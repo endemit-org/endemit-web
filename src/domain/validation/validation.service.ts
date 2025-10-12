@@ -1,53 +1,41 @@
 import { CheckoutFormData } from "@/types/checkout";
 import { CartItem } from "@/types/cart";
 import { getComplementaryTicketModel } from "@/lib/util";
-
-export interface ValidationErrors {
-  email: boolean;
-  emailRepeat: boolean;
-  name: boolean;
-  address: boolean;
-  city: boolean;
-  postalCode: boolean;
-  country: boolean;
-  phone: boolean;
-  termsAndConditions: boolean;
-  complementaryTicketData: { [x: string]: string | boolean } | null;
-}
+import { ValidationErrors } from "@/types/validation";
 
 export class CheckoutValidationService {
-  static validateEmail(email: string): boolean {
+  static isValidEmail(email: string): boolean {
     return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  static validateName(name: string): boolean {
+  static isValidFullName(name: string): boolean {
     const parts = name.trim().split(/\s+/);
     return !(parts.length >= 2 && parts.every(part => part.length >= 2));
   }
 
-  static validateAddress(address: string): boolean {
+  static isValidAddress(address: string): boolean {
     return address.trim().length < 5;
   }
 
-  static validateCity(city: string): boolean {
+  static isValidCity(city: string): boolean {
     return city.trim().length < 2;
   }
 
-  static validatePostalCode(postalCode: string): boolean {
+  static isValidPostalCode(postalCode: string): boolean {
     return postalCode.trim().length < 3;
   }
 
-  static validateCountry(country: string): boolean {
+  static isValidCountry(country: string): boolean {
     return country.trim().length === 2;
   }
 
-  static validatePhone(phone: string): boolean {
+  static isValidPhone(phone: string): boolean {
     const cleaned = phone.trim();
     return cleaned.length >= 5 && /^\d+$/.test(cleaned);
   }
 
-  static validateTermsAndConditions(accepted: boolean): boolean {
-    return !accepted;
+  static isValidCheckbox(checked: boolean): boolean {
+    return !checked;
   }
 
   static validateForm({
@@ -60,7 +48,7 @@ export class CheckoutValidationService {
     items: CartItem[];
   }): ValidationErrors {
     const errors: ValidationErrors = {
-      email: this.validateEmail(formData.email),
+      email: this.isValidEmail(formData.email),
       emailRepeat: formData.email !== formData.emailRepeat,
       name: false,
       address: false,
@@ -68,21 +56,19 @@ export class CheckoutValidationService {
       postalCode: false,
       country: false,
       phone: false,
-      termsAndConditions: this.validateTermsAndConditions(
-        formData.termsAndConditions
-      ),
+      termsAndConditions: this.isValidCheckbox(formData.termsAndConditions),
       complementaryTicketData: !items
         ? null
         : getComplementaryTicketModel(items, false),
     };
 
     if (requiresShippingAddress) {
-      errors.name = this.validateName(formData.name);
-      errors.address = this.validateAddress(formData.address);
-      errors.city = this.validateCity(formData.city);
-      errors.postalCode = this.validatePostalCode(formData.postalCode);
-      errors.country = this.validateCountry(formData.city);
-      errors.phone = this.validatePhone(formData.phone);
+      errors.name = this.isValidFullName(formData.name);
+      errors.address = this.isValidAddress(formData.address);
+      errors.city = this.isValidCity(formData.city);
+      errors.postalCode = this.isValidPostalCode(formData.postalCode);
+      errors.country = this.isValidCountry(formData.city);
+      errors.phone = this.isValidPhone(formData.phone);
     }
 
     if (errors.complementaryTicketData) {
@@ -90,7 +76,7 @@ export class CheckoutValidationService {
         const value = formData.complementaryTicketData
           ? String(formData.complementaryTicketData[key])
           : "";
-        errors.complementaryTicketData[key] = this.validateName(value);
+        errors.complementaryTicketData[key] = this.isValidFullName(value);
       }
     }
 

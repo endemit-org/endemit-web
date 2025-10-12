@@ -5,7 +5,7 @@ export default function FestivalSubscribe() {
     <Subscribe
       title="SUBSCRIBE"
       description="Endemit Festival is private community gathering, accessible only by invitation. If you'd like to become a member, sign up and we'll send you more info."
-      apiEndpoint="/api/festival-subscribe"
+      apiEndpoint="/api/v1/newsletter/festival-subscribe"
       theme="light"
       centered={true}
     />

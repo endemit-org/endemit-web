@@ -5,7 +5,7 @@ export default function EndemitSubscribe() {
     <Subscribe
       title="SUBSCRIBE"
       description="Receive updates about our upcoming events, music, and announcements"
-      apiEndpoint="/api/endemit-subscribe"
+      apiEndpoint="/api/v1/newsletter/endemit-subscribe"
       theme="dark"
       centered={false}
       resetButton={true}

@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import {
   updateOrderStatusCancelled,
+  updateOrderStatusExpired,
   updateOrderStatusPaid,
 } from "@/domain/order/order.actions";
 import {
@@ -111,7 +112,7 @@ export async function POST(request: Request) {
         const session = event.data.object;
         // Checkout session expired without payment - mark as CANCELLED
         // User didn't complete checkout within time limit
-        await updateOrderStatusCancelled(session.id);
+        await updateOrderStatusExpired(session.id);
         console.log(`Order cancelled (expired): ${session.id}`);
         break;
       }

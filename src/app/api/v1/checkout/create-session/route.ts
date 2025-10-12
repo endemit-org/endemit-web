@@ -1,16 +1,15 @@
 import { PrismicProductDocument } from "@/types/prismic";
 import { NextResponse } from "next/server";
 import {
-  getFormattedProduct,
   getVariantSingleProducts,
-} from "@/domain/cms/cms.actions";
+  getFormattedProduct,
+} from "@/domain/cms/actions";
 import { CartItem } from "@/types/cart";
 import assert from "node:assert";
 import { CustomStripeLineItem, ShippingAddress } from "@/types/checkout";
 import { Product, ProductCompositionType } from "@/types/product";
 import { stripe } from "@/services/stripe/stripe";
 import { prismicClient } from "@/services/prismic/prismic";
-import { getOrderWeight } from "@/domain/checkout/checkout.actions";
 import shippingService from "@/domain/shipping/shipping.service";
 import { Country } from "@/types/country";
 import { createOrder } from "@/domain/order/order.actions";
@@ -20,6 +19,7 @@ import {
   isProductTicket,
 } from "@/domain/product/product.rules";
 import { CheckoutValidationService } from "@/domain/validation/validation.service";
+import { getCheckoutWeight } from "@/domain/checkout/actions";
 
 export async function POST(request: Request) {
   try {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
 
     // Ensure all items are valid products with valid prices
     const checkoutItems: CartItem[] = [];
-    const orderWeight = getOrderWeight(items);
+    const orderWeight = getCheckoutWeight(items);
 
     items.forEach(item => {
       const product = validProducts.find(p => p.id === item.id);
@@ -103,8 +103,6 @@ export async function POST(request: Request) {
           return complementaryTicketData[key];
         });
       }
-
-      console.log({ ticketHolders });
 
       return {
         price_data: {

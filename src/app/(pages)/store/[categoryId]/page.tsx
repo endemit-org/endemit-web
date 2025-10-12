@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { PrismicProductDocument } from "@/types/prismic";
-import { getFormattedProduct } from "@/domain/cms/cms.actions";
 import { categoryFromSlug } from "@/lib/util";
 import ProductSection from "@/components/product/ProductSection";
 import Breadcrumb from "@/components/Breadcrumb";
 import { prismicClient, prismic } from "@/services/prismic/prismic";
+import { getFormattedProduct } from "@/domain/cms/actions";
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function ProductPage({

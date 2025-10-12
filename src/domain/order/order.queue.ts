@@ -1,5 +1,5 @@
 import { inngest } from "@/services/inngest/inngest";
-import { sendOrderEmail } from "@/domain/email";
+import { sendOrderEmail } from "@/domain/email/actions";
 import { getOrderById } from "@/domain/order/order.actions";
 import assert from "node:assert";
 

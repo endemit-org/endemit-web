@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateQrImage } from "@/domain/ticket/ticket.actions";
+
+import { generateTicketImage } from "@/domain/ticket/actions";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const qrCodeDataUrl = await generateQrImage(ticketData);
+    const qrCodeDataUrl = await generateTicketImage(ticketData);
     // Convert base64 string to Buffer
     const imageBuffer = Buffer.from(qrCodeDataUrl.split(",")[1], "base64");
 

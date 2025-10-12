@@ -33,24 +33,6 @@ export type ShippingAddress = {
   phone: string;
 };
 
-export interface Order {
-  id: string;
-  status: OrderStatus;
-
-  items: CartItem[];
-  total: number;
-
-  email: string;
-  shippingInfo?: ShippingAddress;
-
-  paymentInfo?: {
-    method: OrderPaymentMethod;
-    status: OrderPaymentStatus;
-    transactionId: string;
-    email: string;
-  };
-}
-
 export interface CheckoutFormData extends ShippingAddress {
   email: string;
   emailRepeat: string;

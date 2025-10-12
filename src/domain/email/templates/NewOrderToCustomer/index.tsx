@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MainLayout } from "@/domain/email/templates/Main.layout";
+import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text } from "@react-email/components";
 import { formatPrice } from "@/lib/formatting";
@@ -9,13 +9,13 @@ interface Props {
   order: Order;
 }
 
-export default function OrderEmailTemplate({ order }: Props) {
+function NewOrderToCustomerTemplate({ order }: Props) {
   const orderItems = JSON.parse(
     order.items as string
   ) as CustomStripeLineItem[];
 
   return (
-    <MainLayout>
+    <MasterTemplate>
       <div>
         <h1>
           Your Order for {order.id} {order.totalAmount}
@@ -110,6 +110,8 @@ export default function OrderEmailTemplate({ order }: Props) {
           </tbody>
         </table>
       </div>
-    </MainLayout>
+    </MasterTemplate>
   );
 }
+
+export { NewOrderToCustomerTemplate };

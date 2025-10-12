@@ -1,7 +1,6 @@
-import { Product, ProductCompositionType } from "@/types/product";
-import { richTextToPlainText } from "@/lib/util";
 import { PrismicProductDocument } from "@/types/prismic";
-import { getProductId, getProductName } from "@/domain/product/product.actions";
+import { richTextToPlainText } from "@/lib/util";
+import { Product, ProductCompositionType } from "@/types/product";
 
 export const getFormattedProduct = (product: PrismicProductDocument) => {
   const hasVariants =
@@ -77,25 +76,4 @@ export const getFormattedProduct = (product: PrismicProductDocument) => {
       image: product.data.meta_image?.url || null,
     },
   } as Product;
-};
-
-export const getVariantSingleProducts = (product: Product) => {
-  const variantSingleProducts: Product[] = [];
-
-  product.variants.forEach(variant => {
-    const productId = getProductId(product.uid, variant.variant_value);
-    const productName = getProductName(product.name, variant.variant_value);
-
-    const productWithVariant: Product = {
-      ...product,
-      id: productId,
-      uid: productId,
-      composition: ProductCompositionType.VARIANT,
-      name: productName,
-      variants: [variant],
-    };
-    variantSingleProducts.push(productWithVariant);
-  });
-
-  return variantSingleProducts;
 };

@@ -6,11 +6,6 @@ import CheckoutSummary from "./CheckoutSummary";
 import CheckoutForm from "./CheckoutForm";
 import CheckoutItemList from "./CheckoutItemList";
 import { useShippingCost } from "@/hooks/useShippingCosts";
-import {
-  calculateTotals,
-  getOrderWeight,
-  roundUpTotal,
-} from "@/domain/checkout/checkout.actions";
 import { useCheckoutForm } from "@/hooks/useCheckoutForm";
 import {
   includesDonationProduct,
@@ -21,6 +16,11 @@ import { useProducts } from "@/stores/ProductStore";
 import { isProductSellableByStatus } from "@/domain/product/product.rules";
 import { Product } from "@/types/product";
 import { formatPrice } from "@/lib/formatting";
+import {
+  getCheckoutWeight,
+  getCheckoutTotals,
+  getRoundedUpTotal,
+} from "@/domain/checkout/actions";
 
 export default function Checkout() {
   const {
@@ -44,7 +44,7 @@ export default function Checkout() {
   const includesNonRefundable = includesNonRefundableProduct(items);
   const includesDonationInCart = includesDonationProduct(items);
 
-  const orderWeight = getOrderWeight(items);
+  const orderWeight = getCheckoutWeight(items);
 
   const {
     formData,
@@ -60,9 +60,9 @@ export default function Checkout() {
     error: shippingError,
   } = useShippingCost(formData.country, orderWeight, requiresShippingAddress);
 
-  const { subTotal, total } = calculateTotals(totalPrice, shippingCost);
+  const { subTotal, total } = getCheckoutTotals(totalPrice, shippingCost);
 
-  const roundedTotal = roundUpTotal(total);
+  const roundedTotal = getRoundedUpTotal(total);
   const donationAmount = Math.round(roundedTotal - total);
   const showDonationCTA =
     items.length > 0 && !includesDonationInCart && donationAmount > 0;

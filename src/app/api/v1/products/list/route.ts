@@ -1,7 +1,7 @@
 import { PrismicProductDocument } from "@/types/prismic";
 import { NextResponse } from "next/server";
-import { getFormattedProduct } from "@/domain/cms/cms.actions";
 import { prismicClient } from "@/services/prismic/prismic";
+import { getFormattedProduct } from "@/domain/cms/actions";
 
 export async function GET() {
   try {

@@ -5,7 +5,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { useCartActions, useCartItems } from "@/stores/CartStore";
 import { Product } from "@/types/product";
-import { getVariantSingleProducts } from "@/domain/cms/cms.actions";
+import { getVariantSingleProducts } from "@/domain/cms/actions";
 import Button from "@/components/Button";
 import {
   isProductConfigurable,

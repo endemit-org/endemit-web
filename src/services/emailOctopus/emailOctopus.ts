@@ -1,0 +1,5 @@
+export const EMAIL_OCTOPUS_API_KEY = process.env.EMAIL_OCTOPUS_API_KEY ?? "";
+export const EMAIL_OCTOPUS_GENERAL_LIST_ID =
+  process.env.EMAIL_OCTOPUS_GENERAL_LIST_ID ?? "";
+export const EMAIL_OCTOPUS_FESTIVAL_LIST_ID =
+  process.env.EMAIL_OCTOPUS_FESTIVAL_LIST_ID ?? "";

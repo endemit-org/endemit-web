@@ -1,11 +1,11 @@
 import { inngest } from "@/services/inngest/inngest";
+import { sendTicketEmail } from "@/domain/email/actions";
 import {
   createTicket,
-  generateQrContent,
-  generateQrImage,
   generateSecureHash,
-} from "@/domain/ticket/ticket.actions";
-import { sendTicketEmail } from "@/domain/email";
+  generateTicketImage,
+  generateQrContent,
+} from "@/domain/ticket/actions";
 
 enum TicketQueueEvent {
   CREATE_TICKET = "create-ticket",
@@ -80,7 +80,9 @@ export const ticketQueueFunction = inngest.createFunction(
     });
 
     const ticketImage = await step.run("create-ticket-image", async () => {
-      const image = await generateQrImage(JSON.stringify(ticketSecurityData));
+      const image = await generateTicketImage(
+        JSON.stringify(ticketSecurityData)
+      );
 
       if (!image) {
         throw new Error("Failed to generate QR image");
