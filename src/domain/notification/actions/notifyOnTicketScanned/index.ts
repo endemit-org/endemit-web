@@ -1,5 +1,8 @@
-import { discord } from "@/services/discord/discord";
-import { formatPrice } from "@/lib/formatting";
+import { DiscordConnector } from "@/services/discord";
+
+const discordTicketScan = new DiscordConnector(
+  process.env.DISCORD_TICKET_SCAN_WEBHOOK ?? ""
+);
 
 export async function notifyOnTicketScanned({
   eventName,
@@ -13,7 +16,7 @@ export async function notifyOnTicketScanned({
   totalTicketsScannedAtEvent: number;
 }) {
   try {
-    await discord.sendEmbed({
+    await discordTicketScan.sendEmbed({
       title: `✅ Ticket scanned at ${eventName}`,
       description: `**${ticketHolderName}**'s ticket was just scanned at ${eventName}! This makes a total of **${totalTicketsScannedAtEvent}** tickets scanned at ${eventName} so far.`,
       color: 0x5865f2,

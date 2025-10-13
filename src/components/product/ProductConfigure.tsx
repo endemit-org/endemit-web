@@ -10,7 +10,7 @@ import Button from "@/components/Button";
 import {
   isProductConfigurable,
   isProductSellableByStatus,
-} from "@/domain/product/product.rules";
+} from "@/domain/product/businessLogic";
 
 interface Props {
   product: Product;

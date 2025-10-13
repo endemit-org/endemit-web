@@ -60,3 +60,11 @@ export const isProductExcludedFromRefunds = (product: Product) => {
 export const isProductFeatured = (product: Product) => {
   return product.isFeatured;
 };
+export const canProductExistInCart = (
+  productComposition: ProductCompositionType
+) => {
+  return (
+    productComposition === ProductCompositionType.SINGLE ||
+    productComposition === ProductCompositionType.VARIANT
+  );
+};

@@ -3,7 +3,7 @@ import { PrismicProductDocument } from "@/types/prismic";
 import { categoryFromSlug } from "@/lib/util";
 import ProductSection from "@/components/product/ProductSection";
 import Breadcrumb from "@/components/Breadcrumb";
-import { prismicClient, prismic } from "@/services/prismic/prismic";
+import { prismicClient, prismic } from "@/services/prismic";
 import { getFormattedProduct } from "@/domain/cms/actions";
 export const revalidate = 3600; // Revalidate every hour
 

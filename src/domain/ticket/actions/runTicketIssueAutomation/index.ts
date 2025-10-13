@@ -1,26 +1,15 @@
-import { inngest } from "@/services/inngest/inngest";
-import { sendTicketEmail } from "@/domain/email/actions";
+import { inngest } from "@/services/inngest";
+import { TicketCreationData, TicketQueueEvent } from "@/types/ticket";
 import {
-  createTicket,
+  createTicketTransaction,
+  generateQrContent,
   generateSecureHash,
   generateTicketImage,
-  generateQrContent,
 } from "@/domain/ticket/actions";
+import { sendTicketEmail } from "@/domain/email/actions";
+import { notifyOnNewTicketIssue } from "@/domain/notification/actions";
 
-enum TicketQueueEvent {
-  CREATE_TICKET = "create-ticket",
-}
-
-export type TicketCreationData = {
-  eventId: string;
-  eventName: string;
-  ticketHolderName: string;
-  ticketPayerEmail: string;
-  orderId: string;
-  metadata?: Record<string, string | number | boolean>;
-};
-
-export const ticketQueueFunction = inngest.createFunction(
+export const runTicketIssueAutomation = inngest.createFunction(
   { id: "create-ticket-function", retries: 5 },
   { event: TicketQueueEvent.CREATE_TICKET },
   async ({ event, step }) => {
@@ -29,6 +18,7 @@ export const ticketQueueFunction = inngest.createFunction(
       eventName,
       ticketHolderName,
       ticketPayerEmail,
+      price,
       orderId,
       metadata,
     } = event.data as TicketCreationData;
@@ -60,10 +50,11 @@ export const ticketQueueFunction = inngest.createFunction(
       }
     );
 
-    const ticket = await step.run("create-ticket-db", async () => {
-      const created = await createTicket({
+    const ticketTransaction = await step.run("create-ticket-db", async () => {
+      const created = await createTicketTransaction({
         eventId,
         eventName,
+        price,
         ticketHolderName,
         ticketPayerEmail,
         ticketHash: ticketSecurityData.ticketHash,
@@ -92,8 +83,10 @@ export const ticketQueueFunction = inngest.createFunction(
     });
 
     await step.run("send-ticket-email", async () => {
+      const issuedTicket = ticketTransaction.ticket;
+
       try {
-        const result = await sendTicketEmail(ticket, ticketImage);
+        const result = await sendTicketEmail(issuedTicket, ticketImage);
 
         if (!result || result.error) {
           throw new Error(
@@ -101,7 +94,7 @@ export const ticketQueueFunction = inngest.createFunction(
           );
         }
 
-        console.log(`Ticket email sent: ${ticket.id}`);
+        console.log(`Ticket email sent: ${issuedTicket.id}`);
         return result;
       } catch (error) {
         // Detect rate limit errors
@@ -111,22 +104,30 @@ export const ticketQueueFunction = inngest.createFunction(
             error.message.includes("rate limit")
           ) {
             throw new Error(
-              `Rate limit hit when sending email for ticket ${ticket.id}`
+              `Rate limit hit when sending email for ticket ${issuedTicket.id}`
             );
           }
         }
 
-        throw new Error(`Email send failed for ticket ${ticket.id}: ${error}`);
+        throw new Error(
+          `Email send failed for ticket ${issuedTicket.id}: ${error}`
+        );
       }
     });
 
-    return { ticketId: ticket.id };
+    await step.run("send-instant-notification", async () => {
+      const issuedTicket = ticketTransaction.ticket;
+      const sequenceNumber = ticketTransaction.ticketCount;
+
+      return await notifyOnNewTicketIssue({
+        eventName: issuedTicket.eventName,
+        ticketHolderName: issuedTicket.ticketHolderName,
+        ticketPayerEmail: issuedTicket.ticketPayerEmail,
+        ticketPrice: Number(issuedTicket.price),
+        totalTicketsSoldForEvent: sequenceNumber,
+      });
+    });
+
+    return { ticketId: ticketTransaction.ticket.id };
   }
 );
-
-export const queueTicketCreation = async (data: TicketCreationData) => {
-  return await inngest.send({
-    name: TicketQueueEvent.CREATE_TICKET,
-    data,
-  });
-};

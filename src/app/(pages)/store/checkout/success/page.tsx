@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { stripe } from "@/services/stripe/stripe";
-import { getOrderByStripeSession } from "@/domain/order/order.actions";
-import ClearCart from "@/components/checkout/ClearCart";
+import { stripe } from "@/services/stripe";
+import CartClear from "@/components/cart/CartClear";
+import { getOrderByStripeSession } from "@/domain/order/actions";
 
 export const metadata: Metadata = {
   title: "Merch",
@@ -50,7 +50,7 @@ export default async function SuccessPage({
           </p>
         </>
       )}
-      <ClearCart />
+      <CartClear />
     </div>
   );
 }

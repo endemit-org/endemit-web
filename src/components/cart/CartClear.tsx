@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useCart } from "@/stores/CartStore";
 
-export default function ClearCart() {
+export default function CartClear() {
   const { clearCart } = useCart();
 
   useEffect(() => {

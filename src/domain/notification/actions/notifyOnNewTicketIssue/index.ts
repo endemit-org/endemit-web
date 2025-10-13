@@ -1,5 +1,9 @@
-import { discord } from "@/services/discord/discord";
 import { formatPrice } from "@/lib/formatting";
+import { DiscordConnector } from "@/services/discord";
+
+const discordTicketPurchase = new DiscordConnector(
+  process.env.DISCORD_TICKET_PURCHASE_WEBHOOK ?? ""
+);
 
 export async function notifyOnNewTicketIssue({
   eventName,
@@ -15,7 +19,7 @@ export async function notifyOnNewTicketIssue({
   totalTicketsSoldForEvent: number;
 }) {
   try {
-    await discord.sendEmbed({
+    await discordTicketPurchase.sendEmbed({
       title: `🎫 New Ticket issued for ${eventName}`,
       description: `A new ticket was issued to **${ticketHolderName}**. This makes a total of **${totalTicketsSoldForEvent}** tickets sold for ${eventName} so far.`,
       color: 0x5865f2,

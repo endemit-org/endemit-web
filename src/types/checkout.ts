@@ -1,4 +1,3 @@
-import { CartItem } from "@/types/cart";
 import { Country } from "@/types/country";
 import Stripe from "stripe";
 
@@ -37,6 +36,7 @@ export interface CheckoutFormData extends ShippingAddress {
   email: string;
   emailRepeat: string;
   termsAndConditions: boolean;
+  subscribeToNewsletter?: boolean;
 
   complementaryTicketData: Record<string, string | boolean> | null;
 }

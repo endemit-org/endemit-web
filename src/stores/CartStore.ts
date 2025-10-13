@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { CartItem, CartStore } from "@/types/cart";
 import { Product } from "@/types/product";
-import { canProductExistInCart } from "@/domain/product/product.actions";
 import { getApiPath } from "@/lib/api";
+import { canProductExistInCart } from "@/domain/product/businessLogic";
 
 interface CreateCheckoutSessionResponse {
   sessionId: string;

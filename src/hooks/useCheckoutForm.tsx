@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckoutValidationService } from "@/domain/validation/validation.service";
+import { CheckoutValidationService } from "@/services/validation/validation.service";
 import { CheckoutFormData } from "@/types/checkout";
 import { CartItem } from "@/types/cart";
-import { getComplementaryTicketModel } from "@/lib/util";
+
+import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";
 
 export function useCheckoutForm(
   requiresShippingAddress: boolean,
@@ -20,6 +21,7 @@ export function useCheckoutForm(
     country: "SI",
     phone: "",
     termsAndConditions: false,
+    subscribeToNewsletter: false,
     complementaryTicketData: !items
       ? null
       : getComplementaryTicketModel(items, ""),

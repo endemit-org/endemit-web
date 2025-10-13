@@ -11,9 +11,9 @@ model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
   email            String
-  subtotal         Int // cents
-  totalAmount      Int // cents
-  shippingAmount   Int? // cents
+  subtotal         Decimal     @db.Decimal(10, 2)
+  totalAmount      Decimal     @db.Decimal(10, 2)
+  shippingAmount   Decimal?    @db.Decimal(10, 2)
   shippingRequired Boolean
   shippingAddress  Json?
   items            Json
@@ -37,6 +37,7 @@ model Ticket {
   ticketHolderName String
   ticketPayerEmail String
   ticketHash       String       @unique
+  price            Decimal      @db.Decimal(10, 2)
   qrContent        Json?
   metadata         Json?
   attended         Boolean      @default(false)

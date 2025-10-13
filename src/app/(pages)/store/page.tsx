@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { getVisibleProducts } from "@/domain/product/product.actions";
 import { ProductCategory } from "@/types/product";
 import ProductSection from "@/components/product/ProductSection";
 import {
   isProductFeatured,
   isProductTicket,
-} from "@/domain/product/product.rules";
+} from "@/domain/product/businessLogic";
+import { getVisibleProducts } from "@/domain/product/actions/getProducts";
 
 export const metadata: Metadata = {
   title: "Store",

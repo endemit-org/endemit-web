@@ -1,16 +1,20 @@
-import { discord } from "@/services/discord/discord";
+import { DiscordConnector } from "@/services/discord";
 import { Order } from "@prisma/client";
 import { formatPrice } from "@/lib/formatting";
 import { CustomStripeLineItem } from "@/types/checkout";
+
+const discordOrders = new DiscordConnector(
+  process.env.DISCORD_ORDERS_WEBHOOK ?? ""
+);
 
 export async function notifyOnNewOrder(order: Order) {
   try {
     const orderItems = JSON.parse(
       order.items as string
     ) as CustomStripeLineItem[];
-    await discord.sendEmbed({
+    await discordOrders.sendEmbed({
       title: "💵 New Order received",
-      description: `A new order in value of **${formatPrice(order.totalAmount / 100)}** was just received!`,
+      description: `A new order in value of **${formatPrice(order.totalAmount)}** was just received!`,
       color: 0x5865f2,
       fields: [
         {

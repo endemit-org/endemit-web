@@ -1,6 +1,7 @@
 import { Product } from "@/types/product";
 import { create } from "zustand";
-import { getProducts } from "@/domain/product/product.actions";
+
+import { getAllProducts } from "@/domain/product/actions/getProducts";
 
 interface ProductsState {
   products: Product[];
@@ -21,7 +22,7 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
   fetchProducts: async () => {
     set({ isLoading: true, error: null });
     try {
-      const products = await getProducts();
+      const products = await getAllProducts();
       set({ isLoading: false, products });
     } catch (error) {
       set({

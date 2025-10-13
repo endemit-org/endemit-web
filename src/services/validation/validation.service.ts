@@ -1,28 +1,32 @@
 import { CheckoutFormData } from "@/types/checkout";
 import { CartItem } from "@/types/cart";
-import { getComplementaryTicketModel } from "@/lib/util";
 import { ValidationErrors } from "@/types/validation";
+import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";
 
 export class CheckoutValidationService {
   static isValidEmail(email: string): boolean {
     return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
+  static isValidName(name: string): boolean {
+    return name.trim().length >= 2;
+  }
+
   static isValidFullName(name: string): boolean {
     const parts = name.trim().split(/\s+/);
-    return !(parts.length >= 2 && parts.every(part => part.length >= 2));
+    return parts.length >= 2 && parts.every(part => part.length >= 2);
   }
 
   static isValidAddress(address: string): boolean {
-    return address.trim().length < 5;
+    return address.trim().length >= 5;
   }
 
   static isValidCity(city: string): boolean {
-    return city.trim().length < 2;
+    return city.trim().length > 2;
   }
 
   static isValidPostalCode(postalCode: string): boolean {
-    return postalCode.trim().length < 3;
+    return postalCode.trim().length >= 3;
   }
 
   static isValidCountry(country: string): boolean {
@@ -35,7 +39,7 @@ export class CheckoutValidationService {
   }
 
   static isValidCheckbox(checked: boolean): boolean {
-    return !checked;
+    return checked;
   }
 
   static validateForm({
@@ -56,19 +60,19 @@ export class CheckoutValidationService {
       postalCode: false,
       country: false,
       phone: false,
-      termsAndConditions: this.isValidCheckbox(formData.termsAndConditions),
+      termsAndConditions: !this.isValidCheckbox(formData.termsAndConditions),
       complementaryTicketData: !items
         ? null
         : getComplementaryTicketModel(items, false),
     };
 
     if (requiresShippingAddress) {
-      errors.name = this.isValidFullName(formData.name);
-      errors.address = this.isValidAddress(formData.address);
-      errors.city = this.isValidCity(formData.city);
-      errors.postalCode = this.isValidPostalCode(formData.postalCode);
-      errors.country = this.isValidCountry(formData.city);
-      errors.phone = this.isValidPhone(formData.phone);
+      errors.name = !this.isValidFullName(formData.name);
+      errors.address = !this.isValidAddress(formData.address);
+      errors.city = !this.isValidCity(formData.city);
+      errors.postalCode = !this.isValidPostalCode(formData.postalCode);
+      errors.country = !this.isValidCountry(formData.country);
+      errors.phone = !this.isValidPhone(formData.phone);
     }
 
     if (errors.complementaryTicketData) {
@@ -76,7 +80,7 @@ export class CheckoutValidationService {
         const value = formData.complementaryTicketData
           ? String(formData.complementaryTicketData[key])
           : "";
-        errors.complementaryTicketData[key] = this.isValidFullName(value);
+        errors.complementaryTicketData[key] = !this.isValidName(value);
       }
     }
 

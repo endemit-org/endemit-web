@@ -5,7 +5,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import ImageGallery from "@/components/ImageGallery";
 import ProductConfigure from "@/components/product/ProductConfigure";
-import { prismicClient } from "@/services/prismic/prismic";
+import { prismicClient } from "@/services/prismic";
 import { getFormattedProduct } from "@/domain/cms/actions";
 
 export const revalidate = 3600; // Revalidate cache every hour

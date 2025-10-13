@@ -4,7 +4,7 @@ import {
   isProductDonation,
   isProductExcludedFromRefunds,
   isProductShippable,
-} from "@/domain/product/product.rules";
+} from "@/domain/product/businessLogic";
 
 export const includesShippableProduct = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductShippable(item));

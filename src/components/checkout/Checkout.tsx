@@ -11,9 +11,9 @@ import {
   includesDonationProduct,
   includesNonRefundableProduct,
   includesShippableProduct,
-} from "@/domain/checkout/checkout.rules";
+} from "@/domain/checkout/businessRules";
 import { useProducts } from "@/stores/ProductStore";
-import { isProductSellableByStatus } from "@/domain/product/product.rules";
+import { isProductSellableByStatus } from "@/domain/product/businessLogic";
 import { Product } from "@/types/product";
 import { formatPrice } from "@/lib/formatting";
 import {

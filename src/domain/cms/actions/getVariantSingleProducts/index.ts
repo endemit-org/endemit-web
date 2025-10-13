@@ -1,12 +1,16 @@
 import { Product, ProductCompositionType } from "@/types/product";
-import { getProductId, getProductName } from "@/domain/product/product.actions";
+import { getProductVariantName } from "@/domain/product/actions/getProductVariantName";
+import { getProductVariantId } from "@/domain/product/actions/getProductVariantId";
 
 export const getVariantSingleProducts = (product: Product) => {
   const variantSingleProducts: Product[] = [];
 
   product.variants.forEach(variant => {
-    const productId = getProductId(product.uid, variant.variant_value);
-    const productName = getProductName(product.name, variant.variant_value);
+    const productId = getProductVariantId(product.uid, variant.variant_value);
+    const productName = getProductVariantName(
+      product.name,
+      variant.variant_value
+    );
 
     const productWithVariant: Product = {
       ...product,

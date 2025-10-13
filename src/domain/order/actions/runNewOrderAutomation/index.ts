@@ -1,18 +1,10 @@
-import { inngest } from "@/services/inngest/inngest";
-import { sendOrderEmail } from "@/domain/email/actions";
-import { getOrderById } from "@/domain/order/order.actions";
+import { inngest } from "@/services/inngest";
+import { getOrderById } from "@/domain/order/actions";
 import assert from "node:assert";
+import { sendOrderEmail } from "@/domain/email/actions";
+import { OrderNotificationData, OrderQueueEvent } from "@/types/order";
 
-enum OrderQueueEvent {
-  NOTIFY_ON_ORDER = "notify-on-order",
-}
-
-export type OrderNotificationData = {
-  orderId: string;
-  metadata?: Record<string, string | number | boolean>;
-};
-
-export const orderQueueFunction = inngest.createFunction(
+export const runNewOrderAutomation = inngest.createFunction(
   { id: "notify-order-function", retries: 5 },
   { event: OrderQueueEvent.NOTIFY_ON_ORDER },
   async ({ event, step }) => {
@@ -54,10 +46,3 @@ export const orderQueueFunction = inngest.createFunction(
     return { orderId: order.id };
   }
 );
-
-export const queueOrderNotification = async (data: OrderNotificationData) => {
-  return await inngest.send({
-    name: OrderQueueEvent.NOTIFY_ON_ORDER,
-    data,
-  });
-};

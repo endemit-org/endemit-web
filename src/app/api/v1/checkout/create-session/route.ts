@@ -8,18 +8,18 @@ import { CartItem } from "@/types/cart";
 import assert from "node:assert";
 import { CustomStripeLineItem, ShippingAddress } from "@/types/checkout";
 import { Product, ProductCompositionType } from "@/types/product";
-import { stripe } from "@/services/stripe/stripe";
-import { prismicClient } from "@/services/prismic/prismic";
-import shippingService from "@/domain/shipping/shipping.service";
+import { stripe } from "@/services/stripe";
+import { prismicClient } from "@/services/prismic";
+import shippingService from "@/services/shipping";
 import { Country } from "@/types/country";
-import { createOrder } from "@/domain/order/order.actions";
-import { includesShippableProduct } from "@/domain/checkout/checkout.rules";
+import { includesShippableProduct } from "@/domain/checkout/businessRules";
 import {
   isProductSellableByStatus,
   isProductTicket,
-} from "@/domain/product/product.rules";
-import { CheckoutValidationService } from "@/domain/validation/validation.service";
+} from "@/domain/product/businessLogic";
+import { CheckoutValidationService } from "@/services/validation/validation.service";
 import { getCheckoutWeight } from "@/domain/checkout/actions";
+import { createOrder } from "@/domain/order/actions";
 
 export async function POST(request: Request) {
   try {

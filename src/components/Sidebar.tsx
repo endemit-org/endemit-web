@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
-import CheckoutOverview from "@/components/checkout/CheckoutOverview";
+import Cart from "@/components/cart/Cart";
 
 interface NavigationItem {
   label: string;
@@ -132,7 +132,7 @@ export default function Sidebar({
       </div>
 
       <div className="flex absolute right-0 top-0 lg:hidden gap-x-4">
-        {showCart && <CheckoutOverview variant={"compact"} />}
+        {showCart && <Cart variant={"compact"} />}
 
         <button
           type="button"
@@ -215,7 +215,7 @@ export default function Sidebar({
         <div className="flex-shrink-0">
           {showCart && (
             <div className="px-5 pb-4">
-              <CheckoutOverview variant={"detailed"} />
+              <Cart variant={"detailed"} />
             </div>
           )}
 

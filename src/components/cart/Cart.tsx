@@ -12,7 +12,7 @@ interface Props {
   variant?: "compact" | "detailed";
 }
 
-export default function CheckoutOverview({ variant = "detailed" }: Props) {
+export default function Cart({ variant = "detailed" }: Props) {
   const itemCount = useCartItemCount();
   const totalPrice = useCartTotal();
   const [isClient, setIsClient] = useState(false);

@@ -1,7 +1,7 @@
 import { formatPrice } from "@/lib/formatting";
-import CartQtyControl from "@/components/checkout/CartQtyControl";
+import CartQtyControl from "@/components/cart/CartQtyControl";
 import { CartItem } from "@/types/cart";
-import { isProductTicket } from "@/domain/product/product.rules";
+import { isProductTicket } from "@/domain/product/businessLogic";
 import CheckoutTicketForm from "@/components/checkout/CheckoutTicketForm";
 import { CheckoutFormData } from "@/types/checkout";
 

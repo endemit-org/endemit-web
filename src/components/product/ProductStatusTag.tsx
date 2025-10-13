@@ -1,6 +1,7 @@
 import { ProductStatus } from "@/types/product";
 import clsx from "clsx";
-import { getStatusColor } from "@/domain/product/product.actions";
+
+import { getStatusTagStyle } from "@/domain/product/actions/getStatusTagStyle";
 
 interface Props {
   status: ProductStatus;
@@ -12,7 +13,7 @@ export default function ProductStatusTag({ status, className }: Props) {
     return;
   }
 
-  const variableColours = getStatusColor(status);
+  const variableColours = getStatusTagStyle(status);
 
   return (
     <div

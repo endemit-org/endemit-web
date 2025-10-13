@@ -33,9 +33,4 @@ class DiscordConnector {
   }
 }
 
-// Singleton instance
-const discord = new DiscordConnector(
-  process.env.DISCORD_WEB_NOTIFICATIONS_WEBHOOK!
-);
-
-export { discord, DiscordConnector };
+export { DiscordConnector };

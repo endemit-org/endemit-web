@@ -1,10 +1,10 @@
 import { serve } from "inngest/next";
-import { inngest } from "@/services/inngest/inngest";
+import { inngest } from "@/services/inngest";
 
-import { ticketQueueFunction } from "@/domain/ticket/ticket.queue";
-import { orderQueueFunction } from "@/domain/order/order.queue";
+import { runNewOrderAutomation } from "@/domain/order/actions";
+import { runTicketIssueAutomation } from "@/domain/ticket/actions";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [ticketQueueFunction, orderQueueFunction],
+  functions: [runTicketIssueAutomation, runNewOrderAutomation],
 });

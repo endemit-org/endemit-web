@@ -1,8 +1,12 @@
-import { discord } from "@/services/discord/discord";
+import { DiscordConnector } from "@/services/discord";
+
+const discordNewsletter = new DiscordConnector(
+  process.env.DISCORD_NEWSLETTER_WEBHOOK ?? ""
+);
 
 export async function notifyOnNewSubscriber(email: string, listName: string) {
   try {
-    await discord.sendEmbed({
+    await discordNewsletter.sendEmbed({
       title: "🎉 New Mailing List Subscriber",
       description: `Someone just subscribed to the ENDEMIT ${listName} mailing list!`,
       color: 0x5865f2,

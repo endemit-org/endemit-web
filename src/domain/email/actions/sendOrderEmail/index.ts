@@ -1,4 +1,4 @@
-import { resend, resendFromEmail } from "@/services/resend/resend";
+import { resend, resendFromEmail } from "@/services/resend";
 import { Order } from "@prisma/client";
 import { NewOrderToCustomerTemplate } from "@/domain/email/templates";
 
