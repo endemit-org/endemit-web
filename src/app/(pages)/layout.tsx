@@ -13,7 +13,7 @@ export default function RootLayout({
         backgroundSize: "110px",
       }}
     >
-      <div className="max-w-8xl  m-auto ">
+      <div className="max-w-8xl m-auto">
         <Sidebar
           navigationItems={[
             { label: "Main", href: "/" },

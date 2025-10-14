@@ -1,5 +1,6 @@
 import { Country } from "@/types/country";
 import Stripe from "stripe";
+import { CartItem } from "@/types/cart";
 
 export enum OrderStatus {
   PENDING = "PENDING",
@@ -23,6 +24,8 @@ export enum OrderPaymentStatus {
   REFUNDED = "REFUNDED",
 }
 
+export type ComplementaryTicketField = Record<string, string>;
+
 export type ShippingAddress = {
   name: string;
   address: string;
@@ -32,22 +35,37 @@ export type ShippingAddress = {
   phone: string;
 };
 
+export type DiscountDetails = {
+  success: boolean;
+  promoCodeKey: string;
+  promoCodeId: string;
+  coupon: {
+    id: string;
+    percent_off?: number;
+    amount_off?: number;
+  };
+  restrictions?: Stripe.PromotionCode.Restrictions;
+};
+
 export interface CheckoutFormData extends ShippingAddress {
   email: string;
   emailRepeat: string;
   termsAndConditions: boolean;
   subscribeToNewsletter?: boolean;
+  discountCodeId?: string;
 
-  complementaryTicketData: Record<string, string | boolean> | null;
+  complementaryTicketData: ComplementaryTicketField;
 }
 
-type CustomProductMetadata = {
+export type CustomProductMetadata = {
   productType: string;
   productCategory: string;
   relatedEvent: string | null;
   ticketHolders: string | null;
   uid: string;
 };
+
+export type CheckoutSessionMetaData = Record<string, string>;
 
 export type CustomStripeLineItem =
   Stripe.Checkout.SessionCreateParams.LineItem & {
@@ -57,3 +75,14 @@ export type CustomStripeLineItem =
       };
     };
   };
+
+export type CheckoutSessionRequestBody = {
+  items: CartItem[];
+  email: string;
+  formData: CheckoutFormData;
+  termsAndConditions: boolean;
+  shippingAddress?: ShippingAddress;
+  complementaryTicketData: ComplementaryTicketField;
+  subscribeToNewsletter: boolean;
+  discountCodeId?: string;
+};

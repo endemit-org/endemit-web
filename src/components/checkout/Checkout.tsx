@@ -1,188 +1,132 @@
 "use client";
 
-import { useCart } from "@/stores/CartStore";
 import { useState, useEffect } from "react";
-import CheckoutSummary from "./CheckoutSummary";
-import CheckoutForm from "./CheckoutForm";
-import CheckoutItemList from "./CheckoutItemList";
-import { useShippingCost } from "@/hooks/useShippingCosts";
-import { useCheckoutForm } from "@/hooks/useCheckoutForm";
-import {
-  includesDonationProduct,
-  includesNonRefundableProduct,
-  includesShippableProduct,
-} from "@/domain/checkout/businessRules";
+import { useCheckoutState } from "@/hooks/useCheckoutState";
 import { useProducts } from "@/stores/ProductStore";
-import { isProductSellableByStatus } from "@/domain/product/businessLogic";
-import { Product } from "@/types/product";
-import { formatPrice } from "@/lib/formatting";
-import {
-  getCheckoutWeight,
-  getCheckoutTotals,
-  getRoundedUpTotal,
-} from "@/domain/checkout/actions";
+import { isProductSellable } from "@/domain/product/businessLogic";
+import CheckoutCustomerForm from "@/components/checkout/CheckoutCustomerForm";
+import CheckoutItemList from "@/components/checkout/CheckoutItemList";
+import CheckoutPromoCodeForm from "@/components/checkout/CheckoutPromoCodeForm";
+import CheckoutDonation from "@/components/checkout/CheckoutDonation";
+import CheckoutActions from "@/components/checkout/CheckoutActions";
+import CheckoutError from "@/components/checkout/CheckoutError";
+import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 
 export default function Checkout() {
-  const {
-    addItem,
-    items,
-    removeItem,
-    clearCart,
-    totalPrice,
-    totalItems,
-    checkout,
-    isLoading,
-  } = useCart();
-
-  const { getProductByUid } = useProducts();
-  const donationProduct = getProductByUid("donation-to-association");
-
   const [isClient, setIsClient] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const requiresShippingAddress = includesShippableProduct(items);
-  const includesNonRefundable = includesNonRefundableProduct(items);
-  const includesDonationInCart = includesDonationProduct(items);
-
-  const orderWeight = getCheckoutWeight(items);
+  const { getProductByUid } = useProducts();
 
   const {
+    items,
+    totalItems,
+    totals,
     formData,
     errorMessages,
-    isFormValid,
-    handleFormValueChange,
-    handleTicketFormValueChange,
-  } = useCheckoutForm(requiresShippingAddress, items);
-
-  const {
-    shippingCost,
-    isLoading: loadingShippingCost,
-    error: shippingError,
-  } = useShippingCost(formData.country, orderWeight, requiresShippingAddress);
-
-  const { subTotal, total } = getCheckoutTotals(totalPrice, shippingCost);
-
-  const roundedTotal = getRoundedUpTotal(total);
-  const donationAmount = Math.round(roundedTotal - total);
-  const showDonationCTA =
-    items.length > 0 && !includesDonationInCart && donationAmount > 0;
+    shouldShowNewsletter,
+    discount,
+    promoCodeValue,
+    showDonation,
+    requiresShippingAddress,
+    includesNonRefundable,
+    isProcessing,
+    error,
+    canProceed,
+    actions,
+  } = useCheckoutState();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (shippingError) {
-      setError(shippingError);
-    }
-  }, [shippingError]);
-
-  const handleCheckout = async () => {
-    setError(null);
-    try {
-      await checkout(formData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Checkout failed");
+  const handleAddDonation = () => {
+    const donationProduct = getProductByUid("donation-to-association");
+    if (donationProduct && isProductSellable(donationProduct).isSellable) {
+      actions.addItem(donationProduct, totals.donationAmount);
     }
   };
 
-  const handleAddDonationToCart = (
-    product: Product,
-    productQty: number = 1
-  ) => {
-    if (product && isProductSellableByStatus(product)) {
-      addItem(product, productQty);
-    }
-  };
+  const hasItems = totalItems > 0;
 
-  if (!isClient) {
-    return (
-      <div className="border border-gray-300 p-4 m-4 rounded-lg bg-white shadow-sm w-full text-black">
-        <CheckoutSummary
-          subTotal={0}
-          shippingCost={0}
-          total={0}
-          orderWeight={0}
-          country="SI"
-          loadingShippingCost={false}
-          totalItems={0}
-        />
-        <p className="text-gray-500 italic">Your cart is empty</p>
-      </div>
-    );
-  }
+  const displayTotals = isClient
+    ? totals
+    : {
+        subTotal: 0,
+        shippingCost: 0,
+        shippingWeight: 0,
+        discountAmount: 0,
+        total: 0,
+        roundedTotal: 0,
+        donationAmount: 0,
+      };
+  const displayCountry = isClient ? formData.country : "SI";
+  const displayItems = isClient ? totalItems : 0;
 
   return (
     <div className="border border-gray-300 p-4 m-4 rounded-lg bg-white shadow-sm w-full text-black">
-      {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
-      )}
+      <CheckoutError error={error} />
 
       <CheckoutSummary
-        subTotal={subTotal}
-        shippingCost={shippingCost}
-        total={total}
-        orderWeight={orderWeight}
-        country={formData.country}
-        loadingShippingCost={loadingShippingCost}
-        totalItems={totalItems}
+        subTotal={displayTotals.subTotal}
+        shippingCost={displayTotals.shippingCost}
+        discountObject={discount}
+        discountAmount={displayTotals.discountAmount}
+        total={displayTotals.total}
+        orderWeight={displayTotals.shippingWeight}
+        country={displayCountry}
+        loadingShippingCost={isProcessing}
+        loadingPromoCode={isProcessing}
+        totalItems={displayItems}
       />
 
-      {totalItems === 0 ? (
-        <p className="text-gray-500 italic">Your cart is empty</p>
-      ) : (
-        <>
-          <CheckoutForm
-            formData={formData}
-            errorMessages={errorMessages}
-            onFormChange={handleFormValueChange}
-            requiresShippingAddress={requiresShippingAddress}
-            includesNonRefundable={includesNonRefundable}
-            items={items}
-          />
+      <CheckoutPromoCodeForm
+        discount={discount}
+        promoCodeValue={promoCodeValue}
+        onPromoCodeChange={actions.setPromoCodeValue}
+        onApplyPromoCode={actions.applyPromoCode}
+        onRemovePromoCode={actions.removePromoCode}
+        isLoading={isProcessing}
+      />
 
-          <CheckoutItemList
-            items={items}
-            onRemoveItem={removeItem}
-            formData={formData}
-            errorMessages={errorMessages}
-            onFormChange={handleTicketFormValueChange}
-          />
+      {isClient &&
+        (!hasItems ? (
+          <p className="text-gray-500 italic">Your cart is empty</p>
+        ) : (
+          <>
+            <CheckoutCustomerForm
+              formData={formData}
+              errorMessages={errorMessages}
+              onFormChange={actions.updateField}
+              requiresShippingAddress={requiresShippingAddress}
+              includesNonRefundable={includesNonRefundable}
+              showSubscribeToNewsletter={shouldShowNewsletter}
+              items={items}
+            />
 
-          {showDonationCTA && donationProduct && (
-            <div>
-              Add {formatPrice(donationAmount)} donation to your total and round
-              up to {formatPrice(roundedTotal)}? Donations support our voluntary
-              work and help us keep ticket prices low.
-              <button
-                onClick={() =>
-                  handleAddDonationToCart(donationProduct, donationAmount)
-                }
-              >
-                Add {formatPrice(donationAmount)} donation
-              </button>
-            </div>
-          )}
+            <CheckoutItemList
+              items={items}
+              onRemoveItem={actions.removeItem}
+              formData={formData}
+              errorMessages={errorMessages}
+              onFormChange={actions.updateTicketField}
+              country={formData?.country}
+            />
 
-          <div className="mt-6 space-y-2">
-            {isFormValid && (
-              <button
-                onClick={!isLoading ? handleCheckout : undefined}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
-              >
-                {isLoading ? "Processing..." : "Pay securely with Stripe"}
-              </button>
+            {showDonation && (
+              <CheckoutDonation
+                donationAmount={displayTotals.donationAmount}
+                roundedTotal={displayTotals.roundedTotal}
+                onAddDonation={handleAddDonation}
+              />
             )}
 
-            <button
-              onClick={clearCart}
-              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
-            >
-              Clear Cart
-            </button>
-          </div>
-        </>
-      )}
+            <CheckoutActions
+              onCheckout={actions.checkout}
+              onClearCart={actions.clearCart}
+              canProceed={canProceed}
+              isProcessing={isProcessing}
+            />
+          </>
+        ))}
     </div>
   );
 }

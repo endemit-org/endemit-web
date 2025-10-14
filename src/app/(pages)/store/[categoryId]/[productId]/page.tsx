@@ -6,12 +6,17 @@ import ProductStatusTag from "@/components/product/ProductStatusTag";
 import ImageGallery from "@/components/ImageGallery";
 import ProductConfigure from "@/components/product/ProductConfigure";
 import { prismicClient } from "@/services/prismic";
-import { getFormattedProduct } from "@/domain/cms/actions";
+import {
+  fetchProductsFromCms,
+  getFormattedProduct,
+} from "@/domain/cms/actions";
+import { getProductLimits } from "@/domain/product/actions/getProductLimits";
+import { isProductSellable } from "@/domain/product/businessLogic";
 
 export const revalidate = 3600; // Revalidate cache every hour
 
 export async function generateStaticParams() {
-  const products = await prismicClient.getAllByType("product");
+  const products = await fetchProductsFromCms({});
 
   return products.map(product => ({
     uid: product.uid,
@@ -75,6 +80,8 @@ export default async function ProductPage({
   }
 
   const product = getFormattedProduct(prismicProduct);
+  const productLimits = getProductLimits(product);
+  const isSellableObject = isProductSellable(product);
 
   return (
     <div className=" mx-auto space-y-8 sm:max-w-full pt-24 px-4 lg:pt-16 ">
@@ -130,7 +137,16 @@ export default async function ProductPage({
           </div>
         </div>
 
-        <ProductConfigure product={product} />
+        {productLimits &&
+          productLimits.map((productLimit, index) => (
+            <div key={`prod-limit-${index}`}>{productLimit}</div>
+          ))}
+
+        {isSellableObject.isSellable && <ProductConfigure product={product} />}
+        {!isSellableObject.isSellable &&
+          !isSellableObject.isSellableByCutoffDate && (
+            <div>Product is no longer available</div>
+          )}
       </div>
     </div>
   );

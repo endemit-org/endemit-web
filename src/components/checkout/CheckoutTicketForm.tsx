@@ -1,6 +1,7 @@
 import Input from "@/components/form/Input";
 import { CartItem } from "@/types/cart";
 import { CheckoutFormData } from "@/types/checkout";
+import { CheckoutValidationService } from "@/services/validation/validation.service";
 
 interface CheckoutFormProps {
   index: number;
@@ -13,7 +14,7 @@ interface CheckoutFormProps {
       }
     | undefined
   >;
-  onFormChange: (name: string, value: string | boolean) => void;
+  onFormChange: (name: string, value: string) => void;
   item: CartItem;
 }
 
@@ -25,6 +26,9 @@ export default function CheckoutTicketForm({
   onFormChange,
 }: CheckoutFormProps) {
   const name = `ticket-${item.id}-${index + 1}-name`;
+  const errorFieldName =
+    CheckoutValidationService.formatComplementaryTicketKey(name);
+  const errorMessage = errorMessages[errorFieldName] as string;
 
   return (
     <div className="text-sm text-red-600">
@@ -38,12 +42,7 @@ export default function CheckoutTicketForm({
             : ""
         }
         onChange={onFormChange}
-        errorMessage={
-          errorMessages.complementaryTicketData &&
-          typeof errorMessages.complementaryTicketData === "object"
-            ? errorMessages.complementaryTicketData[name]
-            : undefined
-        }
+        errorMessage={errorMessage}
         required={true}
       />
     </div>

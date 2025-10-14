@@ -3,6 +3,7 @@ import { getOrderById } from "@/domain/order/actions";
 import assert from "node:assert";
 import { sendOrderEmail } from "@/domain/email/actions";
 import { OrderNotificationData, OrderQueueEvent } from "@/types/order";
+import { notifyOnNewOrder } from "@/domain/notification/actions";
 
 export const runNewOrderAutomation = inngest.createFunction(
   { id: "notify-order-function", retries: 5 },
@@ -41,6 +42,10 @@ export const runNewOrderAutomation = inngest.createFunction(
 
         throw new Error(`Email send failed for order ${order.id}: ${error}`);
       }
+    });
+
+    await step.run("send-instant-notification", async () => {
+      return await notifyOnNewOrder(order);
     });
 
     return { orderId: order.id };

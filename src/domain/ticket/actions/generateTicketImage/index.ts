@@ -2,8 +2,10 @@ import QRCode from "qrcode";
 import path from "path";
 import sharp from "sharp";
 
-export const generateTicketImage = async (data: string): Promise<string> => {
-  const qrCodeDataUrl = await QRCode.toDataURL(data, {
+export const generateTicketImage = async (
+  ticketHashId: string
+): Promise<string> => {
+  const qrCodeDataUrl = await QRCode.toDataURL(ticketHashId, {
     errorCorrectionLevel: "H",
     margin: 4,
     width: 400,
@@ -73,5 +75,48 @@ export const generateTicketImage = async (data: string): Promise<string> => {
     .png()
     .toBuffer();
 
-  return qrBuffer.toString("base64");
+  // 9:16 portrait dimensions
+  const canvasWidth = 1080;
+  const canvasHeight = 1920;
+  const borderWidth = 20;
+  const qrTopPadding = 80;
+
+  const qrMetadata = await sharp(qrBuffer).metadata();
+  const qrWidth = qrMetadata.width || 420;
+  // const qrHeight = qrMetadata.height || 420;
+  const qrLeft = Math.floor((canvasWidth - qrWidth) / 2);
+
+  const ticketBuffer = await sharp({
+    create: {
+      width: canvasWidth,
+      height: canvasHeight,
+      channels: 4,
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    },
+  })
+    .composite([
+      {
+        input: Buffer.from(`
+          <svg width="${canvasWidth}" height="${canvasHeight}">
+            <rect x="${borderWidth / 2}" y="${borderWidth / 2}"
+                  width="${canvasWidth - borderWidth}"
+                  height="${canvasHeight - borderWidth}"
+                  fill="none"
+                  stroke="black"
+                  stroke-width="${borderWidth}"/>
+          </svg>
+        `),
+        top: 0,
+        left: 0,
+      },
+      {
+        input: qrBuffer,
+        top: qrTopPadding,
+        left: qrLeft,
+      },
+    ])
+    .png()
+    .toBuffer();
+
+  return ticketBuffer.toString("base64");
 };

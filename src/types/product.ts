@@ -90,14 +90,17 @@ export interface Product {
   category: ProductCategory;
   isFeatured: boolean;
   sortingWeight: number;
-  cutoffTimestamp: Date | null;
   weight: number;
+  limits: {
+    quantityLimit?: number;
+    regionalEligibility: Array<{
+      region: ProductRegion;
+    }>;
+    cutoffTimestamp: Date | string | null;
+  };
   variants: Array<{
     variant_value: string;
     variant_type: string;
-  }>;
-  regionalEligibility: Array<{
-    region: ProductRegion;
   }>;
   relatedProducts: Array<{
     id: string;

@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { CheckoutValidationService } from "@/services/validation/validation.service";
 import { CheckoutFormData } from "@/types/checkout";
 import { CartItem } from "@/types/cart";
-
 import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";
+import { useLocalStorageForm } from "@/hooks/useLocalStorageForm";
+import { transformHoursToMs } from "@/lib/util";
 
-export function useCheckoutForm(
-  requiresShippingAddress: boolean,
-  items: CartItem[]
-) {
-  const [formData, setFormData] = useState<CheckoutFormData>({
+const STORAGE_KEY = "checkout_form_data";
+
+function getDefaultFormData(items: CartItem[]): CheckoutFormData {
+  return {
     email: "",
     emailRepeat: "",
     name: "",
@@ -22,12 +22,41 @@ export function useCheckoutForm(
     phone: "",
     termsAndConditions: false,
     subscribeToNewsletter: false,
-    complementaryTicketData: !items
-      ? null
-      : getComplementaryTicketModel(items, ""),
+    complementaryTicketData: getComplementaryTicketModel(items, ""),
+    discountCodeId: undefined,
+  };
+}
+
+interface UseCheckoutFormReturn {
+  formData: CheckoutFormData;
+  fieldErrors: { [x: string]: string | boolean } | null;
+  errorMessages: Record<string, string>;
+  isFormValid: boolean;
+  updateField: (name: string, value: string | boolean | undefined) => void;
+  updateTicketField: (name: string, value: string) => void;
+  clearForm: () => void;
+}
+
+export function useCheckoutForm(
+  requiresShippingAddress: boolean,
+  items: CartItem[]
+): UseCheckoutFormReturn {
+  const { saveToStorage, loadFromStorage, clearStorage } =
+    useLocalStorageForm<CheckoutFormData>(STORAGE_KEY, transformHoursToMs(2));
+
+  const [formData, setFormData] = useState<CheckoutFormData>(() => {
+    const stored = loadFromStorage();
+    if (stored) {
+      return {
+        ...stored,
+        complementaryTicketData: getComplementaryTicketModel(items, ""),
+        termsAndConditions: false,
+      };
+    }
+    return getDefaultFormData(items);
   });
 
-  const [fieldErrors, setFieldErrors] = useState({
+  const [fieldErrors, setFieldErrors] = useState(() => ({
     email: false,
     emailRepeat: false,
     name: false,
@@ -37,12 +66,16 @@ export function useCheckoutForm(
     country: false,
     phone: false,
     termsAndConditions: false,
-    complementaryTicketData: !items
-      ? null
-      : getComplementaryTicketModel(items, false),
-  });
+  }));
+
   const [isFormValid, setIsFormValid] = useState(false);
 
+  // Persist to localStorage
+  useEffect(() => {
+    saveToStorage(formData);
+  }, [formData, saveToStorage]);
+
+  // Validate form whenever data changes
   useEffect(() => {
     const errors = CheckoutValidationService.validateForm({
       formData,
@@ -53,14 +86,14 @@ export function useCheckoutForm(
     setIsFormValid(CheckoutValidationService.isFormValid(errors));
   }, [formData, requiresShippingAddress, items]);
 
-  const handleFormValueChange = (name: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const updateField = useCallback(
+    (name: string, value: string | boolean | undefined) => {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    },
+    []
+  );
 
-  const handleTicketFormValueChange = (
-    name: string,
-    value: string | boolean
-  ) => {
+  const updateTicketField = useCallback((name: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       complementaryTicketData: {
@@ -68,7 +101,12 @@ export function useCheckoutForm(
         [name]: value,
       },
     }));
-  };
+  }, []);
+
+  const clearForm = useCallback(() => {
+    clearStorage();
+    setFormData(getDefaultFormData(items));
+  }, [items, clearStorage]);
 
   const errorMessages = CheckoutValidationService.getErrorMessages(fieldErrors);
 
@@ -77,7 +115,8 @@ export function useCheckoutForm(
     fieldErrors,
     errorMessages,
     isFormValid,
-    handleFormValueChange,
-    handleTicketFormValueChange,
+    updateField,
+    updateTicketField,
+    clearForm,
   };
 }

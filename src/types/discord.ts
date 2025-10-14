@@ -1,10 +1,10 @@
-type DiscordEmbedField = {
+export type DiscordEmbedField = {
   name: string;
   value: string;
   inline?: boolean;
 };
 
-type DiscordEmbed = {
+export type DiscordEmbed = {
   title?: string;
   description?: string;
   color?: number;
@@ -27,7 +27,7 @@ type DiscordEmbed = {
   };
 };
 
-type DiscordWebhookPayload = {
+export type DiscordWebhookPayload = {
   content?: string;
   embeds?: DiscordEmbed[];
   username?: string;

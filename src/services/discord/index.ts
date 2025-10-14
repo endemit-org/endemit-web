@@ -1,3 +1,5 @@
+import { DiscordEmbed, DiscordWebhookPayload } from "@/types/discord";
+
 class DiscordConnector {
   private webhookUrl: string;
 

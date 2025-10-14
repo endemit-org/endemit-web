@@ -9,7 +9,7 @@ import { getVariantSingleProducts } from "@/domain/cms/actions";
 import Button from "@/components/Button";
 import {
   isProductConfigurable,
-  isProductSellableByStatus,
+  isProductSellable,
 } from "@/domain/product/businessLogic";
 
 interface Props {
@@ -18,11 +18,7 @@ interface Props {
   maxQty?: number;
 }
 
-export default function ProductConfigure({
-  product,
-  defaultQty = 1,
-  maxQty = 99,
-}: Props) {
+export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
   const { addItem } = useCartActions();
   const cartItems = useCartItems();
   const [productEntity, setProductEntity] = useState<Product | undefined>(
@@ -30,6 +26,15 @@ export default function ProductConfigure({
   );
   const [showCartStatus, setShowCartStatus] = useState(false);
   const [productQty, setProductQty] = useState(defaultQty);
+
+  const maxQty = product.limits.quantityLimit ?? 99;
+
+  const cartItem = cartItems.find(item => item.id === product.id);
+  const isInCart = !!cartItem;
+  const quantityInCart = cartItem?.quantity || 0;
+  const isSellableObject = isProductSellable(product);
+  const { isSellable } = isSellableObject;
+  const productVariants = getVariantSingleProducts(product);
 
   const handleDecrement = () => {
     setProductQty(prevQty => (prevQty > defaultQty ? prevQty - 1 : defaultQty));
@@ -54,12 +59,6 @@ export default function ProductConfigure({
     setProductQty(defaultQty);
     setShowCartStatus(false);
   };
-
-  const cartItem = cartItems.find(item => item.id === product.id);
-  const isInCart = !!cartItem;
-  const quantityInCart = cartItem?.quantity || 0;
-  const isSellable = isProductSellableByStatus(product);
-  const productVariants = getVariantSingleProducts(product);
 
   return (
     <div className="flex flex-col items-center align-middle rounded-md p-4 relative overflow-hidden gap-x-10">

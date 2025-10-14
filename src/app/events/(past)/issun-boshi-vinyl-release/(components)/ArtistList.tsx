@@ -8,6 +8,7 @@ import {
 } from "@/app/events/(past)/issun-boshi-vinyl-release/(config)";
 
 import ArtistCard from "@/components/artist/ArtistCard";
+import { transformMinutesToMs } from "@/lib/util";
 
 export default function ArtistList() {
   const [sortBy, setSortBy] = useState<SortOption>("default");
@@ -34,7 +35,9 @@ export default function ArtistList() {
         );
 
         const duration = artist.duration || 150; // Default 150 minutes if not specified
-        const endDate = new Date(startDate.getTime() + duration * 60 * 1000);
+        const endDate = new Date(
+          startDate.getTime() + transformMinutesToMs(duration)
+        );
 
         return {
           ...artist,

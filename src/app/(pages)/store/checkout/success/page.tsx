@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { stripe } from "@/services/stripe";
-import CartClear from "@/components/cart/CartClear";
+import ClearCheckoutValues from "@/components/checkout/ClearCheckoutValues";
 import { getOrderByStripeSession } from "@/domain/order/actions";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 
 export const metadata: Metadata = {
   title: "Merch",
@@ -30,11 +31,6 @@ export default async function SuccessPage({
   const session = await stripe.checkout.sessions.retrieve(session_id);
   const order = await getOrderByStripeSession(session_id);
 
-  if (order) {
-    console.log("order", order.email);
-  }
-  // console.log("session", session);
-
   return (
     <div className=" mx-auto space-y-8 sm:max-w-full pt-24 px-4 lg:pt-16">
       <h1 className="text-3xl font-bold text-white mb-8">SUCCESS</h1>
@@ -42,7 +38,8 @@ export default async function SuccessPage({
         <>
           <p>Payment status: {session.payment_status}</p>
           <p>
-            Amount: {session.amount_total / 100}{" "}
+            Amount: {transformPriceFromStripe(session.amount_total)} Order:{" "}
+            {order && order.email}
             {session.currency.toUpperCase()}
             {/*{session.line_items.map(item => (*/}
             {/*  <div>{item.}</div>*/}
@@ -50,7 +47,7 @@ export default async function SuccessPage({
           </p>
         </>
       )}
-      <CartClear />
+      <ClearCheckoutValues />
     </div>
   );
 }

@@ -37,74 +37,51 @@ export default function Cart({ variant = "detailed" }: Props) {
     setPrevTotal(totalPrice);
   }, [totalPrice, prevTotal]);
 
-  const isEmpty = itemCount === undefined || itemCount === 0;
-
-  if (!isClient) {
-    return (
-      <div
-        className={clsx(
-          variant === "detailed" &&
-            "border-t-2 border-t-neutral-800 pt-4 flex flex-col items-end px-3 leading-none"
-        )}
-      >
-        <Link
-          className="flex items-center space-x-3 h-14 text-md group"
-          href="/store/checkout"
-        >
-          <div className="text-lg group-hover:text-gray-400 text-gray-400">
-            {formatPrice(0)}
-          </div>
-          <div className="text-sm">
-            <span className="text-gray-100 group-hover:text-gray-400 group-hover:scale-105 transition duration-200 inline-block">
-              <ToteBagIcon />
-              <div className="absolute rounded-full text-gray-100 px-1 ml-3 -mt-3 inline-block pt-0.5 bg-gray-800">
-                0
-              </div>
-            </span>
-          </div>
-        </Link>
-      </div>
-    );
-  }
+  const displayItemCount = isClient ? itemCount || 0 : 0;
+  const displayTotalPrice = isClient ? (totalPrice ?? 0) : 0;
+  const isEmpty = displayItemCount === 0;
 
   return (
     <div
       className={clsx(
         variant === "detailed" &&
-          "border-t-2 border-t-neutral-800  pt-4 flex flex-col items-end px-3 leading-none"
+          "border-t-2 border-t-neutral-800 pt-4 flex flex-col items-end px-3 leading-none"
       )}
     >
       <Link
-        className="flex items-center space-x-3  h-14 text-md group"
+        className="flex items-center space-x-3 h-14 text-md group"
         href="/store/checkout"
       >
         <div
           className={clsx(
-            "text-lg group-hover:text-gray-400",
-            !isEmpty ? "text-blue-400" : "text-gray-400"
+            "text-xl group-hover:text-gray-400",
+            !isEmpty && isClient ? "text-blue-400" : "text-gray-400"
           )}
         >
-          {formatPrice(totalPrice ?? 0)}
+          {formatPrice(displayTotalPrice)}
         </div>
-        <div className="text-sm ">
+        <div className="text-sm">
           <span className="text-gray-100 group-hover:text-gray-400 group-hover:scale-105 transition duration-200 inline-block">
+            {displayItemCount > 0 && (
+              <div className="bg-blue-400 w-5 lg:w-6 h-4 absolute mt-4 lg:mt-5 -z-10 animate-pulse"></div>
+            )}
             <ToteBagIcon />
             <div
               className={clsx(
-                "absolute  rounded-full text-gray-100 px-1 ml-3 -mt-3 inline-block pt-0.5",
-                !isEmpty ? "bg-blue-500" : "bg-gray-800",
+                "absolute rounded-full text-gray-100 px-1 ml-3 -mt-3 inline-block pt-0.5",
+                !isEmpty && isClient ? "bg-blue-500" : "bg-gray-800",
                 shouldBounce ? "animate-ping" : ""
               )}
             >
-              {itemCount || 0}
+              {displayItemCount}
             </div>
-          </span>{" "}
+          </span>
         </div>
       </Link>
-      {variant === "detailed" && itemCount !== undefined && itemCount > 0 && (
+      {variant === "detailed" && displayItemCount > 0 && isClient && (
         <>
           <div className="items-center space-x-3 text-white inline-flex">
-            <div className="text-md ">{itemCount || 0} items in your cart</div>
+            <div className="text-md">{displayItemCount} items in your cart</div>
           </div>
           <div className="mt-3">
             <Button

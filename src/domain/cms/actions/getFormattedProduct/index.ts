@@ -29,15 +29,18 @@ export const getFormattedProduct = (product: PrismicProductDocument) => {
     category: product.data.product_category,
     isFeatured: product.data.featured_product ?? false,
     sortingWeight: product.data.sorting_weight ?? 0,
-    cutoffTimestamp: product.data.cutoff_date
-      ? new Date(product.data.cutoff_date)
-      : null,
+    limits: {
+      cutoffTimestamp: product.data.cutoff_date
+        ? new Date(product.data.cutoff_date)
+        : null,
+      quantityLimit: product.data?.quantity_limit,
+      regionalEligibility: product.data.regional_eligibility,
+    },
     weight: product.data.weight,
     variants: product.data.variants,
     composition: hasVariants
       ? ProductCompositionType.CONFIGURABLE
       : ProductCompositionType.SINGLE,
-    regionalEligibility: product.data.regional_eligibility,
     relatedProducts: hasRelatedProducts
       ? product.data.related_products.map(rp => ({
           id: rp.related_product.id,

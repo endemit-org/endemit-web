@@ -79,10 +79,6 @@ export const getRegionFromCountry = (country: Country) => {
   }
 };
 
-export const getPriceInCents = (price: number) => {
-  return Math.round(price * 100);
-};
-
 export const createSlug = (text: string) => {
   return text
     .toLowerCase()
@@ -105,4 +101,28 @@ export const categoriesWithSlugs = Object.values(ProductCategory).map(
 export const categoryFromSlug = (slug: string) => {
   const category = categoriesWithSlugs.find(cat => cat.slug === slug);
   return category ? category.name : null;
+};
+
+export const ensureDateType = (date: string | Date): Date => {
+  return date instanceof Date ? date : new Date(date);
+};
+
+export const transformGramToKilogram = (grams: number) => {
+  return grams / 1000;
+};
+
+export const transformKilogramToGram = (kilograms: number) => {
+  return Math.round(kilograms * 1000);
+};
+
+export const transformSecondsToMs = (seconds: number) => {
+  return seconds * 1000;
+};
+
+export const transformMinutesToMs = (minutes: number) => {
+  return minutes * 60 * 1000;
+};
+
+export const transformHoursToMs = (hours: number) => {
+  return hours * 60 * 60 * 1000;
 };

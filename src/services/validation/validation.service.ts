@@ -1,7 +1,7 @@
 import { CheckoutFormData } from "@/types/checkout";
 import { CartItem } from "@/types/cart";
-import { ValidationErrors } from "@/types/validation";
 import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";
+import { ValidationErrors } from "@/types/validation";
 
 export class CheckoutValidationService {
   static isValidEmail(email: string): boolean {
@@ -33,6 +33,10 @@ export class CheckoutValidationService {
     return country.trim().length === 2;
   }
 
+  static isValidDiscountCodeFormat(discountCode: string): boolean {
+    return discountCode.trim().length >= 2;
+  }
+
   static isValidPhone(phone: string): boolean {
     const cleaned = phone.trim();
     return cleaned.length >= 5 && /^\d+$/.test(cleaned);
@@ -40,6 +44,14 @@ export class CheckoutValidationService {
 
   static isValidCheckbox(checked: boolean): boolean {
     return checked;
+  }
+
+  static isComplementaryTicketItem(key: string) {
+    return key.startsWith("complementaryTicket_");
+  }
+
+  static formatComplementaryTicketKey(key: string) {
+    return `complementaryTicket_${key}`;
   }
 
   static validateForm({
@@ -61,9 +73,6 @@ export class CheckoutValidationService {
       country: false,
       phone: false,
       termsAndConditions: !this.isValidCheckbox(formData.termsAndConditions),
-      complementaryTicketData: !items
-        ? null
-        : getComplementaryTicketModel(items, false),
     };
 
     if (requiresShippingAddress) {
@@ -75,12 +84,16 @@ export class CheckoutValidationService {
       errors.phone = !this.isValidPhone(formData.phone);
     }
 
-    if (errors.complementaryTicketData) {
-      for (const key in errors.complementaryTicketData) {
-        const value = formData.complementaryTicketData
-          ? String(formData.complementaryTicketData[key])
-          : "";
-        errors.complementaryTicketData[key] = !this.isValidName(value);
+    // Flatten complementary ticket validation to top level
+    const complementaryModel = items
+      ? getComplementaryTicketModel(items, "")
+      : null;
+    if (complementaryModel) {
+      for (const key in complementaryModel) {
+        const value = formData.complementaryTicketData?.[key] || "";
+        errors[this.formatComplementaryTicketKey(key)] = !this.isValidName(
+          String(value)
+        );
       }
     }
 
@@ -88,18 +101,11 @@ export class CheckoutValidationService {
   }
 
   static isFormValid(errors: ValidationErrors): boolean {
-    return Object.values(errors).every(error => {
-      if (typeof error === "object" && error !== null) {
-        return Object.values(error).every(e => e === false);
-      }
-      return error === false;
-    });
+    return Object.values(errors).every(error => error === false);
   }
 
-  static getErrorMessages(errors: ValidationErrors) {
-    const messages: Partial<
-      Record<keyof ValidationErrors, string | { [p: string]: string }>
-    > = {};
+  static getErrorMessages(errors: ValidationErrors): Record<string, string> {
+    const messages: Record<string, string> = {};
 
     if (errors.email) messages.email = "Invalid email address";
     if (errors.emailRepeat)
@@ -114,19 +120,17 @@ export class CheckoutValidationService {
     if (errors.country) messages.country = "Invalid country";
     if (errors.phone)
       messages.phone =
-        "Phone number must be at least 5 nubmers and digits only";
+        "Phone number must be at least 5 numbers and digits only";
     if (errors.termsAndConditions)
       messages.termsAndConditions = "You must accept the terms and conditions";
-    if (errors.complementaryTicketData) {
-      const ticketErrors: { [x: string]: string } = {};
-      for (const key in errors.complementaryTicketData) {
-        if (errors.complementaryTicketData[key]) {
-          ticketErrors[key] =
-            "Ticket holder name must include the first and last name";
-        }
+
+    // Handle complementary ticket errors
+    Object.keys(errors).forEach(key => {
+      if (this.isComplementaryTicketItem(key) && errors[key]) {
+        messages[key] =
+          "Ticket holder name must be provided and at least 2 characters";
       }
-      messages.complementaryTicketData = ticketErrors;
-    }
+    });
 
     return messages;
   }

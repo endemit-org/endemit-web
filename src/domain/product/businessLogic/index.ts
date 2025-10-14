@@ -9,12 +9,23 @@ import {
 import { Country, Region } from "@/types/country";
 import { getRegionFromCountry } from "@/lib/util";
 
+export const isProductSellableByCutoffDate = (product: Product) => {
+  if (!product.limits?.cutoffTimestamp) {
+    return true; // If no cutoff date is set, assume it's sellable
+  }
+  const now = new Date();
+  const cutoffDate = new Date(product.limits.cutoffTimestamp);
+  const isWithinCutoff = now.getTime() <= cutoffDate.getTime();
+
+  return isWithinCutoff;
+};
+
 export const isProductSellableByRegion = (product: Product, region: Region) => {
-  if (product.regionalEligibility.length === 0) {
+  if (product.limits.regionalEligibility.length === 0) {
     return true; // If no regional eligibility is set, assume it's sellable everywhere
   }
   return (
-    product.regionalEligibility.filter(
+    product.limits.regionalEligibility.filter(
       productItem => productItem.region === region
     ).length > 0
   );
@@ -25,16 +36,28 @@ export const isProductSellableByStatus = (product: Product) => {
     product.status === ProductStatus.PREORDER
   );
 };
-export const isProductSellable = (country: Country, product: Product) => {
-  const region = getRegionFromCountry(country);
-  if (!region) {
-    return false;
+export const isProductSellable = (product: Product, country?: Country) => {
+  let isSellableByRegion = true;
+
+  if (country && isProductShippable(product)) {
+    const region = getRegionFromCountry(country);
+    if (!region) {
+      isSellableByRegion = false;
+    } else {
+      isSellableByRegion = isProductSellableByRegion(product, region);
+    }
   }
 
   const isSellableByStatus = isProductSellableByStatus(product);
-  const isSellableByRegion = isProductSellableByRegion(product, region);
+  const isSellableByCutoffDate = isProductSellableByCutoffDate(product);
 
-  return isSellableByStatus && isSellableByRegion;
+  return {
+    isSellableByCutoffDate,
+    isSellableByStatus,
+    isSellableByRegion,
+    isSellable:
+      isSellableByStatus && isSellableByRegion && isSellableByCutoffDate,
+  };
 };
 export const isProductShippable = (product: Product) => {
   return product.type === ProductType.PHYSICAL;

@@ -1,7 +1,8 @@
 import { DiscordConnector } from "@/services/discord";
 import { Order } from "@prisma/client";
-import { formatPrice } from "@/lib/formatting";
+import { formatDecimalPrice } from "@/lib/formatting";
 import { CustomStripeLineItem } from "@/types/checkout";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 
 const discordOrders = new DiscordConnector(
   process.env.DISCORD_ORDERS_WEBHOOK ?? ""
@@ -14,7 +15,7 @@ export async function notifyOnNewOrder(order: Order) {
     ) as CustomStripeLineItem[];
     await discordOrders.sendEmbed({
       title: "💵 New Order received",
-      description: `A new order in value of **${formatPrice(order.totalAmount)}** was just received!`,
+      description: `A new order in value of **${formatDecimalPrice(Number(order.totalAmount))}** was just received!`,
       color: 0x5865f2,
       fields: [
         {
@@ -25,7 +26,7 @@ export async function notifyOnNewOrder(order: Order) {
         ...orderItems.map(item => {
           return {
             name: item.price_data?.product_data?.name || "Product",
-            value: `Quantity: **${item.quantity}**\nPrice: **${formatPrice((item.price_data?.unit_amount || 0) / 100)}**\nTotal: **${formatPrice(((item.price_data?.unit_amount || 0) * (item.quantity || 1)) / 100)}**`,
+            value: `Quantity: **${item.quantity}**\nPrice: **${formatDecimalPrice(transformPriceFromStripe(item.price_data?.unit_amount || 0))}**\nTotal: **${formatDecimalPrice(transformPriceFromStripe((item.price_data?.unit_amount || 0) * (item.quantity || 1)))}**`,
             inline: false,
           };
         }),

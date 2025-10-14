@@ -72,7 +72,7 @@ export const useCartStore = create<CartStore>()(
 
       decrementItem: (productId: string) => {
         const item = get().getItemById(productId);
-        if (item) {
+        if (item && item.quantity > 1) {
           get().updateQuantity(productId, item.quantity - 1);
         }
       },
@@ -128,6 +128,8 @@ export const useCartStore = create<CartStore>()(
             emailRepeat,
             complementaryTicketData,
             termsAndConditions,
+            subscribeToNewsletter,
+            discountCodeId,
             ...shippingAddress
           } = formData;
           const response = await fetch(getApiPath("checkout/create-session"), {
@@ -142,6 +144,8 @@ export const useCartStore = create<CartStore>()(
               complementaryTicketData,
               termsAndConditions,
               shippingAddress,
+              subscribeToNewsletter,
+              discountCodeId,
               formData,
             }),
           });
@@ -191,7 +195,7 @@ export const useCart = () => {
     clearItem: store.clearItem,
     clearCart: store.clearCart,
     totalItems: store.getTotalItems(),
-    totalPrice: store.getTotalPrice(),
+    subtotalPrice: store.getTotalPrice(),
     getItemById: store.getItemById,
     populateProducts: store.populateProducts,
     checkout: store.checkout,

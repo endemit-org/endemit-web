@@ -94,7 +94,6 @@ export const runTicketIssueAutomation = inngest.createFunction(
           );
         }
 
-        console.log(`Ticket email sent: ${issuedTicket.id}`);
         return result;
       } catch (error) {
         // Detect rate limit errors

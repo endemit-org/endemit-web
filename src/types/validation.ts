@@ -1,4 +1,4 @@
-export interface ValidationErrors {
+export type ValidationErrors = {
   email: boolean;
   emailRepeat: boolean;
   name: boolean;
@@ -8,5 +8,5 @@ export interface ValidationErrors {
   country: boolean;
   phone: boolean;
   termsAndConditions: boolean;
-  complementaryTicketData: { [x: string]: string | boolean } | null;
-}
+  [key: string]: boolean; // Dynamic keys for complementary tickets
+};

@@ -23,9 +23,9 @@ export const createOrder = async ({
     data: {
       stripeSession: stripeSessionId,
       email,
-      subtotal: Math.round(subtotal * 100), // in cents
-      totalAmount: Math.round((subtotal + shippingCost) * 100),
-      shippingAmount: Math.round(shippingCost * 100),
+      subtotal,
+      totalAmount: subtotal + shippingCost,
+      shippingAmount: shippingCost,
       shippingRequired,
       shippingAddress: JSON.stringify(shippingAddress),
       items: JSON.stringify(checkoutItems),

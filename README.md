@@ -38,14 +38,15 @@ Open [http://127.0.0.1:3000](http://localhost:3000) to view the application.
 
 ## 🛠️ Available Scripts
 
-| Script                  | Description                                  |
-| ----------------------- | -------------------------------------------- |
-| `pnpm dev`          | Starts the development server with Turbopack |
-| `pnpm build`        | Builds the application for production        |
-| `pnpm start`        | Starts the production server                 |
-| `pnpm lint`         | Runs ESLint to check code quality            |
-| `pnpm format`       | Formats code using Prettier                  |
-| `pnpm format:check` | Checks if code is properly formatted         |
+| Script              | Description                                      |
+|---------------------|--------------------------------------------------|
+| `pnpm dev`          | Starts the development server with Turbopack     |
+| `pnpm dev:emulated` | Starts the development and emulation for inngest |
+| `pnpm build`        | Builds the application for production            |
+| `pnpm start`        | Starts the production server                     |
+| `pnpm lint`         | Runs ESLint to check code quality                |
+| `pnpm format`       | Formats code using Prettier                      |
+| `pnpm format:check` | Checks if code is properly formatted             |
 
 ## 🏗️ Build & Deployment
 
@@ -159,7 +160,7 @@ This project is private and proprietary to Endemit.
 
 ---
 
-**Built with ❤️ by the Endemit crew**
+**Built with ❤️in 🇸🇮 by Endemit**
 
 
 // pnpm dlx inngest-cli@latest dev

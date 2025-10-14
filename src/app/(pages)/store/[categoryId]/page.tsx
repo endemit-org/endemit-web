@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
-import { PrismicProductDocument } from "@/types/prismic";
 import { categoryFromSlug } from "@/lib/util";
 import ProductSection from "@/components/product/ProductSection";
 import Breadcrumb from "@/components/Breadcrumb";
-import { prismicClient, prismic } from "@/services/prismic";
-import { getFormattedProduct } from "@/domain/cms/actions";
+import { prismic } from "@/services/prismic";
+import { fetchProductsFromCms } from "@/domain/cms/actions";
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function ProductPage({
@@ -22,15 +21,11 @@ export default async function ProductPage({
     notFound();
   }
 
-  const products = (await prismicClient.getAllByType("product", {
-    pageSize: 100,
+  const products = await fetchProductsFromCms({
     filters: [prismic.filter.at("my.product.product_category", categoryName)],
-  })) as PrismicProductDocument[];
+  });
 
-  const formattedProducts = products.map(product =>
-    getFormattedProduct(product)
-  );
-  const productsExistInCategory = formattedProducts.length > 0;
+  const productsExistInCategory = products.length > 0;
 
   return (
     <div className=" mx-auto space-y-8 sm:max-w-full pt-24 px-4 lg:pt-16 ">
@@ -49,9 +44,7 @@ export default async function ProductPage({
         <div>There are currently no products in {categoryName}</div>
       )}
 
-      {productsExistInCategory && (
-        <ProductSection products={formattedProducts} />
-      )}
+      {productsExistInCategory && <ProductSection products={products} />}
     </div>
   );
 }

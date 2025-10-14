@@ -3,7 +3,7 @@ import { isProductTicket } from "@/domain/product/businessLogic";
 
 export const getComplementaryTicketModel = (
   items: CartItem[],
-  defaultValue: string | boolean = ""
+  defaultValue: string = ""
 ) => {
   return items
     .filter(item => isProductTicket(item))

@@ -2,7 +2,7 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text } from "@react-email/components";
-import { formatPrice } from "@/lib/formatting";
+import { formatDecimalPrice, formatPrice } from "@/lib/formatting";
 import { CustomStripeLineItem } from "@/types/checkout";
 
 interface Props {
@@ -18,7 +18,8 @@ function NewOrderToCustomerTemplate({ order }: Props) {
     <MasterTemplate>
       <div>
         <h1>
-          Your Order for {order.id} {order.totalAmount}
+          Your Order for {order.id}{" "}
+          {formatDecimalPrice(Number(order.totalAmount))}
         </h1>
         <div>Thank you for shopping at endemit</div>
 

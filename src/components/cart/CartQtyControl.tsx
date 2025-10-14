@@ -1,32 +1,22 @@
-import { useCart, useCartActions } from "@/stores/CartStore";
+import { useCart } from "@/stores/CartStore";
 import { CartItem } from "@/types/cart";
-import { Product } from "@/types/product";
 import IncrementalInput from "@/components/form/IncrementalInput";
 
 interface Props {
-  item?: CartItem;
-  product?: Product;
+  item: CartItem;
 }
 
-export default function CartQtyControl({ item, product }: Props) {
+export default function CartQtyControl({ item }: Props) {
   const { decrementItem, incrementItem } = useCart();
-  const { addItem } = useCartActions();
-
-  if (!item && !product) {
-    return;
-  }
+  const maxQty = item.limits?.quantityLimit ?? 99;
 
   const handleDecrement = () => {
-    if (item) {
-      decrementItem(item.id);
-    }
+    decrementItem(item.id);
   };
 
   const handleIncrement = () => {
-    if (item) {
+    if (item.quantity !== maxQty) {
       incrementItem(item.id);
-    } else if (product) {
-      addItem(product);
     }
   };
 

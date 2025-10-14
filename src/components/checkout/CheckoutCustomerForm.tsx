@@ -19,15 +19,17 @@ interface CheckoutFormProps {
   onFormChange: (name: string, value: string | boolean) => void;
   requiresShippingAddress: boolean;
   includesNonRefundable: boolean;
+  showSubscribeToNewsletter: boolean;
   items: CartItem[];
 }
 
-export default function CheckoutForm({
+export default function CheckoutCustomerForm({
   formData,
   errorMessages,
   onFormChange,
   requiresShippingAddress,
   includesNonRefundable,
+  showSubscribeToNewsletter,
 }: CheckoutFormProps) {
   const destinationCountry = countriesConfig[formData.country];
 
@@ -132,16 +134,18 @@ export default function CheckoutForm({
           "I understand that my order contains non-refundable digital items or tickets that happen."}
       </div>
 
-      <div>
-        <CheckboxInput
-          value={formData.subscribeToNewsletter}
-          name="subscribeToNewsletter"
-          onChange={onFormChange}
-          required={false}
-        />
-        I would like to receive the endemit newsletter with updates on new
-        events and offers.
-      </div>
+      {showSubscribeToNewsletter && (
+        <div>
+          <CheckboxInput
+            value={formData.subscribeToNewsletter}
+            name="subscribeToNewsletter"
+            onChange={onFormChange}
+            required={false}
+          />
+          I would like to receive the endemit newsletter with updates on new
+          events and offers.
+        </div>
+      )}
     </div>
   );
 }
