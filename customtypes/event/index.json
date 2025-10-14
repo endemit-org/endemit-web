@@ -12,10 +12,18 @@
           "label": "slug"
         }
       },
-      "cover": {
+      "cover_image": {
         "type": "Image",
         "config": {
-          "label": "Cover",
+          "label": "Cover image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "promo_image": {
+        "type": "Image",
+        "config": {
+          "label": "Promo image",
           "constraint": {},
           "thumbnails": []
         }
@@ -27,6 +35,24 @@
           "placeholder": ""
         }
       },
+      "description": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+        }
+      },
+      "video": {
+        "type": "Link",
+        "config": {
+          "label": "Video",
+          "placeholder": "Video for the event",
+          "select": "media",
+          "allowText": true
+        }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
@@ -36,37 +62,13 @@
       }
     },
     "Venue": {
-      "venue_name": {
-        "type": "Text",
-        "config": {
-          "label": "Venue name",
-          "placeholder": ""
-        }
-      },
-      "venue_logo": {
-        "type": "Image",
-        "config": {
-          "label": "Venue logo",
-          "constraint": {},
-          "thumbnails": []
-        }
-      },
-      "venue_address": {
-        "type": "Text",
-        "config": {
-          "label": "Venue address",
-          "placeholder": ""
-        }
-      },
-      "venue_map_link": {
+      "venue": {
         "type": "Link",
         "config": {
-          "label": "Venue map link",
-          "placeholder": "",
-          "select": null,
-          "allowTargetBlank": false,
-          "allowText": false,
-          "repeat": true
+          "label": "Venue",
+          "select": "document",
+          "repeat": false,
+          "customtypes": ["venue"]
         }
       }
     },
@@ -91,26 +93,27 @@
           "label": "Artists",
           "repeat": true,
           "fields": {
-            "name": {
-              "type": "Text",
+            "artist": {
+              "type": "Link",
               "config": {
-                "label": "Name",
-                "placeholder": "What is the artists name"
-              }
-            },
-            "image": {
-              "type": "Image",
-              "config": {
-                "label": "Image",
-                "constraint": {},
-                "thumbnails": []
-              }
-            },
-            "description": {
-              "type": "Text",
-              "config": {
-                "label": "Description",
-                "placeholder": "Bio or text about this artist"
+                "label": "Artist",
+                "select": "document",
+                "repeat": false,
+                "customtypes": [
+                  {
+                    "id": "artist",
+                    "fields": [
+                      "name",
+                      "description",
+                      "image",
+                      {
+                        "id": "links",
+                        "fields": ["type", "link"]
+                      },
+                      "video"
+                    ]
+                  }
+                ]
               }
             },
             "start_time": {
@@ -132,6 +135,32 @@
               "config": {
                 "label": "Stage",
                 "placeholder": "(Optional) name of the stage where artist will be. Leave blank if only 1 stage per venue"
+              }
+            },
+            "image_override": {
+              "type": "Image",
+              "config": {
+                "label": "Image override",
+                "constraint": {},
+                "thumbnails": []
+              }
+            },
+            "video_override": {
+              "type": "Link",
+              "config": {
+                "label": "Video override",
+                "placeholder": "",
+                "select": "media",
+                "allowText": true
+              }
+            },
+            "description_override": {
+              "type": "StructuredText",
+              "config": {
+                "label": "Description override",
+                "placeholder": "",
+                "allowTargetBlank": true,
+                "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
               }
             }
           }

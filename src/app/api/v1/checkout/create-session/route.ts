@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     const products = await fetchProductsFromCms({});
 
     const {
+      name,
       email,
       checkoutItems,
       orderWeight,
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
 
     await createOrder({
       stripeSessionId: session.id,
+      name: name ?? undefined,
       email,
       subtotal,
       shippingCost,

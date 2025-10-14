@@ -74,6 +74,7 @@ export const validateCheckoutRequest = (
   );
 
   return {
+    name: body.formData.name,
     email,
     checkoutItems,
     orderWeight,

@@ -1,14 +1,12 @@
-import { PrismicProductDocument } from "@/types/prismic";
 import { formatPrice } from "@/lib/formatting";
 import { createSlug } from "@/lib/util";
 import Breadcrumb from "@/components/Breadcrumb";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import ImageGallery from "@/components/ImageGallery";
 import ProductConfigure from "@/components/product/ProductConfigure";
-import { prismicClient } from "@/services/prismic";
 import {
   fetchProductsFromCms,
-  getFormattedProduct,
+  fetchProductFromCms,
 } from "@/domain/cms/actions";
 import { getProductLimits } from "@/domain/product/actions/getProductLimits";
 import { isProductSellable } from "@/domain/product/businessLogic";
@@ -69,17 +67,14 @@ export default async function ProductPage({
 }) {
   const { productId } = await params;
 
-  const prismicProduct = (await prismicClient
-    .getByUID("product", productId)
-    .catch(() => null)) as PrismicProductDocument;
+  const product = await fetchProductFromCms(productId);
 
-  if (!prismicProduct) {
+  if (!product) {
     return {
       title: "Product Not Found",
     };
   }
 
-  const product = getFormattedProduct(prismicProduct);
   const productLimits = getProductLimits(product);
   const isSellableObject = isProductSellable(product);
 

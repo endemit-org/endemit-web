@@ -4,6 +4,7 @@ import { prisma } from "@/services/prisma";
 
 export const createOrder = async ({
   stripeSessionId,
+  name,
   email,
   subtotal,
   shippingCost,
@@ -12,6 +13,7 @@ export const createOrder = async ({
   checkoutItems,
 }: {
   stripeSessionId: string;
+  name: string;
   email: string;
   subtotal: number;
   shippingCost: number;
@@ -22,6 +24,7 @@ export const createOrder = async ({
   return await prisma.order.create({
     data: {
       stripeSession: stripeSessionId,
+      name,
       email,
       subtotal,
       totalAmount: subtotal + shippingCost,

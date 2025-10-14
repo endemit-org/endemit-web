@@ -164,3 +164,165 @@ export interface PrismicProductDocument {
   lang: string;
   data: PrismicProductData;
 }
+
+// Event Types
+export interface PrismicVenueReference {
+  id: string;
+  type: "venue";
+  tags: string[];
+  lang: string;
+  slug: string;
+  uid: string;
+  data: {
+    name: string;
+    address: string;
+    venue_logo: PrismicImage;
+  };
+  link_type: "Document";
+  isBroken: boolean;
+}
+
+export interface PrismicArtistReference {
+  id: string;
+  type: "artist";
+  tags: string[];
+  lang: string;
+  slug: string;
+  uid: string;
+  data: {
+    name: string;
+    description: PrismicRichTextBlock[];
+    image: PrismicImage;
+    links: ArtistLink[];
+    video: PrismicVideo | null;
+  };
+  link_type: "Document";
+  isBroken: boolean;
+}
+
+export interface EventArtist {
+  artist: PrismicArtistReference;
+  start_time: string;
+  duration: number;
+  stage: string | null;
+  description_override: PrismicRichTextBlock[];
+  image_override: PrismicImage | null;
+  video_override: PrismicVideo | null;
+}
+
+export interface PrismicEventData {
+  // About
+  cover_image: PrismicImage;
+  promo_image: PrismicImage;
+  video: PrismicVideo | null;
+  title: string;
+  description: PrismicRichTextBlock[];
+
+  // Venue
+  venue: PrismicVenueReference;
+
+  // Schedule
+  date_start: string;
+  date_end: string;
+  artists: EventArtist[];
+
+  // Attributes
+  event_type: "Single day" | "Festival" | "Guest appearance";
+  visibility: "Visible" | "Hidden";
+  colour: string;
+
+  // SEO & Metadata
+  meta_title: string | null;
+  meta_description: string | null;
+  meta_image: Partial<PrismicImage>;
+}
+
+export interface PrismicEventDocument {
+  id: string;
+  uid: string;
+  url: string | null;
+  type: "event";
+  href: string;
+  tags: string[];
+  first_publication_date: string;
+  last_publication_date: string;
+  slugs: string[];
+  lang: string;
+  data: PrismicEventData;
+}
+
+// Artist Types
+export type ArtistLinkType =
+  | "Soundcloud"
+  | "Bandcamp"
+  | "Instagram"
+  | "Resident Advisor"
+  | "Other";
+
+export interface ArtistLink {
+  type: ArtistLinkType;
+  link: {
+    link_type: string;
+    url: string;
+  };
+}
+
+export interface PrismicArtistData {
+  // About
+  name: string;
+  description: PrismicRichTextBlock[];
+  image: PrismicImage;
+  video: PrismicVideo | null;
+  links: ArtistLink[];
+
+  // SEO & Metadata
+  meta_title: string | null;
+  meta_description: string | null;
+  meta_image: Partial<PrismicImage>;
+}
+
+export interface PrismicArtistDocument {
+  id: string;
+  uid: string;
+  url: string | null;
+  type: "artist";
+  href: string;
+  tags: string[];
+  first_publication_date: string;
+  last_publication_date: string;
+  slugs: string[];
+  lang: string;
+  data: PrismicArtistData;
+}
+
+// Venue Types
+export interface PrismicVenueData {
+  // About
+  name: string;
+  description: PrismicRichTextBlock[];
+  address: string;
+  venue_logo: PrismicImage;
+  map_location_url: {
+    link_type: string;
+    url: string;
+  };
+
+  // SEO & Metadata
+  meta_title: string | null;
+  meta_description: string | null;
+  meta_image: Partial<PrismicImage>;
+}
+
+export interface PrismicVenueDocument {
+  id: string;
+  uid: string;
+  url: string | null;
+  type: "venue";
+  href: string;
+  tags: string[];
+  first_publication_date: string;
+  last_publication_date: string;
+  slugs: string[];
+  lang: string;
+  data: PrismicVenueData;
+}

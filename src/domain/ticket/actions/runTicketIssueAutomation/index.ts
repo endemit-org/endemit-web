@@ -8,6 +8,9 @@ import {
 } from "@/domain/ticket/actions";
 import { sendTicketEmail } from "@/domain/email/actions";
 import { notifyOnNewTicketIssue } from "@/domain/notification/actions";
+import { transformPriceFromStripe } from "@/services/stripe/util";
+import { formatPrice } from "@/lib/formatting";
+import { fetchEventFromCms } from "@/domain/cms/actions";
 
 export const runTicketIssueAutomation = inngest.createFunction(
   { id: "create-ticket-function", retries: 5 },
@@ -54,7 +57,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
       const created = await createTicketTransaction({
         eventId,
         eventName,
-        price,
+        price: transformPriceFromStripe(price),
         ticketHolderName,
         ticketPayerEmail,
         ticketHash: ticketSecurityData.ticketHash,
@@ -71,9 +74,22 @@ export const runTicketIssueAutomation = inngest.createFunction(
     });
 
     const ticketImage = await step.run("create-ticket-image", async () => {
-      const image = await generateTicketImage(
-        JSON.stringify(ticketSecurityData)
-      );
+      const issuedTicket = ticketTransaction.ticket;
+      const event = await fetchEventFromCms(issuedTicket.eventId);
+
+      const image = await generateTicketImage({
+        shortId: "XH2F",
+        hashId: ticketSecurityData.ticketHash,
+        qrData: JSON.stringify(ticketSecurityData.qrContent),
+        eventName: eventName,
+        eventDetails: "event.locati",
+        eventDate: "25. 11. 2025 @ 22:00",
+        attendeeName: ticketHolderName,
+        attendeeEmail: ticketPayerEmail,
+        artists: ["MOKILOK • UNKNOWN TEXTURE", "RHAEGAL • MMALI"],
+        price: formatPrice(Number(issuedTicket.price)),
+        coverImageUrl: event.coverImage.src,
+      });
 
       if (!image) {
         throw new Error("Failed to generate QR image");

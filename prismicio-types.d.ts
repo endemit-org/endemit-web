@@ -69,6 +69,149 @@ type ContentRelationshipFieldWithData<
   >;
 }[Exclude<TCustomType[number], string>["id"]];
 
+/**
+ * Item in *Artist → Links*
+ */
+export interface ArtistDocumentDataLinksItem {
+  /**
+   * Type field in *Artist → Links*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.links[].type
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  type: prismic.SelectField<
+    "Soundcloud" | "Bandcamp" | "Instagram" | "Resident Advisor" | "Other"
+  >;
+
+  /**
+   * Link field in *Artist → Links*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.links[].link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+}
+
+type ArtistDocumentDataSlicesSlice = never;
+
+/**
+ * Content for Artist documents
+ */
+interface ArtistDocumentData {
+  /**
+   * Name field in *Artist*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.name
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  name: prismic.KeyTextField;
+
+  /**
+   * Description field in *Artist*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.description
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Image field in *Artist*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.image
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
+   * Video field in *Artist*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.video
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * Links field in *Artist*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.links[]
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  links: prismic.GroupField<Simplify<ArtistDocumentDataLinksItem>>;
+
+  /**
+   * Slice Zone field in *Artist*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.slices[]
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<ArtistDocumentDataSlicesSlice> /**
+   * Meta Title field in *Artist*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: artist.meta_title
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */;
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *Artist*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: artist.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * Meta Image field in *Artist*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.meta_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  meta_image: prismic.ImageField<never>;
+}
+
+/**
+ * Artist document from Prismic
+ *
+ * - **API ID**: `artist`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type ArtistDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
+
 type EventDocumentDataSlicesSlice = never;
 
 /**
@@ -76,34 +219,27 @@ type EventDocumentDataSlicesSlice = never;
  */
 export interface EventDocumentDataArtistsItem {
   /**
-   * Name field in *Event → Artists*
+   * Artist field in *Event → Artists*
    *
-   * - **Field Type**: Text
-   * - **Placeholder**: What is the artists name
-   * - **API ID Path**: event.artists[].name
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  name: prismic.KeyTextField;
-
-  /**
-   * Image field in *Event → Artists*
-   *
-   * - **Field Type**: Image
+   * - **Field Type**: Content Relationship
    * - **Placeholder**: *None*
-   * - **API ID Path**: event.artists[].image
-   * - **Documentation**: https://prismic.io/docs/fields/image
+   * - **API ID Path**: event.artists[].artist
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
    */
-  image: prismic.ImageField<never>;
-
-  /**
-   * Description field in *Event → Artists*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: Bio or text about this artist
-   * - **API ID Path**: event.artists[].description
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  description: prismic.KeyTextField;
+  artist: ContentRelationshipFieldWithData<
+    [
+      {
+        id: "artist";
+        fields: [
+          "name",
+          "description",
+          "image",
+          { id: "links"; fields: ["type", "link"] },
+          "video",
+        ];
+      },
+    ]
+  >;
 
   /**
    * Start time field in *Event → Artists*
@@ -134,6 +270,36 @@ export interface EventDocumentDataArtistsItem {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   stage: prismic.KeyTextField;
+
+  /**
+   * Image override field in *Event → Artists*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.artists[].image_override
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image_override: prismic.ImageField<never>;
+
+  /**
+   * Video override field in *Event → Artists*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.artists[].video_override
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  video_override: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * Description override field in *Event → Artists*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.artists[].description_override
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_override: prismic.RichTextField;
 }
 
 /**
@@ -141,15 +307,26 @@ export interface EventDocumentDataArtistsItem {
  */
 interface EventDocumentData {
   /**
-   * Cover field in *Event*
+   * Cover image field in *Event*
    *
    * - **Field Type**: Image
    * - **Placeholder**: *None*
-   * - **API ID Path**: event.cover
+   * - **API ID Path**: event.cover_image
    * - **Tab**: About
    * - **Documentation**: https://prismic.io/docs/fields/image
    */
-  cover: prismic.ImageField<never>;
+  cover_image: prismic.ImageField<never>;
+
+  /**
+   * Promo image field in *Event*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.promo_image
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  promo_image: prismic.ImageField<never>;
 
   /**
    * Title field in *Event*
@@ -163,6 +340,28 @@ interface EventDocumentData {
   title: prismic.KeyTextField;
 
   /**
+   * Description field in *Event*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.description
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Video field in *Event*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: Video for the event
+   * - **API ID Path**: event.video
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
    * Slice Zone field in *Event*
    *
    * - **Field Type**: Slice Zone
@@ -172,50 +371,15 @@ interface EventDocumentData {
    * - **Documentation**: https://prismic.io/docs/slices
    */
   slices: prismic.SliceZone<EventDocumentDataSlicesSlice> /**
-   * Venue name field in *Event*
+   * Venue field in *Event*
    *
-   * - **Field Type**: Text
+   * - **Field Type**: Content Relationship
    * - **Placeholder**: *None*
-   * - **API ID Path**: event.venue_name
+   * - **API ID Path**: event.venue
    * - **Tab**: Venue
-   * - **Documentation**: https://prismic.io/docs/fields/text
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
    */;
-  venue_name: prismic.KeyTextField;
-
-  /**
-   * Venue logo field in *Event*
-   *
-   * - **Field Type**: Image
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.venue_logo
-   * - **Tab**: Venue
-   * - **Documentation**: https://prismic.io/docs/fields/image
-   */
-  venue_logo: prismic.ImageField<never>;
-
-  /**
-   * Venue address field in *Event*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.venue_address
-   * - **Tab**: Venue
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  venue_address: prismic.KeyTextField;
-
-  /**
-   * Venue map link field in *Event*
-   *
-   * - **Field Type**: Link
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.venue_map_link
-   * - **Tab**: Venue
-   * - **Documentation**: https://prismic.io/docs/fields/link
-   */
-  venue_map_link: prismic.Repeatable<
-    prismic.LinkField<string, string, unknown, prismic.FieldState, never>
-  > /**
+  venue: prismic.ContentRelationshipField<"venue"> /**
    * Start field in *Event*
    *
    * - **Field Type**: Timestamp
@@ -760,7 +924,133 @@ export type ProductDocument<Lang extends string = string> =
     Lang
   >;
 
-export type AllDocumentTypes = EventDocument | ProductDocument;
+type VenueDocumentDataSlicesSlice = never;
+
+/**
+ * Content for Venue documents
+ */
+interface VenueDocumentData {
+  /**
+   * Name field in *Venue*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.name
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  name: prismic.KeyTextField;
+
+  /**
+   * Description field in *Venue*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.description
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Address field in *Venue*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Full address, with street, zip, city
+   * - **API ID Path**: venue.address
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  address: prismic.KeyTextField;
+
+  /**
+   * Venue logo field in *Venue*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.venue_logo
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  venue_logo: prismic.ImageField<never>;
+
+  /**
+   * Map location url field in *Venue*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.map_location_url
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  map_location_url: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
+   * Slice Zone field in *Venue*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.slices[]
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<VenueDocumentDataSlicesSlice> /**
+   * Meta Title field in *Venue*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: venue.meta_title
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */;
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *Venue*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: venue.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * Meta Image field in *Venue*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.meta_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  meta_image: prismic.ImageField<never>;
+}
+
+/**
+ * Venue document from Prismic
+ *
+ * - **API ID**: `venue`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type VenueDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithUID<Simplify<VenueDocumentData>, "venue", Lang>;
+
+export type AllDocumentTypes =
+  | ArtistDocument
+  | EventDocument
+  | ProductDocument
+  | VenueDocument;
 
 declare module "@prismicio/client" {
   interface CreateClient {
@@ -783,6 +1073,10 @@ declare module "@prismicio/client" {
 
   namespace Content {
     export type {
+      ArtistDocument,
+      ArtistDocumentData,
+      ArtistDocumentDataLinksItem,
+      ArtistDocumentDataSlicesSlice,
       EventDocument,
       EventDocumentData,
       EventDocumentDataSlicesSlice,
@@ -795,6 +1089,9 @@ declare module "@prismicio/client" {
       ProductDocumentDataSlices1Slice,
       ProductDocumentDataVariantsItem,
       ProductDocumentDataRegionalEligibilityItem,
+      VenueDocument,
+      VenueDocumentData,
+      VenueDocumentDataSlicesSlice,
       AllDocumentTypes,
     };
   }

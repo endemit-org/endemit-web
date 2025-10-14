@@ -1,7 +1,5 @@
-import { PrismicProductDocument } from "@/types/prismic";
 import { NextResponse } from "next/server";
-import { prismicClient } from "@/services/prismic";
-import { getFormattedProduct } from "@/domain/cms/actions";
+import { fetchProductFromCms } from "@/domain/cms/actions";
 
 export async function GET(
   request: Request,
@@ -10,14 +8,9 @@ export async function GET(
   try {
     const { productId } = await params;
 
-    const product = (await prismicClient.getByUID(
-      "product",
-      productId
-    )) as PrismicProductDocument;
+    const product = await fetchProductFromCms(productId);
 
-    const formattedProduct = getFormattedProduct(product);
-
-    return NextResponse.json(formattedProduct, { status: 200 });
+    return NextResponse.json(product, { status: 200 });
   } catch (error) {
     console.error("Error fetching product from Prismic:", error);
     return NextResponse.json(
