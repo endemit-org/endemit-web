@@ -1,5 +1,6 @@
 import { PrismicVenueDocument } from "@/types/prismic";
 import { richTextToPlainText } from "@/lib/util";
+import { Venue } from "@/types/venue";
 
 export const getFormattedVenue = (venue: PrismicVenueDocument) => {
   return {
@@ -20,5 +21,5 @@ export const getFormattedVenue = (venue: PrismicVenueDocument) => {
       description: venue.data.meta_description,
       image: venue.data.meta_image?.url || null,
     },
-  };
+  } as Venue;
 };

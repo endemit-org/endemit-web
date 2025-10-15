@@ -1,5 +1,6 @@
 import { PrismicArtistDocument } from "@/types/prismic";
 import { richTextToPlainText } from "@/lib/util";
+import { Artist } from "@/types/artist";
 
 export const getFormattedArtist = (artist: PrismicArtistDocument) => {
   return {
@@ -26,5 +27,5 @@ export const getFormattedArtist = (artist: PrismicArtistDocument) => {
       description: artist.data.meta_description,
       image: artist.data.meta_image?.url || null,
     },
-  };
+  } as Artist;
 };

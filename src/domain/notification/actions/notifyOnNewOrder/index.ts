@@ -39,7 +39,7 @@ export async function notifyOnNewOrder(order: Order) {
       },
     };
 
-    if (order.name.length > 0) {
+    if (order.name && order.name.length > 0) {
       messageObject.fields = [
         {
           name: "Name",

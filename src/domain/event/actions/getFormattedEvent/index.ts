@@ -1,4 +1,5 @@
 import { PrismicEventDocument } from "@/types/prismic";
+import { Event } from "@/types/event";
 import { richTextToPlainText } from "@/lib/util";
 
 export const getFormattedEvent = (event: PrismicEventDocument) => {
@@ -88,5 +89,5 @@ export const getFormattedEvent = (event: PrismicEventDocument) => {
       description: event.data.meta_description,
       image: event.data.meta_image?.url || null,
     },
-  };
+  } as Event;
 };

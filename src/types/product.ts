@@ -1,3 +1,5 @@
+import { CmsMetaData } from "@/types/common";
+
 export enum ProductType {
   PHYSICAL = "Physical",
   DIGITAL = "Digital",
@@ -119,9 +121,5 @@ export interface Product {
   relatedEvent: ProductRelatedEvent | null;
   specialNotice: string;
   checkoutDescription: string;
-  meta: {
-    title: string | null;
-    description: string | null;
-    image: string | null;
-  };
+  meta: CmsMetaData;
 }
