@@ -2,6 +2,7 @@ import { prisma } from "@/services/prisma";
 
 export const createTicketTransaction = async ({
   eventId,
+  shortId,
   eventName,
   ticketHolderName,
   ticketPayerEmail,
@@ -12,6 +13,7 @@ export const createTicketTransaction = async ({
   metadata,
 }: {
   eventId: string;
+  shortId: string;
   eventName: string;
   ticketHolderName: string;
   ticketPayerEmail: string;
@@ -29,6 +31,7 @@ export const createTicketTransaction = async ({
     const ticket = await tx.ticket.create({
       data: {
         eventId,
+        shortId,
         eventName,
         ticketHolderName,
         ticketPayerEmail,

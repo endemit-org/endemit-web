@@ -30,6 +30,7 @@ model Order {
 }
 
 model Ticket {
+  shortId          String       @unique
   id               String       @id @default(cuid())
   orderId          String
   order            Order        @relation(fields: [orderId], references: [id])

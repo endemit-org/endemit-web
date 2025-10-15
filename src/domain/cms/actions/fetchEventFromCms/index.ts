@@ -4,7 +4,7 @@ import { getFormattedEvent } from "@/domain/event/actions";
 
 export const fetchEventFromCms = async (eventId: string) => {
   const prismicEvent = (await prismicClient
-    .getByUID("event", eventId)
+    .getByID(eventId)
     .catch(() => null)) as PrismicEventDocument;
 
   const eventWithLocalType = getFormattedEvent(prismicEvent);

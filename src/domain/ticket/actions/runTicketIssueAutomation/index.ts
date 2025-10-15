@@ -4,6 +4,7 @@ import {
   createTicketTransaction,
   generateQrContent,
   generateSecureHash,
+  generateShortId,
   generateTicketImage,
 } from "@/domain/ticket/actions";
 import { sendTicketEmail } from "@/domain/email/actions";
@@ -54,8 +55,10 @@ export const runTicketIssueAutomation = inngest.createFunction(
     );
 
     const ticketTransaction = await step.run("create-ticket-db", async () => {
+      const shortId = await generateShortId();
       const created = await createTicketTransaction({
         eventId,
+        shortId,
         eventName,
         price: transformPriceFromStripe(price),
         ticketHolderName,
@@ -77,12 +80,16 @@ export const runTicketIssueAutomation = inngest.createFunction(
       const issuedTicket = ticketTransaction.ticket;
       const event = await fetchEventFromCms(issuedTicket.eventId);
 
+      if (!event?.coverImage?.src || !event?.date_start || !event?.venue) {
+        throw new Error("Missing parameters for ticket image generation");
+      }
+
       const image = await generateTicketImage({
-        shortId: "XH2F",
+        shortId: issuedTicket.shortId,
         hashId: ticketSecurityData.ticketHash,
         qrData: JSON.stringify(ticketSecurityData.qrContent),
         eventName: eventName,
-        eventDetails: "event.locati",
+        eventDetails: event.venue.name ?? "",
         eventDate: "25. 11. 2025 @ 22:00",
         attendeeName: ticketHolderName,
         attendeeEmail: ticketPayerEmail,

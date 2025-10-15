@@ -7,3 +7,4 @@ export * from "./queueTicketIssueAutomation";
 export * from "./runTicketIssueAutomation";
 export * from "./getTicketHoldersForTicket";
 export * from "./getRelatedEventFromTicket";
+export * from "./generateShortId";
