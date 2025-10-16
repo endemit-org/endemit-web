@@ -29,8 +29,8 @@ export async function notifyOnNewOrder(order: Order) {
         },
         ...orderItems.map(item => {
           return {
-            name: "Products purchased",
-            value: `Product: \`${item.price_data?.product_data?.name}\`\nQuantity: \`${item.quantity} * ${formatDecimalPrice(transformPriceFromStripe(item.price_data?.unit_amount || 0))}\`\nTotal: \`${formatDecimalPrice(transformPriceFromStripe((item.price_data?.unit_amount || 0) * (item.quantity || 1)))}\``,
+            name: item.price_data?.product_data?.name ?? "Product",
+            value: `Quantity: \`${item.quantity} * ${formatDecimalPrice(transformPriceFromStripe(item.price_data?.unit_amount || 0))}\`\nTotal: \`${formatDecimalPrice(transformPriceFromStripe((item.price_data?.unit_amount || 0) * (item.quantity || 1)))}\``,
             inline: false,
           };
         }),
