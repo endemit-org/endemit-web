@@ -1,7 +1,6 @@
-import { asLink, Content } from "@prismicio/client";
+import { Content } from "@prismicio/client";
 import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
 import clsx from "clsx";
-import Link from "next/link";
 import Image from "next/image";
 
 /**
@@ -14,8 +13,6 @@ export type TextImageBlockProps =
  * Component for "TextImageBlock" Slices.
  */
 const TextImageBlock = ({ slice }: TextImageBlockProps) => {
-  const button = slice.primary.button.shift();
-
   return (
     <section
       data-slice-type={slice.slice_type}

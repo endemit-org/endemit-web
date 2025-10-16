@@ -1,4 +1,5 @@
 import { sizeMap, TileConfig } from "@/components/grid/TileConfig";
+import Image from "next/image";
 
 interface Props {
   config: TileConfig;
@@ -24,7 +25,7 @@ export default function Tile({ config }: Props) {
               playsInline
             />
           ) : (
-            <img
+            <Image
               src={config.media.src}
               alt={config.title || ""}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"

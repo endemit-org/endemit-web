@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import ActionButton from "@/components/ActionButton";
 
 interface CheckoutActionsProps {

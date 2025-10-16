@@ -3,7 +3,6 @@ import EventList from "@/components/event/EventList";
 import EndemitSubscribe from "@/components/newsletter/EndemitSubscribe";
 import type { Metadata } from "next";
 import PageHeadline from "@/components/PageHeadline";
-import { createSlug } from "@/lib/util";
 import InnerPage from "@/components/InnerPage";
 import OuterPage from "@/components/OuterPage";
 

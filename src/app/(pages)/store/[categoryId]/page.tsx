@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { categoryFromSlug } from "@/lib/util";
 import ProductSection from "@/components/product/ProductSection";
-import Breadcrumb from "@/components/Breadcrumb";
 import { prismic } from "@/app/services/prismic";
 import { fetchProductsFromCms } from "@/domain/cms/actions";
 import PageHeadline from "@/components/PageHeadline";
