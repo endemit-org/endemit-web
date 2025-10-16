@@ -1,6 +1,6 @@
 import { ShippingAddress } from "@/types/checkout";
 import Stripe from "stripe";
-import { prisma } from "@/services/prisma";
+import { prisma } from "@/app/services/prisma";
 
 export const createOrder = async ({
   stripeSessionId,

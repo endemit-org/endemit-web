@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { CheckoutValidationService } from "@/services/validation/validation.service";
+import { CheckoutValidationService } from "@/app/services/validation/validation.service";
 import { CheckoutFormData } from "@/types/checkout";
 import { CartItem } from "@/types/cart";
 import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";

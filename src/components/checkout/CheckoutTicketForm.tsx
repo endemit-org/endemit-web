@@ -1,7 +1,7 @@
 import Input from "@/components/form/Input";
 import { CartItem } from "@/types/cart";
 import { CheckoutFormData } from "@/types/checkout";
-import { CheckoutValidationService } from "@/services/validation/validation.service";
+import { CheckoutValidationService } from "@/app/services/validation/validation.service";
 
 interface CheckoutFormProps {
   index: number;

@@ -6,11 +6,14 @@ import clsx from "clsx";
 import { useCartActions, useCartItems } from "@/stores/CartStore";
 import { Product } from "@/types/product";
 import { getVariantSingleProducts } from "@/domain/cms/actions";
-import Button from "@/components/Button";
 import {
   isProductConfigurable,
   isProductSellable,
 } from "@/domain/product/businessLogic";
+import Link from "next/link";
+import ActionButton from "@/components/ActionButton";
+import { useRouter } from "next/navigation";
+import { getProductsQtyInCart } from "@/domain/checkout/actions";
 
 interface Props {
   product: Product;
@@ -21,6 +24,7 @@ interface Props {
 export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
   const { addItem } = useCartActions();
   const cartItems = useCartItems();
+  const router = useRouter();
   const [productEntity, setProductEntity] = useState<Product | undefined>(
     !isProductConfigurable(product) ? product : undefined
   );
@@ -28,13 +32,21 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
   const [productQty, setProductQty] = useState(defaultQty);
 
   const maxQty = product.limits.quantityLimit ?? 99;
+  const numberOfVariants = product.variants.length;
 
-  const cartItem = cartItems.find(item => item.id === product.id);
-  const isInCart = !!cartItem;
-  const quantityInCart = cartItem?.quantity || 0;
   const isSellableObject = isProductSellable(product);
+  const showCartAdd = isSellableObject.isSellable;
+
   const { isSellable } = isSellableObject;
   const productVariants = getVariantSingleProducts(product);
+
+  const quantityInCart = getProductsQtyInCart(
+    cartItems,
+    productVariants.length > 0
+      ? productVariants.map(product => product.id)
+      : [product.id]
+  );
+  const isInCart = quantityInCart > 0;
 
   const handleDecrement = () => {
     setProductQty(prevQty => (prevQty > defaultQty ? prevQty - 1 : defaultQty));
@@ -51,6 +63,10 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
     }
   };
 
+  const handleGoToCart = () => {
+    router.push("/store/checkout");
+  };
+
   const handleVariantSelection = (product: Product) => {
     setProductEntity(product);
   };
@@ -61,13 +77,13 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center align-middle rounded-md p-4 relative overflow-hidden gap-x-10">
-      {productVariants.length > 0 && (
-        <div>
+    <div className="flex flex-col items-center align-middle rounded-md relative overflow-hidden gap-x-10 w-full">
+      {showCartAdd && numberOfVariants > 0 && (
+        <div className="flex flex-col items-center mb-6">
           <div>Select {product.variants[0].variant_type}</div>
-          <div className="flex gap-x-3 mt-4">
+          <div className="flex gap-x-3 mt-2">
             {productVariants.map(variantProduct => {
-              const middleIndex = Math.floor(productVariants.length / 2);
+              const middleIndex = Math.floor(numberOfVariants / 2);
               const isMiddle =
                 productVariants.indexOf(variantProduct) === middleIndex;
               const isSelected = productEntity
@@ -85,8 +101,8 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
                   onClick={() => handleVariantSelection(variantProduct)}
                   className={clsx(
                     "group relative flex items-center justify-center rounded-md border border-gray-300 p-3 cursor-pointer",
-                    isSelected && "border-indigo-600 bg-indigo-600",
-                    !isSelected && "bg-white hover:bg-gray-200"
+                    isSelected && "border-blue-900 bg-blue-700",
+                    !isSelected && "bg-neutral-200 hover:bg-neutral-300"
                   )}
                 >
                   <span
@@ -105,41 +121,53 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
         </div>
       )}
 
-      <div>
-        <div>Select quantity</div>
-        <IncrementalInput
-          handleDecrement={handleDecrement}
-          handleIncrement={handleIncrement}
-          quantity={productQty}
-        />
-        {isInCart && quantityInCart}
-      </div>
+      {showCartAdd && (
+        <div>
+          <div className={"mb-2 text-center"}>Select quantity</div>
+          <IncrementalInput
+            handleDecrement={handleDecrement}
+            handleIncrement={handleIncrement}
+            quantity={productQty}
+          />
+          {isInCart && (
+            <div className={"text-sm text-neutral-400 mt-4"}>
+              (You have {quantityInCart} in{" "}
+              <Link href={"/store/checkout"}>cart</Link>)
+            </div>
+          )}
+        </div>
+      )}
 
-      <button
-        onClick={handleAddToCart}
-        type="submit"
-        className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
-      >
-        Add to cart
-      </button>
+      {showCartAdd && (
+        <>
+          <ActionButton onClick={handleAddToCart} className={"mt-10"}>
+            Add to cart
+          </ActionButton>
+          <div
+            className={clsx(
+              "bg-neutral-600 w-full h-full absolute left-0 transition-transform duration-300 ease-in-out p-4 text-neutral-200 flex flex-col",
+              !showCartStatus && "translate-y-full"
+            )}
+          >
+            <div
+              className={
+                "absolute right-2 top-2 p-2 cursor-pointer hover:scale-110 transition-transform"
+              }
+              onClick={handleCloseCartNotice}
+            >
+              ⤫
+            </div>
+            <div className={"mb-4 pr-6 flex-1"}>
+              <strong>{product.name}</strong> was successfully added to your
+              cart!
+            </div>
 
-      <div
-        className={clsx(
-          "bg-red-600 w-full h-full absolute left-0 transition-transform duration-300 ease-in-out p-4",
-          !showCartStatus && "translate-y-full"
-        )}
-      >
-        <button
-          className={"absolute right-2 top-2"}
-          onClick={handleCloseCartNotice}
-        >
-          ⤫
-        </button>
-        Added to cart
-        <Button size={"medium"} href={"/store/checkout"}>
-          View cart
-        </Button>
-      </div>
+            <ActionButton onClick={handleGoToCart}>
+              Checkout in cart
+            </ActionButton>
+          </div>
+        </>
+      )}
     </div>
   );
 }

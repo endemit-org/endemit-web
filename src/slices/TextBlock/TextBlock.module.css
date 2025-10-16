@@ -1,0 +1,44 @@
+
+.markdown {
+  @apply font-normal;
+}
+
+.markdown > p {
+  @apply mb-6;
+}
+
+.markdown ul,
+.markdown ol {
+  @apply pl-8 mt-2 mb-4;
+}
+
+.markdown ul {
+  @apply ml-8;
+}
+
+.markdown strong {
+  @apply font-bold 
+}
+
+.markdown ul > li {
+  @apply list-disc mb-2;
+}
+
+.markdown ol > li {
+  @apply list-decimal mb-2;
+}
+.markdown h1 {
+  @apply mb-2 p-0 mt-12;
+}
+
+.markdown h2,
+.markdown h3 {
+  @apply mb-2 p-0 mt-12;
+}
+.markdown a {
+  @apply text-blue-500;
+}
+
+.markdown a:hover {
+  @apply text-blue-200;
+}

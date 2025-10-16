@@ -1,4 +1,4 @@
-import { EMAIL_OCTOPUS_API_KEY } from "@/services/emailOctopus/emailOctopus";
+import { EMAIL_OCTOPUS_API_KEY } from "@/app/services/emailOctopus/emailOctopus";
 
 export const subscribeEmailToList = async (email: string, listId: string) => {
   try {

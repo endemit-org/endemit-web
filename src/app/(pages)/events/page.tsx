@@ -2,6 +2,10 @@ import events from "@/config/events.config";
 import EventList from "@/components/event/EventList";
 import EndemitSubscribe from "@/components/newsletter/EndemitSubscribe";
 import type { Metadata } from "next";
+import PageHeadline from "@/components/PageHeadline";
+import { createSlug } from "@/lib/util";
+import InnerPage from "@/components/InnerPage";
+import OuterPage from "@/components/OuterPage";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -17,16 +21,26 @@ export const metadata: Metadata = {
 
 export default function EventsPage() {
   return (
-    <div className="lg:max-w-3xl mx-auto sm:max-w-full pt-24 px-6 lg:pt-16">
-      <EventList
-        title="UPCOMING EVENTS"
-        events={events.filter(event => !event.options?.isPastEvent)}
+    <OuterPage>
+      <PageHeadline
+        title={"Events"}
+        segments={[
+          { label: "Endemit", path: "" },
+          { label: "Events", path: "events" },
+        ]}
       />
-      <EventList
-        title="PAST EVENTS"
-        events={events.filter(event => event.options?.isPastEvent)}
-      />
-      <EndemitSubscribe />
-    </div>
+
+      <InnerPage>
+        <EventList
+          title="UPCOMING EVENTS"
+          events={events.filter(event => !event.options?.isPastEvent)}
+        />
+        <EventList
+          title="PAST EVENTS"
+          events={events.filter(event => event.options?.isPastEvent)}
+        />
+        <EndemitSubscribe />
+      </InnerPage>
+    </OuterPage>
   );
 }

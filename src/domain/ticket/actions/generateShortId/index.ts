@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid";
-import { prisma } from "@/services/prisma";
+import { prisma } from "@/app/services/prisma";
 
 export const generateShortId = async (maxRetries = 10) => {
   const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 4);

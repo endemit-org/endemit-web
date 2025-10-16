@@ -2,8 +2,11 @@ import { notFound } from "next/navigation";
 import { categoryFromSlug } from "@/lib/util";
 import ProductSection from "@/components/product/ProductSection";
 import Breadcrumb from "@/components/Breadcrumb";
-import { prismic } from "@/services/prismic";
+import { prismic } from "@/app/services/prismic";
 import { fetchProductsFromCms } from "@/domain/cms/actions";
+import PageHeadline from "@/components/PageHeadline";
+import InnerPage from "@/components/InnerPage";
+import OuterPage from "@/components/OuterPage";
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function ProductPage({
@@ -28,11 +31,9 @@ export default async function ProductPage({
   const productsExistInCategory = products.length > 0;
 
   return (
-    <div className=" mx-auto space-y-8 sm:max-w-full pt-24 px-4 lg:pt-16 ">
-      <h1 className="text-3xl font-bold text-white mb-8">
-        {categoryName} ({products.length})
-      </h1>
-      <Breadcrumb
+    <OuterPage>
+      <PageHeadline
+        title={categoryName}
         segments={[
           { label: "Endemit", path: "" },
           { label: "Store", path: "store" },
@@ -41,10 +42,12 @@ export default async function ProductPage({
       />
 
       {!productsExistInCategory && (
-        <div>There are currently no products in {categoryName}</div>
+        <InnerPage>
+          <div>There are currently no products in {categoryName}</div>
+        </InnerPage>
       )}
 
       {productsExistInCategory && <ProductSection products={products} />}
-    </div>
+    </OuterPage>
   );
 }

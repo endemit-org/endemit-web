@@ -47,7 +47,7 @@ export const generateTicketImage = async (
   );
   const logoBuffer = await loadLogo(cfg.logoSize);
   const endemitLogoBuffer = await fetchAndResizeImage(
-    "http://127.0.0.1:3000/images/endemit.png",
+    "http://127.0.0.1:3000/images/endemit.png", //TODO
     200,
     "contain"
   );

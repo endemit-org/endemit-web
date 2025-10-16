@@ -1,6 +1,5 @@
-import { formatPrice } from "@/lib/formatting";
-import { createSlug } from "@/lib/util";
-import Breadcrumb from "@/components/Breadcrumb";
+import { formatDecimalPrice } from "@/lib/formatting";
+import { createSlug, getStatusText } from "@/lib/util";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import ImageGallery from "@/components/ImageGallery";
 import ProductConfigure from "@/components/product/ProductConfigure";
@@ -10,6 +9,13 @@ import {
 } from "@/domain/cms/actions";
 import { getProductLimits } from "@/domain/product/actions/getProductLimits";
 import { isProductSellable } from "@/domain/product/businessLogic";
+import parse from "html-react-parser";
+import ProductCard from "@/components/product/ProductCard";
+import clsx from "clsx";
+import InnerPage from "@/components/InnerPage";
+import PageHeadline from "@/components/PageHeadline";
+import OuterPage from "@/components/OuterPage";
+import style from "@/styles/insetHtml.module.css";
 
 export const revalidate = 3600; // Revalidate cache every hour
 
@@ -77,72 +83,105 @@ export default async function ProductPage({
 
   const productLimits = getProductLimits(product);
   const isSellableObject = isProductSellable(product);
+  const relatedProducts = product.relatedProducts;
 
   return (
-    <div className=" mx-auto space-y-8 sm:max-w-full pt-24 px-4 lg:pt-16 ">
-      <div>
-        <h1 className="text-3xl font-bold text-white mb-0 pb-0">
-          {product.name}
-        </h1>
-        <Breadcrumb
-          segments={[
-            { label: "Endemit", path: "" },
-            { label: "Store", path: "store" },
-            { label: product.category, path: createSlug(product.category) },
-            { label: product.name, path: product.uid },
-          ]}
-        />
-      </div>
-
-      <ProductStatusTag
-        status={product.status}
-        className={"translate-y-4 translate-x-4"}
+    <OuterPage>
+      <PageHeadline
+        title={product.name}
+        segments={[
+          { label: "Endemit", path: "" },
+          { label: "Store", path: "store" },
+          { label: product.category, path: createSlug(product.category) },
+          { label: product.name, path: product.uid },
+        ]}
       />
 
-      <div>
+      <InnerPage>
         {/* Image gallery */}
+
+        <ProductStatusTag
+          status={product.status}
+          className={"translate-y-4 translate-x-4"}
+        />
+
         <ImageGallery images={product.images} altFallbackText={product.name} />
 
-        {/* Product info */}
-        <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid  lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
-          {/* Options */}
-          <div className="mt-4 lg:row-span-3 lg:mt-0">
-            <h2 className="sr-only">Product information</h2>
-            {product.price && (
-              <p className="text-3xl tracking-tight text-gray-100">
-                {formatPrice(product.price)}
-              </p>
-            )}
-          </div>
+        <div className={"lg:flex mt-12 lg:mt-8"}>
+          <div
+            className={"lg:border-r lg:border-neutral-500 lg:pr-20 lg:w-2/3"}
+          >
+            <h3 className="sr-only">Description</h3>
 
-          <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pr-8 lg:pb-16">
-            {/* Description and details */}
-            <div>
-              <h3 className="sr-only">Description</h3>
-
-              <div className="space-y-6">
-                <p
-                  className="text-base text-gray-100"
-                  dangerouslySetInnerHTML={{
-                    __html: product.description,
-                  }}
-                />
-              </div>
+            <div className={`space-y-6 ${style.inset}`}>
+              {parse(product.description)}
             </div>
+          </div>
+          <div
+            className={
+              "px-2 flex-1 lg:pl-10 flex flex-col items-center max-lg:border-neutral-500 max-lg:border-t max-lg:mt-10 max-lg:pt-10"
+            }
+          >
+            <div>Price:</div>
+            <div
+              className={clsx(
+                "text-4xl font-heading mb-6",
+                !isSellableObject.isSellable && "line-through"
+              )}
+            >
+              {formatDecimalPrice(product.price)}
+            </div>
+
+            <ProductConfigure product={product} />
+
+            {!isSellableObject.isSellable &&
+              !isSellableObject.isSellableByCutoffDate && (
+                <div className={"uppercase font-bold"}>
+                  Product no longer available
+                </div>
+              )}
+
+            {!isSellableObject.isSellable &&
+              !isSellableObject.isSellableByStatus && (
+                <div className={"uppercase font-bold"}>
+                  {getStatusText(product.status)}
+                </div>
+              )}
+
+            {productLimits && (
+              <div
+                className={
+                  "border-t border-neutral-500 mt-6 pt-6 text-sm text-neutral-400"
+                }
+              >
+                {productLimits.map((productLimit, index) => (
+                  <div key={`prod-limit-${index}`}>{productLimit}</div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {productLimits &&
-          productLimits.map((productLimit, index) => (
-            <div key={`prod-limit-${index}`}>{productLimit}</div>
-          ))}
-
-        {isSellableObject.isSellable && <ProductConfigure product={product} />}
-        {!isSellableObject.isSellable &&
-          !isSellableObject.isSellableByCutoffDate && (
-            <div>Product is no longer available</div>
-          )}
-      </div>
-    </div>
+        {relatedProducts && relatedProducts.length > 0 && (
+          <div className="mt-20 mb-10 text-center">
+            <h3>You might also like</h3>
+            <div className={"flex gap-0.5 flex-wrap"}>
+              {relatedProducts.map(relatedProduct => (
+                <ProductCard
+                  status={relatedProduct.status}
+                  key={relatedProduct.id}
+                  image={relatedProduct.images[0]}
+                  name={relatedProduct.title}
+                  uid={relatedProduct.uid}
+                  price={relatedProduct.price}
+                  category={relatedProduct.category}
+                  callToAction={relatedProduct.callToAction}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </InnerPage>
+    </OuterPage>
   );
 }

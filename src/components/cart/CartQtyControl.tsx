@@ -15,7 +15,7 @@ export default function CartQtyControl({ item }: Props) {
   };
 
   const handleIncrement = () => {
-    if (item.quantity !== maxQty) {
+    if (item.quantity < maxQty) {
       incrementItem(item.id);
     }
   };

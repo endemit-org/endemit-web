@@ -1,4 +1,5 @@
 import Sidebar from "@/components/Sidebar";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function RootLayout({
   children,
@@ -7,7 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <body
-      className="m-auto overflow-y-scroll bg-black"
+      className="m-auto overflow-y-scroll bg-black "
       style={{
         backgroundImage: "url('/images/endemit-pattern.svg')",
         backgroundSize: "110px",
@@ -25,8 +26,9 @@ export default function RootLayout({
           hideCartOnPath={["/store/checkout"]}
         />
 
-        <div className="lg:ml-72 bg-neutral-900 pb-16 min-h-screen lg:my-12 lg:rounded-r-xl overflow-hidden lg:border-y-2 lg:border-r-2 lg:border-neutral-800 ">
+        <div className="lg:ml-72 relative bg-neutral-900 min-h-screen lg:my-12 lg:rounded-r-xl lg:border-y-2 lg:border-r-2 lg:border-neutral-800 p-4 lg:p-12 max-lg:my-20">
           {children}
+          <SiteFooter />
         </div>
       </div>
     </body>

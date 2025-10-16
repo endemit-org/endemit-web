@@ -1,8 +1,8 @@
-import { stripe } from "@/services/stripe";
+import { stripe } from "@/app/services/stripe";
 import {
   transformPriceFromStripe,
   transformPriceToStripe,
-} from "@/services/stripe/util";
+} from "@/app/services/stripe/util";
 
 export const validatePromoCode = async (
   promoCode: string,

@@ -1,12 +1,13 @@
 "use client";
 
-import Button from "@/components/Button";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import ToteBagIcon from "@/components/icon/TotebagIcon";
 import { useCartItemCount, useCartTotal } from "@/stores/CartStore";
 import { formatPrice } from "@/lib/formatting";
+import ActionButton from "@/components/ActionButton";
+import { useRouter } from "next/navigation";
 
 interface Props {
   variant?: "compact" | "detailed";
@@ -15,6 +16,7 @@ interface Props {
 export default function Cart({ variant = "detailed" }: Props) {
   const itemCount = useCartItemCount();
   const totalPrice = useCartTotal();
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
   const [shouldBounce, setShouldBounce] = useState(false);
@@ -37,6 +39,10 @@ export default function Cart({ variant = "detailed" }: Props) {
     setPrevTotal(totalPrice);
   }, [totalPrice, prevTotal]);
 
+  const handleGoToCart = () => {
+    router.push("/store/checkout");
+  };
+
   const displayItemCount = isClient ? itemCount || 0 : 0;
   const displayTotalPrice = isClient ? (totalPrice ?? 0) : 0;
   const isEmpty = displayItemCount === 0;
@@ -54,7 +60,7 @@ export default function Cart({ variant = "detailed" }: Props) {
       >
         <div
           className={clsx(
-            "text-xl group-hover:text-gray-400",
+            "text-2xl group-hover:text-gray-400 font-heading",
             !isEmpty && isClient ? "text-blue-400" : "text-gray-400"
           )}
         >
@@ -68,7 +74,7 @@ export default function Cart({ variant = "detailed" }: Props) {
             <ToteBagIcon />
             <div
               className={clsx(
-                "absolute rounded-full text-gray-100 px-1 ml-3 -mt-3 inline-block pt-0.5",
+                "absolute rounded-full text-gray-100 px-1 ml-3 -mt-3 inline-block pt-0.5 font-heading",
                 !isEmpty && isClient ? "bg-blue-500" : "bg-gray-800",
                 shouldBounce ? "animate-ping" : ""
               )}
@@ -81,15 +87,10 @@ export default function Cart({ variant = "detailed" }: Props) {
       {variant === "detailed" && displayItemCount > 0 && isClient && (
         <>
           <div className="items-center space-x-3 text-white inline-flex">
-            <div className="text-md">{displayItemCount} items in your cart</div>
+            <div className="text-sm">{displayItemCount} items in your cart</div>
           </div>
           <div className="mt-3">
-            <Button
-              href="/store/checkout"
-              size={"medium"}
-              hoverBgColor={"bg-blue-500"}
-              borderColor={"border-gray-500"}
-            >
+            <ActionButton onClick={handleGoToCart} size={"sm"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -107,7 +108,7 @@ export default function Cart({ variant = "detailed" }: Props) {
                 ></path>
               </svg>
               Checkout
-            </Button>
+            </ActionButton>
           </div>
         </>
       )}

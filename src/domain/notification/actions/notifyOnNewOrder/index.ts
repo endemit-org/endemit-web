@@ -1,8 +1,9 @@
-import { DiscordConnector } from "@/services/discord";
+import { DiscordConnector } from "@/app/services/discord";
 import { Order } from "@prisma/client";
 import { formatDecimalPrice } from "@/lib/formatting";
 import { CustomStripeLineItem } from "@/types/checkout";
-import { transformPriceFromStripe } from "@/services/stripe/util";
+import { transformPriceFromStripe } from "@/app/services/stripe/util";
+import { notificationFooter } from "@/domain/notification/util";
 
 const discordOrders = new DiscordConnector(
   process.env.DISCORD_ORDERS_WEBHOOK ?? ""
@@ -14,9 +15,11 @@ export async function notifyOnNewOrder(order: Order) {
       order.items as string
     ) as CustomStripeLineItem[];
 
+    const totalOrderAmount = formatDecimalPrice(Number(order.totalAmount));
+
     const messageObject = {
       title: "💵 New Order received",
-      description: `A new order in total value of **${formatDecimalPrice(Number(order.totalAmount))}** was just received!`,
+      description: `A new order in total value of **${totalOrderAmount}** was just received!`,
       color: 0x5865f2,
       fields: [
         {
@@ -26,17 +29,19 @@ export async function notifyOnNewOrder(order: Order) {
         },
         ...orderItems.map(item => {
           return {
-            name: item.price_data?.product_data?.name || "Product",
-            value: `Quantity: \`${item.quantity}\`\nPrice: \`${formatDecimalPrice(transformPriceFromStripe(item.price_data?.unit_amount || 0))}\`\nTotal: \`${formatDecimalPrice(transformPriceFromStripe((item.price_data?.unit_amount || 0) * (item.quantity || 1)))}\``,
+            name: "Products purchased",
+            value: `Product: \`${item.price_data?.product_data?.name}\`\nQuantity: \`${item.quantity} * ${formatDecimalPrice(transformPriceFromStripe(item.price_data?.unit_amount || 0))}\`\nTotal: \`${formatDecimalPrice(transformPriceFromStripe((item.price_data?.unit_amount || 0) * (item.quantity || 1)))}\``,
             inline: false,
           };
         }),
+        {
+          name: "Total order amount",
+          value: `\`${totalOrderAmount}\``,
+          inline: false,
+        },
       ],
       timestamp: new Date().toISOString(),
-      footer: {
-        text: "EƎ · ENDEMIT instant notifications",
-        icon_url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/endemit-icon-small.png`,
-      },
+      footer: notificationFooter,
     };
 
     if (order.name && order.name.length > 0) {

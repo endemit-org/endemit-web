@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { EMAIL_OCTOPUS_API_KEY } from "@/services/emailOctopus/emailOctopus";
+import { EMAIL_OCTOPUS_API_KEY } from "@/app/services/emailOctopus/emailOctopus";
 
 export const isEmailSubscribedToList = async (
   email: string,

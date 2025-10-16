@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { stripe } from "@/services/stripe";
+import { stripe } from "@/app/services/stripe";
 import ClearCheckoutValues from "@/components/checkout/ClearCheckoutValues";
 import { getOrderByStripeSession } from "@/domain/order/actions";
-import { transformPriceFromStripe } from "@/services/stripe/util";
+import { transformPriceFromStripe } from "@/app/services/stripe/util";
 
 export const metadata: Metadata = {
   title: "Merch",

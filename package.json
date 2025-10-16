@@ -28,6 +28,7 @@
     "@vercel/analytics": "^1.5.0",
     "clsx": "^2.1.1",
     "crypto": "^1.0.1",
+    "html-react-parser": "^5.2.7",
     "inngest": "^3.44.2",
     "nanoid": "^5.1.6",
     "next": "15.3.2",

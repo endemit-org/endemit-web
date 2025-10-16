@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import ActionButton from "@/components/ActionButton";
 
 interface CheckoutActionsProps {
   onCheckout: () => void;
@@ -15,17 +16,23 @@ export default function CheckoutActions({
 }: CheckoutActionsProps) {
   return (
     <div className="mt-6 space-y-2">
-      <button
+      <ActionButton
         onClick={canProceed ? onCheckout : undefined}
         disabled={!canProceed}
-        className={clsx(
-          "w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors",
-          !canProceed && "bg-neutral-600 cursor-not-allowed",
-          canProceed && "bg-blue-600 hover:bg-blue-700"
-        )}
       >
         {isProcessing ? "Processing..." : "Pay securely with Stripe"}
-      </button>
+      </ActionButton>
+      {/*<button*/}
+      {/*  onClick={canProceed ? onCheckout : undefined}*/}
+      {/*  disabled={!canProceed}*/}
+      {/*  className={clsx(*/}
+      {/*    "w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors",*/}
+      {/*    !canProceed && "bg-neutral-600 cursor-not-allowed",*/}
+      {/*    canProceed && "bg-blue-600 hover:bg-blue-700"*/}
+      {/*  )}*/}
+      {/*>*/}
+      {/*  {isProcessing ? "Processing..." : "Pay securely with Stripe"}*/}
+      {/*</button>*/}
 
       <button
         onClick={onClearCart}

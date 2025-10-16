@@ -22,7 +22,7 @@ function EventListContent({ title, events }: EventListProps) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-white mb-8 mt-12">{title}</h1>
+      <h1 className="text-3xl font-bold text-white mb-8">{title}</h1>
 
       {filteredEvents.map((event, index) => (
         <React.Fragment key={`${event.title}-${index}`}>

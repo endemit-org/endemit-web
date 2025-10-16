@@ -1,0 +1,28 @@
+{
+  "id": "newsletter_subscription",
+  "type": "SharedSlice",
+  "name": "Newsletter",
+  "description": "NewsletterSubscription",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "list_type": {
+          "type": "Select",
+          "config": {
+            "label": "List type",
+            "placeholder": "",
+            "options": ["General", "Festival"],
+            "default_value": "General"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { prismicClient } from "@/services/prismic";
+import { prismicClient } from "@/app/services/prismic";
 import { PrismicArtistDocument } from "@/types/prismic";
 import { getFormattedArtist } from "@/domain/artist/actions";
 

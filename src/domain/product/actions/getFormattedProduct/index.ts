@@ -1,5 +1,5 @@
 import { PrismicProductDocument } from "@/types/prismic";
-import { richTextToPlainText } from "@/lib/util";
+import { richTextToHTML, richTextToPlainText } from "@/lib/util";
 import { Product, ProductCompositionType } from "@/types/product";
 
 export const getFormattedProduct = (product: PrismicProductDocument) => {
@@ -15,7 +15,7 @@ export const getFormattedProduct = (product: PrismicProductDocument) => {
     id: product.id,
     uid: product.uid,
     name: product.data.title,
-    description: richTextToPlainText(product.data.description),
+    description: richTextToHTML(product.data.description),
     images: product.data.images.map(img => ({
       src: img.image.url,
       alt: img.image.alt,
@@ -51,7 +51,7 @@ export const getFormattedProduct = (product: PrismicProductDocument) => {
           productType: rp.related_product.data.product_type,
           status: rp.related_product.data.product_status,
           visibility: rp.related_product.data.product_visibility,
-          images: product.data.images.map(img => ({
+          images: rp.related_product.data.images.map(img => ({
             src: img.image.url,
             alt: img.image.alt,
           })),
@@ -67,7 +67,7 @@ export const getFormattedProduct = (product: PrismicProductDocument) => {
           title: product.data.related_to_event.data.title,
           venueName: product.data.related_to_event.data.venue_name,
           venueAddress: product.data.related_to_event.data.venue_address,
-          venueLogo: product.data.related_to_event.data.venue_logo.url,
+          venueLogo: product.data.related_to_event.data?.venue_logo?.url,
           date: product.data.related_to_event.data.date_start,
         }
       : null,

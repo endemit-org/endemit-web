@@ -1,5 +1,5 @@
-import { transformPriceToStripe } from "@/services/stripe/util";
-import shippingService from "@/services/shipping";
+import { transformPriceToStripe } from "@/app/services/stripe/util";
+import shippingService from "@/app/services/shipping";
 import { Country } from "@/types/country";
 import { ShippingAddress } from "@/types/checkout";
 

@@ -8,7 +8,9 @@ export const getProductLimits = (product: Product) => {
   const productLimit = product.limits;
 
   if (productLimit?.quantityLimit) {
-    limitMessages.push(`Max quantity: ${productLimit.quantityLimit}`);
+    limitMessages.push(
+      `Max quantity per purchase is ${productLimit.quantityLimit} items`
+    );
   }
 
   if (
@@ -16,13 +18,13 @@ export const getProductLimits = (product: Product) => {
     isProductShippable(product)
   ) {
     limitMessages.push(
-      `Available only in: ${productLimit.regionalEligibility.map(region => region.region).join(", ")}`
+      `Item only shippable to ${productLimit.regionalEligibility.map(region => region.region).join(", ")}`
     );
   }
 
   if (productLimit?.cutoffTimestamp) {
     const date = ensureDateType(productLimit.cutoffTimestamp);
-    limitMessages.push(`Available until: ${formatDateTime(date)}`);
+    limitMessages.push(`Available only until ${formatDateTime(date)}`);
   }
 
   return limitMessages;

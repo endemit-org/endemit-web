@@ -1,0 +1,4 @@
+.inset li
+{
+  @apply ml-8 !mt-1
+}

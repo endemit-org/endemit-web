@@ -1,4 +1,4 @@
-import { Product } from "@/types/product";
+import { ProductCategory, ProductStatus } from "@/types/product";
 import Link from "next/link";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import Image from "next/image";
@@ -6,74 +6,74 @@ import { formatPrice } from "@/lib/formatting";
 import { createSlug } from "@/lib/util";
 
 interface ProductCardProps {
-  product: Product;
+  video?: string;
+  image?: {
+    src: string;
+    alt?: string;
+  };
+  name: string;
+  price: number;
+  uid: string;
+  category: ProductCategory;
+  status: ProductStatus;
+  callToAction?: string;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+  status,
+  category,
+  uid,
+  price,
+  name,
+  image,
+  video,
+  callToAction,
+}: ProductCardProps) {
   return (
-    <div className={"group"}>
+    <div
+      className={
+        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full sm:w-[calc(50%-1.2rem)] xl:w-[calc(33.333%-0.1rem)] 8xl:w-[calc(25%-0.1rem)]"
+      }
+    >
       <ProductStatusTag
-        status={product.status}
+        status={status}
         className={"translate-y-2 translate-x-2"}
       />
 
-      <Link href={`/store/${createSlug(product.category)}/${product.uid}`}>
-        {product.video && (
-          <div className="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-7/8 overflow-hidden">
-            <video
-              src={product.video}
-              loop={true}
-              muted={true}
-              autoPlay={true}
+      <Link href={`/store/${createSlug(category)}/${uid}`}>
+        <div className={"aspect-square overflow-hidden "}>
+          {video && (
+            <div className="aspect-square w-full  object-cover group-hover:opacity-75 xl:aspect-7/8 overflow-hidden group-hover:scale-125 transition-transform ease-in-out">
+              <video src={video} loop={true} muted={true} autoPlay={true} />
+            </div>
+          )}
+
+          {image && !video && (
+            <Image
+              src={image.src}
+              alt={image.alt ?? name}
+              width={800}
+              height={800}
+              loading="lazy"
+              className="aspect-square w-full   object-cover group-hover:opacity-75 xl:aspect-7/8 group-hover:scale-125 transition-transform ease-in-out"
             />
+          )}
+        </div>
+
+        <div className={"flex my-4 w-full px-2"}>
+          <div className={"flex-1"}>
+            <h3 className="text-2xl text-neutral-200">{name}</h3>
+            <p className="category text-sm text-neutral-400">
+              {callToAction ?? category}
+            </p>
           </div>
-        )}
-
-        {product.images[0] && !product.video && (
-          <Image
-            src={product.images[0].src}
-            alt={product.images[0].alt ?? product.name}
-            width={800}
-            height={800}
-            loading="lazy"
-            className="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-7/8"
-          />
-        )}
-        <h3 className="mt-4 text-sm text-gray-100">{product.name}</h3>
+          <div className={"pl-2"}>
+            <p className="text-lg font-medium text-gray-500">
+              {formatPrice(price)}
+            </p>
+          </div>
+        </div>
       </Link>
-
-      <p className="mt-1 text-lg font-medium text-gray-500">
-        {formatPrice(product.price)}
-      </p>
-
-      {/*<div>*/}
-      {/*  <h3>{product.name}</h3>*/}
-      {/*  {product.description && (*/}
-      {/*    <p className="description">{product.description}</p>*/}
-      {/*  )}*/}
-
-      {/*  {product.variants.length > 0 && (*/}
-      {/*    <div>*/}
-      {/*      Avaiable in:*/}
-      {/*      <div className="flex gap-x-2">*/}
-      {/*        {product.variants.map(variant => (*/}
-      {/*          <div>{variant.variant_value}</div>*/}
-      {/*        ))}*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*  )}*/}
-
-      {/*  {isInCart && <div>You have {quantity} in cart</div>}*/}
-
-      {/*  <div>*/}
-      {/*    <p className="price">€{product.price.toFixed(2)}</p>*/}
-
-      {/*    {product.category && (*/}
-      {/*      <p className="category">Category: {product.category}</p>*/}
-      {/*    )}*/}
-      {/*  </div>*/}
-
-      {/*</div>*/}
     </div>
   );
 }

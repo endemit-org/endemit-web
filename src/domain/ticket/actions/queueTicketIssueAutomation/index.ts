@@ -1,5 +1,5 @@
 import { TicketCreationData, TicketQueueEvent } from "@/types/ticket";
-import { inngest } from "@/services/inngest";
+import { inngest } from "@/app/services/inngest";
 
 export const queueTicketIssueAutomation = async (data: TicketCreationData) => {
   return await inngest.send({

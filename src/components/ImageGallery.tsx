@@ -45,7 +45,7 @@ export default function ImageGallery({
   };
 
   return (
-    <div className="mx-auto mt-6 group select-none">
+    <div className="mx-auto group select-none">
       {/* Desktop Grid */}
       <div className="hidden lg:grid lg:grid-cols-3 lg:gap-8">
         <Image
@@ -148,8 +148,8 @@ export default function ImageGallery({
               onClick={() => scrollToSlide(index)}
               className={`h-2 w-2 rounded-full transition-all ${
                 currentSlide === index
-                  ? "bg-gray-900 w-4"
-                  : "bg-gray-300 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
+                  ? "bg-neutral-100 w-4"
+                  : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

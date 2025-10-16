@@ -7,6 +7,7 @@ import {
   VariantType,
   VariantValue,
 } from "@/types/product";
+import { SliceZone } from "@prismicio/client";
 
 export interface PrismicImage {
   dimensions: {
@@ -325,4 +326,32 @@ export interface PrismicVenueDocument {
   slugs: string[];
   lang: string;
   data: PrismicVenueData;
+}
+
+// Main Content Page Data
+export interface PrismicContentPageData {
+  // Main
+  title: string;
+  render_frame: boolean;
+  slices: SliceZone;
+
+  // SEO & Metadata
+  meta_title: string | null;
+  meta_description: string | null;
+  meta_image: Partial<PrismicImage>;
+}
+
+// Complete Content Page Document
+export interface PrismicContentPageDocument {
+  id: string;
+  uid: string;
+  url: string | null;
+  type: "content_page";
+  href: string;
+  tags: string[];
+  first_publication_date: string;
+  last_publication_date: string;
+  slugs: string[];
+  lang: string;
+  data: PrismicContentPageData;
 }

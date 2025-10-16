@@ -1,4 +1,5 @@
-import { DiscordConnector } from "@/services/discord";
+import { DiscordConnector } from "@/app/services/discord";
+import { notificationFooter } from "@/domain/notification/util";
 
 const discordNewsletter = new DiscordConnector(
   process.env.DISCORD_NEWSLETTER_WEBHOOK ?? ""
@@ -8,7 +9,7 @@ export async function notifyOnNewSubscriber(email: string, listName: string) {
   try {
     await discordNewsletter.sendEmbed({
       title: "🎉 New Mailing List Subscriber",
-      description: `Someone just subscribed to the ENDEMIT ${listName} mailing list!`,
+      description: `Someone just subscribed to the our **${listName}** mailing list!`,
       color: 0x5865f2,
       fields: [
         {
@@ -18,10 +19,7 @@ export async function notifyOnNewSubscriber(email: string, listName: string) {
         },
       ],
       timestamp: new Date().toISOString(),
-      footer: {
-        text: "EƎ · ENDEMIT instant notifications",
-        icon_url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/endemit-icon-small.png`,
-      },
+      footer: notificationFooter,
     });
   } catch (error) {
     console.error("Failed to send Discord notification:", error);

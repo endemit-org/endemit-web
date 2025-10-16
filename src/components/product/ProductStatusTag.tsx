@@ -1,7 +1,8 @@
 import { ProductStatus } from "@/types/product";
 import clsx from "clsx";
 
-import { getStatusTagStyle } from "@/domain/product/actions/getStatusTagStyle";
+import { getStatusTagStyle } from "@/domain/product/actions";
+import { getStatusText } from "@/lib/util";
 
 interface Props {
   status: ProductStatus;
@@ -19,11 +20,11 @@ export default function ProductStatusTag({ status, className }: Props) {
     <div
       className={clsx(
         variableColours,
-        "absolute z-10 rounded-md px-2 py-1 text-sm font-semibold",
+        "absolute z-10 rounded-md px-2 py-1 text-sm font-semibold  uppercase tracking-wide",
         className
       )}
     >
-      {status.replace("_", " ").toLowerCase()}
+      {getStatusText(status)}
     </div>
   );
 }

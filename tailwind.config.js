@@ -26,7 +26,21 @@ module.exports = {
       maxWidth: {
         "8xl": "1600px",
       },
+      fontFamily: {
+        heading: ["var(--font-heading)"],
+        body: ["var(--font-body)"],
+        accent: ["var(--font-accent)"],
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        ".link": {
+          "@apply text-blue-500 underline hover:text-blue-600  transition-colors":
+            {},
+        },
+      });
+    },
+  ],
 };

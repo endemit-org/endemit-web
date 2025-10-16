@@ -1,5 +1,6 @@
 import { formatPrice } from "@/lib/formatting";
-import { DiscordConnector } from "@/services/discord";
+import { DiscordConnector } from "@/app/services/discord";
+import { notificationFooter } from "@/domain/notification/util";
 
 const discordTicketPurchase = new DiscordConnector(
   process.env.DISCORD_TICKET_PURCHASE_WEBHOOK ?? ""
@@ -21,7 +22,7 @@ export async function notifyOnNewTicketIssue({
   try {
     await discordTicketPurchase.sendEmbed({
       title: `🎫 New Ticket issued for ${eventName}`,
-      description: `A new ticket was issued to **${ticketHolderName}**. This makes a total of **${totalTicketsSoldForEvent}** tickets sold for ${eventName} so far.`,
+      description: `A new ticket was issued to **${ticketHolderName}**. This makes a total of **${totalTicketsSoldForEvent}** tickets sold for **${eventName}** so far.`,
       color: 0x5865f2,
       fields: [
         {
@@ -44,12 +45,14 @@ export async function notifyOnNewTicketIssue({
           value: `\`${formatPrice(ticketPrice)}\``,
           inline: false,
         },
+        {
+          name: "Sold for event:",
+          value: `\`${totalTicketsSoldForEvent}\``,
+          inline: false,
+        },
       ],
       timestamp: new Date().toISOString(),
-      footer: {
-        text: "EƎ · ENDEMIT instant notifications",
-        icon_url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/endemit-icon-small.png`,
-      },
+      footer: notificationFooter,
     });
   } catch (error) {
     console.error("Failed to send Discord notification:", error);

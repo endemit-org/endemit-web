@@ -21,6 +21,9 @@ export const isProductSellableByCutoffDate = (product: Product) => {
 };
 
 export const isProductSellableByRegion = (product: Product, region: Region) => {
+  if (!product.limits?.regionalEligibility) {
+    return true;
+  }
   if (product.limits.regionalEligibility.length === 0) {
     return true; // If no regional eligibility is set, assume it's sellable everywhere
   }
@@ -83,11 +86,9 @@ export const isProductExcludedFromRefunds = (product: Product) => {
 export const isProductFeatured = (product: Product) => {
   return product.isFeatured;
 };
-export const canProductExistInCart = (
-  productComposition: ProductCompositionType
-) => {
+export const canProductExistInCart = (product: Product) => {
   return (
-    productComposition === ProductCompositionType.SINGLE ||
-    productComposition === ProductCompositionType.VARIANT
+    product.composition === ProductCompositionType.SINGLE ||
+    product.composition === ProductCompositionType.VARIANT
   );
 };

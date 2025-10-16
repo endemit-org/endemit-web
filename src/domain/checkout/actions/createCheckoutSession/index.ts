@@ -1,4 +1,4 @@
-import { stripe } from "@/services/stripe";
+import { stripe } from "@/app/services/stripe";
 import { createCheckoutDescription } from "@/domain/checkout/actions";
 import {
   CheckoutSessionMetaData,

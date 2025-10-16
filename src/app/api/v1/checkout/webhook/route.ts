@@ -1,4 +1,4 @@
-import { stripe } from "@/services/stripe";
+import { stripe } from "@/app/services/stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { onOrderPaymentComplete } from "@/domain/order/actions/onOrderPaymentComplete";

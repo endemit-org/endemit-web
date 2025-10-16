@@ -1,4 +1,5 @@
-import { DiscordConnector } from "@/services/discord";
+import { DiscordConnector } from "@/app/services/discord";
+import { notificationFooter } from "@/domain/notification/util";
 
 const discordTicketScan = new DiscordConnector(
   process.env.DISCORD_TICKET_SCAN_WEBHOOK ?? ""
@@ -18,30 +19,32 @@ export async function notifyOnTicketScanned({
   try {
     await discordTicketScan.sendEmbed({
       title: `✅ Ticket scanned at ${eventName}`,
-      description: `**${ticketHolderName}**'s ticket was just scanned at ${eventName}! This makes a total of **${totalTicketsScannedAtEvent}** tickets scanned at ${eventName} so far.`,
+      description: `**${ticketHolderName}**'s ticket was just scanned at ${eventName}! This makes a total of **${totalTicketsScannedAtEvent}** tickets scanned at **${eventName}** so far.`,
       color: 0x5865f2,
       fields: [
         {
-          name: "Purchased by",
+          name: "Purchased by:",
           value: `\`${ticketPayerEmail}\``,
           inline: false,
         },
         {
-          name: "Ticket holder",
+          name: "Ticket holder:",
           value: `\`${ticketHolderName}\``,
           inline: false,
         },
         {
-          name: "Event",
+          name: "Event:",
           value: `\`${eventName}\``,
+          inline: false,
+        },
+        {
+          name: "Scanned at event:",
+          value: `\`${totalTicketsScannedAtEvent}\``,
           inline: false,
         },
       ],
       timestamp: new Date().toISOString(),
-      footer: {
-        text: "EƎ · ENDEMIT instant notifications",
-        icon_url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/endemit-icon-small.png`,
-      },
+      footer: notificationFooter,
     });
   } catch (error) {
     console.error("Failed to send Discord notification:", error);

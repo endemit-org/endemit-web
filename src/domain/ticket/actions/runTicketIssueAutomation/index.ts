@@ -1,4 +1,4 @@
-import { inngest } from "@/services/inngest";
+import { inngest } from "@/app/services/inngest";
 import { TicketCreationData, TicketQueueEvent } from "@/types/ticket";
 import {
   createTicketTransaction,
@@ -9,9 +9,10 @@ import {
 } from "@/domain/ticket/actions";
 import { sendTicketEmail } from "@/domain/email/actions";
 import { notifyOnNewTicketIssue } from "@/domain/notification/actions";
-import { transformPriceFromStripe } from "@/services/stripe/util";
-import { formatPrice } from "@/lib/formatting";
+import { transformPriceFromStripe } from "@/app/services/stripe/util";
+import { formatEventDateAndTime, formatPrice } from "@/lib/formatting";
 import { fetchEventFromCms } from "@/domain/cms/actions";
+import { splitArtistsIntoLines } from "@/domain/ticket/util";
 
 export const runTicketIssueAutomation = inngest.createFunction(
   { id: "create-ticket-function", retries: 5 },
@@ -80,7 +81,13 @@ export const runTicketIssueAutomation = inngest.createFunction(
       const issuedTicket = ticketTransaction.ticket;
       const event = await fetchEventFromCms(issuedTicket.eventId);
 
-      if (!event?.coverImage?.src || !event?.date_start || !event?.venue) {
+      if (
+        !event?.coverImage?.src ||
+        !event?.date_start ||
+        !event?.venue ||
+        !event?.artists ||
+        event?.artists?.length === 0
+      ) {
         throw new Error("Missing parameters for ticket image generation");
       }
 
@@ -90,10 +97,12 @@ export const runTicketIssueAutomation = inngest.createFunction(
         qrData: JSON.stringify(ticketSecurityData.qrContent),
         eventName: eventName,
         eventDetails: event.venue.name ?? "",
-        eventDate: "25. 11. 2025 @ 22:00",
+        eventDate: formatEventDateAndTime(event.date_start),
         attendeeName: ticketHolderName,
         attendeeEmail: ticketPayerEmail,
-        artists: ["MOKILOK • UNKNOWN TEXTURE", "RHAEGAL • MMALI"],
+        artists: splitArtistsIntoLines(
+          event.artists.map(artist => artist.name)
+        ),
         price: formatPrice(Number(issuedTicket.price)),
         coverImageUrl: event.coverImage.src,
       });

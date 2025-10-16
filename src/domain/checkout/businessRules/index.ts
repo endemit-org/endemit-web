@@ -6,7 +6,7 @@ import {
   isProductShippable,
 } from "@/domain/product/businessLogic";
 import { DiscountDetails } from "@/types/checkout";
-import { transformPriceFromStripe } from "@/services/stripe/util";
+import { transformPriceFromStripe } from "@/app/services/stripe/util";
 
 export const includesShippableProduct = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductShippable(item));
@@ -49,4 +49,8 @@ export const shouldShowDonationCTA = (
   includesDonation: boolean
 ) => {
   return items.length > 0 && !includesDonation && donationAmount > 0;
+};
+
+export const isProductInCart = (cartItems: CartItem[], productId: string) => {
+  return cartItems.some(item => item.id === productId);
 };

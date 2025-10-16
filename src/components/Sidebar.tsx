@@ -114,12 +114,12 @@ export default function Sidebar({
   };
 
   return (
-    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bottom-0 lg:z-auto lg:w-72  lg:border-r lg:border-neutral-800 lg:py-12 bg-opacity-90 lg:border-l-[1px] lg:border-x-neutral-800">
+    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800">
       <div className="flex h-14 items-center px-4 py-4 lg:h-auto ">
         <Link
           href={logoHref}
           onClick={close}
-          className="lg:mx-3 lg:ml-auto hover:opacity-70"
+          className="lg:mx-3 lg:ml-auto hover:opacity-70 transition-opacity ease-in-out"
         >
           <Image
             src={logoSrc}
@@ -140,8 +140,8 @@ export default function Sidebar({
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <div
-            className="font-medium "
-            style={{ fontSize: "14px", paddingTop: "4px" }}
+            className="font-medium font-heading text-xl"
+            style={{ paddingTop: "4px" }}
           >
             MENU
           </div>
@@ -181,14 +181,14 @@ export default function Sidebar({
       </div>
 
       <div
-        className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 opacity-90", {
-          "fixed inset-x-0 bottom-0 top-14 mt-px bg-black flex flex-col":
+        className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 ", {
+          "fixed inset-x-0 bottom-0 top-14  bg-neutral-950 flex flex-col":
             isMenuOpen,
           hidden: !isMenuOpen,
         })}
       >
         {/* Scrollable navigation area */}
-        <nav className="px-5 pb-7 pt-5 text-xl space-y-2 overflow-y-auto lg:flex-1">
+        <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl space-y-2 overflow-y-auto lg:flex-1 font-heading tracking-widest">
           {navigationItems.map((item, index) => {
             const isActive = isItemActive(item);
             return (
@@ -197,7 +197,7 @@ export default function Sidebar({
                 onClick={() => handleNavClick(item)}
                 href={item.href}
                 className={clsx(
-                  "block rounded-md px-3 py-2 text-right font-medium uppercase sm:pt-2 pt-4",
+                  "block rounded-md px-3 py-2 text-right font-regular uppercase sm:pt-2 pt-4 transition-colors ease-in-out",
                   item.isBackButton && "text-sm opacity-85",
                   isActive && `${activeColor} cursor-default`,
                   !isActive &&

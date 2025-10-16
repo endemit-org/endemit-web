@@ -21,7 +21,7 @@ export const useCartStore = create<CartStore>()(
       isLoading: false,
 
       addItem: (product: Product, quantity = 1) => {
-        if (!canProductExistInCart(product.composition)) {
+        if (!canProductExistInCart(product)) {
           return;
         }
 

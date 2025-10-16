@@ -5,7 +5,6 @@ import { filterVisibleProducts } from "@/domain/product/actions/getVisibleProduc
 async function getProducts(): Promise<Product[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    console.log(`${baseUrl}${getApiPath("products/list")}`);
     const response = await fetch(`${baseUrl}${getApiPath("products/list")}`, {
       cache: "force-cache", // or 'force-cache' for static generation
       next: { revalidate: 60 * 60 * 2 }, // Revalidate every 2 hours

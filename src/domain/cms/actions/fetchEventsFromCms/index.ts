@@ -1,4 +1,4 @@
-import { prismicClient } from "@/services/prismic";
+import { prismicClient } from "@/app/services/prismic";
 import { PrismicEventDocument } from "@/types/prismic";
 import { getFormattedEvent } from "@/domain/event/actions";
 

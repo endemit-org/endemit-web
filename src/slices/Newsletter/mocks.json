@@ -1,0 +1,14 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"list_type": {
+				"__TYPE__": "FieldContent",
+				"value": "Festival",
+				"type": "Select"
+			}
+		},
+		"items": []
+	}
+]

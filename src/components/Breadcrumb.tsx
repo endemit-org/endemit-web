@@ -30,19 +30,24 @@ export default function Breadcrumb({
   });
 
   return (
-    <nav className={`flex gap-x-2 items-center ${className}`}>
+    <nav
+      className={`flex gap-x-2 items-center font-heading uppercase font-normal  ${className}`}
+    >
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
 
         return (
-          <div key={index} className="flex gap-x-2 items-center">
+          <div
+            key={index}
+            className="flex gap-x-2 items-center text-neutral-300"
+          >
             <Link
               href={item.href}
-              className={isLast ? "text-gray-400" : "hover:underline"}
+              className={isLast ? "text-neutral-500" : "hover:underline"}
             >
               {item.label}
             </Link>
-            {!isLast && <span className="text-gray-500">{separator}</span>}
+            {!isLast && <span className="text-neutral-400">{separator}</span>}
           </div>
         );
       })}

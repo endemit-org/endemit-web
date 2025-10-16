@@ -50,6 +50,10 @@ export const formatDateTime = (date: Date) => {
   });
 };
 
+export const formatEventDateAndTime = (date: Date) => {
+  return `${formatDate(date)} @ ${formatTime(date)}`;
+};
+
 export const formatWeight = (number: number) => {
   return `${formatNumber(number, 3)} kg`;
 };

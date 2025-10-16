@@ -1,6 +1,6 @@
 import { CartItem } from "@/types/cart";
 import { CheckoutSessionRequestBody, ShippingAddress } from "@/types/checkout";
-import { CheckoutValidationService } from "@/services/validation/validation.service";
+import { CheckoutValidationService } from "@/app/services/validation/validation.service";
 import { includesShippableProduct } from "@/domain/checkout/businessRules";
 import { Product, ProductCompositionType } from "@/types/product";
 import { isProductSellable } from "@/domain/product/businessLogic";
@@ -9,7 +9,7 @@ import {
   getCheckoutWeight,
   parseItemsForPayment,
 } from "@/domain/checkout/actions";
-import shippingService from "@/services/shipping";
+import shippingService from "@/app/services/shipping";
 import { Country } from "@/types/country";
 
 export const validateCheckoutRequest = (

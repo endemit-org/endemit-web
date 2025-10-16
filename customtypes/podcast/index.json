@@ -1,0 +1,144 @@
+{
+  "format": "page",
+  "id": "podcast",
+  "label": "Podcast",
+  "repeatable": true,
+  "status": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID"
+        }
+      },
+      "cover_image": {
+        "type": "Image",
+        "config": {
+          "label": "Cover image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "episode_name": {
+        "type": "Text",
+        "config": {
+          "label": "Episode name",
+          "placeholder": ""
+        }
+      },
+      "description": {
+        "type": "Text",
+        "config": {
+          "label": "Description",
+          "placeholder": ""
+        }
+      },
+      "artist": {
+        "type": "Link",
+        "config": {
+          "label": "Artist",
+          "select": "document",
+          "repeat": false,
+          "customtypes": [
+            {
+              "id": "artist",
+              "fields": [
+                "name",
+                "description",
+                "image",
+                "video",
+                {
+                  "id": "links",
+                  "fields": ["type", "link"]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "embed_link": {
+        "type": "Embed",
+        "config": {
+          "label": "Embed link",
+          "placeholder": ""
+        }
+      },
+      "tracklist": {
+        "type": "Group",
+        "config": {
+          "label": "Tracklist",
+          "repeat": true,
+          "fields": {
+            "title": {
+              "type": "Text",
+              "config": {
+                "label": "Title",
+                "placeholder": ""
+              }
+            },
+            "artist": {
+              "type": "Text",
+              "config": {
+                "label": "Artist",
+                "placeholder": ""
+              }
+            },
+            "embed": {
+              "type": "Embed",
+              "config": {
+                "label": "Embed",
+                "placeholder": ""
+              }
+            },
+            "link": {
+              "type": "Link",
+              "config": {
+                "label": "Link",
+                "placeholder": "",
+                "select": null,
+                "allowTargetBlank": true,
+                "allowText": true,
+                "repeat": false
+              }
+            }
+          }
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {}
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "config": {
+          "label": "Meta Title",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
+      "meta_description": {
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_image": {
+        "config": {
+          "constraint": {
+            "height": 1260,
+            "width": 2400
+          },
+          "label": "Meta Image",
+          "thumbnails": []
+        },
+        "type": "Image"
+      }
+    }
+  }
+}

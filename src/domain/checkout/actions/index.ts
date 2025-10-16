@@ -2,6 +2,7 @@ export * from "./getCheckoutTotals";
 export * from "./getCheckoutWeight";
 export * from "./getRoundedUpTotal";
 export * from "./getCheckoutDisplayValues";
+export * from "./getProductsQtyInCart";
 export * from "./consolidateCheckoutErrors";
 export * from "./getSuggestedDonationAmount";
 export * from "./createShippingLineItem";

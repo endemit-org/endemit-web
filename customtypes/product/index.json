@@ -78,7 +78,7 @@
           "label": "Description",
           "placeholder": "Descriptive text to highlight the features of the product",
           "allowTargetBlank": true,
-          "multi": "paragraph,heading4,strong,em,hyperlink,list-item,o-list-item"
+          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
         }
       },
       "related_products": {

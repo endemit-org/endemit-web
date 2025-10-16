@@ -7,3 +7,5 @@ export * from "./fetchVenueFromCms";
 export * from "./fetchVenuesFromCms";
 export * from "./fetchArtistFromCms";
 export * from "./fetchArtistsFromCms";
+export * from "./fetchContentPageFromCms";
+export * from "./fetchContentPagesFromCms";

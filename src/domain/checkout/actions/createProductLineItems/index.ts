@@ -1,4 +1,4 @@
-import { transformPriceToStripe } from "@/services/stripe/util";
+import { transformPriceToStripe } from "@/app/services/stripe/util";
 import { isProductTicket } from "@/domain/product/businessLogic";
 import { CartItem } from "@/types/cart";
 import { ComplementaryTicketField } from "@/types/checkout";

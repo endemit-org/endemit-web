@@ -2,6 +2,19 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
+import { Teko, Space_Grotesk } from "next/font/google";
+
+const headlineFont = Teko({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-heading",
+  weight: ["400", "600"],
+});
+
+const bodyFont = Space_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-body",
+  weight: ["300", "400", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -82,7 +95,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${headlineFont.variable} ${bodyFont.variable} `}
+    >
       <Analytics />
       <Providers>{children}</Providers>
     </html>

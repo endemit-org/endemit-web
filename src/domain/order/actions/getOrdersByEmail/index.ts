@@ -1,4 +1,4 @@
-import { prisma } from "@/services/prisma";
+import { prisma } from "@/app/services/prisma";
 
 export const getOrdersByEmail = async (email: string) => {
   return await prisma.order.findMany({

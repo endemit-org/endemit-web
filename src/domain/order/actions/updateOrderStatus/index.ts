@@ -1,5 +1,5 @@
 import { OrderStatus } from "@prisma/client";
-import { prisma } from "@/services/prisma";
+import { prisma } from "@/app/services/prisma";
 
 export const updateOrderStatus = async (
   stripeSessionId: string,

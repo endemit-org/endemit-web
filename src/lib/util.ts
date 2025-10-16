@@ -126,3 +126,7 @@ export const transformMinutesToMs = (minutes: number) => {
 export const transformHoursToMs = (hours: number) => {
   return hours * 60 * 60 * 1000;
 };
+
+export const getStatusText = (status: string) => {
+  return status.replace("_", " ").toLowerCase();
+};

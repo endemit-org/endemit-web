@@ -1,4 +1,4 @@
-import { prismicClient } from "@/services/prismic";
+import { prismicClient } from "@/app/services/prismic";
 import { PrismicProductDocument } from "@/types/prismic";
 import { getFormattedProduct } from "@/domain/product/actions";
 

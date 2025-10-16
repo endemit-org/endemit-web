@@ -52,7 +52,7 @@ export default function EventCard({
         <div className={clsx("pt-4 pb-6 min-h-[220px] md:h-[220px]")}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-full">
             {shouldShowImage && (
-              <div className="relative h-48 md:h-full overflow-hidden rounded-md">
+              <div className="relative h-48 md:h-full overflow-hidden rounded-md aspect-[2/1]">
                 <Image
                   src={imageSrc}
                   alt={title}
@@ -65,7 +65,7 @@ export default function EventCard({
             {!shouldShowImage && (
               <div>
                 <div
-                  className="w-full h-48 md:h-full flex items-center justify-center bg-stone-700 rounded-md "
+                  className="w-full h-48 md:h-full flex items-center justify-center bg-stone-700 rounded-md  "
                   style={{
                     backgroundImage: "url('/images/worms.png')",
                     backgroundRepeat: "repeat",
@@ -79,7 +79,7 @@ export default function EventCard({
                       alt={"Event image coming soon"}
                       width={48}
                       height={48}
-                      className="mx-auto mb-2 opacity-70"
+                      className="mx-auto mb-2 opacity-70 "
                     />
                     <div className="text-stone-400 font-medium">
                       Details coming soon
@@ -97,11 +97,11 @@ export default function EventCard({
                   </span>
                 )}
               </h3>
-              <p className="text-gray-400 mb-3">
+              <p className="text-gray-400 mb-3 text-sm">
                 {dateString} • {location}
               </p>
               {artists && (
-                <div className="text-xs md:text-sm text-gray-400">
+                <div className="text-md md:text-lg text-gray-400 font-heading">
                   {artists.map(
                     (artist, index) => `${index > 0 ? " • " : ""}${artist}`
                   )}
