@@ -73,6 +73,7 @@ export default async function SuccessPage({
                 viewBox="0 0 100 100"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                id="successIcon"
               >
                 <circle
                   cx="50"
@@ -144,7 +145,7 @@ export default async function SuccessPage({
         </div>
       </InnerPage>
       <ClearCheckoutValues />
-      <CheckoutSuccessConfetti />
+      <CheckoutSuccessConfetti targetElementId={"successIcon"} />
     </OuterPage>
   );
 }

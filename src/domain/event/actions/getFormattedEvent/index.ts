@@ -34,6 +34,7 @@ export const getFormattedEvent = (event: PrismicEventDocument) => {
                 alt: event.data.venue.data.venue_logo.alt,
               }
             : null,
+          mapLocationUrl: event.data.venue.data.map_location_url.url,
         }
       : null,
     colour: event.data.colour,

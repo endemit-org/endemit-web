@@ -1,5 +1,5 @@
-import countryConfig from "@/config/countries.config";
 import SelectInput from "@/components/form/SelectInput";
+import { getCountries } from "@/domain/checkout/actions";
 
 interface Props {
   name: string;
@@ -19,7 +19,7 @@ export default function CountrySelect({
   required = false,
 }: Props) {
   // Sort countries by orderPriority (descending) and then by name (ascending)
-  const sortedCountries = Object.values(countryConfig)
+  const sortedCountries = Object.values(getCountries())
     .sort((a, b) => {
       if (a.orderPriority !== b.orderPriority) {
         return (b.orderPriority ?? 0) - (a.orderPriority ?? 0);

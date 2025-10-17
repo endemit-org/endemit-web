@@ -2,7 +2,7 @@ import {
   isProductSellable,
   isProductSellableByCutoffDate,
 } from "@/domain/product/businessLogic";
-import { createSlug, ensureDateType } from "@/lib/util";
+import { ensureDateType } from "@/lib/util";
 import Link from "next/link";
 import Image from "next/image";
 import { formatDateTime, formatDecimalPrice } from "@/lib/formatting";
@@ -11,6 +11,7 @@ import shippingService from "@/services/shipping";
 import { CartItem } from "@/types/cart";
 import { Country } from "@/types/country";
 import { ReactNode } from "react";
+import { getProductLink } from "@/domain/product/actions";
 
 type Props = {
   item: CartItem;
@@ -30,7 +31,7 @@ export default function CheckoutItem({
   editable = false,
 }: Props) {
   const isSellableObject = isProductSellable(item, country);
-  const productLink = `/store/${createSlug(item.category)}/${item.uid}`;
+  const productLink = getProductLink(item.uid, item.category);
 
   return (
     <div

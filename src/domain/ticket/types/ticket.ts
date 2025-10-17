@@ -19,7 +19,12 @@ export type TicketEmailData = Pick<
   | "ticketPayerEmail"
   | "qrContent"
   | "ticketHash"
->;
+> & {
+  eventCoverImageUrl: string;
+  eventDate: Date;
+  mapUrl: string;
+  address: string;
+};
 
 export enum TicketQueueEvent {
   CREATE_TICKET = "create-ticket",

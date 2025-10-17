@@ -1,5 +1,5 @@
 import { Country } from "@/types/country";
-import countryConfig from "@/config/countries.config";
+import { getCountries, getCountry } from "@/domain/checkout/actions";
 
 class ShippingService {
   calculateShippingCost(country: Country, weightInGrams: number) {
@@ -7,7 +7,7 @@ class ShippingService {
       throw new Error("Weight must be greater than 0");
     }
 
-    const countryData = countryConfig[country];
+    const countryData = getCountry(country);
 
     if (!countryData) {
       throw new Error(`Country ${country} not found in configuration`);
@@ -25,17 +25,17 @@ class ShippingService {
 
     return {
       cost: weightRange.cost,
-      country: countryConfig[country],
+      country: getCountry(country),
       weightClass: weightRange.maxGrams,
     };
   }
 
   getAvailableCountries(): Country[] {
-    return Object.keys(countryConfig) as Country[];
+    return Object.keys(getCountries()) as Country[];
   }
 
   getCountryDetails(country: Country) {
-    return countryConfig[country];
+    return getCountry(country);
   }
 }
 

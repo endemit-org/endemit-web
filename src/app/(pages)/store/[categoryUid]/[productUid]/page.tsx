@@ -101,16 +101,25 @@ export default async function ProductPage({
       />
 
       <InnerPage>
-        {/* Image gallery */}
-
+        <div
+          className={
+            "absolute w-full blur-xl inset h-full top-0 mix-blend-multiply opacity-50"
+          }
+          style={{
+            backgroundImage: `url('${product.images[0]?.src}')`,
+            backgroundRepeat: "repeat",
+            backgroundBlendMode: "color-burn",
+            backgroundSize: "1500px",
+          }}
+        ></div>
         <ProductStatusTag
           status={product.status}
-          className={"translate-y-4 translate-x-4"}
+          className={"translate-y-4 translate-x-4 relative"}
         />
 
         <ImageGallery images={product.images} altFallbackText={product.name} />
 
-        <div className={"lg:flex mt-12 lg:mt-8"}>
+        <div className={"lg:flex mt-12 lg:mt-8 relative"}>
           <div
             className={"lg:border-r lg:border-neutral-500 lg:pr-20 lg:w-2/3"}
           >

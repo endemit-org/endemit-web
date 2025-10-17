@@ -2,12 +2,12 @@ import Input from "@/components/form/Input";
 import CountrySelect from "@/components/form/CountrySelect";
 import CheckboxInput from "@/components/form/CheckboxInput";
 import Link from "next/link";
-import countriesConfig from "@/config/countries.config";
 import { CartItem } from "@/types/cart";
 import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import CheckoutTicketForm from "@/components/checkout/CheckoutTicketForm";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";
 import { isProductTicket } from "@/domain/product/businessLogic";
+import { getCountry } from "@/domain/checkout/actions";
 
 interface CheckoutFormProps {
   formData: CheckoutFormData;
@@ -63,7 +63,7 @@ export default function CheckoutCustomerForm({
   validateForm,
   validationTriggered,
 }: CheckoutFormProps) {
-  const destinationCountry = countriesConfig[formData.country];
+  const destinationCountry = getCountry(formData.country);
   const includesTickets = includesTicketProducts(items);
   const ticketItems = items.filter(item => isProductTicket(item));
 

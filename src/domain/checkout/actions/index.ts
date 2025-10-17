@@ -10,3 +10,5 @@ export * from "./createProductLineItems";
 export * from "./createCheckoutDescription";
 export * from "./parseItemsForPayment";
 export * from "./validateCheckoutRequest";
+export * from "./getCountry";
+export * from "./getCountries";
