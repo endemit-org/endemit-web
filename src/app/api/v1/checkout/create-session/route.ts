@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
       orderItems: checkoutItems.map(checkoutItem =>
-        transformToProductInOrder(checkoutItem)
+        transformToProductInOrder(checkoutItem, complementaryTicketData)
       ),
     });
 

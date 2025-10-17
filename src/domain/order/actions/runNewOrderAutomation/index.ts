@@ -28,7 +28,6 @@ export const runNewOrderAutomation = inngest.createFunction(
           );
         }
 
-        console.log(`Order email sent: ${order.id}`);
         return result;
       } catch (error) {
         // Detect rate limit errors

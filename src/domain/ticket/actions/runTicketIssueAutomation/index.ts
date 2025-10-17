@@ -1,6 +1,7 @@
 import { inngest } from "@/services/inngest";
 import {
   TicketCreationData,
+  TicketPayload,
   TicketQueueEvent,
 } from "@/domain/ticket/types/ticket";
 import {
@@ -12,9 +13,8 @@ import {
 } from "@/domain/ticket/actions";
 import { sendTicketEmail } from "@/domain/email/actions";
 import { notifyOnNewTicketIssue } from "@/domain/notification/actions";
-import { transformPriceFromStripe } from "@/services/stripe/util";
 import { formatEventDateAndTime, formatPrice } from "@/lib/formatting";
-import { fetchEventFromCms } from "@/domain/cms/actions";
+import { fetchEventFromCmsById } from "@/domain/cms/actions";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
 
 export const runTicketIssueAutomation = inngest.createFunction(
@@ -34,37 +34,34 @@ export const runTicketIssueAutomation = inngest.createFunction(
     const ticketSecurityData = await step.run(
       "generate-ticket-hash",
       async () => {
-        const hash = generateSecureHash({
+        const shortId = await generateShortId();
+        const payLoad: TicketPayload = {
           eventId,
           eventName,
           ticketHolderName,
           ticketPayerEmail,
           orderId,
-        });
+          price,
+          shortId,
+        };
 
-        const qrData = generateQrContent(hash, {
-          eventId,
-          eventName,
-          ticketHolderName,
-          ticketPayerEmail,
-          orderId,
-        });
+        const hash = generateSecureHash(payLoad);
+        const qrData = generateQrContent(hash, payLoad);
 
         if (!hash || !qrData) {
           throw new Error("Failed to generate ticket security data");
         }
 
-        return { ticketHash: hash, qrContent: qrData };
+        return { ticketHash: hash, qrContent: qrData, shortId };
       }
     );
 
     const ticketTransaction = await step.run("create-ticket-db", async () => {
-      const shortId = await generateShortId();
       const created = await createTicketTransaction({
         eventId,
-        shortId,
+        shortId: ticketSecurityData.shortId,
         eventName,
-        price: transformPriceFromStripe(price),
+        price,
         ticketHolderName,
         ticketPayerEmail,
         ticketHash: ticketSecurityData.ticketHash,
@@ -82,7 +79,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
 
     const ticketImage = await step.run("create-ticket-image", async () => {
       const issuedTicket = ticketTransaction.ticket;
-      const event = await fetchEventFromCms(issuedTicket.eventId);
+      const event = await fetchEventFromCmsById(issuedTicket.eventId);
 
       if (
         !event?.coverImage?.src ||

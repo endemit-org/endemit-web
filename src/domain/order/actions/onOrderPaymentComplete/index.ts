@@ -3,24 +3,29 @@ import {
   queueNewOrderAutomation,
   updateOrderStatusPaid,
 } from "@/domain/order/actions";
-import {
-  getRelatedEventFromTicket,
-  getTicketHoldersForTicket,
-  queueTicketIssueAutomation,
-} from "@/domain/ticket/actions";
+import { queueTicketIssueAutomation } from "@/domain/ticket/actions";
+import { fetchEventFromCmsById } from "@/domain/cms/actions";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
   const order = await updateOrderStatusPaid(paymentSessionId);
 
   await queueNewOrderAutomation({ orderId: order.id });
-
   const ticketItems = getTicketsFromOrder(order);
 
   if (ticketItems) {
-    ticketItems.forEach(ticketItem => {
-      const ticketHolders = getTicketHoldersForTicket(ticketItem, order.email);
-      const eventData = getRelatedEventFromTicket(ticketItem);
+    for (const ticketItem of ticketItems) {
+      const ticketHolders = ticketItem.metadata?.ticketHolders as string[];
+      const relatedEvent = ticketItem.relatedEvent;
 
+      if (!relatedEvent) {
+        console.error("Missing related event for ticket item", {
+          paymentSessionId,
+          ticketItem,
+        });
+        return;
+      }
+
+      const eventData = await fetchEventFromCmsById(relatedEvent);
       if (!ticketHolders || !eventData) {
         console.error("Missing ticket holders or event data", {
           paymentSessionId,
@@ -33,21 +38,18 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
       ticketHolders.forEach(ticketHolderName => {
         queueTicketIssueAutomation({
           eventId: eventData.id,
-          eventName: eventData.title,
+          eventName: eventData.name,
           ticketHolderName,
           ticketPayerEmail: order.email,
-          price: ticketItem.price_data?.unit_amount ?? 0,
+          price: ticketItem.price,
           orderId: order.id,
           metadata: {
-            productName: ticketItem.price_data?.product_data?.name ?? "Default",
+            productName: ticketItem.name ?? "Default",
+            eventUid: eventData.uid,
           },
         });
       });
-    });
-
-    // get order, get items, create tickets, send emails, send discord, add to airtable?
-    // TODO
-    // Ticket creation
+    }
   }
 
   return order;
