@@ -31,41 +31,38 @@ export const runTicketIssueAutomation = inngest.createFunction(
       metadata,
     } = event.data as TicketCreationData;
 
-    const ticketSecurityData = await step.run(
-      "generate-ticket-hash",
-      async () => {
-        const shortId = await generateShortId();
-        const payLoad: TicketPayload = {
-          eventId,
-          eventName,
-          ticketHolderName,
-          ticketPayerEmail,
-          orderId,
-          price,
-          shortId,
-        };
+    const ticketBaseData = await step.run("generate-ticket-hash", async () => {
+      const shortId = await generateShortId();
+      const payLoad: TicketPayload = {
+        eventId,
+        eventName,
+        ticketHolderName,
+        ticketPayerEmail,
+        orderId,
+        price,
+        shortId,
+      };
 
-        const hash = generateSecureHash(payLoad);
-        const qrData = generateQrContent(hash, payLoad);
+      const hash = generateSecureHash(payLoad);
+      const qrData = generateQrContent(hash, payLoad);
 
-        if (!hash || !qrData) {
-          throw new Error("Failed to generate ticket security data");
-        }
-
-        return { ticketHash: hash, qrContent: qrData, shortId };
+      if (!hash || !qrData) {
+        throw new Error("Failed to generate ticket security data");
       }
-    );
+
+      return { ticketHash: hash, qrContent: qrData, shortId };
+    });
 
     const ticketTransaction = await step.run("create-ticket-db", async () => {
       const created = await createTicketTransaction({
         eventId,
-        shortId: ticketSecurityData.shortId,
+        shortId: ticketBaseData.shortId,
         eventName,
         price,
         ticketHolderName,
         ticketPayerEmail,
-        ticketHash: ticketSecurityData.ticketHash,
-        qrContent: ticketSecurityData.qrContent,
+        ticketHash: ticketBaseData.ticketHash,
+        qrContent: ticketBaseData.qrContent,
         orderId,
         metadata,
       });
@@ -77,48 +74,71 @@ export const runTicketIssueAutomation = inngest.createFunction(
       return created;
     });
 
-    const ticketImage = await step.run("create-ticket-image", async () => {
-      const issuedTicket = ticketTransaction.ticket;
-      const event = await fetchEventFromCmsById(issuedTicket.eventId);
+    const ticketImageWithEvent = await step.run(
+      "create-ticket-image",
+      async () => {
+        const issuedTicket = ticketTransaction.ticket;
+        const event = await fetchEventFromCmsById(eventId);
 
-      if (
-        !event?.coverImage?.src ||
-        !event?.date_start ||
-        !event?.venue ||
-        !event?.artists ||
-        event?.artists?.length === 0
-      ) {
-        throw new Error("Missing parameters for ticket image generation");
+        if (
+          !ticketBaseData ||
+          !event?.coverImage?.src ||
+          !event?.date_start ||
+          !event?.venue ||
+          !event?.artists ||
+          event?.artists?.length === 0
+        ) {
+          throw new Error("Missing parameters for ticket image generation");
+        }
+
+        const image = await generateTicketImage({
+          shortId: issuedTicket.shortId,
+          hashId: ticketBaseData.ticketHash,
+          qrData: JSON.stringify(ticketBaseData.qrContent),
+          eventName: eventName,
+          eventDetails: event.venue.name ?? "",
+          eventDate: formatEventDateAndTime(event.date_start),
+          attendeeName: ticketHolderName,
+          attendeeEmail: ticketPayerEmail,
+          artists: splitArtistsIntoLines(
+            event.artists.map(artist => artist.name)
+          ),
+          price: formatPrice(Number(issuedTicket.price)),
+          coverImageUrl: event.coverImage.src,
+        });
+
+        if (!image) {
+          throw new Error("Failed to generate QR image");
+        }
+
+        return { image, event };
       }
-
-      const image = await generateTicketImage({
-        shortId: issuedTicket.shortId,
-        hashId: ticketSecurityData.ticketHash,
-        qrData: JSON.stringify(ticketSecurityData.qrContent),
-        eventName: eventName,
-        eventDetails: event.venue.name ?? "",
-        eventDate: formatEventDateAndTime(event.date_start),
-        attendeeName: ticketHolderName,
-        attendeeEmail: ticketPayerEmail,
-        artists: splitArtistsIntoLines(
-          event.artists.map(artist => artist.name)
-        ),
-        price: formatPrice(Number(issuedTicket.price)),
-        coverImageUrl: event.coverImage.src,
-      });
-
-      if (!image) {
-        throw new Error("Failed to generate QR image");
-      }
-
-      return image;
-    });
+    );
 
     await step.run("send-ticket-email", async () => {
-      const issuedTicket = ticketTransaction.ticket;
-
       try {
-        const result = await sendTicketEmail(issuedTicket, ticketImage);
+        const issuedTicket = ticketTransaction.ticket;
+
+        if (!ticketImageWithEvent.event.date_start) {
+          throw new Error("Event date is missing for ticket email");
+        }
+
+        const result = await sendTicketEmail(
+          {
+            id: issuedTicket.id,
+            eventName: issuedTicket.eventName,
+            ticketHolderName: issuedTicket.ticketHolderName,
+            ticketPayerEmail: issuedTicket.ticketPayerEmail,
+            qrContent: issuedTicket.qrContent,
+            ticketHash: issuedTicket.ticketHash,
+            eventCoverImageUrl:
+              ticketImageWithEvent.event.coverImage?.src || "",
+            eventDate: new Date(ticketImageWithEvent.event.date_start),
+            mapUrl: ticketImageWithEvent.event.venue?.mapLocationUrl || "",
+            address: ticketImageWithEvent.event.venue?.address || "",
+          },
+          ticketImageWithEvent.image
+        );
 
         if (!result || result.error) {
           throw new Error(
@@ -135,13 +155,13 @@ export const runTicketIssueAutomation = inngest.createFunction(
             error.message.includes("rate limit")
           ) {
             throw new Error(
-              `Rate limit hit when sending email for ticket ${issuedTicket.id}`
+              `Rate limit hit when sending email for ticket ${ticketTransaction.ticket.id}`
             );
           }
         }
 
         throw new Error(
-          `Email send failed for ticket ${issuedTicket.id}: ${error}`
+          `Email send failed for ticket ${ticketTransaction.ticket.id}: ${error}`
         );
       }
     });

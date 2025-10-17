@@ -6,3 +6,7 @@ export * from "./generateTicketImage";
 export * from "./queueTicketIssueAutomation";
 export * from "./runTicketIssueAutomation";
 export * from "./generateShortId";
+export * from "./getTicketsSoldForEvent";
+export * from "./getTicketsScannedForEvent";
+export * from "./getTicketSummaryForEvent";
+export * from "./scanTicketById";

@@ -45,7 +45,7 @@ export default function ImageGallery({
   };
 
   return (
-    <div className="mx-auto group select-none">
+    <div className="mx-auto group select-none relative">
       {/* Desktop Grid */}
       <div className="hidden lg:grid lg:grid-cols-3 lg:gap-8">
         <Image

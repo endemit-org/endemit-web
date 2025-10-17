@@ -26,7 +26,7 @@ export default function RootLayout({
           hideCartOnPath={["/store/checkout"]}
         />
 
-        <div className="lg:ml-72 relative bg-neutral-900 min-h-screen lg:my-12 lg:rounded-r-xl lg:border-y-2 lg:border-r-2 lg:border-neutral-800 p-4 lg:p-12 max-lg:my-20">
+        <div className="lg:ml-72 relative bg-neutral-900 min-h-screen lg:mt-12 lg:mb-20 lg:rounded-r-xl lg:border-y-2 lg:border-r-2 lg:border-neutral-800 p-4 lg:p-12 max-lg:mb-36 max-lg:mt-14 max-lg:py-12">
           {children}
           <SiteFooter />
         </div>

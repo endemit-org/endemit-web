@@ -5,4 +5,5 @@ export * from "./getProductVariantId";
 export * from "./getProductVariantName";
 export * from "./getStatusTagStyle";
 export * from "./getVisibleProducts";
+export * from "./getProductLink";
 export * from "./transformToProductInOrder";
