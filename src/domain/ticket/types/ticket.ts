@@ -1,11 +1,14 @@
 import { Ticket } from "@prisma/client";
 
 export interface TicketPayload {
+  shortId: string;
   eventId: string;
   eventName: string;
   ticketHolderName: string;
   ticketPayerEmail: string;
   orderId: string;
+  price: number;
+  salt?: string;
 }
 
 export type TicketEmailData = Pick<

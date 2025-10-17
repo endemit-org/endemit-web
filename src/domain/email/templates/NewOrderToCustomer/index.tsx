@@ -13,10 +13,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
   if (!order.items) {
     return null;
   }
-  const orderItemsObject = order.items as unknown as {
-    items: ProductInOrder[];
-  };
-  const orderItems = orderItemsObject.items;
+  const orderItems = order.items as unknown as ProductInOrder[];
 
   return (
     <MasterTemplate>

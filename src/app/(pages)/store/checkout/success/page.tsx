@@ -45,9 +45,7 @@ export default async function SuccessPage({
     orderHasTickets &&
     tickets
       .map(ticket => {
-        const holderStringObject =
-          ticket.price_data?.product_data?.metadata?.ticketHolders;
-        return holderStringObject ? JSON.parse(holderStringObject) : "Unknown";
+        return ticket.metadata?.ticketholders;
       })
       .flat();
 

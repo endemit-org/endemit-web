@@ -3,9 +3,27 @@ import crypto from "crypto";
 
 export const generateSecureHash = (ticketPayload: TicketPayload) => {
   const secret = process.env.TICKET_SECRET;
-  if (!secret) throw new Error("TICKET_SECRET is not set");
+  const splitConfig = process.env.TICKET_VERIFICATION_HASH_SPLIT_CONFIG;
 
-  const data = JSON.stringify(ticketPayload);
+  if (!secret || !splitConfig)
+    throw new Error("Missing security parameters on generateSecureHash");
 
-  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+  const ticketSalt = crypto.randomBytes(32).toString("hex");
+
+  const newPayload = {
+    ...ticketPayload,
+    salt: ticketSalt,
+  };
+
+  const data = JSON.stringify(newPayload);
+  const hash = crypto.createHmac("sha256", secret).update(data).digest("hex");
+
+  const [frontChars, backChars] = splitConfig.split(",").map(Number);
+
+  const saltFront = ticketSalt.slice(0, frontChars);
+  const saltBack = ticketSalt.slice(-backChars);
+
+  const combinedHash = saltFront + hash + saltBack;
+
+  return combinedHash;
 };

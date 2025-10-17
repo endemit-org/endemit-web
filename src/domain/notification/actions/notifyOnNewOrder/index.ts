@@ -13,10 +13,7 @@ export async function notifyOnNewOrder(order: Order) {
     if (!order.items) {
       return null;
     }
-    const orderItemsObject = order.items as unknown as {
-      items: ProductInOrder[];
-    };
-    const orderItems = orderItemsObject.items;
+    const orderItems = order.items as unknown as ProductInOrder[];
 
     const totalOrderAmount = formatDecimalPrice(Number(order.totalAmount));
 

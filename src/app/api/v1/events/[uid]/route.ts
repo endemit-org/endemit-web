@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchEventFromCms } from "@/domain/cms/actions";
+import { fetchEventFromCmsByUid } from "@/domain/cms/actions";
 
 export async function GET(
   request: Request,
@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { uid } = await params;
 
-    const product = await fetchEventFromCms(uid);
+    const product = await fetchEventFromCmsByUid(uid);
 
     return NextResponse.json(product, { status: 200 });
   } catch (error) {
