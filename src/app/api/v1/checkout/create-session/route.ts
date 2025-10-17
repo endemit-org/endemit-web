@@ -5,6 +5,7 @@ import { createOrder } from "@/domain/order/actions";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions";
 import { createCheckoutSession } from "@/domain/checkout/actions/createCheckoutSession";
 import { createCheckoutSessionLineItems } from "@/domain/checkout/actions/createCheckoutSessionLineItems";
+import { transformToProductInOrder } from "@/domain/product/actions";
 
 export async function POST(request: Request) {
   try {
@@ -52,8 +53,10 @@ export async function POST(request: Request) {
       subtotal,
       shippingCost,
       shippingRequired: shouldHaveShippingAddress,
-      shippingAddress: shippingAddress,
-      checkoutItems: lineItems,
+      shippingAddress,
+      orderItems: checkoutItems.map(checkoutItem =>
+        transformToProductInOrder(checkoutItem)
+      ),
     });
 
     if (subscribeToNewsletter) {

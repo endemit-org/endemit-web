@@ -1,9 +1,8 @@
 import { DiscordConnector } from "@/services/discord";
 import { Order } from "@prisma/client";
 import { formatDecimalPrice } from "@/lib/formatting";
-import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
-import { transformPriceFromStripe } from "@/services/stripe/util";
 import { notificationFooter } from "@/domain/notification/util";
+import { ProductInOrder } from "@/domain/order/types/order";
 
 const discordOrders = new DiscordConnector(
   process.env.DISCORD_ORDERS_WEBHOOK ?? ""
@@ -11,9 +10,13 @@ const discordOrders = new DiscordConnector(
 
 export async function notifyOnNewOrder(order: Order) {
   try {
-    const orderItems = JSON.parse(
-      order.items as string
-    ) as CustomStripeLineItem[];
+    if (!order.items) {
+      return null;
+    }
+    const orderItemsObject = order.items as unknown as {
+      items: ProductInOrder[];
+    };
+    const orderItems = orderItemsObject.items;
 
     const totalOrderAmount = formatDecimalPrice(Number(order.totalAmount));
 
@@ -29,8 +32,8 @@ export async function notifyOnNewOrder(order: Order) {
         },
         ...orderItems.map(item => {
           return {
-            name: item.price_data?.product_data?.name ?? "Product",
-            value: `Quantity: \`${item.quantity} * ${formatDecimalPrice(transformPriceFromStripe(item.price_data?.unit_amount || 0))}\`\nTotal: \`${formatDecimalPrice(transformPriceFromStripe((item.price_data?.unit_amount || 0) * (item.quantity || 1)))}\``,
+            name: item.name ?? "Product",
+            value: `Quantity: \`${item.quantity} * ${formatDecimalPrice(item.price || 0)}\`\nTotal: \`${formatDecimalPrice((item.price || 0) * (item.quantity || 1))}\``,
             inline: false,
           };
         }),

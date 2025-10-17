@@ -10,8 +10,9 @@ export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
   const categories = categoriesWithSlugs;
+
   return categories.map(category => ({
-    categoryId: category.slug,
+    categoryUid: category.slug,
   }));
 }
 
@@ -19,12 +20,12 @@ export default async function CategoryPage({
   params,
 }: {
   params: Promise<{
-    categoryId: string;
+    categoryUid: string;
   }>;
 }) {
-  const { categoryId } = await params;
+  const { categoryUid } = await params;
 
-  const categoryName = categoryFromSlug(categoryId);
+  const categoryName = categoryFromSlug(categoryUid);
 
   if (!categoryName) {
     notFound();
@@ -43,7 +44,7 @@ export default async function CategoryPage({
         segments={[
           { label: "Endemit", path: "" },
           { label: "Store", path: "store" },
-          { label: categoryName, path: categoryId },
+          { label: categoryName, path: categoryUid },
         ]}
       />
 

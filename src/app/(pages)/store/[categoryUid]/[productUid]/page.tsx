@@ -73,12 +73,12 @@ export default async function ProductPage({
   params,
 }: {
   params: Promise<{
-    productId: string;
+    productUid: string;
   }>;
 }) {
-  const { productId } = await params;
+  const { productUid } = await params;
 
-  const product = await fetchProductFromCms(productId);
+  const product = await fetchProductFromCms(productUid);
 
   if (!product) {
     notFound();

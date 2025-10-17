@@ -3,19 +3,24 @@ import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text } from "@react-email/components";
 import { formatDecimalPrice, formatPrice } from "@/lib/formatting";
-import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
+import { ProductInOrder } from "@/domain/order/types/order";
 
 interface Props {
   order: Order;
 }
 
 function NewOrderToCustomerTemplate({ order }: Props) {
-  const orderItems = JSON.parse(
-    order.items as string
-  ) as CustomStripeLineItem[];
+  if (!order.items) {
+    return null;
+  }
+  const orderItemsObject = order.items as unknown as {
+    items: ProductInOrder[];
+  };
+  const orderItems = orderItemsObject.items;
 
   return (
     <MasterTemplate>
+      ß
       <div>
         <h1>
           Your Order for {order.id}{" "}
@@ -62,13 +67,10 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                   <tr key={`order-item-${index}`}>
                     <td className="border-b border-gray-200 py-2">
                       <Img
-                        alt={item.price_data?.product_data?.name}
+                        alt={item.name}
                         className="rounded-lg object-cover"
                         height={110}
-                        src={
-                          item.price_data?.product_data?.images &&
-                          item.price_data?.product_data?.images[0]
-                        }
+                        src={item.image.src}
                       />
                     </td>
                     <td
@@ -76,7 +78,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                       className="border-b border-gray-200 py-2"
                       colSpan={6}
                     >
-                      <Text>{item.price_data?.product_data?.name}</Text>
+                      <Text>{item.name}</Text>
                     </td>
                     <td
                       align="center"
@@ -88,22 +90,13 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                       align="center"
                       className="border-b border-gray-200 py-2"
                     >
-                      <Text>
-                        {item.price_data?.unit_amount &&
-                          formatPrice(item.price_data?.unit_amount)}
-                      </Text>
+                      <Text>{formatPrice(item.price)}</Text>
                     </td>
                     <td
                       align="center"
                       className="border-b border-gray-200 py-2"
                     >
-                      <Text>
-                        {item.price_data?.unit_amount &&
-                          item.quantity &&
-                          formatPrice(
-                            item.quantity * item.price_data?.unit_amount
-                          )}
-                      </Text>
+                      <Text>{formatPrice(item.quantity * item.price)}</Text>
                     </td>
                   </tr>
                 );

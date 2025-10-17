@@ -68,9 +68,9 @@ export const runTicketIssueAutomation = inngest.createFunction(
         ticketHolderName,
         ticketPayerEmail,
         ticketHash: ticketSecurityData.ticketHash,
-        qrContent: JSON.stringify(ticketSecurityData.qrContent),
+        qrContent: ticketSecurityData.qrContent,
         orderId,
-        metadata: JSON.stringify(metadata),
+        metadata,
       });
 
       if (!created) {
