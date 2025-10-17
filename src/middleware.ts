@@ -45,8 +45,8 @@ function handleCORS(request: NextRequest) {
 
 function handleStagingAuth(request: NextRequest) {
   const isStaging =
-    process.env.CURRENT_ENV !== "production" &&
-    process.env.CURRENT_ENV !== "development";
+    process.env.NEXT_PUBLIC_CURRENT_ENV !== "production" &&
+    process.env.NEXT_PUBLIC_CURRENT_ENV !== "development";
 
   const isStagingLoginPage = request.nextUrl.pathname === STAGING_LOGIN_PATH;
 

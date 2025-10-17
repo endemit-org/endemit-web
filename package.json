@@ -14,7 +14,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "slicemachine": "start-slicemachine",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "env-init": "vercel login && vercel link --project=prj_vS6KCdGiPdIALZpEF5ZOlnGXperd --scope=team_PkvMkqbUl2Dicg1v7EZCAVue --yes && pnpm env-dev",
+    "env-dev": "vercel env pull --environment=development",
+    "env-stage": "vercel env pull --environment=preview",
+    "env-prod": "vercel env pull --environment=production"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
