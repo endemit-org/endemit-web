@@ -9,12 +9,12 @@ export default function RootLayout({
   return (
     <body
       className="m-auto overflow-y-scroll bg-black "
-      // style={{
-      //   backgroundImage: "url('/images/endemit-pattern.svg')",
-      //   backgroundSize: "110px",
-      // }}
+      style={{
+        backgroundImage: "url('/images/endemit-pattern.svg')",
+        backgroundSize: "110px",
+      }}
     >
-      <div className="max-w-8xl m-auto opacity-30">
+      <div className="max-w-8xl m-auto">
         <Sidebar
           navigationItems={[
             { label: "Main", href: "/" },
