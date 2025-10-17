@@ -45,8 +45,8 @@ export const createCheckoutSession = async ({
     customer_email: email,
     mode: "payment",
     payment_method_types: ["card"],
-    success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/store/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/store/checkout/canceled?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${process.env.NEXT_PUBLIC_BASE_WEB_URL}/store/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_BASE_WEB_URL}/store/checkout/canceled?session_id={CHECKOUT_SESSION_ID}`,
     metadata,
     discounts: [
       {

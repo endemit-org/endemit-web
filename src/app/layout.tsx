@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
 import { Teko, Space_Grotesk } from "next/font/google";
+import EnvironmentIndicator from "@/components/EnvironmentIndicator";
 
 const headlineFont = Teko({
   subsets: ["latin", "latin-ext"],
@@ -97,6 +98,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
       <Analytics />
+      <EnvironmentIndicator />
       <Providers>{children}</Providers>
     </html>
   );
