@@ -1,4 +1,4 @@
-import { ProductStatus } from "@/types/product";
+import { ProductStatus } from "@/domain/product/types/product";
 import clsx from "clsx";
 
 import { getStatusTagStyle } from "@/domain/product/actions";

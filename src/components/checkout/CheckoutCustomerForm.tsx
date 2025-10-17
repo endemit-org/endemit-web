@@ -4,7 +4,10 @@ import CheckboxInput from "@/components/form/CheckboxInput";
 import Link from "next/link";
 import countriesConfig from "@/config/countries.config";
 import { CartItem } from "@/types/cart";
-import { CheckoutFormData } from "@/types/checkout";
+import { CheckoutFormData } from "@/domain/checkout/types/checkout";
+import CheckoutTicketForm from "@/components/checkout/CheckoutTicketForm";
+import { includesTicketProducts } from "@/domain/checkout/businessRules";
+import { isProductTicket } from "@/domain/product/businessLogic";
 
 interface CheckoutFormProps {
   formData: CheckoutFormData;
@@ -17,69 +20,155 @@ interface CheckoutFormProps {
     | undefined
   >;
   onFormChange: (name: string, value: string | boolean) => void;
+  onTicketFormChange: (name: string, value: string) => void;
   requiresShippingAddress: boolean;
   includesNonRefundable: boolean;
   showSubscribeToNewsletter: boolean;
+  validateForm: (type: "manual" | "auto") => void;
   items: CartItem[];
+  validationTriggered: boolean;
+}
+
+function CheckoutFormSection({
+  title,
+  children,
+  description,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-neutral-600 pb-8 border-dotted">
+      <h2 className=" font-medium mb-3 text-2xl text-neutral-200">{title}</h2>
+      {description && (
+        <div className=" font-normal mb-3 text-sm text-neutral-400">
+          {description}
+        </div>
+      )}
+      <div className="space-y-3">{children}</div>
+    </div>
+  );
 }
 
 export default function CheckoutCustomerForm({
+  items,
   formData,
   errorMessages,
   onFormChange,
+  onTicketFormChange,
   requiresShippingAddress,
   includesNonRefundable,
   showSubscribeToNewsletter,
+  validateForm,
+  validationTriggered,
 }: CheckoutFormProps) {
   const destinationCountry = countriesConfig[formData.country];
+  const includesTickets = includesTicketProducts(items);
+  const ticketItems = items.filter(item => isProductTicket(item));
+
+  const handleValidateForm = () => {
+    validateForm("manual");
+  };
 
   return (
-    <div className="space-y-3">
-      <div>
-        <div>Where should we send your order?</div>
-        <div className="bg-white">
-          <Input
-            name="email"
-            label="E-mail"
-            type="email"
-            value={formData.email}
-            onChange={onFormChange}
-            errorMessage={errorMessages.email as string}
-            required={true}
-          />
-          <Input
-            name="emailRepeat"
-            label="Repeat e-mail"
-            type="email"
-            value={formData.emailRepeat}
-            onChange={onFormChange}
-            errorMessage={errorMessages.emailRepeat as string}
-            required={true}
-          />
-        </div>
-      </div>
+    <div className="gap-y-8 flex flex-col">
+      <CheckoutFormSection
+        title={"Your contact information"}
+        description={`Ensure your email is correct as this is where you will receive your order
+          confirmation${includesTickets ? " and digital tickets" : ""}.`}
+      >
+        <Input
+          name="email"
+          label="E-mail"
+          type="email"
+          placeholder="jane@endemit.org"
+          value={formData.email}
+          onChange={onFormChange}
+          onEnter={handleValidateForm}
+          errorMessage={errorMessages.email as string}
+          required={true}
+          validationTriggered={validationTriggered}
+        />
+        <Input
+          name="emailRepeat"
+          label="Repeat e-mail"
+          type="email"
+          placeholder="jane@endemit.org"
+          value={formData.emailRepeat}
+          onChange={onFormChange}
+          onEnter={handleValidateForm}
+          errorMessage={errorMessages.emailRepeat as string}
+          required={true}
+          validationTriggered={validationTriggered}
+        />
+      </CheckoutFormSection>
+
+      {includesTickets && ticketItems.length > 0 && (
+        <CheckoutFormSection
+          title={"Ticket holder information"}
+          description={`As a backup for lost tickets or inability to scan at the event, please provide the name of each ticket holder:`}
+        >
+          {ticketItems.map(item => (
+            <div key={`ticket-data-${item.id}}`}>
+              {new Array(item.quantity).fill(0).map((_, index) => (
+                <CheckoutTicketForm
+                  key={`${item.id}-${index}`}
+                  index={index}
+                  item={item}
+                  formData={formData}
+                  errorMessages={errorMessages}
+                  onFormChange={onTicketFormChange}
+                  onEnter={handleValidateForm}
+                  validationTriggered={validationTriggered}
+                />
+              ))}
+            </div>
+          ))}
+        </CheckoutFormSection>
+      )}
 
       {requiresShippingAddress && (
-        <div>
-          <div>Where should we send your order?</div>
-          <div className="bg-white">
+        <CheckoutFormSection
+          title={"Shipping information"}
+          description={`Please provide your shipping address where we will send your order.`}
+        >
+          <Input
+            name="name"
+            label="Full Name"
+            type="text"
+            value={formData.name}
+            onChange={onFormChange}
+            onEnter={handleValidateForm}
+            errorMessage={errorMessages.name as string}
+            required={true}
+            placeholder="Jane Demit"
+            validationTriggered={validationTriggered}
+          />
+          <Input
+            name="address"
+            label="Address"
+            type="text"
+            value={formData.address}
+            onChange={onFormChange}
+            onEnter={handleValidateForm}
+            errorMessage={errorMessages.address as string}
+            required={true}
+            placeholder="Road to forever 42"
+            validationTriggered={validationTriggered}
+          />
+          <div className={"flex gap-x-4"}>
             <Input
-              name="name"
-              label="Full Name"
+              name="postalCode"
+              label="Postal Code"
               type="text"
-              value={formData.name}
+              value={formData.postalCode}
               onChange={onFormChange}
-              errorMessage={errorMessages.name as string}
+              onEnter={handleValidateForm}
+              errorMessage={errorMessages.postalCode as string}
               required={true}
-            />
-            <Input
-              name="address"
-              label="Address"
-              type="text"
-              value={formData.address}
-              onChange={onFormChange}
-              errorMessage={errorMessages.address as string}
-              required={true}
+              placeholder="2390"
+              validationTriggered={validationTriggered}
             />
             <Input
               name="city"
@@ -87,64 +176,111 @@ export default function CheckoutCustomerForm({
               type="text"
               value={formData.city}
               onChange={onFormChange}
+              onEnter={handleValidateForm}
               errorMessage={errorMessages.city as string}
               required={true}
+              placeholder="Ravne na Koroškem"
+              validationTriggered={validationTriggered}
             />
-            <Input
-              name="postalCode"
-              label="Postal Code"
-              type="text"
-              value={formData.postalCode}
-              onChange={onFormChange}
-              errorMessage={errorMessages.postalCode as string}
-              required={true}
-            />
-            <Input
-              name="phone"
-              label="Phone"
-              type="text"
-              value={formData.phone}
-              onChange={onFormChange}
-              errorMessage={errorMessages.phone as string}
-              required={true}
-              prefix={destinationCountry.callingCode as string}
-            />
-            <CountrySelect
-              name="country"
-              onChange={onFormChange}
-              value={formData.country}
-              errorMessage={errorMessages.country as string}
-              required={true}
-            />
-            Is your country not listed? Please{" "}
-            <Link href="mailto:endemit@endemit.org">contact us</Link>.
           </div>
-        </div>
+          <CountrySelect
+            name="country"
+            label="Country"
+            onChange={onFormChange}
+            value={formData.country}
+            errorMessage={errorMessages.country as string}
+            required={true}
+          />
+          <div className="text-neutral-400 text-sm">
+            Is your country not listed? Please{" "}
+            <Link href="mailto:endemit@endemit.org" className={"link"}>
+              contact us
+            </Link>
+            .
+          </div>
+
+          <Input
+            name="phone"
+            label="Phone"
+            type="text"
+            autoComplete="off"
+            placeholder="30 111 222"
+            value={formData.phone}
+            onChange={onFormChange}
+            onEnter={handleValidateForm}
+            errorMessage={errorMessages.phone as string}
+            required={true}
+            prefix={destinationCountry.callingCode as string}
+            validationTriggered={validationTriggered}
+          />
+          {formData.phone && !errorMessages.phone && (
+            <div className="text-neutral-400 text-sm">
+              We will reach you at {destinationCountry.callingCode}{" "}
+              {formData.phone}
+            </div>
+          )}
+        </CheckoutFormSection>
       )}
 
-      <div>
-        <CheckboxInput
-          value={formData.termsAndConditions}
-          errorMessage={errorMessages.termsAndConditions as string}
-          name="termsAndConditions"
-          onChange={onFormChange}
-          required={true}
-        />
-        {includesNonRefundable &&
-          "I understand that my order contains non-refundable digital items or tickets that happen."}
-      </div>
+      <CheckboxInput
+        errorMessage={errorMessages.termsAndConditions as string}
+        value={formData.termsAndConditions}
+        name="termsAndConditions"
+        onChange={onFormChange}
+        required={true}
+        validationTriggered={validationTriggered}
+      >
+        <div className={"flex flex-col gap-y-2 flex-1"}>
+          <div>
+            I confirm the order, accept and agree to the{" "}
+            <Link
+              target="_blank"
+              className="link"
+              href={"/terms-and-conditions"}
+            >
+              Terms and conditions
+            </Link>
+            ,{" "}
+            <Link target="_blank" className="link" href={"/privacy-policy"}>
+              Privacy policy
+            </Link>
+            , and{" "}
+            <Link
+              target="_blank"
+              className="link"
+              href={"/right-to-withdrawal"}
+            >
+              Right to withdrawal
+            </Link>
+            .
+          </div>
+          {includesNonRefundable && (
+            <div>
+              I understand and accept that my order contains non refundable
+              items as stated in{" "}
+              <Link
+                target="_blank"
+                className="link"
+                href={"/notice-on-purchase-of-digital-products"}
+              >
+                Notice on purchase of digital products
+              </Link>
+            </div>
+          )}
+        </div>
+      </CheckboxInput>
 
       {showSubscribeToNewsletter && (
-        <div>
-          <CheckboxInput
-            value={formData.subscribeToNewsletter}
-            name="subscribeToNewsletter"
-            onChange={onFormChange}
-            required={false}
-          />
-          I would like to receive the endemit newsletter with updates on new
-          events and offers.
-        </div>
+        <CheckboxInput
+          value={formData.subscribeToNewsletter}
+          name="subscribeToNewsletter"
+          onChange={onFormChange}
+          required={false}
+          validationTriggered={validationTriggered}
+        >
+          I would like to receive an occasional endemit newsletter with updates
+          on new events and offers.
+        </CheckboxInput>
       )}
     </div>
   );

@@ -1,8 +1,11 @@
-import { inngest } from "@/app/services/inngest";
+import { inngest } from "@/services/inngest";
 import { getOrderById } from "@/domain/order/actions";
 import assert from "node:assert";
 import { sendOrderEmail } from "@/domain/email/actions";
-import { OrderNotificationData, OrderQueueEvent } from "@/types/order";
+import {
+  OrderNotificationData,
+  OrderQueueEvent,
+} from "@/domain/order/types/order";
 import { notifyOnNewOrder } from "@/domain/notification/actions";
 
 export const runNewOrderAutomation = inngest.createFunction(

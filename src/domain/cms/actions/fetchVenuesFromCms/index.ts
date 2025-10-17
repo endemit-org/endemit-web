@@ -1,5 +1,5 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicVenueDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicVenueDocument } from "@/domain/cms/types/prismic";
 import { getFormattedVenue } from "@/domain/venue/actions";
 
 export const fetchVenuesFromCms = async ({
@@ -13,6 +13,10 @@ export const fetchVenuesFromCms = async ({
     pageSize,
     ...(filters && { filters }),
   })) as PrismicVenueDocument[];
+
+  if (!venues) {
+    return null;
+  }
 
   const venuesWithLocalType = venues.map(venue => getFormattedVenue(venue));
 

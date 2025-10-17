@@ -4,7 +4,7 @@ import IncrementalInput from "@/components/form/IncrementalInput";
 import { useState } from "react";
 import clsx from "clsx";
 import { useCartActions, useCartItems } from "@/stores/CartStore";
-import { Product } from "@/types/product";
+import { Product } from "@/domain/product/types/product";
 import { getVariantSingleProducts } from "@/domain/cms/actions";
 import {
   isProductConfigurable,
@@ -12,7 +12,6 @@ import {
 } from "@/domain/product/businessLogic";
 import Link from "next/link";
 import ActionButton from "@/components/ActionButton";
-import { useRouter } from "next/navigation";
 import { getProductsQtyInCart } from "@/domain/checkout/actions";
 
 interface Props {
@@ -24,7 +23,6 @@ interface Props {
 export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
   const { addItem } = useCartActions();
   const cartItems = useCartItems();
-  const router = useRouter();
   const [productEntity, setProductEntity] = useState<Product | undefined>(
     !isProductConfigurable(product) ? product : undefined
   );
@@ -61,10 +59,6 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
       addItem(productEntity, productQty);
       setShowCartStatus(true);
     }
-  };
-
-  const handleGoToCart = () => {
-    router.push("/store/checkout");
   };
 
   const handleVariantSelection = (product: Product) => {
@@ -162,7 +156,7 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
               cart!
             </div>
 
-            <ActionButton onClick={handleGoToCart}>
+            <ActionButton href={"/store/checkout"}>
               Checkout in cart
             </ActionButton>
           </div>

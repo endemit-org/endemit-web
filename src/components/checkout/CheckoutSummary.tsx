@@ -1,9 +1,10 @@
-import { formatPrice, formatWeight } from "@/lib/formatting";
+import { formatDecimalPrice, formatWeight } from "@/lib/formatting";
 import { Country } from "@/types/country";
 import countriesConfig from "@/config/countries.config";
 import Spinner from "@/components/Spinner";
 import { transformGramToKilogram } from "@/lib/util";
-import { DiscountDetails } from "@/types/checkout";
+import { DiscountDetails } from "@/domain/checkout/types/checkout";
+import clsx from "clsx";
 
 interface Props {
   subTotal: number;
@@ -15,7 +16,31 @@ interface Props {
   country: Country;
   loadingShippingCost: boolean;
   loadingPromoCode?: boolean;
-  totalItems: number;
+}
+
+function LineItem({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={clsx("flex justify-between mb-2", className)}>
+      <span>{label}</span>
+      <span>{children}</span>
+    </div>
+  );
+}
+
+function LineItemSpinner() {
+  return (
+    <span className={"text-neutral-400 gap-x-2 font-sm flex text-sm"}>
+      <Spinner /> Loading
+    </span>
+  );
 }
 
 export default function CheckoutSummary({
@@ -28,49 +53,59 @@ export default function CheckoutSummary({
   country,
   loadingShippingCost,
   loadingPromoCode,
-  totalItems,
 }: Props) {
   const destinationCountry = countriesConfig[country];
 
   return (
-    <>
-      <h3 className="text-lg font-semibold mb-3">Cart ({totalItems} items)</h3>
-      <p className="text-xl font-bold mb-4 text-gray-800">
-        Subtotal: {formatPrice(subTotal)}
-      </p>
+    <div className="text-md text-neutral-200 space-y-4 py-4">
+      <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
+
       {shippingCost > 0 && (
-        <p className="text-xl font-bold mb-4 text-gray-800">
-          Shipping:
-          {loadingShippingCost && <Spinner />}
+        <LineItem label={"Shipping:"}>
+          {loadingShippingCost && <LineItemSpinner />}
           {!loadingShippingCost && country && (
             <>
-              {destinationCountry.flag} {destinationCountry.name}{" "}
-              {formatPrice(shippingCost)} -{" "}
-              {formatWeight(transformGramToKilogram(orderWeight))}
+              <div className="text-right">
+                {formatDecimalPrice(shippingCost)}
+              </div>
+              <div className={"text-xs text-neutral-400 text-right"}>
+                {destinationCountry.flag} {destinationCountry.name}
+                {" -  "} {formatWeight(transformGramToKilogram(orderWeight))}
+              </div>
             </>
           )}
-        </p>
-      )}
-      {loadingPromoCode && <Spinner />}
-      {discountObject && discountObject.coupon && (
-        <div>
-          {discountObject.coupon.percent_off && (
-            <p className="text-xl font-bold mb-4 text-gray-800">
-              Discount ({discountObject.coupon.percent_off}%):{" "}
-              {formatPrice(discountAmount)}
-            </p>
-          )}
-          {discountObject.coupon.amount_off && (
-            <p className="text-xl font-bold mb-4 text-gray-800">
-              Discount: {formatPrice(discountAmount)}
-            </p>
-          )}
-        </div>
+        </LineItem>
       )}
 
-      <p className="text-xl font-bold mb-4 text-gray-800">
-        Total: {formatPrice(total)}
-      </p>
-    </>
+      {discountObject && discountObject.coupon && (
+        <LineItem label={"Discount:"}>
+          {discountObject.coupon.percent_off && (
+            <>
+              <span className={"mr-6 italic text-neutral-400"}>
+                (-{discountObject.coupon.percent_off}%)
+              </span>
+              {formatDecimalPrice(discountAmount)}
+            </>
+          )}
+          {discountObject.coupon.amount_off && (
+            <>
+              {loadingPromoCode ? (
+                <LineItemSpinner />
+              ) : (
+                formatDecimalPrice(discountAmount)
+              )}
+            </>
+          )}
+        </LineItem>
+      )}
+
+      <LineItem label={"Total:"} className={"text-2xl"}>
+        {loadingPromoCode || loadingShippingCost ? (
+          <LineItemSpinner />
+        ) : (
+          formatDecimalPrice(total)
+        )}
+      </LineItem>
+    </div>
   );
 }

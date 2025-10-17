@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { CheckoutValidationService } from "@/app/services/validation/validation.service";
-import { CheckoutFormData } from "@/types/checkout";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { CheckoutValidationService } from "@/services/validation/validation.service";
+import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import { CartItem } from "@/types/cart";
 import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";
 import { useLocalStorageForm } from "@/hooks/useLocalStorageForm";
@@ -35,11 +41,13 @@ interface UseCheckoutFormReturn {
   updateField: (name: string, value: string | boolean | undefined) => void;
   updateTicketField: (name: string, value: string) => void;
   clearForm: () => void;
+  validateForm: (type: "manual" | "auto") => void;
 }
 
 export function useCheckoutForm(
   requiresShippingAddress: boolean,
-  items: CartItem[]
+  items: CartItem[],
+  setValidationTriggered: Dispatch<SetStateAction<boolean>>
 ): UseCheckoutFormReturn {
   const { saveToStorage, loadFromStorage, clearStorage } =
     useLocalStorageForm<CheckoutFormData>(STORAGE_KEY, transformHoursToMs(2));
@@ -70,6 +78,24 @@ export function useCheckoutForm(
 
   const [isFormValid, setIsFormValid] = useState(false);
 
+  const validateForm = useCallback(
+    (type: "manual" | "auto") => {
+      const errors = CheckoutValidationService.validateForm({
+        formData,
+        requiresShippingAddress,
+        items,
+      });
+      setFieldErrors(errors);
+
+      if (type === "manual") {
+        setValidationTriggered(true);
+      }
+
+      setIsFormValid(CheckoutValidationService.isFormValid(errors));
+    },
+    [formData, requiresShippingAddress, items, setValidationTriggered]
+  );
+
   // Persist to localStorage
   useEffect(() => {
     saveToStorage(formData);
@@ -77,14 +103,8 @@ export function useCheckoutForm(
 
   // Validate form whenever data changes
   useEffect(() => {
-    const errors = CheckoutValidationService.validateForm({
-      formData,
-      requiresShippingAddress,
-      items,
-    });
-    setFieldErrors(errors);
-    setIsFormValid(CheckoutValidationService.isFormValid(errors));
-  }, [formData, requiresShippingAddress, items]);
+    validateForm("auto");
+  }, [formData, requiresShippingAddress, items, validateForm]);
 
   const updateField = useCallback(
     (name: string, value: string | boolean | undefined) => {
@@ -118,5 +138,6 @@ export function useCheckoutForm(
     updateField,
     updateTicketField,
     clearForm,
+    validateForm,
   };
 }

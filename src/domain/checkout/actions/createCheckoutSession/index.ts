@@ -1,25 +1,33 @@
-import { stripe } from "@/app/services/stripe";
+import { stripe } from "@/services/stripe";
 import { createCheckoutDescription } from "@/domain/checkout/actions";
 import {
   CheckoutSessionMetaData,
   CustomStripeLineItem,
   ShippingAddress,
-} from "@/types/checkout";
+} from "@/domain/checkout/types/checkout";
 
 export const createCheckoutSession = async ({
   lineItems,
   discountCodeId,
   email,
   shippingAddress,
+  ticketHolders,
+  donationAmount,
 }: {
   lineItems: CustomStripeLineItem[];
   discountCodeId?: string;
   email: string;
   shippingAddress?: ShippingAddress;
   metadata?: CheckoutSessionMetaData;
+  ticketHolders?: string[];
+  donationAmount?: number;
 }) => {
   const metadata: CheckoutSessionMetaData = {
     requiresShipping: shippingAddress ? "true" : "false",
+    includesTickets: ticketHolders ? "true" : "false",
+    includesDonation: donationAmount && donationAmount > 0 ? "true" : "false",
+    ticketHolders: ticketHolders ? JSON.stringify(ticketHolders) : "",
+    donationAmount: donationAmount ? donationAmount.toString() : "0",
   };
 
   if (shippingAddress) {
@@ -38,7 +46,7 @@ export const createCheckoutSession = async ({
     mode: "payment",
     payment_method_types: ["card"],
     success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/store/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/store/checkout/canceled`,
+    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/store/checkout/canceled?session_id={CHECKOUT_SESSION_ID}`,
     metadata,
     discounts: [
       {

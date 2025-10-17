@@ -1,6 +1,9 @@
-import { PrismicProductDocument } from "@/types/prismic";
+import { PrismicProductDocument } from "@/domain/cms/types/prismic";
 import { richTextToHTML, richTextToPlainText } from "@/lib/util";
-import { Product, ProductCompositionType } from "@/types/product";
+import {
+  Product,
+  ProductCompositionType,
+} from "@/domain/product/types/product";
 
 export const getFormattedProduct = (product: PrismicProductDocument) => {
   const hasVariants =

@@ -1,4 +1,4 @@
-import { ProductCategory, ProductStatus } from "@/types/product";
+import { ProductCategory, ProductStatus } from "@/domain/product/types/product";
 import Link from "next/link";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import Image from "next/image";
@@ -44,7 +44,13 @@ export default function ProductCard({
         <div className={"aspect-square overflow-hidden "}>
           {video && (
             <div className="aspect-square w-full  object-cover group-hover:opacity-75 xl:aspect-7/8 overflow-hidden group-hover:scale-125 transition-transform ease-in-out">
-              <video src={video} loop={true} muted={true} autoPlay={true} />
+              <video
+                src={video}
+                loop={true}
+                muted={true}
+                autoPlay={true}
+                playsInline={true}
+              />
             </div>
           )}
 

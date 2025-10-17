@@ -34,6 +34,7 @@ export function useCheckoutState() {
   } = useCart();
 
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [validationTriggered, setValidationTriggered] = useState(false);
 
   // Derive checkout requirements
   const requiresShippingAddress = includesShippableProduct(items);
@@ -49,7 +50,8 @@ export function useCheckoutState() {
     isFormValid,
     updateField,
     updateTicketField,
-  } = useCheckoutForm(requiresShippingAddress, items);
+    validateForm,
+  } = useCheckoutForm(requiresShippingAddress, items, setValidationTriggered);
 
   // Newsletter subscription check
   const emailIsValid =
@@ -127,10 +129,16 @@ export function useCheckoutState() {
   // Checkout action
   const handleCheckout = async () => {
     setCheckoutError(null);
-    try {
-      await checkout(formData);
-    } catch (err) {
-      setCheckoutError(err instanceof Error ? err.message : "Checkout failed");
+    validateForm("manual");
+
+    if (canProceed) {
+      try {
+        await checkout(formData);
+      } catch (err) {
+        setCheckoutError(
+          err instanceof Error ? err.message : "Checkout failed"
+        );
+      }
     }
   };
 
@@ -156,6 +164,8 @@ export function useCheckoutState() {
     errorMessages,
     isFormValid,
     shouldShowNewsletter,
+    validateForm,
+    validationTriggered,
 
     // Promo codes
     discount,

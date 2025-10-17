@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useRef } from "react";
-import { ProductImage } from "@/types/product";
+import { ProductImage } from "@/domain/product/types/product";
 import clsx from "clsx";
 import ChevronPrevIcon from "@/components/icon/ChevronPrevIcon";
 import ChevronNextIcon from "@/components/icon/ChevronNextIcon";

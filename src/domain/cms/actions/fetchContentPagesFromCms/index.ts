@@ -1,5 +1,5 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicContentPageDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicContentPageDocument } from "@/domain/cms/types/prismic";
 import { getFormattedContentPage } from "@/domain/contentPage/actions";
 
 export const fetchContentPagesFromCms = async ({
@@ -13,6 +13,10 @@ export const fetchContentPagesFromCms = async ({
     pageSize,
     ...(filters && { filters }),
   })) as PrismicContentPageDocument[];
+
+  if (!contentPages) {
+    return null;
+  }
 
   const contentPagesWithLocalType = contentPages.map(contentPage =>
     getFormattedContentPage(contentPage)

@@ -95,10 +95,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${headlineFont.variable} ${bodyFont.variable} `}
-    >
+    <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
       <Analytics />
       <Providers>{children}</Providers>
     </html>

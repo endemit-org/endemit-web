@@ -1,4 +1,5 @@
-import { prisma } from "@/app/services/prisma";
+import { prisma } from "@/services/prisma";
+import { Prisma } from "@prisma/client";
 
 export const createTicketTransaction = async ({
   eventId,
@@ -19,9 +20,9 @@ export const createTicketTransaction = async ({
   ticketPayerEmail: string;
   ticketHash: string;
   price: number;
-  qrContent: string;
+  qrContent: Prisma.InputJsonValue;
   orderId: string;
-  metadata?: string;
+  metadata?: Prisma.InputJsonValue;
 }) => {
   return await prisma.$transaction(async tx => {
     const ticketCount = await tx.ticket.count({

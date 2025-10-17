@@ -7,12 +7,14 @@
     "dev": "next dev --turbopack",
     "dev:inngest": "pnpm dlx inngest-cli@latest dev",
     "dev:emulated": "turbo dev dev:inngest",
-    "build": "next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
+    "build:next": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "slicemachine": "start-slicemachine"
+    "slicemachine": "start-slicemachine",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
@@ -26,6 +28,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/sharp": "^0.32.0",
     "@vercel/analytics": "^1.5.0",
+    "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
     "crypto": "^1.0.1",
     "html-react-parser": "^5.2.7",
@@ -45,6 +48,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@slicemachine/adapter-next": "^0.3.84",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

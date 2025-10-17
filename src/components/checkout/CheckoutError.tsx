@@ -6,6 +6,8 @@ export default function CheckoutError({ error }: CheckoutErrorProps) {
   if (!error) return null;
 
   return (
-    <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
+    <div className="text-neutral-200 bg-red-950 p-3 rounded mb-4 border-2 border-red-700">
+      {error}
+    </div>
   );
 }

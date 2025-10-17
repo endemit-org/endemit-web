@@ -1,4 +1,7 @@
-import { Product, ProductCompositionType } from "@/types/product";
+import {
+  Product,
+  ProductCompositionType,
+} from "@/domain/product/types/product";
 import { getProductVariantName } from "@/domain/product/actions/getProductVariantName";
 import { getProductVariantId } from "@/domain/product/actions/getProductVariantId";
 

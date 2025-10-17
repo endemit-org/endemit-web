@@ -9,3 +9,5 @@ export * from "./fetchArtistFromCms";
 export * from "./fetchArtistsFromCms";
 export * from "./fetchContentPageFromCms";
 export * from "./fetchContentPagesFromCms";
+export * from "./fetchPodcastFromCms";
+export * from "./fetchPodcastsFromCms";

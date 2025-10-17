@@ -27,6 +27,13 @@
           "placeholder": ""
         }
       },
+      "episode_number": {
+        "type": "Text",
+        "config": {
+          "label": "Episode number",
+          "placeholder": "Example 001"
+        }
+      },
       "description": {
         "type": "Text",
         "config": {
@@ -57,11 +64,25 @@
           ]
         }
       },
-      "embed_link": {
-        "type": "Embed",
+      "episode_date": {
+        "type": "Date",
         "config": {
-          "label": "Embed link",
-          "placeholder": ""
+          "label": "Episode date",
+          "placeholder": "The date of the episode"
+        }
+      },
+      "track_url": {
+        "type": "Text",
+        "config": {
+          "label": "Track url",
+          "placeholder": "Soundcloud track url"
+        }
+      },
+      "track_api_url": {
+        "type": "Text",
+        "config": {
+          "label": "Track API url",
+          "placeholder": "Starts with https://api.soundcloud.com/tracks/...."
         }
       },
       "tracklist": {
@@ -81,13 +102,6 @@
               "type": "Text",
               "config": {
                 "label": "Artist",
-                "placeholder": ""
-              }
-            },
-            "embed": {
-              "type": "Embed",
-              "config": {
-                "label": "Embed",
                 "placeholder": ""
               }
             },

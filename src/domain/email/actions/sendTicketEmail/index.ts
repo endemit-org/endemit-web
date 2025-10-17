@@ -1,5 +1,5 @@
-import { TicketEmailData } from "@/types/ticket";
-import { resend, resendFromEmail } from "@/app/services/resend";
+import { TicketEmailData } from "@/domain/ticket/types/ticket";
+import { resend, resendFromEmail } from "@/services/resend";
 import { NewTicketToCustomerTemplate } from "@/domain/email/templates";
 
 export const sendTicketEmail = async (

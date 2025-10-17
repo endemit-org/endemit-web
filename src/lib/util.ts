@@ -1,9 +1,9 @@
 import { EventProps } from "@/components/event/EventCard";
 import events from "@/config/events.config";
-import { PrismicRichTextBlock } from "@/types/prismic";
+import { PrismicRichTextBlock } from "@/domain/cms/types/prismic";
 import { Country } from "@/types/country";
 import countryConfig from "@/config/countries.config";
-import { ProductCategory } from "@/types/product";
+import { ProductCategory } from "@/domain/product/types/product";
 
 export const getTimeUntil = (currentTime: Date, date: Date) => {
   const diff = date.getTime() - currentTime.getTime();
