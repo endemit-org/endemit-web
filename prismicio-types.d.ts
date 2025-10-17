@@ -213,6 +213,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
   | TextImageBlockSlice
@@ -473,7 +474,14 @@ interface EventDocumentData {
    * - **Tab**: Venue
    * - **Documentation**: https://prismic.io/docs/fields/content-relationship
    */;
-  venue: prismic.ContentRelationshipField<"venue"> /**
+  venue: ContentRelationshipFieldWithData<
+    [
+      {
+        id: "venue";
+        fields: ["name", "address", "venue_logo", "map_location_url"];
+      },
+    ]
+  > /**
    * Start field in *Event*
    *
    * - **Field Type**: Timestamp
@@ -608,16 +616,6 @@ export interface PodcastDocumentDataTracklistItem {
   artist: prismic.KeyTextField;
 
   /**
-   * Embed field in *Podcast → Tracklist*
-   *
-   * - **Field Type**: Embed
-   * - **Placeholder**: *None*
-   * - **API ID Path**: podcast.tracklist[].embed
-   * - **Documentation**: https://prismic.io/docs/fields/embed
-   */
-  embed: prismic.EmbedField;
-
-  /**
    * Link field in *Podcast → Tracklist*
    *
    * - **Field Type**: Link
@@ -657,6 +655,17 @@ interface PodcastDocumentData {
   episode_name: prismic.KeyTextField;
 
   /**
+   * Episode number field in *Podcast*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Example 001
+   * - **API ID Path**: podcast.episode_number
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  episode_number: prismic.KeyTextField;
+
+  /**
    * Description field in *Podcast*
    *
    * - **Field Type**: Text
@@ -692,15 +701,37 @@ interface PodcastDocumentData {
   >;
 
   /**
-   * Embed link field in *Podcast*
+   * Episode date field in *Podcast*
    *
-   * - **Field Type**: Embed
-   * - **Placeholder**: *None*
-   * - **API ID Path**: podcast.embed_link
+   * - **Field Type**: Date
+   * - **Placeholder**: The date of the episode
+   * - **API ID Path**: podcast.episode_date
    * - **Tab**: Main
-   * - **Documentation**: https://prismic.io/docs/fields/embed
+   * - **Documentation**: https://prismic.io/docs/fields/date
    */
-  embed_link: prismic.EmbedField;
+  episode_date: prismic.DateField;
+
+  /**
+   * Track url field in *Podcast*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Soundcloud track url
+   * - **API ID Path**: podcast.track_url
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  track_url: prismic.KeyTextField;
+
+  /**
+   * Track API url field in *Podcast*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Starts with https://api.soundcloud.com/tracks/....
+   * - **API ID Path**: podcast.track_api_url
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  track_api_url: prismic.KeyTextField;
 
   /**
    * Tracklist field in *Podcast*
@@ -1559,6 +1590,72 @@ export type NewsletterSubscriptionSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *PodcastList → Default → Primary*
+ */
+export interface PodcastListSliceDefaultPrimary {
+  /**
+   * Title field in *PodcastList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast_list.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *PodcastList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast_list.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Render frame field in *PodcastList → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: podcast_list.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
+}
+
+/**
+ * Default variation for PodcastList Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PodcastListSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<PodcastListSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *PodcastList*
+ */
+type PodcastListSliceVariation = PodcastListSliceDefault;
+
+/**
+ * PodcastList Shared Slice
+ *
+ * - **API ID**: `podcast_list`
+ * - **Description**: PodcastList
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PodcastListSlice = prismic.SharedSlice<
+  "podcast_list",
+  PodcastListSliceVariation
+>;
+
+/**
  * Item in *ProductList → Manual selection → Primary → Products*
  */
 export interface ProductListSliceManualPrimaryProductsItem {
@@ -2259,6 +2356,10 @@ declare module "@prismicio/client" {
       NewsletterSubscriptionSliceDefaultPrimary,
       NewsletterSubscriptionSliceVariation,
       NewsletterSubscriptionSliceDefault,
+      PodcastListSlice,
+      PodcastListSliceDefaultPrimary,
+      PodcastListSliceVariation,
+      PodcastListSliceDefault,
       ProductListSlice,
       ProductListSliceDefaultPrimary,
       ProductListSliceFeaturedPrimary,

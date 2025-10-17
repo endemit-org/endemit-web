@@ -1,45 +1,54 @@
 import ActionButton from "@/components/ActionButton";
+import Image from "next/image";
 
 interface CheckoutActionsProps {
   onCheckout: () => void;
-  onClearCart: () => void;
   canProceed: boolean;
   isProcessing: boolean;
+  errorMessages: Record<
+    string,
+    | string
+    | {
+        [p: string]: string;
+      }
+    | undefined
+  >;
 }
 
 export default function CheckoutActions({
   onCheckout,
-  onClearCart,
   canProceed,
   isProcessing,
+  errorMessages,
 }: CheckoutActionsProps) {
+  const remainingFields = Object.keys(errorMessages).length;
+
   return (
     <div className="mt-6 space-y-2">
       <ActionButton
         onClick={canProceed ? onCheckout : undefined}
         disabled={!canProceed}
       >
-        {isProcessing ? "Processing..." : "Pay securely with Stripe"}
+        {isProcessing && canProceed
+          ? "Redirecting you to payment..."
+          : "Pay securely with Stripe"}
       </ActionButton>
-      {/*<button*/}
-      {/*  onClick={canProceed ? onCheckout : undefined}*/}
-      {/*  disabled={!canProceed}*/}
-      {/*  className={clsx(*/}
-      {/*    "w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors",*/}
-      {/*    !canProceed && "bg-neutral-600 cursor-not-allowed",*/}
-      {/*    canProceed && "bg-blue-600 hover:bg-blue-700"*/}
-      {/*  )}*/}
-      {/*>*/}
-      {/*  {isProcessing ? "Processing..." : "Pay securely with Stripe"}*/}
-      {/*</button>*/}
-
-      <button
-        onClick={onClearCart}
-        disabled={isProcessing}
-        className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors text-sm disabled:opacity-50"
-      >
-        Clear Cart
-      </button>
+      {!canProceed && (
+        <div className={"text-neutral-400 text-sm text-center"}>
+          Please fill in all required fields to proceed to credit card payment.{" "}
+          Fill in the remaining <strong>{remainingFields}</strong> required
+          fields.
+        </div>
+      )}
+      <div className="text-center w-full pt-4">
+        <Image
+          src="/images/powered-by-stripe.png"
+          alt="Powered by Stripe"
+          className="inline"
+          width={180}
+          height={44}
+        />
+      </div>
     </div>
   );
 }

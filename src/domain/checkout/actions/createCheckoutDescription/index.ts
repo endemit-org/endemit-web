@@ -1,4 +1,4 @@
-import { ShippingAddress } from "@/types/checkout";
+import { ShippingAddress } from "@/domain/checkout/types/checkout";
 
 export const createCheckoutDescription = (
   shippingAddress?: ShippingAddress,

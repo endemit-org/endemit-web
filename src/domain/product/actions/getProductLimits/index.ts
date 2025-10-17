@@ -1,4 +1,4 @@
-import { Product } from "@/types/product";
+import { Product } from "@/domain/product/types/product";
 import { formatDateTime } from "@/lib/formatting";
 import { isProductShippable } from "@/domain/product/businessLogic";
 import { ensureDateType } from "@/lib/util";

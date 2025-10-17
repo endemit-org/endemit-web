@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { fetchProductsFromCms } from "@/domain/cms/actions";
-import { prismic } from "@/app/services/prismic";
+import { prismic } from "@/services/prismic";
 import ProductSection from "@/components/product/ProductSection";
 
 /**
@@ -39,7 +39,9 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
       product => product.product.id
     );
     products = await fetchProductsFromCms({});
-    products = products.filter(product => productIds.includes(product.id));
+    products = products
+      ? products.filter(product => productIds.includes(product.id))
+      : [];
   }
 
   return (

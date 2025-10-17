@@ -1,6 +1,6 @@
 import { Order } from "@prisma/client";
-import { ProductCategory, ProductType } from "@/types/product";
-import { CustomStripeLineItem } from "@/types/checkout";
+import { ProductCategory, ProductType } from "@/domain/product/types/product";
+import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
 
 export const getTicketsFromOrder = (order: Order) => {
   if (!order.items) {

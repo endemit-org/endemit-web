@@ -1,5 +1,5 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicEventDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicEventDocument } from "@/domain/cms/types/prismic";
 import { getFormattedEvent } from "@/domain/event/actions";
 
 export const fetchEventsFromCms = async ({
@@ -13,6 +13,10 @@ export const fetchEventsFromCms = async ({
     pageSize,
     ...(filters && { filters }),
   })) as PrismicEventDocument[];
+
+  if (!events) {
+    return null;
+  }
 
   const eventsWithLocalType = events.map(event => getFormattedEvent(event));
 

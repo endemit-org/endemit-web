@@ -1,4 +1,4 @@
-import { Event, EventType } from "@/types/event";
+import { Event, EventType } from "@/domain/event/types/event";
 
 export const isEventCompleted = (event: Event) => {
   const now = new Date();

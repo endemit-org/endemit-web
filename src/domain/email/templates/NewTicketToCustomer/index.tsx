@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TicketEmailData } from "@/types/ticket";
+import { TicketEmailData } from "@/domain/ticket/types/ticket";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 
 interface Props {

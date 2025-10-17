@@ -4,9 +4,10 @@ import {
   isProductDonation,
   isProductExcludedFromRefunds,
   isProductShippable,
+  isProductTicket,
 } from "@/domain/product/businessLogic";
-import { DiscountDetails } from "@/types/checkout";
-import { transformPriceFromStripe } from "@/app/services/stripe/util";
+import { DiscountDetails } from "@/domain/checkout/types/checkout";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 
 export const includesShippableProduct = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductShippable(item));
@@ -16,6 +17,9 @@ export const includesNonRefundableProduct = (cartItems: CartItem[]) => {
 };
 export const includesDonationProduct = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductDonation(item));
+};
+export const includesTicketProducts = (cartItems: CartItem[]) => {
+  return cartItems.some(item => isProductTicket(item));
 };
 export const hasMinimumCheckoutValue = (total: number) => {
   return total >= 2;

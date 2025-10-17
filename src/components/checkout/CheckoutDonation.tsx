@@ -1,9 +1,11 @@
 import { formatPrice } from "@/lib/formatting";
+import Link from "next/link";
+import ActionButton from "@/components/ActionButton";
 
 interface CheckoutDonationProps {
   donationAmount: number;
   roundedTotal: number;
-  onAddDonation: () => void;
+  onAddDonation: (e: React.MouseEvent) => void;
 }
 
 export default function CheckoutDonation({
@@ -12,18 +14,27 @@ export default function CheckoutDonation({
   onAddDonation,
 }: CheckoutDonationProps) {
   return (
-    <div className="p-4 bg-blue-50 border border-blue-200 rounded mb-4">
-      <p className="text-sm text-gray-700 mb-2">
-        Add {formatPrice(donationAmount)} donation to your total and round up to{" "}
-        {formatPrice(roundedTotal)}? Donations support our voluntary work and
-        help us keep ticket prices low.
-      </p>
-      <button
-        onClick={onAddDonation}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
-      >
+    <div className="p-4 bg-neutral-100 border border-neutral-400 rounded mb-4 space-y-2 text-center">
+      <h3 className={"text-xl"}>We appreciate donations 🙏</h3>
+      <div className="text-sm text-neutral-800 pb-6">
+        <p className=" mb-2">
+          Add <strong>{formatPrice(donationAmount)} donation</strong> to your
+          total and round up to {formatPrice(roundedTotal)}?
+        </p>
+        <p>
+          Donations support our voluntary work and help us keep ticket prices at
+          our events low.
+        </p>
+      </div>
+
+      <ActionButton onClick={onAddDonation} size={"sm"}>
         Add {formatPrice(donationAmount)} donation
-      </button>
+      </ActionButton>
+      <div>
+        <Link href={"/about"} className={"link text-sm"} target={"_blank"}>
+          More about our non-profit
+        </Link>
+      </div>
     </div>
   );
 }

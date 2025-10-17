@@ -1,4 +1,4 @@
-import { TicketPayload } from "@/types/ticket";
+import { TicketPayload } from "@/domain/ticket/types/ticket";
 
 export const generateQrContent = (
   ticketHash: string,

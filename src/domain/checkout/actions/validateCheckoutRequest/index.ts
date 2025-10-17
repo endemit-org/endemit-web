@@ -1,15 +1,21 @@
 import { CartItem } from "@/types/cart";
-import { CheckoutSessionRequestBody, ShippingAddress } from "@/types/checkout";
-import { CheckoutValidationService } from "@/app/services/validation/validation.service";
+import {
+  CheckoutSessionRequestBody,
+  ShippingAddress,
+} from "@/domain/checkout/types/checkout";
+import { CheckoutValidationService } from "@/services/validation/validation.service";
 import { includesShippableProduct } from "@/domain/checkout/businessRules";
-import { Product, ProductCompositionType } from "@/types/product";
+import {
+  Product,
+  ProductCompositionType,
+} from "@/domain/product/types/product";
 import { isProductSellable } from "@/domain/product/businessLogic";
 import { getVariantSingleProducts } from "@/domain/cms/actions/getVariantSingleProducts";
 import {
   getCheckoutWeight,
   parseItemsForPayment,
 } from "@/domain/checkout/actions";
-import shippingService from "@/app/services/shipping";
+import shippingService from "@/services/shipping";
 import { Country } from "@/types/country";
 
 export const validateCheckoutRequest = (

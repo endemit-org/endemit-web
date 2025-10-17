@@ -1,12 +1,13 @@
-import { Product } from "@/types/product";
+import { Product } from "@/domain/product/types/product";
 import { create } from "zustand";
-
 import { getAllProducts } from "@/domain/product/actions/getProducts";
+import { useEffect } from "react";
 
 interface ProductsState {
   products: Product[];
   isLoading: boolean;
   error: string | null;
+  isInitialized: boolean;
   fetchProducts: () => Promise<void>;
   setProducts: (products: Product[]) => void;
   getProductByUid: (uid: string) => Product | undefined;
@@ -18,12 +19,13 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
   products: [],
   isLoading: false,
   error: null,
+  isInitialized: false,
 
   fetchProducts: async () => {
     set({ isLoading: true, error: null });
     try {
       const products = await getAllProducts();
-      set({ isLoading: false, products });
+      set({ isLoading: false, products, isInitialized: true });
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Unknown error",
@@ -45,12 +47,16 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
   clearProducts: () => set({ products: [], error: null }),
 }));
 
-// Auto-fetch on initialization
-useProductsStore.getState().fetchProducts();
-
-// Custom hook for easier usage
+// Custom hook with auto-fetch on mount
 export const useProducts = () => {
   const store = useProductsStore();
+
+  useEffect(() => {
+    if (!store.isInitialized && !store.isLoading) {
+      store.fetchProducts();
+    }
+  }, [store]);
+
   return {
     products: store.products,
     isLoading: store.isLoading,
@@ -69,7 +75,6 @@ export const useProductsLoading = () =>
   useProductsStore(state => state.isLoading);
 export const useProductsError = () => useProductsStore(state => state.error);
 
-// Actions selector - use callback to avoid re-renders
 export const useProductsActions = () => {
   const fetchProducts = useProductsStore(state => state.fetchProducts);
   const setProducts = useProductsStore(state => state.setProducts);

@@ -1,5 +1,5 @@
-import { PrismicContentPageDocument } from "@/types/prismic";
-import { ContentPage } from "@/types/contentPage";
+import { PrismicContentPageDocument } from "@/domain/cms/types/prismic";
+import { ContentPage } from "@/domain/contentPage/types/contentPage";
 
 export const getFormattedContentPage = (
   contentPage: PrismicContentPageDocument

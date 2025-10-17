@@ -1,4 +1,4 @@
-import { Product } from "@/types/product";
+import { Product } from "@/domain/product/types/product";
 import { getApiPath } from "@/lib/api";
 import { filterVisibleProducts } from "@/domain/product/actions/getVisibleProducts";
 

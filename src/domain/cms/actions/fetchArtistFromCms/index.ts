@@ -1,11 +1,15 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicArtistDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicArtistDocument } from "@/domain/cms/types/prismic";
 import { getFormattedArtist } from "@/domain/artist/actions";
 
-export const fetchArtistFromCms = async (artistId: string) => {
+export const fetchArtistFromCms = async (artistUid: string) => {
   const prismicArtist = (await prismicClient
-    .getByID(artistId)
+    .getByUID("artist", artistUid)
     .catch(() => null)) as PrismicArtistDocument;
+
+  if (!prismicArtist) {
+    return null;
+  }
 
   const artistWithLocalType = getFormattedArtist(prismicArtist);
 

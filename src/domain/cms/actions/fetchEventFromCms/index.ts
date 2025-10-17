@@ -1,11 +1,15 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicEventDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicEventDocument } from "@/domain/cms/types/prismic";
 import { getFormattedEvent } from "@/domain/event/actions";
 
-export const fetchEventFromCms = async (eventId: string) => {
+export const fetchEventFromCms = async (eventUid: string) => {
   const prismicEvent = (await prismicClient
-    .getByID(eventId)
+    .getByUID("event", eventUid)
     .catch(() => null)) as PrismicEventDocument;
+
+  if (!prismicEvent) {
+    return null;
+  }
 
   const eventWithLocalType = getFormattedEvent(prismicEvent);
 

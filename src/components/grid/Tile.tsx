@@ -19,10 +19,10 @@ export default function Tile({ config }: Props) {
             <video
               src={config.media.src}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
-              autoPlay
-              muted
-              loop
-              playsInline
+              autoPlay={true}
+              muted={true}
+              loop={true}
+              playsInline={true}
             />
           ) : (
             <Image

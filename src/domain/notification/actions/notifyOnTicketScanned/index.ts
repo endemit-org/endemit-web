@@ -1,4 +1,4 @@
-import { DiscordConnector } from "@/app/services/discord";
+import { DiscordConnector } from "@/services/discord";
 import { notificationFooter } from "@/domain/notification/util";
 
 const discordTicketScan = new DiscordConnector(

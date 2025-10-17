@@ -1,5 +1,8 @@
-import { inngest } from "@/app/services/inngest";
-import { TicketCreationData, TicketQueueEvent } from "@/types/ticket";
+import { inngest } from "@/services/inngest";
+import {
+  TicketCreationData,
+  TicketQueueEvent,
+} from "@/domain/ticket/types/ticket";
 import {
   createTicketTransaction,
   generateQrContent,
@@ -9,7 +12,7 @@ import {
 } from "@/domain/ticket/actions";
 import { sendTicketEmail } from "@/domain/email/actions";
 import { notifyOnNewTicketIssue } from "@/domain/notification/actions";
-import { transformPriceFromStripe } from "@/app/services/stripe/util";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 import { formatEventDateAndTime, formatPrice } from "@/lib/formatting";
 import { fetchEventFromCms } from "@/domain/cms/actions";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
@@ -65,9 +68,9 @@ export const runTicketIssueAutomation = inngest.createFunction(
         ticketHolderName,
         ticketPayerEmail,
         ticketHash: ticketSecurityData.ticketHash,
-        qrContent: JSON.stringify(ticketSecurityData.qrContent),
+        qrContent: ticketSecurityData.qrContent,
         orderId,
-        metadata: JSON.stringify(metadata),
+        metadata,
       });
 
       if (!created) {
