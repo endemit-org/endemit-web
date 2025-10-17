@@ -2,8 +2,8 @@ import { EventProps } from "@/components/event/EventCard";
 import events from "@/config/events.config";
 import { PrismicRichTextBlock } from "@/domain/cms/types/prismic";
 import { Country } from "@/types/country";
-import countryConfig from "@/config/countries.config";
 import { ProductCategory } from "@/domain/product/types/product";
+import { getCountry } from "@/domain/checkout/actions";
 
 export const getTimeUntil = (currentTime: Date, date: Date) => {
   const diff = date.getTime() - currentTime.getTime();
@@ -70,7 +70,7 @@ export function richTextToHTML(richText: PrismicRichTextBlock[]): string {
 }
 
 export const getRegionFromCountry = (country: Country) => {
-  const countryData = countryConfig[country];
+  const countryData = getCountry(country);
 
   if (countryData) {
     return countryData.region;

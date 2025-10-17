@@ -108,7 +108,7 @@ export default function Checkout() {
               </>
             ))}
         </div>
-        <div className="lg:w-2/5 w-full pt-6 lg:p-6 min-w-72">
+        <div className="lg:w-2/5 w-full pt-6 lg:p-6 min-w-72 max-lg:mt-8 max-lg:mb-12">
           {isClient && (
             <>
               <h3 className="text-2xl font-medium font-heading mb-3 text-neutral-200">

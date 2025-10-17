@@ -1,10 +1,10 @@
 import { formatDecimalPrice, formatWeight } from "@/lib/formatting";
 import { Country } from "@/types/country";
-import countriesConfig from "@/config/countries.config";
 import Spinner from "@/components/Spinner";
 import { transformGramToKilogram } from "@/lib/util";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import clsx from "clsx";
+import { getCountry } from "@/domain/checkout/actions";
 
 interface Props {
   subTotal: number;
@@ -54,7 +54,7 @@ export default function CheckoutSummary({
   loadingShippingCost,
   loadingPromoCode,
 }: Props) {
-  const destinationCountry = countriesConfig[country];
+  const destinationCountry = getCountry(country);
 
   return (
     <div className="text-md text-neutral-200 space-y-4 py-4">

@@ -10,6 +10,7 @@ export const createOrder = async ({
   email,
   subtotal,
   shippingCost,
+  discountAmount,
   shippingRequired,
   shippingAddress,
   orderItems,
@@ -20,6 +21,7 @@ export const createOrder = async ({
   email: string;
   subtotal: number;
   shippingCost: number;
+  discountAmount: number;
   shippingRequired: boolean;
   shippingAddress?: ShippingAddress;
   orderItems: ProductInOrder[];
@@ -31,8 +33,9 @@ export const createOrder = async ({
       name,
       email,
       subtotal,
-      totalAmount: subtotal + shippingCost,
+      totalAmount: subtotal + shippingCost + discountAmount,
       shippingAmount: shippingCost,
+      discountAmount,
       shippingRequired,
       shippingAddress,
       items: JSON.parse(JSON.stringify(orderItems)),

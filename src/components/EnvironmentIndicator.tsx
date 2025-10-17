@@ -28,7 +28,7 @@ export default function EnvironmentIndicator() {
   const glowColor = isDev ? "shadow-red-500/50" : "shadow-orange-500/50";
 
   return createPortal(
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       <div
         onClick={() => setVisible(false)}
         className={`${bgColor} ${glowColor} rounded-full px-4 py-2 shadow-lg animate-pulse flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity`}

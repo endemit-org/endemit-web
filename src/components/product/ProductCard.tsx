@@ -3,7 +3,7 @@ import Link from "next/link";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import Image from "next/image";
 import { formatPrice } from "@/lib/formatting";
-import { createSlug } from "@/lib/util";
+import { getProductLink } from "@/domain/product/actions";
 
 interface ProductCardProps {
   video?: string;
@@ -40,7 +40,7 @@ export default function ProductCard({
         className={"translate-y-2 translate-x-2"}
       />
 
-      <Link href={`/store/${createSlug(category)}/${uid}`}>
+      <Link href={getProductLink(uid, category)}>
         <div className={"aspect-square overflow-hidden "}>
           {video && (
             <div className="aspect-square w-full  object-cover group-hover:opacity-75 xl:aspect-7/8 overflow-hidden group-hover:scale-125 transition-transform ease-in-out">

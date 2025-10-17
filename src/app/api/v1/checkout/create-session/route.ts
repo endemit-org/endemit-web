@@ -6,6 +6,7 @@ import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions";
 import { createCheckoutSession } from "@/domain/checkout/actions/createCheckoutSession";
 import { createCheckoutSessionLineItems } from "@/domain/checkout/actions/createCheckoutSessionLineItems";
 import { transformToProductInOrder } from "@/domain/product/actions";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 
 export async function POST(request: Request) {
   try {
@@ -52,6 +53,9 @@ export async function POST(request: Request) {
       email,
       subtotal,
       shippingCost,
+      discountAmount: session.total_details?.amount_discount
+        ? transformPriceFromStripe(session.total_details.amount_discount) * -1
+        : 0,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
       orderItems: checkoutItems.map(checkoutItem =>

@@ -13,6 +13,7 @@ import { isProductSellable } from "@/domain/product/businessLogic";
 import { getVariantSingleProducts } from "@/domain/cms/actions/getVariantSingleProducts";
 import {
   getCheckoutWeight,
+  getCountry,
   parseItemsForPayment,
 } from "@/domain/checkout/actions";
 import shippingService from "@/services/shipping";
@@ -73,6 +74,11 @@ export const validateCheckoutRequest = (
           orderWeight
         ).cost
       : 0;
+
+  if (shouldHaveShippingAddress && shippingAddress) {
+    const countryDetails = getCountry(shippingAddress.country);
+    shippingAddress.phone = `${countryDetails.callingCode}${shippingAddress.phone}`;
+  }
 
   const subtotal = checkoutItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
