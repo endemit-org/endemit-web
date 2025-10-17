@@ -2,6 +2,7 @@ import { transformPriceToStripe } from "@/services/stripe/util";
 import { isProductTicket } from "@/domain/product/businessLogic";
 import { CartItem } from "@/types/cart";
 import { ComplementaryTicketField } from "@/domain/checkout/types/checkout";
+import { getTicketHoldersFromData } from "@/domain/checkout/actions/getTicketHoldersFromData";
 
 export const createProductLineItems = (
   items: CartItem[],
@@ -12,10 +13,11 @@ export const createProductLineItems = (
     let ticketHolders: string[] = [];
 
     if (isTicket) {
-      ticketHolders = Array.from(
-        { length: item.quantity },
-        (_, index) => `ticket-${item.id}-${index + 1}-name`
-      ).map(key => complementaryTicketData[key]);
+      ticketHolders = getTicketHoldersFromData({
+        complementaryTicketData,
+        quantity: item.quantity,
+        id: item.id,
+      });
     }
 
     return {

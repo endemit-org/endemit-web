@@ -220,6 +220,9 @@ function createTextOverlay(
   const eventInfo =
     `${data.eventName} · ${data.eventDate} · ${data.eventDetails}`.toUpperCase();
 
+  const firstPart = data.hashId.slice(0, 64).toUpperCase();
+  const secondPart = data.hashId.slice(64).toUpperCase();
+
   return Buffer.from(`
     <svg width="${cfg.canvasWidth}" height="${cfg.canvasHeight}">
       <text x="${layout.centerX}" y="145" font-family="Helvetica, sans-serif"
@@ -237,7 +240,7 @@ function createTextOverlay(
         font-family="Helvetica, sans-serif" font-size="30" fill="#AAAAAA"
         letter-spacing="10" text-anchor="left" font-weight="lighter"
         transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
-        ${data.hashId.toUpperCase()}
+        ${firstPart}
       </text>
 
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1900}"
@@ -250,7 +253,7 @@ function createTextOverlay(
         font-family="Helvetica, sans-serif" font-size="30" fill="#AAAAAA"
         letter-spacing="10" text-anchor="left" font-weight="lighter"
         transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
-        ${data.hashId.toUpperCase()}
+        ${secondPart}
       </text>
 
       <text x="${layout.centerX}" y="1895" font-family="Helvetica, sans-serif"

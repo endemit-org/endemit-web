@@ -1,20 +1,18 @@
 import { Order } from "@prisma/client";
 import { ProductCategory, ProductType } from "@/domain/product/types/product";
-import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
+import { ProductInOrder } from "@/domain/order/types/order";
 
 export const getTicketsFromOrder = (order: Order) => {
   if (!order.items) {
     return null;
   }
 
-  const items = JSON.parse(order.items as string) as CustomStripeLineItem[];
+  const items = order.items as unknown as ProductInOrder[];
 
   items.filter(item => {
     const isDigitalTicket =
-      item.price_data?.product_data?.metadata?.productType ===
-        ProductType.DIGITAL &&
-      item.price_data?.product_data?.metadata?.productCategory ===
-        ProductCategory.TICKETS;
+      item.type === ProductType.DIGITAL &&
+      item.category === ProductCategory.TICKETS;
 
     return isDigitalTicket;
   });

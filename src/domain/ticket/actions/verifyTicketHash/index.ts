@@ -1,14 +1,36 @@
 import { TicketPayload } from "@/domain/ticket/types/ticket";
-import { generateSecureHash } from "@/domain/ticket/actions";
 import crypto from "crypto";
 
 export const verifyTicketHash = (
-  ticketHash: string,
+  storedHash: string,
   ticketPayload: TicketPayload
 ) => {
-  const expectedHash = generateSecureHash(ticketPayload);
+  const secret = process.env.TICKET_SECRET;
+  const splitConfig = process.env.TICKET_VERIFICATION_HASH_SPLIT_CONFIG;
+
+  if (!secret || !splitConfig)
+    throw new Error("Missing security parameters on verifyTicketHash");
+
+  const [frontChars, backChars] = splitConfig.split(",").map(Number);
+
+  const saltFront = storedHash.slice(0, frontChars);
+  const saltBack = storedHash.slice(-backChars);
+  const ticketSalt = saltFront + saltBack;
+
+  const newPayload = {
+    ...ticketPayload,
+    salt: ticketSalt,
+  };
+
+  const data = JSON.stringify(newPayload);
+  const computedHash = crypto
+    .createHmac("sha256", secret)
+    .update(data)
+    .digest("hex");
+  const computedCombined = saltFront + computedHash + saltBack;
+
   return crypto.timingSafeEqual(
-    Buffer.from(ticketHash),
-    Buffer.from(expectedHash)
+    Buffer.from(storedHash),
+    Buffer.from(computedCombined)
   );
 };

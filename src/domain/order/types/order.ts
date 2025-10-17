@@ -1,4 +1,8 @@
-import { ProductCategory, ProductImage } from "@/domain/product/types/product";
+import {
+  ProductCategory,
+  ProductImage,
+  ProductType,
+} from "@/domain/product/types/product";
 
 export enum OrderQueueEvent {
   NOTIFY_ON_ORDER = "notify-on-order",
@@ -14,9 +18,12 @@ export interface ProductInOrder {
   uid: string;
   name: string;
   image: ProductImage;
+  type: ProductType;
+  category: ProductCategory;
+  relatedEvent: string | null;
   price: number;
   quantity: number;
   currency: string;
-  category: ProductCategory;
   checkoutDescription: string;
+  metadata?: Record<string, string | number | boolean | string[]>;
 }

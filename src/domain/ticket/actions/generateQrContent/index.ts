@@ -4,8 +4,8 @@ export const generateQrContent = (
   ticketHash: string,
   ticketPayload: TicketPayload
 ) => {
-  return JSON.stringify({
+  return {
     hash: ticketHash,
-    payload: ticketPayload,
-  });
+    ...ticketPayload,
+  };
 };

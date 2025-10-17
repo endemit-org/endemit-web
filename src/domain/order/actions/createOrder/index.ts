@@ -2,6 +2,7 @@ import { ShippingAddress } from "@/domain/checkout/types/checkout";
 
 import { prisma } from "@/services/prisma";
 import { ProductInOrder } from "@/domain/order/types/order";
+import { Prisma } from "@prisma/client";
 
 export const createOrder = async ({
   stripeSessionId,
@@ -12,6 +13,7 @@ export const createOrder = async ({
   shippingRequired,
   shippingAddress,
   orderItems,
+  metadata,
 }: {
   stripeSessionId: string;
   name: string;
@@ -21,6 +23,7 @@ export const createOrder = async ({
   shippingRequired: boolean;
   shippingAddress?: ShippingAddress;
   orderItems: ProductInOrder[];
+  metadata?: Prisma.InputJsonValue;
 }) => {
   return await prisma.order.create({
     data: {
@@ -32,7 +35,8 @@ export const createOrder = async ({
       shippingAmount: shippingCost,
       shippingRequired,
       shippingAddress,
-      items: JSON.parse(JSON.stringify({ items: orderItems })),
+      items: JSON.parse(JSON.stringify(orderItems)),
+      metadata,
     },
   });
 };

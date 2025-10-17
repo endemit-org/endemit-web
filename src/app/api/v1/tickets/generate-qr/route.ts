@@ -17,9 +17,17 @@ export async function GET(request: NextRequest) {
     const ticketImage = await generateTicketImage({
       shortId: "XH2F",
       hashId:
-        "5e7f24ff8cd3eb1b68bd23351c98e30abba5560a3a42a86794800f82262b1462",
-      qrData:
-        "5e7f24ff8cd3eb1b68bd23351c98e30abba5560a3a42a86794800f82262b14625e7f24ff8cd3eb1b68bd23351c98e30abba5560a3a42a86794800f82262b14625e7f24ff8cd3eb1b68bd23351c98e30abba5560a3a42a86794800f82262b14625e7f24ff8cd3eb1b68bd23351c98e30abba5560a3a42a86794800f82262b1462",
+        "98456790388bf45e16daf38c739ef5ddb06e64a47d01d2d2dfb1a2d9242c3170953d3005781df31c06a9ae7df0f842f7b5908e39da87c87dcb4ede436ba0f567",
+      qrData: JSON.stringify({
+        hash: "98456790388bf45e16daf38c739ef5ddb06e64a47d01d2d2dfb1a2d9242c3170953d3005781df31c06a9ae7df0f842f7b5908e39da87c87dcb4ede436ba0f567",
+        price: 20,
+        eventId: "aOksGREAACQAq06C",
+        orderId: "cmguzbejy0004dvro81banp3c",
+        shortId: "6YHG",
+        eventName: "Test event 2025",
+        ticketHolderName: "Nejc Palir",
+        ticketPayerEmail: "nejc.palir@gmail.com",
+      }),
       eventName: "Po prešernovo v Majki",
       eventDetails: "KUD Kodeljevo Ljubljana",
       eventDate: "25. 11. 2025 @ 22:00",
