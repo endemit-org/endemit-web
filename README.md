@@ -168,3 +168,6 @@ This project is private and proprietary to Endemit.
 // prismic, dev server
 // stripe, hooks
 // resend
+
+// pnpm env-init
+// pnpm env-dev env-stage env-prod
