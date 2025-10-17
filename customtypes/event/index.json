@@ -68,7 +68,12 @@
           "label": "Venue",
           "select": "document",
           "repeat": false,
-          "customtypes": ["venue"]
+          "customtypes": [
+            {
+              "id": "venue",
+              "fields": ["name", "address", "venue_logo", "map_location_url"]
+            }
+          ]
         }
       }
     },

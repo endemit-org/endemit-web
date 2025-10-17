@@ -32,7 +32,7 @@ export default function SelectInput({
     if (isFocused) return "border-blue-500";
     if (showError) return "border-red-500";
     if (showSuccess) return "border-green-500";
-    return "border-gray-300";
+    return "border-neutral-600";
   };
 
   return (
@@ -40,7 +40,7 @@ export default function SelectInput({
       {label && (
         <label
           htmlFor={name}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-lg font-medium font-heading text-neutral-400 mb-1"
         >
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
@@ -56,7 +56,7 @@ export default function SelectInput({
           setIsFocused(false);
           setTouched(true);
         }}
-        className={`w-full px-3 py-2 border-2 rounded-lg outline-none transition-colors ${getBorderColor()}`}
+        className={`w-full px-3 py-2 border-2 rounded-lg outline-none transition-colors bg-neutral-700 text-neutral-200 ${getBorderColor()}`}
       >
         {dataSet.map(item => (
           <option key={`${name}-${item.value}`} value={item.value}>
@@ -66,7 +66,7 @@ export default function SelectInput({
       </select>
       {showError && (
         <p className="text-red-500 text-sm mt-1">
-          {errorMessage ?? "This field has an error"}
+          ⚠ {errorMessage ?? "This field has an error"}
         </p>
       )}
     </div>

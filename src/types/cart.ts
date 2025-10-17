@@ -1,5 +1,5 @@
-import { Product } from "@/types/product";
-import { CheckoutFormData } from "@/types/checkout";
+import { Product } from "@/domain/product/types/product";
+import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 
 export interface CartItem extends Product {
   quantity: number;

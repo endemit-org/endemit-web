@@ -1,5 +1,5 @@
-import { DiscountDetails } from "@/types/checkout";
-import { transformPriceFromStripe } from "@/app/services/stripe/util";
+import { DiscountDetails } from "@/domain/checkout/types/checkout";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 
 const getDiscountByAmount = (discountAmount: number) => {
   return discountAmount * -1;

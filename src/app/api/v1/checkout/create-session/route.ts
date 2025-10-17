@@ -11,6 +11,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const products = await fetchProductsFromCms({});
 
+    if (!products || products.length === 0) {
+      throw new Error("No products available for checkout");
+    }
+
     const {
       name,
       email,

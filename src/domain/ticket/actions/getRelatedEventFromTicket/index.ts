@@ -1,5 +1,5 @@
-import { ProductRelatedEvent } from "@/types/product";
-import { CustomStripeLineItem } from "@/types/checkout";
+import { ProductRelatedEvent } from "@/domain/product/types/product";
+import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
 
 export const getRelatedEventFromTicket = (item: CustomStripeLineItem) => {
   const metadata = item.price_data?.product_data?.metadata;

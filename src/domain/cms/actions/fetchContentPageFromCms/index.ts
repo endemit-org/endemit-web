@@ -1,11 +1,15 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicContentPageDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicContentPageDocument } from "@/domain/cms/types/prismic";
 import { getFormattedContentPage } from "@/domain/contentPage/actions";
 
-export const fetchContentPageFromCms = async (pageId: string) => {
+export const fetchContentPageFromCms = async (pageUid: string) => {
   const prismicPage = (await prismicClient
-    .getByUID("content_page", pageId)
+    .getByUID("content_page", pageUid)
     .catch(() => null)) as PrismicContentPageDocument;
+
+  if (!prismicPage) {
+    return null;
+  }
 
   const contentPageWithLocalType = getFormattedContentPage(prismicPage);
 

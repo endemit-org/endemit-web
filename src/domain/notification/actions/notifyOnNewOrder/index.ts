@@ -1,8 +1,8 @@
-import { DiscordConnector } from "@/app/services/discord";
+import { DiscordConnector } from "@/services/discord";
 import { Order } from "@prisma/client";
 import { formatDecimalPrice } from "@/lib/formatting";
-import { CustomStripeLineItem } from "@/types/checkout";
-import { transformPriceFromStripe } from "@/app/services/stripe/util";
+import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
+import { transformPriceFromStripe } from "@/services/stripe/util";
 import { notificationFooter } from "@/domain/notification/util";
 
 const discordOrders = new DiscordConnector(

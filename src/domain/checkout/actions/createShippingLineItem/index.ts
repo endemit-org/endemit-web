@@ -1,7 +1,7 @@
-import { transformPriceToStripe } from "@/app/services/stripe/util";
-import shippingService from "@/app/services/shipping";
+import { transformPriceToStripe } from "@/services/stripe/util";
+import shippingService from "@/services/shipping";
 import { Country } from "@/types/country";
-import { ShippingAddress } from "@/types/checkout";
+import { ShippingAddress } from "@/domain/checkout/types/checkout";
 
 export const createShippingLineItem = (
   shippingAddress: ShippingAddress,

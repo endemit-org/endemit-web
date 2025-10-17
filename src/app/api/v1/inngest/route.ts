@@ -1,5 +1,5 @@
 import { serve } from "inngest/next";
-import { inngest } from "@/app/services/inngest";
+import { inngest } from "@/services/inngest";
 
 import { runNewOrderAutomation } from "@/domain/order/actions";
 import { runTicketIssueAutomation } from "@/domain/ticket/actions";

@@ -1,4 +1,4 @@
-import { Product } from "@/types/product";
+import { Product } from "@/domain/product/types/product";
 import ProductCard from "@/components/product/ProductCard";
 import clsx from "clsx";
 

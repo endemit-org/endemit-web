@@ -1,5 +1,9 @@
+"use client";
+import { useRouter } from "next/navigation";
+
 interface ActionButtonProps {
-  onClick?: () => void;
+  href?: string;
+  onClick?: (e: React.MouseEvent) => void;
   type?: "button" | "submit" | "reset";
   children: React.ReactNode;
   className?: string;
@@ -11,6 +15,7 @@ interface ActionButtonProps {
 
 export default function ActionButton({
   onClick,
+  href,
   type = "button",
   children,
   className = "",
@@ -19,6 +24,8 @@ export default function ActionButton({
   size = "md",
   fullWidth = true,
 }: ActionButtonProps) {
+  const router = useRouter();
+
   const baseClasses =
     "flex items-center justify-center rounded-md border border-transparent font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-hidden";
 
@@ -26,7 +33,7 @@ export default function ActionButton({
     primary:
       "bg-blue-700 text-neutral-200 hover:bg-blue-800 focus:ring-blue-500",
     secondary:
-      "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500",
+      "bg-neutral-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500",
     danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
   };
 
@@ -44,9 +51,18 @@ export default function ActionButton({
   const combinedClasses =
     `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${disabledClass} ${className}`.trim();
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      onClick(e);
+    }
+    if (href && !disabled) {
+      router.push(href);
+    }
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       type={type}
       className={combinedClasses}
       disabled={disabled}

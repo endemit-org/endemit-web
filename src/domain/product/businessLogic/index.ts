@@ -5,7 +5,7 @@ import {
   ProductStatus,
   ProductType,
   ProductVisibility,
-} from "@/types/product";
+} from "@/domain/product/types/product";
 import { Country, Region } from "@/types/country";
 import { getRegionFromCountry } from "@/lib/util";
 

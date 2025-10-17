@@ -2,7 +2,7 @@ import {
   ComplementaryTicketField,
   CustomStripeLineItem,
   ShippingAddress,
-} from "@/types/checkout";
+} from "@/domain/checkout/types/checkout";
 import {
   createProductLineItems,
   createShippingLineItem,

@@ -1,4 +1,4 @@
-import { prisma } from "@/app/services/prisma";
+import { prisma } from "@/services/prisma";
 
 export const createTicketTransaction = async ({
   eventId,

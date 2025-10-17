@@ -1,5 +1,5 @@
-import { PrismicEventDocument } from "@/types/prismic";
-import { Event } from "@/types/event";
+import { PrismicEventDocument } from "@/domain/cms/types/prismic";
+import { Event } from "@/domain/event/types/event";
 import { richTextToPlainText } from "@/lib/util";
 
 export const getFormattedEvent = (event: PrismicEventDocument) => {

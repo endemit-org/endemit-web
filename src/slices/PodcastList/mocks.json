@@ -1,0 +1,23 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "how",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "FieldContent",
+				"value": "similar",
+				"type": "Text"
+			},
+			"render_frame": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			}
+		},
+		"items": []
+	}
+]

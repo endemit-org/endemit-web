@@ -1,4 +1,4 @@
-import { TicketPayload } from "@/types/ticket";
+import { TicketPayload } from "@/domain/ticket/types/ticket";
 import crypto from "crypto";
 
 export const generateSecureHash = (ticketPayload: TicketPayload) => {

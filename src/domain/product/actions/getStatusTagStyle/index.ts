@@ -1,4 +1,4 @@
-import { ProductStatus } from "@/types/product";
+import { ProductStatus } from "@/domain/product/types/product";
 
 export const getStatusTagStyle = (status: ProductStatus) => {
   switch (status) {

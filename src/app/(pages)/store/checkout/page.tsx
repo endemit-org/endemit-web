@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Cart from "@/components/checkout/Checkout";
+import OuterPage from "@/components/OuterPage";
+import PageHeadline from "@/components/PageHeadline";
 
 export const metadata: Metadata = {
   title: "Merch",
@@ -15,9 +17,16 @@ export const metadata: Metadata = {
 
 export default function CheckoutPage() {
   return (
-    <div className=" mx-auto space-y-8 sm:max-w-full pt-24 px-4 lg:pt-16">
-      <h1 className="text-3xl font-bold text-white mb-8">CHECKOUT</h1>
+    <OuterPage>
+      <PageHeadline
+        title={"Checkout"}
+        segments={[
+          { label: "Endemit", path: "" },
+          { label: "Store", path: "store" },
+          { label: "Checkout", path: "checkout" },
+        ]}
+      />
       <Cart />
-    </div>
+    </OuterPage>
   );
 }

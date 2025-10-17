@@ -1,6 +1,6 @@
-import { PrismicVenueDocument } from "@/types/prismic";
+import { PrismicVenueDocument } from "@/domain/cms/types/prismic";
 import { richTextToPlainText } from "@/lib/util";
-import { Venue } from "@/types/venue";
+import { Venue } from "@/domain/venue/types/venue";
 
 export const getFormattedVenue = (venue: PrismicVenueDocument) => {
   return {

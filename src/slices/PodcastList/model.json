@@ -1,0 +1,42 @@
+{
+  "id": "podcast_list",
+  "type": "SharedSlice",
+  "name": "PodcastList",
+  "description": "PodcastList",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": ""
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

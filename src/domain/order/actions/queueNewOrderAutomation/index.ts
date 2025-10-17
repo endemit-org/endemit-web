@@ -1,5 +1,8 @@
-import { inngest } from "@/app/services/inngest";
-import { OrderNotificationData, OrderQueueEvent } from "@/types/order";
+import { inngest } from "@/services/inngest";
+import {
+  OrderNotificationData,
+  OrderQueueEvent,
+} from "@/domain/order/types/order";
 
 export const queueNewOrderAutomation = async (data: OrderNotificationData) => {
   return await inngest.send({

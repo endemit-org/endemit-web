@@ -1,4 +1,4 @@
-import { TicketPayload } from "@/types/ticket";
+import { TicketPayload } from "@/domain/ticket/types/ticket";
 import { generateSecureHash } from "@/domain/ticket/actions";
 import crypto from "crypto";
 

@@ -1,5 +1,5 @@
 import { formatPrice } from "@/lib/formatting";
-import { DiscordConnector } from "@/app/services/discord";
+import { DiscordConnector } from "@/services/discord";
 import { notificationFooter } from "@/domain/notification/util";
 
 const discordTicketPurchase = new DiscordConnector(

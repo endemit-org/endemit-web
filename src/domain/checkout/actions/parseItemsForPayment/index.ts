@@ -1,5 +1,5 @@
 import { CartItem } from "@/types/cart";
-import { Product } from "@/types/product";
+import { Product } from "@/domain/product/types/product";
 
 export const parseItemsForPayment = (
   items: CartItem[],

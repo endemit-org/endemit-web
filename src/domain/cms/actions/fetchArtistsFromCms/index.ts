@@ -1,5 +1,5 @@
-import { prismicClient } from "@/app/services/prismic";
-import { PrismicArtistDocument } from "@/types/prismic";
+import { prismicClient } from "@/services/prismic";
+import { PrismicArtistDocument } from "@/domain/cms/types/prismic";
 import { getFormattedArtist } from "@/domain/artist/actions";
 
 export const fetchArtistsFromCms = async ({
@@ -13,6 +13,10 @@ export const fetchArtistsFromCms = async ({
     pageSize,
     ...(filters && { filters }),
   })) as PrismicArtistDocument[];
+
+  if (!artists) {
+    return null;
+  }
 
   const artistsWithLocalType = artists.map(event => getFormattedArtist(event));
 

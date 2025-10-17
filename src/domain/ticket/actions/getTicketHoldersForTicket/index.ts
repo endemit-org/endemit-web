@@ -1,4 +1,4 @@
-import { CustomStripeLineItem } from "@/types/checkout";
+import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
 
 export const getTicketHoldersForTicket = (
   item: CustomStripeLineItem,

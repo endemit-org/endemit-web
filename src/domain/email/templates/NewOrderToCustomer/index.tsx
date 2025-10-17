@@ -3,7 +3,7 @@ import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text } from "@react-email/components";
 import { formatDecimalPrice, formatPrice } from "@/lib/formatting";
-import { CustomStripeLineItem } from "@/types/checkout";
+import { CustomStripeLineItem } from "@/domain/checkout/types/checkout";
 
 interface Props {
   order: Order;
