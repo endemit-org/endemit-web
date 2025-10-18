@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { NextResponse } from "next/server";
 import { CheckoutValidationService } from "@/services/validation/validation.service";
-import { validatePromoCode } from "@/domain/checkout/actions/validatePromoCode";
+import { validatePromoCode } from "@/domain/checkout/actions";
 
 export async function POST(request: Request) {
   try {

@@ -8,7 +8,7 @@ import { ShippingAddress } from "@/domain/checkout/types/checkout";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";
 import { CartItem } from "@/types/cart";
 import { getCountry } from "@/domain/checkout/actions";
-import { getProductLink } from "@/domain/product/actions/getProductLink";
+import { getProductLink } from "@/domain/product/actions";
 
 interface Props {
   order: Order;

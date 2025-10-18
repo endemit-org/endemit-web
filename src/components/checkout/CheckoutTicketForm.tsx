@@ -43,7 +43,7 @@ export default function CheckoutTicketForm({
       <Input
         name={name}
         prefix={"Name"}
-        label={`Ticket holder ${index + 1} name for ${item.name}`}
+        label={`Ticket holder ${index + 1} name @ ${item.name}`}
         type="text"
         value={
           formData.complementaryTicketData

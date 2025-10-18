@@ -5,7 +5,7 @@ import { ValidationErrors } from "@/types/validation";
 
 export class CheckoutValidationService {
   static isValidEmail(email: string): boolean {
-    return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   static isValidName(name: string): boolean {
@@ -64,7 +64,7 @@ export class CheckoutValidationService {
     items: CartItem[];
   }): ValidationErrors {
     const errors: ValidationErrors = {
-      email: this.isValidEmail(formData.email),
+      email: !this.isValidEmail(formData.email),
       emailRepeat: formData.email !== formData.emailRepeat,
       name: false,
       address: false,

@@ -2,9 +2,9 @@ import events from "@/config/events.config";
 import EventList from "@/components/event/EventList";
 import EndemitSubscribe from "@/components/newsletter/EndemitSubscribe";
 import type { Metadata } from "next";
-import PageHeadline from "@/components/PageHeadline";
-import InnerPage from "@/components/InnerPage";
-import OuterPage from "@/components/OuterPage";
+import PageHeadline from "@/components/content/PageHeadline";
+import InnerPage from "@/components/content/InnerPage";
+import OuterPage from "@/components/content/OuterPage";
 
 export const metadata: Metadata = {
   title: "Events",

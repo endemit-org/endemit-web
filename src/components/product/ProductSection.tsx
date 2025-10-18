@@ -33,7 +33,7 @@ export default function ProductSection({
 
       <div
         className={clsx(
-          "flex gap-0.5 flex-wrap w-full",
+          "sm:grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2",
           title || description ? "mt-8" : "mt-0"
         )}
       >

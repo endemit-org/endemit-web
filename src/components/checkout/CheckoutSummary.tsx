@@ -1,6 +1,6 @@
 import { formatDecimalPrice, formatWeight } from "@/lib/formatting";
 import { Country } from "@/types/country";
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/content/Spinner";
 import { transformGramToKilogram } from "@/lib/util";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import clsx from "clsx";
@@ -36,11 +36,7 @@ function LineItem({
 }
 
 function LineItemSpinner() {
-  return (
-    <span className={"text-neutral-400 gap-x-2 font-sm flex text-sm"}>
-      <Spinner /> Loading
-    </span>
-  );
+  return <Spinner text={"Loading..."} />;
 }
 
 export default function CheckoutSummary({

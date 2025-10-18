@@ -1,15 +1,21 @@
 import Subscribe from "@/components/newsletter/Subscribe";
 import { getApiPath } from "@/lib/api";
 
-export default function EndemitSubscribe() {
+export default function EndemitSubscribe({
+  title,
+  description,
+}: {
+  title?: string;
+  description?: string;
+}) {
   return (
     <Subscribe
-      title="SUBSCRIBE"
-      description="Receive updates about our upcoming events, music, and announcements"
+      title={title ?? "SUBSCRIBE"}
+      description={
+        description ??
+        "Receive updates about our upcoming events, music, and announcements"
+      }
       apiEndpoint={getApiPath("newsletter/general-subscribe")}
-      theme="dark"
-      centered={false}
-      resetButton={true}
       containerClass="mt-16 mb-16"
     />
   );

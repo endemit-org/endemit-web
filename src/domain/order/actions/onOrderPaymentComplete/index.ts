@@ -5,6 +5,8 @@ import {
 } from "@/domain/order/actions";
 import { queueTicketIssueAutomation } from "@/domain/ticket/actions";
 import { fetchEventFromCmsById } from "@/domain/cms/actions";
+import { subscribeEmailToTicketBuyerList } from "@/domain/newsletter/actions";
+import { notifyOnNewSubscriber } from "@/domain/notification/actions";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
   const order = await updateOrderStatusPaid(paymentSessionId);
@@ -33,6 +35,14 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
           eventData,
         });
         return;
+      }
+
+      const subscriptionResponse = await subscribeEmailToTicketBuyerList(
+        order.email,
+        eventData.uid
+      );
+      if (subscriptionResponse) {
+        await notifyOnNewSubscriber(order.email, "Ticket buyers Newsletter");
       }
 
       ticketHolders.forEach(ticketHolderName => {

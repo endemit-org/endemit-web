@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { fetchProductsFromCms } from "@/domain/cms/actions";
-import { validateCheckoutRequest } from "@/domain/checkout/actions";
+import {
+  validateCheckoutRequest,
+  createCheckoutSession,
+  createCheckoutSessionLineItems,
+} from "@/domain/checkout/actions";
 import { createOrder } from "@/domain/order/actions";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions";
-import { createCheckoutSession } from "@/domain/checkout/actions/createCheckoutSession";
-import { createCheckoutSessionLineItems } from "@/domain/checkout/actions/createCheckoutSessionLineItems";
 import { transformToProductInOrder } from "@/domain/product/actions";
 import { transformPriceFromStripe } from "@/services/stripe/util";
+import { notifyOnNewSubscriber } from "@/domain/notification/actions";
 
 export async function POST(request: Request) {
   try {
@@ -64,7 +67,10 @@ export async function POST(request: Request) {
     });
 
     if (subscribeToNewsletter) {
-      await subscribeEmailToGeneralList(email);
+      const subscriptionResponse = await subscribeEmailToGeneralList(email);
+      if (subscriptionResponse) {
+        await notifyOnNewSubscriber(email, "General Newsletter");
+      }
     }
 
     return NextResponse.json(

@@ -23,7 +23,7 @@ export default function PodcastCard({
   return (
     <div
       className={
-        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full sm:w-[calc(50%-1.2rem)] xl:w-[calc(33.333%-0.1rem)] 8xl:w-[calc(25%-0.1rem)]"
+        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full"
       }
     >
       <Link href={`/music/emit/${uid}`}>

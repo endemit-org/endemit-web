@@ -1,0 +1,162 @@
+[
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "Mountain landscape",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop"
+        },
+        "caption": "Beautiful mountain vista"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "Ocean waves",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&h=600&fit=crop"
+        },
+        "caption": "Calm ocean sunset"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "Forest path",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop"
+        },
+        "caption": "Misty forest trail"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "Desert dunes",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&h=600&fit=crop"
+        },
+        "caption": "Golden desert sands"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "City skyline",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&h=600&fit=crop"
+        },
+        "caption": "Urban evening lights"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "Northern lights",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&h=600&fit=crop"
+        },
+        "caption": "Aurora borealis display"
+      }
+    ],
+    "primary": {
+      "heading": [
+        {
+          "type": "heading2",
+          "text": "Our Gallery",
+          "spans": []
+        }
+      ],
+      "layout": "grid",
+      "columns": "3"
+    },
+    "id": "image_gallery_mock_1$default",
+    "slice_type": "image_gallery",
+    "slice_label": null
+  },
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 1000
+          },
+          "alt": "Architecture",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&h=1000&fit=crop"
+        },
+        "caption": "Modern architecture"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 500
+          },
+          "alt": "Minimalist interior",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&h=500&fit=crop"
+        },
+        "caption": "Clean living space"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 800
+          },
+          "alt": "Abstract art",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=800&fit=crop"
+        },
+        "caption": "Colorful patterns"
+      },
+      {
+        "image": {
+          "dimensions": {
+            "width": 800,
+            "height": 600
+          },
+          "alt": "Street photography",
+          "copyright": null,
+          "url": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop"
+        },
+        "caption": "City life moments"
+      }
+    ],
+    "primary": {
+      "heading": [
+        {
+          "type": "heading2",
+          "text": "Featured Work",
+          "spans": []
+        }
+      ],
+      "layout": "masonry",
+      "columns": "2"
+    },
+    "id": "image_gallery_mock_2$default",
+    "slice_type": "image_gallery",
+    "slice_label": null
+  }
+]

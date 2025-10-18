@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import { useCart } from "@/stores/CartStore";
-import { useLocalStorageForm } from "@/hooks/useLocalStorageForm";
+import { useSessionStorageForm } from "@/hooks/useSessionStorageForm";
 
 export default function ClearCheckoutValues() {
   const { clearCart } = useCart();
-  const { clearStorage } = useLocalStorageForm();
+  const { clearStorage } = useSessionStorageForm();
 
   useEffect(() => {
     clearCart();

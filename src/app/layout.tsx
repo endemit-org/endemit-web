@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
 import { Teko, Space_Grotesk } from "next/font/google";
-import EnvironmentIndicator from "@/components/EnvironmentIndicator";
+import EnvironmentIndicator from "@/components/development/EnvironmentIndicator";
 
 const headlineFont = Teko({
   subsets: ["latin", "latin-ext"],

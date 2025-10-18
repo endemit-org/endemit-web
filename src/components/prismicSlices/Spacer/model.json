@@ -1,0 +1,35 @@
+{
+  "id": "spacer",
+  "type": "SharedSlice",
+  "name": "Spacer",
+  "description": "Configurable vertical spacing between sections",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "size": {
+          "type": "Select",
+          "config": {
+            "label": "Size",
+            "options": ["small", "medium", "large", "xlarge"],
+            "default_value": "medium"
+          }
+        },
+        "mobileSize": {
+          "type": "Select",
+          "config": {
+            "label": "Mobile Size",
+            "options": ["small", "medium", "large", "xlarge"],
+            "default_value": "small"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

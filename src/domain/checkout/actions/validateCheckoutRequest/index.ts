@@ -10,7 +10,7 @@ import {
   ProductCompositionType,
 } from "@/domain/product/types/product";
 import { isProductSellable } from "@/domain/product/businessLogic";
-import { getVariantSingleProducts } from "@/domain/cms/actions/getVariantSingleProducts";
+import { getVariantSingleProducts } from "@/domain/cms/actions";
 import {
   getCheckoutWeight,
   getCountry,

@@ -1,4 +1,4 @@
-import ProtectedEnvironmentLogin from "@/components/ProtectedEnvironmentLogin";
+import ProtectedEnvironmentLogin from "@/components/development/ProtectedEnvironmentLogin";
 
 export default function StagingLoginPage() {
   return (

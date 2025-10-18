@@ -33,6 +33,21 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
             "podcast_list": {
               "type": "SharedSlice"
             },
@@ -40,9 +55,6 @@
               "type": "SharedSlice"
             },
             "text_column": {
-              "type": "SharedSlice"
-            },
-            "text_image_block": {
               "type": "SharedSlice"
             },
             "embed_block": {
