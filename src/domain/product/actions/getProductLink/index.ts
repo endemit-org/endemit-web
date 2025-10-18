@@ -1,4 +1,4 @@
-import { createSlug } from "@/lib/util";
+import { createSlug } from "../../../../../lib/util";
 import { ProductCategory } from "@/domain/product/types/product";
 
 export const getProductLink = (

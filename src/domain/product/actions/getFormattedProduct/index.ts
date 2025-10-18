@@ -1,5 +1,5 @@
 import { PrismicProductDocument } from "@/domain/cms/types/prismic";
-import { richTextToHTML, richTextToPlainText } from "@/lib/util";
+import { richTextToHTML, richTextToPlainText } from "../../../../../lib/util";
 import {
   Product,
   ProductCompositionType,

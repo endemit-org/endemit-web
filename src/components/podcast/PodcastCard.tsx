@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { formatDate } from "@/lib/formatting";
+import { formatDate } from "../../../lib/formatting";
 
 interface PodcastCardProps {
   image?: {

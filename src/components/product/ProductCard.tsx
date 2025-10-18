@@ -2,7 +2,7 @@ import { ProductCategory, ProductStatus } from "@/domain/product/types/product";
 import Link from "next/link";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import Image from "next/image";
-import { formatPrice } from "@/lib/formatting";
+import { formatPrice } from "../../../lib/formatting";
 import { getProductLink } from "@/domain/product/actions";
 
 interface ProductCardProps {

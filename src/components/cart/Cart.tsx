@@ -5,7 +5,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import ToteBagIcon from "@/components/icon/TotebagIcon";
 import { useCartItemCount, useCartTotal } from "@/stores/CartStore";
-import { formatPrice } from "@/lib/formatting";
+import { formatPrice } from "../../../lib/formatting";
 import ActionButton from "@/components/form/ActionButton";
 import { useRouter } from "next/navigation";
 

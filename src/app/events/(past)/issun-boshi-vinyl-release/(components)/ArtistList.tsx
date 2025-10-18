@@ -8,7 +8,7 @@ import {
 } from "@/app/events/(past)/issun-boshi-vinyl-release/(config)";
 
 import ArtistCard from "@/components/artist/ArtistCard";
-import { transformMinutesToMs } from "@/lib/util";
+import { transformMinutesToMs } from "../../../../../../lib/util";
 
 export default function ArtistList() {
   const [sortBy, setSortBy] = useState<SortOption>("default");

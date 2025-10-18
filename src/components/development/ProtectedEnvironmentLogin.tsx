@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../../lib/api";
 
 export default function ProtectedEnvironmentLogin() {
   const [password, setPassword] = useState("");

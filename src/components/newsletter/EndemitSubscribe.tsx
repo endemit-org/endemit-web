@@ -1,5 +1,5 @@
 import Subscribe from "@/components/newsletter/Subscribe";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../../lib/api";
 
 export default function EndemitSubscribe({
   title,

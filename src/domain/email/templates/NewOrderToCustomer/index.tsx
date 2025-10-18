@@ -2,7 +2,7 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text, Link } from "@react-email/components";
-import { formatDecimalPrice } from "@/lib/formatting";
+import { formatDecimalPrice } from "../../../../../lib/formatting";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ShippingAddress } from "@/domain/checkout/types/checkout";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";

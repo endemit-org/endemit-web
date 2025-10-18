@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { categoriesWithSlugs, categoryFromSlug } from "@/lib/util";
+import { categoriesWithSlugs, categoryFromSlug } from "../../../../../lib/util";
 import ProductSection from "@/components/product/ProductSection";
 import { prismic } from "@/services/prismic";
 import { fetchProductsFromCms } from "@/domain/cms/actions";

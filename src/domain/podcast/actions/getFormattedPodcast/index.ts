@@ -1,5 +1,5 @@
 import { PrismicPodcastDocument } from "@/domain/cms/types/prismic";
-import { richTextToPlainText } from "@/lib/util";
+import { richTextToPlainText } from "../../../../../lib/util";
 import { Podcast } from "@/domain/podcast/types/podcast";
 
 export const getFormattedPodcast = (podcast: PrismicPodcastDocument) => {

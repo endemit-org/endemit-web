@@ -1,5 +1,5 @@
-import { formatDecimalPrice } from "@/lib/formatting";
-import { createSlug, getStatusText } from "@/lib/util";
+import { formatDecimalPrice } from "../../../../../../lib/formatting";
+import { createSlug, getStatusText } from "../../../../../../lib/util";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import ImageGalleryWithMasonry from "@/components/content/ImageGalleryWithMasonry";
 import ProductConfigure from "@/components/product/ProductConfigure";

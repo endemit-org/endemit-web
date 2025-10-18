@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { transformHoursToMs } from "@/lib/util";
+import { transformHoursToMs } from "../../lib/util";
 
 const STORAGE_KEY = "checkout_form_data";
 

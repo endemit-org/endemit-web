@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: [
+    "127.0.0.1",
+    "89.143.77.229",
+    "localhost",
+    "*.endemit.org",
+  ],
   images: {
     unoptimized: true,
     remotePatterns: [

@@ -3,7 +3,9 @@ import { getFormattedNavigationMenu } from "@/domain/contentPage/actions";
 
 export const fetchNavigationMenuFromCms = async () => {
   const navigationMenu = await prismicClient
-    .getSingle("menu_navigation")
+    .getSingle("menu_navigation", {
+      fetchOptions: { next: { revalidate: 0 } },
+    })
     .catch(() => null);
 
   if (!navigationMenu) {

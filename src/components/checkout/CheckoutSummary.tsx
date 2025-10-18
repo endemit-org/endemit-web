@@ -1,7 +1,7 @@
-import { formatDecimalPrice, formatWeight } from "@/lib/formatting";
+import { formatDecimalPrice, formatWeight } from "../../../lib/formatting";
 import { Country } from "@/types/country";
 import Spinner from "@/components/content/Spinner";
-import { transformGramToKilogram } from "@/lib/util";
+import { transformGramToKilogram } from "../../../lib/util";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import clsx from "clsx";
 import { getCountry } from "@/domain/checkout/actions";

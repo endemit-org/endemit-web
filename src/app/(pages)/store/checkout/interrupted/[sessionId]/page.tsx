@@ -5,7 +5,7 @@ import InnerPage from "@/components/content/InnerPage";
 import ActionButton from "@/components/form/ActionButton";
 import { stripe } from "@/services/stripe";
 import { transformPriceFromStripe } from "@/services/stripe/util";
-import { formatDecimalPrice } from "@/lib/formatting";
+import { formatDecimalPrice } from "../../../../../../../lib/formatting";
 import Link from "next/link";
 import AnimatedWarningIcon from "@/components/icon/AnimatedWarningIcon";
 

@@ -1,6 +1,8 @@
 import { FC } from "react";
-import { Content } from "@prismicio/client";
+import { asImageSrc, asLink, Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
+import TileGrid from "@/components/grid/TileGrid";
+import { TileConfig } from "@/components/grid/TileConfig";
 
 /**
  * Props for `GridTile`.
@@ -10,41 +12,54 @@ export type GridTileProps = SliceComponentProps<Content.GridTileSlice>;
 /**
  * Component for "GridTile" Slices.
  */
+
+type MediaSrc = {
+  type: "image" | "video";
+  src: string;
+};
+
 const GridTile: FC<GridTileProps> = ({ slice }) => {
+  const tilesFromSlice = slice.primary.tiles.map((tile, index) => {
+    const videoObject = asLink(tile.video);
+    const imageObject = asImageSrc(tile.image);
+    let mediaSrc: MediaSrc | null = null;
+    const linkObject = asLink(tile.link);
+
+    if (imageObject) {
+      mediaSrc = {
+        type: "image",
+        src: imageObject,
+      };
+    }
+
+    if (videoObject) {
+      mediaSrc = {
+        type: "video",
+        src: videoObject,
+      };
+    }
+
+    return {
+      id: `slice-tile-${index}`,
+      size: tile.size
+        ? (tile.size.toLowerCase() as TileConfig["size"])
+        : "medium",
+      title: tile.headline || undefined,
+      subtitle: tile.content || undefined,
+      className: tile.override_class_definition || undefined,
+      media: mediaSrc ?? undefined,
+      link: linkObject ?? undefined,
+      backgroundColor: tile.background_colour || undefined,
+      textColor: tile.text_colour || undefined,
+    };
+  });
+
   return (
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      Placeholder component for grid_tile (variation: {slice.variation}) slices.
-      <br />
-      <strong>You can edit this slice directly in your code editor.</strong>
-      {/**
-       * 💡 Use Prismic MCP with your code editor
-       *
-       * Get AI-powered help to build your slice components — based on your actual model.
-       *
-       * ▶️ Setup:
-       * 1. Add a new MCP Server in your code editor:
-       *
-       * {
-       *   "mcpServers": {
-       *     "Prismic MCP": {
-       *       "command": "npx",
-       *       "args": ["-y", "@prismicio/mcp-server@latest"]
-       *     }
-       *   }
-       * }
-       *
-       * 2. Select a model optimized for coding (e.g. Claude 3.7 Sonnet or similar)
-       *
-       * ✅ Then open your slice file and ask your code editor:
-       *    "Code this slice"
-       *
-       * Your code editor reads your slice model and helps you code faster ⚡
-       * 🎙️ Give your feedback: https://community.prismic.io/t/help-us-shape-the-future-of-slice-creation/19505
-       * 📚 Documentation: https://prismic.io/docs/ai#code-with-prismics-mcp-server
-       */}
+      <TileGrid tiles={tilesFromSlice} />
     </section>
   );
 };

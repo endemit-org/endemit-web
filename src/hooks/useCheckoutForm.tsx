@@ -12,7 +12,7 @@ import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import { CartItem } from "@/types/cart";
 import { getComplementaryTicketModel } from "@/domain/ticket/actions/getComplementaryTicketModel";
 import { useSessionStorageForm } from "@/hooks/useSessionStorageForm";
-import { transformHoursToMs } from "@/lib/util";
+import { transformHoursToMs } from "../../lib/util";
 
 const STORAGE_KEY = "checkout_form_data";
 

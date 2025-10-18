@@ -8,8 +8,11 @@ interface Props {
 export default function Tile({ config }: Props) {
   const { col, row } = sizeMap[config.size];
   const baseClasses = `${col} ${row} ${config?.className} relative overflow-hidden group transition-all`;
-  const bgColor = config.backgroundColor || "bg-white";
-  const textColor = config.textColor || "text-black";
+
+  const dynamicStyles = {
+    backgroundColor: config.backgroundColor || "#e5e5e5",
+    color: config.textColor || "#000000",
+  };
 
   const content = (
     <>
@@ -27,17 +30,16 @@ export default function Tile({ config }: Props) {
           ) : (
             <Image
               src={config.media.src}
+              width={600}
+              height={600}
               alt={config.title || ""}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
             />
           )}
         </div>
       )}
-
       {(config.title || config.subtitle) && (
-        <div
-          className={`absolute inset-0 p-4 lg:p-6 flex flex-col justify-end ${textColor} z-10`}
-        >
+        <div className="absolute inset-0 p-4 lg:p-6 flex flex-col justify-end z-10">
           {config.media && (
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent -z-10" />
           )}
@@ -64,12 +66,17 @@ export default function Tile({ config }: Props) {
     return (
       <a
         href={config.link}
-        className={`${baseClasses} ${bgColor} cursor-pointer`}
+        className={`${baseClasses} cursor-pointer`}
+        style={dynamicStyles}
       >
         {content}
       </a>
     );
   }
 
-  return <div className={`${baseClasses} ${bgColor}`}>{content}</div>;
+  return (
+    <div className={baseClasses} style={dynamicStyles}>
+      {content}
+    </div>
+  );
 }

@@ -2,10 +2,10 @@ import {
   isProductSellable,
   isProductSellableByCutoffDate,
 } from "@/domain/product/businessLogic";
-import { ensureDateType } from "@/lib/util";
+import { ensureDateType } from "../../../lib/util";
 import Link from "next/link";
 import Image from "next/image";
-import { formatDateTime, formatDecimalPrice } from "@/lib/formatting";
+import { formatDateTime, formatDecimalPrice } from "../../../lib/formatting";
 import CartQtyControl from "@/components/cart/CartQtyControl";
 import shippingService from "@/services/shipping";
 import { CartItem } from "@/types/cart";

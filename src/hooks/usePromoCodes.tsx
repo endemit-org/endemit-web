@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../lib/api";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import { isPromoCodeValid } from "@/domain/checkout/businessRules";
 

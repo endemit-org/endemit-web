@@ -1,6 +1,6 @@
 import { DiscordConnector } from "@/services/discord";
 import { Order } from "@prisma/client";
-import { formatDecimalPrice } from "@/lib/formatting";
+import { formatDecimalPrice } from "../../../../../lib/formatting";
 import { notificationFooter } from "@/domain/notification/util";
 import { ProductInOrder } from "@/domain/order/types/order";
 
