@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import EventFooter from "@/components/event/EventFooter";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/content/Sidebar";
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +28,7 @@ export default function IssunBoshiVinylReleaseLayout({
     <body className="m-auto overflow-y-scroll max-lg:my-14 bg-issun-boshi-purple min-h-screen">
       <div className="max-w-8xl m-auto overflow-hidden relative bg-issun-boshi-purple">
         <div
-          className="absolute -z-10 top-0 bottom-0 left-0 right-0 bg-issun-boshi-purple opacity-30 min-h-screen"
+          className="absolute -z-0 top-0 bottom-0 left-0 right-0 bg-issun-boshi-purple opacity-30 min-h-screen"
           style={{
             backgroundImage: "url('/images/worms.png')",
             backgroundRepeat: "repeat",
@@ -72,7 +72,7 @@ export default function IssunBoshiVinylReleaseLayout({
             href: "/events/issun-boshi-vinyl-release/location",
           }}
         />
-        <div className="lg:pl-72 min-h-screen  flex-col flex h-full xl:items-center">
+        <div className="lg:pl-72 min-h-screen  flex-col flex h-full xl:items-center relative">
           {children}
         </div>
 

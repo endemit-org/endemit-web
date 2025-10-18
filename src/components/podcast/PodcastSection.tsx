@@ -33,7 +33,7 @@ export default function PodcastSection({
 
       <div
         className={clsx(
-          "flex gap-0.5 flex-wrap w-full",
+          "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2",
           title || description ? "mt-8" : "mt-0"
         )}
       >
@@ -47,6 +47,19 @@ export default function PodcastSection({
             uid={podcast.uid}
           />
         ))}
+        {podcasts.length < 4 &&
+          Array.from({ length: 4 - podcasts.length }).map((_, index) => (
+            <div
+              key={`filler-${index}`}
+              className="bg-neutral-900 w-full h-full flex items-center justify-center"
+            >
+              <div
+                className={"text-neutral-700 font-heading uppercase text-lg"}
+              >
+                Coming soon
+              </div>
+            </div>
+          ))}
       </div>
     </section>
   );

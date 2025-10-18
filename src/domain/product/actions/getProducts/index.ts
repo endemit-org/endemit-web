@@ -1,5 +1,5 @@
 import { Product } from "@/domain/product/types/product";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../../../../lib/api";
 import { filterVisibleProducts } from "@/domain/product/actions/getVisibleProducts";
 
 async function getProducts(): Promise<Product[]> {

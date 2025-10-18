@@ -1,0 +1,46 @@
+{
+  "id": "tabs",
+  "type": "SharedSlice",
+  "name": "Tabs",
+  "description": "Horizontal tabs for organizing content",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "heading": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Heading",
+            "single": "heading2"
+          }
+        }
+      },
+      "items": {
+        "tabLabel": {
+          "type": "Text",
+          "config": {
+            "label": "Tab Label"
+          }
+        },
+        "tabId": {
+          "type": "Text",
+          "config": {
+            "label": "Tab ID (for URL hash)"
+          }
+        },
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "multi": "paragraph, preformatted, heading3, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl"
+          }
+        }
+      }
+    }
+  ]
+}

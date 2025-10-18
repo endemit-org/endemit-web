@@ -1,9 +1,9 @@
 import { ArtistWithTimestamp } from "@/app/events/(past)/endemit-festival/(config)";
 import Image from "next/image";
-import { getTimeUntil } from "@/lib/util";
+import { getTimeUntil } from "../../../lib/util";
 import clsx from "clsx";
 import { HTMLProps } from "react";
-import { formatDay, formatTime } from "@/lib/formatting";
+import { formatDay, formatTime } from "../../../lib/formatting";
 
 interface ArtistSnippetProps {
   artist: ArtistWithTimestamp;

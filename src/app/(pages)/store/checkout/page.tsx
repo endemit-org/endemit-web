@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Cart from "@/components/checkout/Checkout";
-import OuterPage from "@/components/OuterPage";
-import PageHeadline from "@/components/PageHeadline";
+import OuterPage from "@/components/content/OuterPage";
+import PageHeadline from "@/components/content/PageHeadline";
 
 export const metadata: Metadata = {
   title: "Merch",

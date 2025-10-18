@@ -1,6 +1,6 @@
-import { formatPrice } from "@/lib/formatting";
+import { formatPrice } from "../../../lib/formatting";
 import Link from "next/link";
-import ActionButton from "@/components/ActionButton";
+import ActionButton from "@/components/form/ActionButton";
 
 interface CheckoutDonationProps {
   donationAmount: number;

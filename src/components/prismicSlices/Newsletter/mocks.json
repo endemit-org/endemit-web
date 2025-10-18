@@ -1,0 +1,24 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"list_type": {
+				"__TYPE__": "FieldContent",
+				"value": "Festival",
+				"type": "Select"
+			},
+			"override_title": {
+				"__TYPE__": "FieldContent",
+				"value": "hollow",
+				"type": "Text"
+			},
+			"override_description": {
+				"__TYPE__": "FieldContent",
+				"value": "white",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]

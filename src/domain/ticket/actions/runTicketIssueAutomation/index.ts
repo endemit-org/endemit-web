@@ -13,7 +13,10 @@ import {
 } from "@/domain/ticket/actions";
 import { sendTicketEmail } from "@/domain/email/actions";
 import { notifyOnNewTicketIssue } from "@/domain/notification/actions";
-import { formatEventDateAndTime, formatPrice } from "@/lib/formatting";
+import {
+  formatEventDateAndTime,
+  formatPrice,
+} from "../../../../../lib/formatting";
 import { fetchEventFromCmsById } from "@/domain/cms/actions";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import assert from "node:assert";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions";
+import { notifyOnNewSubscriber } from "@/domain/notification/actions";
 
 export async function POST(request: Request) {
   try {
@@ -9,6 +10,9 @@ export async function POST(request: Request) {
     assert(email, "Email is required");
 
     const subscriptionResponse = await subscribeEmailToGeneralList(email);
+    if (subscriptionResponse) {
+      await notifyOnNewSubscriber(email, "General Newsletter");
+    }
 
     return NextResponse.json(subscriptionResponse);
   } catch (error) {

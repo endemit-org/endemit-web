@@ -2,7 +2,7 @@ import * as React from "react";
 import { TicketEmailData } from "@/domain/ticket/types/ticket";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Img, Text, Link } from "@react-email/components";
-import { formatEventDateAndTime } from "@/lib/formatting";
+import { formatEventDateAndTime } from "../../../../../lib/formatting";
 
 interface Props {
   ticket: TicketEmailData;

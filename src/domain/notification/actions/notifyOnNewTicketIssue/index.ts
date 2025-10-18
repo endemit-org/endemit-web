@@ -1,4 +1,4 @@
-import { formatPrice } from "@/lib/formatting";
+import { formatPrice } from "../../../../../lib/formatting";
 import { DiscordConnector } from "@/services/discord";
 import { notificationFooter } from "@/domain/notification/util";
 

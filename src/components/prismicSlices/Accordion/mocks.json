@@ -1,0 +1,120 @@
+[
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [
+      {
+        "title": "What is your refund policy?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "We offer a 30-day money-back guarantee. If you're not satisfied with your purchase, contact our support team and we'll process your refund within 5-7 business days.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "title": "How do I get started?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Getting started is easy! Simply sign up for an account, choose your plan, and follow our onboarding guide. Our team is available 24/7 to help you with any questions.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "title": "What payment methods do you accept?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and bank transfers for enterprise customers.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "title": "Can I upgrade or downgrade my plan?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Yes, you can change your plan at any time. Upgrades take effect immediately, while downgrades will apply at the start of your next billing cycle.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "title": "Is my data secure?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Absolutely. We use industry-standard encryption (SSL/TLS) to protect your data in transit and at rest. We're also SOC 2 Type II certified and GDPR compliant.",
+            "spans": []
+          }
+        ]
+      }
+    ],
+    "primary": {
+      "heading": [
+        {
+          "type": "heading2",
+          "text": "Frequently Asked Questions",
+          "spans": []
+        }
+      ],
+      "allowMultiple": false
+    },
+    "id": "accordion_mock_1$default",
+    "slice_type": "accordion",
+    "slice_label": null
+  },
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [
+      {
+        "title": "Product Features",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Our platform includes real-time collaboration, advanced analytics, automated workflows, and integrations with over 100 popular tools.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "title": "Technical Specifications",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Built on modern cloud infrastructure with 99.9% uptime SLA. Supports REST API, webhooks, and GraphQL endpoints.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "title": "Support & Resources",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Access our comprehensive documentation, video tutorials, community forums, and dedicated support team available via chat, email, or phone.",
+            "spans": []
+          }
+        ]
+      }
+    ],
+    "primary": {
+      "heading": [
+        {
+          "type": "heading2",
+          "text": "Learn More",
+          "spans": []
+        }
+      ],
+      "allowMultiple": true
+    },
+    "id": "accordion_mock_2$default",
+    "slice_type": "accordion",
+    "slice_label": null
+  }
+]

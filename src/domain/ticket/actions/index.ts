@@ -10,3 +10,5 @@ export * from "./getTicketsSoldForEvent";
 export * from "./getTicketsScannedForEvent";
 export * from "./getTicketSummaryForEvent";
 export * from "./scanTicketById";
+
+// Do not export getComplementaryTicketModel here to avoid circular dependencies and client-side bundle issues.

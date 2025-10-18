@@ -11,3 +11,5 @@ export * from "./fetchContentPageFromCms";
 export * from "./fetchContentPagesFromCms";
 export * from "./fetchPodcastFromCms";
 export * from "./fetchPodcastsFromCms";
+export * from "./fetchNavigationMenuFromCms";
+export * from "./fetchHomePageFromCms";

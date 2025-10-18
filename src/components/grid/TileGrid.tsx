@@ -8,7 +8,7 @@ interface Props {
 export default function TileGrid({ tiles }: Props) {
   return (
     <div
-      className="grid grid-cols-6 lg:grid-cols-8 8xl:grid-cols-12 auto-rows-[200px] lg:auto-rows-[300px] gap-2 p-2"
+      className="grid grid-cols-6 lg:grid-cols-8 8xl:grid-cols-12 auto-rows-[200px] lg:auto-rows-[300px] gap-2"
       style={{ gridAutoFlow: "dense" }}
     >
       {tiles.map(tile => (

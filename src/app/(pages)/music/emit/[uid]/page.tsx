@@ -2,12 +2,14 @@ import {
   fetchPodcastFromCms,
   fetchPodcastsFromCms,
 } from "@/domain/cms/actions";
-import PageHeadline from "@/components/PageHeadline";
-import OuterPage from "@/components/OuterPage";
+import PageHeadline from "@/components/content/PageHeadline";
+import OuterPage from "@/components/content/OuterPage";
 import { notFound } from "next/navigation";
 import PodcastEpisodeHero from "@/components/podcast/PodcastEpisodeHero";
 import PodcastArtistSection from "@/components/podcast/PodcastArtistSection";
-import RelatedPodcastsSection from "@/components/podcast/RelatedPodcastsSection";
+import PodcastSection from "@/components/podcast/PodcastSection";
+import EndemitSubscribe from "@/components/newsletter/EndemitSubscribe";
+import Spacer from "@/components/content/Spacer";
 
 export async function generateStaticParams() {
   const podcasts = await fetchPodcastsFromCms({});
@@ -72,7 +74,20 @@ export default async function PodcastPage({
         )}
       </div>
 
-      {filteredPodcast && <RelatedPodcastsSection podcasts={filteredPodcast} />}
+      {filteredPodcast && (
+        <PodcastSection
+          title={"Enjoy our latest episodes"}
+          podcasts={filteredPodcast}
+        />
+      )}
+
+      <Spacer size={"small"} />
+      <EndemitSubscribe
+        title={"Dont miss out our next episode"}
+        description={
+          "Subscribe and be notified when we release a new emit episode"
+        }
+      />
     </OuterPage>
   );
 }

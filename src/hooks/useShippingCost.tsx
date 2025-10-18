@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Country } from "@/types/country";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../lib/api";
 
 interface UseShippingCostReturn {
   shippingCost: number;

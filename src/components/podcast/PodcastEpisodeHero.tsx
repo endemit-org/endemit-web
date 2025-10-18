@@ -1,5 +1,5 @@
-import InnerPage from "@/components/InnerPage";
-import SoundCloudEmbed from "@/components/SoundCloudEmbed";
+import InnerPage from "@/components/content/InnerPage";
+import SoundCloudEmbed from "@/components/content/SoundCloudEmbed";
 
 interface PodcastEpisodeHeroProps {
   number: string;

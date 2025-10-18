@@ -2,8 +2,10 @@ import {
   Product,
   ProductCompositionType,
 } from "@/domain/product/types/product";
-import { getProductVariantName } from "@/domain/product/actions/getProductVariantName";
-import { getProductVariantId } from "@/domain/product/actions/getProductVariantId";
+import {
+  getProductVariantId,
+  getProductVariantName,
+} from "@/domain/product/actions/";
 
 export const getVariantSingleProducts = (product: Product) => {
   const variantSingleProducts: Product[] = [];

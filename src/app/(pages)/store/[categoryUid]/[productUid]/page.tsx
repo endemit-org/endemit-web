@@ -1,24 +1,22 @@
-import { formatDecimalPrice } from "@/lib/formatting";
-import { createSlug, getStatusText } from "@/lib/util";
+import { formatDecimalPrice } from "../../../../../../lib/formatting";
+import { createSlug, getStatusText } from "../../../../../../lib/util";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
-import ImageGallery from "@/components/ImageGallery";
+import ImageGalleryWithMasonry from "@/components/content/ImageGalleryWithMasonry";
 import ProductConfigure from "@/components/product/ProductConfigure";
 import {
   fetchProductsFromCms,
   fetchProductFromCms,
 } from "@/domain/cms/actions";
-import { getProductLimits } from "@/domain/product/actions/getProductLimits";
+import { getProductLimits } from "@/domain/product/actions";
 import { isProductSellable } from "@/domain/product/businessLogic";
 import parse from "html-react-parser";
 import ProductCard from "@/components/product/ProductCard";
 import clsx from "clsx";
-import InnerPage from "@/components/InnerPage";
-import PageHeadline from "@/components/PageHeadline";
-import OuterPage from "@/components/OuterPage";
+import InnerPage from "@/components/content/InnerPage";
+import PageHeadline from "@/components/content/PageHeadline";
+import OuterPage from "@/components/content/OuterPage";
 import style from "@/styles/insetHtml.module.css";
 import { notFound } from "next/navigation";
-
-export const revalidate = 3600; // Revalidate cache every hour
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -117,7 +115,10 @@ export default async function ProductPage({
           className={"translate-y-4 translate-x-4 relative"}
         />
 
-        <ImageGallery images={product.images} altFallbackText={product.name} />
+        <ImageGalleryWithMasonry
+          images={product.images}
+          altFallbackText={product.name}
+        />
 
         <div className={"lg:flex mt-12 lg:mt-8 relative"}>
           <div
