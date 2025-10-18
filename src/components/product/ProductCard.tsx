@@ -2,7 +2,7 @@ import { ProductCategory, ProductStatus } from "@/domain/product/types/product";
 import Link from "next/link";
 import ProductStatusTag from "@/components/product/ProductStatusTag";
 import Image from "next/image";
-import { formatPrice } from "@/lib/formatting";
+import { formatPrice } from "../../../lib/formatting";
 import { getProductLink } from "@/domain/product/actions";
 
 interface ProductCardProps {
@@ -32,7 +32,7 @@ export default function ProductCard({
   return (
     <div
       className={
-        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full sm:w-[calc(50%-1.2rem)] xl:w-[calc(33.333%-0.1rem)] 8xl:w-[calc(25%-0.1rem)]"
+        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full"
       }
     >
       <ProductStatusTag

@@ -3,7 +3,7 @@
 import { ArtistWithTimestamp, artistConfig, eventConfig } from "../(config)";
 import { useMemo, useState } from "react";
 import ArtistCard from "@/components/artist/ArtistCard";
-import { transformMinutesToMs } from "@/lib/util";
+import { transformMinutesToMs } from "../../../../../../lib/util";
 
 type SortOption = "default" | "timestamp";
 

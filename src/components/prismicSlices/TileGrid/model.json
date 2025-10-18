@@ -1,0 +1,106 @@
+{
+  "id": "grid_tile",
+  "type": "SharedSlice",
+  "name": "TileGrid",
+  "description": "GridTile",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "tiles": {
+          "type": "Group",
+          "config": {
+            "label": "Tiles",
+            "repeat": true,
+            "fields": {
+              "size": {
+                "type": "Select",
+                "config": {
+                  "label": "Size *",
+                  "placeholder": "What is the size of the tile",
+                  "options": [
+                    "Small",
+                    "Medium",
+                    "Large",
+                    "Wide",
+                    "Tall",
+                    "Full"
+                  ]
+                }
+              },
+              "headline": {
+                "type": "Text",
+                "config": {
+                  "label": "Headline",
+                  "placeholder": "(optional)"
+                }
+              },
+              "content": {
+                "type": "Text",
+                "config": {
+                  "label": "Content",
+                  "placeholder": "(optional)"
+                }
+              },
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Image",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              },
+              "video": {
+                "type": "Link",
+                "config": {
+                  "label": "Video",
+                  "placeholder": "",
+                  "select": "media",
+                  "allowText": false
+                }
+              },
+              "link": {
+                "type": "Link",
+                "config": {
+                  "label": "Link",
+                  "placeholder": "(optional)",
+                  "select": null,
+                  "allowTargetBlank": false,
+                  "allowText": false,
+                  "repeat": false
+                }
+              },
+              "background_colour": {
+                "type": "Color",
+                "config": {
+                  "label": "Background colour",
+                  "placeholder": "(optional)"
+                }
+              },
+              "text_colour": {
+                "type": "Color",
+                "config": {
+                  "label": "Text colour",
+                  "placeholder": "(optional)"
+                }
+              },
+              "override_class_definition": {
+                "type": "Text",
+                "config": {
+                  "label": "Override class definition",
+                  "placeholder": "(Optiona) - if you know what you're doing, tailwind"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

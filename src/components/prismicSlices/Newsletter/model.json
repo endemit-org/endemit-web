@@ -1,0 +1,45 @@
+{
+  "id": "newsletter_subscription",
+  "type": "SharedSlice",
+  "name": "Newsletter",
+  "description": "NewsletterSubscription",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "list_type": {
+          "type": "Select",
+          "config": {
+            "label": "List type",
+            "placeholder": "",
+            "options": [
+              "General",
+              "Festival"
+            ],
+            "default_value": "General"
+          }
+        },
+        "override_title": {
+          "type": "Text",
+          "config": {
+            "label": "Override title",
+            "placeholder": "(Optional) Replace title in widget"
+          }
+        },
+        "override_description": {
+          "type": "Text",
+          "config": {
+            "label": "Override description",
+            "placeholder": "(Optional) Replace dsecription in widget"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

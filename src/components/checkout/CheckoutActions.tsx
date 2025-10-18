@@ -1,4 +1,5 @@
-import ActionButton from "@/components/ActionButton";
+import ActionButton from "@/components/form/ActionButton";
+import clsx from "clsx";
 import Image from "next/image";
 
 interface CheckoutActionsProps {
@@ -28,6 +29,9 @@ export default function CheckoutActions({
       <ActionButton
         onClick={canProceed ? onCheckout : undefined}
         disabled={!canProceed}
+        className={clsx(
+          canProceed && "animate-rave-125bmp hover:[animation:none]"
+        )}
       >
         {isProcessing && canProceed
           ? "Redirecting you to payment..."

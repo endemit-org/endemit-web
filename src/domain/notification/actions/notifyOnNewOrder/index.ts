@@ -1,6 +1,6 @@
 import { DiscordConnector } from "@/services/discord";
 import { Order } from "@prisma/client";
-import { formatDecimalPrice } from "@/lib/formatting";
+import { formatDecimalPrice } from "../../../../../lib/formatting";
 import { notificationFooter } from "@/domain/notification/util";
 import { ProductInOrder } from "@/domain/order/types/order";
 
@@ -17,6 +17,10 @@ export async function notifyOnNewOrder(order: Order) {
 
     const totalOrderAmount = formatDecimalPrice(Number(order.totalAmount));
 
+    const createOrderItemsValues = orderItems.map(item => {
+      return `Product: **${item.name ?? "Product"}**\nPrice: **${formatDecimalPrice((item.price || 0) * (item.quantity || 1))}** _(${item.quantity} * ${formatDecimalPrice(item.price || 0)})_`;
+    });
+
     const messageObject = {
       title: "💵 New Order received",
       description: `A new order in total value of **${totalOrderAmount}** was just received!`,
@@ -27,13 +31,11 @@ export async function notifyOnNewOrder(order: Order) {
           value: `\`${order.email}\``,
           inline: false,
         },
-        ...orderItems.map(item => {
-          return {
-            name: item.name ?? "Product",
-            value: `Quantity: \`${item.quantity} * ${formatDecimalPrice(item.price || 0)}\`\nTotal: \`${formatDecimalPrice((item.price || 0) * (item.quantity || 1))}\``,
-            inline: false,
-          };
-        }),
+        {
+          name: "Order items",
+          value: createOrderItemsValues.join("\n\n"),
+          inline: false,
+        },
         {
           name: "Total order amount",
           value: `\`${totalOrderAmount}\``,

@@ -1,7 +1,25 @@
 import { EMAIL_OCTOPUS_API_KEY } from "@/services/emailOctopus/emailOctopus";
 
-export const subscribeEmailToList = async (email: string, listId: string) => {
+type ApiPayload = {
+  email_address: string;
+  status: "subscribed" | "unsubscribed" | "pending";
+  tags?: string[];
+};
+
+export const subscribeEmailToList = async (
+  email: string,
+  listId: string,
+  tag?: string
+) => {
   try {
+    const apiPayload: ApiPayload = {
+      email_address: email,
+      status: "subscribed",
+    };
+    if (tag) {
+      apiPayload.tags = [tag];
+    }
+
     const response = await fetch(
       `https://api.emailoctopus.com/lists/${listId}/contacts`,
       {
@@ -10,10 +28,7 @@ export const subscribeEmailToList = async (email: string, listId: string) => {
           Authorization: `Bearer ${EMAIL_OCTOPUS_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email_address: email,
-          status: "subscribed",
-        }),
+        body: JSON.stringify(apiPayload),
       }
     );
     const data = await response.json();

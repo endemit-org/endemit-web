@@ -1,5 +1,5 @@
 import { PrismicArtistDocument } from "@/domain/cms/types/prismic";
-import { richTextToPlainText } from "@/lib/util";
+import { richTextToPlainText } from "../../../../../lib/util";
 import { Artist } from "@/domain/artist/types/artist";
 
 export const getFormattedArtist = (artist: PrismicArtistDocument) => {

@@ -7,7 +7,7 @@ import {
   ProductVisibility,
 } from "@/domain/product/types/product";
 import { Country, Region } from "@/types/country";
-import { getRegionFromCountry } from "@/lib/util";
+import { getRegionFromCountry } from "../../../../lib/util";
 
 export const isProductSellableByCutoffDate = (product: Product) => {
   if (!product.limits?.cutoffTimestamp) {

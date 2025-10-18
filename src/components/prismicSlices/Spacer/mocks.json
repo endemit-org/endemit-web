@@ -1,0 +1,50 @@
+[
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [],
+    "primary": {
+      "size": "small",
+      "mobileSize": "small"
+    },
+    "id": "spacer_mock_1$default",
+    "slice_type": "spacer",
+    "slice_label": "Small Spacer"
+  },
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [],
+    "primary": {
+      "size": "medium",
+      "mobileSize": "small"
+    },
+    "id": "spacer_mock_2$default",
+    "slice_type": "spacer",
+    "slice_label": "Medium Spacer"
+  },
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [],
+    "primary": {
+      "size": "large",
+      "mobileSize": "medium"
+    },
+    "id": "spacer_mock_3$default",
+    "slice_type": "spacer",
+    "slice_label": "Large Spacer"
+  },
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [],
+    "primary": {
+      "size": "xlarge",
+      "mobileSize": "large"
+    },
+    "id": "spacer_mock_4$default",
+    "slice_type": "spacer",
+    "slice_label": "XLarge Spacer"
+  }
+]

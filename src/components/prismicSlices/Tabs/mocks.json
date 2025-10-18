@@ -1,0 +1,104 @@
+[
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [
+      {
+        "tabLabel": "Features",
+        "tabId": "features",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Our platform includes real-time collaboration, advanced analytics, automated workflows, and integrations with over 100 popular tools. Experience seamless productivity with features designed for modern teams.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "tabLabel": "Pricing",
+        "tabId": "pricing",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Choose from our flexible pricing plans starting at $9/month. All plans include a 14-day free trial with no credit card required. Enterprise pricing available for larger teams.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "tabLabel": "Support",
+        "tabId": "support",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Get help when you need it with 24/7 customer support via chat, email, or phone. Access our comprehensive documentation, video tutorials, and community forums.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "tabLabel": "API",
+        "tabId": "api",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Build custom integrations with our RESTful API. Complete documentation, SDKs for popular languages, and webhooks for real-time updates. Rate limits designed for production use.",
+            "spans": []
+          }
+        ]
+      }
+    ],
+    "primary": {
+      "heading": [
+        {
+          "type": "heading2",
+          "text": "Product Information",
+          "spans": []
+        }
+      ]
+    },
+    "id": "tabs_mock_1$default",
+    "slice_type": "tabs",
+    "slice_label": null
+  },
+  {
+    "variation": "default",
+    "version": "initial",
+    "items": [
+      {
+        "tabLabel": "Overview",
+        "tabId": "overview",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Welcome to our comprehensive guide. This section provides an overview of all available options and features.",
+            "spans": []
+          }
+        ]
+      },
+      {
+        "tabLabel": "Getting Started",
+        "tabId": "getting-started",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Follow these simple steps to get up and running in minutes. No technical expertise required.",
+            "spans": []
+          }
+        ]
+      }
+    ],
+    "primary": {
+      "heading": [
+        {
+          "type": "heading2",
+          "text": "Documentation",
+          "spans": []
+        }
+      ]
+    },
+    "id": "tabs_mock_2$default",
+    "slice_type": "tabs",
+    "slice_label": null
+  }
+]

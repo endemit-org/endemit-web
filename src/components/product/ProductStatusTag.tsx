@@ -2,7 +2,7 @@ import { ProductStatus } from "@/domain/product/types/product";
 import clsx from "clsx";
 
 import { getStatusTagStyle } from "@/domain/product/actions";
-import { getStatusText } from "@/lib/util";
+import { getStatusText } from "../../../lib/util";
 
 interface Props {
   status: ProductStatus;

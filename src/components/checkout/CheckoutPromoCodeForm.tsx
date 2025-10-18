@@ -2,7 +2,7 @@
 
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import Input from "@/components/form/Input";
-import ActionButton from "@/components/ActionButton";
+import ActionButton from "@/components/form/ActionButton";
 
 interface CheckoutPromoCodeFormProps {
   discount: DiscountDetails | undefined;

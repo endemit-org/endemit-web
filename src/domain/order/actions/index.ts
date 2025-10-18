@@ -6,3 +6,5 @@ export * from "./getOrderByStripeSession";
 export * from "./runNewOrderAutomation";
 export * from "./queueNewOrderAutomation";
 export * from "./getTicketsFromOrder";
+export * from "./onOrderPaymentComplete";
+export * from "./onOrderPaymentExpired";

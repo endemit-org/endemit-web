@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../lib/api";
 
 interface UseNewsletterSubscriptionReturn {
   shouldShowNewsletter: boolean;

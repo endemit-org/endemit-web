@@ -1,8 +1,10 @@
 import { stripe } from "@/services/stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { onOrderPaymentComplete } from "@/domain/order/actions/onOrderPaymentComplete";
-import { onOrderPaymentExpired } from "@/domain/order/actions/onOrderPaymentExpired";
+import {
+  onOrderPaymentExpired,
+  onOrderPaymentComplete,
+} from "@/domain/order/actions";
 
 export async function POST(request: Request) {
   const body = await request.text();

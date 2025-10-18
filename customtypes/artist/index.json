@@ -15,8 +15,8 @@
       "name": {
         "type": "Text",
         "config": {
-          "label": "Name",
-          "placeholder": ""
+          "label": "Name *",
+          "placeholder": "(Required) Name of the artist"
         }
       },
       "description": {

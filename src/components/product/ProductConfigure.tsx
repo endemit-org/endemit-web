@@ -11,7 +11,7 @@ import {
   isProductSellable,
 } from "@/domain/product/businessLogic";
 import Link from "next/link";
-import ActionButton from "@/components/ActionButton";
+import ActionButton from "@/components/form/ActionButton";
 import { getProductsQtyInCart } from "@/domain/checkout/actions";
 
 interface Props {

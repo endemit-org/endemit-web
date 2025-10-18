@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { CartItem, CartStore } from "@/types/cart";
 import { Product } from "@/domain/product/types/product";
-import { getApiPath } from "@/lib/api";
+import { getApiPath } from "../../lib/api";
 import { canProductExistInCart } from "@/domain/product/businessLogic";
 
 interface CreateCheckoutSessionResponse {

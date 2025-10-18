@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
-import { categoriesWithSlugs, categoryFromSlug } from "@/lib/util";
+import { categoriesWithSlugs, categoryFromSlug } from "../../../../../lib/util";
 import ProductSection from "@/components/product/ProductSection";
 import { prismic } from "@/services/prismic";
 import { fetchProductsFromCms } from "@/domain/cms/actions";
-import PageHeadline from "@/components/PageHeadline";
-import InnerPage from "@/components/InnerPage";
-import OuterPage from "@/components/OuterPage";
-export const revalidate = 3600; // Revalidate every hour
+import PageHeadline from "@/components/content/PageHeadline";
+import InnerPage from "@/components/content/InnerPage";
+import OuterPage from "@/components/content/OuterPage";
 
 export async function generateStaticParams() {
   const categories = categoriesWithSlugs;

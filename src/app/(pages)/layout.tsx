@@ -1,11 +1,14 @@
-import Sidebar from "@/components/Sidebar";
-import SiteFooter from "@/components/SiteFooter";
+import Sidebar from "@/components/content/Sidebar";
+import SiteFooter from "@/components/content/SiteFooter";
+import { fetchNavigationMenuFromCms } from "@/domain/cms/actions";
 
-export default function RootLayout({
+export default async function ContentPageLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const menuItems = await fetchNavigationMenuFromCms();
+
   return (
     <body
       className="m-auto overflow-y-scroll bg-black "
@@ -15,19 +18,27 @@ export default function RootLayout({
       }}
     >
       <div className="max-w-8xl m-auto">
-        <Sidebar
-          navigationItems={[
-            { label: "Main", href: "/" },
-            { label: "Events", href: "/events" },
-            { label: "Music", href: "/music" },
-            { label: "Store", href: "/store" },
-            { label: "About", href: "/about" },
-          ]}
-          hideCartOnPath={["/store/checkout"]}
-        />
+        {menuItems && (
+          <Sidebar
+            navigationItems={menuItems.items.map(item => ({
+              label: item.label,
+              href: item.link,
+            }))}
+            hideCartOnPath={["/store/checkout"]}
+          />
+        )}
 
         <div className="lg:ml-72 relative bg-neutral-900 min-h-screen lg:mt-12 lg:mb-20 lg:rounded-r-xl lg:border-y-2 lg:border-r-2 lg:border-neutral-800 p-4 lg:p-12 max-lg:mb-36 max-lg:mt-14 max-lg:py-12">
-          {children}
+          <div
+            className="absolute  top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-50 min-h-screen"
+            style={{
+              backgroundImage: "url('/images/worms.png')",
+              backgroundRepeat: "repeat",
+              backgroundBlendMode: "multiply",
+              backgroundSize: "150px",
+            }}
+          />
+          <div className={"relative"}>{children}</div>
           <SiteFooter />
         </div>
       </div>

@@ -1,15 +1,13 @@
-import { components } from "@/slices";
+import { components } from "../../../../components/prismicSlices";
 import {
   fetchContentPagesFromCms,
   fetchContentPageFromCms,
 } from "@/domain/cms/actions";
 import { SliceZone } from "@prismicio/react";
-import PageHeadline from "@/components/PageHeadline";
-import OuterPage from "@/components/OuterPage";
-import InnerPage from "@/components/InnerPage";
+import PageHeadline from "@/components/content/PageHeadline";
+import OuterPage from "@/components/content/OuterPage";
+import InnerPage from "@/components/content/InnerPage";
 import { notFound } from "next/navigation";
-
-export const revalidate = 3600; // Revalidate cache every hour
 
 export async function generateStaticParams() {
   const contentPages = await fetchContentPagesFromCms({});
