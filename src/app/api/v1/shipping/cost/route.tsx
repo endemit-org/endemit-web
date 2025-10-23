@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import shippingService from "@/services/shipping";
-import { Country } from "@/types/country";
+import shippingService from "@/lib/services/shipping";
+import { CountryCode } from "@/domain/checkout/types/country";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate shipping cost
     const cost = shippingService.calculateShippingCost(
-      country as Country,
+      country as CountryCode,
       weightNum
     );
 

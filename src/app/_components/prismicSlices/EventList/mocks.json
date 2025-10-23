@@ -1,0 +1,19 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"show": {
+				"__TYPE__": "FieldContent",
+				"value": "Upcoming",
+				"type": "Select"
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "tell",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]

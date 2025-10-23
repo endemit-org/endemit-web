@@ -1,0 +1,38 @@
+{
+  "id": "event_list",
+  "type": "SharedSlice",
+  "name": "EventList",
+  "description": "EventList",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "show": {
+          "type": "Select",
+          "config": {
+            "label": "Which events to show",
+            "placeholder": "",
+            "options": [
+              "All",
+              "Upcoming",
+              "Past"
+            ]
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

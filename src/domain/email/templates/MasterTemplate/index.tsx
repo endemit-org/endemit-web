@@ -9,6 +9,7 @@ import {
   Img,
 } from "@react-email/components";
 import { Tailwind } from "@react-email/tailwind";
+import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 interface Props {
   children: React.ReactNode;
@@ -17,7 +18,7 @@ interface Props {
 function Logo() {
   return (
     <Img
-      src={`${process.env.NEXT_PUBLIC_BASE_WEB_URL}/images/endemit-logo.png`}
+      src={`${PUBLIC_BASE_WEB_URL}/images/endemit-logo.png`}
       width={60}
       alt="ENDEMIT"
       className="mx-auto block"

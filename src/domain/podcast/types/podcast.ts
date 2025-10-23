@@ -1,4 +1,5 @@
 import { CmsMetaData } from "@/domain/cms/types/common";
+import { RichTextField } from "@prismicio/client";
 
 export interface Podcast {
   id: string;
@@ -18,11 +19,8 @@ export interface Podcast {
   artist: {
     id: string;
     name: string;
-    description: string | null;
-    image: {
-      src: string;
-      alt: string | null;
-    } | null;
+    description?: RichTextField | null;
+    image: { src: string; alt: string } | null;
     video: string | null;
     links:
       | {

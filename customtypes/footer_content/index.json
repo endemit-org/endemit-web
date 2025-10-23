@@ -1,0 +1,36 @@
+{
+  "format": "custom",
+  "id": "footer_content",
+  "label": "Footer content",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Main": {
+      "footer_text": {
+        "type": "Text",
+        "config": {
+          "label": "Footer text",
+          "placeholder": ""
+        }
+      },
+      "links": {
+        "type": "Link",
+        "config": {
+          "label": "Links",
+          "placeholder": "Links in the footer",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": true
+        }
+      },
+      "link_divider_symbol": {
+        "type": "Text",
+        "config": {
+          "label": "Link divider symbol",
+          "placeholder": ""
+        }
+      }
+    }
+  }
+}

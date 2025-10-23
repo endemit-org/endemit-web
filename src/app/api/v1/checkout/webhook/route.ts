@@ -1,10 +1,9 @@
-import { stripe } from "@/services/stripe";
+import { stripe } from "@/lib/services/stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import {
-  onOrderPaymentExpired,
-  onOrderPaymentComplete,
-} from "@/domain/order/actions";
+import { STRIPE_WEBHOOK_SECRET } from "@/lib/services/env/private";
+import { onOrderPaymentComplete } from "@/domain/order/operations/onOrderPaymentComplete";
+import { onOrderPaymentExpired } from "@/domain/order/operations/onOrderPaymentExpired";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -16,7 +15,7 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     return NextResponse.json(

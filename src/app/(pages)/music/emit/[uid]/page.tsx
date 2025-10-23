@@ -1,15 +1,13 @@
-import {
-  fetchPodcastFromCms,
-  fetchPodcastsFromCms,
-} from "@/domain/cms/actions";
-import PageHeadline from "@/components/content/PageHeadline";
-import OuterPage from "@/components/content/OuterPage";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/content/OuterPage";
 import { notFound } from "next/navigation";
-import PodcastEpisodeHero from "@/components/podcast/PodcastEpisodeHero";
-import PodcastArtistSection from "@/components/podcast/PodcastArtistSection";
-import PodcastSection from "@/components/podcast/PodcastSection";
-import EndemitSubscribe from "@/components/newsletter/EndemitSubscribe";
-import Spacer from "@/components/content/Spacer";
+import PodcastEpisodeHero from "@/app/_components/podcast/PodcastEpisodeHero";
+import ArtistProfile from "@/app/_components/artist/ArtistProfile";
+import PodcastSection from "@/app/_components/podcast/PodcastSection";
+import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
+import Spacer from "@/app/_components/content/Spacer";
+import { fetchPodcastsFromCms } from "@/domain/cms/operations/fetchPodcastsFromCms";
+import { fetchPodcastFromCms } from "@/domain/cms/operations/fetchPodcastFromCms";
 
 export async function generateStaticParams() {
   const podcasts = await fetchPodcastsFromCms({});
@@ -67,7 +65,7 @@ export default async function PodcastPage({
         />
 
         {podcast.artist && (
-          <PodcastArtistSection
+          <ArtistProfile
             artist={podcast.artist}
             coverSrc={podcast.cover?.src}
           />

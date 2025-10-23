@@ -1,10 +1,11 @@
 import { Product } from "@/domain/product/types/product";
-import { getApiPath } from "../../../../../lib/api";
+import { getApiPath } from "@/lib/util/api";
 import { filterVisibleProducts } from "@/domain/product/actions/getVisibleProducts";
+import { PUBLIC_API_URL } from "@/lib/services/env/public";
 
 async function getProducts(): Promise<Product[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const baseUrl = PUBLIC_API_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}${getApiPath("products/list")}`, {
       cache: "force-cache", // or 'force-cache' for static generation
       next: { revalidate: 60 * 60 * 2 }, // Revalidate every 2 hours

@@ -1,5 +1,6 @@
-import { createSlug } from "../../../../../lib/util";
+import { getSlugFromText } from "@/lib/util/util";
 import { ProductCategory } from "@/domain/product/types/product";
+import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 export const getProductLink = (
   uid: string,
@@ -9,5 +10,5 @@ export const getProductLink = (
   const removeVariantSuffix = (uid: string) => {
     return uid.replace(/:[^:]+$/, "");
   };
-  return `${isAbsolute ? process.env.NEXT_PUBLIC_BASE_WEB_URL : ""}/store/${createSlug(category)}/${removeVariantSuffix(uid)}`;
+  return `${isAbsolute ? PUBLIC_BASE_WEB_URL : ""}/store/${getSlugFromText(category)}/${removeVariantSuffix(uid)}`;
 };

@@ -1,5 +1,6 @@
-import { ArtistAtEvent } from "@/domain/artist/types/artist";
 import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
+import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
+import { SliceZone } from "@prismicio/client";
 
 export enum EventVisibility {
   Visible = "Visible",
@@ -29,11 +30,20 @@ export type Event = {
   promoImage: CmsImage | null;
   venue: VenueInEvent | null;
   colour: string;
-  visibility: EventVisibility;
+  options: {
+    visibility: EventVisibility;
+    enabledLink: boolean;
+  };
+  tickets: {
+    available: boolean;
+    productId: string | null;
+  };
+  annotation?: string;
   type: EventType;
   date_start: Date | null;
   date_end: Date | null;
   event: string | null;
   artists: Array<ArtistAtEvent>;
   meta: CmsMetaData;
+  slices: SliceZone;
 };

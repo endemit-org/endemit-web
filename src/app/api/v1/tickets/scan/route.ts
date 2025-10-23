@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import assert from "node:assert";
-import { scanTicketById } from "@/domain/ticket/actions";
+import { scanTicketById } from "@/domain/ticket/operations/scanTicketById";
 
 export async function POST(request: Request) {
   try {

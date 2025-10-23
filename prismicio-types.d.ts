@@ -167,6 +167,28 @@ interface ArtistDocumentData {
    * - **Documentation**: https://prismic.io/docs/slices
    */
   slices: prismic.SliceZone<ArtistDocumentDataSlicesSlice> /**
+   * Show in artist page field in *Artist*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: artist.show_in_artist_page
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */;
+  show_in_artist_page: prismic.BooleanField;
+
+  /**
+   * Is part of endemit crew field in *Artist*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: artist.is_endemit_crew
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  is_endemit_crew: prismic.BooleanField /**
    * Meta Title field in *Artist*
    *
    * - **Field Type**: Text
@@ -213,6 +235,9 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | EventListSlice
+  | SpacerSlice
+  | ArtistListSlice
   | TabsSlice
   | GridTileSlice
   | AccordionSlice
@@ -311,7 +336,19 @@ export type ContentPageDocument<Lang extends string = string> =
     Lang
   >;
 
-type EventDocumentDataSlicesSlice = never;
+type EventDocumentDataSlicesSlice =
+  | EmbedBlockSlice
+  | PodcastListSlice
+  | TextColumnSlice
+  | TabsSlice
+  | ProductListSlice
+  | SpacerSlice
+  | HeroSlice
+  | GridTileSlice
+  | ImageGallerySlice
+  | NewsletterSubscriptionSlice
+  | ContentSectionSlice
+  | AccordionSlice;
 
 /**
  * Item in *Event → Artists*
@@ -530,7 +567,18 @@ interface EventDocumentData {
   >;
 
   /**
-   * Visibility field in *Event*
+   * Colour field in *Event*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: Event colour
+   * - **API ID Path**: event.colour
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/color
+   */
+  colour: prismic.ColorField;
+
+  /**
+   * Visible in events field in *Event*
    *
    * - **Field Type**: Select
    * - **Placeholder**: *None*
@@ -541,15 +589,27 @@ interface EventDocumentData {
   visibility: prismic.SelectField<"Visible" | "Hidden">;
 
   /**
-   * Colour field in *Event*
+   * Enable link to full page field in *Event*
    *
-   * - **Field Type**: Color
-   * - **Placeholder**: Event colour
-   * - **API ID Path**: event.colour
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: event.enable_link_to_full_page
    * - **Tab**: Attributes
-   * - **Documentation**: https://prismic.io/docs/fields/color
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
-  colour: prismic.ColorField /**
+  enable_link_to_full_page: prismic.BooleanField;
+
+  /**
+   * Annotation field in *Event*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (Optional)
+   * - **API ID Path**: event.annotation
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  annotation: prismic.KeyTextField /**
    * Meta Title field in *Event*
    *
    * - **Field Type**: Text
@@ -594,6 +654,62 @@ interface EventDocumentData {
  */
 export type EventDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<EventDocumentData>, "event", Lang>;
+
+/**
+ * Content for Footer content documents
+ */
+interface FooterContentDocumentData {
+  /**
+   * Footer text field in *Footer content*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: footer_content.footer_text
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  footer_text: prismic.KeyTextField;
+
+  /**
+   * Links field in *Footer content*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Links in the footer
+   * - **API ID Path**: footer_content.links
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  links: prismic.Repeatable<
+    prismic.LinkField<string, string, unknown, prismic.FieldState, never>
+  >;
+
+  /**
+   * Link divider symbol field in *Footer content*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: footer_content.link_divider_symbol
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  link_divider_symbol: prismic.KeyTextField;
+}
+
+/**
+ * Footer content document from Prismic
+ *
+ * - **API ID**: `footer_content`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type FooterContentDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<FooterContentDocumentData>,
+    "footer_content",
+    Lang
+  >;
 
 type HomePageDocumentDataSlicesSlice =
   | TabsSlice
@@ -668,6 +784,106 @@ export type HomePageDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithoutUID<
     Simplify<HomePageDocumentData>,
     "home_page",
+    Lang
+  >;
+
+type InnerContentDocumentDataSlicesSlice =
+  | SpacerSlice
+  | TextColumnSlice
+  | ProductListSlice
+  | PodcastListSlice
+  | HeroSlice
+  | GridTileSlice
+  | ImageGallerySlice
+  | NewsletterSubscriptionSlice
+  | ContentSectionSlice
+  | AccordionSlice
+  | EmbedBlockSlice;
+
+/**
+ * Content for Inner content documents
+ */
+interface InnerContentDocumentData {
+  /**
+   * Title field in *Inner content*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: inner_content.title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * (Internal) Description field in *Inner content*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Internal only, for self organisation
+   * - **API ID Path**: inner_content.internal_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  internal_description: prismic.KeyTextField;
+
+  /**
+   * Connected to event field in *Inner content*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: inner_content.connected_to_event
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  connected_to_event: prismic.ContentRelationshipField<"event">;
+
+  /**
+   * Related to product field in *Inner content*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: inner_content.related_to_product
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  related_to_product: prismic.ContentRelationshipField<"product">;
+
+  /**
+   * Sorting weight field in *Inner content*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: Useful in tabs
+   * - **API ID Path**: inner_content.sorting_weight
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  sorting_weight: prismic.NumberField;
+
+  /**
+   * Slice Zone field in *Inner content*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: inner_content.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<InnerContentDocumentDataSlicesSlice>;
+}
+
+/**
+ * Inner content document from Prismic
+ *
+ * - **API ID**: `inner_content`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type InnerContentDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithUID<
+    Simplify<InnerContentDocumentData>,
+    "inner_content",
     Lang
   >;
 
@@ -1497,7 +1713,9 @@ export type AllDocumentTypes =
   | ArtistDocument
   | ContentPageDocument
   | EventDocument
+  | FooterContentDocument
   | HomePageDocument
+  | InnerContentDocument
   | MenuNavigationDocument
   | PodcastDocument
   | ProductDocument
@@ -1582,6 +1800,36 @@ type AccordionSliceVariation = AccordionSliceDefault;
 export type AccordionSlice = prismic.SharedSlice<
   "accordion",
   AccordionSliceVariation
+>;
+
+/**
+ * Default variation for ArtistList Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ArtistListSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Record<string, never>,
+  never
+>;
+
+/**
+ * Slice variation for *ArtistList*
+ */
+type ArtistListSliceVariation = ArtistListSliceDefault;
+
+/**
+ * ArtistList Shared Slice
+ *
+ * - **API ID**: `artist_list`
+ * - **Description**: ArtistList
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ArtistListSlice = prismic.SharedSlice<
+  "artist_list",
+  ArtistListSliceVariation
 >;
 
 /**
@@ -1692,6 +1940,61 @@ type EmbedBlockSliceVariation = EmbedBlockSliceDefault;
 export type EmbedBlockSlice = prismic.SharedSlice<
   "embed_block",
   EmbedBlockSliceVariation
+>;
+
+/**
+ * Primary content in *EventList → Default → Primary*
+ */
+export interface EventListSliceDefaultPrimary {
+  /**
+   * Which events to show field in *EventList → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.show
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  show: prismic.SelectField<"All" | "Upcoming" | "Past">;
+
+  /**
+   * Title field in *EventList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for EventList Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type EventListSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<EventListSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *EventList*
+ */
+type EventListSliceVariation = EventListSliceDefault;
+
+/**
+ * EventList Shared Slice
+ *
+ * - **API ID**: `event_list`
+ * - **Description**: EventList
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type EventListSlice = prismic.SharedSlice<
+  "event_list",
+  EventListSliceVariation
 >;
 
 /**
@@ -2755,9 +3058,14 @@ declare module "@prismicio/client" {
       EventDocumentData,
       EventDocumentDataSlicesSlice,
       EventDocumentDataArtistsItem,
+      FooterContentDocument,
+      FooterContentDocumentData,
       HomePageDocument,
       HomePageDocumentData,
       HomePageDocumentDataSlicesSlice,
+      InnerContentDocument,
+      InnerContentDocumentData,
+      InnerContentDocumentDataSlicesSlice,
       MenuNavigationDocument,
       MenuNavigationDocumentData,
       MenuNavigationDocumentDataItemsItem,
@@ -2782,6 +3090,9 @@ declare module "@prismicio/client" {
       AccordionSliceDefaultItem,
       AccordionSliceVariation,
       AccordionSliceDefault,
+      ArtistListSlice,
+      ArtistListSliceVariation,
+      ArtistListSliceDefault,
       ContentSectionSlice,
       ContentSectionSliceDefaultPrimary,
       ContentSectionSliceVariation,
@@ -2790,6 +3101,10 @@ declare module "@prismicio/client" {
       EmbedBlockSliceDefaultPrimary,
       EmbedBlockSliceVariation,
       EmbedBlockSliceDefault,
+      EventListSlice,
+      EventListSliceDefaultPrimary,
+      EventListSliceVariation,
+      EventListSliceDefault,
       GridTileSlice,
       GridTileSliceDefaultPrimaryTilesItem,
       GridTileSliceDefaultPrimary,

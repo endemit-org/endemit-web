@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchPodcastFromCms } from "@/domain/cms/actions";
+import { fetchPodcastFromCms } from "@/domain/cms/operations/fetchPodcastFromCms";
 
 export async function GET(
   request: Request,

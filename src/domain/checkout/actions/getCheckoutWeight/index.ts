@@ -1,4 +1,4 @@
-import { CartItem } from "@/types/cart";
+import { CartItem } from "@/domain/checkout/types/cartItem";
 
 export const getCheckoutWeight = (cartItems: CartItem[]) => {
   const paddingForPackaging = 100; // 100g padding for packaging
@@ -8,7 +8,8 @@ export const getCheckoutWeight = (cartItems: CartItem[]) => {
   const itemsWeight = Math.max(
     cartItems.reduce(
       (total, item) =>
-        total + item.weight * item.quantity * (1 + paddingPercentPerItem),
+        total +
+        (item.weight ?? 0) * item.quantity * (1 + paddingPercentPerItem),
       0
     ),
     minimumShipmentWeight

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Button from "@/components/form/Button";
+import Button from "@/app/_components/form/Button";
 import Link from "next/link";
 
 export default function AfterPurchase() {
@@ -7,7 +7,7 @@ export default function AfterPurchase() {
     <div className="min-h-screen font-typo">
       <div className="lg:max-w-100 mx-auto space-y-8 sm:max-w-full">
         <div className="m-auto  max-w-5xl space-y-6 p-5 lg:px-12 ">
-          <div className="m-auto  max-w-5xl  p-5 lg:px-12  text-white text-xl font-thin">
+          <div className="m-auto  max-w-5xl  p-5 lg:px-12  text-neutral-200 text-xl font-thin">
             <h2 className="text-center text-3xl text-issun-boshi-orange font-normal ">
               Haha, yes! Purchase confirmed.
             </h2>

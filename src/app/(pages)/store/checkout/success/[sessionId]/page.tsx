@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import ClearCheckoutValues from "@/components/checkout/ClearCheckoutValues";
-import {
-  getOrderByStripeSession,
-  getTicketsFromOrder,
-} from "@/domain/order/actions";
-import OuterPage from "@/components/content/OuterPage";
-import PageHeadline from "@/components/content/PageHeadline";
-import CheckoutSuccessConfetti from "@/components/checkout/CheckoutSuccessConfetti";
-import InnerPage from "@/components/content/InnerPage";
-import ActionButton from "@/components/form/ActionButton";
-import AnimatedSuccessIcon from "@/components/icon/AnimatedSuccessIcon";
+import ClearCheckoutValues from "@/app/_components/checkout/ClearCheckoutValues";
+
+import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import CheckoutSuccessConfetti from "@/app/_components/checkout/CheckoutSuccessConfetti";
+import InnerPage from "@/app/_components/content/InnerPage";
+import ActionButton from "@/app/_components/form/ActionButton";
+import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
+import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";
+import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
+import { stripe } from "@/lib/services/stripe";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Merch",
@@ -24,23 +25,31 @@ export const metadata: Metadata = {
 };
 
 export default async function SuccessPage({
-  searchParams,
+  params,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  params: Promise<{
+    sessionId: string;
+  }>;
 }) {
-  const { session_id } = await searchParams;
+  const { sessionId } = await params;
 
-  if (!session_id) {
-    return <div>No session found</div>;
+  if (!sessionId) {
+    notFound();
   }
 
-  const order = await getOrderByStripeSession(session_id);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (session.status !== "complete") {
+    notFound();
+  }
+
+  const order = await getOrderByStripeSession(sessionId);
 
   if (!order) {
-    return <div>No order found</div>;
+    notFound();
   }
 
-  const tickets = getTicketsFromOrder(order);
+  const tickets = transformTicketsFromOrder(order);
   const orderHasTickets = tickets && tickets.length > 0;
   const ticketHolders =
     orderHasTickets &&
@@ -59,7 +68,7 @@ export default async function SuccessPage({
           { label: "Store", path: "store" },
           {
             label: `Order ${order.id}`,
-            path: `checkout/success?session_id=${session_id}`,
+            path: `checkout/success/${sessionId}`,
           },
         ]}
       />
@@ -73,7 +82,7 @@ export default async function SuccessPage({
             </div>
 
             {/* Success Message */}
-            <h1 className="text-3xl font-bold text-white mb-4">
+            <h1 className="text-3xl font-bold text-neutral-200 mb-4">
               Order Confirmed!
             </h1>
 
@@ -84,7 +93,9 @@ export default async function SuccessPage({
             {order.email && (
               <div className="bg-zinc-900 rounded-lg p-4 mb-8">
                 <p className="text-gray-500 text-sm mb-1">Email</p>
-                <p className="text-white text-sm break-all">{order.email}</p>
+                <p className="text-neutral-200 text-sm break-all">
+                  {order.email}
+                </p>
               </div>
             )}
 
@@ -99,7 +110,7 @@ export default async function SuccessPage({
             {order.id && (
               <div className="bg-zinc-900 rounded-lg p-4 mb-8">
                 <p className="text-gray-500 text-sm mb-1">Order ID</p>
-                <p className="text-white text-sm break-all">{order.id}</p>
+                <p className="text-neutral-200 text-sm break-all">{order.id}</p>
               </div>
             )}
 

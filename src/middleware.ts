@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { PUBLIC_CURRENT_ENV } from "@/lib/services/env/public";
+import { STAGING_PASSWORD } from "@/lib/services/env/private";
 
 const STAGING_LOGIN_PATH = "/staging-login";
 
@@ -11,8 +13,7 @@ function handleCORS(request: NextRequest) {
   const isAllowed =
     allowedOrigins.some(allowed => origin.startsWith(allowed)) ||
     origin.endsWith(".endemit.org") ||
-    origin === "https://endemit.org" ||
-    origin === "http://endemit.org";
+    origin === "https://endemit.org";
 
   if (request.method === "OPTIONS") {
     return new NextResponse(null, {
@@ -45,24 +46,24 @@ function handleCORS(request: NextRequest) {
 
 function handleStagingAuth(request: NextRequest) {
   const isStaging =
-    process.env.NEXT_PUBLIC_CURRENT_ENV !== "production" &&
-    process.env.NEXT_PUBLIC_CURRENT_ENV !== "development";
+    PUBLIC_CURRENT_ENV !== "production" && PUBLIC_CURRENT_ENV !== "development";
+
+  if (!isStaging) {
+    return NextResponse.next();
+  }
 
   const isStagingLoginPage = request.nextUrl.pathname === STAGING_LOGIN_PATH;
+  const authCookie = request.cookies.get("staging-auth");
+  const isAuthenticated = authCookie?.value === STAGING_PASSWORD;
 
-  if (!isStaging && isStagingLoginPage) {
+  // Redirect authenticated users away from login page
+  if (isAuthenticated && isStagingLoginPage) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (isStaging && !isStagingLoginPage) {
-    const authCookie = request.cookies.get("staging-auth");
-
-    if (
-      !authCookie?.value ||
-      authCookie.value !== process.env.STAGING_PASSWORD
-    ) {
-      return NextResponse.redirect(new URL(STAGING_LOGIN_PATH, request.url));
-    }
+  // Redirect unauthenticated users to login page
+  if (!isAuthenticated && !isStagingLoginPage) {
+    return NextResponse.redirect(new URL(STAGING_LOGIN_PATH, request.url));
   }
 
   return NextResponse.next();

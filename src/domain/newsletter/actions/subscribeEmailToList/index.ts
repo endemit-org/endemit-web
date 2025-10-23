@@ -1,4 +1,4 @@
-import { EMAIL_OCTOPUS_API_KEY } from "@/services/emailOctopus/emailOctopus";
+import { EMAIL_NEWSLETTER_API_KEY } from "@/lib/services/emailOctopus/emailOctopus";
 
 type ApiPayload = {
   email_address: string;
@@ -25,7 +25,7 @@ export const subscribeEmailToList = async (
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${EMAIL_OCTOPUS_API_KEY}`,
+          Authorization: `Bearer ${EMAIL_NEWSLETTER_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(apiPayload),
