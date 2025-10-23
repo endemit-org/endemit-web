@@ -1,6 +1,6 @@
 import type { User, Session, Role, UserRole, UserStatus } from "@prisma/client";
-import type { Permission } from "../config/permissions.config";
-import type { RoleSlug } from "../config/roles.config";
+import type { Permission } from "@/domain/auth/config/permissions.config";
+import type { RoleSlug } from "@/domain/auth/config/roles.config";
 
 export type UserWithRelations = User & {
   sessions: Session[];

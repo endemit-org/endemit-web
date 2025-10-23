@@ -5,13 +5,13 @@ export default async function ProtectedLayout({
 }) {
   return (
     <body
-      className="m-auto overflow-y-scroll bg-black "
+      className="m-auto overflow-y-scroll bg-neutral-950 "
       style={{
         backgroundImage: "url('/images/endemit-pattern.svg')",
         backgroundSize: "110px",
       }}
     >
-      <div className="min-h-screen bg-gray-100">{children}</div>
+      <div className="min-h-screen ">{children}</div>
     </body>
   );
 }

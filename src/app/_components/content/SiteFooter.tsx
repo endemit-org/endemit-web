@@ -2,6 +2,7 @@ import Link from "next/link";
 import EndemitSymbol from "@/app/_components/icon/EndemitSymbol";
 import packageJson from "@/package.json";
 import { fetchFooterFromCms } from "@/domain/cms/operations/fetchFooterFromCms";
+import { getBuildInfo } from "@/lib/build";
 
 export default async function SiteFooter() {
   const footerContent = await fetchFooterFromCms();
@@ -20,13 +21,22 @@ export default async function SiteFooter() {
         .replace("{VERSION}", `v${packageJson.version}`)
     : "© Endemit";
 
+  const buildInfo = getBuildInfo({
+    commitSha: process.env.NEXT_PUBLIC_COMMIT_SHA,
+    deploymentId: process.env.NEXT_PUBLIC_DEPLOYMENT_ID,
+    version: packageJson.version,
+  });
+
   return (
     <footer
       className={
         "text-neutral-500 absolute -bottom-28 lg:-bottom-16 text-center w-full text-xs left-0 max-lg:px-5"
       }
     >
-      <div className="text-neutral-200 w-4 inline-block mb-2">
+      <div
+        className="text-neutral-200 w-4 inline-block mb-2"
+        title={buildInfo.full}
+      >
         <EndemitSymbol />
       </div>
       <div>

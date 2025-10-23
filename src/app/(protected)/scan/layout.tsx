@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/session";
+import { getCurrentUser } from "@/lib/services/auth";
 import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
 import { LogoutButton } from "@/app/_components/auth/LogoutButton";
 
@@ -26,7 +26,7 @@ export default async function ScanLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen ">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">

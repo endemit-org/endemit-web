@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createUserSession } from "@/lib/auth/session";
+import { createUserSession } from "@/lib/services/auth";
 import { z } from "zod";
 import { authenticateUser } from "@/domain/auth/operations/authenticateUser";
 

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/session";
+import { getCurrentUser } from "@/lib/services/auth";
 import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
 import { LogoutButton } from "@/app/_components/auth/LogoutButton";
 

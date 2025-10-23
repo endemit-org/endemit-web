@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/auth/session';
+import { getCurrentUser } from "@/lib/services/auth";
 
 export default async function AdminPage() {
   const user = await getCurrentUser();
@@ -19,7 +19,7 @@ export default async function AdminPage() {
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Name</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user?.name || 'N/A'}
+                {user?.name || "N/A"}
               </dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -31,14 +31,14 @@ export default async function AdminPage() {
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Roles</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user?.roles.join(', ')}
+                {user?.roles.join(", ")}
               </dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Permissions</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <div className="flex flex-wrap gap-2">
-                  {user?.permissions.map((permission) => (
+                  {user?.permissions.map(permission => (
                     <span
                       key={permission}
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
