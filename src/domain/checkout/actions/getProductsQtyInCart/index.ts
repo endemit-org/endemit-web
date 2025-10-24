@@ -1,4 +1,4 @@
-import { CartItem } from "@/types/cart";
+import { CartItem } from "@/domain/checkout/types/cartItem";
 
 export const getProductsQtyInCart = (
   cartItems: CartItem[],

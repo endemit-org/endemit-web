@@ -1,6 +1,7 @@
-import { Country } from "@/types/country";
+import { CountryCode } from "@/domain/checkout/types/country";
 import Stripe from "stripe";
-import { CartItem } from "@/types/cart";
+
+import { CartItem } from "@/domain/checkout/types/cartItem";
 
 export enum OrderStatus {
   PENDING = "PENDING",
@@ -31,7 +32,7 @@ export type ShippingAddress = {
   address: string;
   city: string;
   postalCode: string;
-  country: Country;
+  country: CountryCode;
   phone: string;
 };
 

@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { fetchProductsFromCms } from "@/domain/cms/actions";
-import { validateCheckoutRequest } from "@/domain/checkout/actions";
-import { createOrder } from "@/domain/order/actions";
-import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions";
-import { transformToProductInOrder } from "@/domain/product/actions";
-import { transformPriceFromStripe } from "@/services/stripe/util";
-import { notifyOnNewSubscriber } from "@/domain/notification/actions";
-import { createCheckoutSessionLineItems } from "@/domain/checkout/actions/createCheckoutSessionLineItems";
-import { createCheckoutSession } from "@/domain/checkout/actions/createCheckoutSession";
+
+import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
+import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCheckoutRequest";
+import { transformToCheckoutSessionLineItems } from "@/domain/checkout/transformers/transformToCheckoutSessionLineItems";
+import { createCheckoutSession } from "@/domain/checkout/operations/createCheckoutSession";
+import { createOrder } from "@/domain/order/operations/createOrder";
+import { transformToProductInOrder } from "@/domain/product/transformers/transformToProductInOrder";
+import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscribeEmailToGeneralList";
+import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
+import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
 
 export async function POST(request: Request) {
   try {
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       shippingCost,
     } = validateCheckoutRequest(body, products);
 
-    const lineItems = createCheckoutSessionLineItems({
+    const lineItems = transformToCheckoutSessionLineItems({
       checkoutItems,
       shippingAddress,
       shouldHaveShippingAddress,

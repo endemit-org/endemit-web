@@ -2,13 +2,13 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text, Link } from "@react-email/components";
-import { formatDecimalPrice } from "../../../../../lib/formatting";
+import { formatDecimalPrice } from "@/lib/util/formatting";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ShippingAddress } from "@/domain/checkout/types/checkout";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";
-import { CartItem } from "@/types/cart";
-import { getCountry } from "@/domain/checkout/actions";
-import { getProductLink } from "@/domain/product/actions";
+import { getProductLink } from "@/domain/product/actions/getProductLink";
+import { getCountry } from "@/domain/checkout/actions/getCountry";
+import { CartItem } from "@/domain/checkout/types/cartItem";
 
 interface Props {
   order: Order;
@@ -310,7 +310,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
           </tbody>
         </table>
         <Text className="text-gray-600 my-6">
-          Please feel free to reach out to our support team at
+          Please feel free to reach out to our support team at{" "}
           <Link href={"mailto:endemit@endemit.org"} className={"link"}>
             endemit@endemit.org
           </Link>{" "}

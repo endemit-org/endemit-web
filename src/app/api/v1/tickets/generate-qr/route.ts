@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-import { generateTicketImage } from "@/domain/ticket/actions";
+import { generateTicketImage } from "@/domain/ticket/operations/generateTicketImage";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

@@ -1,5 +1,5 @@
-import countryConfig from "@/domain/checkout/config/countries.config";
+import { countries } from "@/domain/checkout/config/countries.config";
 
 export const getCountries = () => {
-  return countryConfig;
+  return countries;
 };

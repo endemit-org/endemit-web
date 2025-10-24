@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Sidebar from "@/components/content/Sidebar";
-import EventFooter from "@/components/event/EventFooter";
+import Sidebar from "@/app/_components/content/Sidebar";
+import EventFooter from "@/app/_components/event/EventFooter";
 
 export const metadata: Metadata = {
   title: "Ius Primae Noctis",
@@ -23,7 +23,13 @@ export default function IusPrimaeNoctisLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="m-auto overflow-y-scroll bg-gray-1100 ">
+    <body
+      className="m-auto overflow-y-scroll bg-black "
+      style={{
+        backgroundImage: "url('/images/endemit-pattern.svg')",
+        backgroundSize: "110px",
+      }}
+    >
       <Sidebar
         navigationItems={[
           {
@@ -56,11 +62,6 @@ export default function IusPrimaeNoctisLayout({
             alt: "Facebook",
           },
         ]}
-        footerAction={{
-          label: "Tickets",
-          href: "/events/ius-primae-noctis/tickets",
-          style: "button",
-        }}
         footerInfo={{
           lines: ["Grad Kodeljevo", "Ul. Carla Benza 20"], // Assuming default location
           href: "/events/ius-primae-noctis/location",

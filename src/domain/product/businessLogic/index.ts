@@ -6,8 +6,9 @@ import {
   ProductType,
   ProductVisibility,
 } from "@/domain/product/types/product";
-import { Country, Region } from "@/types/country";
-import { getRegionFromCountry } from "../../../../lib/util";
+import { CountryCode, Region } from "@/domain/checkout/types/country";
+
+import { getRegionFromCountry } from "@/domain/checkout/actions/getRegionFromCountry";
 
 export const isProductSellableByCutoffDate = (product: Product) => {
   if (!product.limits?.cutoffTimestamp) {
@@ -39,7 +40,7 @@ export const isProductSellableByStatus = (product: Product) => {
     product.status === ProductStatus.PREORDER
   );
 };
-export const isProductSellable = (product: Product, country?: Country) => {
+export const isProductSellable = (product: Product, country?: CountryCode) => {
   let isSellableByRegion = true;
 
   if (country && isProductShippable(product)) {

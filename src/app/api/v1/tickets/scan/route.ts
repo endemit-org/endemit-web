@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import assert from "node:assert";
-import { scanTicketById } from "@/domain/ticket/actions";
+import { scanTicketByHash } from "@/domain/ticket/operations/scanTicketByHash";
 
 export async function POST(request: Request) {
   try {
@@ -8,7 +8,8 @@ export async function POST(request: Request) {
 
     assert(ticketHash, "Ticket hash is required");
     try {
-      const { attended, scanCount, shortId } = await scanTicketById(ticketHash);
+      const { attended, scanCount, shortId } =
+        await scanTicketByHash(ticketHash);
 
       return NextResponse.json({
         success: true,

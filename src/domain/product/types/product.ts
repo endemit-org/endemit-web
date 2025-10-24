@@ -1,4 +1,5 @@
 import { CmsMetaData } from "@/domain/cms/types/common";
+import { RichTextField } from "@prismicio/client";
 
 export enum ProductType {
   PHYSICAL = "Physical",
@@ -80,7 +81,7 @@ export interface Product {
   id: string;
   uid: string;
   name: string;
-  description: string;
+  description: RichTextField;
   images: ProductImage[];
   video: string | null;
   price: number;
@@ -92,9 +93,9 @@ export interface Product {
   category: ProductCategory;
   isFeatured: boolean;
   sortingWeight: number;
-  weight: number;
+  weight: number | null;
   limits: {
-    quantityLimit?: number;
+    quantityLimit: number | null;
     regionalEligibility: Array<{
       region: ProductRegion;
     }>;

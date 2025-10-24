@@ -33,6 +33,15 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "event_list": {
+              "type": "SharedSlice"
+            },
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "artist_list": {
+              "type": "SharedSlice"
+            },
             "tabs": {
               "type": "SharedSlice"
             },

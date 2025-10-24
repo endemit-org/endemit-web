@@ -59,7 +59,7 @@ export default function AlbumPage() {
       <div className="lg:px-32">
         <div className="text-center ">
           <hr className="border-t border-issun-boshi-yellow/80 my-12 border-dashed" />
-          <div className="text-white text-lg font-normal py-2 mb-4">
+          <div className="text-neutral-200 text-lg font-normal py-2 mb-4">
             Tracklist
           </div>
           {[
@@ -77,7 +77,7 @@ export default function AlbumPage() {
           ))}
           <hr className="border-t border-issun-boshi-yellow/80 my-12 border-dashed" />
           <div className="text-center font-light flex flex-col gap-4 text-lg bg-gradient-to-b items-center from-issun-boshi-orange via-issun-boshi-yellow to-white bg-clip-text text-transparent">
-            <p className="text-white text-lg font-normal py-2 mb-4">
+            <p className="text-neutral-200 text-lg font-normal py-2 mb-4">
               Endemit I
             </p>
             <p>

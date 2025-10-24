@@ -86,6 +86,25 @@
           "choices": {}
         }
       }
+    },"Attributes": {
+      "show_in_artist_page": {
+        "type": "Boolean",
+        "config": {
+          "label": "Show in artist page",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
+      "is_endemit_crew": {
+        "type": "Boolean",
+        "config": {
+          "label": "Is part of endemit crew",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      }
     },
     "SEO & Metadata": {
       "meta_title": {

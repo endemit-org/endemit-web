@@ -15,10 +15,14 @@
     "format:check": "prettier --check .",
     "slicemachine": "start-slicemachine",
     "postinstall": "prisma generate",
+    "db:seed": "tsx prisma/seed.ts",
     "env-init": "vercel login && vercel link --project=prj_vS6KCdGiPdIALZpEF5ZOlnGXperd --scope=team_PkvMkqbUl2Dicg1v7EZCAVue --yes && pnpm env-dev",
     "env-dev": "vercel env pull .env --environment=development",
     "env-stage": "vercel env pull .env --environment=preview",
     "env-prod": "vercel env pull .env --environment=production"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
@@ -32,21 +36,22 @@
     "@types/qrcode": "^1.5.5",
     "@types/sharp": "^0.32.0",
     "@vercel/analytics": "^1.5.0",
+    "@yudiel/react-qr-scanner": "^2.4.1",
     "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
-    "crypto": "^1.0.1",
-    "html-react-parser": "^5.2.7",
     "inngest": "^3.44.2",
     "nanoid": "^5.1.6",
-    "next": "15.3.2",
+    "next": "15.4.7",
     "prisma": "^6.17.1",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scroll-parallax": "^3.4.5",
     "resend": "^6.1.2",
+    "server-only": "^0.0.1",
     "sharp": "^0.34.2",
     "stripe": "^18.5.0",
+    "zod": "^3.24.1",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
@@ -63,6 +68,7 @@
     "prettier": "^3.6.2",
     "slice-machine-ui": "^2.18.2",
     "tailwindcss": "3.4.1",
+    "tsx": "^4.19.2",
     "turbo": "^2.5.8",
     "typescript": "^5"
   }

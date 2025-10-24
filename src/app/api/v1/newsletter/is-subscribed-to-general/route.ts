@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import assert from "node:assert";
-import { isEmailSubscribedToGeneralList } from "@/domain/newsletter/actions";
+import { isEmailSubscribedToGeneralList } from "@/domain/newsletter/actions/isSubscribedToGeneralList";
 
 export async function POST(request: Request) {
   try {

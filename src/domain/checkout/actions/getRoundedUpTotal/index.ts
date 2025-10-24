@@ -1,9 +1,12 @@
 export const getRoundedUpTotal = (amount: number) => {
-  const rounded = Math.ceil(amount / 10) * 10;
+  const fivePercent = Math.ceil((amount * 1.05) / 10) * 10;
+  const increase = fivePercent - amount;
 
-  // If we want to implement the 5% rule again in the future, uncomment below:
-  // const fivePercent = Math.ceil((amount * 1.05) / 10) * 10;
-  // return Math.max(rounded, fivePercent);
+  // If 5% rounded stays within 15 EUR, use it
+  if (increase <= 15) {
+    return fivePercent;
+  }
 
-  return rounded;
+  // Otherwise, add 15 and round DOWN to nearest 10
+  return Math.floor((amount + 15) / 10) * 10;
 };

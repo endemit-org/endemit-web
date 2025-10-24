@@ -16,10 +16,10 @@ export default function EndemitFestival() {
           className="text-center absolute left-0 w-full flex flex-col items-center"
           style={{ top: "15%" }}
         >
-          <div className="text-center text-5xl md:text-5xl lg:text-6xl font-bold uppercase text-white">
+          <div className="text-center text-5xl md:text-5xl lg:text-6xl font-bold uppercase text-neutral-200">
             Endemit Festival
           </div>
-          <div className="text-center text-2xl md:text-2xl lg:text-3xl font-bold uppercase text-white mt-4">
+          <div className="text-center text-2xl md:text-2xl lg:text-3xl font-bold uppercase text-neutral-200 mt-4">
             Libeliče, 15-17 Aug 2025
           </div>
         </div>
@@ -38,11 +38,11 @@ export default function EndemitFestival() {
         }}
       >
         <div className="text-center absolute left-0 w-full flex flex-col items-center top-[8%] md:top-[12%]">
-          <div className="text-center text-4xl md:text-4xl lg:text-5xl font-bold uppercase text-white lg:w-3/4 md:w-4/5 mx-4">
+          <div className="text-center text-4xl md:text-4xl lg:text-5xl font-bold uppercase text-neutral-200 lg:w-3/4 md:w-4/5 mx-4">
             A carefully curated electronic music festival, surrounded by a
             river, forest, and mountains.
           </div>
-          <div className="text-center text-2xl md:text-3xl lg:text-4xl font-bold  text-white mt-4 lg:w-2/3 md:w-4/5 mx-4">
+          <div className="text-center text-2xl md:text-3xl lg:text-4xl font-bold  text-neutral-200 mt-4 lg:w-2/3 md:w-4/5 mx-4">
             <br></br>Back to the source. <br></br>
             <br></br>That time of year is calling us home — to the forest that
             knows us, to the ground that holds us, and to each other.

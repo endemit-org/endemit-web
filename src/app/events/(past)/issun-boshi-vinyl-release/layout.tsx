@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import EventFooter from "@/components/event/EventFooter";
-import Sidebar from "@/components/content/Sidebar";
+import EventFooter from "@/app/_components/event/EventFooter";
+import Sidebar from "@/app/_components/content/Sidebar";
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +25,14 @@ export default function IssunBoshiVinylReleaseLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="m-auto overflow-y-scroll max-lg:my-14 bg-issun-boshi-purple min-h-screen">
+    <body
+      className="m-auto overflow-y-scroll bg-black "
+      style={{
+        backgroundImage: "url('/images/endemit-pattern.svg')",
+        backgroundSize: "110px",
+      }}
+    >
+      {" "}
       <div className="max-w-8xl m-auto overflow-hidden relative bg-issun-boshi-purple">
         <div
           className="absolute -z-0 top-0 bottom-0 left-0 right-0 bg-issun-boshi-purple opacity-30 min-h-screen"

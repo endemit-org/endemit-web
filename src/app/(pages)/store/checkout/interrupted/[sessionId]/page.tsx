@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import PageHeadline from "@/components/content/PageHeadline";
-import OuterPage from "@/components/content/OuterPage";
-import InnerPage from "@/components/content/InnerPage";
-import ActionButton from "@/components/form/ActionButton";
-import { stripe } from "@/services/stripe";
-import { transformPriceFromStripe } from "@/services/stripe/util";
-import { formatDecimalPrice } from "../../../../../../../lib/formatting";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/content/OuterPage";
+import InnerPage from "@/app/_components/content/InnerPage";
+import ActionButton from "@/app/_components/form/ActionButton";
+import { stripe } from "@/lib/services/stripe";
+import { formatDecimalPrice } from "@/lib/util/formatting";
 import Link from "next/link";
-import AnimatedWarningIcon from "@/components/icon/AnimatedWarningIcon";
+import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
+import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Payment interrupted ",
@@ -21,21 +22,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function CanceledPage({
-  searchParams,
+export default async function InterruptedPage({
+  params,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  params: Promise<{
+    sessionId: string;
+  }>;
 }) {
-  const { session_id } = await searchParams;
+  const { sessionId } = await params;
 
-  if (!session_id) {
-    return <div>No session found</div>;
+  if (!sessionId) {
+    notFound();
   }
 
-  const session = await stripe.checkout.sessions.retrieve(session_id);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
   const totalAmount = formatDecimalPrice(
     transformPriceFromStripe(Number(session.amount_total))
   );
+
+  if (session.status !== "open") {
+    notFound();
+  }
 
   return (
     <OuterPage>
@@ -46,7 +53,7 @@ export default async function CanceledPage({
           { label: "Store", path: "store" },
           {
             label: "Payment interrupted",
-            path: `checkout/interrupted?session_id=${session_id}`,
+            path: `checkout/interrupted/${sessionId}`,
           },
         ]}
       />
@@ -60,7 +67,7 @@ export default async function CanceledPage({
             </div>
 
             {/* Message */}
-            <h1 className="text-3xl font-bold text-white mb-4">
+            <h1 className="text-3xl font-bold text-neutral-200 mb-4">
               Payment Not Completed
             </h1>
 
@@ -72,7 +79,7 @@ export default async function CanceledPage({
             {/* Amount Box */}
             <div className="bg-zinc-900 rounded-lg p-4 mb-8">
               <p className="text-gray-500 text-sm mb-1">Order Total</p>
-              <p className="text-white text-2xl">{totalAmount}</p>
+              <p className="text-neutral-200 text-2xl">{totalAmount}</p>
             </div>
 
             {/* Action Buttons */}
