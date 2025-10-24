@@ -58,6 +58,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "poem": {
+              "type": "SharedSlice"
+            },
             "embed_block": {
               "type": "SharedSlice"
             },
@@ -108,7 +111,14 @@
           "customtypes": [
             {
               "id": "venue",
-              "fields": ["name", "address", "venue_logo", "map_location_url"]
+              "fields": [
+                "name",
+                "address",
+                "venue_logo",
+                "map_location_url",
+                "coordinates",
+                "description"
+              ]
             }
           ]
         }

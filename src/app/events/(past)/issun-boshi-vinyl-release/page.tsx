@@ -54,9 +54,7 @@ export default function IssunBoshiVinylReleasePage() {
               chapter in life{" "}
               <Link
                 className={"text-issun-boshi-yellow font-normal link"}
-                href={
-                  "/src/app/events/(past)/issun-boshi-vinyl-release/location"
-                }
+                href={"/events/(past)/issun-boshi-vinyl-release/location"}
               >
                 on 20 September in Kader
               </Link>
@@ -67,9 +65,7 @@ export default function IssunBoshiVinylReleasePage() {
               production, available exclusively for{" "}
               <Link
                 className={"text-issun-boshi-yellow font-normal link"}
-                href={
-                  "/src/app/events/(past)/issun-boshi-vinyl-release/get-the-ep"
-                }
+                href={"/events/(past)/issun-boshi-vinyl-release/get-the-ep"}
               >
                 purchase at the event
               </Link>

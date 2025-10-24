@@ -1,6 +1,6 @@
 import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
-import { SliceZone } from "@prismicio/client";
+import { GeoPointField, SliceZone } from "@prismicio/client";
 
 export enum EventVisibility {
   Visible = "Visible",
@@ -16,6 +16,8 @@ export enum EventType {
 export type VenueInEvent = {
   id: string;
   name: string;
+  description: string;
+  coordinates: GeoPointField;
   address: string;
   mapLocationUrl: string;
   logo: CmsImage | null;

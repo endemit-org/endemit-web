@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { asImageSrc, asLink, Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
-import TileGrid from "@/app/_components/grid/TileGrid";
 import { TileConfig } from "@/app/_components/grid/TileConfig";
+import MasonryGrid from "@/app/_components/grid/MasonryGrid";
 
 /**
  * Props for `GridTile`.
@@ -43,7 +43,7 @@ const GridTile: FC<GridTileProps> = ({ slice }) => {
       id: `slice-tile-${index}`,
       size: tile.size
         ? (tile.size.toLowerCase() as TileConfig["size"])
-        : "medium",
+        : "square",
       title: tile.headline || undefined,
       subtitle: tile.content || undefined,
       className: tile.override_class_definition || undefined,
@@ -59,7 +59,7 @@ const GridTile: FC<GridTileProps> = ({ slice }) => {
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      <TileGrid tiles={tilesFromSlice} />
+      <MasonryGrid tiles={tilesFromSlice} />
     </section>
   );
 };

@@ -32,7 +32,7 @@ export const formatDay = (date: Date) => {
 };
 
 export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("sl-SI", {
     day: "2-digit",
     month: "long",
     year: "2-digit",
@@ -40,7 +40,7 @@ export const formatDate = (date: Date) => {
 };
 
 export const formatDateTime = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("sl-SI", {
     day: "2-digit",
     month: "long",
     year: "2-digit",

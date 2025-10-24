@@ -1,5 +1,5 @@
 import EventCard from "@/app/_components/event/EventCard";
-import React, { Suspense } from "react";
+import React from "react";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 
@@ -28,32 +28,22 @@ async function EventListContent({ title, type }: EventListProps) {
   }
 
   return (
-    <div>
+    <>
       {title && (
         <h1 className="text-3xl font-bold text-neutral-200 mb-8">{title}</h1>
       )}
-      {filteredEvents.map((event, index) => (
-        <React.Fragment key={`${event.id}-${index}`}>
-          {index > 0 && (
-            <hr
-              key={`divider-${index}`}
-              className="border-t border-[#333333] my-4"
-            />
-          )}
-          <EventCard event={event}>{/*{event.children}*/}</EventCard>
-        </React.Fragment>
-      ))}
-    </div>
+      <div className={"grid grid-cols-2 gap-4"}>
+        {filteredEvents.map((event, index) => (
+          <React.Fragment key={`${event.id}-${index}`}>
+            <EventCard event={event}>{/*{event.children}*/}</EventCard>
+          </React.Fragment>
+        ))}
+      </div>{" "}
+    </>
   );
 }
 
 // Main component with Suspense boundary
 export default function EventLister({ title, type }: EventListProps) {
-  return (
-    <Suspense
-      fallback={<div className="text-neutral-200">Loading events...</div>}
-    >
-      <EventListContent title={title} type={type} />
-    </Suspense>
-  );
+  return <EventListContent title={title} type={type} />;
 }

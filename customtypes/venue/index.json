@@ -54,6 +54,12 @@
           "repeat": false
         }
       },
+      "coordinates": {
+        "type": "GeoPoint",
+        "config": {
+          "label": "Coordinates"
+        }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

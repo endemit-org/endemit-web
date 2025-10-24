@@ -13,6 +13,7 @@ export const components = {
   image_gallery: dynamic(() => import("./ImageGallery")),
   newsletter_subscription: dynamic(() => import("./Newsletter")),
   podcast_list: dynamic(() => import("./PodcastList")),
+  poem: dynamic(() => import("./Poem")),
   product_list: dynamic(() => import("./ProductList")),
   spacer: dynamic(() => import("./Spacer")),
   tabs: dynamic(() => import("./Tabs")),

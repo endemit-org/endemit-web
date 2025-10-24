@@ -3,6 +3,8 @@ export const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL!;
 export const PUBLIC_BASE_WEB_URL = process.env.NEXT_PUBLIC_BASE_WEB_URL!;
 export const PUBLIC_CURRENT_ENV = process.env.NEXT_PUBLIC_CURRENT_ENV!;
 export const PUBLIC_VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV!;
+export const PUBLIC_GOOGLE_MAP_API_KEY =
+  process.env.NEXT_PUBLIC_GOOGLE_API_KEY!;
 
 // Stripe
 export const PUBLIC_STRIPE_PUBLISHABLE_KEY =

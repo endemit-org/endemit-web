@@ -35,7 +35,7 @@ export default function Hero({
   };
 
   return (
-    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-neutral-950 border-8 border-neutral-950">
       {backgroundImage && (
         <>
           <Image
@@ -46,7 +46,7 @@ export default function Hero({
             priority
           />
           <div
-            className="absolute inset-0 bg-black"
+            className="absolute inset-0 bg-neutral-950"
             style={{ opacity: overlayOpacity / 100 }}
           />
         </>

@@ -6,6 +6,7 @@ type Props = {
   width?: number;
   height?: number;
   className?: string;
+  sizes?: string;
 };
 
 export default function ImageWithFallback({
@@ -14,6 +15,7 @@ export default function ImageWithFallback({
   width = 400,
   height = 400,
   className,
+  sizes,
 }: Props) {
   const imageSrc = src ?? "/images/noise.gif";
 
@@ -24,6 +26,7 @@ export default function ImageWithFallback({
       width={width}
       height={height}
       className={className}
+      sizes={sizes}
     />
   );
 }
