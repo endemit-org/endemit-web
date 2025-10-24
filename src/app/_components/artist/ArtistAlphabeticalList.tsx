@@ -21,7 +21,7 @@ export default function ArtistAlphabeticalList({ artists }: Props) {
         <Link
           key={artist.id}
           href={`/artists/${artist.uid}`}
-          className="group relative overflow-hidden rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-500 transition-all duration-300"
+          className="group relative overflow-hidden  bg-neutral-950  border-8 border-neutral-950 hover:border-slate-500 transition-all duration-300"
         >
           <div className="relative aspect-square overflow-hidden">
             {artist.image?.src && (
@@ -32,19 +32,14 @@ export default function ArtistAlphabeticalList({ artists }: Props) {
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/50 to-transparent opacity-60" />
           </div>
 
           <div className="relative p-4 min-h-[80px] flex items-center justify-center">
-            {/* Blurred name background */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold text-cyan-400 blur-md opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                {artist.name}
-              </span>
-            </div>
-
-            {/* Sharp name foreground */}
-            <span className="relative text-2xl font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center leading-tight">
+            <span className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
+              {artist.name}
+            </span>
+            <span className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
               {artist.name}
             </span>
           </div>

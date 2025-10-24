@@ -32,6 +32,9 @@ importers:
       '@slicemachine/init':
         specifier: ^2.10.40
         version: 2.10.40
+      '@types/google.maps':
+        specifier: ^3.58.1
+        version: 3.58.1
       '@types/qrcode':
         specifier: ^1.5.5
         version: 1.5.5
@@ -1463,6 +1466,9 @@ packages:
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
+
+  '@types/google.maps@3.58.1':
+    resolution: {integrity: sha512-X9QTSvGJ0nCfMzYOnaVs/k6/4L+7F5uCS+4iUmkLEls6J9S/Phv+m/i3mDeyc49ZBgwab3EFO1HEoBY7k98EGQ==}
 
   '@types/http-proxy@1.17.16':
     resolution: {integrity: sha512-sdWoUajOB1cd0A8cRRQ1cfyWNbmFKLAqBB89Y8x5iYyG/mkJHc0YUH8pdWBy2omi9qtCpiIgGjuwO0dQST2l5w==}
@@ -6128,6 +6134,8 @@ snapshots:
   '@types/emscripten@1.41.4': {}
 
   '@types/estree@1.0.8': {}
+
+  '@types/google.maps@3.58.1': {}
 
   '@types/http-proxy@1.17.16':
     dependencies:

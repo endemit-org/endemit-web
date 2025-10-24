@@ -24,12 +24,8 @@
                   "label": "Size *",
                   "placeholder": "What is the size of the tile",
                   "options": [
-                    "Small",
-                    "Medium",
-                    "Large",
-                    "Wide",
-                    "Tall",
-                    "Full"
+                    "Square",
+                    "Portrait"
                   ]
                 }
               },

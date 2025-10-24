@@ -1,0 +1,28 @@
+{
+  "id": "poem",
+  "type": "SharedSlice",
+  "name": "Poem",
+  "description": "Poem",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "strong,paragraph"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

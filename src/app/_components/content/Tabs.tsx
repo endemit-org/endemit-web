@@ -54,21 +54,21 @@ export default function Tabs({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="">
       {heading && (
         <h2 className="text-3xl font-bold mb-8 text-gray-900">{heading}</h2>
       )}
 
-      <div className="border-b border-gray-200">
+      <div className="hidden lg:block border-b-2 border-neutral-700">
         <nav className="flex space-x-8 overflow-x-auto" aria-label="Tabs">
           {items.map((item, index) => (
             <button
               key={item.id}
               onClick={() => handleTabClick(index)}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
                 activeIndex === index
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-blue-500 text-neutral-200"
+                  : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
             >
               {item.label}
@@ -77,7 +77,20 @@ export default function Tabs({
         </nav>
       </div>
 
-      <div className="mt-8 prose max-w-none">{items[activeIndex]?.content}</div>
+      <div className="hidden lg:block mt-8 max-w-none">
+        {items[activeIndex]?.content}
+      </div>
+
+      <div className="lg:hidden space-y-6">
+        {items.map(item => (
+          <div key={item.id} className="border-b border-neutral-700 pb-6">
+            <h3 className="text-2xl font-bold font-heading tracking-wider text-neutral-200 mb-4">
+              {item.label}
+            </h3>
+            <div className="max-w-none">{item.content}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

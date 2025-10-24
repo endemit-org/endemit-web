@@ -2,6 +2,7 @@ import { fetchHomePageFromCms } from "@/domain/cms/operations/fetchHomePageFromC
 import { notFound } from "next/navigation";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";
+import React from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const homePage = await fetchHomePageFromCms();
@@ -24,5 +25,9 @@ export default async function Home() {
     notFound();
   }
 
-  return <SliceDisplay slices={homePage.data.slices} />;
+  return (
+    <>
+      <SliceDisplay slices={homePage.data.slices} />
+    </>
+  );
 }

@@ -30,45 +30,47 @@ export default function IusPrimaeNoctisLayout({
         backgroundSize: "110px",
       }}
     >
-      <Sidebar
-        navigationItems={[
-          {
-            label: "Events",
-            href: "/events",
-            isBackButton: true,
-          },
-          {
-            label: "Ius Primae Noctis",
-            href: "/events/ius-primae-noctis",
-          },
-          {
-            label: "Artists",
-            href: "/events/ius-primae-noctis/artists",
-          },
-          {
-            label: "Location",
+      <div className="max-w-8xl m-auto overflow-hidden relative ">
+        <Sidebar
+          navigationItems={[
+            {
+              label: "Events",
+              href: "/events",
+              isBackButton: true,
+            },
+            {
+              label: "Ius Primae Noctis",
+              href: "/events/ius-primae-noctis",
+            },
+            {
+              label: "Artists",
+              href: "/events/ius-primae-noctis/artists",
+            },
+            {
+              label: "Location",
+              href: "/events/ius-primae-noctis/location",
+            },
+            {
+              label: "Tickets",
+              href: "/events/ius-primae-noctis/tickets",
+            },
+          ]}
+          socialLinks={[
+            {
+              id: "facebook",
+              href: "https://www.facebook.com/events/985739330046224",
+              iconSrc: "/images/facebook.png",
+              alt: "Facebook",
+            },
+          ]}
+          footerInfo={{
+            lines: ["Grad Kodeljevo", "Ul. Carla Benza 20"], // Assuming default location
             href: "/events/ius-primae-noctis/location",
-          },
-          {
-            label: "Tickets",
-            href: "/events/ius-primae-noctis/tickets",
-          },
-        ]}
-        socialLinks={[
-          {
-            id: "facebook",
-            href: "https://www.facebook.com/events/985739330046224",
-            iconSrc: "/images/facebook.png",
-            alt: "Facebook",
-          },
-        ]}
-        footerInfo={{
-          lines: ["Grad Kodeljevo", "Ul. Carla Benza 20"], // Assuming default location
-          href: "/events/ius-primae-noctis/location",
-        }}
-      />
-      <div className={"pb-16"}>{children}</div>
-      <EventFooter ticketsLink={"/events/ius-primae-noctis/tickets"} />
+          }}
+        />
+        <div className={"pb-16"}>{children}</div>
+        <EventFooter ticketsLink={"/events/ius-primae-noctis/tickets"} />
+      </div>
     </body>
   );
 }

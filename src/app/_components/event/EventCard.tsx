@@ -4,45 +4,54 @@ import clsx from "clsx";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import { formatDate } from "@/lib/util/formatting";
 import { Event } from "@/domain/event/types/event";
-import { ReactNode } from "react";
 
 export interface EventProps {
   event: Event;
-  children?: ReactNode;
 }
 
-export default function EventCard({ event, children }: EventProps) {
+export default function EventCard({ event }: EventProps) {
   const shouldShowLink = event.options.enabledLink;
   const shouldShowImage = !!event.coverImage?.src;
   const eventLink = `/events/${event.uid}`;
 
   return (
-    <div className={clsx(!shouldShowLink && "cursor-not-allowed")}>
+    <div
+      className={clsx(
+        "bg-neutral-950 p-2",
+        !shouldShowLink && "cursor-not-allowed"
+      )}
+    >
       <Link
         href={shouldShowLink ? eventLink : ""}
         target={eventLink?.startsWith("http") ? "_blank" : "_self"}
         className={clsx(
-          "block focus:outline-0 active:outline-0 mt-2 hover:scale-[1.02] transition-all duration-300 active:scale-[0.995]",
+          "block focus:outline-0 active:outline-0",
           !shouldShowLink && "pointer-events-none"
         )}
       >
-        <div className={clsx("pt-4 pb-6 min-h-[220px] md:h-[220px]")}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-full">
-            {shouldShowImage && event.coverImage?.src && (
-              <div className="relative h-48 md:h-full overflow-hidden rounded-md aspect-[2/1]">
-                <Image
-                  src={event.coverImage?.src}
-                  alt={event.coverImage?.alt ?? event.name}
-                  fill
-                  className="object-cover"
-                />
-                {children}
+        <div className={"relative"}>
+          <div className="flex flex-col">
+            {event.tickets.available && (
+              <div className="absolute top-4 left-4">
+                <span className="px-2 py-1 bg-neutral-200 text-black animate-pulse text-sm flex w-fit gap-x-2 items-center">
+                  <TicketIcon />
+                  Tickets now available
+                </span>
               </div>
+            )}
+            {shouldShowImage && event.promoImage?.src && (
+              <Image
+                src={event.promoImage?.src}
+                alt={event.promoImage?.alt ?? event.name}
+                width={400}
+                height={400}
+                className="object-cover aspect-square w-full"
+              />
             )}
             {!shouldShowImage && (
               <div>
                 <div
-                  className="w-full h-48 md:h-full flex items-center justify-center bg-stone-700 rounded-md  "
+                  className="w-full aspect-square  flex items-center justify-center bg-stone-700 rounded-md  "
                   style={{
                     backgroundImage: "url('/images/worms.png')",
                     backgroundRepeat: "repeat",
@@ -65,8 +74,8 @@ export default function EventCard({ event, children }: EventProps) {
                 </div>
               </div>
             )}
-            <div className="flex flex-col justify-center">
-              <h3 className="text-xl md:text-2xl font-bold mb-2 text-neutral-200 uppercase">
+            <div className="flex flex-col justify-center my-6 px-6">
+              <h3 className="text-xl md:text-7xl font-bold mb-2 text-neutral-200 uppercase">
                 {event.name}
                 {event.annotation && (
                   <span className="text-sm md:text-base font-normal text-gray-400 ml-2">
@@ -80,18 +89,10 @@ export default function EventCard({ event, children }: EventProps) {
                 </p>
               )}
               {event.artists && event.artists.length > 0 && (
-                <div className="text-md md:text-lg text-gray-400 font-heading">
+                <div className="text-md md:text-xl text-neutral-200 font-heading uppercase tracking-wider">
                   {event.artists.map(
                     (artist, index) => `${index > 0 ? " • " : ""}${artist.name}`
                   )}
-                </div>
-              )}
-              {event.tickets.available && (
-                <div className="mt-4">
-                  <span className="px-2 py-1 bg-neutral-200 text-black animate-pulse text-md rounded-md flex w-fit gap-x-2 items-center">
-                    <TicketIcon />
-                    Tickets now available
-                  </span>
                 </div>
               )}
             </div>

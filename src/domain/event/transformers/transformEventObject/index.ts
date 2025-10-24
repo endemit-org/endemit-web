@@ -2,6 +2,7 @@ import { Event } from "@/domain/event/types/event";
 
 import { asLink, asText, isFilled } from "@prismicio/client";
 import { EventDocument } from "@/prismicio-types";
+import { convertMinutesToMs } from "@/lib/util/converters";
 
 export const transformEventObject = (
   event: EventDocument,
@@ -36,6 +37,8 @@ export const transformEventObject = (
             id: venueDoc.id,
             name: venueDoc.data.name,
             address: venueDoc.data.address,
+            description: venueDoc.data.description,
+            coordinates: venueDoc.data.coordinates,
             logo: venueDoc.data.venue_logo
               ? {
                   src: venueDoc.data.venue_logo.url,
@@ -73,23 +76,33 @@ export const transformEventObject = (
 
               return {
                 id: artist.id,
+                uid: artist.uid,
                 name: artist.data.name,
-                description: item.description_override
-                  ? asText(item.description_override)
-                  : artist.data.description
-                    ? asText(artist.data.description)
-                    : null,
-                image: item.image_override
-                  ? {
-                      src: item.image_override.url,
-                      alt: item.image_override.alt,
-                    }
-                  : {
-                      src: artist.data.image.url,
-                      alt: artist.data.image.alt,
-                    },
+                description:
+                  item.description_override.length > 0
+                    ? asText(item.description_override)
+                    : artist.data.description
+                      ? asText(artist.data.description)
+                      : null,
+                image:
+                  item.image_override && item.image_override.url
+                    ? {
+                        src: item.image_override.url,
+                        alt: item.image_override.alt,
+                      }
+                    : {
+                        src: artist.data.image.url,
+                        alt: artist.data.image.alt,
+                      },
                 video: asLink(item.video_override) ?? asLink(artist.data.video),
                 start_time: item.start_time ? new Date(item.start_time) : null,
+                end_time:
+                  item.start_time && item.duration
+                    ? new Date(
+                        new Date(item.start_time).getTime() +
+                          convertMinutesToMs(item.duration)
+                      )
+                    : null,
                 duration: item.duration,
                 stage: item.stage,
                 links: artist.data.links

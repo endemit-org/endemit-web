@@ -337,6 +337,7 @@ export type ContentPageDocument<Lang extends string = string> =
   >;
 
 type EventDocumentDataSlicesSlice =
+  | PoemSlice
   | EmbedBlockSlice
   | PodcastListSlice
   | TextColumnSlice
@@ -519,7 +520,14 @@ interface EventDocumentData {
     [
       {
         id: "venue";
-        fields: ["name", "address", "venue_logo", "map_location_url"];
+        fields: [
+          "name",
+          "address",
+          "venue_logo",
+          "map_location_url",
+          "coordinates",
+          "description",
+        ];
       },
     ]
   > /**
@@ -1667,6 +1675,17 @@ interface VenueDocumentData {
   >;
 
   /**
+   * Coordinates field in *Venue*
+   *
+   * - **Field Type**: GeoPoint
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.coordinates
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/geopoint
+   */
+  coordinates: prismic.GeoPointField;
+
+  /**
    * Slice Zone field in *Venue*
    *
    * - **Field Type**: Slice Zone
@@ -2021,9 +2040,7 @@ export interface GridTileSliceDefaultPrimaryTilesItem {
    * - **API ID Path**: grid_tile.default.primary.tiles[].size
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
-  size: prismic.SelectField<
-    "Small" | "Medium" | "Large" | "Wide" | "Tall" | "Full"
-  >;
+  size: prismic.SelectField<"Square" | "Portrait">;
 
   /**
    * Headline field in *TileGrid → Default → Primary → Tiles*
@@ -2509,6 +2526,48 @@ export type PodcastListSlice = prismic.SharedSlice<
   "podcast_list",
   PodcastListSliceVariation
 >;
+
+/**
+ * Primary content in *Poem → Default → Primary*
+ */
+export interface PoemSliceDefaultPrimary {
+  /**
+   * Content field in *Poem → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: poem.default.primary.content
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  content: prismic.RichTextField;
+}
+
+/**
+ * Default variation for Poem Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PoemSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<PoemSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Poem*
+ */
+type PoemSliceVariation = PoemSliceDefault;
+
+/**
+ * Poem Shared Slice
+ *
+ * - **API ID**: `poem`
+ * - **Description**: Poem
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PoemSlice = prismic.SharedSlice<"poem", PoemSliceVariation>;
 
 /**
  * Item in *ProductList → Manual selection → Primary → Products*
@@ -3139,6 +3198,10 @@ declare module "@prismicio/client" {
       PodcastListSliceDefaultPrimary,
       PodcastListSliceVariation,
       PodcastListSliceDefault,
+      PoemSlice,
+      PoemSliceDefaultPrimary,
+      PoemSliceVariation,
+      PoemSliceDefault,
       ProductListSlice,
       ProductListSliceDefaultPrimary,
       ProductListSliceFeaturedPrimary,
