@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function SignInPage() {
       router.push(redirectTo);
       router.refresh();
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       setError("An error occurred. Please try again.");
       setIsLoading(false);
     }
@@ -45,11 +46,15 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-neutral-800 p-10 rounded">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in
-          </h2>
+      <div className="max-w-md w-full space-y-8 bg-neutral-900 p-10 rounded">
+        <div
+          className={
+            "text-neutral-400  flex justify-center items-center w-full"
+          }
+        >
+          <div className="w-52">
+            <AnimatedEndemitLogo />
+          </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
@@ -99,7 +104,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-blue-700 text-neutral-200 hover:bg-blue-800 focus:ring-blue-500"
             >
               {isLoading ? "Signing in..." : "Sign in"}
             </button>

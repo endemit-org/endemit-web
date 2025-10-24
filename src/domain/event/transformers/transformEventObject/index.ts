@@ -49,6 +49,7 @@ export const transformEventObject = (
     options: {
       visibility: event.data.visibility,
       enabledLink: event.data.enable_link_to_full_page,
+      enabledTicketScanning: event.data.allow_ticket_scanning,
     },
     tickets: {
       available: !!ticketProductId,

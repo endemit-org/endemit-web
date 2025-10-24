@@ -6,6 +6,7 @@ import {
   TICKET_SECRET,
   TICKET_VERIFICATION_HASH_SPLIT_CONFIG,
 } from "@/lib/services/env/private";
+import { normaliseJsonInput } from "@/domain/ticket/util";
 
 export const generateSecureHash = (ticketPayload: TicketPayload) => {
   const secret = TICKET_SECRET;
@@ -21,7 +22,9 @@ export const generateSecureHash = (ticketPayload: TicketPayload) => {
     salt: ticketSalt,
   };
 
-  const data = JSON.stringify(newPayload);
+  const normalisedJsonInput = normaliseJsonInput(newPayload);
+
+  const data = JSON.stringify(normalisedJsonInput);
   const hash = crypto.createHmac("sha256", secret).update(data).digest("hex");
 
   const [frontChars, backChars] = splitConfig.split(",").map(Number);

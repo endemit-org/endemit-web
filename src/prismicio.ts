@@ -5,8 +5,8 @@ import {
 } from "@prismicio/client";
 import { enableAutoPreviews } from "@prismicio/next";
 import sm from "../slicemachine.config.json";
-import { PUBLIC_CURRENT_ENV } from "@/lib/services/env/public";
 import { PRISMIC_REPOSITORY_NAME } from "@/lib/services/env/private";
+import { isProduction } from "@/lib/util/env";
 
 /**
  * The project's Prismic repository name.
@@ -59,10 +59,9 @@ const routes: Route[] = [
 export const createClient = (config: ClientConfig = {}) => {
   const client = baseCreateClient(repositoryName, {
     routes,
-    fetchOptions:
-      PUBLIC_CURRENT_ENV === "production"
-        ? { next: { tags: ["prismic"] }, cache: "force-cache" }
-        : { next: { revalidate: 5 } },
+    fetchOptions: isProduction()
+      ? { next: { tags: ["prismic"] }, cache: "force-cache" }
+      : { next: { revalidate: 5 } },
     ...config,
   });
 

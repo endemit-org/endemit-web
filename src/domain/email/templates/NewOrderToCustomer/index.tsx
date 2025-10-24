@@ -310,7 +310,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
           </tbody>
         </table>
         <Text className="text-gray-600 my-6">
-          Please feel free to reach out to our support team at
+          Please feel free to reach out to our support team at{" "}
           <Link href={"mailto:endemit@endemit.org"} className={"link"}>
             endemit@endemit.org
           </Link>{" "}

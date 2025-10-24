@@ -1,4 +1,4 @@
-import { TicketPayload } from "@/domain/ticket/types/ticket";
+import { QrTicketPayload, TicketPayload } from "@/domain/ticket/types/ticket";
 
 export const transformToQrContent = (
   ticketHash: string,
@@ -7,5 +7,5 @@ export const transformToQrContent = (
   return {
     hash: ticketHash,
     ...ticketPayload,
-  };
+  } as QrTicketPayload;
 };

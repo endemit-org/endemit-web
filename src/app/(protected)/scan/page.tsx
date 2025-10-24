@@ -1,57 +1,78 @@
-import { getCurrentUser } from "@/lib/services/auth";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/content/OuterPage";
+import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
+import { prismic } from "@/lib/services/prismic";
+import { isEventCompleted } from "@/domain/event/businessLogic";
+import Link from "next/link";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { formatEventDateAndTime } from "@/lib/util/formatting";
 
 export default async function AdminPage() {
-  const user = await getCurrentUser();
+  const eventsToScan = await fetchEventsFromCms({
+    filters: [prismic.filter.at("my.event.allow_ticket_scanning", true)],
+  });
+
+  const eventsToDisplay = eventsToScan?.filter(event => {
+    return !isEventCompleted(event);
+  });
 
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Admin Dashboard
-          </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            Welcome to the admin panel
-          </p>
-        </div>
-        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user?.name || "N/A"}
-              </dd>
-            </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Email</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user?.email}
-              </dd>
-            </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Roles</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user?.roles.join(", ")}
-              </dd>
-            </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Permissions</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <div className="flex flex-wrap gap-2">
-                  {user?.permissions.map(permission => (
-                    <span
-                      key={permission}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                    >
-                      {permission}
-                    </span>
-                  ))}
+    <OuterPage>
+      <PageHeadline
+        title={"Ticket scanner"}
+        segments={[
+          { label: "Endemit", path: "" },
+          { label: "Scan", path: "scan" },
+        ]}
+      />
+      <div className="px-4 py-6 sm:px-0">
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              Ticket scanner for events
+            </h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+              Welcome to the event ticket scanner. Select the event in the list
+              below that you would like to scan the tickets for.
+            </p>
+          </div>
+          <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+            {eventsToDisplay &&
+              eventsToDisplay.map(event => (
+                <div
+                  key={`event-card-scanner-${event.id}`}
+                  className="border-t first:border-none border-gray-200 px-4 py-5 sm:px-6 flex gap-x-6"
+                >
+                  <ImageWithFallback
+                    src={event.coverImage?.src}
+                    alt={event.coverImage?.alt ?? ""}
+                    width={100}
+                    height={100}
+                    className={"aspect-square object-fill w-20"}
+                  />
+
+                  <Link
+                    key={event.id}
+                    href={`/scan/${event.uid}`}
+                    className="text-2xl"
+                  >
+                    {event.name}
+                    {event.date_start && (
+                      <span className={"block text-sm"}>
+                        {formatEventDateAndTime(event.date_start)}
+                      </span>
+                    )}
+                  </Link>
                 </div>
-              </dd>
-            </div>
-          </dl>
+              ))}
+
+            {!eventsToDisplay ||
+              (eventsToDisplay.length === 0 && (
+                <div>There are no events to scan right now</div>
+              ))}
+          </div>
         </div>
       </div>
-    </div>
+    </OuterPage>
   );
 }

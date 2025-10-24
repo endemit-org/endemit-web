@@ -78,6 +78,7 @@ model Ticket {
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+  ScanLog          ScanLog[]
 
   @@index([ticketHash])
   @@index([eventId])
@@ -99,6 +100,7 @@ model User {
 
   sessions  Session[]
   userRoles UserRole[]
+  ScanLog   ScanLog[]
 
   @@index([email])
   @@index([status])
@@ -147,4 +149,19 @@ model UserRole {
   @@unique([userId, roleId])
   @@index([userId])
   @@index([roleId])
+}
+
+model ScanLog {
+  id        String   @id @default(cuid())
+  userId    String
+  ticketId  String
+  eventId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  Ticket    Ticket   @relation(fields: [ticketId], references: [id])
+
+  @@index([eventId])
+  @@index([userId])
+  @@index([ticketId])
 }

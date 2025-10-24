@@ -609,7 +609,19 @@ interface EventDocumentData {
    * - **Tab**: Attributes
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
-  annotation: prismic.KeyTextField /**
+  annotation: prismic.KeyTextField;
+
+  /**
+   * Allow ticket scanning field in *Event*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event.allow_ticket_scanning
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  allow_ticket_scanning: prismic.BooleanField /**
    * Meta Title field in *Event*
    *
    * - **Field Type**: Text

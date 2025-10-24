@@ -33,6 +33,7 @@ export type Event = {
   options: {
     visibility: EventVisibility;
     enabledLink: boolean;
+    enabledTicketScanning: boolean;
   };
   tickets: {
     available: boolean;

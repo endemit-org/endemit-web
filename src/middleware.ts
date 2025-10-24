@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { PUBLIC_CURRENT_ENV } from "@/lib/services/env/public";
 import { STAGING_PASSWORD } from "@/lib/services/env/private";
+import { isDevelopment, isProduction } from "@/lib/util/env";
 
 const STAGING_LOGIN_PATH = "/staging-login";
 
@@ -45,8 +45,7 @@ function handleCORS(request: NextRequest) {
 }
 
 function handleStagingAuth(request: NextRequest) {
-  const isStaging =
-    PUBLIC_CURRENT_ENV !== "production" && PUBLIC_CURRENT_ENV !== "development";
+  const isStaging = !isProduction() && !isDevelopment();
 
   if (!isStaging) {
     return NextResponse.next();

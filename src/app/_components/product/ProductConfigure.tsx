@@ -172,8 +172,7 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
                     />
                   </div>
                 )}
-                <strong>{product.name}</strong> was successfully added to your
-                cart!
+                <strong>{product.name}</strong> was added to your cart!
               </div>
             </div>
 

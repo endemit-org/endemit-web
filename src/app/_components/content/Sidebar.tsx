@@ -110,11 +110,11 @@ export default function Sidebar({
           className="lg:mx-3 lg:ml-auto hover:opacity-70 transition-opacity ease-in-out"
         >
           {/*{ Show animated logo on desktop}*/}
-          <div className="w-24 lg:w-32 text-neutral-200 max-lg:hidden">
+          <div className="w-24 lg:w-32 text-white max-lg:hidden">
             <AnimatedEndemitLogo />
           </div>
           {/*{ Show regular logo on mobile }*/}
-          <div className="w-24 lg:w-32 text-neutral-200  lg:hidden">
+          <div className="w-24 lg:w-32 text-white  lg:hidden">
             <EndemitLogo />
           </div>
         </Link>

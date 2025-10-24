@@ -17,7 +17,7 @@ export default function AnimatedEndemitLogo() {
           to { opacity: 1; }
         }
         .draw-path {
-          stroke: #FFFFFF;
+          stroke: currentColor;
           stroke-width: 2.5;
           fill: transparent;
           stroke-dasharray: 1000;
@@ -25,7 +25,7 @@ export default function AnimatedEndemitLogo() {
           animation: draw 2.1s ease-in-out forwards, strokeFadeOut 0.3s ease-in-out 0.6s forwards;
         }
         .fill-path {
-          fill: #FFFFFF;
+          fill: currentColor;
           opacity: 0;
           animation: fadeIn 0.5s ease-in-out 0.5s forwards;
         }

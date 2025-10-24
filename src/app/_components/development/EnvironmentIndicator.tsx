@@ -2,16 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  PUBLIC_CURRENT_ENV,
-  PUBLIC_VERCEL_ENV,
-} from "@/lib/services/env/public";
+import { isDevelopment, isPreview } from "@/lib/util/env";
 
 function determineEnvironment(): "development" | "staging" | null {
-  if (PUBLIC_CURRENT_ENV === "development") {
+  if (isDevelopment()) {
     return "development";
   }
-  if (PUBLIC_VERCEL_ENV === "preview" || PUBLIC_VERCEL_ENV === "staging") {
+  if (isPreview()) {
     return "staging";
   }
   return null;

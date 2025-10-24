@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
 import { Teko, Space_Grotesk } from "next/font/google";
 import EnvironmentIndicator from "@/app/_components/development/EnvironmentIndicator";
+import { isProduction } from "@/lib/util/env";
 
 const headlineFont = Teko({
   subsets: ["latin", "latin-ext"],
@@ -76,11 +77,11 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: true,
-    follow: true,
+    index: isProduction(),
+    follow: isProduction(),
     googleBot: {
-      index: true,
-      follow: true,
+      index: isProduction(),
+      follow: isProduction(),
       "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,

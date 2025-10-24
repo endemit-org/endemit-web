@@ -7,7 +7,7 @@ export const isEventCompleted = (event: Event) => {
     return false;
   }
 
-  const isCompleted = now.getTime() <= event.date_end.getTime();
+  const isCompleted = now.getTime() >= event.date_end.getTime();
 
   return isCompleted;
 };
@@ -22,4 +22,8 @@ export const isEventFestival = (event: Event) => {
 
 export const isEventSingleDay = (event: Event) => {
   return event.type === EventType.SingleDay;
+};
+
+export const isEventScanningEnabled = (event: Event) => {
+  return event.options.enabledTicketScanning;
 };

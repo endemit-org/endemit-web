@@ -3,6 +3,7 @@ import "server-only";
 import { DiscordConnector } from "@/lib/services/discord";
 import { notificationFooter } from "@/domain/notification/util";
 import { DISCORD_TICKET_SCAN_WEBHOOK } from "@/lib/services/env/private";
+import { formatNumber } from "@/lib/util/formatting";
 
 const discordTicketScan = new DiscordConnector(
   DISCORD_TICKET_SCAN_WEBHOOK ?? ""
@@ -13,11 +14,15 @@ export async function notifyOnTicketScanned({
   ticketPayerEmail,
   ticketHolderName,
   totalTicketsScannedAtEvent,
+  totalTicketsSoldForEvent,
+  totalTicketsScannedRatio,
 }: {
   eventName: string;
   ticketPayerEmail: string;
   ticketHolderName: string;
   totalTicketsScannedAtEvent: number;
+  totalTicketsSoldForEvent: number;
+  totalTicketsScannedRatio: number;
 }) {
   try {
     await discordTicketScan.sendEmbed({
@@ -42,7 +47,7 @@ export async function notifyOnTicketScanned({
         },
         {
           name: "Scanned at event:",
-          value: `\`${totalTicketsScannedAtEvent}\``,
+          value: `\`${totalTicketsScannedAtEvent} / ${totalTicketsSoldForEvent}\` · \`(${formatNumber(totalTicketsScannedRatio * 100, 2)}%)\``,
           inline: false,
         },
       ],

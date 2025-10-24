@@ -248,6 +248,15 @@
           "label": "Annotation",
           "placeholder": "(Optional)"
         }
+      },
+      "allow_ticket_scanning": {
+        "type": "Boolean",
+        "config": {
+          "label": "Allow ticket scanning",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
       }
     },
     "SEO & Metadata": {
