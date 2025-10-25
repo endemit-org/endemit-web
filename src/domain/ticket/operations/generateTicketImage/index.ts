@@ -227,12 +227,6 @@ function createTextOverlay(
   const firstPart = data.hashId.slice(0, 64).toUpperCase();
   const secondPart = data.hashId.slice(64).toUpperCase();
 
-  const fontBase64 = fs
-    .readFileSync(
-      path.join(process.cwd(), "public", "fonts", "DIN_Condensed_Bold.ttf")
-    )
-    .toString("base64");
-
   return Buffer.from(`
     <svg width="${cfg.canvasWidth}" height="${cfg.canvasHeight}">
     <defs>
