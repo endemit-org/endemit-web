@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import path from "path";
 import sharp from "sharp";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import * as fs from "node:fs";
 
 interface TicketData {
   shortId: string;
@@ -226,58 +227,64 @@ function createTextOverlay(
   const firstPart = data.hashId.slice(0, 64).toUpperCase();
   const secondPart = data.hashId.slice(64).toUpperCase();
 
+  const fontBase64 = fs
+    .readFileSync(
+      path.join(process.cwd(), "public", "fonts", "DIN_Condensed_Bold.ttf")
+    )
+    .toString("base64");
+
   return Buffer.from(`
     <svg width="${cfg.canvasWidth}" height="${cfg.canvasHeight}">
     <defs>
         <style type="text/css">
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&amp;display=swap');
           text {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter, Arial';
           }
         </style>
       </defs>
 
-      <text x="${layout.centerX}" y="145" font-family="Inter, sans-serif"
+      <text x="${layout.centerX}" y="145"
         font-size="85" font-weight="bold" fill="black" text-anchor="middle">
         TICKET ${data.shortId}
       </text>
 
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 960}"
-        font-family="Inter, sans-serif" font-size="40" fill="black"
+         font-size="40" fill="black"
         text-anchor="start" letter-spacing="1"
         transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${eventInfo}
       </text>
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 910}"
-        font-family="Inter, sans-serif" font-size="30" fill="#AAAAAA"
+         font-size="30" fill="#AAAAAA"
         letter-spacing="10" text-anchor="start" font-weight="lighter"
         transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${firstPart}
       </text>
 
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1900}"
-        font-family="Inter, sans-serif" font-size="40" fill="black"
+         font-size="40" fill="black"
         text-anchor="start"
         transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${eventInfo}
       </text>
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1850}"
-        font-family="Inter, sans-serif" font-size="30" fill="#AAAAAA"
+         font-size="30" fill="#AAAAAA"
         letter-spacing="10" text-anchor="start" font-weight="lighter"
         transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${secondPart}
       </text>
 
-      <text x="${layout.centerX}" y="1895" font-family="Inter, sans-serif"
+      <text x="${layout.centerX}" y="1895"
         font-size="26" fill="white" text-anchor="middle">
         Ticket admits one person. Ticket is non-refundable.
       </text>
 
-      <text x="${layout.centerX}" y="1490" font-family="Inter, sans-serif"
+      <text x="${layout.centerX}" y="1490"
         font-size="46" font-weight="bold" fill="white" text-anchor="middle">
         ${data.attendeeName.toUpperCase()}
       </text>
-      <text x="${layout.centerX}" y="1530" font-family="Inter, sans-serif"
+      <text x="${layout.centerX}" y="1530"
         font-size="26" fill="white" text-anchor="middle">
         ${data.attendeeEmail}
       </text>
@@ -286,14 +293,14 @@ function createTextOverlay(
         .map(
           (artist, i) => `
         <text x="${layout.centerX}" y="${1610 + i * 50}"
-          font-family="Inter, sans-serif" font-size="30" fill="white" text-anchor="middle">
+           font-size="30" fill="white" text-anchor="middle">
           ${artist.toUpperCase()}
         </text>
       `
         )
         .join("")}
 
-      <text x="${layout.centerX}" y="1765" font-family="Inter, sans-serif"
+      <text x="${layout.centerX}" y="1765"
         font-size="80" font-weight="bolder" fill="#222222" text-anchor="middle">
         ${data.price}
       </text>
