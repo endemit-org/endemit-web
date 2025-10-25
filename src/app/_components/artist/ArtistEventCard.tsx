@@ -18,27 +18,42 @@ export default function ArtistEventCard({
   cardClassName = "bg-neutral-900",
   nameClassName = "font-bold mb-4 text-neutral-200",
   descriptionClassName = "text-neutral-300 ",
-  timeClassName = "font-bold text-neutral-400",
+  timeClassName = "text-neutral-200",
 }: ArtistCardProps) {
   return (
     <div className={clsx("", cardClassName)}>
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 p-4">
         {/* Artist Photo */}
         <div className="lg:w-1/3 flex-shrink-0">
-          <div className="relative w-full overflow-hidden ">
+          <div className="relative w-full  overflow-hidden ">
             <ImageWithFallback
               src={artist.image?.src}
               alt={artist.name}
               width={400}
               height={600}
-              className="w-full h-auto object-cover"
+              className="w-full h-auto"
               sizes="(max-width: 768px) 100vw, 33vw"
             />
           </div>
+          {/* Stage and Time Info */}
+          {artist.start_time && artist.end_time && (
+            <div className=" space-y-2 text-center mt-4">
+              <div
+                className={clsx(
+                  "text-lg lg:text-xl uppercase font-heading",
+                  timeClassName
+                )}
+              >
+                {formatDay(artist.start_time)} {formatTime(artist.start_time)} -{" "}
+                {formatTime(artist.end_time)}
+                {artist.stage && ` @ ${artist.stage}`}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Artist Info */}
-        <div className="lg:w-2/3 flex flex-col justify-center max-lg:p-4">
+        <div className="lg:w-2/3 flex flex-col justify-center  max-lg:p-4">
           <div className="flex items-start justify-between">
             <h3
               className={clsx(
@@ -59,19 +74,6 @@ export default function ArtistEventCard({
             >
               {String(artist.description)}
             </p>
-          )}
-
-          {/* Stage and Time Info */}
-          {artist.start_time && artist.end_time && (
-            <div className="mt-4 space-y-2">
-              <div
-                className={clsx("text-lg lg:text-xl uppercase", timeClassName)}
-              >
-                {formatDay(artist.start_time)} {formatTime(artist.start_time)} -{" "}
-                {formatTime(artist.end_time)}
-                {artist.stage && ` @ ${artist.stage}`}
-              </div>
-            </div>
           )}
 
           <Link className={"link mt-6"} href={`/artists/${artist.uid}`}>

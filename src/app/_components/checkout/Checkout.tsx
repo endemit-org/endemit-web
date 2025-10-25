@@ -13,6 +13,7 @@ import CheckoutActions from "@/app/_components/checkout/CheckoutActions";
 import CheckoutSummary from "@/app/_components/checkout/CheckoutSummary";
 import confetti from "canvas-confetti";
 import Link from "next/link";
+import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 
 export default function Checkout() {
   const [isClient, setIsClient] = useState(false);
@@ -81,13 +82,20 @@ export default function Checkout() {
             (!hasItems ? (
               <div className="text-neutral-400 italic text-center h-full  flex flex-col justify-center items-center">
                 <div>
+                  <div
+                    className={
+                      "flex flex-col justify-center items-center mb-6 text-neutral-400"
+                    }
+                  >
+                    <AnimatedWarningIcon color="currentColor" />
+                  </div>
                   Your cart is empty.
                   <div className="pt-4">
-                    Visit the{" "}
+                    Visit{" "}
                     <Link href={"/store"} className="link">
-                      Endemit store
+                      our Endemit Store
                     </Link>{" "}
-                    to select your products.
+                    to select products for your purchase.
                   </div>
                 </div>
               </div>

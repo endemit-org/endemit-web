@@ -235,6 +235,8 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | PoemSlice
+  | VinylPromoSectionSlice
   | EventListSlice
   | SpacerSlice
   | ArtistListSlice
@@ -336,21 +338,6 @@ export type ContentPageDocument<Lang extends string = string> =
     Lang
   >;
 
-type EventDocumentDataSlicesSlice =
-  | PoemSlice
-  | EmbedBlockSlice
-  | PodcastListSlice
-  | TextColumnSlice
-  | TabsSlice
-  | ProductListSlice
-  | SpacerSlice
-  | HeroSlice
-  | GridTileSlice
-  | ImageGallerySlice
-  | NewsletterSubscriptionSlice
-  | ContentSectionSlice
-  | AccordionSlice;
-
 /**
  * Item in *Event → Artists*
  */
@@ -439,6 +426,24 @@ export interface EventDocumentDataArtistsItem {
   description_override: prismic.RichTextField;
 }
 
+type EventDocumentDataSlicesSlice =
+  | ArtistListSlice
+  | EventListSlice
+  | VinylPromoSectionSlice
+  | PoemSlice
+  | EmbedBlockSlice
+  | PodcastListSlice
+  | TextColumnSlice
+  | TabsSlice
+  | ProductListSlice
+  | SpacerSlice
+  | HeroSlice
+  | GridTileSlice
+  | ImageGallerySlice
+  | NewsletterSubscriptionSlice
+  | ContentSectionSlice
+  | AccordionSlice;
+
 /**
  * Content for Event documents
  */
@@ -513,18 +518,7 @@ interface EventDocumentData {
     unknown,
     prismic.FieldState,
     never
-  >;
-
-  /**
-   * Slice Zone field in *Event*
-   *
-   * - **Field Type**: Slice Zone
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.slices[]
-   * - **Tab**: About
-   * - **Documentation**: https://prismic.io/docs/slices
-   */
-  slices: prismic.SliceZone<EventDocumentDataSlicesSlice> /**
+  > /**
    * Venue field in *Event*
    *
    * - **Field Type**: Content Relationship
@@ -647,6 +641,15 @@ interface EventDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   allow_ticket_scanning: prismic.BooleanField /**
+   * Slice Zone field in *Event*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.slices[]
+   * - **Tab**: Rich content
+   * - **Documentation**: https://prismic.io/docs/slices
+   */;
+  slices: prismic.SliceZone<EventDocumentDataSlicesSlice> /**
    * Meta Title field in *Event*
    *
    * - **Field Type**: Text
@@ -2545,11 +2548,11 @@ export type PodcastListSlice = prismic.SharedSlice<
 >;
 
 /**
- * Primary content in *Poem → Default → Primary*
+ * Primary content in *EventIntro → Default → Primary*
  */
 export interface PoemSliceDefaultPrimary {
   /**
-   * Content field in *Poem → Default → Primary*
+   * Content field in *EventIntro → Default → Primary*
    *
    * - **Field Type**: Rich Text
    * - **Placeholder**: *None*
@@ -2560,7 +2563,7 @@ export interface PoemSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Poem Slice
+ * Default variation for EventIntro Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
@@ -2573,12 +2576,12 @@ export type PoemSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Poem*
+ * Slice variation for *EventIntro*
  */
 type PoemSliceVariation = PoemSliceDefault;
 
 /**
- * Poem Shared Slice
+ * EventIntro Shared Slice
  *
  * - **API ID**: `poem`
  * - **Description**: Poem
@@ -3114,6 +3117,73 @@ export type TextColumnSlice = prismic.SharedSlice<
   TextColumnSliceVariation
 >;
 
+/**
+ * Primary content in *VinylPromoSection → Default → Primary*
+ */
+export interface VinylPromoSectionSliceDefaultPrimary {
+  /**
+   * Headline field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vinyl_promo_section.default.primary.headline
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  headline: prismic.KeyTextField;
+
+  /**
+   * Description field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vinyl_promo_section.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Product field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vinyl_promo_section.default.primary.product
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  product: ContentRelationshipFieldWithData<
+    [{ id: "product"; fields: ["title"] }]
+  >;
+}
+
+/**
+ * Default variation for VinylPromoSection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VinylPromoSectionSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<VinylPromoSectionSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *VinylPromoSection*
+ */
+type VinylPromoSectionSliceVariation = VinylPromoSectionSliceDefault;
+
+/**
+ * VinylPromoSection Shared Slice
+ *
+ * - **API ID**: `vinyl_promo_section`
+ * - **Description**: VinylPromoSection
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VinylPromoSectionSlice = prismic.SharedSlice<
+  "vinyl_promo_section",
+  VinylPromoSectionSliceVariation
+>;
+
 declare module "@prismicio/client" {
   interface CreateClient {
     (
@@ -3144,8 +3214,8 @@ declare module "@prismicio/client" {
       ContentPageDocumentDataSlicesSlice,
       EventDocument,
       EventDocumentData,
-      EventDocumentDataSlicesSlice,
       EventDocumentDataArtistsItem,
+      EventDocumentDataSlicesSlice,
       FooterContentDocument,
       FooterContentDocumentData,
       HomePageDocument,
@@ -3245,6 +3315,10 @@ declare module "@prismicio/client" {
       TextColumnSliceVariation,
       TextColumnSliceDefault,
       TextColumnSliceColumnWithImage,
+      VinylPromoSectionSlice,
+      VinylPromoSectionSliceDefaultPrimary,
+      VinylPromoSectionSliceVariation,
+      VinylPromoSectionSliceDefault,
     };
   }
 }

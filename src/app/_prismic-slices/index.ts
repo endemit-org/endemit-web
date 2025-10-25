@@ -13,9 +13,10 @@ export const components = {
   image_gallery: dynamic(() => import("./ImageGallery")),
   newsletter_subscription: dynamic(() => import("./Newsletter")),
   podcast_list: dynamic(() => import("./PodcastList")),
-  poem: dynamic(() => import("./Poem")),
+  poem: dynamic(() => import("./EventIntro")),
   product_list: dynamic(() => import("./ProductList")),
   spacer: dynamic(() => import("./Spacer")),
   tabs: dynamic(() => import("./Tabs")),
   text_column: dynamic(() => import("./TextColumns")),
+  vinyl_promo_section: dynamic(() => import("./VinylPromoSection")),
 };

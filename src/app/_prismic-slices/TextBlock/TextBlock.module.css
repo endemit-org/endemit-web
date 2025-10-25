@@ -13,11 +13,11 @@
 }
 
 .markdown ul {
-  @apply ml-8;
+  @apply ml-8 !list-outside;
 }
 
 .markdown strong {
-  @apply font-bold 
+  @apply font-bold
 }
 
 .markdown ul > li {

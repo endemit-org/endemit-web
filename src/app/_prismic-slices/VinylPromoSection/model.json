@@ -1,0 +1,49 @@
+{
+  "id": "vinyl_promo_section",
+  "type": "SharedSlice",
+  "name": "VinylPromoSection",
+  "description": "VinylPromoSection",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "headline": {
+          "type": "Text",
+          "config": {
+            "label": "Headline",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": ""
+          }
+        },
+        "product": {
+          "type": "Link",
+          "config": {
+            "label": "Product",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              {
+                "id": "product",
+                "fields": [
+                  "title"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
