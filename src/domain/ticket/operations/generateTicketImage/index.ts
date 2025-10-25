@@ -4,7 +4,6 @@ import QRCode from "qrcode";
 import path from "path";
 import sharp from "sharp";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
-import * as fs from "node:fs";
 
 interface TicketData {
   shortId: string;
@@ -233,7 +232,7 @@ function createTextOverlay(
         <style type="text/css">
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&amp;display=swap');
           text {
-            font-family: 'Inter, Arial';
+            font-family: 'Inter, Arial, sans-serif';
           }
         </style>
       </defs>
