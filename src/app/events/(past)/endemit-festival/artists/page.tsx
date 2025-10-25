@@ -1,9 +1,14 @@
 "use client";
 
-import { ArtistWithTimestamp, artistConfig, eventConfig } from "../(config)";
+import {
+  ArtistWithTimestamp,
+  artistConfig,
+  eventConfig,
+} from "@/app/events/(past)/endemit-festival/(config)";
 import { useMemo, useState } from "react";
-import ArtistCard from "@/components/artist/ArtistCard";
-import { transformMinutesToMs } from "../../../../../../lib/util";
+import ArtistCard from "@/app/_components/artist/ArtistCard";
+
+import { convertMinutesToMs } from "@/lib/util/converters";
 
 type SortOption = "default" | "timestamp";
 
@@ -30,7 +35,7 @@ export default function Artists() {
 
         const duration = artist.duration || 150; // Default 150 minutes if not specified
         const endDate = new Date(
-          startDate.getTime() + transformMinutesToMs(duration)
+          startDate.getTime() + convertMinutesToMs(duration)
         );
 
         return {
@@ -69,7 +74,7 @@ export default function Artists() {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as SortOption)}
-              className="px-1 py-1 border border-gray-300 rounded text-sm bg-white"
+              className="px-1 py-1 border border-gray-300 rounded text-sm bg-neutral-200"
             >
               <option value="default">Default</option>
               <option value="timestamp">Performance Time</option>

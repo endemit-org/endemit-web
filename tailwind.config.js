@@ -1,3 +1,5 @@
+import containerQueries from "@tailwindcss/container-queries";
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -19,6 +21,13 @@ module.exports = {
       },
       animation: {
         "slow-spin": "spin 2s linear infinite",
+        scan: "scan 2s ease-in-out infinite",
+      },
+      keyframes: {
+        scan: {
+          "0%, 100%": { top: "0%", opacity: "0" },
+          "50%": { top: "100%", opacity: "1" },
+        },
       },
       screens: {
         "8xl": "1600px",
@@ -29,11 +38,11 @@ module.exports = {
       fontFamily: {
         heading: ["var(--font-heading)"],
         body: ["var(--font-body)"],
-        accent: ["var(--font-accent)"],
       },
     },
   },
   plugins: [
+    containerQueries,
     function ({ addComponents }) {
       addComponents({
         ".link": {

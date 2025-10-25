@@ -12,22 +12,6 @@
           "label": "slug"
         }
       },
-      "cover_image": {
-        "type": "Image",
-        "config": {
-          "label": "Cover image",
-          "constraint": {},
-          "thumbnails": []
-        }
-      },
-      "promo_image": {
-        "type": "Image",
-        "config": {
-          "label": "Promo image",
-          "constraint": {},
-          "thumbnails": []
-        }
-      },
       "title": {
         "type": "Text",
         "config": {
@@ -44,6 +28,22 @@
           "multi": "paragraph,heading2,strong,em,hyperlink,image,list-item"
         }
       },
+      "cover_image": {
+        "type": "Image",
+        "config": {
+          "label": "Cover image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "promo_image": {
+        "type": "Image",
+        "config": {
+          "label": "Promo image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
       "video": {
         "type": "Link",
         "config": {
@@ -53,11 +53,15 @@
           "allowText": true
         }
       },
-      "slices": {
-        "type": "Slices",
-        "fieldset": "Slice Zone",
+      "art_author": {
+        "type": "Link",
         "config": {
-          "choices": {}
+          "label": "Art author",
+          "placeholder": "",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": false
         }
       }
     },
@@ -71,7 +75,14 @@
           "customtypes": [
             {
               "id": "venue",
-              "fields": ["name", "address", "venue_logo", "map_location_url"]
+              "fields": [
+                "name",
+                "address",
+                "venue_logo",
+                "map_location_url",
+                "coordinates",
+                "description"
+              ]
             }
           ]
         }
@@ -181,19 +192,94 @@
           "options": ["Single day", "Festival", "Guest appearance"]
         }
       },
-      "visibility": {
-        "type": "Select",
-        "config": {
-          "label": "Visibility",
-          "placeholder": "",
-          "options": ["Visible", "Hidden"]
-        }
-      },
       "colour": {
         "type": "Color",
         "config": {
           "label": "Colour",
           "placeholder": "Event colour"
+        }
+      },
+      "visibility": {
+        "type": "Select",
+        "config": {
+          "label": "Visible in events",
+          "placeholder": "",
+          "options": ["Visible", "Hidden"]
+        }
+      },
+      "enable_link_to_full_page": {
+        "type": "Boolean",
+        "config": {
+          "label": "Enable link to full page",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": true
+        }
+      },
+      "annotation": {
+        "type": "Text",
+        "config": {
+          "label": "Annotation",
+          "placeholder": "(Optional)"
+        }
+      },
+      "allow_ticket_scanning": {
+        "type": "Boolean",
+        "config": {
+          "label": "Allow ticket scanning",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      }
+    },
+
+    "Rich content": {
+       "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "poem": {
+              "type": "SharedSlice"
+            },
+            "embed_block": {
+              "type": "SharedSlice"
+            },
+            "podcast_list": {
+              "type": "SharedSlice"
+            },
+            "text_column": {
+              "type": "SharedSlice"
+            },
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "product_list": {
+              "type": "SharedSlice"
+            },
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "newsletter_subscription": {
+              "type": "SharedSlice"
+            },
+            "content_section": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            }
+          }
         }
       }
     },

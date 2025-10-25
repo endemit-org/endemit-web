@@ -20,7 +20,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/prismicio-types": ["./prismicio-types.d.ts"] 
+      "@/prismicio-types": ["./prismicio-types.d.ts"] ,
+      "@/config/*": ["./config/*"],
+      "@/package.json": ["./package.json"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

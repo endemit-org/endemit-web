@@ -61,3 +61,7 @@ next-env.d.ts
 /src/generated/prisma
 /.turbo
 /.idea
+
+# dev notes etc
+*.md
+!README.md

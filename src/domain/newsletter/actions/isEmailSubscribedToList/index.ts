@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { EMAIL_OCTOPUS_API_KEY } from "@/services/emailOctopus/emailOctopus";
+import { EMAIL_NEWSLETTER_API_KEY } from "@/lib/services/emailOctopus/emailOctopus";
 
 export const isEmailSubscribedToList = async (
   email: string,
@@ -15,7 +15,7 @@ export const isEmailSubscribedToList = async (
       `https://api.emailoctopus.com/lists/${listId}/contacts/${memberId}`,
       {
         headers: {
-          Authorization: `Bearer ${EMAIL_OCTOPUS_API_KEY}`,
+          Authorization: `Bearer ${EMAIL_NEWSLETTER_API_KEY}`,
         },
       }
     );

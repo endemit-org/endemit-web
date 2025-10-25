@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { STAGING_PASSWORD } from "@/lib/services/env/private";
 
 export async function POST(request: Request) {
   const { password } = await request.json();
 
-  if (password === process.env.STAGING_PASSWORD) {
+  if (password === STAGING_PASSWORD) {
     const response = NextResponse.json({ success: true });
 
     response.cookies.set("staging-auth", password, {

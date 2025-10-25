@@ -7,6 +7,36 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+  PENDING_VERIFICATION
+  DELETED
+}
+
+enum OrderStatus {
+  CREATED
+  PROCESSING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  EXPIRED
+  REFUND_REQUESTED
+  REFUNDED
+}
+
+enum TicketStatus {
+  PENDING
+  CANCELLED
+  SCANNED
+  VALIDATED
+  BANNED
+  REFUND_REQUESTED
+  REFUNDED
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
@@ -48,6 +78,7 @@ model Ticket {
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+  ScanLog          ScanLog[]
 
   @@index([ticketHash])
   @@index([eventId])
@@ -55,24 +86,82 @@ model Ticket {
   @@index([orderId])
 }
 
-enum OrderStatus {
-  CREATED
-  PROCESSING
-  PAID
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  EXPIRED
-  REFUND_REQUESTED
-  REFUNDED
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  emailVerified DateTime?
+  name          String?
+  passwordHash  String?
+  image         String?
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  lastLoginAt   DateTime?
+
+  sessions  Session[]
+  userRoles UserRole[]
+  ScanLog   ScanLog[]
+
+  @@index([email])
+  @@index([status])
 }
 
-enum TicketStatus {
-  PENDING
-  CANCELLED
-  SCANNED // Scanning at the entrance
-  VALIDATED // Manual marking in app
-  BANNED
-  REFUND_REQUESTED
-  REFUNDED
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken String   @unique
+  expiresAt    DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([expiresAt])
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  permissions String[]
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userRoles UserRole[]
+
+  @@index([slug])
+}
+
+model UserRole {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleId     String
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+  assignedBy String?
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+model ScanLog {
+  id        String   @id @default(cuid())
+  userId    String
+  ticketId  String
+  eventId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  Ticket    Ticket   @relation(fields: [ticketId], references: [id])
+
+  @@index([eventId])
+  @@index([userId])
+  @@index([ticketId])
 }

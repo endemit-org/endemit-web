@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
-import { categoriesWithSlugs, categoryFromSlug } from "../../../../../lib/util";
-import ProductSection from "@/components/product/ProductSection";
-import { prismic } from "@/services/prismic";
-import { fetchProductsFromCms } from "@/domain/cms/actions";
-import PageHeadline from "@/components/content/PageHeadline";
-import InnerPage from "@/components/content/InnerPage";
-import OuterPage from "@/components/content/OuterPage";
+import { getCategoriesWithSlugs, getCategoryFromSlug } from "@/lib/util/util";
+import ProductSection from "@/app/_components/product/ProductSection";
+import { prismic } from "@/lib/services/prismic";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import InnerPage from "@/app/_components/content/InnerPage";
+import OuterPage from "@/app/_components/content/OuterPage";
+import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 
 export async function generateStaticParams() {
-  const categories = categoriesWithSlugs;
+  const categories = getCategoriesWithSlugs;
 
   return categories.map(category => ({
     categoryUid: category.slug,
@@ -24,7 +24,7 @@ export default async function CategoryPage({
 }) {
   const { categoryUid } = await params;
 
-  const categoryName = categoryFromSlug(categoryUid);
+  const categoryName = getCategoryFromSlug(categoryUid);
 
   if (!categoryName) {
     notFound();

@@ -1,0 +1,97 @@
+{
+  "format": "page",
+  "id": "inner_content",
+  "label": "Inner content",
+  "repeatable": true,
+  "status": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Title",
+          "placeholder": ""
+        }
+      },
+      "internal_description": {
+        "type": "Text",
+        "config": {
+          "label": "(Internal) Description",
+          "placeholder": "Internal only, for self organisation"
+        }
+      },
+      "connected_to_event": {
+        "type": "Link",
+        "config": {
+          "label": "Connected to event",
+          "select": "document",
+          "repeat": false,
+          "customtypes": ["event"]
+        }
+      },
+      "related_to_product": {
+        "type": "Link",
+        "config": {
+          "label": "Related to product",
+          "select": "document",
+          "repeat": false,
+          "customtypes": ["product"]
+        }
+      },
+      "sorting_weight": {
+        "type": "Number",
+        "config": {
+          "label": "Sorting weight",
+          "placeholder": "Useful in tabs"
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "text_column": {
+              "type": "SharedSlice"
+            },
+            "product_list": {
+              "type": "SharedSlice"
+            },
+            "podcast_list": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "newsletter_subscription": {
+              "type": "SharedSlice"
+            },
+            "content_section": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            },
+            "embed_block": {
+              "type": "SharedSlice"
+            }
+          }
+        }
+      }
+    }
+  }
+}

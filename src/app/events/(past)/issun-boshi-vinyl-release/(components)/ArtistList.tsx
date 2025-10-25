@@ -7,8 +7,9 @@ import {
   eventConfig,
 } from "@/app/events/(past)/issun-boshi-vinyl-release/(config)";
 
-import ArtistCard from "@/components/artist/ArtistCard";
-import { transformMinutesToMs } from "../../../../../../lib/util";
+import ArtistCard from "@/app/_components/artist/ArtistCard";
+
+import { convertMinutesToMs } from "@/lib/util/converters";
 
 export default function ArtistList() {
   const [sortBy, setSortBy] = useState<SortOption>("default");
@@ -36,7 +37,7 @@ export default function ArtistList() {
 
         const duration = artist.duration || 150; // Default 150 minutes if not specified
         const endDate = new Date(
-          startDate.getTime() + transformMinutesToMs(duration)
+          startDate.getTime() + convertMinutesToMs(duration)
         );
 
         return {
@@ -69,7 +70,7 @@ export default function ArtistList() {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as SortOption)}
-            className="px-1 py-1 border border-gray-300 rounded text-sm bg-white text-issun-boshi-purple"
+            className="px-1 py-1 border border-gray-300 rounded text-sm bg-neutral-200 text-issun-boshi-purple"
           >
             <option value="default">Default</option>
             <option value="timestamp">Performance Time</option>
@@ -84,7 +85,7 @@ export default function ArtistList() {
             artist={artist}
             cardClassName={"bg-black/20"}
             nameClassName={"text-issun-boshi-yellow"}
-            descriptionClassName={"text-white/80 font-light"}
+            descriptionClassName={"text-neutral-200/80 font-light"}
             timeClassName={"text-issun-boshi-orange font-light"}
           />
         ))}

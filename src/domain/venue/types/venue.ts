@@ -1,10 +1,12 @@
 import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
+import { GeoPointField, RichTextField } from "@prismicio/client";
 
 export type Venue = {
   id: string;
   uid: string;
   name: string;
-  description: string;
+  description: RichTextField;
+  coordinates: GeoPointField | null;
   image: CmsImage | null;
   address: string | null;
   mapUrl: string | null;

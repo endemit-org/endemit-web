@@ -84,10 +84,10 @@ export default function ParallaxHero() {
           className="absolute inset-0 max-lg:-mt-[130%]"
         >
           <div className="absolute inset-0 flex-col flex items-center justify-center text-shadow-lg">
-            <h1 className="text-center text-4xl sm:text-5xl lg:text-5xl xl:text-7xl text-white font-thin max-lg:text-issun-boshi-blue">
+            <h1 className="text-center text-4xl sm:text-5xl lg:text-5xl xl:text-7xl text-neutral-200 font-thin max-lg:text-issun-boshi-blue">
               Issun-bōshi vinyl release
             </h1>
-            <div className="text-2xl text-white">INLAND • MMALI</div>
+            <div className="text-2xl text-neutral-200">INLAND • MMALI</div>
           </div>
         </Parallax>
 

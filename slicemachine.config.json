@@ -1,6 +1,6 @@
 {
   "repositoryName": "endemit",
   "adapter": "@slicemachine/adapter-next",
-  "libraries": ["./src/components/prismicSlices"],
+  "libraries": ["./src/app/_prismic-slices"],
   "localSliceSimulatorURL": "http://localhost:3000/slice-simulator"
 }

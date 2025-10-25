@@ -1,7 +1,22 @@
-import { fetchHomePageFromCms } from "@/domain/cms/actions";
+import { fetchHomePageFromCms } from "@/domain/cms/operations/fetchHomePageFromCms";
 import { notFound } from "next/navigation";
-import { SliceZone } from "@prismicio/react";
-import { components } from "@/components/prismicSlices";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
+import { Metadata } from "next";
+import React from "react";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const homePage = await fetchHomePageFromCms();
+
+  return {
+    title: homePage?.data.meta_title,
+    description: homePage?.data.meta_description,
+    openGraph: {
+      title: homePage!.data.meta_title!,
+      description: homePage!.data.meta_description!,
+      images: [homePage!.data.meta_image.url!],
+    },
+  };
+}
 
 export default async function Home() {
   const homePage = await fetchHomePageFromCms();
@@ -10,5 +25,9 @@ export default async function Home() {
     notFound();
   }
 
-  return <SliceZone slices={homePage.data.slices} components={components} />;
+  return (
+    <>
+      <SliceDisplay slices={homePage.data.slices} />
+    </>
+  );
 }

@@ -11,6 +11,10 @@ export interface TicketPayload {
   salt?: string;
 }
 
+export interface QrTicketPayload extends Omit<TicketPayload, "salt"> {
+  hash: string;
+}
+
 export type TicketEmailData = Pick<
   Ticket,
   | "id"
@@ -38,4 +42,8 @@ export type TicketCreationData = {
   price: number;
   orderId: string;
   metadata?: Record<string, string | number | boolean>;
+};
+
+export type SerializedTicket = Omit<Ticket, "createdAt|updatedAt"> & {
+  price: number;
 };

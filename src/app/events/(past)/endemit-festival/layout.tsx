@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Sidebar from "@/components/content/Sidebar";
-import EventFooter from "@/components/event/EventFooter";
+import Sidebar from "@/app/_components/content/Sidebar";
+import EventFooter from "@/app/_components/event/EventFooter";
 
 export const metadata: Metadata = {
   title: "Endemit Festival",
@@ -20,7 +20,13 @@ export default function FestivalLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="m-auto overflow-y-scroll ">
+    <body
+      className="m-auto overflow-y-scroll bg-black "
+      style={{
+        backgroundImage: "url('/images/endemit-pattern.svg')",
+        backgroundSize: "110px",
+      }}
+    >
       <div className="max-w-8xl  m-auto">
         <Sidebar
           activeColor="text-violet-400"

@@ -39,11 +39,11 @@ export default function IssunBoshiVinylReleasePage() {
           </div>
 
           <div className="text-center  left-0 w-full flex flex-col items-center top-[8%] md:top-[12%] ">
-            <div className="text-center text-4xl md:text-4xl lg:text-5xl uppercase text-white lg:w-3/4 md:w-4/5 mx-4 pb-16">
+            <div className="text-center text-4xl md:text-4xl lg:text-5xl uppercase text-neutral-200 lg:w-3/4 md:w-4/5 mx-4 pb-16">
               After a decade of both creative blockade and artistic growth,
               MMali is set to present his first vinyl release.
             </div>
-            <div className="text-center text-xl md:text-2xl lg:text-3xl font-light text-white mt-4 lg:w-2/3 md:w-4/5 mx-4">
+            <div className="text-center text-xl md:text-2xl lg:text-3xl font-light text-neutral-200 mt-4 lg:w-2/3 md:w-4/5 mx-4">
               Named after his alter ego Issun-Boshi, a one-inch samurai who
               overcomes all obstacles to win the heart of a princess, owning his
               shortcomings and outgrowing them.
@@ -54,9 +54,7 @@ export default function IssunBoshiVinylReleasePage() {
               chapter in life{" "}
               <Link
                 className={"text-issun-boshi-yellow font-normal link"}
-                href={
-                  "/src/app/events/(past)/issun-boshi-vinyl-release/location"
-                }
+                href={"/events/(past)/issun-boshi-vinyl-release/location"}
               >
                 on 20 September in Kader
               </Link>
@@ -67,9 +65,7 @@ export default function IssunBoshiVinylReleasePage() {
               production, available exclusively for{" "}
               <Link
                 className={"text-issun-boshi-yellow font-normal link"}
-                href={
-                  "/src/app/events/(past)/issun-boshi-vinyl-release/get-the-ep"
-                }
+                href={"/events/(past)/issun-boshi-vinyl-release/get-the-ep"}
               >
                 purchase at the event
               </Link>

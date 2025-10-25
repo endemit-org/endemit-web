@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchEventsFromCms } from "@/domain/cms/actions";
+import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 
 export async function GET() {
   try {

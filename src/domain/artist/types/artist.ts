@@ -1,4 +1,5 @@
 import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
+import { RichTextField } from "@prismicio/client";
 
 export enum ArtistLinkType {
   Soundcloud = "Soundcloud",
@@ -12,7 +13,7 @@ export type Artist = {
   id: string;
   uid: string;
   name: string;
-  description: string;
+  description?: RichTextField | null;
   image: CmsImage | null;
   video: string | null;
   links: Array<{
@@ -20,10 +21,4 @@ export type Artist = {
     url: string;
   }>;
   meta: CmsMetaData;
-};
-
-export type ArtistAtEvent = Artist & {
-  start_time: Date | null;
-  duration: number;
-  stage: string | null;
 };

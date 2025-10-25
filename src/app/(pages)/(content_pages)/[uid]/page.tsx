@@ -1,13 +1,10 @@
-import { components } from "../../../../components/prismicSlices";
-import {
-  fetchContentPagesFromCms,
-  fetchContentPageFromCms,
-} from "@/domain/cms/actions";
-import { SliceZone } from "@prismicio/react";
-import PageHeadline from "@/components/content/PageHeadline";
-import OuterPage from "@/components/content/OuterPage";
-import InnerPage from "@/components/content/InnerPage";
+import { fetchContentPagesFromCms } from "@/domain/cms/operations/fetchContentPagesFromCms";
+import { fetchContentPageFromCms } from "@/domain/cms/operations/fetchContentPageFromCms";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/content/OuterPage";
+import InnerPage from "@/app/_components/content/InnerPage";
 import { notFound } from "next/navigation";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
 
 export async function generateStaticParams() {
   const contentPages = await fetchContentPagesFromCms({});
@@ -84,14 +81,12 @@ export default async function ContentPage({
 
       {contentPage.renderFrame && (
         <InnerPage>
-          {contentPage.slices && (
-            <SliceZone slices={contentPage.slices} components={components} />
-          )}
+          {contentPage.slices && <SliceDisplay slices={contentPage.slices} />}
         </InnerPage>
       )}
 
       {!contentPage.renderFrame && contentPage.slices && (
-        <SliceZone slices={contentPage.slices} components={components} />
+        <SliceDisplay slices={contentPage.slices} />
       )}
     </OuterPage>
   );

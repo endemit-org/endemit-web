@@ -1,22 +1,20 @@
-import { formatDecimalPrice } from "../../../../../../lib/formatting";
-import { createSlug, getStatusText } from "../../../../../../lib/util";
-import ProductStatusTag from "@/components/product/ProductStatusTag";
-import ImageGalleryWithMasonry from "@/components/content/ImageGalleryWithMasonry";
-import ProductConfigure from "@/components/product/ProductConfigure";
-import {
-  fetchProductsFromCms,
-  fetchProductFromCms,
-} from "@/domain/cms/actions";
-import { getProductLimits } from "@/domain/product/actions";
+import { formatDecimalPrice } from "@/lib/util/formatting";
+import { getSlugFromText, getStatusText } from "@/lib/util/util";
+import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
+import ImageGalleryWithMasonry from "@/app/_components/content/ImageGalleryWithMasonry";
+import ProductConfigure from "@/app/_components/product/ProductConfigure";
+import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
+import { fetchProductFromCms } from "@/domain/cms/operations/fetchProductFromCms";
+import { getProductLimits } from "@/domain/product/actions/getProductLimits";
 import { isProductSellable } from "@/domain/product/businessLogic";
-import parse from "html-react-parser";
-import ProductCard from "@/components/product/ProductCard";
+import ProductCard from "@/app/_components/product/ProductCard";
 import clsx from "clsx";
-import InnerPage from "@/components/content/InnerPage";
-import PageHeadline from "@/components/content/PageHeadline";
-import OuterPage from "@/components/content/OuterPage";
-import style from "@/styles/insetHtml.module.css";
+import InnerPage from "@/app/_components/content/InnerPage";
+import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/content/OuterPage";
+import style from "@/app/_styles/insetHtml.module.css";
 import { notFound } from "next/navigation";
+import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -93,7 +91,7 @@ export default async function ProductPage({
         segments={[
           { label: "Endemit", path: "" },
           { label: "Store", path: "store" },
-          { label: product.category, path: createSlug(product.category) },
+          { label: product.category, path: getSlugFromText(product.category) },
           { label: product.name, path: product.uid },
         ]}
       />
@@ -127,7 +125,7 @@ export default async function ProductPage({
             <h3 className="sr-only">Description</h3>
 
             <div className={`space-y-6 ${style.inset}`}>
-              {parse(product.description)}
+              <RichTextDisplay richText={product.description} />
             </div>
           </div>
           <div

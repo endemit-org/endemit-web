@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import assert from "node:assert";
-import { subscribeEmailToFestivalList } from "@/domain/newsletter/actions";
-import { notifyOnNewSubscriber } from "@/domain/notification/actions";
+import { subscribeEmailToFestivalList } from "@/domain/newsletter/actions/subscribeEmailToFestivalList";
+import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 
 export async function POST(request: Request) {
   try {

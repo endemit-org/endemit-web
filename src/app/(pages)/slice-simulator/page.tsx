@@ -3,9 +3,7 @@ import {
   SliceSimulatorParams,
   getSlices,
 } from "@slicemachine/adapter-next/simulator";
-import { SliceZone } from "@prismicio/react";
-
-import { components } from "../../../components/prismicSlices";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
 
 export default async function SliceSimulatorPage({
   searchParams,
@@ -16,7 +14,7 @@ export default async function SliceSimulatorPage({
   return (
     <div className="bg-neutral-800">
       <SliceSimulator>
-        <SliceZone slices={slices} components={components} />
+        <SliceDisplay slices={slices} />
       </SliceSimulator>
     </div>
   );
