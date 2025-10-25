@@ -28,7 +28,7 @@ export const normaliseJsonInput = (payload: TicketPayload) =>
     .sort()
     .reduce((sorted, key) => {
       // @ts-expect-error unnecesary issue by TS
-      sorted[key] = newPayload[key];
+      sorted[key] = payload[key];
       return sorted;
     }, {}) as TicketPayload;
 
