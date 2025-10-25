@@ -7,6 +7,11 @@ import { fetchArtistsFromCms } from "@/domain/cms/operations/fetchArtistsFromCms
 import { fetchEventsForArtistFromCms } from "@/domain/cms/operations/fetchEventsForArtistFromCms";
 import { fetchPodcastsForArtistFromCms } from "@/domain/cms/operations/fetchPodcastsForArtistFromCms";
 import ArtistProfile from "@/app/_components/artist/ArtistProfile";
+import Spacer from "@/app/_components/content/Spacer";
+import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
+import clsx from "clsx";
+import PodcastCard from "@/app/_components/podcast/PodcastCard";
+import EventMiniCard from "@/app/_components/event/EventMiniCard";
 
 export async function generateStaticParams() {
   const artists = await fetchArtistsFromCms({});
@@ -39,6 +44,15 @@ export default async function ArtistPage({
 
   return (
     <OuterPage>
+      <div
+        className={
+          "absolute top-80 h-[400px] blur-3xl -left-10 -right-10 bg-cover opacity-40 "
+        }
+        style={{
+          backgroundImage: `url(${artist.image?.src})`,
+        }}
+      ></div>
+
       <PageHeadline
         title={artist.name}
         segments={[
@@ -48,15 +62,43 @@ export default async function ArtistPage({
         ]}
       />
       <ArtistProfile artist={artist} coverSrc={artist.image?.src} />
-      <InnerPage>
-        {relatedEvents &&
-          relatedEvents.map(event => <div key={event.id}>{event.name}</div>)}
+      <Spacer size={"xlarge"} />
 
-        {relatedPodcasts &&
-          relatedPodcasts.map(podcast => (
-            <div key={podcast.id}>{podcast.name}</div>
-          ))}
+      <InnerPage>
+        <div
+          className={clsx(
+            "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2"
+          )}
+        >
+          {relatedPodcasts &&
+            relatedPodcasts.map(podcast => (
+              <PodcastCard
+                date={podcast.date}
+                episodeNumber={podcast.number}
+                key={podcast.id}
+                image={podcast.cover}
+                name={podcast.name}
+                uid={podcast.uid}
+              />
+            ))}
+          {relatedEvents &&
+            relatedEvents.map(event => (
+              <EventMiniCard
+                location={event.venue?.name}
+                date={event.date_start}
+                key={event.id}
+                image={event.promoImage}
+                name={event.name}
+                uid={event.uid}
+              />
+            ))}
+        </div>
       </InnerPage>
+      <Spacer size={"small"} />
+      <EndemitSubscribe
+        title={`Don't miss ${artist.name} next time`}
+        description={"Subscribe and be notified about our events and lineups"}
+      />
     </OuterPage>
   );
 }

@@ -9,7 +9,7 @@ export interface EventProps {
   event: Event;
 }
 
-export default function EventCard({ event }: EventProps) {
+export default function EventPoster({ event }: EventProps) {
   const shouldShowLink = event.options.enabledLink;
   const shouldShowImage = !!event.coverImage?.src;
   const eventLink = `/events/${event.uid}`;

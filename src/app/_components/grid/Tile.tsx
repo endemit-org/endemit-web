@@ -2,6 +2,7 @@ import { TileConfig } from "@/app/_components/grid/TileConfig";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import clsx from "clsx";
 
 interface Props {
   config: TileConfig;
@@ -22,7 +23,11 @@ export default function Tile({ config }: Props) {
           {config.media.type === "video" ? (
             <video
               src={config.media.src}
-              className="w-full h-full object-cover group-hover:scale-125 transition-all duration-500 ease-out"
+              className={clsx(
+                "w-full h-full object-cover ",
+                config.link &&
+                  "group-hover:scale-125 transition-all duration-500 ease-out"
+              )}
               autoPlay={true}
               muted={true}
               loop={true}
@@ -34,18 +39,22 @@ export default function Tile({ config }: Props) {
               width={600}
               height={600}
               alt={config.title || ""}
-              className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500 ease-out"
+              className={clsx(
+                "w-full h-full object-cover ",
+                config.link &&
+                  "group-hover:scale-125 transition-transform duration-500 ease-out"
+              )}
             />
           )}
         </div>
       )}
       {(config.title || config.subtitle) && (
-        <div className="absolute inset-0  lg:p-6 flex flex-col justify-end z-10">
-          {config.media && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent -z-10" />
-          )}
+        <div className="absolute inset-0  lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300">
+          {/*{config.media && (*/}
+          {/*  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent -z-10" />*/}
+          {/*)}*/}
           {config.title && (
-            <h3 className="font-bold text-2xl lg:text-4xl uppercase leading-tight group-hover:scale-95 transition-transform duration-300">
+            <h3 className="font-bold text-2xl lg:text-4xl uppercase leading-tight ">
               {config.title}
             </h3>
           )}
