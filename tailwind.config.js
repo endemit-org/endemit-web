@@ -1,3 +1,5 @@
+import containerQueries from "@tailwindcss/container-queries";
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -40,6 +42,7 @@ module.exports = {
     },
   },
   plugins: [
+    containerQueries,
     function ({ addComponents }) {
       addComponents({
         ".link": {

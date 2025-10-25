@@ -444,28 +444,6 @@ export interface EventDocumentDataArtistsItem {
  */
 interface EventDocumentData {
   /**
-   * Cover image field in *Event*
-   *
-   * - **Field Type**: Image
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.cover_image
-   * - **Tab**: About
-   * - **Documentation**: https://prismic.io/docs/fields/image
-   */
-  cover_image: prismic.ImageField<never>;
-
-  /**
-   * Promo image field in *Event*
-   *
-   * - **Field Type**: Image
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.promo_image
-   * - **Tab**: About
-   * - **Documentation**: https://prismic.io/docs/fields/image
-   */
-  promo_image: prismic.ImageField<never>;
-
-  /**
    * Title field in *Event*
    *
    * - **Field Type**: Text
@@ -488,6 +466,28 @@ interface EventDocumentData {
   description: prismic.RichTextField;
 
   /**
+   * Cover image field in *Event*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.cover_image
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  cover_image: prismic.ImageField<never>;
+
+  /**
+   * Promo image field in *Event*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.promo_image
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  promo_image: prismic.ImageField<never>;
+
+  /**
    * Video field in *Event*
    *
    * - **Field Type**: Link to Media
@@ -497,6 +497,23 @@ interface EventDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/link-to-media
    */
   video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * Art author field in *Event*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.art_author
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  art_author: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
 
   /**
    * Slice Zone field in *Event*

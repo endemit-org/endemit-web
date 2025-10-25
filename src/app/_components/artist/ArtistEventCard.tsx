@@ -38,7 +38,7 @@ export default function ArtistEventCard({
         </div>
 
         {/* Artist Info */}
-        <div className="lg:w-2/3 flex flex-col justify-center">
+        <div className="lg:w-2/3 flex flex-col justify-center max-lg:p-4">
           <div className="flex items-start justify-between">
             <h3
               className={clsx(

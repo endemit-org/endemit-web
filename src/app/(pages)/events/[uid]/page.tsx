@@ -11,6 +11,7 @@ import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { formatDate } from "@/lib/util/formatting";
 import EventLineUp from "@/app/_components/event/EventLineUp";
 import EventLocation from "@/app/_components/event/EventLocation";
+import Link from "next/link";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -53,7 +54,6 @@ export default async function EventPage({
       content: <EventLocation venue={event.venue} />,
       sortingWeight: 300,
     },
-    { label: "Tickets", content: "test 3", id: "page3", sortingWeight: 400 },
   ] as TabItem[];
 
   if (innerContentPages && innerContentPages?.length > 0) {
@@ -88,7 +88,7 @@ export default async function EventPage({
       />
       <div
         className={
-          "absolute  top-60 h-96 blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop"
+          "absolute top-80 h-96 blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop @container"
         }
         style={{
           backgroundImage: `url(${event.coverImage?.src})`,
@@ -104,6 +104,17 @@ export default async function EventPage({
         className={"bg-neutral-950 relative"}
       >
         <div className={"flex justify-center relative max-lg:flex-col"}>
+          {event.artAuthor && (
+            <Link
+              href={event.artAuthor.link}
+              target={"_blank"}
+              className={
+                "absolute  left-0 bottom-0 bg-neutral-900 py-2 px-2 text-xs text-neutral-600"
+              }
+            >
+              Author: {event.artAuthor.text}
+            </Link>
+          )}
           {event.coverImage?.src && (
             <Image
               src={event.coverImage?.src}
@@ -153,7 +164,7 @@ export default async function EventPage({
 
       <div
         className={
-          "text-8xl  relative text-neutral-950 uppercase font-heading flex text-center w-full justify-between overflow-hidden text-nowrap -scale-y-100"
+          "text-[clamp(4rem,4cqi,20rem)] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center w-full justify-between overflow-hidden text-nowrap -scale-y-100"
         }
       >
         {event.name} · {event.name} · {event.name} · {event.name} · {event.name}{" "}
@@ -166,13 +177,12 @@ export default async function EventPage({
       {/*  }}*/}
       {/*></div>*/}
       <div className={"relative"}>
+        {" "}
+        <Tabs items={defaultContent} sortByWeight={true} />
         <div className={"flex justify-center"}></div>
       </div>
 
-      <InnerPage>
-        {" "}
-        <Tabs items={defaultContent} sortByWeight={true} />
-      </InnerPage>
+      <InnerPage> a</InnerPage>
     </OuterPage>
   );
 }

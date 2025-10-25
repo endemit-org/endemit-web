@@ -22,7 +22,7 @@ export default function Tile({ config }: Props) {
           {config.media.type === "video" ? (
             <video
               src={config.media.src}
-              className="w-full h-full object-cover group-hover:scale-125 transition-all duration-500 ease-out group-hover:blur-lg"
+              className="w-full h-full object-cover group-hover:scale-125 transition-all duration-500 ease-out"
               autoPlay={true}
               muted={true}
               loop={true}

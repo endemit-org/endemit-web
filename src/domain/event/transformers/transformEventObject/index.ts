@@ -29,6 +29,12 @@ export const transformEventObject = (
           alt: event.data.promo_image.alt,
         }
       : null,
+    artAuthor: asLink(event.data.art_author)
+      ? {
+          text: event.data.art_author.text,
+          link: asLink(event.data.art_author),
+        }
+      : null,
     slices: event.data.slices,
 
     venue:

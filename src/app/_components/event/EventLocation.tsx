@@ -24,7 +24,7 @@ export default function EventLocation({ venue }: Props) {
                 lng: venue?.coordinates.longitude,
               },
               customIcon: {
-                url: "/images/kader.png", // Your custom icon URL
+                url: "/images/endemit-icon-small.png", // Your custom icon URL
                 scaledSize: { width: 40, height: 40 }, // Icon size
                 anchor: { x: 20, y: 40 }, // Anchor point (usually bottom center)
               },
