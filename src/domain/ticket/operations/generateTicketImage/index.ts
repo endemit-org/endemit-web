@@ -3,6 +3,7 @@ import "server-only";
 import QRCode from "qrcode";
 import path from "path";
 import sharp from "sharp";
+import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 interface TicketData {
   shortId: string;
@@ -49,7 +50,7 @@ export const generateTicketImage = async (
   );
   const logoBuffer = await loadLogo(cfg.logoSize);
   const endemitLogoBuffer = await fetchAndResizeImage(
-    "http://127.0.0.1:3000/images/endemit.png", //TODO
+    `${PUBLIC_BASE_WEB_URL}/images/endemit.png`,
     200,
     "contain"
   );
