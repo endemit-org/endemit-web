@@ -130,7 +130,7 @@ export default async function EventPage({
               alt={event.coverImage?.alt ?? ""}
               height={500}
               width={888}
-              className="aspect-video lg:w-3/5 w-full"
+              className="aspect-video lg:w-2/3 w-full"
             />
           )}
           <div
@@ -177,7 +177,7 @@ export default async function EventPage({
       </div>
 
       <div className={"relative flex"}>
-        <div className={clsx(product && "lg:w-2/3")}>
+        <div className={clsx(product && "lg:w-4/5")}>
           <Tabs items={defaultContent} sortByWeight={true} />
         </div>
 
@@ -185,7 +185,7 @@ export default async function EventPage({
           <div className={"max-lg:hidden"}>
             <div
               className={
-                " p-8 flex-1 flex flex-col items-center text-neutral-200 bg-neutral-700 rounded-md h-fit"
+                " p-8 flex-1 flex flex-col items-center text-neutral-200 bg-neutral-800 rounded-md h-fit"
               }
               style={{
                 backgroundImage: "url('/images/worms.png')",
