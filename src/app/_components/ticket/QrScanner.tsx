@@ -231,7 +231,7 @@ export default function QRScanner({ eventId }: Props) {
 
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl h-[90vh] overflow-auto">
+          <div className="bg-white rounded-lg w-full max-w-2xl h-[90vh] overflow-auto text-neutral-900">
             <div className="p-4 relative">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Scan QR Ticket</h2>
