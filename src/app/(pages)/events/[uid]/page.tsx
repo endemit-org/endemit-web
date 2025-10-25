@@ -185,7 +185,7 @@ export default async function EventPage({
           <div className={"max-lg:hidden"}>
             <div
               className={
-                " p-8 flex-1 flex flex-col items-center text-neutral-200 bg-neutral-700 rounded-md h-fit"
+                " p-8 flex-1 flex flex-col items-center text-neutral-200 bg-neutral-800 rounded-md h-fit"
               }
               style={{
                 backgroundImage: "url('/images/worms.png')",

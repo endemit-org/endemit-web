@@ -228,47 +228,47 @@ function createTextOverlay(
 
   return Buffer.from(`
     <svg width="${cfg.canvasWidth}" height="${cfg.canvasHeight}">
-      <text x="${layout.centerX}" y="145" font-family="Helvetica, sans-serif"
+      <text x="${layout.centerX}" y="145" font-family="Arial, sans-serif"
         font-size="85" font-weight="bold" fill="black" text-anchor="middle">
         TICKET ${data.shortId}
       </text>
 
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 960}"
-        font-family="Helvetica, sans-serif" font-size="40" fill="black"
+        font-family="Arial, sans-serif" font-size="40" fill="black"
         text-anchor="start" letter-spacing="1"
         transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${eventInfo}
       </text>
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 910}"
-        font-family="Helvetica, sans-serif" font-size="30" fill="#AAAAAA"
+        font-family="Arial, sans-serif" font-size="30" fill="#AAAAAA"
         letter-spacing="10" text-anchor="start" font-weight="lighter"
         transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${firstPart}
       </text>
 
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1900}"
-        font-family="Helvetica, sans-serif" font-size="40" fill="black"
+        font-family="Arial, sans-serif" font-size="40" fill="black"
         text-anchor="start"
         transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${eventInfo}
       </text>
       <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1850}"
-        font-family="Helvetica, sans-serif" font-size="30" fill="#AAAAAA"
+        font-family="Arial, sans-serif" font-size="30" fill="#AAAAAA"
         letter-spacing="10" text-anchor="start" font-weight="lighter"
         transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
         ${secondPart}
       </text>
 
-      <text x="${layout.centerX}" y="1895" font-family="Helvetica, sans-serif"
+      <text x="${layout.centerX}" y="1895" font-family="Arial, sans-serif"
         font-size="26" fill="white" text-anchor="middle">
         Ticket admits one person. Ticket is non-refundable.
       </text>
 
-      <text x="${layout.centerX}" y="1490" font-family="Helvetica, sans-serif"
+      <text x="${layout.centerX}" y="1490" font-family="Arial, sans-serif"
         font-size="46" font-weight="bold" fill="white" text-anchor="middle">
         ${data.attendeeName.toUpperCase()}
       </text>
-      <text x="${layout.centerX}" y="1530" font-family="Helvetica, sans-serif"
+      <text x="${layout.centerX}" y="1530" font-family="Arial, sans-serif"
         font-size="26" fill="white" text-anchor="middle">
         ${data.attendeeEmail}
       </text>
@@ -277,14 +277,14 @@ function createTextOverlay(
         .map(
           (artist, i) => `
         <text x="${layout.centerX}" y="${1610 + i * 50}"
-          font-family="Helvetica, sans-serif" font-size="30" fill="white" text-anchor="middle">
+          font-family="Arial, sans-serif" font-size="30" fill="white" text-anchor="middle">
           ${artist.toUpperCase()}
         </text>
       `
         )
         .join("")}
 
-      <text x="${layout.centerX}" y="1765" font-family="Helvetica, sans-serif"
+      <text x="${layout.centerX}" y="1765" font-family="Arial, sans-serif"
         font-size="80" font-weight="bolder" fill="#222222" text-anchor="middle">
         ${data.price}
       </text>
