@@ -1,20 +1,16 @@
-import { formatDecimalPrice } from "@/lib/util/formatting";
-import { getSlugFromText, getStatusText } from "@/lib/util/util";
+import { getSlugFromText } from "@/lib/util/util";
 import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
 import ImageGalleryWithMasonry from "@/app/_components/content/ImageGalleryWithMasonry";
-import ProductConfigure from "@/app/_components/product/ProductConfigure";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
-import { fetchProductFromCms } from "@/domain/cms/operations/fetchProductFromCms";
-import { getProductLimits } from "@/domain/product/actions/getProductLimits";
-import { isProductSellable } from "@/domain/product/businessLogic";
+import { fetchProductFromCmsByUid } from "@/domain/cms/operations/fetchProductFromCms";
 import ProductCard from "@/app/_components/product/ProductCard";
-import clsx from "clsx";
 import InnerPage from "@/app/_components/content/InnerPage";
 import PageHeadline from "@/app/_components/content/PageHeadline";
 import OuterPage from "@/app/_components/content/OuterPage";
 import style from "@/app/_styles/insetHtml.module.css";
 import { notFound } from "next/navigation";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
+import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -74,14 +70,12 @@ export default async function ProductPage({
 }) {
   const { productUid } = await params;
 
-  const product = await fetchProductFromCms(productUid);
+  const product = await fetchProductFromCmsByUid(productUid);
 
   if (!product) {
     notFound();
   }
 
-  const productLimits = getProductLimits(product);
-  const isSellableObject = isProductSellable(product);
   const relatedProducts = product.relatedProducts;
 
   return (
@@ -133,43 +127,7 @@ export default async function ProductPage({
               "px-2 flex-1 lg:pl-10 flex flex-col items-center max-lg:border-neutral-500 max-lg:border-t max-lg:mt-10 max-lg:pt-10"
             }
           >
-            <div>Price:</div>
-            <div
-              className={clsx(
-                "text-4xl font-heading mb-6",
-                !isSellableObject.isSellable && "line-through"
-              )}
-            >
-              {formatDecimalPrice(product.price)}
-            </div>
-
-            <ProductConfigure product={product} />
-
-            {!isSellableObject.isSellable &&
-              !isSellableObject.isSellableByCutoffDate && (
-                <div className={"uppercase font-bold"}>
-                  Product no longer available
-                </div>
-              )}
-
-            {!isSellableObject.isSellable &&
-              !isSellableObject.isSellableByStatus && (
-                <div className={"uppercase font-bold"}>
-                  {getStatusText(product.status)}
-                </div>
-              )}
-
-            {productLimits && (
-              <div
-                className={
-                  "border-t border-neutral-500 mt-6 pt-6 text-sm text-neutral-400"
-                }
-              >
-                {productLimits.map((productLimit, index) => (
-                  <div key={`prod-limit-${index}`}>{productLimit}</div>
-                ))}
-              </div>
-            )}
+            <ProductAddToCart product={product} />
           </div>
         </div>
       </InnerPage>

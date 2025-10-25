@@ -1,7 +1,7 @@
 {
   "id": "poem",
   "type": "SharedSlice",
-  "name": "Poem",
+  "name": "EventIntro",
   "description": "Poem",
   "variations": [
     {

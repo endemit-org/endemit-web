@@ -1,5 +1,8 @@
 import { VenueInEvent } from "@/domain/event/types/event";
 import GoogleMapLocation from "@/app/_components/content/GoogleMapLocation";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
+import Link from "next/link";
 
 type Props = {
   venue: VenueInEvent | null;
@@ -10,33 +13,60 @@ export default function EventLocation({ venue }: Props) {
 
   return (
     <div>
-      {venue?.coordinates && (
-        <GoogleMapLocation
-          center={{
-            lat: venue?.coordinates.latitude,
-            lng: venue?.coordinates.longitude,
-          }}
-          zoom={18}
-          markers={[
-            {
-              position: {
+      <div className="flex gap-x-6">
+        <div>
+          <ImageWithFallback
+            src={venue.logo?.src}
+            alt={venue.logo?.alt ?? venue.name}
+            className={"w-80"}
+          />
+        </div>
+
+        <div className="flex gap-y-6 flex-col">
+          <div>
+            <h3 className={"text-4xl"}>{venue.name}</h3>
+            <div>
+              <Link
+                className={"link"}
+                href={venue.mapLocationUrl}
+                target={"_blank"}
+              >
+                {venue.address}
+              </Link>
+            </div>
+          </div>
+          <div>
+            <RichTextDisplay richText={venue.description} />
+          </div>
+          {venue?.coordinates && (
+            <GoogleMapLocation
+              center={{
                 lat: venue?.coordinates.latitude,
                 lng: venue?.coordinates.longitude,
-              },
-              customIcon: {
-                url: "/images/endemit-icon-small.png", // Your custom icon URL
-                scaledSize: { width: 40, height: 40 }, // Icon size
-                anchor: { x: 20, y: 40 }, // Anchor point (usually bottom center)
-              },
-            },
-          ]}
-          mapOptions={{
-            disableDefaultUI: false,
-            zoomControl: true,
-            streetViewControl: true,
-          }}
-        />
-      )}
+              }}
+              zoom={18}
+              markers={[
+                {
+                  position: {
+                    lat: venue?.coordinates.latitude,
+                    lng: venue?.coordinates.longitude,
+                  },
+                  customIcon: {
+                    url: "/images/endemit-icon-small.png",
+                    scaledSize: { width: 60, height: 60 },
+                    anchor: { x: 20, y: 40 },
+                  },
+                },
+              ]}
+              mapOptions={{
+                disableDefaultUI: false,
+                zoomControl: true,
+                streetViewControl: true,
+              }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

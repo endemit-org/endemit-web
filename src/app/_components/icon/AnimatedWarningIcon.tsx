@@ -1,4 +1,8 @@
-export default function AnimatedWarningIcon() {
+type Props = {
+  color?: string;
+};
+
+export default function AnimatedWarningIcon({ color = "#fbbf24" }: Props) {
   return (
     <svg
       className="w-24 h-24"
@@ -10,7 +14,7 @@ export default function AnimatedWarningIcon() {
         cx="50"
         cy="50"
         r="45"
-        stroke="#fbbf24"
+        stroke={color}
         strokeWidth="4"
         fill="none"
         style={{
@@ -21,7 +25,7 @@ export default function AnimatedWarningIcon() {
       />
       <path
         d="M50 30 L50 55"
-        stroke="#fbbf24"
+        stroke={color}
         strokeWidth="4"
         strokeLinecap="round"
         style={{
@@ -34,7 +38,7 @@ export default function AnimatedWarningIcon() {
         cx="50"
         cy="68"
         r="3"
-        fill="#fbbf24"
+        fill={color}
         style={{
           opacity: 0,
           animation: "fadeIn 0.3s ease-out 0.6s forwards",

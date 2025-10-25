@@ -119,7 +119,7 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
   markers = [],
   height = 400,
   width = "100%",
-  className = "grayscale contrast-125",
+  className = "",
   mapOptions = {},
   onMapLoad,
   darkMode = true,

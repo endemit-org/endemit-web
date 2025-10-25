@@ -16,12 +16,12 @@ export default function ArtistAlphabeticalList({ artists }: Props) {
   );
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 ">
       {sortedArtists.map(artist => (
         <Link
           key={artist.id}
           href={`/artists/${artist.uid}`}
-          className="group relative overflow-hidden  bg-neutral-950  border-8 border-neutral-950 hover:border-slate-500 transition-all duration-300"
+          className="group relative overflow-hidden  bg-neutral-950  border-8 border-neutral-950 hover:border-neutral-900 hover:bg-neutral-900 "
         >
           <div className="relative aspect-square overflow-hidden">
             {artist.image?.src && (

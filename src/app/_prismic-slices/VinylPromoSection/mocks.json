@@ -1,0 +1,27 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"headline": {
+				"__TYPE__": "FieldContent",
+				"value": "almost",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "FieldContent",
+				"value": "weight",
+				"type": "Text"
+			},
+			"product": {
+				"__TYPE__": "LinkContent",
+				"key": "095d837b-5be9-44f3-8cd4-8b7dfbf8627a",
+				"value": {
+					"__TYPE__": "DocumentLink",
+					"id": "mock_document_id"
+				}
+			}
+		},
+		"items": []
+	}
+]

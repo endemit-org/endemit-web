@@ -1,4 +1,4 @@
-import EventCard from "@/app/_components/event/EventCard";
+import EventPoster from "@/app/_components/event/EventPoster";
 import React from "react";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { isEventCompleted } from "@/domain/event/businessLogic";
@@ -35,7 +35,7 @@ async function EventListContent({ title, type }: EventListProps) {
       <div className={"grid sm:grid-cols-2 gap-4"}>
         {filteredEvents.map((event, index) => (
           <React.Fragment key={`${event.id}-${index}`}>
-            <EventCard event={event}>{/*{event.children}*/}</EventCard>
+            <EventPoster event={event}>{/*{event.children}*/}</EventPoster>
           </React.Fragment>
         ))}
       </div>{" "}

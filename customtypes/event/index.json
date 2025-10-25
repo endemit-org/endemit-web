@@ -233,13 +233,21 @@
         }
       }
     },
-
     "Rich content": {
-       "slices": {
+      "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "artist_list": {
+              "type": "SharedSlice"
+            },
+            "event_list": {
+              "type": "SharedSlice"
+            },
+            "vinyl_promo_section": {
+              "type": "SharedSlice"
+            },
             "poem": {
               "type": "SharedSlice"
             },

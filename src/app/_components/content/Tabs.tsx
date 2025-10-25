@@ -61,7 +61,7 @@ export default function Tabs({
       )}
 
       <div className="hidden lg:block border-b-2 border-neutral-700">
-        <nav className="flex space-x-8 overflow-x-auto" aria-label="Tabs">
+        <nav className="flex space-x-8 overflow-x-auto " aria-label="Tabs">
           {items.map((item, index) => (
             <button
               key={item.id}
@@ -84,9 +84,9 @@ export default function Tabs({
 
       <div className="lg:hidden space-y-6">
         {items.map(item => (
-          <div key={item.id} className="pb-20 first:pt-0 pt-20">
+          <div key={item.id} className="pb-14 first:pt-0 pt-14">
             <InnerPage>
-              <h3 className="text-4xl font-bold font-heading tracking-wider text-neutral-200 mb-4">
+              <h3 className="text-6xl font-heading tracking-wider text-neutral-400 mb-6">
                 {item.label}
               </h3>
               <div className="max-w-none">{item.content}</div>
