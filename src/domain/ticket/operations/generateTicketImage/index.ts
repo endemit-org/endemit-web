@@ -3,7 +3,10 @@ import "server-only";
 import QRCode from "qrcode";
 import path from "path";
 import sharp from "sharp";
+import satori from "satori";
+import fs from "fs";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import type { ReactElement } from "react";
 
 interface TicketData {
   shortId: string;
@@ -60,7 +63,7 @@ export const generateTicketImage = async (
   const qrHeight = qrMetadata.height || 420;
 
   const layout = calculateLayout(cfg, qrWidth, qrHeight);
-  const textSvg = createTextOverlay(ticketData, cfg, layout);
+  const textSvg = await createTextOverlay(ticketData, cfg, layout);
   const blackSquare = await createBlackSquare(650, 900);
 
   const ticketBuffer = await sharp({
@@ -83,7 +86,7 @@ export const generateTicketImage = async (
         left: layout.coverLeft,
       },
       { input: endemitLogoBuffer, top: 1730, left: layout.centerX - 100 },
-      { input: textSvg, top: 0, left: 0 },
+      { input: Buffer.from(textSvg), top: 0, left: 0 },
     ])
     .png()
     .toBuffer();
@@ -215,88 +218,209 @@ function calculateLayout(cfg: TicketConfig, qrWidth: number, qrHeight: number) {
   };
 }
 
-function createTextOverlay(
+async function createTextOverlay(
   data: TicketData,
   cfg: TicketConfig,
   layout: ReturnType<typeof calculateLayout>
-): Buffer {
+): Promise<string> {
+  const fontRegular = fs.readFileSync(
+    path.join(process.cwd(), "public", "fonts", "DIN_Condensed_Bold.ttf")
+  );
+
   const eventInfo =
     `${data.eventName} · ${data.eventDate} · ${data.eventDetails}`.toUpperCase();
-
   const firstPart = data.hashId.slice(0, 64).toUpperCase();
   const secondPart = data.hashId.slice(64).toUpperCase();
 
-  return Buffer.from(`
-    <svg width="${cfg.canvasWidth}" height="${cfg.canvasHeight}">
-    <defs>
-        <style type="text/css">
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&amp;display=swap');
-          text {
-            font-family: 'Inter, Arial, sans-serif';
-          }
-        </style>
-      </defs>
+  const element: ReactElement = {
+    type: "div",
+    props: {
+      style: {
+        width: cfg.canvasWidth,
+        height: cfg.canvasHeight,
+        display: "flex",
+        position: "relative",
+        fontFamily: "DIN",
+      },
+      children: [
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: 145,
+              left: layout.centerX,
+              transform: "translateX(-50%) translateY(-100%)",
+              fontSize: 85,
+              fontWeight: "bold",
+              color: "black",
+              whiteSpace: "nowrap",
+            },
+            children: `TICKET ${data.shortId}`,
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: layout.centerY,
+              left: cfg.borderWidth + 60,
+              transform: `rotate(-90deg) translateX(-50%)`,
+              transformOrigin: "0 0",
+              fontSize: 40,
+              color: "black",
+              letterSpacing: "1px",
+              whiteSpace: "nowrap",
+            },
+            children: eventInfo,
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: layout.centerY,
+              left: cfg.borderWidth + 110,
+              transform: `rotate(-90deg) translateX(-50%)`,
+              transformOrigin: "0 0",
+              fontSize: 30,
+              color: "#AAAAAA",
+              letterSpacing: "10px",
+              fontWeight: "lighter",
+              whiteSpace: "nowrap",
+            },
+            children: firstPart,
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: layout.centerY,
+              right: cfg.borderWidth + 60,
+              transform: `rotate(90deg) translateX(50%)`,
+              transformOrigin: "100% 0",
+              fontSize: 40,
+              color: "black",
+              whiteSpace: "nowrap",
+            },
+            children: eventInfo,
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: layout.centerY,
+              right: cfg.borderWidth + 110,
+              transform: `rotate(90deg) translateX(50%)`,
+              transformOrigin: "100% 0",
+              fontSize: 30,
+              color: "#AAAAAA",
+              letterSpacing: "10px",
+              fontWeight: "lighter",
+              whiteSpace: "nowrap",
+            },
+            children: secondPart,
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: 1895,
+              left: layout.centerX,
+              transform: "translateX(-50%) translateY(-100%)",
+              fontSize: 26,
+              color: "white",
+              whiteSpace: "nowrap",
+            },
+            children: "Ticket admits one person. Ticket is non-refundable.",
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: 1490,
+              left: layout.centerX,
+              transform: "translateX(-50%) translateY(-100%)",
+              fontSize: 46,
+              fontWeight: "bold",
+              color: "white",
+              whiteSpace: "nowrap",
+            },
+            children: data.attendeeName.toUpperCase(),
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: 1530,
+              left: layout.centerX,
+              transform: "translateX(-50%) translateY(-100%)",
+              fontSize: 26,
+              color: "white",
+              whiteSpace: "nowrap",
+            },
+            children: data.attendeeEmail,
+          },
+        },
+        ...data.artists.map((artist, i) => ({
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: 1610 + i * 50,
+              left: layout.centerX,
+              transform: "translateX(-50%) translateY(-100%)",
+              fontSize: 30,
+              color: "white",
+              whiteSpace: "nowrap",
+            },
+            children: artist.toUpperCase(),
+          },
+        })),
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: 1765,
+              left: layout.centerX,
+              transform: "translateX(-50%) translateY(-100%)",
+              fontSize: 80,
+              fontWeight: "bolder",
+              color: "#222222",
+              whiteSpace: "nowrap",
+            },
+            children: data.price,
+          },
+        },
+      ],
+    },
+  } as ReactElement;
 
-      <text x="${layout.centerX}" y="145"
-        font-size="85" font-weight="bold" fill="black" text-anchor="middle">
-        TICKET ${data.shortId}
-      </text>
+  const svg = await satori(element, {
+    width: cfg.canvasWidth,
+    height: cfg.canvasHeight,
+    fonts: [
+      {
+        name: "DIN",
+        data: fontRegular,
+        weight: 700,
+        style: "normal",
+      },
+    ],
+  });
 
-      <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 960}"
-         font-size="40" fill="black"
-        text-anchor="start" letter-spacing="1"
-        transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
-        ${eventInfo}
-      </text>
-      <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 910}"
-         font-size="30" fill="#AAAAAA"
-        letter-spacing="10" text-anchor="start" font-weight="lighter"
-        transform="rotate(-90, ${cfg.borderWidth + 60}, ${layout.centerY})">
-        ${firstPart}
-      </text>
-
-      <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1900}"
-         font-size="40" fill="black"
-        text-anchor="start"
-        transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
-        ${eventInfo}
-      </text>
-      <text x="${cfg.borderWidth - 840}" y="${cfg.canvasHeight - 1850}"
-         font-size="30" fill="#AAAAAA"
-        letter-spacing="10" text-anchor="start" font-weight="lighter"
-        transform="rotate(90, ${cfg.borderWidth + 60}, ${layout.centerY})">
-        ${secondPart}
-      </text>
-
-      <text x="${layout.centerX}" y="1895"
-        font-size="26" fill="white" text-anchor="middle">
-        Ticket admits one person. Ticket is non-refundable.
-      </text>
-
-      <text x="${layout.centerX}" y="1490"
-        font-size="46" font-weight="bold" fill="white" text-anchor="middle">
-        ${data.attendeeName.toUpperCase()}
-      </text>
-      <text x="${layout.centerX}" y="1530"
-        font-size="26" fill="white" text-anchor="middle">
-        ${data.attendeeEmail}
-      </text>
-
-      ${data.artists
-        .map(
-          (artist, i) => `
-        <text x="${layout.centerX}" y="${1610 + i * 50}"
-           font-size="30" fill="white" text-anchor="middle">
-          ${artist.toUpperCase()}
-        </text>
-      `
-        )
-        .join("")}
-
-      <text x="${layout.centerX}" y="1765"
-        font-size="80" font-weight="bolder" fill="#222222" text-anchor="middle">
-        ${data.price}
-      </text>
-    </svg>
-  `);
+  return svg;
 }
