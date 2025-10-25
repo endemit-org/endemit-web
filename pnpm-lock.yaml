@@ -90,7 +90,7 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
       sharp:
-        specifier: ^0.34.2
+        specifier: ^0.34.4
         version: 0.34.4
       stripe:
         specifier: ^18.5.0
