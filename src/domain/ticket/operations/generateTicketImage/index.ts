@@ -248,10 +248,10 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: 145,
+              top: 175,
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
-              fontSize: 85,
+              fontSize: 105,
               fontWeight: "bold",
               color: "black",
               whiteSpace: "nowrap",
@@ -264,10 +264,10 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: layout.centerY,
-              left: cfg.borderWidth + 60,
-              transform: `rotate(-90deg) translateX(-50%)`,
-              transformOrigin: "0 0",
+              top: 1880,
+              left: cfg.borderWidth + 30,
+              transform: `rotate(-90deg)`,
+              transformOrigin: "left top",
               fontSize: 40,
               color: "black",
               letterSpacing: "1px",
@@ -281,10 +281,10 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: layout.centerY,
-              left: cfg.borderWidth + 110,
-              transform: `rotate(-90deg) translateX(-50%)`,
-              transformOrigin: "0 0",
+              top: 1880,
+              left: cfg.borderWidth + 75,
+              transform: `rotate(-90deg)`,
+              transformOrigin: "left top",
               fontSize: 30,
               color: "#AAAAAA",
               letterSpacing: "10px",
@@ -299,12 +299,13 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: layout.centerY,
-              right: cfg.borderWidth + 60,
-              transform: `rotate(90deg) translateX(50%)`,
-              transformOrigin: "100% 0",
+              top: 1830,
+              right: cfg.borderWidth + 25,
+              transform: `rotate(90deg)`,
+              transformOrigin: "right top",
               fontSize: 40,
               color: "black",
+              letterSpacing: "1px",
               whiteSpace: "nowrap",
             },
             children: eventInfo,
@@ -315,10 +316,10 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: layout.centerY,
+              bottom: 25,
               right: cfg.borderWidth + 110,
-              transform: `rotate(90deg) translateX(50%)`,
-              transformOrigin: "100% 0",
+              transform: `rotate(90deg)`,
+              transformOrigin: "right bottom",
               fontSize: 30,
               color: "#AAAAAA",
               letterSpacing: "10px",
@@ -348,7 +349,7 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: 1490,
+              top: 1510,
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 46,
@@ -364,7 +365,7 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: 1530,
+              top: 1540,
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 26,
@@ -394,7 +395,7 @@ async function createTextOverlay(
           props: {
             style: {
               position: "absolute",
-              top: 1765,
+              top: 1785,
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 80,
