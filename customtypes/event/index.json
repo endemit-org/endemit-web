@@ -12,22 +12,6 @@
           "label": "slug"
         }
       },
-      "cover_image": {
-        "type": "Image",
-        "config": {
-          "label": "Cover image",
-          "constraint": {},
-          "thumbnails": []
-        }
-      },
-      "promo_image": {
-        "type": "Image",
-        "config": {
-          "label": "Promo image",
-          "constraint": {},
-          "thumbnails": []
-        }
-      },
       "title": {
         "type": "Text",
         "config": {
@@ -44,6 +28,22 @@
           "multi": "paragraph,heading2,strong,em,hyperlink,image,list-item"
         }
       },
+      "cover_image": {
+        "type": "Image",
+        "config": {
+          "label": "Cover image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "promo_image": {
+        "type": "Image",
+        "config": {
+          "label": "Promo image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
       "video": {
         "type": "Link",
         "config": {
@@ -53,51 +53,15 @@
           "allowText": true
         }
       },
-      "slices": {
-        "type": "Slices",
-        "fieldset": "Slice Zone",
+      "art_author": {
+        "type": "Link",
         "config": {
-          "choices": {
-            "poem": {
-              "type": "SharedSlice"
-            },
-            "embed_block": {
-              "type": "SharedSlice"
-            },
-            "podcast_list": {
-              "type": "SharedSlice"
-            },
-            "text_column": {
-              "type": "SharedSlice"
-            },
-            "tabs": {
-              "type": "SharedSlice"
-            },
-            "product_list": {
-              "type": "SharedSlice"
-            },
-            "spacer": {
-              "type": "SharedSlice"
-            },
-            "hero": {
-              "type": "SharedSlice"
-            },
-            "grid_tile": {
-              "type": "SharedSlice"
-            },
-            "image_gallery": {
-              "type": "SharedSlice"
-            },
-            "newsletter_subscription": {
-              "type": "SharedSlice"
-            },
-            "content_section": {
-              "type": "SharedSlice"
-            },
-            "accordion": {
-              "type": "SharedSlice"
-            }
-          }
+          "label": "Art author",
+          "placeholder": "",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": false
         }
       }
     },
@@ -266,6 +230,56 @@
           "placeholder_false": "false",
           "placeholder_true": "true",
           "default_value": false
+        }
+      }
+    },
+
+    "Rich content": {
+       "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "poem": {
+              "type": "SharedSlice"
+            },
+            "embed_block": {
+              "type": "SharedSlice"
+            },
+            "podcast_list": {
+              "type": "SharedSlice"
+            },
+            "text_column": {
+              "type": "SharedSlice"
+            },
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "product_list": {
+              "type": "SharedSlice"
+            },
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "newsletter_subscription": {
+              "type": "SharedSlice"
+            },
+            "content_section": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            }
+          }
         }
       }
     },

@@ -27,7 +27,6 @@ const hasImage = (
 const TextColumn = ({ slice }: TextColumnProps) => {
   return (
     <section
-      className="lg:my-24 my-16"
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >

@@ -32,7 +32,7 @@ async function EventListContent({ title, type }: EventListProps) {
       {title && (
         <h1 className="text-3xl font-bold text-neutral-200 mb-8">{title}</h1>
       )}
-      <div className={"grid grid-cols-2 gap-4"}>
+      <div className={"grid sm:grid-cols-2 gap-4"}>
         {filteredEvents.map((event, index) => (
           <React.Fragment key={`${event.id}-${index}`}>
             <EventCard event={event}>{/*{event.children}*/}</EventCard>

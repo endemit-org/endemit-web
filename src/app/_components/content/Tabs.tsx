@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import InnerPage from "@/app/_components/content/InnerPage";
 
 export interface TabItem {
   label: string;
@@ -68,7 +69,7 @@ export default function Tabs({
               className={`whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
                 activeIndex === index
                   ? "border-blue-500 text-neutral-200"
-                  : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
+                  : "border-transparent text-neutral-950 hover:text-neutral-800 [text-shadow:0_0px_1px_rgba(255,255,255,0.4)] hover:border-neutral-300"
               }`}
             >
               {item.label}
@@ -78,16 +79,18 @@ export default function Tabs({
       </div>
 
       <div className="hidden lg:block mt-8 max-w-none">
-        {items[activeIndex]?.content}
+        <InnerPage>{items[activeIndex]?.content}</InnerPage>
       </div>
 
       <div className="lg:hidden space-y-6">
         {items.map(item => (
-          <div key={item.id} className="border-b border-neutral-700 pb-6">
-            <h3 className="text-2xl font-bold font-heading tracking-wider text-neutral-200 mb-4">
-              {item.label}
-            </h3>
-            <div className="max-w-none">{item.content}</div>
+          <div key={item.id} className="pb-20 first:pt-0 pt-20">
+            <InnerPage>
+              <h3 className="text-4xl font-bold font-heading tracking-wider text-neutral-200 mb-4">
+                {item.label}
+              </h3>
+              <div className="max-w-none">{item.content}</div>
+            </InnerPage>
           </div>
         ))}
       </div>

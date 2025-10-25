@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
+import {
+  GoogleMap,
+  useLoadScript,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
 import { PUBLIC_GOOGLE_MAP_API_KEY } from "@/lib/services/env/public";
 
 interface GoogleMapProps {
@@ -26,8 +32,7 @@ interface GoogleMapProps {
   darkMode?: boolean;
 }
 
-// Dark mode styles
-const darkModeStyles = [
+const darkModeStyles: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
@@ -109,168 +114,23 @@ const darkModeStyles = [
 ];
 
 const GoogleMapLocation: React.FC<GoogleMapProps> = ({
-  center = { lat: 40.7128, lng: -74.006 }, // Default to NYC
+  center = { lat: 40.7128, lng: -74.006 },
   zoom = 12,
   markers = [],
   height = 400,
   width = "100%",
-  className = "",
+  className = "grayscale contrast-125",
   mapOptions = {},
   onMapLoad,
   darkMode = true,
 }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<string>("");
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: PUBLIC_GOOGLE_MAP_API_KEY!,
+  });
 
-  const apiKey = PUBLIC_GOOGLE_MAP_API_KEY;
+  const [activeMarker, setActiveMarker] = useState<number | null>(null);
 
-  // Load Google Maps script
-  useEffect(() => {
-    if (!apiKey) {
-      setError("Google Maps API key is required");
-      return;
-    }
-
-    // Check if script already exists
-    const existingScript = document.getElementById("google-maps-script");
-
-    if (existingScript) {
-      setIsLoaded(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = "google-maps-script";
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
-    script.async = true;
-    script.defer = true;
-
-    script.onload = () => {
-      setIsLoaded(true);
-    };
-
-    script.onerror = () => {
-      setError("Failed to load Google Maps");
-    };
-
-    document.head.appendChild(script);
-
-    return () => {
-      const scriptToRemove = document.getElementById("google-maps-script");
-      if (scriptToRemove && !document.querySelector("[data-google-map]")) {
-        scriptToRemove.remove();
-      }
-    };
-  }, [apiKey]);
-
-  // Initialize map
-  useEffect(() => {
-    if (!isLoaded || !mapRef.current || map) return;
-
-    try {
-      const googleMap = new google.maps.Map(mapRef.current, {
-        center,
-        zoom,
-        styles: darkMode ? darkModeStyles : undefined,
-        ...mapOptions,
-      });
-
-      setMap(googleMap);
-
-      if (onMapLoad) {
-        onMapLoad(googleMap);
-      }
-    } catch (err) {
-      setError("Failed to initialize map");
-      console.error("Google Maps initialization error:", err);
-    }
-  }, [isLoaded, center, zoom, mapOptions, onMapLoad, map, darkMode]);
-
-  // Add markers
-  useEffect(() => {
-    if (!map) return;
-
-    // Clear existing markers
-    const markersArray: google.maps.Marker[] = [];
-
-    markers.forEach(markerData => {
-      // Build icon configuration
-      let markerIcon:
-        | string
-        | google.maps.Icon
-        | google.maps.Symbol
-        | undefined;
-
-      if (markerData.customIcon) {
-        markerIcon = {
-          url: markerData.customIcon.url,
-          scaledSize: markerData.customIcon.scaledSize
-            ? new google.maps.Size(
-                markerData.customIcon.scaledSize.width,
-                markerData.customIcon.scaledSize.height
-              )
-            : new google.maps.Size(32, 32), // Default size
-          anchor: markerData.customIcon.anchor
-            ? new google.maps.Point(
-                markerData.customIcon.anchor.x,
-                markerData.customIcon.anchor.y
-              )
-            : undefined,
-          origin: markerData.customIcon.origin
-            ? new google.maps.Point(
-                markerData.customIcon.origin.x,
-                markerData.customIcon.origin.y
-              )
-            : new google.maps.Point(0, 0),
-        };
-      } else if (markerData.icon) {
-        markerIcon = markerData.icon;
-      }
-
-      const marker = new google.maps.Marker({
-        position: markerData.position,
-        map,
-        title: markerData.title,
-        icon: markerIcon,
-      });
-
-      // Add info window if info is provided
-      if (markerData.info) {
-        const infoWindow = new google.maps.InfoWindow({
-          content: markerData.info,
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-      }
-
-      markersArray.push(marker);
-    });
-
-    // Cleanup markers on unmount or update
-    return () => {
-      markersArray.forEach(marker => marker.setMap(null));
-    };
-  }, [map, markers]);
-
-  // Update center when prop changes
-  useEffect(() => {
-    if (map && center) {
-      map.setCenter(center);
-    }
-  }, [map, center]);
-
-  // Update zoom when prop changes
-  useEffect(() => {
-    if (map && zoom) {
-      map.setZoom(zoom);
-    }
-  }, [map, zoom]);
-
-  if (error) {
+  if (loadError) {
     return (
       <div
         className={`flex items-center justify-center bg-gray-100 ${className}`}
@@ -278,19 +138,87 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
       >
         <div className="text-red-500 text-center p-4">
           <p className="font-semibold">Error loading map</p>
-          <p className="text-sm mt-1">{error}</p>
+          <p className="text-sm mt-1">Failed to load Google Maps</p>
         </div>
       </div>
     );
   }
 
+  if (!isLoaded) {
+    return (
+      <div
+        className={`flex items-center justify-center bg-gray-100 ${className}`}
+        style={{ height, width }}
+      >
+        <div className="text-gray-600">Loading map...</div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      ref={mapRef}
-      data-google-map
-      className={className}
-      style={{ height, width }}
-    />
+    <GoogleMap
+      mapContainerClassName={className}
+      mapContainerStyle={{ height, width }}
+      center={center}
+      zoom={zoom}
+      options={{
+        styles: darkMode ? darkModeStyles : undefined,
+        ...mapOptions,
+      }}
+      onLoad={onMapLoad}
+    >
+      {markers.map((marker, index) => {
+        // Build icon configuration
+        let markerIcon:
+          | string
+          | google.maps.Icon
+          | google.maps.Symbol
+          | undefined;
+
+        if (marker.customIcon) {
+          markerIcon = {
+            url: marker.customIcon.url,
+            scaledSize: new google.maps.Size(
+              marker.customIcon.scaledSize?.width || 32,
+              marker.customIcon.scaledSize?.height || 32
+            ),
+            anchor: marker.customIcon.anchor
+              ? new google.maps.Point(
+                  marker.customIcon.anchor.x,
+                  marker.customIcon.anchor.y
+                )
+              : undefined,
+            origin: marker.customIcon.origin
+              ? new google.maps.Point(
+                  marker.customIcon.origin.x,
+                  marker.customIcon.origin.y
+                )
+              : new google.maps.Point(0, 0),
+          };
+        } else if (marker.icon) {
+          markerIcon = marker.icon;
+        }
+
+        return (
+          <React.Fragment key={index}>
+            <Marker
+              position={marker.position}
+              title={marker.title}
+              icon={markerIcon}
+              onClick={() => marker.info && setActiveMarker(index)}
+            />
+            {activeMarker === index && marker.info && (
+              <InfoWindow
+                position={marker.position}
+                onCloseClick={() => setActiveMarker(null)}
+              >
+                <div>{marker.info}</div>
+              </InfoWindow>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </GoogleMap>
   );
 };
 

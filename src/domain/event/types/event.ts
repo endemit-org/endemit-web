@@ -30,6 +30,10 @@ export type Event = {
   description: string | null;
   coverImage: CmsImage | null;
   promoImage: CmsImage | null;
+  artAuthor: {
+    text: string;
+    link: string;
+  } | null;
   venue: VenueInEvent | null;
   colour: string;
   options: {
