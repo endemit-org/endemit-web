@@ -130,7 +130,7 @@ export default async function EventPage({
               alt={event.coverImage?.alt ?? ""}
               height={500}
               width={888}
-              className="aspect-video lg:w-3/5 w-full"
+              className="aspect-video lg:w-2/3 w-full"
             />
           )}
           <div
@@ -177,7 +177,7 @@ export default async function EventPage({
       </div>
 
       <div className={"relative flex"}>
-        <div className={clsx(product && "lg:w-2/3")}>
+        <div className={clsx(product && "lg:w-4/5")}>
           <Tabs items={defaultContent} sortByWeight={true} />
         </div>
 
