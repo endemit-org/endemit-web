@@ -51,8 +51,9 @@
     "react-dom": "^19.0.0",
     "react-scroll-parallax": "^3.4.5",
     "resend": "^6.1.2",
+    "satori": "^0.18.3",
     "server-only": "^0.0.1",
-    "sharp": "^0.34.2",
+    "sharp": "^0.34.4",
     "stripe": "^18.5.0",
     "zod": "^3.24.1",
     "zustand": "^5.0.8"
