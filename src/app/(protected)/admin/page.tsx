@@ -1,4 +1,13 @@
 import { getCurrentUser } from "@/lib/services/auth";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard  •  Admin",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminPage() {
   const user = await getCurrentUser();

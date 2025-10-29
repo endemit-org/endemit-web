@@ -12,6 +12,7 @@ import { sendOrderEmailToCustomer } from "@/domain/email/operations/sendOrderEma
 import { getOrderById } from "@/domain/order/operations/getOrderById";
 import { notifyOnNewOrder } from "@/domain/notification/operations/notifyOnNewOrder";
 import { sendOrderEmailToMerchant } from "@/domain/email/operations/sendOrderEmailToMerchant";
+import { stripe } from "@/lib/services/stripe";
 
 export const runNewOrderAutomation = inngest.createFunction(
   { id: "notify-order-function", retries: 5 },
@@ -23,9 +24,42 @@ export const runNewOrderAutomation = inngest.createFunction(
 
     assert(order !== null, `Order not found: ${orderId}`);
 
+    const invoicePdf = await step.run(
+      "fetch-pdf-invoice-from-stripe",
+      async () => {
+        assert(
+          order.stripeSession,
+          `Stripe session not found: ${order.stripeSession}`
+        );
+
+        const session = await stripe.checkout.sessions.retrieve(
+          order.stripeSession
+        );
+
+        assert(session.invoice, `Stripe invoice not found: ${order.id}`);
+
+        const invoice = await stripe.invoices.retrieve(
+          session.invoice as string
+        );
+
+        assert(
+          invoice.invoice_pdf,
+          `PDF invoice invoice not found: ${order.id}`
+        );
+
+        const pdfResponse = await fetch(invoice.invoice_pdf);
+        const pdfBuffer = await pdfResponse.arrayBuffer();
+
+        return {
+          buffer: Buffer.from(pdfBuffer).toString("base64"),
+          filename: `invoice-${invoice.number}.pdf`,
+        };
+      }
+    );
+
     await step.run("send-order-email-to-customer", async () => {
       try {
-        const result = await sendOrderEmailToCustomer(order);
+        const result = await sendOrderEmailToCustomer(order, invoicePdf);
 
         if (!result || result.error) {
           throw new Error(
@@ -55,7 +89,7 @@ export const runNewOrderAutomation = inngest.createFunction(
 
     await step.run("send-order-email-to-merchant", async () => {
       try {
-        const result = await sendOrderEmailToMerchant(order);
+        const result = await sendOrderEmailToMerchant(order, invoicePdf);
 
         if (!result || result.error) {
           throw new Error(

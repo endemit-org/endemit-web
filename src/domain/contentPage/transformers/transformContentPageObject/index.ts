@@ -10,10 +10,13 @@ export const transformContentPageObject = (
     title: contentPage.data.title,
     renderFrame: contentPage.data.render_frame ?? false,
     slices: contentPage.data.slices,
+    updatedAt: new Date(contentPage.last_publication_date),
     meta: {
       title: contentPage.data.meta_title,
       description: contentPage.data.meta_description,
       image: contentPage.data.meta_image?.url || null,
+      priority: contentPage.data.priority,
+      frequency: contentPage.data.update_frequency,
     },
   } as ContentPage;
 };

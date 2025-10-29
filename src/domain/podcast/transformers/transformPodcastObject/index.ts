@@ -42,13 +42,23 @@ export const transformPodcastObject = (podcast: PodcastDocument): Podcast => {
     date: podcast.data.episode_date
       ? new Date(podcast.data.episode_date)
       : null,
-    description: podcast.data.description ?? "",
+    description: podcast.data.episode_description,
+    footnote: podcast.data.footnote ?? "",
     cover: transformCoverImage(podcast.data.cover_image),
     track: {
       url: podcast.data.track_url ?? "",
-      apiUrl: podcast.data.track_api_url ?? "",
     },
+    tracklist:
+      podcast.data.tracklist && podcast.data.tracklist.length > 0
+        ? podcast.data.tracklist.map(track => ({
+            artist: String(track.artist),
+            title: String(track.title),
+            link: asLink(track.link),
+            timestamp: track.timestamp ? String(track.timestamp) : undefined,
+          }))
+        : null,
     artist: transformArtist(podcast.data.artist),
+    updatedAt: new Date(podcast.last_publication_date),
     meta: {
       title: podcast.data.meta_title,
       description: podcast.data.meta_description,

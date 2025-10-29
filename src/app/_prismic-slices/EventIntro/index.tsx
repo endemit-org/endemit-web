@@ -19,7 +19,7 @@ const Poem: FC<PoemProps> = ({ slice }) => {
       data-slice-variation={slice.variation}
       className={`${s.markdown} `}
     >
-      <div className="text-center font-light flex flex-col gap-4 text-lg bg-gradient-to-b items-center from-neutral-400 to-neutral-200 bg-clip-text text-transparent">
+      <div className="text-center font-light flex flex-col gap-4 text-sm md:text-md lg:text-lg bg-gradient-to-b items-center from-neutral-400 to-neutral-200 bg-clip-text text-transparent px-12 lg:px-20 xl:px-36 ">
         <RichTextDisplay richText={slice.primary.content} />
       </div>
     </section>

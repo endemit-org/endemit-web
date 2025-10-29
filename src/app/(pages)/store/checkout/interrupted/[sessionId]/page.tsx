@@ -11,14 +11,11 @@ import { transformPriceFromStripe } from "@/domain/checkout/transformers/transfo
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Payment interrupted ",
-  description: "Your payment session was interrupted.",
-  openGraph: {
-    description: "Your payment session was interrupted.",
-    images: ["/images/og/endemit-og.png"],
-  },
-  twitter: {
-    card: "summary_large_image",
+  title: "⚠️ Payment interrupted",
+  description: "Your payment was interrupted and has not completed your order.",
+  robots: {
+    index: false,
+    follow: false,
   },
 };
 

@@ -51,6 +51,7 @@ export type Event = {
   date_end: Date | null;
   event: string | null;
   artists: Array<ArtistAtEvent>;
+  updatedAt: Date;
   meta: CmsMetaData;
   slices: SliceZone;
 };

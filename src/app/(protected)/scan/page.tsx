@@ -6,8 +6,17 @@ import { isEventCompleted } from "@/domain/event/businessLogic";
 import Link from "next/link";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
+import type { Metadata } from "next";
 
-export default async function AdminPage() {
+export const metadata: Metadata = {
+  title: "Ticket scanner",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default async function ScanPage() {
   const eventsToScan = await fetchEventsFromCms({
     filters: [prismic.filter.at("my.event.allow_ticket_scanning", true)],
   });

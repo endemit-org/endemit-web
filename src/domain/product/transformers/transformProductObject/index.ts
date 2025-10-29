@@ -98,6 +98,9 @@ export const transformProductObject = (product: ProductDocument) => {
         : null,
     specialNotice: product.data.special_notice,
     checkoutDescription: product.data.checkout_description,
+    slices: product.data.slices,
+    displaySlicePosition: product.data.display_content_slices,
+    updatedAt: new Date(product.last_publication_date),
     meta: {
       title: product.data.meta_title,
       description: product.data.meta_description,

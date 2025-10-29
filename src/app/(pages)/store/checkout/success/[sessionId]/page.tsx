@@ -13,14 +13,12 @@ import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Merch",
-  description: "Exclusive Endemit merchandise, coming soon.",
-  openGraph: {
-    description: "Exclusive Endemit merchandise, coming soon.",
-    images: ["/images/og/endemit-og.png"],
-  },
-  twitter: {
-    card: "summary_large_image",
+  title: "✅ Order Confirmed",
+  description:
+    "Your order on endemit.org was successfully confirmed. Please continue or close this page.",
+  robots: {
+    index: false,
+    follow: false,
   },
 };
 

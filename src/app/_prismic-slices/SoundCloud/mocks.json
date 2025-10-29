@@ -1,0 +1,24 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"url": {
+				"__TYPE__": "FieldContent",
+				"value": "wood",
+				"type": "Text"
+			},
+			"height": {
+				"__TYPE__": "FieldContent",
+				"value": "91",
+				"type": "Number"
+			},
+			"color": {
+				"__TYPE__": "FieldContent",
+				"value": "#a55ea2",
+				"type": "Color"
+			}
+		},
+		"items": []
+	}
+]

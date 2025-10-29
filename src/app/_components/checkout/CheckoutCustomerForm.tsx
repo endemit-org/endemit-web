@@ -230,7 +230,7 @@ export default function CheckoutCustomerForm({
         required={true}
         validationTriggered={validationTriggered}
       >
-        <div className={"flex flex-col gap-y-2 flex-1"}>
+        <div className={"flex flex-col gap-y-4 flex-1"}>
           <div>
             I confirm the order, accept and agree to the{" "}
             <Link
@@ -265,6 +265,16 @@ export default function CheckoutCustomerForm({
               >
                 Notice on purchase of digital products
               </Link>
+              .
+            </div>
+          )}
+          {includesTickets && (
+            <div>
+              I understand, accept and will respect the applicable{" "}
+              <Link target="_blank" className="link" href={"/code-of-conduct"}>
+                Code of conduct
+              </Link>{" "}
+              at Endemit events.
             </div>
           )}
         </div>

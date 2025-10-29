@@ -1,5 +1,5 @@
 import { CmsMetaData } from "@/domain/cms/types/common";
-import { RichTextField } from "@prismicio/client";
+import { RichTextField, SliceZone } from "@prismicio/client";
 
 export enum ProductType {
   PHYSICAL = "Physical",
@@ -94,6 +94,7 @@ export interface Product {
   isFeatured: boolean;
   sortingWeight: number;
   weight: number | null;
+  slices: SliceZone;
   limits: {
     quantityLimit: number | null;
     regionalEligibility: Array<{
@@ -121,6 +122,8 @@ export interface Product {
   }> | null;
   relatedEvent: ProductRelatedEvent | null;
   specialNotice: string;
+  displaySlicePosition: "Above description" | "Below description";
   checkoutDescription: string;
+  updatedAt: Date;
   meta: CmsMetaData;
 }

@@ -4,7 +4,9 @@ import {
   PRISMIC_REPOSITORY_NAME,
 } from "@/lib/services/env/private";
 
-export const prismicClient = prismicLib.createClient(PRISMIC_REPOSITORY_NAME, {
+const prismicClientObject = prismicLib.createClient(PRISMIC_REPOSITORY_NAME, {
   accessToken: PRISMIC_ACCESS_TOKEN,
 });
+
+export const prismicClient = prismicClientObject;
 export const prismic = prismicLib;

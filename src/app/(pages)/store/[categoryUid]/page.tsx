@@ -15,6 +15,34 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    categoryUid: string;
+  }>;
+}) {
+  const { categoryUid } = await params;
+
+  const categoryName = getCategoryFromSlug(categoryUid);
+
+  if (!categoryName) {
+    notFound();
+  }
+
+  const title = `${categoryName} • Store`;
+  const description = `Official Endemit ${categoryName} available to purchase securely online.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+    },
+  };
+}
+
 export default async function CategoryPage({
   params,
 }: {

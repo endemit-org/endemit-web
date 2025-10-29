@@ -34,11 +34,13 @@
           "placeholder": "Example 001"
         }
       },
-      "description": {
-        "type": "Text",
+      "episode_description": {
+        "type": "StructuredText",
         "config": {
-          "label": "Description",
-          "placeholder": ""
+          "label": "Episode description",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,heading3,strong,em,hyperlink"
         }
       },
       "artist": {
@@ -78,11 +80,11 @@
           "placeholder": "Soundcloud track url"
         }
       },
-      "track_api_url": {
+      "footnote": {
         "type": "Text",
         "config": {
-          "label": "Track API url",
-          "placeholder": "Starts with https://api.soundcloud.com/tracks/...."
+          "label": "Footnote",
+          "placeholder": ""
         }
       },
       "tracklist": {
@@ -114,6 +116,13 @@
                 "allowTargetBlank": true,
                 "allowText": true,
                 "repeat": false
+              }
+            },
+            "timestamp": {
+              "type": "Text",
+              "config": {
+                "label": "Timestamp",
+                "placeholder": ""
               }
             }
           }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import React from "react";
 
 export interface HeroProps {
   heading: string;
@@ -35,14 +36,21 @@ export default function Hero({
   };
 
   return (
-    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-neutral-950 border-8 border-neutral-950">
+    <Link
+      href={primaryCta?.href ?? "#"}
+      className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-neutral-950 border-8 border-neutral-950 group"
+    >
+      {primaryCta?.href && (
+        <div className="absolute inset-0 border-[20px] border-white scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none z-10" />
+      )}
+
       {backgroundImage && (
         <>
           <Image
             src={backgroundImage.src}
             alt={backgroundImage.alt}
             fill
-            className="object-cover"
+            className="object-cover group-hover:scale-125 transition-transform duration-500 ease-out"
             priority
           />
           <div
@@ -52,7 +60,7 @@ export default function Hero({
         </>
       )}
 
-      <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 group-hover:scale-95 transition-transform duration-300">
         <div
           className={`flex flex-col gap-6 ${alignmentClasses[textAlignment]}`}
         >
@@ -66,21 +74,12 @@ export default function Hero({
             </p>
           )}
 
-          {(primaryCta || secondaryCta) && (
+          {secondaryCta && (
             <div className="flex flex-wrap gap-4 mt-2">
-              {primaryCta && (
-                <Link
-                  href={primaryCta.href}
-                  className="px-8 py-3 bg-neutral-200 text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  {primaryCta.text}
-                </Link>
-              )}
-
               {secondaryCta && (
                 <Link
                   href={secondaryCta.href}
-                  className="px-8 py-3 bg-transparent text-neutral-200 font-semibold rounded-lg border-2 border-white hover:bg-neutral-200/10 transition-colors"
+                  className="px-8 py-3 bg-neutral-200 text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   {secondaryCta.text}
                 </Link>
@@ -89,6 +88,6 @@ export default function Hero({
           )}
         </div>
       </div>
-    </section>
+    </Link>
   );
 }

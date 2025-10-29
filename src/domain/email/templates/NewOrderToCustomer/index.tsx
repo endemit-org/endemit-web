@@ -37,7 +37,8 @@ function NewOrderToCustomerTemplate({ order }: Props) {
         <Text className="text-gray-800 mb-6">Order #{order.id}</Text>
         <Text className="text-gray-600 mb-6">
           This is a confirmation of your order placed with us. Below are the
-          details of your purchase.
+          details of your purchase. Your invoice is attached as a PDF document
+          to this email.
           {shippingAddress && (
             <div>
               We will ship your order to the address provided shortly, usually

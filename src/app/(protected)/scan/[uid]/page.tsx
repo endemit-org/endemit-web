@@ -14,6 +14,27 @@ import { serializeTicket } from "@/domain/ticket/util";
 
 export const revalidate = 60;
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    uid: string;
+  }>;
+}) {
+  const { uid } = await params;
+  const event = await fetchEventFromCmsByUid(uid);
+
+  if (!event) {
+    notFound();
+  }
+
+  const title = `${event.meta.title ?? event.name} • Scanner`;
+
+  return {
+    title,
+  };
+}
+
 export default async function EventScanPage({
   params,
 }: {

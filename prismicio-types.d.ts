@@ -235,6 +235,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | SoundCloudSlice
   | PoemSlice
   | VinylPromoSectionSlice
   | EventListSlice
@@ -320,6 +321,30 @@ interface ContentPageDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/image
    */
   meta_image: prismic.ImageField<never>;
+
+  /**
+   * Update frequency field in *Content page*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: content_page.update_frequency
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  update_frequency: prismic.SelectField<
+    "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never"
+  >;
+
+  /**
+   * Priority field in *Content page*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: 1.0-0.8: High priority : 0.7-0.4: Mid priority : 0.3-0.0: Low priority
+   * - **API ID Path**: content_page.priority
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  priority: prismic.NumberField;
 }
 
 /**
@@ -1013,6 +1038,16 @@ export interface PodcastDocumentDataTracklistItem {
    * - **Documentation**: https://prismic.io/docs/fields/link
    */
   link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+  /**
+   * Timestamp field in *Podcast → Tracklist*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast.tracklist[].timestamp
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  timestamp: prismic.KeyTextField;
 }
 
 type PodcastDocumentDataSlicesSlice = never;
@@ -1055,15 +1090,15 @@ interface PodcastDocumentData {
   episode_number: prismic.KeyTextField;
 
   /**
-   * Description field in *Podcast*
+   * Episode description field in *Podcast*
    *
-   * - **Field Type**: Text
+   * - **Field Type**: Rich Text
    * - **Placeholder**: *None*
-   * - **API ID Path**: podcast.description
+   * - **API ID Path**: podcast.episode_description
    * - **Tab**: Main
-   * - **Documentation**: https://prismic.io/docs/fields/text
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
    */
-  description: prismic.KeyTextField;
+  episode_description: prismic.RichTextField;
 
   /**
    * Artist field in *Podcast*
@@ -1112,15 +1147,15 @@ interface PodcastDocumentData {
   track_url: prismic.KeyTextField;
 
   /**
-   * Track API url field in *Podcast*
+   * Footnote field in *Podcast*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: Starts with https://api.soundcloud.com/tracks/....
-   * - **API ID Path**: podcast.track_api_url
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast.footnote
    * - **Tab**: Main
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
-  track_api_url: prismic.KeyTextField;
+  footnote: prismic.KeyTextField;
 
   /**
    * Tracklist field in *Podcast*
@@ -1249,9 +1284,16 @@ export interface ProductDocumentDataRelatedProductsItem {
   call_to_action: prismic.KeyTextField;
 }
 
-type ProductDocumentDataSlicesSlice = never;
-
-type ProductDocumentDataSlices1Slice = never;
+type ProductDocumentDataSlicesSlice =
+  | HeroSlice
+  | TextColumnSlice
+  | VinylPromoSectionSlice
+  | NewsletterSubscriptionSlice
+  | ContentSectionSlice
+  | GridTileSlice
+  | SpacerSlice
+  | ImageGallerySlice
+  | SoundCloudSlice;
 
 /**
  * Item in *Product → Variants*
@@ -1376,17 +1418,6 @@ interface ProductDocumentData {
   video: prismic.LinkToMediaField<prismic.FieldState, never>;
 
   /**
-   * Description field in *Product*
-   *
-   * - **Field Type**: Rich Text
-   * - **Placeholder**: Descriptive text to highlight the features of the product
-   * - **API ID Path**: product.description
-   * - **Tab**: About
-   * - **Documentation**: https://prismic.io/docs/fields/rich-text
-   */
-  description: prismic.RichTextField;
-
-  /**
    * Related products field in *Product*
    *
    * - **Field Type**: Group
@@ -1419,7 +1450,31 @@ interface ProductDocumentData {
    * - **Tab**: About
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
-  checkout_description: prismic.KeyTextField;
+  checkout_description: prismic.KeyTextField /**
+   * Description field in *Product*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Descriptive text to highlight the features of the product
+   * - **API ID Path**: product.description
+   * - **Tab**: Rich content
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */;
+  description: prismic.RichTextField;
+
+  /**
+   * Display content slices field in *Product*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Above description
+   * - **API ID Path**: product.display_content_slices
+   * - **Tab**: Rich content
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  display_content_slices: prismic.SelectField<
+    "Above description" | "Below description",
+    "filled"
+  >;
 
   /**
    * Slice Zone field in *Product*
@@ -1427,7 +1482,7 @@ interface ProductDocumentData {
    * - **Field Type**: Slice Zone
    * - **Placeholder**: *None*
    * - **API ID Path**: product.slices[]
-   * - **Tab**: About
+   * - **Tab**: Rich content
    * - **Documentation**: https://prismic.io/docs/slices
    */
   slices: prismic.SliceZone<ProductDocumentDataSlicesSlice> /**
@@ -1524,18 +1579,7 @@ interface ProductDocumentData {
         ];
       },
     ]
-  >;
-
-  /**
-   * Slice Zone field in *Product*
-   *
-   * - **Field Type**: Slice Zone
-   * - **Placeholder**: *None*
-   * - **API ID Path**: product.slices1[]
-   * - **Tab**: Attributes
-   * - **Documentation**: https://prismic.io/docs/slices
-   */
-  slices1: prismic.SliceZone<ProductDocumentDataSlices1Slice> /**
+  > /**
    * Variants field in *Product*
    *
    * - **Field Type**: Group
@@ -2805,6 +2849,71 @@ export type ProductListSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *SoundCloud → Default → Primary*
+ */
+export interface SoundCloudSliceDefaultPrimary {
+  /**
+   * Soundcloud url field in *SoundCloud → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sound_cloud.default.primary.url
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  url: prismic.KeyTextField;
+
+  /**
+   * Height field in *SoundCloud → Default → Primary*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sound_cloud.default.primary.height
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  height: prismic.NumberField;
+
+  /**
+   * Color field in *SoundCloud → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sound_cloud.default.primary.color
+   * - **Documentation**: https://prismic.io/docs/fields/color
+   */
+  color: prismic.ColorField;
+}
+
+/**
+ * Default variation for SoundCloud Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type SoundCloudSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<SoundCloudSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *SoundCloud*
+ */
+type SoundCloudSliceVariation = SoundCloudSliceDefault;
+
+/**
+ * SoundCloud Shared Slice
+ *
+ * - **API ID**: `sound_cloud`
+ * - **Description**: SoundCloud
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type SoundCloudSlice = prismic.SharedSlice<
+  "sound_cloud",
+  SoundCloudSliceVariation
+>;
+
+/**
  * Primary content in *Spacer → Default → Primary*
  */
 export interface SpacerSliceDefaultPrimary {
@@ -3152,6 +3261,17 @@ export interface VinylPromoSectionSliceDefaultPrimary {
   product: ContentRelationshipFieldWithData<
     [{ id: "product"; fields: ["title"] }]
   >;
+
+  /**
+   * Display add to cart field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: vinyl_promo_section.default.primary.display_add_to_cart
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  display_add_to_cart: prismic.BooleanField;
 }
 
 /**
@@ -3236,7 +3356,6 @@ declare module "@prismicio/client" {
       ProductDocumentDataImagesItem,
       ProductDocumentDataRelatedProductsItem,
       ProductDocumentDataSlicesSlice,
-      ProductDocumentDataSlices1Slice,
       ProductDocumentDataVariantsItem,
       ProductDocumentDataRegionalEligibilityItem,
       VenueDocument,
@@ -3298,6 +3417,10 @@ declare module "@prismicio/client" {
       ProductListSliceDefault,
       ProductListSliceFeatured,
       ProductListSliceManual,
+      SoundCloudSlice,
+      SoundCloudSliceDefaultPrimary,
+      SoundCloudSliceVariation,
+      SoundCloudSliceDefault,
       SpacerSlice,
       SpacerSliceDefaultPrimary,
       SpacerSliceVariation,
