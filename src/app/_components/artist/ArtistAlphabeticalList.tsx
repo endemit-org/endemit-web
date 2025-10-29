@@ -1,6 +1,7 @@
 import { Artist } from "@/domain/artist/types/artist";
 import Link from "next/link";
 import Image from "next/image";
+import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 
 type Props = {
   artists: Artist[];
@@ -35,14 +36,32 @@ export default function ArtistAlphabeticalList({ artists }: Props) {
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/50 to-transparent opacity-60" />
           </div>
 
-          <div className="relative p-4 min-h-[80px] flex items-center justify-center">
-            <span className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
+          <div className="relative p-4 min-h-[80px] flex  flex-col items-center justify-center">
+            <div className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
               {artist.name}
-            </span>
-            <span className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
+            </div>
+            <div className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
               {artist.name}
-            </span>
+            </div>
           </div>
+          {artist.isEndemitCrew && (
+            <div
+              className={
+                " w-full  flex gap-x-1  z-10 items-center absolute bottom-0 justify-center"
+              }
+            >
+              <div
+                className={
+                  "uppercase font-heading pt-2 text-neutral-500 text-xs"
+                }
+              >
+                Part of
+              </div>{" "}
+              <div className={"w-14 text-neutral-300"}>
+                <AnimatedEndemitLogo />
+              </div>
+            </div>
+          )}
         </Link>
       ))}
     </div>

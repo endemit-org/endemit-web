@@ -45,8 +45,9 @@ export default function CheckoutItem({
               <Image
                 src={item.images[0].src}
                 alt={item.name}
-                width={64}
-                height={64}
+                width={100}
+                height={100}
+                quality={90}
                 className={"aspect-square object-cover w-20 rounded-md"}
               />
             </Link>
@@ -106,7 +107,7 @@ export default function CheckoutItem({
 
           {item.limits?.cutoffTimestamp &&
             isProductSellableByCutoffDate(item) && (
-              <div className="text-blue-400  text-sm pt-2">
+              <div className="text-neutral-400  text-sm pt-2">
                 This item is available for sale until{" "}
                 {formatDateTime(ensureTypeIsDate(item.limits.cutoffTimestamp))}
               </div>

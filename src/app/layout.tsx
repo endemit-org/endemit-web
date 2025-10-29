@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/_styles/globals.css";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
 import { Teko, Space_Grotesk } from "next/font/google";
 import EnvironmentIndicator from "@/app/_components/development/EnvironmentIndicator";
@@ -98,7 +98,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
-      <Analytics />
+      <VercelAnalytics />
       <EnvironmentIndicator />
       <Providers>{children}</Providers>
     </html>

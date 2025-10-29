@@ -16,6 +16,8 @@ import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import clsx from "clsx";
+import { Metadata } from "next";
+import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -27,6 +29,58 @@ export async function generateStaticParams() {
   return events.map(event => ({
     uid: event.uid,
   }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    uid: string;
+  }>;
+}): Promise<Metadata> {
+  const { uid } = await params;
+  const event = await fetchEventFromCmsByUid(uid);
+
+  if (!event) {
+    notFound();
+  }
+
+  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start ? formatDate(event.date_start) : ""}`}`} • Events`;
+  const description = event?.meta.description ?? event.description ?? undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: event.meta.image
+        ? [event.meta.image]
+        : event.promoImage?.src
+          ? [event.promoImage?.src]
+          : undefined,
+    },
+  };
+}
+
+function TicketDisplay({ product }: { product: Product }) {
+  return (
+    <div className={"flex flex-col items-center text-neutral-200"}>
+      <div className={"font-heading uppercase text-3xl text-neutral-400 mb-8"}>
+        Tickets available now
+      </div>
+      <div>
+        <ImageWithFallback
+          src={product.images[0].src}
+          alt={product.images[0].alt}
+          width={400}
+          height={229}
+        />
+      </div>
+      <h2 className={"text-2xl my-6"}>{product.name}</h2>
+      <ProductAddToCart product={product} />
+    </div>
+  );
 }
 
 export default async function EventPage({
@@ -54,14 +108,14 @@ export default async function EventPage({
     {
       label: "Lineup",
       content: <EventLineUp artists={event.artists} />,
-      id: "page",
+      id: "lineup",
       sortingWeight: 200,
     },
     {
       label: "Location",
-      id: "test-2",
+      id: "location",
       content: <EventLocation venue={event.venue} />,
-      sortingWeight: 300,
+      sortingWeight: 400,
     },
   ] as TabItem[];
 
@@ -69,7 +123,11 @@ export default async function EventPage({
     innerContentPages.forEach(page => {
       defaultContent.push({
         label: page.title,
-        content: <SliceDisplay slices={page.slices} />,
+        content: (
+          <div className={"max-lg:text-xs"}>
+            <SliceDisplay slices={page.slices} />
+          </div>
+        ),
         id: page.uid,
         sortingWeight: page.sortingWeight,
       });
@@ -78,157 +136,171 @@ export default async function EventPage({
 
   if (event.slices.length > 0) {
     defaultContent.push({
-      label: "Overview",
+      label: "About",
       content: <SliceDisplay slices={event.slices} />,
       id: "overview",
       sortingWeight: 0,
+      hideTitle: true,
+    });
+  }
+
+  if (product) {
+    defaultContent.push({
+      label: "Tickets",
+      content: <TicketDisplay product={product} />,
+      id: "tickets",
+      sortingWeight: 300,
+      mobileOnly: true,
     });
   }
 
   return (
-    <OuterPage>
-      <PageHeadline
-        title={event.name}
-        segments={[
-          { label: "Endemit", path: "" },
-          { label: "Events", path: "events" },
-          { label: event.name, path: event.uid },
-        ]}
-      />
-      <div
-        className={
-          "absolute top-80 h-96 blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
-        }
-        style={{
-          backgroundImage: `url(${event.coverImage?.src})`,
-        }}
-      ></div>
-      <div
-        style={{
-          backgroundImage: "url('/images/worms.png')",
-          backgroundRepeat: "repeat",
-          backgroundBlendMode: "soft-light",
-          backgroundSize: "150px",
-        }}
-        className={"bg-neutral-950 relative"}
-      >
-        <div className={"flex justify-center relative max-lg:flex-col"}>
-          {event.artAuthor && (
-            <Link
-              href={event.artAuthor.link}
-              target={"_blank"}
-              className={
-                "absolute  lg:left-0 max-lg:right-0 max-lg:top-0 lg:bottom-0 bg-neutral-900 py-2 px-2 text-xs text-neutral-600"
-              }
-            >
-              Author: {event.artAuthor.text}
-            </Link>
-          )}
-          {event.coverImage?.src && (
-            <Image
-              src={event.coverImage?.src}
-              alt={event.coverImage?.alt ?? ""}
-              height={500}
-              width={888}
-              className="aspect-video lg:w-2/3 w-full"
-            />
-          )}
-          <div
-            className={
-              "lg:w-1/3  text-neutral-200 p-2 lg:p-4 xl:p-8 lg:border-l-2 border-l-neutral-200 flex flex-col"
-            }
-          >
-            {event.date_start && (
-              <div className={"uppercase "}>{formatDate(event.date_start)}</div>
-            )}
-
-            <div className="flex-1 justify-center flex flex-col">
-              {event.artists.map(artist => (
-                <h3
-                  className={"lg:text-3xl xl:text-4xl px-3"}
-                  key={`artist-marquee-${artist.id}`}
+    <>
+      <EventSeoMicrodata product={product} event={event} />
+      <OuterPage className={"max-lg:pt-10"}>
+        <PageHeadline
+          title={event.name}
+          segments={[
+            { label: "Endemit", path: "" },
+            { label: "Events", path: "events" },
+            { label: event.name, path: event.uid },
+          ]}
+        />
+        <div
+          className={
+            "absolute top-80 h-96 blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
+          }
+          style={{
+            backgroundImage: `url(${event.coverImage?.src})`,
+          }}
+        ></div>
+        <div
+          style={{
+            backgroundImage: "url('/images/worms.png')",
+            backgroundRepeat: "repeat",
+            backgroundBlendMode: "soft-light",
+            backgroundSize: "150px",
+          }}
+          className={"bg-neutral-950 relative"}
+        >
+          <div className={"flex justify-center relative max-lg:flex-col"}>
+            <div className={"relative aspect-video lg:w-2/3 w-full"}>
+              {event.artAuthor && (
+                <Link
+                  href={event.artAuthor.link}
+                  target={"_blank"}
+                  className={
+                    "absolute  left-0 bottom-0 hover:bg-neutral-900 bg-neutral-900/60 py-1 px-1 text-xs text-neutral-600"
+                  }
                 >
-                  {artist.name}
-                </h3>
-              ))}
-            </div>
-            <div className={"flex gap-x-2 text-sm lg:text-md"}>
-              {event.venue?.logo && event.venue?.logo.src && (
+                  Author: {event.artAuthor.text}
+                </Link>
+              )}
+              {event.coverImage?.src && (
                 <Image
-                  src={event.venue?.logo.src}
-                  alt={event.venue?.logo.src}
-                  width={20}
-                  height={20}
-                  className="aspect-square w-6 h-6"
+                  src={event.coverImage?.src}
+                  alt={event.coverImage?.alt ?? ""}
+                  height={455}
+                  width={809}
+                  quality="100"
+                  className="aspect-video w-full"
                 />
               )}
-              {event.venue?.name}
             </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className={
-          "text-[clamp(4rem,4cqi,20rem)] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center w-full justify-between overflow-hidden text-nowrap -scale-y-100"
-        }
-      >
-        {event.name} · {event.name} · {event.name} · {event.name} · {event.name}{" "}
-        · {event.name} · {event.name} · {event.name} ·
-      </div>
-
-      <div className={"relative flex"}>
-        <div className={clsx(product && "lg:w-4/5")}>
-          <Tabs items={defaultContent} sortByWeight={true} />
-        </div>
-
-        {product && (
-          <div className={"max-lg:hidden"}>
             <div
               className={
-                " p-8 flex-1 flex flex-col items-center text-neutral-200 bg-neutral-800 rounded-md h-fit"
+                "lg:w-1/3  text-neutral-200 p-4 lg:p-4 xl:p-8 lg:border-l-2 border-l-neutral-200 flex flex-col max-lg:gap-y-6 max-lg:items-center max-lg:py-12"
               }
-              style={{
-                backgroundImage: "url('/images/worms.png')",
-                backgroundRepeat: "repeat",
-                backgroundBlendMode: "multiply",
-                backgroundSize: "150px",
-                // backgroundColor: event.colour,
-              }}
             >
-              <div
-                className={
-                  "font-heading uppercase text-3xl text-neutral-400 mb-8"
-                }
-              >
-                Tickets available now
-              </div>
-              <div>
-                <ImageWithFallback
-                  src={product.images[0].src}
-                  alt={product.images[0].alt}
-                />
-              </div>
-              <h2 className={"text-2xl my-6"}>{product.name}</h2>
-              <ProductAddToCart product={product} />
-            </div>
-            <div className={"p4 text-center mt-10 "}>
               {event.date_start && (
                 <div
                   className={
-                    "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
+                    "uppercase max-lg:text-2xl lg:text-[clamp(0.7rem,2cqi,2rem)]"
                   }
                 >
-                  {formatEventDateAndTime(event.date_start)}
+                  {formatDate(event.date_start)}
                 </div>
               )}
-              <div className={"text-neutral-400 text-md font-thin "}>
+
+              <div className="flex-1 justify-center flex flex-col lg:@container">
+                {event.artists.map(artist => (
+                  <h3
+                    className={
+                      "max-lg:text-3xl lg:text-[clamp(1.7rem,20cqi,5rem)] lg:leading-[clamp(1.9rem,20.2cqi,5.2rem)] max-lg:text-center max-lg:w-full"
+                    }
+                    key={`artist-marquee-${artist.id}`}
+                  >
+                    {artist.name}
+                  </h3>
+                ))}
+              </div>
+              <div
+                className={"flex gap-x-2 text-sm lg:text-md"}
+                id={"overview"}
+              >
+                {event.venue?.logo && event.venue?.logo.src && (
+                  <Image
+                    src={event.venue?.logo.src}
+                    alt={event.venue?.logo.src}
+                    width={32}
+                    height={32}
+                    quality={85}
+                    className="aspect-square w-6 h-6"
+                  />
+                )}
                 {event.venue?.name}
-                <div>{event.venue?.address}</div>
               </div>
             </div>
           </div>
-        )}
-      </div>
-    </OuterPage>
+        </div>
+        <div
+          className={
+            "-left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
+          }
+        >
+          <div className={"animate-marquee-move"}>
+            {Array(15).fill(event.name).join(" · ")}
+          </div>
+        </div>
+
+        <div className={"relative flex"}>
+          <div className={clsx(product && "lg:w-4/5")}>
+            <Tabs items={defaultContent} sortByWeight={true} />
+          </div>
+
+          {product && (
+            <section className={"max-lg:hidden"}>
+              <div
+                className={" p-8 flex-1  bg-neutral-800 rounded-md h-fit"}
+                style={{
+                  backgroundImage: "url('/images/worms.png')",
+                  backgroundRepeat: "repeat",
+                  backgroundBlendMode: "multiply",
+                  backgroundSize: "150px",
+                  // backgroundColor: event.colour,
+                }}
+              >
+                <TicketDisplay product={product} />
+              </div>
+              <div className={"p4 text-center mt-10 "}>
+                {event.date_start && (
+                  <div
+                    className={
+                      "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
+                    }
+                  >
+                    {formatEventDateAndTime(event.date_start)}
+                  </div>
+                )}
+                <div className={"text-neutral-400 text-md font-thin "}>
+                  {event.venue?.name}
+                  <div>{event.venue?.address}</div>
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+      </OuterPage>
+    </>
   );
 }

@@ -8,6 +8,45 @@ type Props = {
   venue: VenueInEvent | null;
 };
 
+function EventLocationDetails({ venue }: Props) {
+  if (!venue) return;
+
+  return (
+    <>
+      <div className={"mb-8"}>
+        <RichTextDisplay richText={venue.description} />
+      </div>
+      {venue?.coordinates && (
+        <GoogleMapLocation
+          center={{
+            lat: venue?.coordinates.latitude,
+            lng: venue?.coordinates.longitude,
+          }}
+          zoom={18}
+          markers={[
+            {
+              position: {
+                lat: venue?.coordinates.latitude,
+                lng: venue?.coordinates.longitude,
+              },
+              customIcon: {
+                url: "/images/endemit-icon-small.png",
+                scaledSize: { width: 60, height: 60 },
+                anchor: { x: 20, y: 40 },
+              },
+            },
+          ]}
+          mapOptions={{
+            disableDefaultUI: false,
+            zoomControl: true,
+            streetViewControl: true,
+          }}
+        />
+      )}
+    </>
+  );
+}
+
 export default function EventLocation({ venue }: Props) {
   if (!venue) return;
 
@@ -18,7 +57,7 @@ export default function EventLocation({ venue }: Props) {
           <ImageWithFallback
             src={venue.logo?.src}
             alt={venue.logo?.alt ?? venue.name}
-            className={"w-80"}
+            className={"w-20"}
           />
         </div>
 
@@ -34,38 +73,14 @@ export default function EventLocation({ venue }: Props) {
                 {venue.address}
               </Link>
             </div>
+            <div className="max-lg:hidden">
+              <EventLocationDetails venue={venue} />
+            </div>
           </div>
-          <div>
-            <RichTextDisplay richText={venue.description} />
-          </div>
-          {venue?.coordinates && (
-            <GoogleMapLocation
-              center={{
-                lat: venue?.coordinates.latitude,
-                lng: venue?.coordinates.longitude,
-              }}
-              zoom={18}
-              markers={[
-                {
-                  position: {
-                    lat: venue?.coordinates.latitude,
-                    lng: venue?.coordinates.longitude,
-                  },
-                  customIcon: {
-                    url: "/images/endemit-icon-small.png",
-                    scaledSize: { width: 60, height: 60 },
-                    anchor: { x: 20, y: 40 },
-                  },
-                },
-              ]}
-              mapOptions={{
-                disableDefaultUI: false,
-                zoomControl: true,
-                streetViewControl: true,
-              }}
-            />
-          )}
         </div>
+      </div>
+      <div className="lg:hidden flex gap-y-6 flex-col mt-6">
+        <EventLocationDetails venue={venue} />
       </div>
     </div>
   );

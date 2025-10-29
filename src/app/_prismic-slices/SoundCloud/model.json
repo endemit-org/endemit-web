@@ -1,0 +1,40 @@
+{
+  "id": "sound_cloud",
+  "type": "SharedSlice",
+  "name": "SoundCloud",
+  "description": "SoundCloud",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "url": {
+          "type": "Text",
+          "config": {
+            "label": "Soundcloud url",
+            "placeholder": ""
+          }
+        },
+        "height": {
+          "type": "Number",
+          "config": {
+            "label": "Height",
+            "placeholder": ""
+          }
+        },
+        "color": {
+          "type": "Color",
+          "config": {
+            "label": "Color",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

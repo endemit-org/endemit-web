@@ -21,6 +21,8 @@ export const transformArtistObject = (artist: ArtistDocument) => {
           url: asLink(link.link),
         }))
       : [],
+    updatedAt: new Date(artist.last_publication_date),
+    isEndemitCrew: artist.data.is_endemit_crew,
 
     meta: {
       title: artist.data.meta_title,

@@ -72,15 +72,6 @@
           "allowText": false
         }
       },
-      "description": {
-        "type": "StructuredText",
-        "config": {
-          "label": "Description",
-          "placeholder": "Descriptive text to highlight the features of the product",
-          "allowTargetBlank": true,
-          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
-        }
-      },
       "related_products": {
         "type": "Group",
         "config": {
@@ -137,12 +128,60 @@
           "label": "Checkout description",
           "placeholder": "Item description visible in Stripe"
         }
+      }
+    },
+    "Rich content": {
+      "description": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description",
+          "placeholder": "Descriptive text to highlight the features of the product",
+          "allowTargetBlank": true,
+          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
+        }
+      },
+      "display_content_slices": {
+        "type": "Select",
+        "config": {
+          "label": "Display content slices",
+          "placeholder": "",
+          "options": ["Above description", "Below description"],
+          "default_value": "Above description"
+        }
       },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
         "config": {
-          "choices": {}
+          "choices": {
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "text_column": {
+              "type": "SharedSlice"
+            },
+            "vinyl_promo_section": {
+              "type": "SharedSlice"
+            },
+            "newsletter_subscription": {
+              "type": "SharedSlice"
+            },
+            "content_section": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "sound_cloud": {
+              "type": "SharedSlice"
+            }
+          }
         }
       }
     },
@@ -219,13 +258,6 @@
               ]
             }
           ]
-        }
-      },
-      "slices1": {
-        "type": "Slices",
-        "fieldset": "Slice Zone",
-        "config": {
-          "choices": {}
         }
       }
     },

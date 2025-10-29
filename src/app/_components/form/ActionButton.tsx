@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface ActionButtonProps {
   href?: string;
@@ -11,6 +12,7 @@ interface ActionButtonProps {
   variant?: "primary" | "secondary" | "danger";
   size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
+  openInNewTab?: boolean;
 }
 
 export default function ActionButton({
@@ -23,6 +25,7 @@ export default function ActionButton({
   variant = "primary",
   size = "md",
   fullWidth = true,
+  openInNewTab = false,
 }: ActionButtonProps) {
   const router = useRouter();
 
@@ -55,10 +58,25 @@ export default function ActionButton({
     if (onClick) {
       onClick(e);
     }
-    if (href && !disabled) {
+
+    if (href && !disabled && !openInNewTab) {
       router.push(href);
     }
   };
+
+  if (href && !disabled) {
+    return (
+      <Link
+        href={href}
+        target={openInNewTab ? "_blank" : undefined}
+        rel={openInNewTab ? "noopener noreferrer" : undefined}
+        className={combinedClasses}
+        onClick={onClick}
+      >
+        {children}
+      </Link>
+    );
+  }
 
   return (
     <button

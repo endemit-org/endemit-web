@@ -32,7 +32,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ tiles, className = "" }) => {
               aspectRatio: tile.size === "portrait" ? "1/2" : "1/1",
             }}
           >
-            <div className="h-full relative overflow-hidden">
+            <div className="h-full relative overflow-hidden ">
               <Tile config={tile} />
             </div>
           </div>

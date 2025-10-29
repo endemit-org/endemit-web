@@ -8,4 +8,5 @@ export type ContentPage = {
   renderFrame: boolean;
   slices: SliceZone;
   meta: CmsMetaData;
+  updatedAt: Date;
 };

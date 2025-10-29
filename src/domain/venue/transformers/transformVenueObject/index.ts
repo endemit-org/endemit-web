@@ -17,6 +17,7 @@ export const transformVenueObject = (venue: VenueDocument) => {
     address: venue.data?.address ?? null,
     coordinates: venue.data.coordinates ?? null,
     mapUrl: asLink(venue.data.map_location_url) ?? null,
+    updatedAt: new Date(venue.last_publication_date),
     meta: {
       title: venue.data.meta_title,
       description: venue.data.meta_description,

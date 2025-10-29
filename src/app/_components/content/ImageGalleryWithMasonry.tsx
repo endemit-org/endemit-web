@@ -17,8 +17,8 @@ interface Props {
 export default function ImageGalleryWithMasonry({
   images,
   altFallbackText,
-  width = 800,
-  height = 800,
+  width = 1200,
+  height = 1200,
 }: Props) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -49,6 +49,7 @@ export default function ImageGalleryWithMasonry({
       {/* Desktop Grid */}
       <div className="hidden lg:grid lg:grid-cols-3 lg:gap-8">
         <Image
+          quality={95}
           width={width}
           height={height}
           alt={images[0]?.alt ?? altFallbackText}
@@ -61,6 +62,7 @@ export default function ImageGalleryWithMasonry({
         />
         {images[1] && (
           <Image
+            quality={95}
             width={width}
             height={height}
             alt={images[1]?.alt ?? altFallbackText}
@@ -74,6 +76,7 @@ export default function ImageGalleryWithMasonry({
         )}
         {images[2] && (
           <Image
+            quality={95}
             width={width}
             height={height}
             alt={images[2]?.alt ?? altFallbackText}
@@ -86,6 +89,7 @@ export default function ImageGalleryWithMasonry({
         )}
         {images[3] && (
           <Image
+            quality={95}
             width={width}
             height={height}
             alt={images[3]?.alt ?? altFallbackText}
@@ -110,6 +114,7 @@ export default function ImageGalleryWithMasonry({
           {images.map((image, index) => (
             <div key={index} className="flex-shrink-0 w-full snap-center">
               <Image
+                quality={95}
                 width={width}
                 height={height}
                 alt={image?.alt ?? altFallbackText}

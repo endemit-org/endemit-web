@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /scan/
+Disallow: /api/
+
+Sitemap: https://endemit.org/sitemap.xml

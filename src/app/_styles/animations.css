@@ -50,6 +50,15 @@
     }
   }
 
+@keyframes moveBackAndForth {
+  0%, 100% {
+    transform: translate3d(-60%, 0, 0);
+  }
+  50% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
+
 @keyframes beatShake {
   0% {
     transform: translateX(0) translateY(0);
@@ -94,4 +103,8 @@
 .animate-sun {
   animation: sunBlown 25s ease-in-out infinite;
   transform-origin: 87% 22%;
+}
+
+.animate-marquee-move {
+  animation: moveBackAndForth 180s ease-in-out infinite;
 }

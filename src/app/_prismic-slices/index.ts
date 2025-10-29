@@ -15,6 +15,7 @@ export const components = {
   podcast_list: dynamic(() => import("./PodcastList")),
   poem: dynamic(() => import("./EventIntro")),
   product_list: dynamic(() => import("./ProductList")),
+  sound_cloud: dynamic(() => import("./SoundCloud")),
   spacer: dynamic(() => import("./Spacer")),
   tabs: dynamic(() => import("./Tabs")),
   text_column: dynamic(() => import("./TextColumns")),

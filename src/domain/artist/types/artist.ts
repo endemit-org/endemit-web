@@ -16,9 +16,11 @@ export type Artist = {
   description?: RichTextField | null;
   image: CmsImage | null;
   video: string | null;
+  isEndemitCrew: boolean;
   links: Array<{
     type: ArtistLinkType;
     url: string;
   }>;
+  updatedAt: Date;
   meta: CmsMetaData;
 };

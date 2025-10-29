@@ -45,8 +45,9 @@ export default function EventPoster({ event }: EventProps) {
                 <Image
                   src={event.promoImage?.src}
                   alt={event.promoImage?.alt ?? event.name}
-                  width={400}
-                  height={400}
+                  width={600}
+                  height={600}
+                  quality={95}
                   className="object-cover aspect-square w-full group-hover:scale-125 transition-transform duration-300 ease-in-out relative"
                 />
               )}

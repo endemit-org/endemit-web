@@ -8,7 +8,6 @@ const ALLOWED_DEV_ORIGINS = [
 ];
 
 const IMAGE_CONFIG = {
-  unoptimized: true,
   remotePatterns: [
     {
       protocol: "https" as const,

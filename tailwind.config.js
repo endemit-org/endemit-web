@@ -1,4 +1,5 @@
 import containerQueries from "@tailwindcss/container-queries";
+import tailwindScrollbar from "tailwind-scrollbar";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -51,5 +52,6 @@ module.exports = {
         },
       });
     },
+    tailwindScrollbar({ nocompatible: true }),
   ],
 };

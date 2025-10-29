@@ -41,6 +41,15 @@
               }
             ]
           }
+        },
+        "display_add_to_cart": {
+          "type": "Boolean",
+          "config": {
+            "label": "Display add to cart",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
         }
       },
       "items": {}
