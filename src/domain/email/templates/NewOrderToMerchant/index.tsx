@@ -39,7 +39,8 @@ function NewOrderToMerchantTemplate({ order }: Props) {
         <Text className="text-gray-800 mb-6">Order #{order.id}</Text>
         <Text className="text-gray-600 mb-6">
           This is a copy of an order placed with us on Endemit.org. Below are
-          the details of the customers purchase.
+          the details of the customers purchase. The invoice is attached for
+          reference.
           {shippingAddress && (
             <div>
               We have stated that we will ship your order to the address

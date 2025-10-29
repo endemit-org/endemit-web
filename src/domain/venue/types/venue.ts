@@ -11,4 +11,5 @@ export type Venue = {
   address: string | null;
   mapUrl: string | null;
   meta: CmsMetaData;
+  updatedAt: Date;
 };

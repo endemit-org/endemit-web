@@ -16,11 +16,19 @@ async function EventListContent({ title, type }: EventListProps) {
   let filteredEvents = events;
 
   if (type === "Upcoming") {
-    filteredEvents = events.filter(event => !isEventCompleted(event));
+    filteredEvents = events
+      .filter(event => !isEventCompleted(event))
+      .filter(event => event.date_start !== null)
+      //@ts-expect-error Typescript doesnt get that it cant be null
+      .sort((a, b) => a.date_start - b.date_start);
   }
 
   if (type === "Past") {
-    filteredEvents = events.filter(event => isEventCompleted(event));
+    filteredEvents = events
+      .filter(event => isEventCompleted(event))
+      .filter(event => event.date_start !== null)
+      //@ts-expect-error Typescript doesnt get that it cant be null
+      .sort((a, b) => b.date_start - a.date_start);
   }
 
   if (!filteredEvents || filteredEvents.length === 0) {

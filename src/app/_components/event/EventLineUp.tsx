@@ -27,8 +27,12 @@ export default function EventLineUp({ artists }: Props) {
 
   return (
     <div className={"flex flex-col gap-y-6"}>
-      <div className="flex gap-x-6 w-full items-center justify-between">
-        <div className={"flex uppercase font-heading text-2xl gap-x-2 flex-1"}>
+      <div className="flex gap-x-6 w-full items-center justify-between max-lg:flex-col">
+        <div
+          className={
+            "flex uppercase font-heading text-2xl gap-x-2 flex-1 max-lg:hidden"
+          }
+        >
           {sortedArtists.map(artist => (
             <div key={`mini-artist-mq-${artist.id}`}>{artist.name}</div>
           ))}

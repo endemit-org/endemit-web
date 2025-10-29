@@ -7,11 +7,12 @@ interface Props {
 }
 
 const components: JSXMapSerializer = {
-  // heading1: ({ children }) => (
-  //   <h1 className="text-4xl font-bold">{children}</h1>
-  // ),
-  // heading2: ({ children }) => (
-  //   <h2 className="text-3xl font-semibold">{children}</h2>
+  heading1: ({ children }) => (
+    <h1 className="text-4xl font-bold">{children}</h1>
+  ),
+  heading2: ({ children }) => (
+    <h2 className="text-3xl font-semibold pt-12">{children}</h2>
+  ),
 
   // paragraph: ({ children }) => <p className="mb-4">{children}</p>,
   hyperlink: ({ node, children }) => (
@@ -19,6 +20,7 @@ const components: JSXMapSerializer = {
       {children}
     </Link>
   ),
+  list: ({ children }) => <ul className={"list-disc"}>{children}</ul>,
 };
 
 export default function RichTextDisplay({ richText }: Props) {

@@ -4,15 +4,9 @@ import OuterPage from "@/app/_components/content/OuterPage";
 import PageHeadline from "@/app/_components/content/PageHeadline";
 
 export const metadata: Metadata = {
-  title: "Merch",
-  description: "Exclusive Endemit merchandise, coming soon.",
-  openGraph: {
-    description: "Exclusive Endemit merchandise, coming soon.",
-    images: ["/images/og/endemit-og.png"],
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
+  title: "Secure checkout",
+  description:
+    "Secure checkout for Endemit store. Review your order, enter shipping details, and complete your purchase safely with SSL encryption.",
 };
 
 export default function CheckoutPage() {

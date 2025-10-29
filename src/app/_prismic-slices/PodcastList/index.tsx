@@ -4,6 +4,7 @@ import { SliceComponentProps } from "@prismicio/react";
 
 import PodcastSection from "@/app/_components/podcast/PodcastSection";
 import { fetchPodcastsFromCms } from "@/domain/cms/operations/fetchPodcastsFromCms";
+import PodcastSeriesSeoMicrodata from "@/app/_components/seo/PodcastSeriesSeoMicrodata";
 
 /**
  * Props for `PodcastList`.
@@ -25,6 +26,7 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
+      <PodcastSeriesSeoMicrodata />
       {podcasts && podcasts.length > 0 && (
         <PodcastSection
           podcasts={podcasts}

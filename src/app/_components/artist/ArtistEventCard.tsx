@@ -32,21 +32,24 @@ export default function ArtistEventCard({
               width={400}
               height={600}
               className="w-full h-auto"
-              sizes="(max-width: 768px) 100vw, 33vw"
             />
           </div>
           {/* Stage and Time Info */}
           {artist.start_time && artist.end_time && (
-            <div className=" space-y-2 text-center mt-4">
+            <div className=" space-y-2 text-center  bg-neutral-950 p-2">
               <div
                 className={clsx(
-                  "text-lg lg:text-xl uppercase font-heading",
+                  "max-sm:text-2xl lg:text-xl uppercase font-heading tracking-wide",
                   timeClassName
                 )}
               >
                 {formatDay(artist.start_time)} {formatTime(artist.start_time)} -{" "}
                 {formatTime(artist.end_time)}
-                {artist.stage && ` @ ${artist.stage}`}
+                {artist.stage && (
+                  <div className={"mt-0.5 text-neutral-400"}>
+                    @ {artist.stage}
+                  </div>
+                )}
               </div>
             </div>
           )}

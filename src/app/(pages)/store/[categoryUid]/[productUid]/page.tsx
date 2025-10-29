@@ -11,6 +11,11 @@ import style from "@/app/_styles/insetHtml.module.css";
 import { notFound } from "next/navigation";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
+import { Metadata } from "next";
+import { prismic } from "@/lib/services/prismic";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
+import clsx from "clsx";
+import ProductSeoMicrodata from "@/app/_components/seo/ProductSeoMicrodata";
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -24,42 +29,38 @@ export async function generateStaticParams() {
   }));
 }
 
-// TODO Nejc
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: { uid: string };
-// }): Promise<Metadata> {
-//   const prismicProduct = (await prismic
-//     .getByUID("product", params.uid)
-//     .catch(() => null)) as PrismicProductDocument;
-//
-//   if (!prismicProduct) {
-//     return {
-//       title: "Product Not Found",
-//     };
-//   }
-//
-//   const product = formatProduct(prismicProduct);
-//
-//   return {
-//     title: product.data.meta_title || product.data.title,
-//     description:
-//       product.meta_description ||
-//       richTextToPlainText(product.data.description),
-//     openGraph: {
-//       title: product.data.meta_title || product.data.title,
-//       description:
-//         product.data.meta_description ||
-//         richTextToPlainText(product.data.description),
-//       images: product.data.meta_image?.url
-//         ? [{ url: product.data.meta_image.url }]
-//         : product.images.length > 0
-//           ? [{ url: product.images[0].src }]
-//           : [],
-//     },
-//   };
-// }
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    productUid: string;
+  }>;
+}): Promise<Metadata> {
+  const { productUid } = await params;
+  const product = await fetchProductFromCmsByUid(productUid);
+
+  if (!product) {
+    notFound();
+  }
+
+  const title = `${product.meta.title ?? product.name} • ${product.category}`;
+  const description =
+    product?.meta.description ?? prismic.asText(product.description);
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: product.meta.image
+        ? [product.meta.image]
+        : product.images
+          ? product.images.map(image => image.src)
+          : undefined,
+    },
+  };
+}
 
 export default async function ProductPage({
   params,
@@ -79,79 +80,111 @@ export default async function ProductPage({
   const relatedProducts = product.relatedProducts;
 
   return (
-    <OuterPage>
-      <PageHeadline
-        title={product.name}
-        segments={[
-          { label: "Endemit", path: "" },
-          { label: "Store", path: "store" },
-          { label: product.category, path: getSlugFromText(product.category) },
-          { label: product.name, path: product.uid },
-        ]}
-      />
-
-      <InnerPage>
-        <div
-          className={
-            "absolute w-full blur-xl inset h-full top-0 mix-blend-multiply opacity-50"
-          }
-          style={{
-            backgroundImage: `url('${product.images[0]?.src}')`,
-            backgroundRepeat: "repeat",
-            backgroundBlendMode: "color-burn",
-            backgroundSize: "1500px",
-          }}
-        ></div>
-        <ProductStatusTag
-          status={product.status}
-          className={"translate-y-4 translate-x-4 relative"}
+    <>
+      <ProductSeoMicrodata product={product} />
+      <OuterPage>
+        <PageHeadline
+          title={product.name}
+          segments={[
+            { label: "Endemit", path: "" },
+            { label: "Store", path: "store" },
+            {
+              label: product.category,
+              path: getSlugFromText(product.category),
+            },
+            { label: product.name, path: product.uid },
+          ]}
         />
 
-        <ImageGalleryWithMasonry
-          images={product.images}
-          altFallbackText={product.name}
-        />
-
-        <div className={"lg:flex mt-12 lg:mt-8 relative"}>
-          <div
-            className={"lg:border-r lg:border-neutral-500 lg:pr-20 lg:w-2/3"}
-          >
-            <h3 className="sr-only">Description</h3>
-
-            <div className={`space-y-6 ${style.inset}`}>
-              <RichTextDisplay richText={product.description} />
-            </div>
-          </div>
+        <InnerPage>
           <div
             className={
-              "px-2 flex-1 lg:pl-10 flex flex-col items-center max-lg:border-neutral-500 max-lg:border-t max-lg:mt-10 max-lg:pt-10"
+              "absolute w-full blur-xl inset h-full top-0 mix-blend-multiply opacity-50"
             }
-          >
-            <ProductAddToCart product={product} />
+            style={{
+              backgroundImage: `url('${product.images[0]?.src}')`,
+              backgroundRepeat: "repeat",
+              backgroundBlendMode: "color-burn",
+              backgroundSize: "1500px",
+            }}
+          ></div>
+          <ProductStatusTag
+            status={product.status}
+            className={"translate-y-4 translate-x-4 relative"}
+          />
+
+          <ImageGalleryWithMasonry
+            images={product.images}
+            altFallbackText={product.name}
+          />
+
+          <div className={"lg:flex mt-12 lg:mt-8 relative"}>
+            <div
+              className={"lg:border-r lg:border-neutral-500 lg:pr-20 lg:w-2/3"}
+            >
+              <h3 className="sr-only">Description</h3>
+
+              {product.slices &&
+                product.displaySlicePosition === "Above description" && (
+                  <SliceDisplay slices={product.slices} />
+                )}
+
+              <div className={`space-y-6 ${style.inset}`}>
+                <RichTextDisplay richText={product.description} />
+              </div>
+
+              {product.slices &&
+                product.displaySlicePosition === "Below description" && (
+                  <SliceDisplay slices={product.slices} />
+                )}
+            </div>
+            <div
+              className={
+                "px-2 flex-1 lg:pl-10 flex flex-col items-center max-lg:border-neutral-500 max-lg:border-t max-lg:mt-10 max-lg:pt-10"
+              }
+            >
+              <ProductAddToCart product={product} />
+
+              {product.video && (
+                <div className="aspect-square w-full  object-cover mt-10 rounded-lg overflow-hidden">
+                  <video
+                    src={product.video}
+                    loop={true}
+                    muted={true}
+                    autoPlay={true}
+                    playsInline={true}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </InnerPage>
-      {relatedProducts && relatedProducts.length > 0 && (
-        <div className="mt-20 mb-10 text-center">
-          <h3 className={"text-neutral-200 text-2xl py-6"}>
-            You might also like
-          </h3>
-          <div className={"flex gap-0.5 flex-wrap"}>
-            {relatedProducts.map((relatedProduct, index) => (
-              <ProductCard
-                status={relatedProduct.status}
-                key={`related-${relatedProduct.id}-${index}`}
-                image={relatedProduct.images[0]}
-                name={relatedProduct.title}
-                uid={relatedProduct.uid}
-                price={relatedProduct.price}
-                category={relatedProduct.category}
-                callToAction={relatedProduct.callToAction}
-              />
-            ))}
+        </InnerPage>
+        {relatedProducts && relatedProducts.length > 0 && (
+          <div className="mt-20 mb-10 text-center">
+            <h3 className={"text-neutral-200 text-2xl py-6"}>
+              You might also like
+            </h3>
+            <div
+              className={clsx(
+                "sm:grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2"
+              )}
+            >
+              {relatedProducts.map((relatedProduct, index) => (
+                <ProductCard
+                  status={relatedProduct.status}
+                  key={`related-${relatedProduct.id}-${index}`}
+                  image={relatedProduct.images[0]}
+                  name={relatedProduct.title}
+                  uid={relatedProduct.uid}
+                  price={relatedProduct.price}
+                  category={relatedProduct.category}
+                  callToAction={relatedProduct.callToAction}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-    </OuterPage>
+        )}
+      </OuterPage>
+    </>
   );
 }

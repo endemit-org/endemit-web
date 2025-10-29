@@ -8,6 +8,9 @@ import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
 import Spacer from "@/app/_components/content/Spacer";
 import { fetchPodcastsFromCms } from "@/domain/cms/operations/fetchPodcastsFromCms";
 import { fetchPodcastFromCms } from "@/domain/cms/operations/fetchPodcastFromCms";
+import { Metadata } from "next";
+import { prismic } from "@/lib/services/prismic";
+import PodcastEpisodeSeoMicrodata from "@/app/_components/seo/PodcastEpisodeSeoMicrodata";
 
 export async function generateStaticParams() {
   const podcasts = await fetchPodcastsFromCms({});
@@ -21,6 +24,41 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    uid: string;
+  }>;
+}): Promise<Metadata> {
+  const { uid } = await params;
+  const podcast = await fetchPodcastFromCms(uid);
+
+  if (!podcast) {
+    notFound();
+  }
+
+  const title = `${podcast.meta.title ?? podcast.name} • Music`;
+  const description =
+    podcast?.meta.description ??
+    prismic.asText(podcast.description) ??
+    undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: podcast.meta.image
+        ? [podcast.meta.image]
+        : podcast.cover?.src
+          ? [podcast.cover?.src]
+          : undefined,
+    },
+  };
+}
+
 export default async function PodcastPage({
   params,
 }: {
@@ -29,7 +67,6 @@ export default async function PodcastPage({
   }>;
 }) {
   const { uid } = await params;
-
   const podcast = await fetchPodcastFromCms(uid);
 
   if (!podcast) {
@@ -45,47 +82,50 @@ export default async function PodcastPage({
       .slice(0, 4);
 
   return (
-    <OuterPage>
-      <PageHeadline
-        title={podcast.name}
-        segments={[
-          { label: "Endemit", path: "" },
-          { label: "Music", path: "music" },
-          { label: podcast.name, path: `emit/${uid}` },
-        ]}
-      />
-      <div>
-        <PodcastEpisodeHero
-          number={podcast.number}
-          coverSrc={podcast.cover?.src}
-          description={podcast.description}
-          trackUrl={podcast.track.url}
-          trackApiUrl={podcast.track.apiUrl}
-          uid={podcast.uid}
+    <>
+      <PodcastEpisodeSeoMicrodata podcast={podcast} />
+      <OuterPage>
+        <PageHeadline
+          title={podcast.name}
+          segments={[
+            { label: "Endemit", path: "" },
+            { label: "Music", path: "music" },
+            { label: podcast.name, path: `emit/${uid}` },
+          ]}
         />
-
-        {podcast.artist && (
-          <ArtistProfile
-            artist={podcast.artist}
+        <div>
+          <PodcastEpisodeHero
+            number={podcast.number}
             coverSrc={podcast.cover?.src}
+            footnote={podcast.footnote}
+            description={podcast.description}
+            trackUrl={podcast.track.url}
+            tracklist={podcast.tracklist}
+          />
+
+          {podcast.artist && (
+            <ArtistProfile
+              artist={podcast.artist}
+              coverSrc={podcast.cover?.src}
+            />
+          )}
+        </div>
+
+        {filteredPodcast && (
+          <PodcastSection
+            title={"Enjoy our latest episodes"}
+            podcasts={filteredPodcast}
           />
         )}
-      </div>
 
-      {filteredPodcast && (
-        <PodcastSection
-          title={"Enjoy our latest episodes"}
-          podcasts={filteredPodcast}
+        <Spacer size={"small"} />
+        <EndemitSubscribe
+          title={"Dont miss out our next episode"}
+          description={
+            "Subscribe and be notified when we release a new emit episode"
+          }
         />
-      )}
-
-      <Spacer size={"small"} />
-      <EndemitSubscribe
-        title={"Dont miss out our next episode"}
-        description={
-          "Subscribe and be notified when we release a new emit episode"
-        }
-      />
-    </OuterPage>
+      </OuterPage>{" "}
+    </>
   );
 }

@@ -33,6 +33,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "sound_cloud": {
+              "type": "SharedSlice"
+            },
             "poem": {
               "type": "SharedSlice"
             },
@@ -110,6 +113,29 @@
           "thumbnails": []
         },
         "type": "Image"
+      },
+      "update_frequency": {
+        "type": "Select",
+        "config": {
+          "label": "Update frequency",
+          "placeholder": "",
+          "options": [
+            "always",
+            "hourly",
+            "daily",
+            "weekly",
+            "monthly",
+            "yearly",
+            "never"
+          ]
+        }
+      },
+      "priority": {
+        "type": "Number",
+        "config": {
+          "label": "Priority",
+          "placeholder": "1.0-0.8: High priority : 0.7-0.4: Mid priority : 0.3-0.0: Low priority"
+        }
       }
     }
   }

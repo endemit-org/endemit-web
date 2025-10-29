@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import clsx from "clsx";
+import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 
 interface Props {
   config: TileConfig;
@@ -46,28 +47,24 @@ export default function Tile({ config }: Props) {
               )}
             />
           )}
-        </div>
-      )}
-      {(config.title || config.subtitle) && (
-        <div className="absolute inset-0  lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300">
-          {/*{config.media && (*/}
-          {/*  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent -z-10" />*/}
-          {/*)}*/}
-          {config.title && (
-            <h3 className="font-bold text-2xl lg:text-4xl uppercase leading-tight ">
-              {config.title}
-            </h3>
+          {config.link && (
+            <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[20px] z-20 border-white scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
           )}
-          {config.subtitle && (
-            <p className="text-sm lg:text-base mt-2 opacity-90">
-              {config.subtitle}
-            </p>
+          {(config.title || config.subtitle) && (
+            <div className="absolute inset-0 p-3 lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300 w-full">
+              {config.title && (
+                <h3 className="font-bold text-2xl lg:text-4xl uppercase leading-tight ">
+                  {config.title}
+                </h3>
+              )}
+              {config.subtitle && (
+                <p className="text-sm lg:text-base mt-2 opacity-90">
+                  {config.subtitle}
+                </p>
+              )}
+            </div>
           )}
         </div>
-      )}
-
-      {config.link && (
-        <div className="absolute inset-0 border-[20px] border-white scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
       )}
     </>
   );
@@ -85,8 +82,27 @@ export default function Tile({ config }: Props) {
   }
 
   return (
-    <div className={baseClasses} style={dynamicStyles}>
+    <div
+      className={`${baseClasses} cursor-not-allowed group`}
+      style={dynamicStyles}
+    >
       {content}
+      <div
+        className={
+          "absolute flex justify-between items-center bottom-2 left-0 w-full px-3 translate-y-[140%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out"
+        }
+      >
+        <div className={"text-neutral-300 w-16"}>
+          <EndemitLogo />
+        </div>
+        <div
+          className={
+            "text-xs text-neutral-900 bg-neutral-200/30 px-2 py-0.5 rounded-md backdrop-blur-lg"
+          }
+        >
+          Not clickable, just art
+        </div>
+      </div>
     </div>
   );
 }

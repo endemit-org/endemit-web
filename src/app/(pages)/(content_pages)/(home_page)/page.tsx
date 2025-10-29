@@ -7,12 +7,15 @@ import React from "react";
 export async function generateMetadata(): Promise<Metadata> {
   const homePage = await fetchHomePageFromCms();
 
+  const title = homePage?.data.meta_title ?? undefined;
+  const description = homePage?.data.meta_description ?? undefined;
+
   return {
-    title: homePage?.data.meta_title,
-    description: homePage?.data.meta_description,
+    title,
+    description,
     openGraph: {
-      title: homePage!.data.meta_title!,
-      description: homePage!.data.meta_description!,
+      title,
+      description,
       images: [homePage!.data.meta_image.url!],
     },
   };

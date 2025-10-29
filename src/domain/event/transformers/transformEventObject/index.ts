@@ -120,6 +120,7 @@ export const transformEventObject = (
               };
             })
         : [],
+    updatedAt: new Date(event.last_publication_date),
     meta: {
       title: event.data.meta_title,
       description: event.data.meta_description,
