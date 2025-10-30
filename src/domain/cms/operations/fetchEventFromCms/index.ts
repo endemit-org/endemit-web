@@ -16,7 +16,7 @@ export const fetchEventFromCmsByUid = async (eventUid: string) => {
 
   const ticketsForEvent = await fetchTicketForEventFromCms(prismicEvent.id);
 
-  return transformEventObject(
+  return await transformEventObject(
     prismicEvent,
     ticketsForEvent && ticketsForEvent?.length > 0
       ? ticketsForEvent[0].id
@@ -35,7 +35,7 @@ export const fetchEventFromCmsById = async (eventId: string) => {
 
   const ticketsForEvent = await fetchTicketForEventFromCms(prismicEvent.id);
 
-  return transformEventObject(
+  return await transformEventObject(
     prismicEvent,
     ticketsForEvent && ticketsForEvent?.length > 0
       ? ticketsForEvent[0].id

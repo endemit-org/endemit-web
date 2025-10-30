@@ -10,7 +10,45 @@
       "docURL": "...",
       "version": "initial",
       "description": "Default",
-      "imageUrl": ""
+      "imageUrl": "",
+      "primary": {
+        "show": {
+          "type": "Select",
+          "config": {
+            "label": "Show",
+            "placeholder": "",
+            "options": [
+              "All",
+              "Endemit",
+              "Guests"
+            ]
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {}
     }
   ]
 }

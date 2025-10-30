@@ -63,6 +63,27 @@
           "allowText": true,
           "repeat": false
         }
+      },
+      "external_event_link": {
+        "type": "Text",
+        "config": {
+          "label": "External event link",
+          "placeholder": ""
+        }
+      },
+      "season_number": {
+        "type": "Number",
+        "config": {
+          "label": "Season number",
+          "placeholder": ""
+        }
+      },
+      "episode_number": {
+        "type": "Number",
+        "config": {
+          "label": "Episode number",
+          "placeholder": "(in season)"
+        }
       }
     },
     "Venue": {
@@ -81,7 +102,8 @@
                 "venue_logo",
                 "map_location_url",
                 "coordinates",
-                "description"
+                "description",
+                "image"
               ]
             }
           ]
@@ -126,7 +148,23 @@
                         "id": "links",
                         "fields": ["type", "link"]
                       },
-                      "video"
+                      "video",
+                      "is_b2b",
+                      "is_endemit_crew",
+                      {
+                        "id": "b2b_attributed_to_artist",
+                        "fields": [
+                          {
+                            "id": "artist",
+                            "customtypes": [
+                              {
+                                "id": "artist",
+                                "fields": ["name"]
+                              }
+                            ]
+                          }
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -153,6 +191,22 @@
                 "placeholder": "(Optional) name of the stage where artist will be. Leave blank if only 1 stage per venue"
               }
             },
+            "name_override": {
+              "type": "Text",
+              "config": {
+                "label": "Name override",
+                "placeholder": ""
+              }
+            },
+            "description_override": {
+              "type": "StructuredText",
+              "config": {
+                "label": "Description override",
+                "placeholder": "",
+                "allowTargetBlank": true,
+                "multi": "paragraph,strong,em,hyperlink"
+              }
+            },
             "image_override": {
               "type": "Image",
               "config": {
@@ -168,15 +222,6 @@
                 "placeholder": "",
                 "select": "media",
                 "allowText": true
-              }
-            },
-            "description_override": {
-              "type": "StructuredText",
-              "config": {
-                "label": "Description override",
-                "placeholder": "",
-                "allowTargetBlank": true,
-                "multi": "paragraph,strong,em,hyperlink"
               }
             }
           }

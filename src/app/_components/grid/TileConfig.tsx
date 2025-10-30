@@ -9,6 +9,7 @@ export interface TileConfig {
   media?: {
     type: "image" | "video";
     src: string;
+    placeholder?: string;
   };
   link?: string;
   backgroundColor?: string;

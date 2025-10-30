@@ -1,4 +1,4 @@
-import { CmsMetaData } from "@/domain/cms/types/common";
+import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
 import { RichTextField } from "@prismicio/client";
 
 export type PodcastTrackInList = {
@@ -16,19 +16,17 @@ export interface Podcast {
   date: Date | null;
   description: RichTextField | null;
   footnote: string;
-  cover: {
-    src: string;
-    alt: string | null;
-  } | null;
+  cover: CmsImage | null;
   track: {
     url: string;
   };
   tracklist: PodcastTrackInList[] | null;
   artist: {
+    uid: string;
     id: string;
     name: string;
     description?: RichTextField | null;
-    image: { src: string; alt: string } | null;
+    image: CmsImage;
     video: string | null;
     links:
       | {

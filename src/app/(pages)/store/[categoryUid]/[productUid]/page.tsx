@@ -1,4 +1,4 @@
-import { getSlugFromText } from "@/lib/util/util";
+import { getResizedPrismicImage, getSlugFromText } from "@/lib/util/util";
 import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
 import ImageGalleryWithMasonry from "@/app/_components/content/ImageGalleryWithMasonry";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
@@ -16,6 +16,7 @@ import { prismic } from "@/lib/services/prismic";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import clsx from "clsx";
 import ProductSeoMicrodata from "@/app/_components/seo/ProductSeoMicrodata";
+import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -79,6 +80,10 @@ export default async function ProductPage({
 
   const relatedProducts = product.relatedProducts;
 
+  const relatedEvent = product.relatedEvent
+    ? await fetchEventFromCmsByUid(product.relatedEvent.uid)
+    : null;
+
   return (
     <>
       <ProductSeoMicrodata product={product} />
@@ -101,12 +106,16 @@ export default async function ProductPage({
             className={
               "absolute w-full blur-xl inset h-full top-0 mix-blend-multiply opacity-50"
             }
-            style={{
-              backgroundImage: `url('${product.images[0]?.src}')`,
-              backgroundRepeat: "repeat",
-              backgroundBlendMode: "color-burn",
-              backgroundSize: "1500px",
-            }}
+            style={
+              product.images[0]
+                ? {
+                    backgroundImage: `url('${getResizedPrismicImage(product.images[0]?.src, { width: 400, quality: 50 })}')`,
+                    backgroundRepeat: "repeat",
+                    backgroundBlendMode: "color-burn",
+                    backgroundSize: "1500px",
+                  }
+                : {}
+            }
           ></div>
           <ProductStatusTag
             status={product.status}
@@ -116,6 +125,7 @@ export default async function ProductPage({
           <ImageGalleryWithMasonry
             images={product.images}
             altFallbackText={product.name}
+            relatedEvent={relatedEvent}
           />
 
           <div className={"lg:flex mt-12 lg:mt-8 relative"}>

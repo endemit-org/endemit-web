@@ -24,7 +24,7 @@ export const fetchEventsFromCms = async ({
     events.map(async event => {
       const ticketsForEvent = await fetchTicketForEventFromCms(event.id);
 
-      return transformEventObject(
+      return await transformEventObject(
         event,
         ticketsForEvent && ticketsForEvent?.length > 0
           ? ticketsForEvent[0].id

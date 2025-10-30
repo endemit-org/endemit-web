@@ -56,6 +56,15 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "sound_cloud": {
+              "type": "SharedSlice"
+            },
+            "vinyl_promo_section": {
+              "type": "SharedSlice"
+            },
+            "poem": {
+              "type": "SharedSlice"
+            },
             "spacer": {
               "type": "SharedSlice"
             },

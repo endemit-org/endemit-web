@@ -1,94 +1,58 @@
-import { ArtistWithTimestamp } from "@/app/events/(past)/endemit-festival/(config)";
-import Image from "next/image";
-import { HTMLProps } from "react";
-import clsx from "clsx";
-import { formatDay, formatTime } from "@/lib/util/formatting";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
+import Link from "next/link";
+import { Artist } from "@/domain/artist/types/artist";
+import React from "react";
 
-interface ArtistCardProps {
-  artist: ArtistWithTimestamp;
-  cardClassName?: HTMLProps<HTMLElement>["className"];
-  nameClassName?: HTMLProps<HTMLElement>["className"];
-  descriptionClassName?: HTMLProps<HTMLElement>["className"];
-  timeClassName?: HTMLProps<HTMLElement>["className"];
-}
+type Props = {
+  artist: Artist;
+};
 
-export default function ArtistCard({
-  artist,
-  cardClassName = "bg-neutral-200/80",
-  nameClassName = "font-bold mb-4 text-gray-900",
-  descriptionClassName = "text-gray-700 ",
-  timeClassName = "font-bold text-gray-900",
-}: ArtistCardProps) {
+export default function ArtistCard({ artist }: Props) {
   return (
-    <div
-      className={clsx(
-        "backdrop-blur-sm rounded-lg p-6 shadow-lg",
-        cardClassName
-      )}
+    <Link
+      key={artist.id}
+      href={`/artists/${artist.uid}`}
+      className="group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full relative  "
     >
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Artist Photo */}
-        <div className="lg:w-1/3 flex-shrink-0">
-          <div className="relative w-full rounded-lg overflow-hidden bg-gray-200">
-            <Image
-              src={artist.photo}
-              alt={artist.name}
-              width={400}
-              height={600}
-              className="w-full h-auto object-cover"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              onError={e => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = `
-                      <div class="w-full h-64 lg:h-80 flex items-center justify-center bg-gray-300">
-                        <div class="text-center">
-                          <div class="text-gray-600 font-medium">Photo Coming Soon</div>
-                        </div>
-                      </div>
-                  `;
-                }
-              }}
-            />
-          </div>
+      <div className={"aspect-square overflow-hidden relative "}>
+        <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[13px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
+
+        {artist.image?.src && (
+          <ImageWithFallback
+            src={artist.image.src}
+            alt={artist.image.alt || artist.name}
+            placeholder={artist.image.placeholder}
+            fill
+            className="aspect-square w-full object-cover group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out  xl:aspect-7/8 contrast-125 grayscale  hover:grayscale-0 hover:contrast-100  "
+          />
+        )}
+      </div>
+
+      <div className="relative p-4 flex  flex-col items-center justify-center">
+        <div className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
+          {artist.name}
         </div>
-
-        {/* Artist Info */}
-        <div className="lg:w-2/3 flex flex-col justify-center">
-          <div className="flex items-start justify-between">
-            <h3
-              className={clsx(
-                "text-2xl lg:text-3xl mb-4 uppercase",
-                nameClassName
-              )}
-            >
-              {artist.name}
-            </h3>
-          </div>
-
-          <p
-            className={clsx(
-              "leading-relaxed text-sm lg:text-base",
-              descriptionClassName
-            )}
-          >
-            {artist.description}
-          </p>
-
-          {/* Stage and Time Info */}
-          <div className="mt-4 space-y-2">
-            <div
-              className={clsx("text-lg lg:text-xl uppercase", timeClassName)}
-            >
-              {formatDay(artist.startTime)} {formatTime(artist.startTime)} -{" "}
-              {formatTime(artist.endTime)}
-              {artist.stage && ` @ ${artist.stage}`}
-            </div>
-          </div>
+        <div className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
+          {artist.name}
         </div>
       </div>
-    </div>
+      {artist.isEndemitCrew && (
+        <div
+          className={
+            " w-full  flex gap-x-1  z-10 items-center absolute bottom-2 justify-center left-0"
+          }
+        >
+          <div
+            className={"uppercase font-heading pt-2 text-neutral-500 text-xs"}
+          >
+            Part of
+          </div>{" "}
+          <div className={"w-14 text-neutral-300"}>
+            <AnimatedEndemitLogo />
+          </div>
+        </div>
+      )}
+    </Link>
   );
 }

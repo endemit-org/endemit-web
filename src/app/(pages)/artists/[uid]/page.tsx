@@ -15,6 +15,8 @@ import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
 import ArtistSeoMicrodata from "@/app/_components/seo/ArtistSeoMicrodata";
+import { getResizedPrismicImage } from "@/lib/util/util";
+import ArtistList from "@/app/_components/artist/ArtistList";
 
 export async function generateStaticParams() {
   const artists = await fetchArtistsFromCms({});
@@ -71,12 +73,24 @@ export default async function ArtistPage({
   const { uid } = await params;
   const artist = await fetchArtistFromCms(uid);
 
-  if (!artist) {
+  if (!artist || artist.isB2b) {
     notFound();
   }
 
-  const relatedEvents = await fetchEventsForArtistFromCms(artist.id);
+  const relatedEventsQuery = await fetchEventsForArtistFromCms(artist.id);
   const relatedPodcasts = await fetchPodcastsForArtistFromCms(artist.id);
+  const relatedArtistsQuery = await fetchArtistsFromCms({});
+  const relatedArtists = relatedArtistsQuery
+    ?.filter(a => a.id !== artist.id)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 4);
+  const relatedEvents = relatedEventsQuery
+    ? relatedEventsQuery.sort((a, b) => {
+        if (!a.date_start || !b.date_start) return 0;
+        return b.date_start.getTime() - a.date_start.getTime();
+      })
+    : null;
+
   const showRelatedPodcasts = relatedPodcasts && relatedPodcasts?.length > 0;
   const showRelatedEvents = relatedEvents && relatedEvents?.length > 0;
 
@@ -84,15 +98,6 @@ export default async function ArtistPage({
     <>
       <ArtistSeoMicrodata artist={artist} />
       <OuterPage>
-        <div
-          className={
-            "absolute top-80 h-[400px] blur-3xl -left-10 -right-10 bg-cover opacity-40 "
-          }
-          style={{
-            backgroundImage: `url(${artist.image?.src})`,
-          }}
-        ></div>
-
         <PageHeadline
           title={artist.name}
           segments={[
@@ -102,13 +107,27 @@ export default async function ArtistPage({
           ]}
         />
         <ArtistProfile artist={artist} coverSrc={artist.image?.src} />
+        <div
+          className={
+            "absolute top-80 h-[400px] blur-3xl -left-10 -right-10 bg-cover opacity-40 z-0 "
+          }
+          style={
+            artist.image
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(artist.image?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
+        ></div>
         <Spacer size={"xlarge"} />
-
         {(showRelatedEvents || showRelatedPodcasts) && (
           <InnerPage>
+            <h2 className={"text-3xl text-neutral-200"}>
+              {artist.name} appears on
+            </h2>
             <div
               className={clsx(
-                "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2"
+                "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2 mt-8"
               )}
             >
               {showRelatedPodcasts &&
@@ -123,18 +142,36 @@ export default async function ArtistPage({
                   />
                 ))}
               {showRelatedEvents &&
-                relatedEvents.map(event => (
-                  <EventMiniCard
-                    location={event.venue?.name}
-                    date={event.date_start}
-                    key={event.id}
-                    image={event.promoImage}
-                    name={event.name}
-                    uid={event.uid}
-                  />
-                ))}
+                relatedEvents.map(event => {
+                  const shouldShowLink =
+                    event.options.enabledLink ||
+                    event.options.externalEventLink;
+                  const link =
+                    event.options.externalEventLink ?? `/events/${event.uid}`;
+
+                  return (
+                    <EventMiniCard
+                      location={event.venue?.name}
+                      dateStart={event.date_start}
+                      dateEnd={event.date_end}
+                      key={event.id}
+                      image={event.promoImage}
+                      name={event.name}
+                      link={shouldShowLink ? link : null}
+                    />
+                  );
+                })}
             </div>
           </InnerPage>
+        )}{" "}
+        {relatedArtists && (
+          <>
+            <Spacer size={"small"} />
+            <h2 className={"text-3xl text-neutral-200"}>
+              Explore other artists
+            </h2>
+            <ArtistList artists={relatedArtists} />
+          </>
         )}
         <Spacer size={"small"} />
         <EndemitSubscribe

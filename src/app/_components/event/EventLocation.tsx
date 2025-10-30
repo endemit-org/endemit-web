@@ -13,6 +13,12 @@ function EventLocationDetails({ venue }: Props) {
 
   return (
     <>
+      <ImageWithFallback
+        src={venue.image?.src}
+        alt={venue.image?.alt ?? venue.name}
+        placeholder={venue.image?.placeholder}
+        className={"w-full my-6"}
+      />
       <div className={"mb-8"}>
         <RichTextDisplay richText={venue.description} />
       </div>
@@ -57,14 +63,23 @@ export default function EventLocation({ venue }: Props) {
           <ImageWithFallback
             src={venue.logo?.src}
             alt={venue.logo?.alt ?? venue.name}
-            className={"w-20"}
+            placeholder={venue.logo?.placeholder}
+            className={"max-h-14 max-w-14 object-contain"}
           />
         </div>
 
         <div className="flex gap-y-6 flex-col">
           <div>
-            <h3 className={"text-4xl"}>{venue.name}</h3>
-            <div>
+            <h3 className={"text-4xl"}>
+              <Link
+                className={"hover:opacity-90"}
+                href={`/venues/${venue.uid}`}
+                target={"_blank"}
+              >
+                {venue.name}
+              </Link>
+            </h3>
+            <div className={"mb-6"}>
               <Link
                 className={"link"}
                 href={venue.mapLocationUrl}

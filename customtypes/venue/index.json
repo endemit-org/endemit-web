@@ -28,6 +28,14 @@
           "multi": "paragraph,heading2,strong,em,hyperlink"
         }
       },
+      "image": {
+        "type": "Image",
+        "config": {
+          "label": "Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
       "address": {
         "type": "Text",
         "config": {
@@ -58,6 +66,15 @@
         "type": "GeoPoint",
         "config": {
           "label": "Coordinates"
+        }
+      },
+      "show_in_venues": {
+        "type": "Boolean",
+        "config": {
+          "label": "Show in venues",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
         }
       },
       "slices": {

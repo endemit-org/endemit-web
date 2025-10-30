@@ -3,8 +3,8 @@ import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import { fetchContentPagesFromCms } from "@/domain/cms/operations/fetchContentPagesFromCms";
 import { fetchHomePageFromCms } from "@/domain/cms/operations/fetchHomePageFromCms";
 import { fetchArtistsFromCms } from "@/domain/cms/operations/fetchArtistsFromCms";
-import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { fetchVenuesFromCms } from "@/domain/cms/operations/fetchVenuesFromCms";
+import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { fetchPodcastsFromCms } from "@/domain/cms/operations/fetchPodcastsFromCms";
@@ -107,8 +107,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...homePage,
     ...contentPages,
     ...eventPages,
-    ...artistPages,
     ...productPages,
+    ...artistPages,
     ...venuePages,
     ...podcastPages,
     ...categoryPages,

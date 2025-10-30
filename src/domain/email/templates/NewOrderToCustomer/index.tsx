@@ -9,6 +9,7 @@ import { includesTicketProducts } from "@/domain/checkout/businessRules";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { CartItem } from "@/domain/checkout/types/cartItem";
+import { getResizedPrismicImage } from "@/lib/util/util";
 
 interface Props {
   order: Order;
@@ -159,7 +160,9 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                       >
                         <Img
                           alt={item.name}
-                          src={item.image.src}
+                          src={getResizedPrismicImage(item.image.src, {
+                            width: 100,
+                          })}
                           width={80}
                           height={80}
                           style={{

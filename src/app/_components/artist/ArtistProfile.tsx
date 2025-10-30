@@ -1,8 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { CmsImage } from "@/domain/cms/types/common";
+import { getResizedPrismicImage } from "@/lib/util/util";
 
 interface ArtistLink {
   url: string;
@@ -10,9 +12,10 @@ interface ArtistLink {
 }
 
 interface Artist {
+  uid: string;
   name: string;
   description?: RichTextField | null;
-  image: { src: string; alt: string | null } | null;
+  image: CmsImage | null;
   links: ArtistLink[] | null;
   isEndemitCrew?: boolean;
 }
@@ -20,20 +23,23 @@ interface Artist {
 interface PodcastArtistSectionProps {
   artist: Artist;
   coverSrc?: string;
+  showLinkToPage?: boolean;
 }
 
 export default function ArtistProfile({
   artist,
   coverSrc,
+  showLinkToPage = false,
 }: PodcastArtistSectionProps) {
   return (
-    <div className="relative overflow-hidden mb-40">
+    <div className="relative overflow-hidden mb-40 z-10">
       <div className="flex gap-x-12 max-lg:flex-col max-lg:gap-y-16 max-lg:items-center">
         {artist.image && (
           <div>
-            <Image
+            <ImageWithFallback
               src={artist.image.src}
               alt={artist.image.alt ?? artist.name}
+              placeholder={artist.image.placeholder}
               width={300}
               height={300}
               quality={90}
@@ -45,11 +51,15 @@ export default function ArtistProfile({
           <div className="bg-gradient-to-b from-neutral-300 to-neutral-400 bg-clip-text text-transparent relative">
             <h1
               className="text-5xl lg:text-7xl 2xl:text-8xl font-bold text-transparent bg-clip-text blur-[5px] top-0 absolute scale-110"
-              style={{
-                backgroundImage: `url('${coverSrc}')`,
-                backgroundSize: "1000px",
-                backgroundRepeat: "repeat",
-              }}
+              style={
+                coverSrc
+                  ? {
+                      backgroundImage: `url('${getResizedPrismicImage(coverSrc, { width: 400, quality: 50 })}')`,
+                      backgroundSize: "1000px",
+                      backgroundRepeat: "repeat",
+                    }
+                  : {}
+              }
             >
               {artist.name}
             </h1>
@@ -83,6 +93,16 @@ export default function ArtistProfile({
               </div>
             )}
           </div>
+          {showLinkToPage && (
+            <div className={"mt-6"}>
+              <Link
+                href={`/artists/${artist.uid}`}
+                className={"link text-[#d31c18] hover:text-[#87100e]"}
+              >
+                View {artist.name}&#39;s full profile
+              </Link>
+            </div>
+          )}
           {artist.links && artist.links.length > 0 && (
             <div className="gap-y-2 gap-x-6 flex mt-6 max-xl:flex-col">
               <div className="text-neutral-300 text-sm">

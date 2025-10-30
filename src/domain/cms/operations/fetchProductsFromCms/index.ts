@@ -30,7 +30,9 @@ export const fetchProductsFromCms = async ({
     return null;
   }
 
-  return productsWithRequiredAttributes.map(product =>
-    transformProductObject(product)
-  );
+  const transformedProducts = [];
+  for (const product of productsWithRequiredAttributes) {
+    transformedProducts.push(await transformProductObject(product));
+  }
+  return transformedProducts;
 };

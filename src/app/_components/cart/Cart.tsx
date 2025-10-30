@@ -89,7 +89,7 @@ export default function Cart({ variant = "detailed" }: Props) {
           <div className="items-center space-x-3 text-neutral-200 inline-flex">
             <div className="text-sm">{displayItemCount} items in your cart</div>
           </div>
-          <div className="mt-3 animate-rave-125bmp hover:[animation:none]">
+          <div className="mt-3 animate-rave-125bmp-delay hover:[animation:none]">
             <ActionButton onClick={handleGoToCart} size={"sm"}>
               Checkout
             </ActionButton>

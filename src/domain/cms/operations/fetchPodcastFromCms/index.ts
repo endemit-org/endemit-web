@@ -12,5 +12,5 @@ export const fetchPodcastFromCms = async (podcastUid: string) => {
     return null;
   }
 
-  return transformPodcastObject(prismicPodcast);
+  return await transformPodcastObject(prismicPodcast);
 };

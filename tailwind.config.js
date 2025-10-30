@@ -22,6 +22,7 @@ module.exports = {
       },
       animation: {
         "slow-spin": "spin 2s linear infinite",
+        "slowest-spin": "spin 15s linear infinite",
         scan: "scan 2s ease-in-out infinite",
       },
       keyframes: {

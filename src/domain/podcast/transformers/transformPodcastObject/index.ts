@@ -1,29 +1,34 @@
 import { Podcast } from "@/domain/podcast/types/podcast";
 import { asLink, isFilled } from "@prismicio/client";
 import { PodcastDocument } from "@/prismicio-types";
+import { getBlurDataURL } from "@/lib/util/util";
+import { CmsImage } from "@/domain/cms/types/common";
 
-const transformCoverImage = (
+const transformCoverImage = async (
   coverImage: PodcastDocument["data"]["cover_image"]
 ) => {
   if (!isFilled.image(coverImage)) return null;
   return {
     src: coverImage.url,
     alt: coverImage.alt ?? "",
-  };
+    placeholder: await getBlurDataURL(coverImage.url!),
+  } as CmsImage;
 };
 
-const transformArtist = (artist: PodcastDocument["data"]["artist"]) => {
+const transformArtist = async (artist: PodcastDocument["data"]["artist"]) => {
   const artistDoc = isFilled.contentRelationship(artist) ? artist : null;
 
   if (!artistDoc || !artistDoc.data) return null;
 
   return {
+    uid: artistDoc.uid!,
     id: artistDoc.id,
     name: artistDoc.data.name ?? "",
     description: artistDoc.data.description,
     image: {
       src: artistDoc.data.image.url ?? "",
       alt: artistDoc.data.image.alt ?? "",
+      placeholder: await getBlurDataURL(artistDoc.data.image.url!),
     },
     video: asLink(artistDoc.data.video) ?? "",
     links: artistDoc.data.links.map(link => ({
@@ -33,7 +38,9 @@ const transformArtist = (artist: PodcastDocument["data"]["artist"]) => {
   };
 };
 
-export const transformPodcastObject = (podcast: PodcastDocument): Podcast => {
+export const transformPodcastObject = async (
+  podcast: PodcastDocument
+): Promise<Podcast> => {
   return {
     id: podcast.id,
     uid: podcast.uid,
@@ -44,7 +51,7 @@ export const transformPodcastObject = (podcast: PodcastDocument): Podcast => {
       : null,
     description: podcast.data.episode_description,
     footnote: podcast.data.footnote ?? "",
-    cover: transformCoverImage(podcast.data.cover_image),
+    cover: await transformCoverImage(podcast.data.cover_image),
     track: {
       url: podcast.data.track_url ?? "",
     },
@@ -57,7 +64,7 @@ export const transformPodcastObject = (podcast: PodcastDocument): Podcast => {
             timestamp: track.timestamp ? String(track.timestamp) : undefined,
           }))
         : null,
-    artist: transformArtist(podcast.data.artist),
+    artist: await transformArtist(podcast.data.artist),
     updatedAt: new Date(podcast.last_publication_date),
     meta: {
       title: podcast.data.meta_title,

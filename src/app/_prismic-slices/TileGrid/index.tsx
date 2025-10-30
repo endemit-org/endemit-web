@@ -3,6 +3,7 @@ import { asImageSrc, asLink, Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { TileConfig } from "@/app/_components/grid/TileConfig";
 import MasonryGrid from "@/app/_components/grid/MasonryGrid";
+import { getBlurDataURL } from "@/lib/util/util";
 
 /**
  * Props for `GridTile`.
@@ -16,10 +17,13 @@ export type GridTileProps = SliceComponentProps<Content.GridTileSlice>;
 type MediaSrc = {
   type: "image" | "video";
   src: string;
+  placeholder?: string;
 };
 
-const GridTile: FC<GridTileProps> = ({ slice }) => {
-  const tilesFromSlice = slice.primary.tiles.map((tile, index) => {
+const GridTile: FC<GridTileProps> = async ({ slice }) => {
+  const tilesFromSlice = [];
+
+  for (const [index, tile] of slice.primary.tiles.entries()) {
     const videoObject = asLink(tile.video);
     const imageObject = asImageSrc(tile.image);
     let mediaSrc: MediaSrc | null = null;
@@ -29,6 +33,7 @@ const GridTile: FC<GridTileProps> = ({ slice }) => {
       mediaSrc = {
         type: "image",
         src: imageObject,
+        placeholder: await getBlurDataURL(imageObject),
       };
     }
 
@@ -39,7 +44,7 @@ const GridTile: FC<GridTileProps> = ({ slice }) => {
       };
     }
 
-    return {
+    tilesFromSlice.push({
       id: `slice-tile-${index}`,
       size: tile.size
         ? (tile.size.toLowerCase() as TileConfig["size"])
@@ -51,8 +56,8 @@ const GridTile: FC<GridTileProps> = ({ slice }) => {
       link: linkObject ?? undefined,
       backgroundColor: tile.background_colour || undefined,
       textColor: tile.text_colour || undefined,
-    };
-  });
+    });
+  }
 
   return (
     <section

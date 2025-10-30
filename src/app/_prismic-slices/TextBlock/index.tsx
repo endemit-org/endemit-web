@@ -1,26 +1,28 @@
 import { FC } from "react";
 import { Content } from "@prismicio/client";
-import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
+import { SliceComponentProps } from "@prismicio/react";
+import InnerPage from "@/app/_components/content/InnerPage";
 import s from "./TextBlock.module.css";
+import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 
-/**
- * Props for `ContentSection`.
- */
 export type ContentSectionProps =
   SliceComponentProps<Content.ContentSectionSlice>;
 
-/**
- * Component for "ContentSection" Slices.
- */
 const ContentSection: FC<ContentSectionProps> = ({ slice }) => {
+  const content = slice.primary.content ? (
+    <RichTextDisplay richText={slice.primary.content} />
+  ) : null;
+
   return (
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
-      className={`${s.markdown} `}
+      className={s.markdown}
     >
-      {slice.primary.content && (
-        <PrismicRichText field={slice.primary.content} />
+      {slice.primary.render_frame ? (
+        <InnerPage>{content}</InnerPage>
+      ) : (
+        <div className={"text-neutral-200"}>{content}</div>
       )}
     </section>
   );

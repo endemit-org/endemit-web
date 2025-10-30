@@ -1,56 +1,49 @@
 import Link from "next/link";
-import Image from "next/image";
 import React from "react";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { CmsImage } from "@/domain/cms/types/common";
+import EventTicketAvailableStatus from "@/app/_components/event/EventTicketAvailableStatus";
 
 export interface HeroProps {
   heading: string;
   description?: string;
-  primaryCta?: {
-    text: string;
-    href: string;
-  };
-  secondaryCta?: {
-    text: string;
-    href: string;
-  };
-  backgroundImage?: {
-    src: string;
-    alt: string;
-  };
-  textAlignment?: "left" | "center";
+  link?: string;
+  backgroundImage?: CmsImage;
+  backgroundVideo?: string;
   overlayOpacity?: number;
+  specialMarker?: "None" | "Tickets available";
 }
 
 export default function Hero({
   heading,
   description,
-  primaryCta,
-  secondaryCta,
+  link,
   backgroundImage,
-  textAlignment = "center",
+  backgroundVideo,
   overlayOpacity = 50,
+  specialMarker,
 }: HeroProps) {
-  const alignmentClasses = {
-    left: "text-left items-start",
-    center: "text-center items-center",
-  };
-
   return (
     <Link
-      href={primaryCta?.href ?? "#"}
+      href={link ?? "#"}
       className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-neutral-950 border-8 border-neutral-950 group"
     >
-      {primaryCta?.href && (
-        <div className="absolute inset-0 border-[20px] border-white scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none z-10" />
+      {link && (
+        <div className="absolute inset-0 border-[20px] border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none z-20" />
       )}
 
-      {backgroundImage && (
+      {specialMarker && specialMarker === "Tickets available" && (
+        <EventTicketAvailableStatus className=" lg:left-auto right-6 lg:top-auto lg:bottom-6 z-20" />
+      )}
+
+      {backgroundImage && !backgroundVideo && (
         <>
-          <Image
+          <ImageWithFallback
             src={backgroundImage.src}
-            alt={backgroundImage.alt}
+            alt={backgroundImage?.alt ?? ""}
+            placeholder={backgroundImage.placeholder}
             fill
-            className="object-cover group-hover:scale-125 transition-transform duration-500 ease-out"
+            className="object-cover group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out"
             priority
           />
           <div
@@ -60,34 +53,39 @@ export default function Hero({
         </>
       )}
 
-      <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 group-hover:scale-95 transition-transform duration-300">
-        <div
-          className={`flex flex-col gap-6 ${alignmentClasses[textAlignment]}`}
-        >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-200 max-w-4xl">
-            {heading}
-          </h1>
+      {backgroundVideo && (
+        <video
+          src={backgroundVideo}
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out"
+          autoPlay={true}
+          muted={true}
+          loop={true}
+          playsInline={true}
+        />
+      )}
 
-          {description && (
-            <p className="text-lg sm:text-xl text-neutral-200/90 max-w-2xl">
-              {description}
-            </p>
-          )}
+      {(heading || description) && (
+        <div className="absolute bottom-0 z-10 w-full mx-auto px-4 sm:px-6 lg:px-6  overflow-hidden ">
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent -left-6 -right-6 -bottom-12  h-[100%]" />
+          <div className="flex flex-col text-left relative z-10 group-hover:scale-95 transition-transform duration-300 pb-6 pt-3">
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-200 max-w-4xl text-shadow"
+              style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
+            >
+              {heading}
+            </h1>
 
-          {secondaryCta && (
-            <div className="flex flex-wrap gap-4 mt-2">
-              {secondaryCta && (
-                <Link
-                  href={secondaryCta.href}
-                  className="px-8 py-3 bg-neutral-200 text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  {secondaryCta.text}
-                </Link>
-              )}
-            </div>
-          )}
+            {description && (
+              <p
+                className="text-lg sm:text-xl text-neutral-200/90 max-w-2xl "
+                style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
+              >
+                {description}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </Link>
   );
 }

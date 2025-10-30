@@ -12,5 +12,5 @@ export const fetchVenueFromCms = async (venueUid: string) => {
     return null;
   }
 
-  return transformVenueObject(prismicVenue);
+  return await transformVenueObject(prismicVenue);
 };

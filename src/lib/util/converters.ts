@@ -13,3 +13,6 @@ export const convertMinutesToMs = (minutes: number) => {
 export const convertHoursToMs = (hours: number) => {
   return hours * 60 * 60 * 1000;
 };
+export const convertMonthsToMs = (months: number) => {
+  return months * 30 * 24 * 60 * 60 * 1000;
+};
