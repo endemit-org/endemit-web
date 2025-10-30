@@ -7,9 +7,11 @@ export type Venue = {
   name: string;
   description: RichTextField;
   coordinates: GeoPointField | null;
+  logo: CmsImage | null;
   image: CmsImage | null;
   address: string | null;
   mapUrl: string | null;
   meta: CmsMetaData;
+  showOnVenuePage: boolean;
   updatedAt: Date;
 };

@@ -4,6 +4,7 @@ import { formatDay, formatTime } from "@/lib/util/formatting";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import Link from "next/link";
+import { convertMonthsToMs } from "@/lib/util/converters";
 
 interface ArtistCardProps {
   artist: ArtistAtEvent;
@@ -20,6 +21,10 @@ export default function ArtistEventCard({
   descriptionClassName = "text-neutral-300 ",
   timeClassName = "text-neutral-200",
 }: ArtistCardProps) {
+  const isMoreThanThreeMonthsAgo = artist.start_time
+    ? new Date(artist.start_time).getTime() < Date.now() - convertMonthsToMs(3)
+    : false;
+
   return (
     <div className={clsx("", cardClassName)}>
       <div className="flex flex-col lg:flex-row gap-6 p-4">
@@ -36,24 +41,26 @@ export default function ArtistEventCard({
             />
           </div>
           {/* Stage and Time Info */}
-          {artist.start_time && artist.end_time && (
-            <div className=" space-y-2 text-center  bg-neutral-950 p-2">
-              <div
-                className={clsx(
-                  "max-sm:text-2xl lg:text-xl uppercase font-heading tracking-wide",
-                  timeClassName
-                )}
-              >
-                {formatDay(artist.start_time)} {formatTime(artist.start_time)} -{" "}
-                {formatTime(artist.end_time)}
-                {artist.stage && (
-                  <div className={"mt-0.5 text-neutral-400"}>
-                    @ {artist.stage}
-                  </div>
-                )}
+          {!isMoreThanThreeMonthsAgo &&
+            artist.start_time &&
+            artist.end_time && (
+              <div className=" space-y-2 text-center  bg-neutral-950 p-2">
+                <div
+                  className={clsx(
+                    "max-sm:text-2xl lg:text-xl uppercase font-heading tracking-wide",
+                    timeClassName
+                  )}
+                >
+                  {formatDay(artist.start_time)} {formatTime(artist.start_time)}{" "}
+                  - {formatTime(artist.end_time)}
+                  {artist.stage && (
+                    <div className={"mt-0.5 text-neutral-400"}>
+                      @ {artist.stage}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
 
         {/* Artist Info */}
@@ -80,9 +87,25 @@ export default function ArtistEventCard({
             </p>
           )}
 
-          <Link className={"link mt-6"} href={`/artists/${artist.uid}`}>
-            More about {artist.name}
-          </Link>
+          {!artist.isB2b && (
+            <Link className={"link mt-6"} href={`/artists/${artist.uid}`}>
+              More about {artist.name}
+            </Link>
+          )}
+
+          {artist.isB2b && artist.b2bAttribution && (
+            <div className={"flex gap-x-4"}>
+              {artist.b2bAttribution.map(artist => (
+                <Link
+                  className={"link mt-6"}
+                  href={`/artists/${artist.uid}`}
+                  key={artist.uid}
+                >
+                  More about {artist.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

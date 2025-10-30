@@ -19,8 +19,10 @@ export const fetchArtistsFromCms = async ({
     return null;
   }
 
+  const filteredOutB2b = artists.filter(artist => !artist.data.is_b2b);
+
   const transformedArtists = [];
-  for (const artist of artists) {
+  for (const artist of filteredOutB2b) {
     transformedArtists.push(await transformArtistObject(artist));
   }
   return transformedArtists;

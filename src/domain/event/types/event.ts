@@ -15,12 +15,14 @@ export enum EventType {
 
 export type VenueInEvent = {
   id: string;
+  uid: string;
   name: string;
   description: RichTextField;
   coordinates: GeoPointField;
   address: string;
   mapLocationUrl: string;
   logo: CmsImage | null;
+  image: CmsImage | null;
 };
 
 export type Event = {
@@ -40,6 +42,7 @@ export type Event = {
     visibility: EventVisibility;
     enabledLink: boolean;
     enabledTicketScanning: boolean;
+    externalEventLink?: string;
   };
   tickets: {
     available: boolean;

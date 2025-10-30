@@ -6,7 +6,7 @@ import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCm
 import Tabs, { TabItem } from "@/app/_components/content/Tabs";
 import { fetchInnerContentPagesForEvent } from "@/domain/cms/operations/fetchInnerContentPagesFromCms";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
-import { formatDate, formatEventDateAndTime } from "@/lib/util/formatting";
+import { formatEventDate, formatEventDateAndTime } from "@/lib/util/formatting";
 import EventLineUp from "@/app/_components/event/EventLineUp";
 import EventLocation from "@/app/_components/event/EventLocation";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import clsx from "clsx";
 import { Metadata } from "next";
 import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
+import { isEventCompleted } from "@/domain/event/businessLogic";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -45,7 +46,7 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start ? formatDate(event.date_start) : ""}`}`} • Events`;
+  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end) : ""}`}`} • Events`;
   const description = event?.meta.description ?? event.description ?? undefined;
 
   return {
@@ -99,11 +100,16 @@ export default async function EventPage({
     product = await fetchProductFromCmsById(event.tickets.productId);
   }
 
-  if (!event) {
+  if (
+    !event ||
+    event.options.visibility === "Hidden" ||
+    event.options.externalEventLink
+  ) {
     notFound();
   }
 
   const innerContentPages = await fetchInnerContentPagesForEvent(event.id);
+  const isPastEvent = isEventCompleted(event);
 
   const defaultContent = [
     {
@@ -125,7 +131,7 @@ export default async function EventPage({
       defaultContent.push({
         label: page.title,
         content: (
-          <div className={"max-lg:text-xs"}>
+          <div className={"max-lg:text-xs w-full"}>
             <SliceDisplay slices={page.slices} />
           </div>
         ),
@@ -180,15 +186,33 @@ export default async function EventPage({
           }
         ></div>
         <div
+          className={
+            "absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
+          }
+          style={
+            event.coverImage
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
+        ></div>
+        <div
           style={{
             backgroundImage: "url('/images/worms.png')",
             backgroundRepeat: "repeat",
             backgroundBlendMode: "soft-light",
             backgroundSize: "150px",
+
+            // backgroundColor: event.colour,
           }}
           className={"bg-neutral-950 relative"}
         >
-          <div className={"flex justify-center relative max-lg:flex-col"}>
+          <div
+            className={
+              "flex justify-center relative max-lg:flex-col lg:items-stretch"
+            }
+          >
             <div className={"relative aspect-video lg:w-2/3 w-full"}>
               {event.artAuthor && (
                 <Link
@@ -208,50 +232,62 @@ export default async function EventPage({
                   height={455}
                   width={809}
                   quality="100"
-                  className="aspect-video w-full"
+                  className="aspect-video w-full h-full object-cover"
                   placeholder={event.coverImage?.placeholder}
                 />
               )}
             </div>
             <div
               className={
-                "lg:w-1/3  text-neutral-200 p-4 lg:p-4 xl:p-8 lg:border-l-2 border-l-neutral-200 flex flex-col max-lg:gap-y-6 max-lg:items-center max-lg:py-12"
+                "lg:w-1/3 text-neutral-200 p-4 lg:p-4 xl:p-8 lg:border-l-2 border-l-neutral-200 flex flex-col max-lg:gap-y-6 max-lg:items-center max-lg:py-12 gap-y-3"
               }
             >
-              {event.date_start && (
+              {event.date_start && event.date_end && (
                 <div
                   className={
-                    "uppercase max-lg:text-2xl lg:text-[clamp(0.7rem,2cqi,2rem)]"
+                    "uppercase max-lg:text-2xl lg:text-[clamp(0.7rem,2cqi,2rem)] flex-shrink-0"
                   }
                 >
-                  {formatDate(event.date_start)}
+                  {formatEventDate(event.date_start, event.date_end)}
+                  {isPastEvent && (
+                    <div className={"text-neutral-400 text-sm"}>
+                      This event has concluded
+                    </div>
+                  )}
                 </div>
               )}
 
-              <div className="flex-1 justify-center flex flex-col lg:@container">
-                {event.artists.map(artist => (
-                  <h3
-                    className={
-                      "max-lg:text-3xl lg:text-[clamp(1.7rem,20cqi,5rem)] lg:leading-[clamp(1.9rem,20.2cqi,5.2rem)] max-lg:text-center max-lg:w-full"
-                    }
-                    key={`artist-marquee-${artist.id}`}
-                  >
-                    {artist.name}
-                  </h3>
-                ))}
+              <div className="flex-1 flex flex-col lg:@container lg:justify-center ">
+                <div
+                  className={clsx(
+                    event.artists.length > 4 &&
+                      "lg:overflow-y-auto  lg:max-h-56 scrollbar-thin scrollbar-track-neutral-800 scrollbar-thumb-neutral-600 hover:scrollbar-thumb-neutral-500"
+                  )}
+                >
+                  {event.artists.map(artist => (
+                    <h3
+                      className={
+                        "max-lg:text-3xl lg:text-[clamp(1.7rem,20cqi,5rem)] lg:leading-[clamp(1.9rem,20.2cqi,5.2rem)] max-lg:text-center max-lg:w-full"
+                      }
+                      key={`artist-marquee-${artist.id}`}
+                    >
+                      {artist.name}
+                    </h3>
+                  ))}
+                </div>
               </div>
               <div
-                className={"flex gap-x-2 text-sm lg:text-md"}
+                className={"flex gap-x-2 text-sm lg:text-md flex-shrink-0"}
                 id={"overview"}
               >
                 {event.venue?.logo && event.venue?.logo.src && (
                   <ImageWithFallback
                     src={event.venue?.logo.src}
                     alt={event.venue?.logo.src}
-                    width={32}
+                    width={100}
                     height={32}
                     quality={85}
-                    className="aspect-square w-6 h-6"
+                    className="w-auto h-4"
                     placeholder={event.venue?.logo?.placeholder}
                   />
                 )}
@@ -266,46 +302,72 @@ export default async function EventPage({
           }
         >
           <div className={"animate-marquee-move"}>
-            {Array(15).fill(event.name).join(" · ")}
+            {Array(Math.ceil(100 / event.name.length))
+              .fill(event.name)
+              .join(" · ")}
           </div>
         </div>
 
         <div className={"relative flex"}>
-          <div className={clsx(product && "lg:w-4/5")}>
+          <div className={"lg:w-2/3 w-full"}>
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
 
-          {product && (
-            <section className={"max-lg:hidden"}>
-              <div
-                className={" p-8 flex-1  bg-neutral-800 rounded-md h-fit"}
-                style={{
-                  backgroundImage: "url('/images/worms.png')",
-                  backgroundRepeat: "repeat",
-                  backgroundBlendMode: "multiply",
-                  backgroundSize: "150px",
-                  // backgroundColor: event.colour,
-                }}
-              >
-                <TicketDisplay product={product} />
-              </div>
-              <div className={"p4 text-center mt-10 "}>
-                {event.date_start && (
+          <section className={"max-lg:hidden flex-1"}>
+            <div
+              className={" p-8 flex-1  bg-neutral-800 rounded-md h-fit"}
+              style={{
+                backgroundImage: "url('/images/worms.png')",
+                backgroundRepeat: "repeat",
+                backgroundBlendMode: "multiply",
+                backgroundSize: "150px",
+
+                // backgroundColor: event.colour,
+              }}
+            >
+              {product && <TicketDisplay product={product} />}
+              {!product && (
+                <div className={"flex flex-col items-center text-neutral-200"}>
                   <div
                     className={
-                      "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
+                      "font-heading uppercase text-3xl text-neutral-400 mb-8"
                     }
                   >
-                    {formatEventDateAndTime(event.date_start)}
+                    Tickets not available
                   </div>
-                )}
-                <div className={"text-neutral-400 text-md font-thin "}>
-                  {event.venue?.name}
-                  <div>{event.venue?.address}</div>
+                  <div>
+                    <ImageWithFallback
+                      src={event.promoImage?.src}
+                      alt={event.promoImage?.alt ?? ""}
+                      width={400}
+                      height={229}
+                      placeholder={event.promoImage?.placeholder}
+                    />
+                  </div>
+                  <h2 className={"text-2xl my-6"}>
+                    {isPastEvent
+                      ? "Tickets have been SOLD OUT."
+                      : "Tickets are not for sale yet"}
+                  </h2>
                 </div>
+              )}
+            </div>
+            <div className={"p4 text-center mt-10 "}>
+              {event.date_start && (
+                <div
+                  className={
+                    "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
+                  }
+                >
+                  {formatEventDateAndTime(event.date_start)}
+                </div>
+              )}
+              <div className={"text-neutral-400 text-md font-thin "}>
+                {event.venue?.name}
+                <div>{event.venue?.address}</div>
               </div>
-            </section>
-          )}
+            </div>
+          </section>
         </div>
       </OuterPage>
     </>

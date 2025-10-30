@@ -84,8 +84,47 @@
   }
 }
 
+@keyframes beatShakeDelay {
+  0%, 95.24% {
+    transform: translateX(0) translateY(0);
+  }
+  0.476% {
+    transform: translateX(-2px) translateY(-1px);
+  }
+  0.952% {
+    transform: translateX(2px) translateY(1px);
+  }
+  1.428% {
+    transform: translateX(-1px) translateY(2px);
+  }
+  1.904% {
+    transform: translateX(1px) translateY(-2px);
+  }
+  2.38% {
+    transform: translateX(-2px) translateY(1px);
+  }
+  2.856%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes unblur {
+  from {
+    transform: translateY(100px);
+    filter: blur(20px);
+  }
+  to {
+    transform: translateY(0px);
+    filter: blur(0);
+  }
+}
+
 .animate-rave-125bmp {
   animation: beatShake 0.476s infinite ease-in-out;
+}
+
+.animate-rave-125bmp-delay {
+  animation: beatShakeDelay 5.476s infinite ease-in-out;
 }
 
 .animate-float-cloud {
@@ -107,4 +146,8 @@
 
 .animate-marquee-move {
   animation: moveBackAndForth 180s ease-in-out infinite;
+}
+
+.animate-unblur-text {
+  animation: unblur 1s ease-out forwards;
 }

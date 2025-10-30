@@ -1,134 +1,88 @@
 [
-  {
-    "variation": "default",
-    "version": "initial",
-    "items": [],
-    "primary": {
-      "heading": [
-        {
-          "type": "heading1",
-          "text": "Build Amazing Products with Modern Technology",
-          "spans": []
-        }
-      ],
-      "description": [
-        {
-          "type": "paragraph",
-          "text": "Create stunning web experiences with Next.js, TypeScript, and Tailwind CSS. Fast, scalable, and beautiful.",
-          "spans": []
-        }
-      ],
-      "primaryCtaText": "Get Started",
-      "primaryCtaLink": {
-        "link_type": "Web",
-        "url": "/get-started"
-      },
-      "secondaryCtaText": "Learn More",
-      "secondaryCtaLink": {
-        "link_type": "Web",
-        "url": "/about"
-      },
-      "backgroundImage": {
-        "dimensions": {
-          "width": 1920,
-          "height": 1080
-        },
-        "alt": "Hero background",
-        "copyright": null,
-        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop"
-      },
-      "textAlignment": "center",
-      "overlayOpacity": 60
-    },
-    "id": "hero_mock_1$default",
-    "slice_type": "hero",
-    "slice_label": null
-  },
-  {
-    "variation": "default",
-    "version": "initial",
-    "items": [],
-    "primary": {
-      "heading": [
-        {
-          "type": "heading1",
-          "text": "Transform Your Business Today",
-          "spans": []
-        }
-      ],
-      "description": [
-        {
-          "type": "paragraph",
-          "text": "Join thousands of companies already using our platform to scale and grow.",
-          "spans": []
-        }
-      ],
-      "primaryCtaText": "Get Started",
-      "primaryCtaLink": {
-        "link_type": "Web",
-        "url": "/get-started"
-      },
-      "secondaryCtaText": "View Demo",
-      "secondaryCtaLink": {
-        "link_type": "Web",
-        "url": "/demo"
-      },
-      "backgroundImage": {
-        "dimensions": {
-          "width": 1920,
-          "height": 1080
-        },
-        "alt": "Business transformation",
-        "copyright": null,
-        "url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1920&h=1080&fit=crop"
-      },
-      "textAlignment": "left",
-      "overlayOpacity": 70
-    },
-    "id": "hero_mock_2$default",
-    "slice_type": "hero",
-    "slice_label": null
-  },
-  {
-    "variation": "default",
-    "version": "initial",
-    "items": [],
-    "primary": {
-      "heading": [
-        {
-          "type": "heading1",
-          "text": "Welcome to Our Platform",
-          "spans": []
-        }
-      ],
-      "description": [
-        {
-          "type": "paragraph",
-          "text": "Simple, powerful, and easy to use.",
-          "spans": []
-        }
-      ],
-      "primaryCtaText": "Start Now",
-      "primaryCtaLink": {
-        "link_type": "Web",
-        "url": "/start"
-      },
-      "secondaryCtaText": null,
-      "secondaryCtaLink": null,
-      "backgroundImage": {
-        "dimensions": {
-          "width": 0,
-          "height": 0
-        },
-        "alt": null,
-        "copyright": null,
-        "url": null
-      },
-      "textAlignment": "center",
-      "overlayOpacity": 50
-    },
-    "id": "hero_mock_3$default",
-    "slice_type": "hero",
-    "slice_label": null
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"heading": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "heading1",
+						"content": {
+							"text": "Everyone"
+						}
+					}
+				]
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Cupidatat irure non qui nostrud aute irure duis quis occaecat exercitation irure aute. Mollit laboris sit aute non nulla. In deserunt amet Lorem non ex non sit qui cillum irure tempor amet incididunt."
+						}
+					}
+				]
+			},
+			"primaryCtaLink": {
+				"key": "044c2be3-1d76-4b44-a6bf-d6f2a3597a4e",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "https://prismic.io"
+				}
+			},
+			"backgroundImage": {
+				"origin": {
+					"id": "main",
+					"url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
+					"width": 5243,
+					"height": 3495
+				},
+				"url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
+				"width": 5243,
+				"height": 3495,
+				"edit": {
+					"zoom": 1,
+					"crop": {
+						"x": 0,
+						"y": 0
+					},
+					"background": "transparent"
+				},
+				"alt": "your",
+				"credits": null,
+				"__TYPE__": "ImageContent"
+			},
+			"overlayOpacity": {
+				"__TYPE__": "FieldContent",
+				"value": "66",
+				"type": "Number"
+			},
+			"special_marker": {
+				"__TYPE__": "FieldContent",
+				"value": "None",
+				"type": "Select"
+			},
+			"background_video": {
+				"key": "513c38c6-d967-414b-8027-4f58b08a9818",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "FileLink",
+					"id": "mock_Media_link",
+					"kind": "file",
+					"name": "mock_name",
+					"url": "https://source.unsplash.com/daily",
+					"size": "0"
+				}
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]

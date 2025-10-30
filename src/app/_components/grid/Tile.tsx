@@ -27,7 +27,7 @@ export default function Tile({ config }: Props) {
               className={clsx(
                 "w-full h-full object-cover ",
                 config.link &&
-                  "group-hover:scale-125 transition-all duration-500 ease-out"
+                  "group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out"
               )}
               autoPlay={true}
               muted={true}
@@ -44,22 +44,28 @@ export default function Tile({ config }: Props) {
               className={clsx(
                 "w-full h-full object-cover ",
                 config.link &&
-                  "group-hover:scale-125 transition-transform duration-500 ease-out"
+                  "group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out"
               )}
             />
           )}
           {config.link && (
-            <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[20px] z-20 border-white scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
+            <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[20px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
           )}
           {(config.title || config.subtitle) && (
             <div className="absolute inset-0 p-3 lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300 w-full">
               {config.title && (
-                <h3 className="font-bold text-2xl lg:text-4xl uppercase leading-tight ">
+                <h3
+                  className="font-bold text-2xl lg:text-4xl uppercase leading-tight "
+                  style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
+                >
                   {config.title}
                 </h3>
               )}
               {config.subtitle && (
-                <p className="text-sm lg:text-base mt-2 opacity-90">
+                <p
+                  className="text-sm lg:text-base mt-2 opacity-90"
+                  style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
+                >
                   {config.subtitle}
                 </p>
               )}

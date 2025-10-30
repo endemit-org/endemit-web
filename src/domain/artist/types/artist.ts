@@ -21,6 +21,8 @@ export type Artist = {
     type: ArtistLinkType;
     url: string;
   }>;
+  isB2b: boolean;
+  b2bAttribution: { name: string; uid: string; id: string }[] | null;
   updatedAt: Date;
   meta: CmsMetaData;
 };

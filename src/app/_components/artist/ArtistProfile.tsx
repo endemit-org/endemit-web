@@ -32,7 +32,7 @@ export default function ArtistProfile({
   showLinkToPage = false,
 }: PodcastArtistSectionProps) {
   return (
-    <div className="relative overflow-hidden mb-40">
+    <div className="relative overflow-hidden mb-40 z-10">
       <div className="flex gap-x-12 max-lg:flex-col max-lg:gap-y-16 max-lg:items-center">
         {artist.image && (
           <div>

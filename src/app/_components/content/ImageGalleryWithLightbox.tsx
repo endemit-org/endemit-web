@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import Lightbox from "@/app/_components/content/Lightbox";
 
 export interface GalleryImage {
   src: string;
@@ -16,7 +17,7 @@ export interface ImageGalleryProps {
   columns?: "2" | "3" | "4";
 }
 
-export default function ImageGalleryAlt({
+export default function ImageGalleryWithLightbox({
   heading,
   images,
   layout = "grid",
@@ -49,7 +50,7 @@ export default function ImageGalleryAlt({
   return (
     <div className="w-full">
       {heading && (
-        <h2 className="text-3xl font-bold mb-8 text-gray-900">{heading}</h2>
+        <h2 className="text-3xl font-bold mb-8 text-neutral-200">{heading}</h2>
       )}
 
       {layout === "grid" ? (
@@ -102,55 +103,14 @@ export default function ImageGalleryAlt({
       )}
 
       {lightboxIndex !== null && (
-        <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
-          onClick={closeLightbox}
-        >
-          <button
-            className="absolute top-4 right-4 text-neutral-200 text-4xl hover:text-gray-300"
-            onClick={closeLightbox}
-          >
-            &times;
-          </button>
-
-          <button
-            className="absolute left-4 text-neutral-200 text-4xl hover:text-gray-300"
-            onClick={e => {
-              e.stopPropagation();
-              prevImage();
-            }}
-          >
-            &#8249;
-          </button>
-
-          <button
-            className="absolute right-4 text-neutral-200 text-4xl hover:text-gray-300"
-            onClick={e => {
-              e.stopPropagation();
-              nextImage();
-            }}
-          >
-            &#8250;
-          </button>
-
-          <div
-            className="max-w-5xl max-h-[90vh] relative"
-            onClick={e => e.stopPropagation()}
-          >
-            <Image
-              src={images[lightboxIndex].src}
-              alt={images[lightboxIndex].alt}
-              width={1200}
-              height={900}
-              className="max-h-[90vh] w-auto object-contain"
-            />
-            {images[lightboxIndex].caption && (
-              <p className="text-neutral-200 text-center mt-4 text-lg">
-                {images[lightboxIndex].caption}
-              </p>
-            )}
-          </div>
-        </div>
+        <Lightbox
+          images={images}
+          currentIndex={lightboxIndex}
+          onClose={closeLightbox}
+          onNext={nextImage}
+          onPrev={prevImage}
+          onSelectIndex={setLightboxIndex}
+        />
       )}
     </div>
   );

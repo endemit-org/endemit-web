@@ -55,7 +55,7 @@ export const getResizedPrismicImage = (
     dpr?: 1 | 0;
   }
 ) => {
-  return `${url}&&w=${options?.width ?? 500}&q=${options?.quality ?? 85}&fm=${options?.format ?? "webp"}&dpr=${options?.dpr ?? 1}`;
+  return `${url}&w=${options?.width ?? 500}&q=${options?.quality ?? 85}&fm=${options?.format ?? "webp"}&dpr=${options?.dpr ?? 1}`;
 };
 
 export const getBlurDataURL = async (imageUrl: string) => {
@@ -80,4 +80,16 @@ export const getBlurDataURL = async (imageUrl: string) => {
       : window.btoa(str);
 
   return `data:image/svg+xml;base64,${toBase64(blurSvg)}`;
+};
+
+export const isDateInPast = (compareDate: Date) => {
+  const now = new Date();
+
+  if (!compareDate) {
+    return false;
+  }
+
+  const isCompleted = now.getTime() >= compareDate.getTime();
+
+  return isCompleted;
 };

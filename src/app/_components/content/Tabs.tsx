@@ -17,12 +17,14 @@ export interface TabsProps {
   heading?: string;
   items: TabItem[];
   sortByWeight?: boolean;
+  backgroundColor?: string;
 }
 
 export default function Tabs({
   heading,
   items,
   sortByWeight = false,
+  backgroundColor,
 }: TabsProps) {
   const hashFromUrl =
     typeof window !== "undefined" ? window.location.hash.slice(1) : "";
@@ -140,8 +142,10 @@ export default function Tabs({
           </nav>
         </div>
 
-        <div className="hidden lg:block mt-8 max-w-none">
-          <InnerPage>{activeTab?.content}</InnerPage>
+        <div className="hidden lg:block mt-8 max-w-none w-full">
+          <InnerPage style={{ backgroundColor }}>
+            {activeTab?.content}
+          </InnerPage>
         </div>
       </section>
 
@@ -160,7 +164,7 @@ export default function Tabs({
                   {item.label}
                 </h3>
               )}
-              <InnerPage>
+              <InnerPage style={{ backgroundColor }}>
                 <div className="max-w-none">{item.content}</div>
               </InnerPage>
             </div>

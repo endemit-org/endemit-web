@@ -23,7 +23,10 @@
           "type": "Select",
           "config": {
             "label": "Layout",
-            "options": ["grid", "masonry"],
+            "options": [
+              "grid",
+              "masonry"
+            ],
             "default_value": "grid"
           }
         },
@@ -31,8 +34,21 @@
           "type": "Select",
           "config": {
             "label": "Columns",
-            "options": ["2", "3", "4"],
+            "options": [
+              "2",
+              "3",
+              "4"
+            ],
             "default_value": "3"
+          }
+        },
+        "include_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Include frame",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
           }
         }
       },

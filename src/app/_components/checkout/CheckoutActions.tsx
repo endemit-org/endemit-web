@@ -30,7 +30,7 @@ export default function CheckoutActions({
         onClick={canProceed ? onCheckout : undefined}
         disabled={!canProceed}
         className={clsx(
-          canProceed && "animate-rave-125bmp hover:[animation:none]"
+          canProceed && "animate-rave-125bmp-delay hover:[animation:none]"
         )}
       >
         {isProcessing && canProceed

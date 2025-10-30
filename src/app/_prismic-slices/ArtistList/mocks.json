@@ -2,7 +2,27 @@
 	{
 		"__TYPE__": "SharedSliceContent",
 		"variation": "default",
-		"primary": {},
+		"primary": {
+			"show": {
+				"__TYPE__": "FieldContent",
+				"value": "Endemit",
+				"type": "Select"
+			},
+			"render_frame": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "kitchen",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "FieldContent",
+				"value": "girl",
+				"type": "Text"
+			}
+		},
 		"items": []
 	}
 ]

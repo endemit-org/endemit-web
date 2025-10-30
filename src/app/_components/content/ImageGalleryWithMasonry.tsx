@@ -8,6 +8,7 @@ import ChevronNextIcon from "@/app/_components/icon/ChevronNextIcon";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import EventPoster from "@/app/_components/event/EventPoster";
 import { Event } from "@/domain/event/types/event";
+import Lightbox from "@/app/_components/content/Lightbox";
 
 interface Props {
   images: ProductImage[];
@@ -26,6 +27,7 @@ export default function ImageGalleryWithMasonry({
 }: Props) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [desktopSlide, setDesktopSlide] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
   const desktopSliderRef = useRef<HTMLDivElement>(null);
 
@@ -73,6 +75,16 @@ export default function ImageGalleryWithMasonry({
     scrollToDesktopSlide(newIndex);
   };
 
+  const closeLightbox = () => setLightboxIndex(null);
+  const nextLightboxImage = () =>
+    setLightboxIndex(prev =>
+      prev !== null ? (prev + 1) % images.length : null
+    );
+  const prevLightboxImage = () =>
+    setLightboxIndex(prev =>
+      prev !== null ? (prev - 1 + images.length) % images.length : null
+    );
+
   const hasRelatedEvent = !!relatedEvent;
   const hasSlider = images.length > 3 || (hasRelatedEvent && images.length > 1);
   const sliderImages = hasRelatedEvent
@@ -104,7 +116,11 @@ export default function ImageGalleryWithMasonry({
               }}
             >
               {sliderImages.map((image, index) => (
-                <div key={index} className="flex-shrink-0 w-full snap-center">
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-full snap-center cursor-pointer"
+                  onClick={() => setLightboxIndex(index)}
+                >
                   <ImageWithFallback
                     placeholder={image.placeholder}
                     quality={95}
@@ -147,49 +163,67 @@ export default function ImageGalleryWithMasonry({
             </div>
           </div>
         ) : (
-          <ImageWithFallback
-            placeholder={images[0].placeholder}
-            quality={95}
-            width={width}
-            height={height}
-            alt={images[0]?.alt ?? altFallbackText}
-            src={images[0].src}
+          <div
             className={clsx(
-              "row-span-2 aspect-3/4 size-full rounded-lg object-cover col-span-2",
+              "row-span-2 col-span-2 cursor-pointer",
               images.length === 1 && "col-span-3"
             )}
-          />
+            onClick={() => setLightboxIndex(0)}
+          >
+            <ImageWithFallback
+              placeholder={images[0].placeholder}
+              quality={95}
+              width={width}
+              height={height}
+              alt={images[0]?.alt ?? altFallbackText}
+              src={images[0].src}
+              className="aspect-3/4 size-full rounded-lg object-cover"
+            />
+          </div>
         )}
 
         {/* Third Column */}
         {hasRelatedEvent ? (
           <div className="col-start-3 row-span-2">
-            {/* Placeholder for related event content */}
             <EventPoster event={relatedEvent} />
           </div>
         ) : (
           <>
             {sideImages[0] && (
-              <ImageWithFallback
-                placeholder={sideImages[0].placeholder}
-                quality={95}
-                width={width}
-                height={height}
-                alt={sideImages[0]?.alt ?? altFallbackText}
-                src={sideImages[0].src}
-                className="col-start-3 aspect-3/2 size-full rounded-lg object-cover"
-              />
+              <div
+                className="col-start-3 cursor-pointer"
+                onClick={() =>
+                  setLightboxIndex(hasSlider ? images.length - 2 : 1)
+                }
+              >
+                <ImageWithFallback
+                  placeholder={sideImages[0].placeholder}
+                  quality={95}
+                  width={width}
+                  height={height}
+                  alt={sideImages[0]?.alt ?? altFallbackText}
+                  src={sideImages[0].src}
+                  className="aspect-3/2 size-full rounded-lg object-cover"
+                />
+              </div>
             )}
             {sideImages[1] && (
-              <ImageWithFallback
-                placeholder={sideImages[1].placeholder}
-                quality={95}
-                width={width}
-                height={height}
-                alt={sideImages[1]?.alt ?? altFallbackText}
-                src={sideImages[1].src}
-                className="col-start-3 row-start-2 aspect-3/2 size-full rounded-lg object-cover"
-              />
+              <div
+                className="col-start-3 row-start-2 cursor-pointer"
+                onClick={() =>
+                  setLightboxIndex(hasSlider ? images.length - 1 : 2)
+                }
+              >
+                <ImageWithFallback
+                  placeholder={sideImages[1].placeholder}
+                  quality={95}
+                  width={width}
+                  height={height}
+                  alt={sideImages[1]?.alt ?? altFallbackText}
+                  src={sideImages[1].src}
+                  className="aspect-3/2 size-full rounded-lg object-cover"
+                />
+              </div>
             )}
           </>
         )}
@@ -208,7 +242,11 @@ export default function ImageGalleryWithMasonry({
           }}
         >
           {images.map((image, index) => (
-            <div key={index} className="flex-shrink-0 w-full snap-center">
+            <div
+              key={index}
+              className="flex-shrink-0 w-full snap-center cursor-pointer"
+              onClick={() => setLightboxIndex(index)}
+            >
               <ImageWithFallback
                 placeholder={image.placeholder}
                 quality={95}
@@ -258,6 +296,17 @@ export default function ImageGalleryWithMasonry({
           ))}
         </div>
       </div>
+
+      {lightboxIndex !== null && (
+        <Lightbox
+          images={images}
+          currentIndex={lightboxIndex}
+          onClose={closeLightbox}
+          onNext={nextLightboxImage}
+          onPrev={prevLightboxImage}
+          onSelectIndex={setLightboxIndex}
+        />
+      )}
     </div>
   );
 }

@@ -37,7 +37,7 @@ export const transformEventObject = async (
       artists.push({
         id: artist.id,
         uid: artist.uid,
-        name: artist.data.name,
+        name: item.name_override ?? artist.data.name,
         description:
           item.description_override.length > 0
             ? asText(item.description_override)
@@ -60,6 +60,18 @@ export const transformEventObject = async (
             : null,
         duration: item.duration,
         stage: item.stage,
+        isB2b: artist.data.is_b2b,
+        b2bAttribution: artist.data.is_b2b
+          ? artist.data.b2b_attributed_to_artist.map(artist => {
+              if (!isFilled.contentRelationship(artist.artist)) return;
+
+              return {
+                name: artist.artist.data?.name,
+                id: artist.artist.id,
+                uid: artist.artist.uid,
+              };
+            })
+          : null,
         links: artist.data.links
           ? artist.data.links.map(link => ({
               type: link.type,
@@ -101,10 +113,18 @@ export const transformEventObject = async (
       venueDoc && venueDoc.data
         ? {
             id: venueDoc.id,
+            uid: venueDoc.uid,
             name: venueDoc.data.name,
             address: venueDoc.data.address,
             description: venueDoc.data.description,
             coordinates: venueDoc.data.coordinates,
+            image: venueDoc.data.image
+              ? {
+                  src: venueDoc.data.image.url,
+                  alt: venueDoc.data.image.alt,
+                  placeholder: await getBlurDataURL(venueDoc.data.image.url!),
+                }
+              : null,
             logo: venueDoc.data.venue_logo
               ? {
                   src: venueDoc.data.venue_logo.url,
@@ -122,6 +142,7 @@ export const transformEventObject = async (
       visibility: event.data.visibility,
       enabledLink: event.data.enable_link_to_full_page,
       enabledTicketScanning: event.data.allow_ticket_scanning,
+      externalEventLink: event.data.external_event_link,
     },
     tickets: {
       available: !!ticketProductId,
