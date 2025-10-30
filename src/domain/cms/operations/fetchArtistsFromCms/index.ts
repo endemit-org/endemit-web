@@ -19,5 +19,9 @@ export const fetchArtistsFromCms = async ({
     return null;
   }
 
-  return artists.map(event => transformArtistObject(event));
+  const transformedArtists = [];
+  for (const artist of artists) {
+    transformedArtists.push(await transformArtistObject(artist));
+  }
+  return transformedArtists;
 };

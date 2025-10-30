@@ -1,8 +1,9 @@
 import { Artist } from "@/domain/artist/types/artist";
 import { ArtistDocument } from "@/prismicio-types";
 import { asLink } from "@prismicio/client";
+import { getBlurDataURL } from "@/lib/util/util";
 
-export const transformArtistObject = (artist: ArtistDocument) => {
+export const transformArtistObject = async (artist: ArtistDocument) => {
   return {
     id: artist.id,
     uid: artist.uid,
@@ -12,6 +13,7 @@ export const transformArtistObject = (artist: ArtistDocument) => {
       ? {
           src: artist.data.image.url,
           alt: artist.data.image.alt,
+          placeholder: await getBlurDataURL(artist.data.image.url!),
         }
       : null,
     video: asLink(artist.data.video) ?? null,

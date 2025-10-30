@@ -13,7 +13,7 @@ export const fetchProductFromCmsByUid = async (productUid: string) => {
     return null;
   }
 
-  return transformProductObject(prismicProduct);
+  return await transformProductObject(prismicProduct);
 };
 
 export const fetchProductFromCmsById = async (productId: string) => {
@@ -25,5 +25,5 @@ export const fetchProductFromCmsById = async (productId: string) => {
     return null;
   }
 
-  return transformProductObject(prismicProduct);
+  return await transformProductObject(prismicProduct);
 };

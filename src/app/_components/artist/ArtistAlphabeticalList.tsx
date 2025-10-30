@@ -1,7 +1,7 @@
 import { Artist } from "@/domain/artist/types/artist";
 import Link from "next/link";
-import Image from "next/image";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 
 type Props = {
   artists: Artist[];
@@ -26,9 +26,10 @@ export default function ArtistAlphabeticalList({ artists }: Props) {
         >
           <div className="relative aspect-square overflow-hidden">
             {artist.image?.src && (
-              <Image
+              <ImageWithFallback
                 src={artist.image.src}
                 alt={artist.image.alt || artist.name}
+                placeholder={artist.image.placeholder}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />

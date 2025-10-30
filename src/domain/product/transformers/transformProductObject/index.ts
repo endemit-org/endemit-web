@@ -5,8 +5,9 @@ import {
 
 import { asLink, asText, isFilled } from "@prismicio/client";
 import { ProductDocument } from "@/prismicio-types";
+import { getBlurDataURL } from "@/lib/util/util";
 
-export const transformProductObject = (product: ProductDocument) => {
+export const transformProductObject = async (product: ProductDocument) => {
   const hasVariants =
     product.data.variants.filter(variant => variant.variant_value).length > 0;
 
@@ -23,15 +24,61 @@ export const transformProductObject = (product: ProductDocument) => {
 
   const hasRelatedEvent = !!relatedEvent;
 
+  const images = [];
+  for (const img of product.data.images) {
+    images.push({
+      src: img.image.url,
+      alt: img.image.alt,
+      placeholder: await getBlurDataURL(img.image.url!),
+    });
+  }
+
+  const relatedProducts = [];
+  if (hasRelatedProducts) {
+    for (const rp of product.data.related_products) {
+      const relatedProduct = isFilled.contentRelationship(rp.related_product)
+        ? rp.related_product
+        : null;
+
+      if (!relatedProduct || !relatedProduct.data) {
+        relatedProducts.push(null);
+        continue;
+      }
+
+      const images = [];
+      for (const img of relatedProduct.data.images) {
+        images.push({
+          src: img.image.url,
+          alt: img.image.alt,
+          placeholder: await getBlurDataURL(img.image.url!),
+        });
+      }
+
+      relatedProducts.push({
+        id: relatedProduct.id,
+        uid: relatedProduct.uid,
+        title: relatedProduct.data.title,
+        description: relatedProduct.data.description
+          ? asText(relatedProduct.data.description)
+          : null,
+        category: relatedProduct.data.product_category,
+        productType: relatedProduct.data.product_type,
+        status: relatedProduct.data.product_status,
+        visibility: relatedProduct.data.product_visibility,
+        images,
+        price: relatedProduct.data.price,
+        sortingWeight: relatedProduct.data.sorting_weight ?? 0,
+        callToAction: rp.call_to_action,
+      });
+    }
+  }
+
   return {
     id: product.id,
     uid: product.uid,
     name: product.data.title,
     description: product.data.description,
-    images: product.data.images.map(img => ({
-      src: img.image.url,
-      alt: img.image.alt,
-    })),
+    images,
     video: asLink(product.data.video) ?? null,
     price: product.data.price,
     currency: "eur",
@@ -53,37 +100,7 @@ export const transformProductObject = (product: ProductDocument) => {
     composition: hasVariants
       ? ProductCompositionType.CONFIGURABLE
       : ProductCompositionType.SINGLE,
-    relatedProducts: hasRelatedProducts
-      ? product.data.related_products.map(rp => {
-          const relatedProduct = isFilled.contentRelationship(
-            rp.related_product
-          )
-            ? rp.related_product
-            : null;
-
-          if (!relatedProduct || !relatedProduct.data) return null;
-
-          return {
-            id: relatedProduct.id,
-            uid: relatedProduct.uid,
-            title: relatedProduct.data.title,
-            description: relatedProduct.data.description
-              ? asText(relatedProduct.data.description)
-              : null,
-            category: relatedProduct.data.product_category,
-            productType: relatedProduct.data.product_type,
-            status: relatedProduct.data.product_status,
-            visibility: relatedProduct.data.product_visibility,
-            images: relatedProduct.data.images.map(img => ({
-              src: img.image.url,
-              alt: img.image.alt,
-            })),
-            price: relatedProduct.data.price,
-            sortingWeight: relatedProduct.data.sorting_weight ?? 0,
-            callToAction: rp.call_to_action,
-          };
-        })
-      : null,
+    relatedProducts: hasRelatedProducts ? relatedProducts : null,
     relatedEvent:
       hasRelatedEvent && relatedEvent && relatedEvent.data
         ? {

@@ -74,6 +74,7 @@ export default async function EventScanPage({
             <ImageWithFallback
               src={event.coverImage?.src}
               alt={event.coverImage?.alt ?? ""}
+              placeholder={event.coverImage?.placeholder}
               width={200}
               height={200}
               className={"aspect-square object-fill"}

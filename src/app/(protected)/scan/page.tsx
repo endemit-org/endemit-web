@@ -55,6 +55,7 @@ export default async function ScanPage() {
                   <ImageWithFallback
                     src={event.coverImage?.src}
                     alt={event.coverImage?.alt ?? ""}
+                    placeholder={event.coverImage?.placeholder}
                     width={100}
                     height={100}
                     className={"aspect-square object-fill w-20"}

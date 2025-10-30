@@ -1,12 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { formatDate } from "@/lib/util/formatting";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { CmsImage } from "@/domain/cms/types/common";
 
 interface PodcastCardProps {
-  image?: {
-    src: string;
-    alt?: string | null;
-  } | null;
+  image?: CmsImage | null;
   name: string;
   date: Date | null;
   location?: string;
@@ -29,9 +27,10 @@ export default function EventMiniCard({
       <Link href={`/events/${uid}`}>
         <div className={"aspect-square overflow-hidden "}>
           {image && (
-            <Image
+            <ImageWithFallback
               src={image.src}
               alt={image.alt ?? name}
+              placeholder={image.placeholder}
               width={800}
               height={800}
               loading="lazy"

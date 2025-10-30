@@ -3,7 +3,6 @@ import OuterPage from "@/app/_components/content/OuterPage";
 import { notFound } from "next/navigation";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
-import Image from "next/image";
 import Tabs, { TabItem } from "@/app/_components/content/Tabs";
 import { fetchInnerContentPagesForEvent } from "@/domain/cms/operations/fetchInnerContentPagesFromCms";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
@@ -18,6 +17,7 @@ import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import clsx from "clsx";
 import { Metadata } from "next";
 import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
+import { getResizedPrismicImage } from "@/lib/util/util";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -75,6 +75,7 @@ function TicketDisplay({ product }: { product: Product }) {
           alt={product.images[0].alt}
           width={400}
           height={229}
+          placeholder={product.images[0].placeholder}
         />
       </div>
       <h2 className={"text-2xl my-6"}>{product.name}</h2>
@@ -170,9 +171,13 @@ export default async function EventPage({
           className={
             "absolute top-80 h-96 blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
           }
-          style={{
-            backgroundImage: `url(${event.coverImage?.src})`,
-          }}
+          style={
+            event.coverImage
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
         ></div>
         <div
           style={{
@@ -197,13 +202,14 @@ export default async function EventPage({
                 </Link>
               )}
               {event.coverImage?.src && (
-                <Image
+                <ImageWithFallback
                   src={event.coverImage?.src}
                   alt={event.coverImage?.alt ?? ""}
                   height={455}
                   width={809}
                   quality="100"
                   className="aspect-video w-full"
+                  placeholder={event.coverImage?.placeholder}
                 />
               )}
             </div>
@@ -239,13 +245,14 @@ export default async function EventPage({
                 id={"overview"}
               >
                 {event.venue?.logo && event.venue?.logo.src && (
-                  <Image
+                  <ImageWithFallback
                     src={event.venue?.logo.src}
                     alt={event.venue?.logo.src}
                     width={32}
                     height={32}
                     quality={85}
                     className="aspect-square w-6 h-6"
+                    placeholder={event.venue?.logo?.placeholder}
                   />
                 )}
                 {event.venue?.name}

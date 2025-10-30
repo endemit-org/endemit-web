@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import React from "react";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { CmsImage } from "@/domain/cms/types/common";
 
 export interface HeroProps {
   heading: string;
@@ -13,10 +14,7 @@ export interface HeroProps {
     text: string;
     href: string;
   };
-  backgroundImage?: {
-    src: string;
-    alt: string;
-  };
+  backgroundImage?: CmsImage;
   textAlignment?: "left" | "center";
   overlayOpacity?: number;
 }
@@ -46,9 +44,10 @@ export default function Hero({
 
       {backgroundImage && (
         <>
-          <Image
+          <ImageWithFallback
             src={backgroundImage.src}
-            alt={backgroundImage.alt}
+            alt={backgroundImage?.alt ?? ""}
+            placeholder={backgroundImage.placeholder}
             fill
             className="object-cover group-hover:scale-125 transition-transform duration-500 ease-out"
             priority

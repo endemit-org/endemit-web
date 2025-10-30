@@ -1,9 +1,9 @@
 import { TileConfig } from "@/app/_components/grid/TileConfig";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import clsx from "clsx";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 
 interface Props {
   config: TileConfig;
@@ -35,8 +35,9 @@ export default function Tile({ config }: Props) {
               playsInline={true}
             />
           ) : (
-            <Image
+            <ImageWithFallback
               src={config.media.src}
+              placeholder={config.media.placeholder}
               width={600}
               height={600}
               alt={config.title || ""}

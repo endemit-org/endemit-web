@@ -2,6 +2,7 @@ import { FC } from "react";
 import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import Hero from "@/app/_components/content/Hero";
+import { getBlurDataURL } from "@/lib/util/util";
 
 /**
  * Props for `Hero`.
@@ -11,7 +12,7 @@ export type HeroProps = SliceComponentProps<Content.HeroSlice>;
 /**
  * Component for "Hero" Slices.
  */
-const HeroSlice: FC<HeroProps> = ({ slice }) => {
+const HeroSlice: FC<HeroProps> = async ({ slice }) => {
   const { primary } = slice;
 
   const heading = isFilled.richText(primary.heading)
@@ -44,6 +45,7 @@ const HeroSlice: FC<HeroProps> = ({ slice }) => {
     ? {
         src: primary.backgroundImage.url,
         alt: primary.backgroundImage.alt || "",
+        placeholder: await getBlurDataURL(primary.backgroundImage.url),
       }
     : undefined;
 

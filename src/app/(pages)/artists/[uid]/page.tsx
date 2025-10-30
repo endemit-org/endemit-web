@@ -15,6 +15,7 @@ import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
 import ArtistSeoMicrodata from "@/app/_components/seo/ArtistSeoMicrodata";
+import { getResizedPrismicImage } from "@/lib/util/util";
 
 export async function generateStaticParams() {
   const artists = await fetchArtistsFromCms({});
@@ -88,9 +89,13 @@ export default async function ArtistPage({
           className={
             "absolute top-80 h-[400px] blur-3xl -left-10 -right-10 bg-cover opacity-40 "
           }
-          style={{
-            backgroundImage: `url(${artist.image?.src})`,
-          }}
+          style={
+            artist.image
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(artist.image?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
         ></div>
 
         <PageHeadline

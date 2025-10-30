@@ -57,6 +57,7 @@ export default function EventLocation({ venue }: Props) {
           <ImageWithFallback
             src={venue.logo?.src}
             alt={venue.logo?.alt ?? venue.name}
+            placeholder={venue.logo?.placeholder}
             className={"w-20"}
           />
         </div>

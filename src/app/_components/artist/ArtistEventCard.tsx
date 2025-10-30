@@ -28,10 +28,11 @@ export default function ArtistEventCard({
           <div className="relative w-full  overflow-hidden ">
             <ImageWithFallback
               src={artist.image?.src}
-              alt={artist.name}
+              alt={artist.image?.alt ?? artist.name}
               width={400}
               height={600}
               className="w-full h-auto"
+              placeholder={artist.image?.placeholder}
             />
           </div>
           {/* Stage and Time Info */}

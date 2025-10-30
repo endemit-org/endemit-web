@@ -107,6 +107,7 @@ export default async function PodcastPage({
             <ArtistProfile
               artist={podcast.artist}
               coverSrc={podcast.cover?.src}
+              showLinkToPage={true}
             />
           )}
         </div>

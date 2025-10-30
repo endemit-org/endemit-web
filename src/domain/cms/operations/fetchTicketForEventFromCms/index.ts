@@ -35,5 +35,9 @@ export const fetchTicketForEventFromCms = async (eventId: string) => {
     return null;
   }
 
-  return ticketsForEvent.map(product => transformProductObject(product));
+  const transformedProducts = [];
+  for (const product of ticketsForEvent) {
+    transformedProducts.push(await transformProductObject(product));
+  }
+  return transformedProducts;
 };

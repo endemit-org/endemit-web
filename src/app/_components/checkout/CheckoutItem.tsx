@@ -4,7 +4,6 @@ import {
 } from "@/domain/product/businessLogic";
 import { ensureTypeIsDate } from "@/lib/util/util";
 import Link from "next/link";
-import Image from "next/image";
 import { formatDateTime, formatDecimalPrice } from "@/lib/util/formatting";
 import CartQtyControl from "@/app/_components/cart/CartQtyControl";
 import shippingService from "@/lib/services/shipping";
@@ -12,6 +11,7 @@ import { CountryCode } from "@/domain/checkout/types/country";
 import { ReactNode } from "react";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { CartItem } from "@/domain/checkout/types/cartItem";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 
 type Props = {
   item: CartItem;
@@ -42,9 +42,10 @@ export default function CheckoutItem({
         <div className={"text-lg font-bold text-neutral-300"}>
           {item.images[0].src && (
             <Link className={"link"} href={productLink}>
-              <Image
+              <ImageWithFallback
                 src={item.images[0].src}
                 alt={item.name}
+                placeholder={item.images[0].placeholder}
                 width={100}
                 height={100}
                 quality={90}

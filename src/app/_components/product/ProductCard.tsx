@@ -1,16 +1,17 @@
-import { ProductCategory, ProductStatus } from "@/domain/product/types/product";
+import {
+  ProductCategory,
+  ProductImage,
+  ProductStatus,
+} from "@/domain/product/types/product";
 import Link from "next/link";
 import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
-import Image from "next/image";
 import { formatPrice } from "@/lib/util/formatting";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 
 interface ProductCardProps {
   video?: string;
-  image?: {
-    src: string;
-    alt?: string;
-  };
+  image?: ProductImage;
   name: string;
   price: number;
   uid: string;
@@ -55,13 +56,13 @@ export default function ProductCard({
           )}
 
           {image && !video && (
-            <Image
+            <ImageWithFallback
               src={image.src}
               alt={image.alt ?? name}
               width={800}
               height={800}
-              loading="lazy"
-              className="aspect-square w-full   object-cover group-hover:opacity-75 xl:aspect-7/8 group-hover:scale-125 transition-transform ease-in-out"
+              placeholder={image.placeholder}
+              className="aspect-square w-full object-cover group-hover:opacity-75 xl:aspect-7/8 group-hover:scale-125 transition-transform ease-in-out"
             />
           )}
         </div>

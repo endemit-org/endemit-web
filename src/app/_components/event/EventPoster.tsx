@@ -1,9 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import { formatDate } from "@/lib/util/formatting";
 import { Event } from "@/domain/event/types/event";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 
 export interface EventProps {
   event: Event;
@@ -42,9 +43,10 @@ export default function EventPoster({ event }: EventProps) {
               )}
 
               {shouldShowImage && event.promoImage?.src && (
-                <Image
+                <ImageWithFallback
                   src={event.promoImage?.src}
                   alt={event.promoImage?.alt ?? event.name}
+                  placeholder={event.promoImage?.placeholder}
                   width={600}
                   height={600}
                   quality={95}
@@ -62,13 +64,9 @@ export default function EventPoster({ event }: EventProps) {
                   }}
                 >
                   <div className="text-center">
-                    <Image
-                      src={"/images/endemit-logo.png"}
-                      alt={"Event image coming soon"}
-                      width={48}
-                      height={48}
-                      className="mx-auto mb-2 opacity-70 "
-                    />
+                    <div className="w-20 text-neutral-200">
+                      <EndemitLogo />
+                    </div>
                     <div className="text-stone-400 font-medium">
                       Details coming soon
                     </div>
