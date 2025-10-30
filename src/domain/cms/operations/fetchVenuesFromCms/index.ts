@@ -19,5 +19,9 @@ export const fetchVenuesFromCms = async ({
     return null;
   }
 
-  return venues.map(venue => transformVenueObject(venue));
+  const transformedVenues = [];
+  for (const venue of venues) {
+    transformedVenues.push(await transformVenueObject(venue));
+  }
+  return transformedVenues;
 };

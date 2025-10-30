@@ -1,22 +1,27 @@
 "use client";
 
-import Image from "next/image";
 import EmbedSoundCloud from "@/app/_components/content/EmbedSoundCloud";
 import { useState } from "react";
 import clsx from "clsx";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 
-export default function InnerClientToggle() {
+type Props = {
+  placeholder: string;
+};
+
+export default function InnerClientToggle({ placeholder }: Props) {
   const [isClicked, setIsClicked] = useState(false);
 
   return (
     <div className="relative overflow-hidden z-20">
-      <Image
+      <ImageWithFallback
         src="/images/issun-boshi-vinyl-release/album/issun-boshi-cover.webp"
         alt="Issun-bōshi  Vinyl release"
         width={400}
         height={400}
         className="z-10 relative "
         onClick={() => setIsClicked(!isClicked)}
+        placeholder={placeholder}
       />
       <div
         className={clsx(

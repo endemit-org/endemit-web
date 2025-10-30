@@ -2,15 +2,10 @@ import { FC } from "react";
 import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ImageGalleryWithLightbox from "@/app/_components/content/ImageGalleryWithLightbox";
+import InnerPage from "@/app/_components/content/InnerPage";
 
-/**
- * Props for `ImageGallery`.
- */
 export type ImageGalleryProps = SliceComponentProps<Content.ImageGallerySlice>;
 
-/**
- * Component for "ImageGallery" Slices.
- */
 const ImageGallerySlice: FC<ImageGalleryProps> = ({ slice }) => {
   const { primary, items } = slice;
 
@@ -26,17 +21,21 @@ const ImageGallerySlice: FC<ImageGalleryProps> = ({ slice }) => {
       caption: isFilled.keyText(item.caption) ? item.caption : undefined,
     }));
 
+  const gallery = (
+    <ImageGalleryWithLightbox
+      heading={heading}
+      images={images}
+      layout={primary.layout || "grid"}
+      columns={primary.columns || "3"}
+    />
+  );
+
   return (
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      <ImageGalleryWithLightbox
-        heading={heading}
-        images={images}
-        layout={primary.layout || "grid"}
-        columns={primary.columns || "3"}
-      />
+      {primary.include_frame ? <InnerPage>{gallery}</InnerPage> : gallery}
     </section>
   );
 };

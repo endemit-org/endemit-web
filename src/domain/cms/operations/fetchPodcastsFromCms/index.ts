@@ -25,5 +25,9 @@ export const fetchPodcastsFromCms = async ({
     return null;
   }
 
-  return podcasts.map(podcast => transformPodcastObject(podcast));
+  const transformedPodcasts = [];
+  for (const podcast of podcasts) {
+    transformedPodcasts.push(await transformPodcastObject(podcast));
+  }
+  return transformedPodcasts;
 };

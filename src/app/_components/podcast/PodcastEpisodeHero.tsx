@@ -4,6 +4,7 @@ import { RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import { PodcastTrackInList } from "@/domain/podcast/types/podcast";
 import clsx from "clsx";
+import { getResizedPrismicImage } from "@/lib/util/util";
 
 interface PodcastEpisodeHeroProps {
   number: string;
@@ -25,12 +26,16 @@ export default function PodcastEpisodeHero({
     <div className="w-full min-h-96 relative flex gap-x-24 max-xl:flex-col max-xl:gap-y-12 mb-20">
       <div
         className="absolute w-full blur-3xl inset h-full"
-        style={{
-          backgroundImage: `url('${coverSrc}')`,
-          backgroundRepeat: "repeat",
-          backgroundBlendMode: "color-burn",
-          backgroundSize: "1500px",
-        }}
+        style={
+          coverSrc
+            ? {
+                backgroundImage: `url('${getResizedPrismicImage(coverSrc, { width: 400, quality: 50 })}')`,
+                backgroundRepeat: "repeat",
+                backgroundBlendMode: "color-burn",
+                backgroundSize: "1500px",
+              }
+            : {}
+        }
       />
       <div className="relative text-neutral-200 flex-1">
         <h3 className="text-[#d31c18] text-8xl mb-0 pb-0 mix-blend-difference">

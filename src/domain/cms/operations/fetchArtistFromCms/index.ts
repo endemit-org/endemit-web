@@ -12,5 +12,5 @@ export const fetchArtistFromCms = async (artistUid: string) => {
     return null;
   }
 
-  return transformArtistObject(prismicArtist);
+  return await transformArtistObject(prismicArtist);
 };

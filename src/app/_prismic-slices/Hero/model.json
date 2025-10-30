@@ -26,28 +26,12 @@
             "single": "paragraph"
           }
         },
-        "primaryCtaText": {
-          "type": "Text",
-          "config": {
-            "label": "Primary CTA Text"
-          }
-        },
         "primaryCtaLink": {
           "type": "Link",
           "config": {
-            "label": "Primary CTA Link"
-          }
-        },
-        "secondaryCtaText": {
-          "type": "Text",
-          "config": {
-            "label": "Secondary CTA Text"
-          }
-        },
-        "secondaryCtaLink": {
-          "type": "Link",
-          "config": {
-            "label": "Secondary CTA Link"
+            "label": "Link",
+            "placeholder": "",
+            "select": null
           }
         },
         "backgroundImage": {
@@ -56,12 +40,13 @@
             "label": "Background Image"
           }
         },
-        "textAlignment": {
-          "type": "Select",
+        "background_video": {
+          "type": "Link",
           "config": {
-            "label": "Text Alignment",
-            "options": ["left", "center"],
-            "default_value": "center"
+            "label": "Background video",
+            "placeholder": "",
+            "select": "media",
+            "allowText": false
           }
         },
         "overlayOpacity": {
@@ -70,6 +55,17 @@
             "label": "Overlay Opacity (0-100)",
             "min": 0,
             "max": 100
+          }
+        },
+        "special_marker": {
+          "type": "Select",
+          "config": {
+            "label": "Special marker",
+            "placeholder": "",
+            "options": [
+              "None",
+              "Tickets available"
+            ]
           }
         }
       },

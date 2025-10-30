@@ -65,6 +65,7 @@ export enum ProductRegion {
 export type ProductImage = {
   src: string;
   alt?: string;
+  placeholder: string;
 };
 
 export type ProductRelatedEvent = {

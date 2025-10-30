@@ -16,4 +16,5 @@ export type CmsMetaData = {
 export type CmsImage = {
   src: string;
   alt: string | null;
+  placeholder: string;
 };

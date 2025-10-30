@@ -99,6 +99,23 @@ export interface ArtistDocumentDataLinksItem {
 type ArtistDocumentDataSlicesSlice = never;
 
 /**
+ * Item in *Artist → B2B attributed to artist*
+ */
+export interface ArtistDocumentDataB2bAttributedToArtistItem {
+  /**
+   * Artist field in *Artist → B2B attributed to artist*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.b2b_attributed_to_artist[].artist
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  artist: ContentRelationshipFieldWithData<
+    [{ id: "artist"; fields: ["name", "image"] }]
+  >;
+}
+
+/**
  * Content for Artist documents
  */
 interface ArtistDocumentData {
@@ -188,7 +205,32 @@ interface ArtistDocumentData {
    * - **Tab**: Attributes
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
-  is_endemit_crew: prismic.BooleanField /**
+  is_endemit_crew: prismic.BooleanField;
+
+  /**
+   * is B2B field in *Artist*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: artist.is_b2b
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  is_b2b: prismic.BooleanField;
+
+  /**
+   * B2B attributed to artist field in *Artist*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist.b2b_attributed_to_artist[]
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  b2b_attributed_to_artist: prismic.GroupField<
+    Simplify<ArtistDocumentDataB2bAttributedToArtistItem>
+  > /**
    * Meta Title field in *Artist*
    *
    * - **Field Type**: Text
@@ -385,6 +427,17 @@ export interface EventDocumentDataArtistsItem {
           "image",
           { id: "links"; fields: ["type", "link"] },
           "video",
+          "is_b2b",
+          "is_endemit_crew",
+          {
+            id: "b2b_attributed_to_artist";
+            fields: [
+              {
+                id: "artist";
+                customtypes: [{ id: "artist"; fields: ["name"] }];
+              },
+            ];
+          },
         ];
       },
     ]
@@ -421,6 +474,26 @@ export interface EventDocumentDataArtistsItem {
   stage: prismic.KeyTextField;
 
   /**
+   * Name override field in *Event → Artists*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.artists[].name_override
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  name_override: prismic.KeyTextField;
+
+  /**
+   * Description override field in *Event → Artists*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.artists[].description_override
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_override: prismic.RichTextField;
+
+  /**
    * Image override field in *Event → Artists*
    *
    * - **Field Type**: Image
@@ -439,16 +512,6 @@ export interface EventDocumentDataArtistsItem {
    * - **Documentation**: https://prismic.io/docs/fields/link-to-media
    */
   video_override: prismic.LinkToMediaField<prismic.FieldState, never>;
-
-  /**
-   * Description override field in *Event → Artists*
-   *
-   * - **Field Type**: Rich Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: event.artists[].description_override
-   * - **Documentation**: https://prismic.io/docs/fields/rich-text
-   */
-  description_override: prismic.RichTextField;
 }
 
 type EventDocumentDataSlicesSlice =
@@ -543,7 +606,40 @@ interface EventDocumentData {
     unknown,
     prismic.FieldState,
     never
-  > /**
+  >;
+
+  /**
+   * External event link field in *Event*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.external_event_link
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  external_event_link: prismic.KeyTextField;
+
+  /**
+   * Season number field in *Event*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.season_number
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  season_number: prismic.NumberField;
+
+  /**
+   * Episode number field in *Event*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: (in season)
+   * - **API ID Path**: event.episode_number
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  episode_number: prismic.NumberField /**
    * Venue field in *Event*
    *
    * - **Field Type**: Content Relationship
@@ -563,6 +659,7 @@ interface EventDocumentData {
           "map_location_url",
           "coordinates",
           "description",
+          "image",
         ];
       },
     ]
@@ -853,6 +950,9 @@ export type HomePageDocument<Lang extends string = string> =
   >;
 
 type InnerContentDocumentDataSlicesSlice =
+  | SoundCloudSlice
+  | VinylPromoSectionSlice
+  | PoemSlice
   | SpacerSlice
   | TextColumnSlice
   | ProductListSlice
@@ -1700,6 +1800,17 @@ interface VenueDocumentData {
   description: prismic.RichTextField;
 
   /**
+   * Image field in *Venue*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue.image
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
    * Address field in *Venue*
    *
    * - **Field Type**: Text
@@ -1748,6 +1859,18 @@ interface VenueDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/geopoint
    */
   coordinates: prismic.GeoPointField;
+
+  /**
+   * Show in venues field in *Venue*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: venue.show_in_venues
+   * - **Tab**: About
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  show_in_venues: prismic.BooleanField;
 
   /**
    * Slice Zone field in *Venue*
@@ -1898,6 +2021,52 @@ export type AccordionSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *ArtistList → Default → Primary*
+ */
+export interface ArtistListSliceDefaultPrimary {
+  /**
+   * Show field in *ArtistList → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_list.default.primary.show
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  show: prismic.SelectField<"All" | "Endemit" | "Guests">;
+
+  /**
+   * Render frame field in *ArtistList → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: artist_list.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
+
+  /**
+   * Title field in *ArtistList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_list.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *ArtistList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_list.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+}
+
+/**
  * Default variation for ArtistList Slice
  *
  * - **API ID**: `default`
@@ -1906,7 +2075,7 @@ export type AccordionSlice = prismic.SharedSlice<
  */
 export type ArtistListSliceDefault = prismic.SharedSliceVariation<
   "default",
-  Record<string, never>,
+  Simplify<ArtistListSliceDefaultPrimary>,
   never
 >;
 
@@ -1940,6 +2109,17 @@ export interface ContentSectionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/rich-text
    */
   content: prismic.RichTextField;
+
+  /**
+   * Render frame field in *TextBlock → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: content_section.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
 }
 
 /**
@@ -2257,17 +2437,7 @@ export interface HeroSliceDefaultPrimary {
   description: prismic.RichTextField;
 
   /**
-   * Primary CTA Text field in *Hero → Default → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: hero.default.primary.primaryCtaText
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  primaryCtaText: prismic.KeyTextField;
-
-  /**
-   * Primary CTA Link field in *Hero → Default → Primary*
+   * Link field in *Hero → Default → Primary*
    *
    * - **Field Type**: Link
    * - **Placeholder**: *None*
@@ -2275,32 +2445,6 @@ export interface HeroSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/link
    */
   primaryCtaLink: prismic.LinkField<
-    string,
-    string,
-    unknown,
-    prismic.FieldState,
-    never
-  >;
-
-  /**
-   * Secondary CTA Text field in *Hero → Default → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: hero.default.primary.secondaryCtaText
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  secondaryCtaText: prismic.KeyTextField;
-
-  /**
-   * Secondary CTA Link field in *Hero → Default → Primary*
-   *
-   * - **Field Type**: Link
-   * - **Placeholder**: *None*
-   * - **API ID Path**: hero.default.primary.secondaryCtaLink
-   * - **Documentation**: https://prismic.io/docs/fields/link
-   */
-  secondaryCtaLink: prismic.LinkField<
     string,
     string,
     unknown,
@@ -2319,15 +2463,14 @@ export interface HeroSliceDefaultPrimary {
   backgroundImage: prismic.ImageField<never>;
 
   /**
-   * Text Alignment field in *Hero → Default → Primary*
+   * Background video field in *Hero → Default → Primary*
    *
-   * - **Field Type**: Select
+   * - **Field Type**: Link to Media
    * - **Placeholder**: *None*
-   * - **Default Value**: center
-   * - **API ID Path**: hero.default.primary.textAlignment
-   * - **Documentation**: https://prismic.io/docs/fields/select
+   * - **API ID Path**: hero.default.primary.background_video
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
    */
-  textAlignment: prismic.SelectField<"left" | "center", "filled">;
+  background_video: prismic.LinkToMediaField<prismic.FieldState, never>;
 
   /**
    * Overlay Opacity (0-100) field in *Hero → Default → Primary*
@@ -2338,6 +2481,16 @@ export interface HeroSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/number
    */
   overlayOpacity: prismic.NumberField;
+
+  /**
+   * Special marker field in *Hero → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero.default.primary.special_marker
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  special_marker: prismic.SelectField<"None" | "Tickets available">;
 }
 
 /**
@@ -2402,6 +2555,17 @@ export interface ImageGallerySliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
   columns: prismic.SelectField<"2" | "3" | "4", "filled">;
+
+  /**
+   * Include frame field in *ImageGallery → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: image_gallery.default.primary.include_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  include_frame: prismic.BooleanField;
 }
 
 /**
@@ -2493,6 +2657,17 @@ export interface NewsletterSubscriptionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   override_description: prismic.KeyTextField;
+
+  /**
+   * Include frame field in *Newsletter → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: newsletter_subscription.default.primary.include_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  include_frame: prismic.BooleanField;
 }
 
 /**
@@ -3329,6 +3504,7 @@ declare module "@prismicio/client" {
       ArtistDocumentData,
       ArtistDocumentDataLinksItem,
       ArtistDocumentDataSlicesSlice,
+      ArtistDocumentDataB2bAttributedToArtistItem,
       ContentPageDocument,
       ContentPageDocumentData,
       ContentPageDocumentDataSlicesSlice,
@@ -3368,6 +3544,7 @@ declare module "@prismicio/client" {
       AccordionSliceVariation,
       AccordionSliceDefault,
       ArtistListSlice,
+      ArtistListSliceDefaultPrimary,
       ArtistListSliceVariation,
       ArtistListSliceDefault,
       ContentSectionSlice,

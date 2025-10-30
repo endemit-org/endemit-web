@@ -1,12 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { formatDate } from "@/lib/util/formatting";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { CmsImage } from "@/domain/cms/types/common";
 
 interface PodcastCardProps {
-  image?: {
-    src: string;
-    alt?: string | null;
-  } | null;
+  image?: CmsImage | null;
   name: string;
   date: Date | null;
   episodeNumber: string;
@@ -23,19 +21,21 @@ export default function PodcastCard({
   return (
     <div
       className={
-        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full"
+        "group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full"
       }
     >
       <Link href={`/music/emit/${uid}`}>
-        <div className={"aspect-square overflow-hidden "}>
+        <div className={"aspect-square overflow-hidden relative"}>
+          <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[13px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
           {image && (
-            <Image
+            <ImageWithFallback
               src={image.src}
               alt={image.alt ?? name}
+              placeholder={image.placeholder}
               width={800}
               height={800}
               loading="lazy"
-              className="aspect-square w-full   object-cover  group-hover:grayscale xl:aspect-7/8 transition-all ease-in-out"
+              className="aspect-square w-full  object-cover xl:aspect-7/8  group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out "
             />
           )}
         </div>

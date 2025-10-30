@@ -37,6 +37,15 @@
             "label": "Override description",
             "placeholder": "(Optional) Replace dsecription in widget"
           }
+        },
+        "include_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Include frame",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
         }
       },
       "items": {}

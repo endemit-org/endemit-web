@@ -86,7 +86,8 @@
           "choices": {}
         }
       }
-    },"Attributes": {
+    },
+    "Attributes": {
       "show_in_artist_page": {
         "type": "Boolean",
         "config": {
@@ -103,6 +104,38 @@
           "placeholder_false": "false",
           "placeholder_true": "true",
           "default_value": false
+        }
+      },
+      "is_b2b": {
+        "type": "Boolean",
+        "config": {
+          "label": "is B2B",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
+      "b2b_attributed_to_artist": {
+        "type": "Group",
+        "config": {
+          "label": "B2B attributed to artist",
+          "repeat": true,
+          "fields": {
+            "artist": {
+              "type": "Link",
+              "config": {
+                "label": "Artist",
+                "select": "document",
+                "repeat": false,
+                "customtypes": [
+                  {
+                    "id": "artist",
+                    "fields": ["name", "image"]
+                  }
+                ]
+              }
+            }
+          }
         }
       }
     },

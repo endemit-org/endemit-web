@@ -3,6 +3,7 @@ import { TicketEmailData } from "@/domain/ticket/types/ticket";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Img, Text, Link } from "@react-email/components";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
+import { getResizedPrismicImage } from "@/lib/util/util";
 
 interface Props {
   ticket: TicketEmailData;
@@ -48,7 +49,9 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
                     }}
                   >
                     <Img
-                      src={ticket.eventCoverImageUrl}
+                      src={getResizedPrismicImage(ticket.eventCoverImageUrl, {
+                        width: 120,
+                      })}
                       alt={ticket.eventName}
                       width={120}
                       height={120}

@@ -2,6 +2,7 @@ import { FC } from "react";
 import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import Hero from "@/app/_components/content/Hero";
+import { getBlurDataURL } from "@/lib/util/util";
 
 /**
  * Props for `Hero`.
@@ -11,7 +12,7 @@ export type HeroProps = SliceComponentProps<Content.HeroSlice>;
 /**
  * Component for "Hero" Slices.
  */
-const HeroSlice: FC<HeroProps> = ({ slice }) => {
+const HeroSlice: FC<HeroProps> = async ({ slice }) => {
   const { primary } = slice;
 
   const heading = isFilled.richText(primary.heading)
@@ -22,29 +23,20 @@ const HeroSlice: FC<HeroProps> = ({ slice }) => {
     ? asText(primary.description)
     : "";
 
-  const primaryCta =
-    isFilled.keyText(primary.primaryCtaText) &&
-    isFilled.link(primary.primaryCtaLink)
-      ? {
-          text: primary.primaryCtaText,
-          href: primary.primaryCtaLink.url || "#",
-        }
-      : undefined;
-
-  const secondaryCta =
-    isFilled.keyText(primary.secondaryCtaText) &&
-    isFilled.link(primary.secondaryCtaLink)
-      ? {
-          text: primary.secondaryCtaText,
-          href: primary.secondaryCtaLink.url || "#",
-        }
-      : undefined;
+  const link = isFilled.link(primary.primaryCtaLink)
+    ? primary.primaryCtaLink.url
+    : undefined;
 
   const backgroundImage = isFilled.image(primary.backgroundImage)
     ? {
         src: primary.backgroundImage.url,
         alt: primary.backgroundImage.alt || "",
+        placeholder: await getBlurDataURL(primary.backgroundImage.url),
       }
+    : undefined;
+
+  const backgroundVideo = isFilled.link(primary.background_video)
+    ? primary.background_video.url
     : undefined;
 
   return (
@@ -55,11 +47,11 @@ const HeroSlice: FC<HeroProps> = ({ slice }) => {
       <Hero
         heading={heading}
         description={description}
-        primaryCta={primaryCta}
-        secondaryCta={secondaryCta}
+        link={link}
         backgroundImage={backgroundImage}
-        textAlignment={primary.textAlignment || "center"}
+        backgroundVideo={backgroundVideo}
         overlayOpacity={primary.overlayOpacity || 50}
+        specialMarker={primary.special_marker as "None" | "Tickets available"}
       />
     </section>
   );

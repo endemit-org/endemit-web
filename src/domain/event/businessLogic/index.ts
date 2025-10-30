@@ -1,15 +1,12 @@
 import { Event, EventType } from "@/domain/event/types/event";
+import { isDateInPast } from "@/lib/util/util";
 
 export const isEventCompleted = (event: Event) => {
-  const now = new Date();
-
   if (!event.date_end) {
     return false;
   }
 
-  const isCompleted = now.getTime() >= event.date_end.getTime();
-
-  return isCompleted;
+  return isDateInPast(event.date_end);
 };
 
 export const isEventGuestAppearance = (event: Event) => {

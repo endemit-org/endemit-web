@@ -1,16 +1,18 @@
-import { ProductCategory, ProductStatus } from "@/domain/product/types/product";
+import {
+  ProductCategory,
+  ProductImage,
+  ProductStatus,
+} from "@/domain/product/types/product";
 import Link from "next/link";
 import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
-import Image from "next/image";
 import { formatPrice } from "@/lib/util/formatting";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import React from "react";
 
 interface ProductCardProps {
   video?: string;
-  image?: {
-    src: string;
-    alt?: string;
-  };
+  image?: ProductImage;
   name: string;
   price: number;
   uid: string;
@@ -32,7 +34,7 @@ export default function ProductCard({
   return (
     <div
       className={
-        "group bg-neutral-950 p-2 hover:bg-black rounded-sm text-left w-full"
+        "group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full"
       }
     >
       <ProductStatusTag
@@ -40,30 +42,34 @@ export default function ProductCard({
         className={"translate-y-2 translate-x-2"}
       />
 
-      <Link href={getProductLink(uid, category)}>
+      <Link href={getProductLink(uid, category)} className={"relative"}>
         <div className={"aspect-square overflow-hidden "}>
-          {video && (
-            <div className="aspect-square w-full  object-cover group-hover:opacity-75 xl:aspect-7/8 overflow-hidden group-hover:scale-125 transition-transform ease-in-out">
-              <video
-                src={video}
-                loop={true}
-                muted={true}
-                autoPlay={true}
-                playsInline={true}
-              />
-            </div>
-          )}
+          <div className={"aspect-square overflow-hidden relative "}>
+            <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[13px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
 
-          {image && !video && (
-            <Image
-              src={image.src}
-              alt={image.alt ?? name}
-              width={800}
-              height={800}
-              loading="lazy"
-              className="aspect-square w-full   object-cover group-hover:opacity-75 xl:aspect-7/8 group-hover:scale-125 transition-transform ease-in-out"
-            />
-          )}
+            {video && (
+              <div className="aspect-square w-full  object-cover  xl:aspect-7/8 overflow-hidden group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out ">
+                <video
+                  src={video}
+                  loop={true}
+                  muted={true}
+                  autoPlay={true}
+                  playsInline={true}
+                />
+              </div>
+            )}
+
+            {image && !video && (
+              <ImageWithFallback
+                src={image.src}
+                alt={image.alt ?? name}
+                width={800}
+                height={800}
+                placeholder={image.placeholder}
+                className="aspect-square w-full object-cover  xl:aspect-7/8   group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out "
+              />
+            )}
+          </div>
         </div>
 
         <div className={"flex my-4 w-full px-2"}>
