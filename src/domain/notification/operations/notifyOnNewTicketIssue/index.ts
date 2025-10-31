@@ -24,6 +24,7 @@ export async function notifyOnNewTicketIssue({
 }) {
   try {
     await discordTicketPurchase.sendEmbed({
+      content: `🎫 *${eventName}* ticket issued to **${ticketHolderName}** *(${ticketPayerEmail})*\n\u200b`,
       title: `🎫 New Ticket issued for ${eventName}`,
       description: `A new ticket was issued to **${ticketHolderName}**. This makes a total of **${totalTicketsSoldForEvent}** tickets sold for **${eventName}** so far.`,
       color: 0x5865f2,

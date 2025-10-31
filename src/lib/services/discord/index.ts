@@ -29,8 +29,12 @@ class DiscordConnector {
     }
   }
 
-  async sendEmbed(embed: DiscordEmbed): Promise<void> {
-    return this.send({ embeds: [embed] });
+  async sendEmbed(embed: DiscordEmbed & { content?: string }): Promise<void> {
+    const { content, ...embedData } = embed;
+    return this.send({
+      ...(content && { content }),
+      embeds: [embedData],
+    });
   }
 }
 

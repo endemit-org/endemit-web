@@ -11,7 +11,8 @@ const discordNewsletter = new DiscordConnector(
 export async function notifyOnNewSubscriber(email: string, listName: string) {
   try {
     await discordNewsletter.sendEmbed({
-      title: "🎉 New Mailing List Subscriber",
+      content: `✉️ **${email}** subscribed to *${listName}*\n\u200b`,
+      title: "✉️ New Mailing List Subscriber",
       description: `Someone just subscribed to the our **${listName}** mailing list!`,
       color: 0x5865f2,
       fields: [
