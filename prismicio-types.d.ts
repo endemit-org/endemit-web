@@ -1072,6 +1072,16 @@ export interface MenuNavigationDocumentDataItemsItem {
     prismic.FieldState,
     "Primary" | "Secondary" | "CTA"
   >;
+
+  /**
+   * Cta text field in *Menu navigation → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (Optional) - only shows when type CTA
+   * - **API ID Path**: menu_navigation.items[].cta_text
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  cta_text: prismic.KeyTextField;
 }
 
 /**
@@ -1111,16 +1121,6 @@ export type MenuNavigationDocument<Lang extends string = string> =
  */
 export interface PodcastDocumentDataTracklistItem {
   /**
-   * Title field in *Podcast → Tracklist*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: podcast.tracklist[].title
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  title: prismic.KeyTextField;
-
-  /**
    * Artist field in *Podcast → Tracklist*
    *
    * - **Field Type**: Text
@@ -1129,6 +1129,16 @@ export interface PodcastDocumentDataTracklistItem {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   artist: prismic.KeyTextField;
+
+  /**
+   * Title field in *Podcast → Tracklist*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast.tracklist[].title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
 
   /**
    * Link field in *Podcast → Tracklist*

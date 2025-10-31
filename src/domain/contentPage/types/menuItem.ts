@@ -2,4 +2,5 @@ export type MenuItem = {
   label: string;
   link: string;
   linkType: string;
+  ctaText?: string;
 };

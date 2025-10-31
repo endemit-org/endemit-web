@@ -23,6 +23,8 @@ export default async function ContentPageLayout({
             navigationItems={menuItems.items.map(item => ({
               label: item.label,
               href: item.link,
+              type: item.linkType,
+              ctaText: item.ctaText,
             }))}
             hideCartOnPath={["/store/checkout"]}
           />

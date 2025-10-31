@@ -14,6 +14,8 @@ import MenuOpenIcon from "@/app/_components/icon/MenuOpenIcon";
 interface NavigationItem {
   label: string;
   href: string;
+  type: "primary" | "secondary" | "CTA" | string;
+  ctaText?: string;
   onClick?: () => void;
   isBackButton?: boolean;
   isActive?: (pathname: string) => boolean;
@@ -87,13 +89,28 @@ export default function Sidebar({
     return customLink ? { ...defaultLink, ...customLink } : defaultLink;
   });
 
-  const isItemActive = (item: NavigationItem) => {
+  const isItemActive = (item: NavigationItem, items: NavigationItem[]) => {
     if (item.isActive) {
       return item.isActive(pathname);
     }
-    return pathname === item.href || pathname.startsWith(item.href + "/");
-  };
 
+    const isMatch =
+      pathname === item.href || pathname.startsWith(item.href + "/");
+
+    if (!isMatch) return false;
+
+    // Check if there's a more specific item in the menu
+    const hasMoreSpecificMatch = items.some(
+      otherItem =>
+        otherItem !== item &&
+        otherItem.href !== item.href &&
+        otherItem.href.startsWith(item.href) &&
+        (pathname === otherItem.href ||
+          pathname.startsWith(otherItem.href + "/"))
+    );
+
+    return !hasMoreSpecificMatch;
+  };
   const showCart = !hideCartOnPath?.includes(pathname);
 
   const close = () => {
@@ -155,21 +172,32 @@ export default function Sidebar({
         {/* Scrollable navigation area */}
         <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl space-y-2 overflow-y-auto lg:flex-1 font-heading tracking-widest">
           {navigationItems.map((item, index) => {
-            const isActive = isItemActive(item);
+            const isActive = isItemActive(item, navigationItems);
+
             return (
               <Link
                 key={index}
                 onClick={() => handleNavClick(item)}
                 href={item.href}
                 className={clsx(
-                  "block rounded-md px-3 py-2 text-right font-regular uppercase sm:pt-2 pt-4 transition-colors ease-in-out",
-                  item.isBackButton && "text-sm opacity-85",
+                  "block rounded-md px-3 py-2 text-right font-regular uppercase sm:pt-2 pt-4 transition-colors hover:underline underline-offset-4 decoration-dotted group",
                   isActive && `${activeColor} cursor-default`,
                   !isActive &&
-                    "text-neutral-200 hover:text-gray-300 active:text-gray-600"
+                    "text-neutral-200 hover:!text-gray-400 active:text-gray-600",
+                  !isActive &&
+                    item.type === "CTA" &&
+                    "!text-white animate-rave-125bmp-delay hover:[animation:none] "
                 )}
               >
-                {item.isBackButton && "← "}
+                {!isActive && item.type === "CTA" && item.ctaText && (
+                  <span
+                    className={
+                      "p-0.5 px-1 text-sm bg-blue-500 leading-[0.6rem] pt-1.5 pr-0.5 text-neutral-100 rounded-sm mr-2 animate-rave-125bmp inline-block group-hover:[animation:none] relative -top-1"
+                    }
+                  >
+                    {item.ctaText}
+                  </span>
+                )}
                 {item.label}
               </Link>
             );
