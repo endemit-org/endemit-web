@@ -16,7 +16,7 @@ interface CheckoutFormProps {
   >;
   onFormChangeAction: (name: string, value: string) => void;
   validationTriggered?: boolean;
-  onEnter: (type: "manual" | "auto") => void;
+  onEnter: (type: "manual" | "auto") => boolean;
   item: CartItem;
 }
 
@@ -34,7 +34,7 @@ export default function CheckoutTicketForm({
     CheckoutValidationService.formatComplementaryTicketKey(name);
   const errorMessage = errorMessages[errorFieldName] as string;
 
-  const handleValidateForm = () => {
+  const handleOnEnter = () => {
     onEnter("manual");
   };
 
@@ -52,7 +52,7 @@ export default function CheckoutTicketForm({
         }
         onChangeAction={onFormChangeAction}
         validationTriggered={validationTriggered}
-        onEnter={handleValidateForm}
+        onEnter={handleOnEnter}
         errorMessage={errorMessage}
         required={true}
       />
