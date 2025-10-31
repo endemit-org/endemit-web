@@ -17,6 +17,7 @@ import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import clsx from "clsx";
 import ProductSeoMicrodata from "@/app/_components/seo/ProductSeoMicrodata";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
+import { buildOpenGraphImages } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -54,11 +55,12 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: product.meta.image
-        ? [product.meta.image]
-        : product.images
+      images: buildOpenGraphImages({
+        metaImage: product.meta.image,
+        fallbackImages: product.images
           ? product.images.map(image => image.src)
           : undefined,
+      }),
     },
   };
 }
