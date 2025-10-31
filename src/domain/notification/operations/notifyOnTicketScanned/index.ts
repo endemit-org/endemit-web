@@ -26,6 +26,7 @@ export async function notifyOnTicketScanned({
 }) {
   try {
     await discordTicketScan.sendEmbed({
+      content: `✅ **${ticketHolderName}** *(${ticketPayerEmail})* scanned at ${eventName} *[${totalTicketsScannedAtEvent}/${totalTicketsSoldForEvent}]*\n\u200b`,
       title: `✅ Ticket scanned at ${eventName}`,
       description: `**${ticketHolderName}**'s ticket was just scanned at ${eventName}! This makes a total of **${totalTicketsScannedAtEvent}** tickets scanned at **${eventName}** so far.`,
       color: 0x5865f2,
