@@ -1072,6 +1072,16 @@ export interface MenuNavigationDocumentDataItemsItem {
     prismic.FieldState,
     "Primary" | "Secondary" | "CTA"
   >;
+
+  /**
+   * Cta text field in *Menu navigation → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (Optional) - only shows when type CTA
+   * - **API ID Path**: menu_navigation.items[].cta_text
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  cta_text: prismic.KeyTextField;
 }
 
 /**

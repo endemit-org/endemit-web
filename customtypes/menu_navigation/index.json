@@ -23,6 +23,13 @@
                 "repeat": false,
                 "variants": ["Primary", "Secondary", "CTA"]
               }
+            },
+            "cta_text": {
+              "type": "Text",
+              "config": {
+                "label": "Cta text",
+                "placeholder": "(Optional) - only shows when type CTA"
+              }
             }
           }
         }

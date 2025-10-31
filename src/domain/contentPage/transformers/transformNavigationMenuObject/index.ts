@@ -10,6 +10,7 @@ export const transformNavigationMenuObject = (
       linkType: item.link.variant,
       label: item.link.text,
       link: asLink(item.link) || "",
+      ctaText: item.cta_text ?? undefined,
     })) as MenuItem[],
   };
 };
