@@ -23,6 +23,7 @@ export async function notifyOnNewOrder(order: Order) {
     });
 
     const messageObject = {
+      content: `💵 New order by **${order.name && order.name.length > 0 ? order.name : order.email}**, paid *${totalOrderAmount}*\n\u200b`,
       title: "💵 New Order received",
       description: `A new order in total value of **${totalOrderAmount}** was just received!`,
       color: 0x5865f2,

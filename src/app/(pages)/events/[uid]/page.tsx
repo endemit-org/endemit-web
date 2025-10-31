@@ -20,6 +20,7 @@ import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
+import { buildOpenGraphImages } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -56,11 +57,12 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: event.meta.image
-        ? [event.meta.image]
-        : event.promoImage?.src
-          ? [event.promoImage?.src]
+      images: buildOpenGraphImages({
+        metaImage: event.meta.image,
+        fallbackImages: event.promoImage?.src
+          ? [event.promoImage.src]
           : undefined,
+      }),
     },
   };
 }

@@ -19,10 +19,8 @@
     "env-init": "vercel login && vercel link --project=prj_vS6KCdGiPdIALZpEF5ZOlnGXperd --scope=team_PkvMkqbUl2Dicg1v7EZCAVue --yes && pnpm env-dev",
     "env-dev": "vercel env pull .env --environment=development",
     "env-stage": "vercel env pull .env --environment=preview",
-    "env-prod": "vercel env pull .env --environment=production"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "env-prod": "vercel env pull .env --environment=production",
+    "prepare": "husky"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
@@ -68,6 +66,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "husky": "^9.1.7",
     "postcss": "^8.5.4",
     "prettier": "^3.6.2",
     "slice-machine-ui": "^2.18.2",
