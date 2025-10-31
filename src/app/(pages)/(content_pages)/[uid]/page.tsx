@@ -6,7 +6,6 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import { notFound } from "next/navigation";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";
-import { getResizedPrismicImage } from "@/lib/util/util";
 import { buildOpenGraphImages } from "@/lib/util/seo";
 
 export async function generateStaticParams() {

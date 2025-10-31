@@ -11,7 +11,6 @@ import { fetchPodcastFromCms } from "@/domain/cms/operations/fetchPodcastFromCms
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
 import PodcastEpisodeSeoMicrodata from "@/app/_components/seo/PodcastEpisodeSeoMicrodata";
-import { getResizedPrismicImage } from "@/lib/util/util";
 import { buildOpenGraphImages } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
