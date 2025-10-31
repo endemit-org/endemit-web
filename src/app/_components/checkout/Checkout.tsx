@@ -110,6 +110,7 @@ export default function Checkout() {
                   includesNonRefundable={includesNonRefundable}
                   showSubscribeToNewsletter={shouldShowNewsletter}
                   items={items}
+                  submitForm={actions.checkout}
                   validateForm={validateForm}
                   validationTriggered={validationTriggered}
                 />

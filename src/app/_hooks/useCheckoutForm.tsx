@@ -42,7 +42,7 @@ interface UseCheckoutFormReturn {
   updateField: (name: string, value: string | boolean | undefined) => void;
   updateTicketField: (name: string, value: string) => void;
   clearForm: () => void;
-  validateForm: (type: "manual" | "auto") => void;
+  validateForm: (type: "manual" | "auto") => boolean;
 }
 
 export function useCheckoutForm(
@@ -92,7 +92,11 @@ export function useCheckoutForm(
         setValidationTriggered(true);
       }
 
-      setIsFormValid(CheckoutValidationService.isFormValid(errors));
+      const formaValidityStatus = CheckoutValidationService.isFormValid(errors);
+
+      setIsFormValid(formaValidityStatus);
+
+      return formaValidityStatus;
     },
     [formData, requiresShippingAddress, items, setValidationTriggered]
   );
