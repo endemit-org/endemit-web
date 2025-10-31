@@ -7,7 +7,7 @@ import { CheckoutValidationService } from "@/lib/services/validation/validation.
 import { subscribeFromClient } from "@/domain/newsletter/actions/subscribeFromClient";
 import CheckoutError from "@/app/_components/checkout/CheckoutError";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
-import Spinner from "@/app/_components/content/Spinner";
+import Spinner from "@/app/_components/ui/Spinner";
 
 interface SubscribeProps {
   title: string;

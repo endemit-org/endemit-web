@@ -7,7 +7,7 @@ import {
   ContextMenu,
   ContextMenuDivider,
   ContextMenuLabel,
-} from "@/app/_components/content/ContextMenu";
+} from "@/app/_components/ui/ContextMenu";
 
 export default async function ScanLayout({
   children,

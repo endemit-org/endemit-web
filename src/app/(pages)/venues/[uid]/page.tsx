@@ -1,6 +1,6 @@
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import InnerPage from "@/app/_components/content/InnerPage";
-import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import InnerPage from "@/app/_components/ui/InnerPage";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import { notFound } from "next/navigation";
 import Spacer from "@/app/_components/content/Spacer";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";

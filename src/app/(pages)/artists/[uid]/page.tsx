@@ -1,6 +1,6 @@
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import InnerPage from "@/app/_components/content/InnerPage";
-import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import InnerPage from "@/app/_components/ui/InnerPage";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchArtistFromCms } from "@/domain/cms/operations/fetchArtistFromCms";
 import { notFound } from "next/navigation";
 import { fetchArtistsFromCms } from "@/domain/cms/operations/fetchArtistsFromCms";

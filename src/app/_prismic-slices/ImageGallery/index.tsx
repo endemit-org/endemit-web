@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ImageGalleryWithLightbox from "@/app/_components/content/ImageGalleryWithLightbox";
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 
 export type ImageGalleryProps = SliceComponentProps<Content.ImageGallerySlice>;
 

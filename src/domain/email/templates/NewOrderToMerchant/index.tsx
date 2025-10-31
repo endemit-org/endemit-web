@@ -161,7 +161,7 @@ function NewOrderToMerchantTemplate({ order }: Props) {
                         <Img
                           alt={item.name}
                           src={getResizedPrismicImage(item.image.src, {
-                            width: 100,
+                            width: 160,
                           })}
                           width={80}
                           height={80}

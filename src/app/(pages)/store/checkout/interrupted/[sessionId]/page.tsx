@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import OuterPage from "@/app/_components/content/OuterPage";
-import InnerPage from "@/app/_components/content/InnerPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { stripe } from "@/lib/services/stripe";
 import { formatDecimalPrice } from "@/lib/util/formatting";

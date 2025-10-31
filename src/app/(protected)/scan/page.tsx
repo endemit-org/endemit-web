@@ -1,5 +1,5 @@
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { prismic } from "@/lib/services/prismic";
 import { isEventCompleted } from "@/domain/event/businessLogic";

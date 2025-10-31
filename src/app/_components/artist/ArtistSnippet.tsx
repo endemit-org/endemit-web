@@ -1,12 +1,12 @@
-import { ArtistWithTimestamp } from "@/app/events/(past)/endemit-festival/(config)";
-import Image from "next/image";
 import { getTimeUntil } from "@/lib/util/util";
 import clsx from "clsx";
 import { HTMLProps } from "react";
 import { formatDay, formatTime } from "@/lib/util/formatting";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 
 interface ArtistSnippetProps {
-  artist: ArtistWithTimestamp;
+  artist: ArtistAtEvent;
   isLive?: boolean;
   currentTime: Date;
   cardClassName?: HTMLProps<HTMLElement>["className"];
@@ -33,8 +33,9 @@ export default function ArtistSnippet({
       )}
     >
       <div className="flex justify-between items-center gap-4">
-        <Image
-          src={artist.photo}
+        <ImageWithFallback
+          src={artist.image?.src}
+          placeholder={artist.image?.placeholder}
           alt={artist.name}
           width={100}
           height={100}
@@ -44,7 +45,8 @@ export default function ArtistSnippet({
           <h4 className={clsx("text-xl", nameClassName)}>{artist.name}</h4>
           <div className={clsx("text-lg ", descriptionClassName)}>
             {!isLive &&
-              `${formatDay(artist.startTime)}, ${formatTime(artist.startTime)}`}
+              artist.start_time &&
+              `${formatDay(artist.start_time)}, ${formatTime(artist.start_time)}`}
             {isLive && (
               <span className="animate-pulse text-red-600 flex gap-1 items-center">
                 <span className="inline-block bg-red-600 rounded-full w-2 h-2 -mt-1"></span>
@@ -53,7 +55,9 @@ export default function ArtistSnippet({
             )}
           </div>
           <div className={clsx(descriptionClassName)}>
-            {!isLive && getTimeUntil(currentTime, artist.startTime)}
+            {!isLive &&
+              artist.start_time &&
+              getTimeUntil(currentTime, artist.start_time)}
             {artist.stage && <span>&nbsp;@ {artist.stage}</span>}
           </div>
         </div>
