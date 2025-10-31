@@ -1,8 +1,8 @@
 import { fetchContentPagesFromCms } from "@/domain/cms/operations/fetchContentPagesFromCms";
 import { fetchContentPageFromCms } from "@/domain/cms/operations/fetchContentPageFromCms";
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import OuterPage from "@/app/_components/content/OuterPage";
-import InnerPage from "@/app/_components/content/InnerPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import { notFound } from "next/navigation";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";

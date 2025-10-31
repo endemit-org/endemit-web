@@ -166,7 +166,7 @@ export default function ImageGalleryWithMasonry({
           <div
             className={clsx(
               "row-span-2 col-span-2 cursor-pointer",
-              images.length === 1 && "col-span-3"
+              images.length === 1 && !hasRelatedEvent && "col-span-3"
             )}
             onClick={() => setLightboxIndex(0)}
           >

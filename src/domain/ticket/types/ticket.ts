@@ -25,6 +25,7 @@ export type TicketEmailData = Pick<
   | "ticketHash"
 > & {
   eventCoverImageUrl: string;
+  eventPromoImageUrl: string;
   eventDate: Date;
   mapUrl: string;
   address: string;

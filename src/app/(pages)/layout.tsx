@@ -1,5 +1,5 @@
-import Sidebar from "@/app/_components/content/Sidebar";
-import SiteFooter from "@/app/_components/content/SiteFooter";
+import Sidebar from "@/app/_components/ui/Sidebar";
+import SiteFooter from "@/app/_components/ui/SiteFooter";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
 
 export default async function ContentPageLayout({

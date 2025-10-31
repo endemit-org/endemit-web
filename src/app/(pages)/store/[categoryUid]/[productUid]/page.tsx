@@ -4,9 +4,9 @@ import ImageGalleryWithMasonry from "@/app/_components/content/ImageGalleryWithM
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { fetchProductFromCmsByUid } from "@/domain/cms/operations/fetchProductFromCms";
 import ProductCard from "@/app/_components/product/ProductCard";
-import InnerPage from "@/app/_components/content/InnerPage";
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import OuterPage from "@/app/_components/content/OuterPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import style from "@/app/_styles/insetHtml.module.css";
 import { notFound } from "next/navigation";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";

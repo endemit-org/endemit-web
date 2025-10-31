@@ -3,9 +3,11 @@ import GoogleMapLocation from "@/app/_components/content/GoogleMapLocation";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import Link from "next/link";
+import clsx from "clsx";
 
 type Props = {
   venue: VenueInEvent | null;
+  logoWidth?: "small" | "large";
 };
 
 function EventLocationDetails({ venue }: Props) {
@@ -53,7 +55,7 @@ function EventLocationDetails({ venue }: Props) {
   );
 }
 
-export default function EventLocation({ venue }: Props) {
+export default function EventLocation({ venue, logoWidth = "small" }: Props) {
   if (!venue) return;
 
   return (
@@ -64,7 +66,11 @@ export default function EventLocation({ venue }: Props) {
             src={venue.logo?.src}
             alt={venue.logo?.alt ?? venue.name}
             placeholder={venue.logo?.placeholder}
-            className={"max-h-14 max-w-14 object-contain"}
+            className={clsx(
+              "object-contain",
+              logoWidth === "small" && "max-h-14 max-w-14 ",
+              logoWidth === "large" && "max-h-28 max-w-28 "
+            )}
           />
         </div>
 

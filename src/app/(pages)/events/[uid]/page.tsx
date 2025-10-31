@@ -1,5 +1,5 @@
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import { notFound } from "next/navigation";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
@@ -19,6 +19,7 @@ import { Metadata } from "next";
 import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { isEventCompleted } from "@/domain/event/businessLogic";
+import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -144,7 +145,11 @@ export default async function EventPage({
   if (event.slices.length > 0) {
     defaultContent.push({
       label: "About",
-      content: <SliceDisplay slices={event.slices} />,
+      content: (
+        <div>
+          <SliceDisplay slices={event.slices} />
+        </div>
+      ),
       id: "overview",
       sortingWeight: 0,
       hideTitle: true,
@@ -175,7 +180,7 @@ export default async function EventPage({
         />
         <div
           className={
-            "absolute top-80 h-96 blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
+            "absolute top-80 h-[600px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
           }
           style={
             event.coverImage
@@ -310,6 +315,9 @@ export default async function EventPage({
 
         <div className={"relative flex"}>
           <div className={"lg:w-2/3 w-full"}>
+            {!isPastEvent && (
+              <ArtistCarousel artists={event.artists} headline={"Up next"} />
+            )}
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
 

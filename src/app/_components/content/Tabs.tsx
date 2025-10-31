@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import Link from "next/link";
 
 export interface TabItem {
@@ -100,7 +100,7 @@ export default function Tabs({
       {/* Floating top navigation menu */}
       <div
         className={
-          "fixed top-14 z-20 left-0 w-full p-2 bg-neutral-950 lg:hidden px-4 border-t border-t-neutral-800 overflow-y-auto"
+          "fixed top-12 z-20 left-0 w-full p-2 bg-neutral-950 lg:hidden px-4 border-t border-t-neutral-800 overflow-y-auto"
         }
       >
         <div className={"flex gap-x-3"}>

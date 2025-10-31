@@ -1,6 +1,6 @@
 import { Artist } from "@/domain/artist/types/artist";
 import ArtistCard from "@/app/_components/artist/ArtistCard";
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import clsx from "clsx";
 
 type Props = {

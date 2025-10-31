@@ -18,8 +18,8 @@ export type VenueInEvent = {
   uid: string;
   name: string;
   description: RichTextField;
-  coordinates: GeoPointField;
-  address: string;
+  coordinates: GeoPointField | null;
+  address: string | null;
   mapLocationUrl: string;
   logo: CmsImage | null;
   image: CmsImage | null;

@@ -1,6 +1,6 @@
 import { formatDecimalPrice, formatWeight } from "@/lib/util/formatting";
 import { CountryCode } from "@/domain/checkout/types/country";
-import Spinner from "@/app/_components/content/Spinner";
+import Spinner from "@/app/_components/ui/Spinner";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import clsx from "clsx";
 import { ConvertGramToKilogram } from "@/lib/util/converters";

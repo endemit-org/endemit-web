@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 import { getCategoriesWithSlugs, getCategoryFromSlug } from "@/lib/util/util";
 import ProductSection from "@/app/_components/product/ProductSection";
 import { prismic } from "@/lib/services/prismic";
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import InnerPage from "@/app/_components/content/InnerPage";
-import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import InnerPage from "@/app/_components/ui/InnerPage";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 
 export async function generateStaticParams() {

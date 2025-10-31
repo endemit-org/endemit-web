@@ -3,7 +3,7 @@ import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import FestivalSubscribe from "@/app/_components/newsletter/FestivalSubscribe";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 
 export type NewsletterSubscriptionProps =
   SliceComponentProps<Content.NewsletterSubscriptionSlice>;

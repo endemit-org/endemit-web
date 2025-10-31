@@ -277,6 +277,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | VenueListSlice
   | SoundCloudSlice
   | PoemSlice
   | VinylPromoSectionSlice
@@ -3402,6 +3403,51 @@ export type TextColumnSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *VenueList → Default → Primary*
+ */
+export interface VenueListSliceDefaultPrimary {
+  /**
+   * Title field in *VenueList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: venue_list.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for VenueList Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VenueListSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<VenueListSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *VenueList*
+ */
+type VenueListSliceVariation = VenueListSliceDefault;
+
+/**
+ * VenueList Shared Slice
+ *
+ * - **API ID**: `venue_list`
+ * - **Description**: VenueList
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VenueListSlice = prismic.SharedSlice<
+  "venue_list",
+  VenueListSliceVariation
+>;
+
+/**
  * Primary content in *VinylPromoSection → Default → Primary*
  */
 export interface VinylPromoSectionSliceDefaultPrimary {
@@ -3615,6 +3661,10 @@ declare module "@prismicio/client" {
       TextColumnSliceVariation,
       TextColumnSliceDefault,
       TextColumnSliceColumnWithImage,
+      VenueListSlice,
+      VenueListSliceDefaultPrimary,
+      VenueListSliceVariation,
+      VenueListSliceDefault,
       VinylPromoSectionSlice,
       VinylPromoSectionSliceDefaultPrimary,
       VinylPromoSectionSliceVariation,

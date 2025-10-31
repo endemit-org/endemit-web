@@ -11,7 +11,6 @@ import {
 import { sendOrderEmailToCustomer } from "@/domain/email/operations/sendOrderEmailToCustomer";
 import { getOrderById } from "@/domain/order/operations/getOrderById";
 import { notifyOnNewOrder } from "@/domain/notification/operations/notifyOnNewOrder";
-import { sendOrderEmailToMerchant } from "@/domain/email/operations/sendOrderEmailToMerchant";
 import { stripe } from "@/lib/services/stripe";
 
 export const runNewOrderAutomation = inngest.createFunction(
@@ -87,35 +86,37 @@ export const runNewOrderAutomation = inngest.createFunction(
       }
     });
 
-    await step.run("send-order-email-to-merchant", async () => {
-      try {
-        const result = await sendOrderEmailToMerchant(order, invoicePdf);
+    // Skipping this for now as on free level of resend
 
-        if (!result || result.error) {
-          throw new Error(
-            `Failed to send order email to merchant: ${result?.error || "Unknown error"}`
-          );
-        }
-
-        return result;
-      } catch (error) {
-        // Detect rate limit errors
-        if (error instanceof Error) {
-          if (
-            error.message.includes("429") ||
-            error.message.includes("rate limit")
-          ) {
-            throw new Error(
-              `Rate limit hit when sending merchant email for order ${order.id}`
-            );
-          }
-        }
-
-        throw new Error(
-          `Merchant email send failed for order ${order.id}: ${error}`
-        );
-      }
-    });
+    // await step.run("send-order-email-to-merchant", async () => {
+    //   try {
+    //     const result = await sendOrderEmailToMerchant(order, invoicePdf);
+    //
+    //     if (!result || result.error) {
+    //       throw new Error(
+    //         `Failed to send order email to merchant: ${result?.error || "Unknown error"}`
+    //       );
+    //     }
+    //
+    //     return result;
+    //   } catch (error) {
+    //     // Detect rate limit errors
+    //     if (error instanceof Error) {
+    //       if (
+    //         error.message.includes("429") ||
+    //         error.message.includes("rate limit")
+    //       ) {
+    //         throw new Error(
+    //           `Rate limit hit when sending merchant email for order ${order.id}`
+    //         );
+    //       }
+    //     }
+    //
+    //     throw new Error(
+    //       `Merchant email send failed for order ${order.id}: ${error}`
+    //     );
+    //   }
+    // });
 
     await step.run("send-instant-notification", async () => {
       return await notifyOnNewOrder(order);
