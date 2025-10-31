@@ -27,10 +27,6 @@ export const createTicketTransaction = async ({
   metadata?: Prisma.InputJsonValue;
 }) => {
   return await prisma.$transaction(async tx => {
-    const ticketCount = await tx.ticket.count({
-      where: { eventId },
-    });
-
     const ticket = await tx.ticket.create({
       data: {
         eventId,
@@ -44,6 +40,10 @@ export const createTicketTransaction = async ({
         price,
         metadata,
       },
+    });
+
+    const ticketCount = await tx.ticket.count({
+      where: { eventId },
     });
 
     return {
