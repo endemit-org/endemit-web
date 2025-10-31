@@ -5,6 +5,7 @@ import { Providers } from "@/app/providers";
 import { Teko, Space_Grotesk } from "next/font/google";
 import EnvironmentIndicator from "@/app/_components/development/EnvironmentIndicator";
 import { isProduction } from "@/lib/util/env";
+import { getDefaultOgImage } from "@/lib/util/seo";
 
 const headlineFont = Teko({
   subsets: ["latin", "latin-ext"],
@@ -50,10 +51,7 @@ export const metadata: Metadata = {
     siteName: "Endemit",
     images: [
       {
-        url: "/images/og/endemit-og.png",
-        width: 1200,
-        height: 800,
-        alt: "Endemit - Cultural association for sound, code, and image",
+        url: getDefaultOgImage(),
       },
     ],
     locale: "en_US",
@@ -65,7 +63,7 @@ export const metadata: Metadata = {
     title: "Endemit",
     description:
       "Cultural association and collective drawn to sound, code, and image",
-    images: ["/images/og/endemit-og.png"],
+    images: [getDefaultOgImage()],
   },
 
   icons: {
@@ -89,6 +87,10 @@ export const metadata: Metadata = {
   },
 
   category: "Arts & Culture",
+
+  alternates: {
+    canonical: "https://endemit.org",
+  },
 };
 
 export default function RootLayout({
