@@ -25,7 +25,7 @@ interface SocialLink {
   alt: string;
   width?: number;
   height?: number;
-  id: "facebook" | "email" | "instagram";
+  id: "facebook" | "email" | "instagram" | "soundcloud";
 }
 
 interface FooterInfo {
@@ -56,6 +56,12 @@ export default function Sidebar({
   const pathname = usePathname();
 
   const defaultSocialLinks: SocialLink[] = [
+    {
+      id: "soundcloud",
+      href: "https://soundcloud.com/ende-mit",
+      iconSrc: "/images/soundcloud.png",
+      alt: "Soundcloud",
+    },
     {
       id: "facebook",
       href: "https://www.facebook.com/endemit.crew",
