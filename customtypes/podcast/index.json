@@ -93,17 +93,17 @@
           "label": "Tracklist",
           "repeat": true,
           "fields": {
-            "title": {
-              "type": "Text",
-              "config": {
-                "label": "Title",
-                "placeholder": ""
-              }
-            },
             "artist": {
               "type": "Text",
               "config": {
                 "label": "Artist",
+                "placeholder": ""
+              }
+            },
+            "title": {
+              "type": "Text",
+              "config": {
+                "label": "Title",
                 "placeholder": ""
               }
             },
