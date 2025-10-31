@@ -11,6 +11,8 @@ import { fetchPodcastFromCms } from "@/domain/cms/operations/fetchPodcastFromCms
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
 import PodcastEpisodeSeoMicrodata from "@/app/_components/seo/PodcastEpisodeSeoMicrodata";
+import { getResizedPrismicImage } from "@/lib/util/util";
+import { buildOpenGraphImages } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const podcasts = await fetchPodcastsFromCms({});
@@ -50,11 +52,10 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: podcast.meta.image
-        ? [podcast.meta.image]
-        : podcast.cover?.src
-          ? [podcast.cover?.src]
-          : undefined,
+      images: buildOpenGraphImages({
+        metaImage: podcast.meta.image,
+        fallbackImages: podcast.cover?.src ? [podcast.cover.src] : undefined,
+      }),
     },
   };
 }

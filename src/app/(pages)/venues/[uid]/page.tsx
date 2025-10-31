@@ -13,6 +13,7 @@ import { fetchVenuesFromCms } from "@/domain/cms/operations/fetchVenuesFromCms";
 import { fetchVenueFromCms } from "@/domain/cms/operations/fetchVenueFromCms";
 import { fetchEventsForVenueFromCms } from "@/domain/cms/operations/fetchEventsForVenueFromCms";
 import EventLocation from "@/app/_components/event/EventLocation";
+import { buildOpenGraphImages } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const venues = await fetchVenuesFromCms({});
@@ -50,11 +51,10 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: venue.meta.image
-        ? [venue.meta.image]
-        : venue.image?.src
-          ? [venue.image?.src]
-          : undefined,
+      images: buildOpenGraphImages({
+        metaImage: venue.meta.image,
+        fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
+      }),
     },
   };
 }
