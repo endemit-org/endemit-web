@@ -1111,16 +1111,6 @@ export type MenuNavigationDocument<Lang extends string = string> =
  */
 export interface PodcastDocumentDataTracklistItem {
   /**
-   * Title field in *Podcast → Tracklist*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: podcast.tracklist[].title
-   * - **Documentation**: https://prismic.io/docs/fields/text
-   */
-  title: prismic.KeyTextField;
-
-  /**
    * Artist field in *Podcast → Tracklist*
    *
    * - **Field Type**: Text
@@ -1129,6 +1119,16 @@ export interface PodcastDocumentDataTracklistItem {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   artist: prismic.KeyTextField;
+
+  /**
+   * Title field in *Podcast → Tracklist*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast.tracklist[].title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
 
   /**
    * Link field in *Podcast → Tracklist*
