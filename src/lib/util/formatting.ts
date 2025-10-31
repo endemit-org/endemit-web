@@ -22,12 +22,14 @@ export const formatTime = (date: Date) => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Europe/Ljubljana",
   });
 };
 
 export const formatDay = (date: Date) => {
   return date.toLocaleDateString("en-US", {
     weekday: "long",
+    timeZone: "Europe/Ljubljana",
   });
 };
 
@@ -36,6 +38,7 @@ export const formatDate = (date: Date) => {
     day: "2-digit",
     month: "long",
     year: "2-digit",
+    timeZone: "Europe/Ljubljana",
   });
 };
 
@@ -47,6 +50,7 @@ export const formatDateTime = (date: Date) => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Europe/Ljubljana",
   });
 };
 
@@ -56,7 +60,10 @@ export const formatEventDate = (dateFrom: Date, dateTo: Date) => {
   if (hoursDiff > 18) {
     const dayFrom = dateFrom.getDate();
     const dayTo = dateTo.getDate();
-    const month = dateFrom.toLocaleDateString("en-US", { month: "long" });
+    const month = dateFrom.toLocaleDateString("en-US", {
+      month: "long",
+      timeZone: "Europe/Ljubljana",
+    });
     const year = dateFrom.getFullYear().toString().slice(-2);
 
     return `${dayFrom} - ${dayTo} ${month} ${year}`;
@@ -76,5 +83,6 @@ export const formatWeight = (number: number) => {
 export const formatDayName = (date: Date) => {
   return date.toLocaleDateString("en-GB", {
     weekday: "long",
+    timeZone: "Europe/Ljubljana",
   });
 };

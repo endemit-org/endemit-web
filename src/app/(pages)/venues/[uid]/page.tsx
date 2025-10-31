@@ -14,6 +14,7 @@ import { fetchVenueFromCms } from "@/domain/cms/operations/fetchVenueFromCms";
 import { fetchEventsForVenueFromCms } from "@/domain/cms/operations/fetchEventsForVenueFromCms";
 import EventLocation from "@/app/_components/event/EventLocation";
 import { buildOpenGraphImages } from "@/lib/util/seo";
+import VenueSeoMicrodata from "@/app/_components/seo/VenueSeoMicrodata";
 
 export async function generateStaticParams() {
   const venues = await fetchVenuesFromCms({});
@@ -86,7 +87,7 @@ export default async function VenuePage({
 
   return (
     <>
-      {/*<ArtistSeoMicrodata artist={artist} />*/}
+      <VenueSeoMicrodata venue={venue} />
       <OuterPage>
         <PageHeadline
           title={venue.name}

@@ -24,7 +24,8 @@ interface CheckoutFormProps {
   requiresShippingAddress: boolean;
   includesNonRefundable: boolean;
   showSubscribeToNewsletter: boolean;
-  validateForm: (type: "manual" | "auto") => void;
+  validateForm: (type: "manual" | "auto") => boolean;
+  submitForm: () => void;
   items: CartItem[];
   validationTriggered: boolean;
 }
@@ -62,13 +63,18 @@ export default function CheckoutCustomerForm({
   showSubscribeToNewsletter,
   validateForm,
   validationTriggered,
+  submitForm,
 }: CheckoutFormProps) {
   const destinationCountry = getCountry(formData.country);
   const includesTickets = includesTicketProducts(items);
   const ticketItems = items.filter(item => isProductTicket(item));
 
-  const handleValidateForm = () => {
-    validateForm("manual");
+  const handleOnEnter = () => {
+    const formValidation = validateForm("manual");
+    if (formValidation) {
+      submitForm();
+    }
+    return formValidation;
   };
 
   return (
@@ -85,7 +91,7 @@ export default function CheckoutCustomerForm({
           placeholder="jane@endemit.org"
           value={formData.email}
           onChangeAction={onFormChangeAction}
-          onEnter={handleValidateForm}
+          onEnter={handleOnEnter}
           errorMessage={errorMessages.email as string}
           required={true}
           validationTriggered={validationTriggered}
@@ -97,7 +103,7 @@ export default function CheckoutCustomerForm({
           placeholder="jane@endemit.org"
           value={formData.emailRepeat}
           onChangeAction={onFormChangeAction}
-          onEnter={handleValidateForm}
+          onEnter={handleOnEnter}
           errorMessage={errorMessages.emailRepeat as string}
           required={true}
           validationTriggered={validationTriggered}
@@ -119,7 +125,7 @@ export default function CheckoutCustomerForm({
                   formData={formData}
                   errorMessages={errorMessages}
                   onFormChangeAction={onTicketFormChange}
-                  onEnter={handleValidateForm}
+                  onEnter={handleOnEnter}
                   validationTriggered={validationTriggered}
                 />
               ))}
@@ -139,7 +145,7 @@ export default function CheckoutCustomerForm({
             type="text"
             value={formData.name}
             onChangeAction={onFormChangeAction}
-            onEnter={handleValidateForm}
+            onEnter={handleOnEnter}
             errorMessage={errorMessages.name as string}
             required={true}
             placeholder="Jane Demit"
@@ -151,7 +157,7 @@ export default function CheckoutCustomerForm({
             type="text"
             value={formData.address}
             onChangeAction={onFormChangeAction}
-            onEnter={handleValidateForm}
+            onEnter={handleOnEnter}
             errorMessage={errorMessages.address as string}
             required={true}
             placeholder="Road to forever 42"
@@ -164,7 +170,7 @@ export default function CheckoutCustomerForm({
               type="text"
               value={formData.postalCode}
               onChangeAction={onFormChangeAction}
-              onEnter={handleValidateForm}
+              onEnter={handleOnEnter}
               errorMessage={errorMessages.postalCode as string}
               required={true}
               placeholder="2390"
@@ -176,7 +182,7 @@ export default function CheckoutCustomerForm({
               type="text"
               value={formData.city}
               onChangeAction={onFormChangeAction}
-              onEnter={handleValidateForm}
+              onEnter={handleOnEnter}
               errorMessage={errorMessages.city as string}
               required={true}
               placeholder="Ravne na Koroškem"
@@ -207,7 +213,7 @@ export default function CheckoutCustomerForm({
             placeholder="30 111 222"
             value={formData.phone}
             onChangeAction={onFormChangeAction}
-            onEnter={handleValidateForm}
+            onEnter={handleOnEnter}
             errorMessage={errorMessages.phone as string}
             required={true}
             prefix={destinationCountry.callingCode as string}
