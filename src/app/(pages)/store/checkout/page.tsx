@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Cart from "@/app/_components/checkout/Checkout";
-import OuterPage from "@/app/_components/content/OuterPage";
-import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
 
 export const metadata: Metadata = {
   title: "Secure checkout",

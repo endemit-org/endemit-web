@@ -4,6 +4,7 @@ import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Img, Text, Link } from "@react-email/components";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import { getResizedPrismicImage } from "@/lib/util/util";
+import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 interface Props {
   ticket: TicketEmailData;
@@ -49,8 +50,8 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
                     }}
                   >
                     <Img
-                      src={getResizedPrismicImage(ticket.eventCoverImageUrl, {
-                        width: 120,
+                      src={getResizedPrismicImage(ticket.eventPromoImageUrl, {
+                        width: 240,
                       })}
                       alt={ticket.eventName}
                       width={120}
@@ -124,6 +125,14 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
             • This ticket is valid for one person
             <br />
             • Ticket is non-refundable, but you can transfer it to someone else
+            <br />•{" "}
+            <Link
+              href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
+              className="link"
+            >
+              Code of conduct
+            </Link>{" "}
+            applies at all our events
             <br />
             • Event entry is subject to venue&#39;s terms and conditions
             <br />• Show this QR code at the entrance

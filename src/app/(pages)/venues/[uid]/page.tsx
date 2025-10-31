@@ -1,32 +1,28 @@
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import OuterPage from "@/app/_components/ui/OuterPage";
-import { fetchArtistFromCms } from "@/domain/cms/operations/fetchArtistFromCms";
 import { notFound } from "next/navigation";
-import { fetchArtistsFromCms } from "@/domain/cms/operations/fetchArtistsFromCms";
-import { fetchEventsForArtistFromCms } from "@/domain/cms/operations/fetchEventsForArtistFromCms";
-import { fetchPodcastsForArtistFromCms } from "@/domain/cms/operations/fetchPodcastsForArtistFromCms";
-import ArtistProfile from "@/app/_components/artist/ArtistProfile";
 import Spacer from "@/app/_components/content/Spacer";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
 import clsx from "clsx";
-import PodcastCard from "@/app/_components/podcast/PodcastCard";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
-import ArtistSeoMicrodata from "@/app/_components/seo/ArtistSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
-import ArtistList from "@/app/_components/artist/ArtistList";
+import { fetchVenuesFromCms } from "@/domain/cms/operations/fetchVenuesFromCms";
+import { fetchVenueFromCms } from "@/domain/cms/operations/fetchVenueFromCms";
+import { fetchEventsForVenueFromCms } from "@/domain/cms/operations/fetchEventsForVenueFromCms";
+import EventLocation from "@/app/_components/event/EventLocation";
 
 export async function generateStaticParams() {
-  const artists = await fetchArtistsFromCms({});
+  const venues = await fetchVenuesFromCms({});
 
-  if (!artists || artists.length === 0) {
+  if (!venues || venues.length === 0) {
     return [];
   }
 
-  return artists.map(artist => ({
-    uid: artist.uid,
+  return venues.map(venue => ({
+    uid: venue.uid,
   }));
 }
 
@@ -38,15 +34,15 @@ export async function generateMetadata({
   }>;
 }): Promise<Metadata> {
   const { uid } = await params;
-  const artist = await fetchArtistFromCms(uid);
+  const venue = await fetchVenueFromCms(uid);
 
-  if (!artist) {
+  if (!venue) {
     notFound();
   }
 
-  const title = `${artist.meta.title ?? artist.name} • Artists`;
+  const title = `${venue.meta.title ?? venue.name} • Venues`;
   const description =
-    artist?.meta.description ?? prismic.asText(artist.description) ?? undefined;
+    venue?.meta.description ?? prismic.asText(venue.description) ?? undefined;
 
   return {
     title,
@@ -54,16 +50,16 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: artist.meta.image
-        ? [artist.meta.image]
-        : artist.image?.src
-          ? [artist.image?.src]
+      images: venue.meta.image
+        ? [venue.meta.image]
+        : venue.image?.src
+          ? [venue.image?.src]
           : undefined,
     },
   };
 }
 
-export default async function ArtistPage({
+export default async function VenuePage({
   params,
 }: {
   params: Promise<{
@@ -71,19 +67,14 @@ export default async function ArtistPage({
   }>;
 }) {
   const { uid } = await params;
-  const artist = await fetchArtistFromCms(uid);
+  const venue = await fetchVenueFromCms(uid);
 
-  if (!artist || artist.isB2b) {
+  if (!venue || !venue.showOnVenuePage) {
     notFound();
   }
 
-  const relatedEventsQuery = await fetchEventsForArtistFromCms(artist.id);
-  const relatedPodcasts = await fetchPodcastsForArtistFromCms(artist.id);
-  const relatedArtistsQuery = await fetchArtistsFromCms({});
-  const relatedArtists = relatedArtistsQuery
-    ?.filter(a => a.id !== artist.id)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 4);
+  const relatedEventsQuery = await fetchEventsForVenueFromCms(venue.id);
+
   const relatedEvents = relatedEventsQuery
     ? relatedEventsQuery.sort((a, b) => {
         if (!a.date_start || !b.date_start) return 0;
@@ -91,56 +82,49 @@ export default async function ArtistPage({
       })
     : null;
 
-  const showRelatedPodcasts = relatedPodcasts && relatedPodcasts?.length > 0;
   const showRelatedEvents = relatedEvents && relatedEvents?.length > 0;
 
   return (
     <>
-      <ArtistSeoMicrodata artist={artist} />
+      {/*<ArtistSeoMicrodata artist={artist} />*/}
       <OuterPage>
         <PageHeadline
-          title={artist.name}
+          title={venue.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Artists", path: "artists" },
-            { label: artist.name, path: artist.uid },
+            { label: "Venues", path: "venues" },
+            { label: venue.name, path: venue.uid },
           ]}
         />
-        <ArtistProfile artist={artist} coverSrc={artist.image?.src} />
         <div
           className={
             "absolute top-80 h-[400px] blur-3xl -left-10 -right-10 bg-cover opacity-40 z-0 "
           }
           style={
-            artist.image
+            venue.image
               ? {
-                  backgroundImage: `url('${getResizedPrismicImage(artist.image?.src, { width: 400, quality: 50 })}')`,
+                  backgroundImage: `url('${getResizedPrismicImage(venue.image?.src, { width: 400, quality: 50 })}')`,
                 }
               : {}
           }
         ></div>
+        <div className={"text-neutral-200"}>
+          <EventLocation
+            venue={{ ...venue, mapLocationUrl: venue.mapUrl ?? "" }}
+            logoWidth={"large"}
+          />
+        </div>
         <Spacer size={"xlarge"} />
-        {(showRelatedEvents || showRelatedPodcasts) && (
+        {showRelatedEvents && (
           <InnerPage>
             <h2 className={"text-3xl text-neutral-200"}>
-              {artist.name} appears on
+              Events hosted at {venue.name}
             </h2>
             <div
               className={clsx(
                 "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2 mt-8"
               )}
             >
-              {showRelatedPodcasts &&
-                relatedPodcasts.map(podcast => (
-                  <PodcastCard
-                    date={podcast.date}
-                    episodeNumber={podcast.number}
-                    key={podcast.id}
-                    image={podcast.cover}
-                    name={podcast.name}
-                    uid={podcast.uid}
-                  />
-                ))}
               {showRelatedEvents &&
                 relatedEvents.map(event => {
                   const shouldShowLink =
@@ -163,19 +147,10 @@ export default async function ArtistPage({
                 })}
             </div>
           </InnerPage>
-        )}{" "}
-        {relatedArtists && (
-          <>
-            <Spacer size={"small"} />
-            <h2 className={"text-3xl text-neutral-200"}>
-              Explore other artists
-            </h2>
-            <ArtistList artists={relatedArtists} />
-          </>
         )}
-        <Spacer size={"small"} />
+
         <EndemitSubscribe
-          title={`Don't miss ${artist.name} next time`}
+          title={`Don't miss the next event at ${venue.name}`}
           description={"Subscribe and be notified about our events and lineups"}
         />
       </OuterPage>

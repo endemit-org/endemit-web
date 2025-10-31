@@ -9,13 +9,11 @@ export const transformTicketsFromOrder = (order: Order) => {
 
   const items = order.items as unknown as ProductInOrder[];
 
-  items.filter(item => {
+  return items.filter(item => {
     const isDigitalTicket =
       item.type === ProductType.DIGITAL &&
       item.category === ProductCategory.TICKETS;
 
     return isDigitalTicket;
   });
-
-  return items;
 };

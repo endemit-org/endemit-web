@@ -5,7 +5,7 @@ import {
   isEventScanningEnabled,
 } from "@/domain/event/businessLogic";
 import { getTicketsForEvent } from "@/domain/ticket/operations/getTicketsForEvent";
-import PageHeadline from "@/app/_components/content/PageHeadline";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import QRScanner from "@/app/_components/ticket/QrScanner";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";

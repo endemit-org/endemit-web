@@ -72,3 +72,9 @@ export const formatEventDateAndTime = (date: Date) => {
 export const formatWeight = (number: number) => {
   return `${formatNumber(number, 3)} kg`;
 };
+
+export const formatDayName = (date: Date) => {
+  return date.toLocaleDateString("en-GB", {
+    weekday: "long",
+  });
+};

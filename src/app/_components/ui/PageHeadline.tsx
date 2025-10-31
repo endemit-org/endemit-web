@@ -1,4 +1,4 @@
-import Breadcrumb from "@/app/_components/content/Breadcrumb";
+import Breadcrumb from "@/app/_components/ui/Breadcrumb";
 
 interface Props {
   title: string;

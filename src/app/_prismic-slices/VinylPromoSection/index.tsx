@@ -3,7 +3,7 @@ import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import Link from "next/link";
 import ActionButton from "@/app/_components/form/ActionButton";
 import InnerClientToggle from "@/app/_prismic-slices/VinylPromoSection/InnerClientToggle";

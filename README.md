@@ -163,6 +163,8 @@ This project is private and proprietary to Endemit.
 **Built with ❤️in 🇸🇮 by Endemit**
 
 
+To-do, amend the readme:
+
 // pnpm dlx inngest-cli@latest dev
 // prisma, slicemachine
 // prismic, dev server

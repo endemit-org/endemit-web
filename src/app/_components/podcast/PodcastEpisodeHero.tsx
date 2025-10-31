@@ -1,4 +1,4 @@
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import EmbedSoundCloud from "@/app/_components/content/EmbedSoundCloud";
 import { RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";

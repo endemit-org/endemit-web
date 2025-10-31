@@ -1,5 +1,5 @@
-import PageHeadline from "@/app/_components/content/PageHeadline";
-import OuterPage from "@/app/_components/content/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
 import { notFound } from "next/navigation";
 import PodcastEpisodeHero from "@/app/_components/podcast/PodcastEpisodeHero";
 import ArtistProfile from "@/app/_components/artist/ArtistProfile";

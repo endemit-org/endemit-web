@@ -82,7 +82,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
 
         if (
           !ticketBaseData ||
-          !event?.coverImage?.src ||
+          !event?.promoImage?.src ||
           !event?.date_start ||
           !event?.venue ||
           !event?.artists ||
@@ -104,7 +104,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
             event.artists.map(artist => artist.name)
           ),
           price: formatPrice(Number(issuedTicket.price)),
-          coverImageUrl: event.coverImage.src,
+          coverImageUrl: event.promoImage.src,
         });
 
         if (!image) {
@@ -133,6 +133,8 @@ export const runTicketIssueAutomation = inngest.createFunction(
             ticketHash: issuedTicket.ticketHash,
             eventCoverImageUrl:
               ticketImageWithEvent.event.coverImage?.src || "",
+            eventPromoImageUrl:
+              ticketImageWithEvent.event.promoImage?.src || "",
             eventDate: new Date(ticketImageWithEvent.event.date_start),
             mapUrl: ticketImageWithEvent.event.venue?.mapLocationUrl || "",
             address: ticketImageWithEvent.event.venue?.address || "",

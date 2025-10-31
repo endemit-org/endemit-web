@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import ClearCheckoutValues from "@/app/_components/checkout/ClearCheckoutValues";
 
-import OuterPage from "@/app/_components/content/OuterPage";
-import PageHeadline from "@/app/_components/content/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
 import CheckoutSuccessConfetti from "@/app/_components/checkout/CheckoutSuccessConfetti";
-import InnerPage from "@/app/_components/content/InnerPage";
+import InnerPage from "@/app/_components/ui/InnerPage";
 import ActionButton from "@/app/_components/form/ActionButton";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";

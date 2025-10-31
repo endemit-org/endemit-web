@@ -15,12 +15,14 @@ export const fetchVenuesFromCms = async ({
     ...(filters && { filters }),
   });
 
-  if (!venues) {
+  const filteredVenue = venues.filter(venue => venue.data.show_in_venues);
+
+  if (!filteredVenue) {
     return null;
   }
 
   const transformedVenues = [];
-  for (const venue of venues) {
+  for (const venue of filteredVenue) {
     transformedVenues.push(await transformVenueObject(venue));
   }
   return transformedVenues;
