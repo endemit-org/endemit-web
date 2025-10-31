@@ -1,31 +1,17 @@
 import Link from "next/link";
-import { formatEventDate } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { CmsImage } from "@/domain/cms/types/common";
 import React from "react";
 import clsx from "clsx";
-import { isDateInPast } from "@/lib/util/util";
-import EventPastEventStatus from "@/app/_components/event/EventPastEventStatus";
 
 interface Props {
   image?: CmsImage | null;
   name: string;
-  dateStart: Date | null;
-  dateEnd: Date | null;
   location?: string;
   link: string | null;
 }
 
-export default function EventMiniCard({
-  link,
-  location,
-  dateStart,
-  dateEnd,
-  name,
-  image,
-}: Props) {
-  const isPastEvent = dateEnd && isDateInPast(dateEnd);
-
+export default function VenueCard({ link, location, name, image }: Props) {
   return (
     <div
       className={
@@ -39,14 +25,6 @@ export default function EventMiniCard({
       >
         <div className={"aspect-square overflow-hidden relative "}>
           <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[13px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
-
-          {isPastEvent && (
-            <EventPastEventStatus
-              className={
-                "group-hover:translate-x-4 group-hover:translate-y-4 transition-transform duration-500"
-              }
-            />
-          )}
 
           {image && (
             <ImageWithFallback
@@ -65,12 +43,7 @@ export default function EventMiniCard({
           <div className={"flex-1"}>
             <h3 className="text-2xl text-neutral-200">{name}</h3>
             <p className="text-sm ">
-              <span className={"text-neutral-200"}>
-                {isPastEvent ? "Was on " : "Happening on "}
-                {dateStart && dateEnd
-                  ? formatEventDate(dateStart, dateEnd)
-                  : location}
-              </span>
+              <span className={"text-neutral-200"}>{location}</span>
             </p>
           </div>
         </div>
