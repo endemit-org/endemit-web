@@ -22,8 +22,8 @@ export default async function SiteFooter() {
     : "© Endemit";
 
   const buildInfo = getBuildInfo({
-    commitSha: process.env.NEXT_PUBLIC_COMMIT_SHA,
-    deploymentId: process.env.NEXT_PUBLIC_DEPLOYMENT_ID,
+    commitSha: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+    deploymentId: process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID,
     version: packageJson.version,
   });
 

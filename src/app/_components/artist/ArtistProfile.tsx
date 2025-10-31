@@ -5,6 +5,7 @@ import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { CmsImage } from "@/domain/cms/types/common";
 import { getResizedPrismicImage } from "@/lib/util/util";
+import Image from "next/image";
 
 interface ArtistLink {
   url: string;
@@ -113,8 +114,14 @@ export default function ArtistProfile({
                   <Link
                     href={link.url}
                     target="_blank"
-                    className="link text-[#d31c18] hover:text-[#87100e]"
+                    className="link text-[#d31c18] hover:text-[#87100e] flex gap-x-2 justify-center"
                   >
+                    <Image
+                      src={`/images/${link.type.toLowerCase()}.png`}
+                      alt={`${artist.name} ${link.type}`}
+                      width={28}
+                      height={28}
+                    />
                     {link.type}
                   </Link>
                 </div>

@@ -4,6 +4,7 @@ import { formatDay, formatTime } from "@/lib/util/formatting";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import Link from "next/link";
+import Image from "next/image";
 import { convertMonthsToMs } from "@/lib/util/converters";
 
 interface ArtistCardProps {
@@ -61,6 +62,27 @@ export default function ArtistEventCard({
                 </div>
               </div>
             )}
+
+          {artist.links.length > 0 && (
+            <div className="flex gap-x-4 justify-center items-center">
+              {artist.links.map(link => (
+                <Link
+                  href={link.url}
+                  key={`${artist.id}-${link.type}`}
+                  className={"hover:opacity-80"}
+                  target={`_blank`}
+                  title={`Listen to ${artist.name} on ${link.type}`}
+                >
+                  <Image
+                    src={`/images/${link.type.toLowerCase()}.png`}
+                    alt={`${artist.name} ${link.type}`}
+                    width={40}
+                    height={40}
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Artist Info */}
