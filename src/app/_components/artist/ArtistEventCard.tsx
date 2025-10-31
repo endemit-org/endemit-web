@@ -74,7 +74,7 @@ export default function ArtistEventCard({
                   title={`Listen to ${artist.name} on ${link.type}`}
                 >
                   <Image
-                    src={`/images/${link.type.toLowerCase()}.png`}
+                    src={`/images/${link.type.toLowerCase().replace(" ", "")}.png`}
                     alt={`${artist.name} ${link.type}`}
                     width={40}
                     height={40}

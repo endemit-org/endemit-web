@@ -117,7 +117,7 @@ export default function ArtistProfile({
                     className="link text-[#d31c18] hover:text-[#87100e] flex gap-x-2 justify-center"
                   >
                     <Image
-                      src={`/images/${link.type.toLowerCase()}.png`}
+                      src={`/images/${link.type.toLowerCase().replace(" ", "")}.png`}
                       alt={`${artist.name} ${link.type}`}
                       width={28}
                       height={28}
