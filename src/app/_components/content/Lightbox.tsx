@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChevronPrevIcon from "@/app/_components/icon/ChevronPrevIcon";
 import ChevronNextIcon from "@/app/_components/icon/ChevronNextIcon";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -28,6 +28,9 @@ export default function Lightbox({
   onSelectIndex,
 }: LightboxProps) {
   const thumbnailsRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [localIndex, setLocalIndex] = useState(currentIndex);
+  const isScrollingProgrammatically = useRef(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -43,7 +46,7 @@ export default function Lightbox({
   useEffect(() => {
     if (thumbnailsRef.current) {
       const thumbnail = thumbnailsRef.current.children[
-        currentIndex
+        localIndex
       ] as HTMLElement;
       if (thumbnail) {
         thumbnail.scrollIntoView({
@@ -53,9 +56,37 @@ export default function Lightbox({
         });
       }
     }
-  }, [currentIndex]);
+  }, [localIndex]);
 
-  const currentImage = images[currentIndex];
+  // Scroll to the current image when index changes from outside (button/keyboard)
+  useEffect(() => {
+    if (sliderRef.current && currentIndex !== localIndex) {
+      isScrollingProgrammatically.current = true;
+      const slideWidth = sliderRef.current.offsetWidth;
+      sliderRef.current.scrollTo({
+        left: slideWidth * currentIndex,
+        behavior: "smooth",
+      });
+      setLocalIndex(currentIndex);
+      // Reset flag after scroll animation completes
+      setTimeout(() => {
+        isScrollingProgrammatically.current = false;
+      }, 300);
+    }
+  }, [currentIndex, localIndex]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    // Don't update if we're scrolling programmatically (from buttons/keyboard)
+    if (isScrollingProgrammatically.current) return;
+
+    const slideIndex = Math.round(
+      e.currentTarget.scrollLeft / e.currentTarget.offsetWidth
+    );
+    if (slideIndex !== localIndex && slideIndex >= 0 && slideIndex < images.length) {
+      setLocalIndex(slideIndex);
+      onSelectIndex(slideIndex);
+    }
+  };
 
   return (
     <div
@@ -97,25 +128,34 @@ export default function Lightbox({
       )}
 
       <div
-        className="flex-1 flex items-center justify-center max-w-5xl w-full"
+        ref={sliderRef}
+        className="flex-1 flex overflow-x-auto snap-x snap-mandatory scrollbar-hide max-w-5xl w-full"
         onClick={e => e.stopPropagation()}
+        onScroll={handleScroll}
       >
-        <div className="relative max-h-[calc(90vh-120px)]">
-          <ImageWithFallback
-            src={currentImage.src}
-            alt={currentImage.alt ?? ""}
-            width={1200}
-            height={900}
-            className="max-h-[calc(90vh-120px)] w-auto object-contain"
-            placeholder={currentImage.placeholder}
-            quality={95}
-          />
-          {currentImage.caption && (
-            <p className="text-neutral-200 text-center mt-4 text-lg">
-              {currentImage.caption}
-            </p>
-          )}
-        </div>
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0 w-full snap-center flex flex-col items-center justify-center"
+          >
+            <div className="relative max-h-[calc(90vh-120px)]">
+              <ImageWithFallback
+                src={image.src}
+                alt={image.alt ?? ""}
+                width={1200}
+                height={900}
+                className="max-h-[calc(90vh-120px)] w-auto object-contain"
+                placeholder={image.placeholder}
+                quality={95}
+              />
+              {image.caption && (
+                <p className="text-neutral-200 text-center mt-4 text-lg">
+                  {image.caption}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       {images.length > 1 && (
@@ -132,7 +172,7 @@ export default function Lightbox({
                 key={index}
                 onClick={() => onSelectIndex(index)}
                 className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden transition-all ${
-                  currentIndex === index
+                  localIndex === index
                     ? "ring-2 ring-neutral-100 opacity-100"
                     : "opacity-50 hover:opacity-75"
                 }`}
@@ -150,7 +190,7 @@ export default function Lightbox({
             ))}
           </div>
           <p className="text-neutral-400 text-center mt-2 text-sm">
-            {currentIndex + 1} / {images.length}
+            {localIndex + 1} / {images.length}
           </p>
         </div>
       )}
