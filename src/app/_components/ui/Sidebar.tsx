@@ -170,7 +170,7 @@ export default function Sidebar({
         })}
       >
         {/* Scrollable navigation area */}
-        <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl space-y-2 overflow-y-auto lg:flex-1 font-heading tracking-widest">
+        <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl max-sm:space-y-1 space-y-2 overflow-y-auto lg:flex-1 font-heading tracking-widest">
           {navigationItems.map((item, index) => {
             const isActive = isItemActive(item, navigationItems);
 
