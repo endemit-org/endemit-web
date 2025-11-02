@@ -21,6 +21,7 @@ import { getResizedPrismicImage } from "@/lib/util/util";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages } from "@/lib/util/seo";
+import { isProductSellable } from "@/domain/product/businessLogic";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -103,6 +104,8 @@ export default async function EventPage({
     product = await fetchProductFromCmsById(event.tickets.productId);
   }
 
+  const productAvailable = product && isProductSellable(product).isSellable;
+
   if (
     !event ||
     event.options.visibility === "Hidden" ||
@@ -158,7 +161,7 @@ export default async function EventPage({
     });
   }
 
-  if (product) {
+  if (productAvailable && product) {
     defaultContent.push({
       label: "Tickets",
       content: <TicketDisplay product={product} />,
@@ -309,7 +312,7 @@ export default async function EventPage({
           }
         >
           <div className={"animate-marquee-move"}>
-            {Array(Math.ceil(100 / event.name.length))
+            {Array(Math.ceil(200 / event.name.length))
               .fill(event.name)
               .join(" · ")}
           </div>
@@ -335,15 +338,19 @@ export default async function EventPage({
                 // backgroundColor: event.colour,
               }}
             >
-              {product && <TicketDisplay product={product} />}
-              {!product && (
+              {productAvailable && product && (
+                <TicketDisplay product={product} />
+              )}
+              {!productAvailable && (
                 <div className={"flex flex-col items-center text-neutral-200"}>
                   <div
                     className={
                       "font-heading uppercase text-3xl text-neutral-400 mb-8"
                     }
                   >
-                    Tickets not available
+                    {isPastEvent || !product
+                      ? `Tickets not available`
+                      : `Tickets not available online`}
                   </div>
                   <div>
                     <ImageWithFallback
@@ -357,8 +364,16 @@ export default async function EventPage({
                   <h2 className={"text-2xl my-6"}>
                     {isPastEvent
                       ? "Tickets have been SOLD OUT."
-                      : "Tickets are not for sale yet"}
+                      : product
+                        ? "Online tickets SOLD OUR"
+                        : "Tickets are not for sale yet"}
                   </h2>
+                  {!isPastEvent && (
+                    <p>
+                      Limited entry tickets available at the doors of the event
+                      upon arrival.
+                    </p>
+                  )}
                 </div>
               )}
             </div>
