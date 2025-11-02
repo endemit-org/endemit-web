@@ -7,7 +7,7 @@ export const formatPrice = (price: number, decimals: number = 0) => {
   });
 };
 
-export const formatDecimalPrice = (price: number) => formatPrice(price, 2);
+export const formatDecimalPrice = (price: number) => formatPrice(price, 0);
 
 export const formatNumber = (number: number, decimals: number = 0) => {
   return number.toLocaleString("sl-SI", {
