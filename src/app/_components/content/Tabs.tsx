@@ -100,16 +100,16 @@ export default function Tabs({
       {/* Floating top navigation menu */}
       <div
         className={
-          "fixed top-12 z-20 left-0 w-full p-2 bg-black pt-4 lg:hidden px-4 border-b border-t-neutral-400"
+          "fixed top-12 z-20 left-0 w-full p-2 bg-black pt-4 lg:hidden px-4 border-b border-t-neutral-400 overflow-x-auto"
         }
       >
-        <div className={"flex gap-x-3 justify-between"}>
+        <div className={"flex gap-x-3 justify-between "}>
           {items.map(item => (
             <Link
               key={`tab-top-navigation-${item.label}-${item.id}`}
               href={`#${item.id}`}
               onClick={() => handleTabClick(item.id, false)}
-              className={`text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent
+              className={`text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
                 ${activeTabId === item.id && "!text-neutral-100 !border-b-blue-500"}`}
             >
               {item.label}

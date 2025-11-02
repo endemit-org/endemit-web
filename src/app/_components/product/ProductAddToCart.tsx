@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { formatDecimalPrice } from "@/lib/util/formatting";
+import { formatPrice } from "@/lib/util/formatting";
 import ProductConfigure from "@/app/_components/product/ProductConfigure";
 import { getStatusText } from "@/lib/util/util";
 import { getProductLimits } from "@/domain/product/actions/getProductLimits";
@@ -24,7 +24,7 @@ export default function ProductAddToCart({ product }: Props) {
           !isSellableObject.isSellable && "line-through"
         )}
       >
-        {formatDecimalPrice(product.price)}
+        {formatPrice(product.price)}
       </div>
       <ProductConfigure product={product} />
       {!isSellableObject.isSellable &&
