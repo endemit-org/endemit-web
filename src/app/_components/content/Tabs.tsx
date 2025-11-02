@@ -100,10 +100,10 @@ export default function Tabs({
       {/* Floating top navigation menu */}
       <div
         className={
-          "fixed top-12 z-20 left-0 w-full p-2 bg-neutral-950 lg:hidden px-4 border-t border-t-neutral-800 overflow-y-auto"
+          "fixed top-12 z-20 left-0 w-full p-2 bg-black pt-4 lg:hidden px-4 border-b border-t-neutral-400"
         }
       >
-        <div className={"flex gap-x-3"}>
+        <div className={"flex gap-x-3 justify-between"}>
           {items.map(item => (
             <Link
               key={`tab-top-navigation-${item.label}-${item.id}`}
