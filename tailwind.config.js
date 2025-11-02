@@ -55,4 +55,7 @@ module.exports = {
     },
     tailwindScrollbar({ nocompatible: true }),
   ],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
 };
