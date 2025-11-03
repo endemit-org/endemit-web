@@ -11,11 +11,11 @@ const defaultOgImage = `${PUBLIC_BASE_WEB_URL}/images/og/endemit-og.png`;
 
 export const getDefaultOgImage = () => defaultOgImage;
 
-export function buildOpenGraphImages({
+export const buildOpenGraphImages = ({
   metaImage,
   fallbackImages,
   width = 1200,
-}: OpenGraphImageInput) {
+}: OpenGraphImageInput) => {
   if (metaImage) {
     return [{ url: getResizedPrismicImage(metaImage, { width }) }];
   }
@@ -27,4 +27,29 @@ export function buildOpenGraphImages({
   }
 
   return [{ url: getDefaultOgImage() }];
-}
+};
+
+export const buildOpenGraphObject = ({
+  title,
+  description,
+  images,
+}: {
+  title?: string;
+  description?: string;
+  images?: { url: string }[];
+}) => {
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images,
+    },
+    twitter: {
+      title,
+      description,
+      images,
+    },
+  };
+};

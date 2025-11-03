@@ -20,7 +20,7 @@ import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
-import { buildOpenGraphImages } from "@/lib/util/seo";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductSellable } from "@/domain/product/businessLogic";
 
 export async function generateStaticParams() {
@@ -51,21 +51,12 @@ export async function generateMetadata({
 
   const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end) : ""}`}`} • Events`;
   const description = event?.meta.description ?? event.description ?? undefined;
+  const images = buildOpenGraphImages({
+    metaImage: event.meta.image,
+    fallbackImages: event.promoImage?.src ? [event.promoImage.src] : undefined,
+  });
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: buildOpenGraphImages({
-        metaImage: event.meta.image,
-        fallbackImages: event.promoImage?.src
-          ? [event.promoImage.src]
-          : undefined,
-      }),
-    },
-  };
+  return buildOpenGraphObject({ title, description, images });
 }
 
 function TicketDisplay({ product }: { product: Product }) {

@@ -13,7 +13,7 @@ import { fetchVenuesFromCms } from "@/domain/cms/operations/fetchVenuesFromCms";
 import { fetchVenueFromCms } from "@/domain/cms/operations/fetchVenueFromCms";
 import { fetchEventsForVenueFromCms } from "@/domain/cms/operations/fetchEventsForVenueFromCms";
 import EventLocation from "@/app/_components/event/EventLocation";
-import { buildOpenGraphImages } from "@/lib/util/seo";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import VenueSeoMicrodata from "@/app/_components/seo/VenueSeoMicrodata";
 
 export async function generateStaticParams() {
@@ -45,19 +45,12 @@ export async function generateMetadata({
   const title = `${venue.meta.title ?? venue.name} • Venues`;
   const description =
     venue?.meta.description ?? prismic.asText(venue.description) ?? undefined;
+  const images = buildOpenGraphImages({
+    metaImage: venue.meta.image,
+    fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
+  });
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: buildOpenGraphImages({
-        metaImage: venue.meta.image,
-        fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
-      }),
-    },
-  };
+  return buildOpenGraphObject({ title, description, images });
 }
 
 export default async function VenuePage({
