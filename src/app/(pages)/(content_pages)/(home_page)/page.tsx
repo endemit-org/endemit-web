@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";
 import React from "react";
-import { buildOpenGraphImages } from "@/lib/util/seo";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const homePage = await fetchHomePageFromCms();
@@ -11,17 +11,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = homePage?.data.meta_title ?? undefined;
   const description = homePage?.data.meta_description ?? undefined;
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: buildOpenGraphImages({
-        metaImage: homePage?.data.meta_image.url,
-      }),
-    },
-  };
+  const images = buildOpenGraphImages({
+    metaImage: homePage?.data.meta_image.url,
+  });
+
+  return buildOpenGraphObject({ title, description, images });
 }
 
 export default async function Home() {
