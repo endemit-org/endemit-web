@@ -6,7 +6,7 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import { notFound } from "next/navigation";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";
-import { buildOpenGraphImages } from "@/lib/util/seo";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const contentPages = await fetchContentPagesFromCms({});
@@ -36,18 +36,11 @@ export async function generateMetadata({
 
   const title = contentPage.meta.title ?? contentPage.title;
   const description = contentPage?.meta.description ?? undefined;
+  const images = buildOpenGraphImages({
+    metaImage: contentPage.meta.image,
+  });
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: buildOpenGraphImages({
-        metaImage: contentPage.meta.image,
-      }),
-    },
-  };
+  return buildOpenGraphObject({ title, description, images });
 }
 
 export default async function ContentPage({

@@ -17,7 +17,7 @@ import { prismic } from "@/lib/services/prismic";
 import ArtistSeoMicrodata from "@/app/_components/seo/ArtistSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import ArtistList from "@/app/_components/artist/ArtistList";
-import { buildOpenGraphImages } from "@/lib/util/seo";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const artists = await fetchArtistsFromCms({});
@@ -48,19 +48,12 @@ export async function generateMetadata({
   const title = `${artist.meta.title ?? artist.name} • Artists`;
   const description =
     artist?.meta.description ?? prismic.asText(artist.description) ?? undefined;
+  const images = buildOpenGraphImages({
+    metaImage: artist.meta.image,
+    fallbackImages: artist.image?.src ? [artist.image.src] : undefined,
+  });
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: buildOpenGraphImages({
-        metaImage: artist.meta.image,
-        fallbackImages: artist.image?.src ? [artist.image.src] : undefined,
-      }),
-    },
-  };
+  return buildOpenGraphObject({ title, description, images });
 }
 
 export default async function ArtistPage({

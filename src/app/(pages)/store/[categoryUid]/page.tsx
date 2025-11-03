@@ -6,6 +6,7 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
 export async function generateStaticParams() {
   const categories = getCategoriesWithSlugs;
@@ -32,15 +33,9 @@ export async function generateMetadata({
 
   const title = `${categoryName} • Store`;
   const description = `Official Endemit ${categoryName} available to purchase securely online.`;
+  const images = buildOpenGraphImages({});
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-    },
-  };
+  return buildOpenGraphObject({ title, description, images });
 }
 
 export default async function CategoryPage({
