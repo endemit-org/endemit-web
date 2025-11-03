@@ -32,6 +32,7 @@ export const PRISMIC_REPOSITORY_NAME = process.env.PRISMIC_REPOSITORY_NAME!;
 export const RESEND_FROM = process.env.RESEND_FROM!;
 export const RESEND_KEY = process.env.RESEND_KEY!;
 export const MERCHANT_EMAIL_ADDRESS = process.env.EMAIL_ORDER_COPY_TO!;
+export const DISPATCHER_EMAIL_ADDRESS = process.env.EMAIL_SHIPPING_ORDER_TO!;
 
 // Auth
 export const STAGING_PASSWORD = process.env.STAGING_PASSWORD!;
