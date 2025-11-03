@@ -13,6 +13,7 @@ import { getOrderById } from "@/domain/order/operations/getOrderById";
 import { notifyOnNewOrder } from "@/domain/notification/operations/notifyOnNewOrder";
 import { stripe } from "@/lib/services/stripe";
 import { sendOrderEmailToMerchant } from "@/domain/email/operations/sendOrderEmailToMerchant";
+import { sendOrderEmailToDispatcher } from "@/domain/email/operations/sendOrderEmailToDispatcher";
 
 export const runNewOrderAutomation = inngest.createFunction(
   { id: "notify-order-function", retries: 5 },
@@ -113,6 +114,40 @@ export const runNewOrderAutomation = inngest.createFunction(
 
         throw new Error(
           `Merchant email send failed for order ${order.id}: ${error}`
+        );
+      }
+    });
+
+    await step.run("send-order-email-to-dispatcher", async () => {
+      if (!order.shippingRequired) {
+        return "Shipping not required for this order";
+      }
+
+      try {
+        const result = await sendOrderEmailToDispatcher(order, invoicePdf);
+
+        if (!result || result.error) {
+          throw new Error(
+            `Failed to send order email to dispatcher: ${result?.error || "Unknown error"}`
+          );
+        }
+
+        return result;
+      } catch (error) {
+        // Detect rate limit errors
+        if (error instanceof Error) {
+          if (
+            error.message.includes("429") ||
+            error.message.includes("rate limit")
+          ) {
+            throw new Error(
+              `Rate limit hit when sending dispatcher email for order ${order.id}`
+            );
+          }
+        }
+
+        throw new Error(
+          `Dispatcher email send failed for order ${order.id}: ${error}`
         );
       }
     });
