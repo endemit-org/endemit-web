@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import Cart from "@/app/_components/checkout/Checkout";
+import Checkout from "@/app/_components/checkout/Checkout";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
+import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
+import { prismic } from "@/lib/services/prismic";
 
 export const metadata: Metadata = {
   title: "Secure checkout",
@@ -9,7 +11,11 @@ export const metadata: Metadata = {
     "Secure checkout for Endemit store. Review your order, enter shipping details, and complete your purchase safely with SSL encryption.",
 };
 
-export default function CheckoutPage() {
+export default async function CheckoutPage() {
+  const featuredProducts = await fetchProductsFromCms({
+    filters: [prismic.filter.at("my.product.featured_product", true)],
+  });
+
   return (
     <OuterPage>
       <PageHeadline
@@ -20,7 +26,7 @@ export default function CheckoutPage() {
           { label: "Checkout", path: "checkout" },
         ]}
       />
-      <Cart />
+      <Checkout products={featuredProducts} />
     </OuterPage>
   );
 }

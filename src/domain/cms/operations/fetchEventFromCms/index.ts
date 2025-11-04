@@ -4,6 +4,7 @@ import { prismicClient } from "@/lib/services/prismic";
 import { transformEventObject } from "@/domain/event/transformers/transformEventObject";
 import { EventDocument } from "@/prismicio-types";
 import { fetchTicketForEventFromCms } from "@/domain/cms/operations/fetchTicketForEventFromCms";
+import { isProductSellable } from "@/domain/product/businessLogic";
 
 export const fetchEventFromCmsByUid = async (eventUid: string) => {
   const prismicEvent = await prismicClient
@@ -15,13 +16,14 @@ export const fetchEventFromCmsByUid = async (eventUid: string) => {
   }
 
   const ticketsForEvent = await fetchTicketForEventFromCms(prismicEvent.id);
-
-  return await transformEventObject(
-    prismicEvent,
-    ticketsForEvent && ticketsForEvent?.length > 0
+  const ticketProductId =
+    ticketsForEvent &&
+    ticketsForEvent?.length > 0 &&
+    isProductSellable(ticketsForEvent[0]).isSellable
       ? ticketsForEvent[0].id
-      : null
-  );
+      : null;
+
+  return await transformEventObject(prismicEvent, ticketProductId);
 };
 
 export const fetchEventFromCmsById = async (eventId: string) => {
@@ -34,11 +36,12 @@ export const fetchEventFromCmsById = async (eventId: string) => {
   }
 
   const ticketsForEvent = await fetchTicketForEventFromCms(prismicEvent.id);
-
-  return await transformEventObject(
-    prismicEvent,
-    ticketsForEvent && ticketsForEvent?.length > 0
+  const ticketProductId =
+    ticketsForEvent &&
+    ticketsForEvent?.length > 0 &&
+    isProductSellable(ticketsForEvent[0]).isSellable
       ? ticketsForEvent[0].id
-      : null
-  );
+      : null;
+
+  return await transformEventObject(prismicEvent, ticketProductId);
 };
