@@ -32,6 +32,7 @@ export type Event = {
   description: string | null;
   coverImage: CmsImage | null;
   promoImage: CmsImage | null;
+  video: string | null;
   artAuthor: {
     text: string;
     link: string;
