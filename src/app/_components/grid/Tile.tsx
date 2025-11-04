@@ -54,7 +54,7 @@ export default function Tile({ config }: Props) {
           )}
           {(config.title || config.subtitle) && (
             <>
-              <div className="absolute  bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent -left-6 -right-6 bottom-0  h-[30%]" />
+              <div className="absolute  bg-gradient-to-t from-neutral-950/80 via-neutral-950/60 to-transparent -left-6 -right-6 bottom-0  h-[30%]" />
 
               <div className="absolute inset-0 p-3 lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300 w-full">
                 {config.title && (
