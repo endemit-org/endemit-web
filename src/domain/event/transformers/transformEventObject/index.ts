@@ -101,6 +101,7 @@ export const transformEventObject = async (
           placeholder: await getBlurDataURL(event.data.promo_image.url!),
         }
       : null,
+    video: asLink(event.data.video) ?? null,
     artAuthor: asLink(event.data.art_author)
       ? {
           text: event.data.art_author.text,

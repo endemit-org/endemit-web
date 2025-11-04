@@ -369,6 +369,18 @@ export default async function EventPage({
               )}
             </div>
             <div className={"p4 text-center mt-10 "}>
+              {event.video && (
+                <div className=" w-full  object-cover rounded-lg overflow-hidden px-8 mb-8">
+                  <video
+                    src={event.video}
+                    loop={true}
+                    muted={true}
+                    autoPlay={true}
+                    playsInline={true}
+                    className={"aspect-square"}
+                  />
+                </div>
+              )}
               {event.date_start && (
                 <div
                   className={
