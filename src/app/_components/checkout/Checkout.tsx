@@ -14,8 +14,14 @@ import CheckoutSummary from "@/app/_components/checkout/CheckoutSummary";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
+import ProductSection from "@/app/_components/product/ProductSection";
+import { Product } from "@/domain/product/types/product";
 
-export default function Checkout() {
+type Props = {
+  products: Product[] | null;
+};
+
+export default function Checkout({ products }: Props) {
   const [isClient, setIsClient] = useState(false);
   const { getProductByUid } = useProducts();
 
@@ -95,7 +101,8 @@ export default function Checkout() {
                     <Link href={"/store"} className="link">
                       our Endemit Store
                     </Link>{" "}
-                    to select products for your purchase.
+                    to select products for your purchase or view our trending
+                    items below.
                   </div>
                 </div>
               </div>
@@ -170,6 +177,16 @@ export default function Checkout() {
           )}
         </div>
       </div>
+
+      {!hasItems && products && (
+        <ProductSection
+          products={products}
+          title={"Trending items"}
+          description={
+            "These items are trending on our checkout. Explore and add to your cart."
+          }
+        />
+      )}
     </>
   );
 }
