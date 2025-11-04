@@ -66,7 +66,7 @@ export default function Hero({
 
       {(heading || description) && (
         <div className="absolute bottom-0 z-10 w-full mx-auto px-4 sm:px-6 lg:px-6  overflow-hidden ">
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent -left-6 -right-6 -bottom-12  h-[100%]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-neutral-950/60 to-transparent -left-6 -right-6 -bottom-12   h-[100%]" />
           <div className="flex flex-col text-left relative z-10 group-hover:scale-95 transition-transform duration-300 pb-6 pt-3">
             <h1
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-200 max-w-4xl text-shadow"

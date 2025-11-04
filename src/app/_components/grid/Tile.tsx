@@ -53,24 +53,28 @@ export default function Tile({ config }: Props) {
             <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[20px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
           )}
           {(config.title || config.subtitle) && (
-            <div className="absolute inset-0 p-3 lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300 w-full">
-              {config.title && (
-                <h3
-                  className="font-bold text-2xl lg:text-4xl uppercase leading-tight"
-                  style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
-                >
-                  {config.title}
-                </h3>
-              )}
-              {config.subtitle && (
-                <p
-                  className="text-sm lg:text-base mt-2 opacity-90"
-                  style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
-                >
-                  {config.subtitle}
-                </p>
-              )}
-            </div>
+            <>
+              <div className="absolute  bg-gradient-to-t from-neutral-950/80 via-neutral-950/60 to-transparent -left-6 -right-6 bottom-0  h-[30%]" />
+
+              <div className="absolute inset-0 p-3 lg:p-6 flex flex-col justify-end z-10 group-hover:scale-95 transition-transform duration-300 w-full">
+                {config.title && (
+                  <h3
+                    className="font-bold text-2xl lg:text-4xl uppercase leading-tight"
+                    style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
+                  >
+                    {config.title}
+                  </h3>
+                )}
+                {config.subtitle && (
+                  <p
+                    className="text-sm lg:text-base mt-2 opacity-90"
+                    style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
+                  >
+                    {config.subtitle}
+                  </p>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}

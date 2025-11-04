@@ -3,6 +3,7 @@ import "server-only";
 import { prismicClient } from "@/lib/services/prismic";
 import { transformEventObject } from "@/domain/event/transformers/transformEventObject";
 import { fetchTicketForEventFromCms } from "@/domain/cms/operations/fetchTicketForEventFromCms";
+import { isProductSellable } from "@/domain/product/businessLogic";
 
 export const fetchEventsFromCms = async ({
   pageSize = 200,
@@ -23,13 +24,14 @@ export const fetchEventsFromCms = async ({
   return Promise.all(
     events.map(async event => {
       const ticketsForEvent = await fetchTicketForEventFromCms(event.id);
-
-      return await transformEventObject(
-        event,
-        ticketsForEvent && ticketsForEvent?.length > 0
+      const ticketProductId =
+        ticketsForEvent &&
+        ticketsForEvent?.length > 0 &&
+        isProductSellable(ticketsForEvent[0]).isSellable
           ? ticketsForEvent[0].id
-          : null
-      );
+          : null;
+
+      return await transformEventObject(event, ticketProductId);
     })
   );
 };
