@@ -3,11 +3,11 @@ import "server-only";
 import type { UserWithRelations } from "@/domain/auth/types";
 import { prisma } from "@/lib/services/prisma";
 
-export const getUserByEmailWithRoles = async (
-  email: string
+export const getUserByUsernameWithRoles = async (
+  username: string
 ): Promise<UserWithRelations | null> => {
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { username },
     include: {
       sessions: true,
       userRoles: {

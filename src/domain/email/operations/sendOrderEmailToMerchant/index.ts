@@ -10,7 +10,7 @@ import { NewOrderToMerchantTemplate } from "@/domain/email/templates/NewOrderToM
 
 export const sendOrderEmailToMerchant = async (
   order: Order,
-  invoiceAttachment: {
+  invoiceAttachment?: {
     buffer: string;
     filename: string;
   }
@@ -20,11 +20,13 @@ export const sendOrderEmailToMerchant = async (
     to: merchantToEmail,
     subject: `New order on endemit`,
     react: NewOrderToMerchantTemplate({ order }),
-    attachments: [
-      {
-        filename: invoiceAttachment.filename,
-        content: invoiceAttachment.buffer,
-      },
-    ],
+    attachments: invoiceAttachment
+      ? [
+          {
+            filename: invoiceAttachment.filename,
+            content: invoiceAttachment.buffer,
+          },
+        ]
+      : undefined,
   });
 };

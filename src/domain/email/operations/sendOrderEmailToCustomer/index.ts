@@ -6,7 +6,7 @@ import { NewOrderToCustomerTemplate } from "@/domain/email/templates";
 
 export const sendOrderEmailToCustomer = async (
   order: Order,
-  invoiceAttachment: {
+  invoiceAttachment?: {
     buffer: string;
     filename: string;
   }
@@ -16,11 +16,13 @@ export const sendOrderEmailToCustomer = async (
     to: order.email,
     subject: `Your order @ endemit`,
     react: NewOrderToCustomerTemplate({ order }),
-    attachments: [
-      {
-        filename: invoiceAttachment.filename,
-        content: invoiceAttachment.buffer,
-      },
-    ],
+    attachments: invoiceAttachment
+      ? [
+          {
+            filename: invoiceAttachment.filename,
+            content: invoiceAttachment.buffer,
+          },
+        ]
+      : undefined,
   });
 };
