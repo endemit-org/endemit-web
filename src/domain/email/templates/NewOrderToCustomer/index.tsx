@@ -38,8 +38,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
         <Text className="text-gray-800 mb-6">Order #{order.id}</Text>
         <Text className="text-gray-600 mb-6">
           This is a confirmation of your order placed with us. Below are the
-          details of your purchase. Your invoice is attached as a PDF document
-          to this email.
+          details of your purchase.
           {shippingAddress && (
             <div>
               We will ship your order to the address provided shortly, usually
@@ -314,7 +313,8 @@ function NewOrderToCustomerTemplate({ order }: Props) {
           </tbody>
         </table>
         <Text className="text-gray-600 my-6">
-          Please feel free to reach out to our support team at{" "}
+          This email message serves as an invoice. Please feel free to reach out
+          to our support team at{" "}
           <Link href={"mailto:endemit@endemit.org"} className={"link"}>
             endemit@endemit.org
           </Link>{" "}

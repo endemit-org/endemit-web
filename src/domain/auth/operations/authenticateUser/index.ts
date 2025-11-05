@@ -6,7 +6,7 @@ import { isPasswordValid, isUserActive } from "@/domain/auth/businessLogic";
 
 export const authenticateUser = async (credentials: LoginCredentials) => {
   const user = await prisma.user.findUnique({
-    where: { email: credentials.email },
+    where: { username: credentials.username },
     include: {
       userRoles: {
         include: {

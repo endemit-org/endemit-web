@@ -52,24 +52,28 @@ async function seedUsers() {
 
   const userConfigs = [
     {
+      username: "@admin",
       email: "admin@endemit.org",
       name: "Admin User",
       roleSlug: "admin",
       password: testPassword,
     },
     {
+      username: "@moderator",
       email: "moderator@endemit.org",
       name: "Moderator User",
       roleSlug: "moderator",
       password: testPassword,
     },
     {
+      username: "@scanner",
       email: "scanner@endemit.org",
       name: "Scanner User",
       roleSlug: "scanner",
       password: testPassword,
     },
     {
+      username: "@user",
       email: "user@endemit.org",
       name: "Regular User",
       roleSlug: "user",

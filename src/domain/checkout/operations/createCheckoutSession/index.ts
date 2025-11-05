@@ -56,9 +56,6 @@ export const createCheckoutSession = async ({
         promotion_code: discountCodeId ?? undefined,
       },
     ],
-    invoice_creation: {
-      enabled: true,
-    },
     payment_intent_data: {
       description: transformToCheckoutDescription(shippingAddress, email),
     },
