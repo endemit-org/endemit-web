@@ -1,12 +1,12 @@
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
-import { prismic } from "@/lib/services/prismic";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import Link from "next/link";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import type { Metadata } from "next";
+import clsx from "clsx";
 
 export const metadata: Metadata = {
   title: "Ticket scanner",
@@ -17,9 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ScanPage() {
-  const eventsToScan = await fetchEventsFromCms({
-    filters: [prismic.filter.at("my.event.allow_ticket_scanning", true)],
-  });
+  const eventsToScan = await fetchEventsFromCms({});
 
   const eventsToDisplay = eventsToScan?.filter(event => {
     return !isEventCompleted(event);
@@ -72,13 +70,30 @@ export default async function ScanPage() {
                         {formatEventDateAndTime(event.date_start)}
                       </span>
                     )}
+                    <span
+                      className={clsx(
+                        "block text-sm mt-1",
+                        event.options.enabledTicketScanning && "text-green-600",
+                        !event.options.enabledTicketScanning && "text-red-600"
+                      )}
+                    >
+                      {event.options.enabledTicketScanning
+                        ? `✅ Scanning enabled`
+                        : `❌ Scanning disabled`}
+                    </span>
                   </Link>
                 </div>
               ))}
 
             {!eventsToDisplay ||
               (eventsToDisplay.length === 0 && (
-                <div>There are no events to scan right now</div>
+                <div
+                  className={
+                    "p-4 text-sm text-center min-h-40 flex flex-col justify-center items-center"
+                  }
+                >
+                  <div>There are no events to scan right now</div>
+                </div>
               ))}
           </div>
         </div>

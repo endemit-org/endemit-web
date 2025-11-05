@@ -10,7 +10,7 @@ import { NewOrderToDispatcherTemplate } from "@/domain/email/templates/NewOrderT
 
 export const sendOrderEmailToDispatcher = async (
   order: Order,
-  invoiceAttachment: {
+  invoiceAttachment?: {
     buffer: string;
     filename: string;
   }
@@ -20,11 +20,13 @@ export const sendOrderEmailToDispatcher = async (
     to: dispatcherToEmail,
     subject: `Ship new order to ${order.name}`,
     react: NewOrderToDispatcherTemplate({ order }),
-    attachments: [
-      {
-        filename: invoiceAttachment.filename,
-        content: invoiceAttachment.buffer,
-      },
-    ],
+    attachments: invoiceAttachment
+      ? [
+          {
+            filename: invoiceAttachment.filename,
+            content: invoiceAttachment.buffer,
+          },
+        ]
+      : undefined,
   });
 };

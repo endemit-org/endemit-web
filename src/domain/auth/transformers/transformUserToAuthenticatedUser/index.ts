@@ -15,7 +15,8 @@ export function index(user: UserWithRoles): AuthenticatedUser {
 
   return {
     id: user.id,
-    email: user.email,
+    username: user.username,
+    email: user.email ?? undefined,
     name: user.name,
     image: user.image,
     status: user.status,

@@ -15,7 +15,8 @@ export type SessionWithUser = Session & {
 
 export interface AuthenticatedUser {
   id: string;
-  email: string;
+  username: string;
+  email?: string;
   name: string | null;
   image: string | null;
   status: UserStatus;
@@ -24,12 +25,12 @@ export interface AuthenticatedUser {
 }
 
 export interface LoginCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface RegisterData {
-  email: string;
+  username: string;
   password: string;
   name?: string;
 }
@@ -43,6 +44,7 @@ export interface CreateSessionData {
 
 export interface UpdateUserData {
   name?: string;
+  username?: string;
   email?: string;
   image?: string;
   status?: UserStatus;
