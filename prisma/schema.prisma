@@ -88,7 +88,8 @@ model Ticket {
 
 model User {
   id            String     @id @default(cuid())
-  email         String     @unique
+  username      String     @unique @default(cuid())
+  email         String?    @unique
   emailVerified DateTime?
   name          String?
   passwordHash  String?
@@ -102,6 +103,7 @@ model User {
   userRoles UserRole[]
   ScanLog   ScanLog[]
 
+  @@index([username])
   @@index([email])
   @@index([status])
 }

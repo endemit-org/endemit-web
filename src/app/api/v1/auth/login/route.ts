@@ -4,7 +4,7 @@ import { z } from "zod";
 import { authenticateUser } from "@/domain/auth/operations/authenticateUser";
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3),
   password: z.string().min(1),
 });
 
@@ -22,10 +22,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password } = result.data;
+    const { username, password } = result.data;
 
     // Authenticate user
-    const user = await authenticateUser({ email, password });
+    const user = await authenticateUser({ username, password });
 
     if (!user) {
       return NextResponse.json(
