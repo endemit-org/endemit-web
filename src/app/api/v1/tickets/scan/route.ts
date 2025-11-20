@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import assert from "node:assert";
-import { scanTicketByHash } from "@/domain/ticket/operations/scanTicketByHash";
+import {
+  TICKET_ALREADY_SCANNED_MESSAGE,
+  scanTicketByHash,
+} from "@/domain/ticket/operations/scanTicketByHash";
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +21,19 @@ export async function POST(request: Request) {
         shortId,
       });
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Ticket could not be scanned";
+
+      if (message === TICKET_ALREADY_SCANNED_MESSAGE) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: message,
+          },
+          { status: 200 }
+        );
+      }
+
       console.error(error);
       return NextResponse.json(
         {
