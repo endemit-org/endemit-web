@@ -15,6 +15,8 @@ interface TicketDetailsDialogProps {
   onClose: () => void;
   scanningEnabled: boolean;
   onConfirmAction: (ticket: SerializedTicket) => Promise<void>;
+  actionError?: string | null;
+  onClearError?: () => void;
 }
 
 export default function TicketDetailsDialog({
@@ -23,6 +25,8 @@ export default function TicketDetailsDialog({
   onClose,
   onConfirmAction,
   scanningEnabled,
+  actionError,
+  onClearError,
 }: TicketDetailsDialogProps) {
   const [isHolding, setIsHolding] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -44,6 +48,7 @@ export default function TicketDetailsDialog({
   const handleMouseDown = () => {
     if (isProcessing || !ticket) return;
 
+    onClearError?.();
     setIsHolding(true);
     setProgress(0);
 
@@ -124,6 +129,11 @@ export default function TicketDetailsDialog({
             <div className="flex justify-between">
               <span className="text-neutral-400">Times scanned:</span>
               <span>{ticket.scanCount}</span>
+            </div>
+          )}
+          {actionError && (
+            <div className="p-3 rounded-lg bg-red-900/40 text-red-200 text-sm">
+              {actionError}
             </div>
           )}
         </div>

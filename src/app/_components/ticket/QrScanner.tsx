@@ -28,6 +28,8 @@ type Props = {
   eventId: string;
 };
 
+const ALREADY_SCANNED_MESSAGE = "This ticket has already been scanned.";
+
 const getVerificationStatus = (
   verification: VerificationResult | null
 ): VerificationStatus => {
@@ -96,29 +98,46 @@ export default function QRScanner({ eventId }: Props) {
   };
 
   const handleScanSuccess = async (ticketPayload: QrTicketPayload) => {
-    playBeep();
-
     try {
       const response = await verifyTicketAtEventAction(ticketPayload);
 
       if (response.success && response.verified) {
-        const markTicketScan = await scanTicketAtEventAction({
-          scannedData: ticketPayload,
-        });
+        try {
+          const markTicketScan = await scanTicketAtEventAction({
+            scannedData: ticketPayload,
+          });
 
-        if (markTicketScan) {
-          setIsMarkingOnServer(false);
-          setScanResult({
-            scanCount: markTicketScan.scannedTicketData.scanCount,
-          });
-          setVerification({
-            success: true,
-            scanCount: markTicketScan.scannedTicketData.scanCount,
-            message:
-              markTicketScan.scannedTicketData.scanCount === 1
-                ? "Valid ticket"
-                : `Warning: Scanned ${markTicketScan.scannedTicketData.scanCount} times`,
-          });
+          if (markTicketScan) {
+            playBeep();
+            setIsMarkingOnServer(false);
+            setScanResult({
+              scanCount: markTicketScan.scannedTicketData.scanCount,
+            });
+            setVerification({
+              success: true,
+              scanCount: markTicketScan.scannedTicketData.scanCount,
+              message:
+                markTicketScan.scannedTicketData.scanCount === 1
+                  ? "Valid ticket"
+                  : `Warning: Scanned ${markTicketScan.scannedTicketData.scanCount} times`,
+            });
+          }
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : ALREADY_SCANNED_MESSAGE;
+
+          if (message === ALREADY_SCANNED_MESSAGE) {
+            playBlorp();
+            setIsMarkingOnServer(false);
+            setVerification({
+              success: false,
+              scanCount: 0,
+              message: ALREADY_SCANNED_MESSAGE,
+            });
+            return;
+          }
+
+          throw error;
         }
       }
     } catch (error) {
