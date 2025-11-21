@@ -14,6 +14,9 @@ import { SerializedTicket } from "@/domain/ticket/types/ticket";
 import TicketDetailsDialog from "@/app/_components/ticket/TicketDetailsDialog";
 import { scanTicketAtEventAction } from "@/domain/ticket/actions/scanTicketAtEventAction";
 
+const ALREADY_SCANNED_MESSAGE = "This ticket has already been scanned.";
+const GENERIC_SCAN_ERROR = "Ticket could not be scanned.";
+
 interface TicketsDisplayProps {
   eventId: string;
   initialTickets: SerializedTicket[];
@@ -35,6 +38,7 @@ export default function TicketsDisplay({
     null
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogError, setDialogError] = useState<string | null>(null);
 
   const refreshTickets = useCallback(async () => {
     setIsRefreshing(true);
@@ -69,32 +73,49 @@ export default function TicketsDisplay({
 
   const handleTicketDetails = (ticket: SerializedTicket) => {
     setSelectedTicket(ticket);
+    setDialogError(null);
     setIsDialogOpen(true);
   };
 
   const handleTicketAction = async (ticket: SerializedTicket) => {
-    const markTicketScan = await scanTicketAtEventAction({
-      scannedData: {
-        eventId: ticket.eventId,
-        eventName: ticket.eventName,
-        hash: ticket.ticketHash,
-        shortId: ticket.shortId,
-        orderId: ticket.orderId,
-        ticketHolderName: ticket.ticketHolderName,
-        ticketPayerEmail: ticket.ticketPayerEmail,
-        price: ticket.price,
-      },
-    });
+    try {
+      setDialogError(null);
+      const markTicketScan = await scanTicketAtEventAction({
+        scannedData: {
+          eventId: ticket.eventId,
+          eventName: ticket.eventName,
+          hash: ticket.ticketHash,
+          shortId: ticket.shortId,
+          orderId: ticket.orderId,
+          ticketHolderName: ticket.ticketHolderName,
+          ticketPayerEmail: ticket.ticketPayerEmail,
+          price: ticket.price,
+        },
+      });
 
-    if (markTicketScan) {
-      refreshTickets();
-      setIsDialogOpen(false);
+      if (markTicketScan) {
+        refreshTickets();
+        setIsDialogOpen(false);
+        setDialogError(null);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : GENERIC_SCAN_ERROR;
+
+      if (message === ALREADY_SCANNED_MESSAGE) {
+        setDialogError(ALREADY_SCANNED_MESSAGE);
+        return;
+      }
+
+      setDialogError(GENERIC_SCAN_ERROR);
+      console.error(error);
     }
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setSelectedTicket(null);
+    setDialogError(null);
   };
 
   return (
@@ -172,6 +193,8 @@ export default function TicketsDisplay({
         onClose={handleCloseDialog}
         onConfirmAction={handleTicketAction}
         scanningEnabled={scanningEnabled}
+        actionError={dialogError}
+        onClearError={() => setDialogError(null)}
       />
     </>
   );
