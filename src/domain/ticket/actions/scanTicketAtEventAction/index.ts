@@ -21,18 +21,28 @@ export const scanTicketAtEventAction = async ({
   assert(user, "User not authenticated");
   assert(user?.permissions.includes("tickets:scan"), "User not authorized");
 
-  const scannedTicketData = await scanTicketByHash(scannedData.hash).catch(
-    error => {
-      if (
-        error instanceof Error &&
-        error.message === TICKET_ALREADY_SCANNED_MESSAGE
-      ) {
-        throw error;
-      }
+  let scannedTicketData;
 
-      throw new Error("Ticket could not be scanned");
+  try {
+    scannedTicketData = await scanTicketByHash(scannedData.hash);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === TICKET_ALREADY_SCANNED_MESSAGE
+    ) {
+      return {
+        success: false as const,
+        reason: "already_scanned" as const,
+        message: TICKET_ALREADY_SCANNED_MESSAGE,
+      };
     }
-  );
+
+    return {
+      success: false as const,
+      reason: "unknown" as const,
+      message: error instanceof Error ? error.message : "Ticket could not be scanned",
+    };
+  }
 
   await createScanLogEntry({
     ticketId: scannedTicketData.id,
@@ -51,5 +61,5 @@ export const scanTicketAtEventAction = async ({
     totalTicketsScannedRatio: scanCount.attendedPercentage,
   });
 
-  return { scannedTicketData, scanCount };
+  return { success: true as const, scannedTicketData, scanCount };
 };
