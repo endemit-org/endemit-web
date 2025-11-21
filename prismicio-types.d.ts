@@ -763,7 +763,19 @@ interface EventDocumentData {
    * - **Tab**: Attributes
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
-  allow_ticket_scanning: prismic.BooleanField /**
+  allow_ticket_scanning: prismic.BooleanField;
+
+  /**
+   * Show artist times field in *Event*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: event.show_artist_times
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  show_artist_times: prismic.BooleanField /**
    * Slice Zone field in *Event*
    *
    * - **Field Type**: Slice Zone

@@ -181,9 +181,9 @@ export default function Checkout({ products }: Props) {
       {!hasItems && products && (
         <ProductSection
           products={products}
-          title={"Trending items"}
+          title={"Official items"}
           description={
-            "These items are trending on our checkout. Explore and add to your cart."
+            "These are official endemit items you can add to your checkout. Explore and add to your cart."
           }
         />
       )}

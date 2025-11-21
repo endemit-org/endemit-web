@@ -11,7 +11,6 @@ import EventLineUp from "@/app/_components/event/EventLineUp";
 import EventLocation from "@/app/_components/event/EventLocation";
 import Link from "next/link";
 import { Product } from "@/domain/product/types/product";
-import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import clsx from "clsx";
@@ -21,7 +20,7 @@ import { getResizedPrismicImage } from "@/lib/util/util";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
-import { isProductSellable } from "@/domain/product/businessLogic";
+import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -59,27 +58,6 @@ export async function generateMetadata({
   return buildOpenGraphObject({ title, description, images });
 }
 
-function TicketDisplay({ product }: { product: Product }) {
-  return (
-    <div className={"flex flex-col items-center text-neutral-200"}>
-      <div className={"font-heading uppercase text-3xl text-neutral-400 mb-8"}>
-        Tickets available now
-      </div>
-      <div>
-        <ImageWithFallback
-          src={product.images[0].src}
-          alt={product.images[0].alt}
-          width={400}
-          height={229}
-          placeholder={product.images[0].placeholder}
-        />
-      </div>
-      <h2 className={"text-2xl my-6"}>{product.name}</h2>
-      <ProductAddToCart product={product} />
-    </div>
-  );
-}
-
 export default async function EventPage({
   params,
 }: {
@@ -95,7 +73,7 @@ export default async function EventPage({
     product = await fetchProductFromCmsById(event.tickets.productId);
   }
 
-  const productAvailable = product && isProductSellable(product).isSellable;
+  const productAvailable = false;
 
   if (
     !event ||
@@ -152,10 +130,10 @@ export default async function EventPage({
     });
   }
 
-  if (productAvailable && product) {
+  if (product && (!isPastEvent || productAvailable)) {
     defaultContent.push({
       label: "Tickets",
-      content: <TicketDisplay product={product} />,
+      content: <EventTicketDisplay product={product} event={event} />,
       id: "tickets",
       sortingWeight: 300,
       mobileOnly: true,
@@ -329,45 +307,9 @@ export default async function EventPage({
                 // backgroundColor: event.colour,
               }}
             >
-              {productAvailable && product && (
-                <TicketDisplay product={product} />
-              )}
-              {!productAvailable && (
-                <div className={"flex flex-col items-center text-neutral-200"}>
-                  <div
-                    className={
-                      "font-heading uppercase text-3xl text-neutral-400 mb-8"
-                    }
-                  >
-                    {isPastEvent || !product
-                      ? `Tickets not available`
-                      : `Tickets not available online`}
-                  </div>
-                  <div>
-                    <ImageWithFallback
-                      src={event.promoImage?.src}
-                      alt={event.promoImage?.alt ?? ""}
-                      width={400}
-                      height={229}
-                      placeholder={event.promoImage?.placeholder}
-                    />
-                  </div>
-                  <h2 className={"text-2xl my-6"}>
-                    {isPastEvent
-                      ? "Tickets have been SOLD OUT."
-                      : product
-                        ? "Online tickets SOLD OUR"
-                        : "Tickets are not for sale yet"}
-                  </h2>
-                  {!isPastEvent && (
-                    <p>
-                      Limited entry tickets available at the doors of the event
-                      upon arrival.
-                    </p>
-                  )}
-                </div>
-              )}
+              <EventTicketDisplay product={product} event={event} />
             </div>
+
             <div className={"p4 text-center mt-10 "}>
               {event.video && (
                 <div className=" w-full  object-cover rounded-lg overflow-hidden px-8 mb-8">
