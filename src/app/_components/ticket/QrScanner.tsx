@@ -102,43 +102,39 @@ export default function QRScanner({ eventId }: Props) {
       const response = await verifyTicketAtEventAction(ticketPayload);
 
       if (response.success && response.verified) {
-        try {
-          const markTicketScan = await scanTicketAtEventAction({
-            scannedData: ticketPayload,
+        const markTicketScan = await scanTicketAtEventAction({
+          scannedData: ticketPayload,
+        });
+
+        if (!markTicketScan.success) {
+          const message = markTicketScan.message ?? ALREADY_SCANNED_MESSAGE;
+
+          playBlorp();
+          setIsMarkingOnServer(false);
+          setVerification({
+            success: false,
+            scanCount: 0,
+            message:
+              markTicketScan.reason === "already_scanned"
+                ? ALREADY_SCANNED_MESSAGE
+                : message,
           });
-
-          if (markTicketScan) {
-            playBeep();
-            setIsMarkingOnServer(false);
-            setScanResult({
-              scanCount: markTicketScan.scannedTicketData.scanCount,
-            });
-            setVerification({
-              success: true,
-              scanCount: markTicketScan.scannedTicketData.scanCount,
-              message:
-                markTicketScan.scannedTicketData.scanCount === 1
-                  ? "Valid ticket"
-                  : `Warning: Scanned ${markTicketScan.scannedTicketData.scanCount} times`,
-            });
-          }
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : ALREADY_SCANNED_MESSAGE;
-
-          if (message === ALREADY_SCANNED_MESSAGE) {
-            playBlorp();
-            setIsMarkingOnServer(false);
-            setVerification({
-              success: false,
-              scanCount: 0,
-              message: ALREADY_SCANNED_MESSAGE,
-            });
-            return;
-          }
-
-          throw error;
+          return;
         }
+
+        playBeep();
+        setIsMarkingOnServer(false);
+        setScanResult({
+          scanCount: markTicketScan.scannedTicketData.scanCount,
+        });
+        setVerification({
+          success: true,
+          scanCount: markTicketScan.scannedTicketData.scanCount,
+          message:
+            markTicketScan.scannedTicketData.scanCount === 1
+              ? "Valid ticket"
+              : `Warning: Scanned ${markTicketScan.scannedTicketData.scanCount} times`,
+        });
       }
     } catch (error) {
       playBlorp();

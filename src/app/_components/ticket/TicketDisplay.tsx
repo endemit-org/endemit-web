@@ -78,38 +78,34 @@ export default function TicketsDisplay({
   };
 
   const handleTicketAction = async (ticket: SerializedTicket) => {
-    try {
-      setDialogError(null);
-      const markTicketScan = await scanTicketAtEventAction({
-        scannedData: {
-          eventId: ticket.eventId,
-          eventName: ticket.eventName,
-          hash: ticket.ticketHash,
-          shortId: ticket.shortId,
-          orderId: ticket.orderId,
-          ticketHolderName: ticket.ticketHolderName,
-          ticketPayerEmail: ticket.ticketPayerEmail,
-          price: ticket.price,
-        },
-      });
+    setDialogError(null);
+    const markTicketScan = await scanTicketAtEventAction({
+      scannedData: {
+        eventId: ticket.eventId,
+        eventName: ticket.eventName,
+        hash: ticket.ticketHash,
+        shortId: ticket.shortId,
+        orderId: ticket.orderId,
+        ticketHolderName: ticket.ticketHolderName,
+        ticketPayerEmail: ticket.ticketPayerEmail,
+        price: ticket.price,
+      },
+    });
 
-      if (markTicketScan) {
-        refreshTickets();
-        setIsDialogOpen(false);
-        setDialogError(null);
-      }
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : GENERIC_SCAN_ERROR;
-
-      if (message === ALREADY_SCANNED_MESSAGE) {
+    if (!markTicketScan.success) {
+      if (markTicketScan.reason === "already_scanned") {
         setDialogError(ALREADY_SCANNED_MESSAGE);
         return;
       }
 
       setDialogError(GENERIC_SCAN_ERROR);
-      console.error(error);
+      console.error(markTicketScan.message);
+      return;
     }
+
+    refreshTickets();
+    setIsDialogOpen(false);
+    setDialogError(null);
   };
 
   const handleCloseDialog = () => {
