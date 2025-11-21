@@ -276,6 +276,15 @@
           "placeholder_true": "true",
           "default_value": false
         }
+      },
+      "show_artist_times": {
+        "type": "Boolean",
+        "config": {
+          "label": "Show artist times",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": true
+        }
       }
     },
     "Rich content": {
