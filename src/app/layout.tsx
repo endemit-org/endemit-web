@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@/app/_styles/globals.css";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights as VercelSpeedInsights } from "@vercel/speed-insights/next";
-import { Providers } from "@/app/providers";
+import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import { Teko, Space_Grotesk } from "next/font/google";
 import EnvironmentIndicator from "@/app/_components/development/EnvironmentIndicator";
 import { isProduction } from "@/lib/util/env";
@@ -101,10 +101,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
-      <VercelAnalytics />
-      <VercelSpeedInsights />
-      <EnvironmentIndicator />
-      <Providers>{children}</Providers>
+      <body>
+        <VercelAnalytics />
+        <VercelSpeedInsights />
+        <EnvironmentIndicator />
+        <PersistentPlayer />
+        {children}
+      </body>
     </html>
   );
 }
