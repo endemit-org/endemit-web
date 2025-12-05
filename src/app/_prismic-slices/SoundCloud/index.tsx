@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
-import EmbedSoundCloud from "@/app/_components/content/EmbedSoundCloud";
 
 /**
  * Props for `SoundCloud`.
@@ -17,11 +16,11 @@ const SoundCloud: FC<SoundCloudProps> = ({ slice }) => {
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      <EmbedSoundCloud
-        url={String(slice.primary.url)}
-        height={slice.primary.height ?? undefined}
-        color={slice.primary.color ?? undefined}
-      />
+      {/*<EmbedSoundCloud*/}
+      {/*  url={String(slice.primary.url)}*/}
+      {/*  title={String(slice.primary.url).split("/").pop() || "SoundCloud Track"}*/}
+      {/*  color={slice.primary.color ?? undefined}*/}
+      {/*/>*/}
     </section>
   );
 };
