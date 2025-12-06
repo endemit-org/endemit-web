@@ -1,6 +1,6 @@
 {
   "name": "endemit-web",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "private": true,
   "packageManager": "pnpm@9.13.0",
   "scripts": {
@@ -43,12 +43,11 @@
     "clsx": "^2.1.1",
     "inngest": "^3.44.2",
     "nanoid": "^5.1.6",
-    "next": "15.4.7",
+    "next": "15.4.8",
     "prisma": "^6.17.1",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-scroll-parallax": "^3.4.5",
     "resend": "^6.1.2",
     "satori": "^0.18.3",
     "server-only": "^0.0.1",

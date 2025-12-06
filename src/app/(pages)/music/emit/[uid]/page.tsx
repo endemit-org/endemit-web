@@ -94,6 +94,8 @@ export default async function PodcastPage({
             description={podcast.description}
             trackUrl={podcast.track.url}
             tracklist={podcast.tracklist}
+            artist={podcast.artist?.name}
+            date={podcast.date}
           />
 
           {podcast.artist && (

@@ -13,7 +13,7 @@ export default function Tile({ config }: Props) {
   const baseClasses = `${config?.className} relative group transition-all h-full overflow-hidden bg-red-200`;
 
   const dynamicStyles = {
-    backgroundColor: config.backgroundColor || "#e5e5e5",
+    backgroundColor: config.backgroundColor || "#000000",
     color: config.textColor || "#000000",
     WebkitTapHighlightColor: "transparent",
   };
