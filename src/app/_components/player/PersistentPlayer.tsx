@@ -88,7 +88,7 @@ export function PersistentPlayer() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 w-full z-20"
+      className="fixed bottom-0 left-0 right-0 w-full z-50"
       style={{ height: `${height}px` }}
     >
       <div className="max-w-8xl m-auto h-full">
