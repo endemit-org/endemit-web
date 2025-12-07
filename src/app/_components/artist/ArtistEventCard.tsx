@@ -6,6 +6,7 @@ import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import Link from "next/link";
 import Image from "next/image";
 import { convertMonthsToMs } from "@/lib/util/converters";
+import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 
 interface ArtistCardProps {
   artist: ArtistAtEvent;
@@ -105,7 +106,7 @@ export default function ArtistEventCard({
                 descriptionClassName
               )}
             >
-              {String(artist.description)}
+              <RichTextDisplay richText={artist.description} />
             </p>
           )}
 
