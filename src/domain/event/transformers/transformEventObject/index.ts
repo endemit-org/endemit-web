@@ -40,9 +40,9 @@ export const transformEventObject = async (
         name: item.name_override ?? artist.data.name,
         description:
           item.description_override.length > 0
-            ? asText(item.description_override)
+            ? item.description_override
             : artist.data.description
-              ? asText(artist.data.description)
+              ? artist.data.description
               : null,
         image: {
           src: imageUrl,

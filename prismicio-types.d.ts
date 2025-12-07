@@ -887,6 +887,10 @@ export type FooterContentDocument<Lang extends string = string> =
   >;
 
 type HomePageDocumentDataSlicesSlice =
+  | EventListSlice
+  | ArtistListSlice
+  | VinylPromoSectionSlice
+  | SpacerSlice
   | TabsSlice
   | TextColumnSlice
   | PodcastListSlice
