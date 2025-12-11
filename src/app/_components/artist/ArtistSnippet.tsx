@@ -1,7 +1,7 @@
 import { getTimeUntil } from "@/lib/util/util";
 import clsx from "clsx";
 import { HTMLProps } from "react";
-import { formatDay, formatTime } from "@/lib/util/formatting";
+import { formatTime } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 
@@ -44,9 +44,7 @@ export default function ArtistSnippet({
         <div className="flex-1">
           <h4 className={clsx("text-xl", nameClassName)}>{artist.name}</h4>
           <div className={clsx("text-lg ", descriptionClassName)}>
-            {!isLive &&
-              artist.start_time &&
-              `${formatDay(artist.start_time)}, ${formatTime(artist.start_time)}`}
+            {!isLive && artist.start_time && `${formatTime(artist.start_time)}`}
             {isLive && (
               <span className="animate-pulse text-red-600 flex gap-1 items-center">
                 <span className="inline-block bg-red-600 rounded-full w-2 h-2 -mt-1"></span>
