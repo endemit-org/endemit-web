@@ -290,7 +290,7 @@ export default async function EventPage({
         <div className={"relative flex"}>
           <div className={"lg:w-2/3 w-full"}>
             {!isPastEvent && (
-              <ArtistCarousel artists={event.artists} headline={"Up next"} />
+              <ArtistCarousel artists={event.artists} headline={"Set times"} />
             )}
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
