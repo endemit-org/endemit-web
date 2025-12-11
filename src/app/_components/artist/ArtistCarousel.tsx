@@ -25,7 +25,7 @@ type TimelineItem = {
 
 export default function ArtistCarousel({
   artists,
-  headline = "Up next",
+  headline = "Set times",
   cardClassName,
   liveCardClassName,
   nameClassName,
