@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { usePlayerStore } from "@/app/_stores/PlayerStore";
+import { useEffect, useRef, useState } from "react";
+import { usePlayerStore, getStoredPlayState } from "@/app/_stores/PlayerStore";
 import CloseIcon from "@/app/_components/icon/CloseIcon";
 import ChevronDownIcon from "@/app/_components/icon/ChevronDownIcon";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -35,10 +35,17 @@ const COLLAPSED_HEIGHT = 48;
 const EXPANDED_HEIGHT = 120;
 
 export function PersistentPlayer() {
-  const { currentTrack, isVisible, isExpanded, close, toggleExpanded } =
-    usePlayerStore();
+  const {
+    currentTrack,
+    isVisible,
+    isExpanded,
+    close,
+    toggleExpanded,
+    setIsPlaying,
+  } = usePlayerStore();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const widgetRef = useRef<ReturnType<typeof window.SC.Widget> | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Load SoundCloud Widget API
   useEffect(() => {
@@ -69,18 +76,52 @@ export function PersistentPlayer() {
     };
   }, [isVisible, isExpanded]);
 
+  // Initialize widget and bind events
   useEffect(() => {
     if (!iframeRef.current || !window.SC) return;
 
     const widget = window.SC.Widget(iframeRef.current);
     widgetRef.current = widget;
-  }, [currentTrack]);
 
+    // Bind play/pause events to track state
+    widget.bind(window.SC.Widget.Events.PLAY, () => {
+      setIsPlaying(true);
+    });
+
+    widget.bind(window.SC.Widget.Events.PAUSE, () => {
+      setIsPlaying(false);
+    });
+
+    widget.bind(window.SC.Widget.Events.FINISH, () => {
+      setIsPlaying(false);
+    });
+
+    return () => {
+      // Clean up event listeners
+      if (widgetRef.current) {
+        widgetRef.current.unbind(window.SC.Widget.Events.PLAY);
+        widgetRef.current.unbind(window.SC.Widget.Events.PAUSE);
+        widgetRef.current.unbind(window.SC.Widget.Events.FINISH);
+      }
+    };
+  }, [currentTrack, setIsPlaying]);
+
+  // Load track with autoplay logic
   useEffect(() => {
     if (currentTrack && widgetRef.current && window.SC) {
-      widgetRef.current.load(currentTrack.url, { auto_play: true });
+      // Check if this is initial load from localStorage
+      const shouldAutoplay = isInitialLoad
+        ? getStoredPlayState()
+        : true; // Always autoplay when user clicks a new track
+
+      widgetRef.current.load(currentTrack.url, { auto_play: shouldAutoplay });
+
+      // After first load, mark as no longer initial
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
     }
-  }, [currentTrack]);
+  }, [currentTrack, isInitialLoad]);
 
   if (!isVisible || !currentTrack) return null;
 
