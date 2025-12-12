@@ -7,6 +7,7 @@ interface Props {
   title?: string;
   description?: string;
   renderFrame?: boolean;
+  gridType?: "small" | "large";
 }
 
 export default function ProductSection({
@@ -14,6 +15,7 @@ export default function ProductSection({
   title,
   description,
   renderFrame = true,
+  gridType,
 }: Props) {
   if (products.length === 0) {
     return;
@@ -33,7 +35,10 @@ export default function ProductSection({
 
       <div
         className={clsx(
-          "sm:grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2",
+          "sm:grid w-full gap-2",
+          gridType === "small"
+            ? "sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            : "sm:grid-cols-1 xl:grid-cols-2",
           title || description ? "mt-8" : "mt-0"
         )}
       >

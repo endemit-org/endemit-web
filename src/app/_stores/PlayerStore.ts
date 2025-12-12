@@ -12,33 +12,109 @@ interface PlayerState {
   currentTrack: Track | null;
   isVisible: boolean;
   isExpanded: boolean;
+  isPlaying: boolean;
 
   loadTrack: (track: Track) => void;
   close: () => void;
   toggleExpanded: () => void;
   setExpanded: (expanded: boolean) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
 }
 
-export const usePlayerStore = create<PlayerState>(set => ({
-  currentTrack: null,
-  isVisible: false,
-  isExpanded: false,
+// localStorage keys
+const STORAGE_KEY_TRACK = "endemit-player-track";
+const STORAGE_KEY_PLAYSTATE = "endemit-player-playstate";
 
-  loadTrack: track =>
+// Helper functions for localStorage
+const getStoredTrack = (): Track | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_TRACK);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+};
+
+const getStoredPlayState = (): boolean => {
+  if (typeof window === "undefined") return false;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_PLAYSTATE);
+    return stored === "true";
+  } catch {
+    return false;
+  }
+};
+
+const storeTrack = (track: Track | null) => {
+  if (typeof window === "undefined") return;
+  try {
+    if (track) {
+      localStorage.setItem(STORAGE_KEY_TRACK, JSON.stringify(track));
+    } else {
+      localStorage.removeItem(STORAGE_KEY_TRACK);
+    }
+  } catch {
+    // Silently fail if localStorage is not available
+  }
+};
+
+const storePlayState = (isPlaying: boolean) => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY_PLAYSTATE, String(isPlaying));
+  } catch {
+    // Silently fail if localStorage is not available
+  }
+};
+
+const clearStorage = () => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEY_TRACK);
+    localStorage.removeItem(STORAGE_KEY_PLAYSTATE);
+  } catch {
+    // Silently fail if localStorage is not available
+  }
+};
+
+// Initialize from localStorage
+const storedTrack = getStoredTrack();
+
+export const usePlayerStore = create<PlayerState>(set => ({
+  currentTrack: storedTrack,
+  isVisible: storedTrack !== null,
+  isExpanded: false,
+  isPlaying: false, // Will be set by the player component
+
+  loadTrack: track => {
+    storeTrack(track);
     set({
       currentTrack: track,
       isVisible: true,
       isExpanded: false,
-    }),
+    });
+  },
 
-  close: () =>
+  close: () => {
+    clearStorage();
     set({
       isVisible: false,
       currentTrack: null,
       isExpanded: false,
-    }),
+      isPlaying: false,
+    });
+  },
 
   toggleExpanded: () => set(state => ({ isExpanded: !state.isExpanded })),
 
   setExpanded: expanded => set({ isExpanded: expanded }),
+
+  setIsPlaying: isPlaying => {
+    storePlayState(isPlaying);
+    set({ isPlaying });
+  },
 }));
+
+// Export stored play state for initial load
+export { getStoredPlayState };
