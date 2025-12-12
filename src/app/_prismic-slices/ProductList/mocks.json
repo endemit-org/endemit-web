@@ -89,6 +89,11 @@
 			"render_frame": {
 				"__TYPE__": "BooleanContent",
 				"value": true
+			},
+			"grid_size_type": {
+				"__TYPE__": "FieldContent",
+				"value": "large",
+				"type": "Select"
 			}
 		},
 		"items": [

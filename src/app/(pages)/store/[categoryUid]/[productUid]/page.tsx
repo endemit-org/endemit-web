@@ -114,7 +114,7 @@ export default async function ProductPage({
           ></div>
           <ProductStatusTag
             status={product.status}
-            className={"translate-y-4 translate-x-4 relative"}
+            className={"translate-y-4 translate-x-4 relative inline-block"}
           />
 
           <ImageGalleryWithMasonry
