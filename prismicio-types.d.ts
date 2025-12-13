@@ -3015,6 +3015,16 @@ export interface ProductListSliceManualPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   render_frame: prismic.BooleanField;
+
+  /**
+   * Grid size type field in *ProductList → Manual selection → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: product_list.manual.primary.grid_size_type
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  grid_size_type: prismic.SelectField<"small" | "large">;
 }
 
 /**

@@ -5,7 +5,7 @@ import { transformProductObject } from "@/domain/product/transformers/transformP
 import { isFilled } from "@prismicio/client";
 import { ProductDocument } from "@/prismicio-types";
 
-export const fetchTicketForEventFromCms = async (eventId: string) => {
+export const fetchTicketsForEventFromCms = async (eventId: string) => {
   const products = (await prismicClient.getAllByType("product", {
     pageSize: 200,
   })) as ProductDocument[];

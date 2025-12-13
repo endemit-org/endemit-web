@@ -16,6 +16,7 @@ export type ProductListProps = SliceComponentProps<Content.ProductListSlice>;
  */
 const ProductList: FC<ProductListProps> = async ({ slice }) => {
   let products = null;
+  let gridSizeType: "small" | "large" = "small";
 
   if (slice.variation === "default" && slice.primary.category) {
     products = await fetchProductsFromCms({
@@ -43,6 +44,7 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
     products = products
       ? products.filter(product => productIds.includes(product.id))
       : [];
+    gridSizeType = slice.primary.grid_size_type ?? "small";
   }
 
   return (
@@ -56,6 +58,7 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
           title={slice.primary.title ?? undefined}
           description={slice.primary.description ?? undefined}
           renderFrame={slice.primary.render_frame ?? false}
+          gridType={gridSizeType}
         />
       )}
     </section>

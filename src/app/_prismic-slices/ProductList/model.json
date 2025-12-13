@@ -144,6 +144,17 @@
             "placeholder_true": "true",
             "default_value": false
           }
+        },
+        "grid_size_type": {
+          "type": "Select",
+          "config": {
+            "label": "Grid size type",
+            "placeholder": "",
+            "options": [
+              "small",
+              "large"
+            ]
+          }
         }
       },
       "items": {}
