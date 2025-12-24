@@ -31,10 +31,10 @@ export default function EventSaveTheDate({
         <div
           className={clsx(
             "text-4xl uppercase font-heading text-neutral-200",
-            !saveTheDateItem.title && "blur-md select-none"
+            !saveTheDateItem.title && "blur-md select-none scale-y-75"
           )}
         >
-          {saveTheDateItem.title ?? "Secret booking"}
+          {saveTheDateItem.title ?? "Nice try, it's a secret!"}
         </div>
         {saveTheDateItem.description && (
           <div className="text-neutral-300">{saveTheDateItem.description}</div>

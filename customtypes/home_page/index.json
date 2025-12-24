@@ -11,6 +11,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "snowfall": {
+              "type": "SharedSlice"
+            },
             "save_the_date": {
               "type": "SharedSlice"
             },

@@ -16,6 +16,7 @@ export const components = {
   poem: dynamic(() => import("./EventIntro")),
   product_list: dynamic(() => import("./ProductList")),
   save_the_date: dynamic(() => import("./SaveTheDate")),
+  snowfall: dynamic(() => import("./Snowfall")),
   sound_cloud: dynamic(() => import("./SoundCloud")),
   spacer: dynamic(() => import("./Spacer")),
   tabs: dynamic(() => import("./Tabs")),

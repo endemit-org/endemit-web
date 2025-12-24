@@ -48,6 +48,7 @@
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-snowfall": "^2.4.0",
     "resend": "^6.1.2",
     "satori": "^0.18.3",
     "server-only": "^0.0.1",

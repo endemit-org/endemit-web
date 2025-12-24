@@ -27,7 +27,11 @@ export default function EventSaveTheDateLister({
         <div
           className={"flex flex-col w-full h-full p-4 relative z-10 gap-y-6"}
         >
-          <div className={"font-heading text-3xl text-neutral-200 uppercase "}>
+          <div
+            className={
+              "font-heading text-5xl font-black text-neutral-200 uppercase "
+            }
+          >
             Save the date
             {saveTheDateItems && saveTheDateItems?.length > 1 && "s"}
           </div>

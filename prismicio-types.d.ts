@@ -517,6 +517,7 @@ export interface EventDocumentDataArtistsItem {
 }
 
 type EventDocumentDataSlicesSlice =
+  | SnowfallSlice
   | SaveTheDateSlice
   | ArtistListSlice
   | EventListSlice
@@ -889,6 +890,7 @@ export type FooterContentDocument<Lang extends string = string> =
   >;
 
 type HomePageDocumentDataSlicesSlice =
+  | SnowfallSlice
   | SaveTheDateSlice
   | EventListSlice
   | ArtistListSlice
@@ -970,6 +972,7 @@ export type HomePageDocument<Lang extends string = string> =
   >;
 
 type InnerContentDocumentDataSlicesSlice =
+  | SnowfallSlice
   | SoundCloudSlice
   | VinylPromoSectionSlice
   | PoemSlice
@@ -3251,6 +3254,36 @@ export type SaveTheDateSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Default variation for Snowfall Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type SnowfallSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Record<string, never>,
+  never
+>;
+
+/**
+ * Slice variation for *Snowfall*
+ */
+type SnowfallSliceVariation = SnowfallSliceDefault;
+
+/**
+ * Snowfall Shared Slice
+ *
+ * - **API ID**: `snowfall`
+ * - **Description**: Snowfall
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type SnowfallSlice = prismic.SharedSlice<
+  "snowfall",
+  SnowfallSliceVariation
+>;
+
+/**
  * Primary content in *SoundCloud → Default → Primary*
  */
 export interface SoundCloudSliceDefaultPrimary {
@@ -3874,6 +3907,9 @@ declare module "@prismicio/client" {
       SaveTheDateSliceDefaultPrimary,
       SaveTheDateSliceVariation,
       SaveTheDateSliceDefault,
+      SnowfallSlice,
+      SnowfallSliceVariation,
+      SnowfallSliceDefault,
       SoundCloudSlice,
       SoundCloudSliceDefaultPrimary,
       SoundCloudSliceVariation,
