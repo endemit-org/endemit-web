@@ -1,36 +1,17 @@
 {
-  "id": "event_list",
+  "id": "save_the_date",
   "type": "SharedSlice",
-  "name": "EventList",
-  "description": "EventList",
+  "name": "SaveTheDate",
+  "description": "SaveTheDate",
   "variations": [
     {
       "id": "default",
-      "name": "Upcoming",
+      "name": "Default",
       "docURL": "...",
       "version": "initial",
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "show": {
-          "type": "Select",
-          "config": {
-            "label": "Which events to show",
-            "placeholder": "",
-            "options": [
-              "All",
-              "Upcoming",
-              "Past"
-            ]
-          }
-        },
-        "title": {
-          "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
-          }
-        },
         "save_the_date": {
           "type": "Group",
           "config": {
@@ -66,36 +47,6 @@
                 }
               }
             }
-          }
-        }
-      },
-      "items": {}
-    },
-    {
-      "id": "past",
-      "name": "Past",
-      "docURL": "...",
-      "version": "initial",
-      "description": "Default",
-      "imageUrl": "",
-      "primary": {
-        "show": {
-          "type": "Select",
-          "config": {
-            "label": "Which events to show",
-            "placeholder": "",
-            "options": [
-              "All",
-              "Upcoming",
-              "Past"
-            ]
-          }
-        },
-        "title": {
-          "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
           }
         }
       },

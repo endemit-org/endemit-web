@@ -23,7 +23,7 @@ const IMAGE_CONFIG = {
 const REDIRECTS = [
   {
     source: "/endemit-festival/map",
-    destination: "/events/endemit-festival/map-and-timetable",
+    destination: "/events/endemit-festival-2025#festival-25-map-timetable",
     permanent: true,
   },
   {

@@ -74,7 +74,7 @@ Redirects are configured in `next.config.ts`. Current redirects include:
 - `/festival` → `/events/endemit-festival`
 - `/endemit-festival` → `/events/endemit-festival`
 - `/ius-primae-noctis` → `/events/ius-primae-noctis`
-- `/endemit-festival/map` → `/events/endemit-festival/map-and-timetable`
+- `/endemit-festival/map` → `/events/endemit-festival-2025#festival-25-map-timetable`
 
 To add new redirects, modify the `redirects()` function in `next.config.ts`:
 
