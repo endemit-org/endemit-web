@@ -1,6 +1,7 @@
 import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
+import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 
 export default async function ContentPageLayout({
   children,
@@ -46,6 +47,7 @@ export default async function ContentPageLayout({
           <SiteFooter />
         </div>
       </div>
+      <PersistentPlayer />
     </body>
   );
 }
