@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "@/app/_styles/globals.css";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights as VercelSpeedInsights } from "@vercel/speed-insights/next";
-import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import { Teko, Space_Grotesk } from "next/font/google";
 import EnvironmentIndicator from "@/app/_components/development/EnvironmentIndicator";
 import { isProduction } from "@/lib/util/env";
@@ -105,7 +104,6 @@ export default function RootLayout({
         <VercelAnalytics />
         <VercelSpeedInsights />
         <EnvironmentIndicator />
-        <PersistentPlayer />
         {children}
       </body>
     </html>
