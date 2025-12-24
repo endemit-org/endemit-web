@@ -1,0 +1,51 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"save_the_date": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"title",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "cloud",
+									"type": "Text"
+								}
+							],
+							[
+								"description",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "discuss",
+									"type": "Text"
+								}
+							],
+							[
+								"note",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "swim",
+									"type": "Text"
+								}
+							],
+							[
+								"date",
+								{
+									"__TYPE__": "FieldContent",
+									"type": "Timestamp",
+									"value": "2018-11-07T22:40:25Z"
+								}
+							]
+						]
+					}
+				]
+			}
+		},
+		"items": []
+	}
+]

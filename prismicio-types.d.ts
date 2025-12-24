@@ -277,6 +277,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | SaveTheDateSlice
   | VenueListSlice
   | SoundCloudSlice
   | PoemSlice
@@ -516,6 +517,7 @@ export interface EventDocumentDataArtistsItem {
 }
 
 type EventDocumentDataSlicesSlice =
+  | SaveTheDateSlice
   | ArtistListSlice
   | EventListSlice
   | VinylPromoSectionSlice
@@ -887,6 +889,7 @@ export type FooterContentDocument<Lang extends string = string> =
   >;
 
 type HomePageDocumentDataSlicesSlice =
+  | SaveTheDateSlice
   | EventListSlice
   | ArtistListSlice
   | VinylPromoSectionSlice
@@ -2245,11 +2248,56 @@ export type EmbedBlockSlice = prismic.SharedSlice<
 >;
 
 /**
- * Primary content in *EventList → Default → Primary*
+ * Item in *EventList → Upcoming → Primary → Save the date*
+ */
+export interface EventListSliceDefaultPrimarySaveTheDateItem {
+  /**
+   * Title field in *EventList → Upcoming → Primary → Save the date*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.save_the_date[].title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *EventList → Upcoming → Primary → Save the date*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.save_the_date[].description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Date field in *EventList → Upcoming → Primary → Save the date*
+   *
+   * - **Field Type**: Timestamp
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.save_the_date[].date
+   * - **Documentation**: https://prismic.io/docs/fields/timestamp
+   */
+  date: prismic.TimestampField;
+
+  /**
+   * Note field in *EventList → Upcoming → Primary → Save the date*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.save_the_date[].note
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  note: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *EventList → Upcoming → Primary*
  */
 export interface EventListSliceDefaultPrimary {
   /**
-   * Which events to show field in *EventList → Default → Primary*
+   * Which events to show field in *EventList → Upcoming → Primary*
    *
    * - **Field Type**: Select
    * - **Placeholder**: *None*
@@ -2259,7 +2307,7 @@ export interface EventListSliceDefaultPrimary {
   show: prismic.SelectField<"All" | "Upcoming" | "Past">;
 
   /**
-   * Title field in *EventList → Default → Primary*
+   * Title field in *EventList → Upcoming → Primary*
    *
    * - **Field Type**: Text
    * - **Placeholder**: *None*
@@ -2267,10 +2315,22 @@ export interface EventListSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   title: prismic.KeyTextField;
+
+  /**
+   * Save the date field in *EventList → Upcoming → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.default.primary.save_the_date[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  save_the_date: prismic.GroupField<
+    Simplify<EventListSliceDefaultPrimarySaveTheDateItem>
+  >;
 }
 
 /**
- * Default variation for EventList Slice
+ * Upcoming variation for EventList Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
@@ -2283,9 +2343,47 @@ export type EventListSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *EventList → Past → Primary*
+ */
+export interface EventListSlicePastPrimary {
+  /**
+   * Which events to show field in *EventList → Past → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.past.primary.show
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  show: prismic.SelectField<"All" | "Upcoming" | "Past">;
+
+  /**
+   * Title field in *EventList → Past → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_list.past.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+}
+
+/**
+ * Past variation for EventList Slice
+ *
+ * - **API ID**: `past`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type EventListSlicePast = prismic.SharedSliceVariation<
+  "past",
+  Simplify<EventListSlicePastPrimary>,
+  never
+>;
+
+/**
  * Slice variation for *EventList*
  */
-type EventListSliceVariation = EventListSliceDefault;
+type EventListSliceVariation = EventListSliceDefault | EventListSlicePast;
 
 /**
  * EventList Shared Slice
@@ -3061,6 +3159,98 @@ export type ProductListSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Item in *SaveTheDate → Default → Primary → Save the date*
+ */
+export interface SaveTheDateSliceDefaultPrimarySaveTheDateItem {
+  /**
+   * Title field in *SaveTheDate → Default → Primary → Save the date*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: save_the_date.default.primary.save_the_date[].title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *SaveTheDate → Default → Primary → Save the date*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: save_the_date.default.primary.save_the_date[].description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Date field in *SaveTheDate → Default → Primary → Save the date*
+   *
+   * - **Field Type**: Timestamp
+   * - **Placeholder**: *None*
+   * - **API ID Path**: save_the_date.default.primary.save_the_date[].date
+   * - **Documentation**: https://prismic.io/docs/fields/timestamp
+   */
+  date: prismic.TimestampField;
+
+  /**
+   * Note field in *SaveTheDate → Default → Primary → Save the date*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: save_the_date.default.primary.save_the_date[].note
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  note: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *SaveTheDate → Default → Primary*
+ */
+export interface SaveTheDateSliceDefaultPrimary {
+  /**
+   * Save the date field in *SaveTheDate → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: save_the_date.default.primary.save_the_date[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  save_the_date: prismic.GroupField<
+    Simplify<SaveTheDateSliceDefaultPrimarySaveTheDateItem>
+  >;
+}
+
+/**
+ * Default variation for SaveTheDate Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type SaveTheDateSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<SaveTheDateSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *SaveTheDate*
+ */
+type SaveTheDateSliceVariation = SaveTheDateSliceDefault;
+
+/**
+ * SaveTheDate Shared Slice
+ *
+ * - **API ID**: `save_the_date`
+ * - **Description**: SaveTheDate
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type SaveTheDateSlice = prismic.SharedSlice<
+  "save_the_date",
+  SaveTheDateSliceVariation
+>;
+
+/**
  * Primary content in *SoundCloud → Default → Primary*
  */
 export interface SoundCloudSliceDefaultPrimary {
@@ -3638,9 +3828,12 @@ declare module "@prismicio/client" {
       EmbedBlockSliceVariation,
       EmbedBlockSliceDefault,
       EventListSlice,
+      EventListSliceDefaultPrimarySaveTheDateItem,
       EventListSliceDefaultPrimary,
+      EventListSlicePastPrimary,
       EventListSliceVariation,
       EventListSliceDefault,
+      EventListSlicePast,
       GridTileSlice,
       GridTileSliceDefaultPrimaryTilesItem,
       GridTileSliceDefaultPrimary,
@@ -3676,6 +3869,11 @@ declare module "@prismicio/client" {
       ProductListSliceDefault,
       ProductListSliceFeatured,
       ProductListSliceManual,
+      SaveTheDateSlice,
+      SaveTheDateSliceDefaultPrimarySaveTheDateItem,
+      SaveTheDateSliceDefaultPrimary,
+      SaveTheDateSliceVariation,
+      SaveTheDateSliceDefault,
       SoundCloudSlice,
       SoundCloudSliceDefaultPrimary,
       SoundCloudSliceVariation,

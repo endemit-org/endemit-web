@@ -11,6 +11,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "save_the_date": {
+              "type": "SharedSlice"
+            },
             "event_list": {
               "type": "SharedSlice"
             },

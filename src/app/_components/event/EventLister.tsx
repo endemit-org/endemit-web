@@ -3,13 +3,26 @@ import React from "react";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import clsx from "clsx";
+import EventSaveTheDateLister from "@/app/_components/event/EventSaveTheDateLister";
+
+type SaveTheDateItem = {
+  title?: string;
+  description?: string;
+  date: Date;
+  note?: string;
+};
 
 interface EventListProps {
   title?: string;
   type: "Past" | "Upcoming" | "All";
+  saveTheDateItems?: SaveTheDateItem[];
 }
 
-async function EventListContent({ title, type }: EventListProps) {
+async function EventListContent({
+  title,
+  type,
+  saveTheDateItems,
+}: EventListProps) {
   const events = await fetchEventsFromCms({});
 
   if (!events) return null;
@@ -32,11 +45,13 @@ async function EventListContent({ title, type }: EventListProps) {
       .sort((a, b) => b.date_start - a.date_start);
   }
 
-  if (!filteredEvents || filteredEvents.length === 0) {
+  const showSaveTheDate = saveTheDateItems && saveTheDateItems.length > 0;
+  const showFiller =
+    filteredEvents.length === 1 && type === "Upcoming" && !showSaveTheDate;
+
+  if ((!filteredEvents || filteredEvents.length === 0) && !showSaveTheDate) {
     return [];
   }
-
-  const showFiller = filteredEvents.length === 1 && type === "Upcoming";
 
   return (
     <>
@@ -56,6 +71,9 @@ async function EventListContent({ title, type }: EventListProps) {
             <EventPoster event={event}>{/*{event.children}*/}</EventPoster>
           </React.Fragment>
         ))}
+        {showSaveTheDate && (
+          <EventSaveTheDateLister saveTheDateItems={saveTheDateItems} />
+        )}
         {showFiller && (
           <div className={"max-sm:hidden relative overflow-hidden"}>
             <div
@@ -86,6 +104,16 @@ async function EventListContent({ title, type }: EventListProps) {
 }
 
 // Main component with Suspense boundary
-export default function EventLister({ title, type }: EventListProps) {
-  return <EventListContent title={title} type={type} />;
+export default function EventLister({
+  title,
+  type,
+  saveTheDateItems,
+}: EventListProps) {
+  return (
+    <EventListContent
+      title={title}
+      type={type}
+      saveTheDateItems={saveTheDateItems}
+    />
+  );
 }
