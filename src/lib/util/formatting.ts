@@ -33,6 +33,20 @@ export const formatDay = (date: Date) => {
   });
 };
 
+export const formatMonthNameShort = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    timeZone: "Europe/Ljubljana",
+  });
+};
+
+export const formatDayOfMonth = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    day: "2-digit",
+    timeZone: "Europe/Ljubljana",
+  });
+};
+
 export const formatDate = (date: Date) => {
   return date.toLocaleDateString("en-GB", {
     day: "2-digit",
