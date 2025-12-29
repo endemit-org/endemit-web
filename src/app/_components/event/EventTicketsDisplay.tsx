@@ -3,10 +3,10 @@
 import { Product } from "@/domain/product/types/product";
 import { Event } from "@/domain/event/types/event";
 import { isProductSellable } from "@/domain/product/businessLogic";
-import TicketIcon from "@/app/_components/icon/TicketIcon";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { isEventCompleted } from "@/domain/event/businessLogic";
+import Banner from "@/app/_components/ui/Banner";
 
 export default function EventTicketDisplay({
   product,
@@ -15,7 +15,7 @@ export default function EventTicketDisplay({
   product?: Product | null;
   event: Event;
 }) {
-  const productAvailable = product && isProductSellable(product).isSellable;
+  const productAvailable = product && !isProductSellable(product).isSellable;
   const isPastEvent = isEventCompleted(event);
 
   return (
@@ -28,19 +28,11 @@ export default function EventTicketDisplay({
             : `Tickets not available online`)}
       </div>
       {!productAvailable && !isPastEvent && (
-        <div
-          className={
-            "bg-orange-700/90 flex rounded-md px-3 py-2 mb-4 gap-3 backdrop-blur"
-          }
-        >
-          <span className="animate-rave-125bmp text-neutral-950 mt-1">
-            <TicketIcon />
-          </span>
-          <div className="text-neutral-950 uppercase">
-            <strong>Tickets available at entrance upon arrival.</strong> Cash
-            only.
-          </div>
-        </div>
+        <Banner title={"Tickets are available at entrance"}>
+          Online tickets are sold out, but you can still get the tickets for you
+          and your friends when you arrive at the event.{" "}
+          <strong>Cash only.</strong>
+        </Banner>
       )}
       <div>
         {product && (

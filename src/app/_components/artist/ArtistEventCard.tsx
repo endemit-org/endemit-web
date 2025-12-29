@@ -100,14 +100,14 @@ export default function ArtistEventCard({
           </div>
 
           {artist.description && (
-            <p
+            <div
               className={clsx(
                 "leading-relaxed text-sm lg:text-base",
                 descriptionClassName
               )}
             >
               <RichTextDisplay richText={artist.description} />
-            </p>
+            </div>
           )}
 
           {!artist.isB2b && (
