@@ -87,6 +87,12 @@ export const isProductExcludedFromRefunds = (product: Product) => {
 export const isProductFeatured = (product: Product) => {
   return product.isFeatured;
 };
+export const isProductSoldOut = (product: Product) => {
+  return (
+    product.status === ProductStatus.SOLD_OUT ||
+    product.status === ProductStatus.OUT_OF_STOCK
+  );
+};
 export const canProductExistInCart = (product: Product) => {
   return (
     product.composition === ProductCompositionType.SINGLE ||
