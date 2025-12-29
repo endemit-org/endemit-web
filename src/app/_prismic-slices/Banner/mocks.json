@@ -1,0 +1,30 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "trail",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Velit ea fugiat ad sit et exercitation commodo ex laboris ullamco enim dolor tempor. Occaecat pariatur exercitation nisi cupidatat id labore est cupidatat. Ipsum deserunt reprehenderit nostrud aliquip id nostrud."
+						}
+					}
+				]
+			},
+			"variant": {
+				"__TYPE__": "FieldContent",
+				"value": "Regular",
+				"type": "Select"
+			}
+		},
+		"items": []
+	}
+]

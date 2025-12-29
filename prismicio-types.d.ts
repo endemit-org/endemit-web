@@ -277,6 +277,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | BannerSlice
   | SaveTheDateSlice
   | VenueListSlice
   | SoundCloudSlice
@@ -517,6 +518,7 @@ export interface EventDocumentDataArtistsItem {
 }
 
 type EventDocumentDataSlicesSlice =
+  | BannerSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | ArtistListSlice
@@ -890,6 +892,7 @@ export type FooterContentDocument<Lang extends string = string> =
   >;
 
 type HomePageDocumentDataSlicesSlice =
+  | BannerSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | EventListSlice
@@ -1418,6 +1421,7 @@ export interface ProductDocumentDataRelatedProductsItem {
 }
 
 type ProductDocumentDataSlicesSlice =
+  | BannerSlice
   | HeroSlice
   | TextColumnSlice
   | VinylPromoSectionSlice
@@ -2128,6 +2132,69 @@ export type ArtistListSlice = prismic.SharedSlice<
   "artist_list",
   ArtistListSliceVariation
 >;
+
+/**
+ * Primary content in *Banner → Default → Primary*
+ */
+export interface BannerSliceDefaultPrimary {
+  /**
+   * Title field in *Banner → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: banner.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *Banner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: banner.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Variant field in *Banner → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Regular
+   * - **API ID Path**: banner.default.primary.variant
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  variant: prismic.SelectField<"Regular" | "Important", "filled">;
+}
+
+/**
+ * Default variation for Banner Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type BannerSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<BannerSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Banner*
+ */
+type BannerSliceVariation = BannerSliceDefault;
+
+/**
+ * Banner Shared Slice
+ *
+ * - **API ID**: `banner`
+ * - **Description**: Banner
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type BannerSlice = prismic.SharedSlice<"banner", BannerSliceVariation>;
 
 /**
  * Primary content in *TextBlock → Default → Primary*
@@ -3852,6 +3919,10 @@ declare module "@prismicio/client" {
       ArtistListSliceDefaultPrimary,
       ArtistListSliceVariation,
       ArtistListSliceDefault,
+      BannerSlice,
+      BannerSliceDefaultPrimary,
+      BannerSliceVariation,
+      BannerSliceDefault,
       ContentSectionSlice,
       ContentSectionSliceDefaultPrimary,
       ContentSectionSliceVariation,
