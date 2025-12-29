@@ -15,7 +15,7 @@ export default function EventTicketDisplay({
   product?: Product | null;
   event: Event;
 }) {
-  const productAvailable = product && !isProductSellable(product).isSellable;
+  const productAvailable = product && isProductSellable(product).isSellable;
   const isPastEvent = isEventCompleted(event);
 
   return (
