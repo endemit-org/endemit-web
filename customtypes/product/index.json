@@ -154,6 +154,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "banner": {
+              "type": "SharedSlice"
+            },
             "hero": {
               "type": "SharedSlice"
             },
