@@ -11,13 +11,7 @@ export default async function ContentPageLayout({
   const menuItems = await fetchNavigationMenuFromCms();
 
   return (
-    <body
-      className="m-auto overflow-y-scroll bg-black "
-      style={{
-        backgroundImage: "url('/images/endemit-pattern.svg')",
-        backgroundSize: "110px",
-      }}
-    >
+    <>
       <div className="max-w-8xl m-auto">
         {menuItems && (
           <Sidebar
@@ -48,6 +42,6 @@ export default async function ContentPageLayout({
         </div>
       </div>
       <PersistentPlayer />
-    </body>
+    </>
   );
 }
