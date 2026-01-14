@@ -18,22 +18,53 @@ export default function EventTicketDisplay({
   const productAvailable = product && isProductSellable(product).isSellable;
   const isPastEvent = isEventCompleted(event);
 
+  let headline,
+    content,
+    subtitle = null;
+
+  if (!event.tickets.shouldSellTickets) {
+    headline = "FREE admission";
+    subtitle = "No tickets required";
+  } else {
+    if (productAvailable) {
+      headline = "Tickets available now";
+      if (product) {
+        subtitle = product.name;
+      }
+    } else {
+      if (isPastEvent || !product) {
+        headline = "Tickets not yet available";
+        if (isPastEvent) {
+          subtitle = "Tickets have been sold out.";
+        } else {
+          subtitle = "Tickets are not for sale yet";
+        }
+      } else {
+        if (product) {
+          subtitle = "Online tickets SOLD OUT";
+          content = (
+            <Banner title={"Tickets are available at entrance"}>
+              Online tickets are sold out, but you can still get the tickets for
+              you and your friends when you arrive at the event.{" "}
+              <strong>Cash only.</strong>
+            </Banner>
+          );
+        } else {
+          subtitle = "Tickets are not for sale yet";
+        }
+        headline = "Tickets not available online";
+      }
+    }
+  }
+
   return (
     <div className={"flex flex-col items-center text-neutral-200"}>
       <div className={"font-heading uppercase text-3xl text-neutral-400 mb-8"}>
-        {productAvailable && "Tickets available now"}
-        {!productAvailable &&
-          (isPastEvent || !product
-            ? `Tickets not available`
-            : `Tickets not available online`)}
+        {headline}
       </div>
-      {!productAvailable && !isPastEvent && (
-        <Banner title={"Tickets are available at entrance"}>
-          Online tickets are sold out, but you can still get the tickets for you
-          and your friends when you arrive at the event.{" "}
-          <strong>Cash only.</strong>
-        </Banner>
-      )}
+
+      {content}
+
       <div>
         {product && (
           <ImageWithFallback
@@ -54,15 +85,7 @@ export default function EventTicketDisplay({
           />
         )}
       </div>
-      <h2 className={"text-2xl my-6"}>
-        {product && productAvailable ? product.name : ""}
-        {(!productAvailable || !product) &&
-          (isPastEvent
-            ? "Tickets have been SOLD OUT."
-            : product
-              ? "Online tickets SOLD OUT"
-              : "Tickets are not for sale yet")}
-      </h2>
+      <h2 className={"text-2xl my-6"}>{subtitle}</h2>
       {productAvailable && <ProductAddToCart product={product} />}
     </div>
   );

@@ -144,8 +144,10 @@ export const transformEventObject = async (
       enabledLink: event.data.enable_link_to_full_page,
       enabledTicketScanning: event.data.allow_ticket_scanning,
       externalEventLink: event.data.external_event_link,
+      showEventLineup: !event.data.hide_lineup,
     },
     tickets: {
+      shouldSellTickets: !event.data.free_admission,
       available: !!ticketProductId,
       productId: ticketProductId,
     },
