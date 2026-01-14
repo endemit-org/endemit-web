@@ -33,10 +33,11 @@ export default function EventTicketDisplay({
       }
     } else {
       if (isPastEvent || !product) {
-        headline = "Tickets not yet available";
         if (isPastEvent) {
+          headline = "Tickets no longer available";
           subtitle = "Tickets have been sold out.";
         } else {
+          headline = "Tickets coming soon";
           subtitle = "Tickets are not for sale yet";
         }
       } else {
