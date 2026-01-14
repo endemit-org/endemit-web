@@ -13,7 +13,9 @@ interface PlayerState {
   isVisible: boolean;
   isExpanded: boolean;
   isPlaying: boolean;
+  hasHydrated: boolean;
 
+  hydrate: () => void;
   loadTrack: (track: Track) => void;
   close: () => void;
   toggleExpanded: () => void;
@@ -78,14 +80,22 @@ const clearStorage = () => {
   }
 };
 
-// Initialize from localStorage
-const storedTrack = getStoredTrack();
-
 export const usePlayerStore = create<PlayerState>(set => ({
-  currentTrack: storedTrack,
-  isVisible: storedTrack !== null,
+  // Initialize with null - will be hydrated from localStorage on client
+  currentTrack: null,
+  isVisible: false,
   isExpanded: false,
-  isPlaying: false, // Will be set by the player component
+  isPlaying: false,
+  hasHydrated: false,
+
+  hydrate: () => {
+    const storedTrack = getStoredTrack();
+    set({
+      currentTrack: storedTrack,
+      isVisible: storedTrack !== null,
+      hasHydrated: true,
+    });
+  },
 
   loadTrack: track => {
     storeTrack(track);

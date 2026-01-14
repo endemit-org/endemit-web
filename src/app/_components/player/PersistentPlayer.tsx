@@ -39,13 +39,20 @@ export function PersistentPlayer() {
     currentTrack,
     isVisible,
     isExpanded,
+    hasHydrated,
     close,
     toggleExpanded,
     setIsPlaying,
+    hydrate,
   } = usePlayerStore();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const widgetRef = useRef<ReturnType<typeof window.SC.Widget> | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Hydrate store from localStorage on client mount
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   // Load SoundCloud Widget API
   useEffect(() => {
@@ -123,7 +130,8 @@ export function PersistentPlayer() {
     }
   }, [currentTrack, isInitialLoad]);
 
-  if (!isVisible || !currentTrack) return null;
+  // Don't render until hydrated to prevent hydration mismatch
+  if (!hasHydrated || !isVisible || !currentTrack) return null;
 
   const height = isExpanded ? EXPANDED_HEIGHT : COLLAPSED_HEIGHT;
 
@@ -208,7 +216,20 @@ export function PersistentPlayer() {
                 />
               </button>
               <button
-                onClick={close}
+                onClick={() => {
+                  // Clean up widget before closing to prevent postMessage errors
+                  if (widgetRef.current && window.SC) {
+                    try {
+                      widgetRef.current.unbind(window.SC.Widget.Events.PLAY);
+                      widgetRef.current.unbind(window.SC.Widget.Events.PAUSE);
+                      widgetRef.current.unbind(window.SC.Widget.Events.FINISH);
+                    } catch {
+                      // Ignore errors during cleanup
+                    }
+                    widgetRef.current = null;
+                  }
+                  close();
+                }}
                 className="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm"
                 aria-label="Close player"
               >

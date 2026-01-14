@@ -780,7 +780,31 @@ interface EventDocumentData {
    * - **Tab**: Attributes
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
-  show_artist_times: prismic.BooleanField /**
+  show_artist_times: prismic.BooleanField;
+
+  /**
+   * Hide lineup field in *Event*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event.hide_lineup
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  hide_lineup: prismic.BooleanField;
+
+  /**
+   * Free admission (no tickets) field in *Event*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event.free_admission
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  free_admission: prismic.BooleanField /**
    * Slice Zone field in *Event*
    *
    * - **Field Type**: Slice Zone
