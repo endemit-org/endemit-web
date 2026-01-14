@@ -44,8 +44,10 @@ export type Event = {
     enabledLink: boolean;
     enabledTicketScanning: boolean;
     externalEventLink?: string;
+    showEventLineup: boolean;
   };
   tickets: {
+    shouldSellTickets: boolean;
     available: boolean;
     productId: string | null;
   };

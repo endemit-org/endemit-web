@@ -285,6 +285,24 @@
           "placeholder_true": "true",
           "default_value": true
         }
+      },
+      "hide_lineup": {
+        "type": "Boolean",
+        "config": {
+          "label": "Hide lineup",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
+      "free_admission": {
+        "type": "Boolean",
+        "config": {
+          "label": "Free admission (no tickets)",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
       }
     },
     "Rich content": {

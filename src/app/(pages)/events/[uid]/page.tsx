@@ -86,20 +86,23 @@ export default async function EventPage({
   const innerContentPages = await fetchInnerContentPagesForEvent(event.id);
   const isPastEvent = isEventCompleted(event);
 
-  const defaultContent = [
-    {
+  const defaultContent = [] as TabItem[];
+
+  if (event.options.showEventLineup) {
+    defaultContent.push({
       label: "Lineup",
       content: <EventLineUp artists={event.artists} />,
       id: "lineup",
       sortingWeight: 200,
-    },
-    {
-      label: "Location",
-      id: "location",
-      content: <EventLocation venue={event.venue} />,
-      sortingWeight: 400,
-    },
-  ] as TabItem[];
+    });
+  }
+
+  defaultContent.push({
+    label: "Location",
+    id: "location",
+    content: <EventLocation venue={event.venue} />,
+    sortingWeight: 400,
+  });
 
   if (innerContentPages && innerContentPages?.length > 0) {
     innerContentPages.forEach(page => {
@@ -130,7 +133,11 @@ export default async function EventPage({
     });
   }
 
-  if (product && (!isPastEvent || productAvailable)) {
+  if (
+    product &&
+    (!isPastEvent || productAvailable) &&
+    event.tickets.shouldSellTickets
+  ) {
     defaultContent.push({
       label: "Tickets",
       content: <EventTicketDisplay product={product} event={event} />,
