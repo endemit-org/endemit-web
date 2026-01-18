@@ -73,8 +73,6 @@ export default async function EventPage({
     product = await fetchProductFromCmsById(event.tickets.productId);
   }
 
-  const productAvailable = false;
-
   if (
     !event ||
     event.options.visibility === "Hidden" ||
@@ -133,11 +131,7 @@ export default async function EventPage({
     });
   }
 
-  if (
-    product &&
-    (!isPastEvent || productAvailable) &&
-    event.tickets.shouldSellTickets
-  ) {
+  if (!isPastEvent && event.tickets.shouldSellTickets) {
     defaultContent.push({
       label: "Tickets",
       content: <EventTicketDisplay product={product} event={event} />,
