@@ -63,6 +63,7 @@ export type CustomProductMetadata = {
   productCategory: string;
   relatedEvent: string | null;
   ticketHolders: string | null;
+  ticketQuantity: string | null;
   uid: string;
 };
 

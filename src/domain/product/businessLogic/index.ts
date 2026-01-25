@@ -75,6 +75,12 @@ export const isProductVisible = (product: Product) => {
 export const isProductTicket = (product: Product) => {
   return product.category === ProductCategory.TICKETS;
 };
+export const getTicketQuantityForProduct = (product: Product): number => {
+  if (!isProductTicket(product)) {
+    return 1;
+  }
+  return product.ticketQuantity ?? 1;
+};
 export const isProductDonation = (product: Product) => {
   return product.category === ProductCategory.DONATIONS;
 };
