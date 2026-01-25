@@ -9,12 +9,12 @@ import {
   isProductSoldOut,
 } from "@/domain/product/businessLogic";
 
-const getTicketProductForEventObject = async (eventId: string) => {
+const getTicketProductIdsForEvent = async (eventId: string): Promise<string[]> => {
   const ticketsForEvent = await fetchTicketsForEventFromCms(eventId);
   const validTicketsForEvent = ticketsForEvent?.filter(
     ticket => isProductSellable(ticket).isSellable
   );
-  let ticketObject = validTicketsForEvent;
+  let ticketProducts = validTicketsForEvent;
 
   // If all tickets are sold out, return the sold out tickets
   if (validTicketsForEvent?.length === 0) {
@@ -22,14 +22,12 @@ const getTicketProductForEventObject = async (eventId: string) => {
       isProductSoldOut(ticket)
     );
     if (soldOutTicketProducts?.length === ticketsForEvent?.length) {
-      ticketObject = soldOutTicketProducts;
+      ticketProducts = soldOutTicketProducts;
     }
   }
 
-  const ticketProductId =
-    ticketObject && ticketObject?.length > 0 ? ticketObject[0].id : null;
-
-  return ticketProductId;
+  // Return all product IDs instead of just the first one
+  return ticketProducts?.map(ticket => ticket.id) ?? [];
 };
 
 export const fetchEventFromCmsByUid = async (eventUid: string) => {
@@ -40,9 +38,9 @@ export const fetchEventFromCmsByUid = async (eventUid: string) => {
   if (!prismicEvent) {
     return null;
   }
-  const ticketProductId = await getTicketProductForEventObject(prismicEvent.id);
+  const ticketProductIds = await getTicketProductIdsForEvent(prismicEvent.id);
 
-  return await transformEventObject(prismicEvent, ticketProductId);
+  return await transformEventObject(prismicEvent, ticketProductIds);
 };
 
 export const fetchEventFromCmsById = async (eventId: string) => {
@@ -53,7 +51,7 @@ export const fetchEventFromCmsById = async (eventId: string) => {
   if (!prismicEvent) {
     return null;
   }
-  const ticketProductId = await getTicketProductForEventObject(prismicEvent.id);
+  const ticketProductIds = await getTicketProductIdsForEvent(prismicEvent.id);
 
-  return await transformEventObject(prismicEvent, ticketProductId);
+  return await transformEventObject(prismicEvent, ticketProductIds);
 };
