@@ -5,7 +5,7 @@ import { CartItem } from "@/domain/checkout/types/cartItem";
 
 export class CheckoutValidationService {
   static isValidEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   }
 
   static isValidName(name: string): boolean {
