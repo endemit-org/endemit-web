@@ -1,5 +1,8 @@
 import { transformPriceToStripe } from "@/domain/checkout/transformers/transformPriceToStripe";
-import { isProductTicket } from "@/domain/product/businessLogic";
+import {
+  isProductTicket,
+  getTicketQuantityForProduct,
+} from "@/domain/product/businessLogic";
 import { ComplementaryTicketField } from "@/domain/checkout/types/checkout";
 import { getTicketHoldersFromData } from "@/domain/checkout/actions/getTicketHoldersFromData";
 import { CartItem } from "@/domain/checkout/types/cartItem";
@@ -10,12 +13,15 @@ const transformToProductLineItems = (
 ) => {
   const isTicket = isProductTicket(item);
   let ticketHolders: string[] = [];
+  let ticketQuantity = 1;
 
   if (isTicket) {
+    ticketQuantity = getTicketQuantityForProduct(item);
     ticketHolders = getTicketHoldersFromData({
       complementaryTicketData,
       quantity: item.quantity,
       id: item.id,
+      ticketQuantity,
     });
   }
 
@@ -32,6 +38,7 @@ const transformToProductLineItems = (
           productType: item.type,
           productCategory: item.category,
           ticketHolders: isTicket ? JSON.stringify(ticketHolders) : null,
+          ticketQuantity: isTicket ? String(ticketQuantity) : null,
           relatedEvent: item.relatedEvent
             ? JSON.stringify(item.relatedEvent)
             : null,

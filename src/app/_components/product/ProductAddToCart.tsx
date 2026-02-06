@@ -17,13 +17,15 @@ export default function ProductAddToCart({ product }: Props) {
 
   // Check if cutoff is within 48 hours
   const cutoffTimestamp = product.limits?.cutoffTimestamp;
-  const shouldShowCountdown = cutoffTimestamp ? (() => {
-    const cutoffDate = ensureTypeIsDate(cutoffTimestamp);
-    const now = new Date().getTime();
-    const cutoff = cutoffDate.getTime();
-    const hoursRemaining = (cutoff - now) / (1000 * 60 * 60);
-    return hoursRemaining > 0 && hoursRemaining <= 48;
-  })() : false;
+  const shouldShowCountdown = cutoffTimestamp
+    ? (() => {
+        const cutoffDate = ensureTypeIsDate(cutoffTimestamp);
+        const now = new Date().getTime();
+        const cutoff = cutoffDate.getTime();
+        const hoursRemaining = (cutoff - now) / (1000 * 60 * 60);
+        return hoursRemaining > 0 && hoursRemaining <= 48;
+      })()
+    : false;
 
   // Filter out the cutoff limit from productLimits if we're showing countdown
   const filteredLimits = shouldShowCountdown
@@ -57,14 +59,16 @@ export default function ProductAddToCart({ product }: Props) {
       {(filteredLimits.length > 0 || shouldShowCountdown) && (
         <div
           className={
-            "border-t border-neutral-500 mt-6 pt-6 text-sm text-neutral-400"
+            "border-t border-neutral-500 mt-6 pt-6 text-sm text-neutral-400 w-full text-center"
           }
         >
           {filteredLimits.map((productLimit, index) => (
             <div key={`prod-limit-${index}`}>{productLimit}</div>
           ))}
           {shouldShowCountdown && cutoffTimestamp && (
-            <ProductCountdown cutoffTimestamp={ensureTypeIsDate(cutoffTimestamp)} />
+            <ProductCountdown
+              cutoffTimestamp={ensureTypeIsDate(cutoffTimestamp)}
+            />
           )}
         </div>
       )}

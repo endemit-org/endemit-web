@@ -5,7 +5,10 @@ import Link from "next/link";
 import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import CheckoutTicketForm from "@/app/_components/checkout/CheckoutTicketForm";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";
-import { isProductTicket } from "@/domain/product/businessLogic";
+import {
+  isProductTicket,
+  getTicketQuantityForProduct,
+} from "@/domain/product/businessLogic";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { CartItem } from "@/domain/checkout/types/cartItem";
 
@@ -115,22 +118,26 @@ export default function CheckoutCustomerForm({
           title={"Ticket holder information"}
           description={`As a backup for lost tickets or inability to scan at the event, please provide the name of each ticket holder:`}
         >
-          {ticketItems.map(item => (
-            <div key={`ticket-data-${item.id}}`}>
-              {new Array(item.quantity).fill(0).map((_, index) => (
-                <CheckoutTicketForm
-                  key={`${item.id}-${index}`}
-                  index={index}
-                  item={item}
-                  formData={formData}
-                  errorMessages={errorMessages}
-                  onFormChangeAction={onTicketFormChange}
-                  onEnter={handleOnEnter}
-                  validationTriggered={validationTriggered}
-                />
-              ))}
-            </div>
-          ))}
+          {ticketItems.map(item => {
+            const ticketQuantity = getTicketQuantityForProduct(item);
+            const totalSlots = item.quantity * ticketQuantity;
+            return (
+              <div key={`ticket-data-${item.id}}`}>
+                {new Array(totalSlots).fill(0).map((_, index) => (
+                  <CheckoutTicketForm
+                    key={`${item.id}-${index}`}
+                    index={index}
+                    item={item}
+                    formData={formData}
+                    errorMessages={errorMessages}
+                    onFormChangeAction={onTicketFormChange}
+                    onEnter={handleOnEnter}
+                    validationTriggered={validationTriggered}
+                  />
+                ))}
+              </div>
+            );
+          })}
         </CheckoutFormSection>
       )}
 

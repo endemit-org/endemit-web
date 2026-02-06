@@ -122,6 +122,7 @@ export interface Product {
     callToAction: string;
   }> | null;
   relatedEvent: ProductRelatedEvent | null;
+  ticketQuantity: number | null;
   specialNotice: string;
   displaySlicePosition: "Above description" | "Below description";
   checkoutDescription: string;
