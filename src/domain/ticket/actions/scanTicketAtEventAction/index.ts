@@ -40,7 +40,8 @@ export const scanTicketAtEventAction = async ({
     return {
       success: false as const,
       reason: "unknown" as const,
-      message: error instanceof Error ? error.message : "Ticket could not be scanned",
+      message:
+        error instanceof Error ? error.message : "Ticket could not be scanned",
     };
   }
 
@@ -52,7 +53,7 @@ export const scanTicketAtEventAction = async ({
 
   const scanCount = await getTicketSummaryForEvent(scannedData.eventId);
 
-  notifyOnTicketScanned({
+  await notifyOnTicketScanned({
     eventName: scannedTicketData.eventName,
     ticketPayerEmail: scannedTicketData.ticketPayerEmail,
     ticketHolderName: scannedTicketData.ticketHolderName,
