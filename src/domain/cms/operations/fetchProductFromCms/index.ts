@@ -27,3 +27,23 @@ export const fetchProductFromCmsById = async (productId: string) => {
 
   return await transformProductObject(prismicProduct);
 };
+
+export const fetchProductsFromCmsByIds = async (productIds: string[]) => {
+  if (productIds.length === 0) {
+    return [];
+  }
+
+  const prismicProducts = (await prismicClient
+    .getByIDs(productIds)
+    .catch(() => null)) as { results: ProductDocument[] } | null;
+
+  if (!prismicProducts || !prismicProducts.results) {
+    return [];
+  }
+
+  const products = await Promise.all(
+    prismicProducts.results.map(product => transformProductObject(product))
+  );
+
+  return products;
+};

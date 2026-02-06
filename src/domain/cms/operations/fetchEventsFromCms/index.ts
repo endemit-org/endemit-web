@@ -24,14 +24,13 @@ export const fetchEventsFromCms = async ({
   return Promise.all(
     events.map(async event => {
       const ticketsForEvent = await fetchTicketsForEventFromCms(event.id);
-      const ticketProductId =
-        ticketsForEvent &&
-        ticketsForEvent?.length > 0 &&
-        isProductSellable(ticketsForEvent[0]).isSellable
-          ? ticketsForEvent[0].id
-          : null;
+      // Return all sellable product IDs
+      const ticketProductIds =
+        ticketsForEvent
+          ?.filter(ticket => isProductSellable(ticket).isSellable)
+          .map(ticket => ticket.id) ?? [];
 
-      return await transformEventObject(event, ticketProductId);
+      return await transformEventObject(event, ticketProductIds);
     })
   );
 };

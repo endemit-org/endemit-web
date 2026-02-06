@@ -113,6 +113,7 @@ export const transformProductObject = async (product: ProductDocument) => {
             date: relatedEvent.data.date_start,
           }
         : null,
+    ticketQuantity: product.data.ticket_quantity ?? null,
     specialNotice: product.data.special_notice,
     checkoutDescription: product.data.checkout_description,
     slices: product.data.slices,

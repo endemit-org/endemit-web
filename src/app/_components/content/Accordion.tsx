@@ -12,14 +12,20 @@ export interface AccordionProps {
   heading?: string;
   items: AccordionItem[];
   allowMultiple?: boolean;
+  defaultOpenIndex?: number;
+  compact?: boolean;
 }
 
 export default function Accordion({
   heading,
   items,
   allowMultiple = false,
+  defaultOpenIndex,
+  compact = false,
 }: AccordionProps) {
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+  const [openIndexes, setOpenIndexes] = useState<number[]>(
+    defaultOpenIndex !== undefined ? [defaultOpenIndex] : []
+  );
 
   const toggleItem = (index: number) => {
     if (allowMultiple) {
@@ -32,12 +38,12 @@ export default function Accordion({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className={compact ? "w-full" : "w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"}>
       {heading && (
-        <h2 className="text-3xl font-bold mb-8 text-gray-900">{heading}</h2>
+        <h2 className={compact ? "text-xl font-bold mb-4 text-neutral-200" : "text-3xl font-bold mb-8 text-gray-900"}>{heading}</h2>
       )}
 
-      <div className="space-y-4">
+      <div className={compact ? "space-y-2" : "space-y-4"}>
         {items.map((item, index) => {
           const isOpen = openIndexes.includes(index);
 
@@ -48,9 +54,9 @@ export default function Accordion({
             >
               <button
                 onClick={() => toggleItem(index)}
-                className="w-full flex items-center justify-between p-6 text-left bg-neutral-800 hover:bg-neutral-700 transition-colors"
+                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left bg-neutral-800 hover:bg-neutral-700 transition-colors`}
               >
-                <span className="text-lg font-semibold text-neutral-200">
+                <span className={`${compact ? "text-base" : "text-lg"} font-semibold text-neutral-200`}>
                   {item.title}
                 </span>
                 <ItemToggleIcon isOpen={isOpen} />
@@ -58,10 +64,10 @@ export default function Accordion({
 
               <div
                 className={`overflow-hidden transition-all duration-300  ${
-                  isOpen ? "max-h-96" : "max-h-0"
+                  isOpen ? "max-h-[600px]" : "max-h-0"
                 }`}
               >
-                <div className="p-6 text-neutral-800  bg-neutral-200 prose max-w-none">
+                <div className={`${compact ? "p-4" : "p-6"} text-neutral-800 bg-neutral-200 prose max-w-none`}>
                   {item.content}
                 </div>
               </div>

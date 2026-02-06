@@ -7,7 +7,7 @@ import { getBlurDataURL } from "@/lib/util/util";
 
 export const transformEventObject = async (
   event: EventDocument,
-  ticketProductId: string | null
+  ticketProductIds: string[]
 ) => {
   const venueDoc = isFilled.contentRelationship(event.data.venue)
     ? event.data.venue
@@ -148,8 +148,8 @@ export const transformEventObject = async (
     },
     tickets: {
       shouldSellTickets: !event.data.free_admission,
-      available: !!ticketProductId,
-      productId: ticketProductId,
+      available: ticketProductIds.length > 0,
+      productIds: ticketProductIds,
     },
     annotation: event.data.annotation,
     type: event.data.event_type,

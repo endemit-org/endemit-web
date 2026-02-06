@@ -49,7 +49,7 @@ export type Event = {
   tickets: {
     shouldSellTickets: boolean;
     available: boolean;
-    productId: string | null;
+    productIds: string[];
   };
   annotation?: string;
   type: EventType;

@@ -262,6 +262,13 @@
             }
           ]
         }
+      },
+      "ticket_quantity": {
+        "type": "Number",
+        "config": {
+          "label": "Ticket quantity",
+          "placeholder": "Number of ticket holders per product (for ticket packages). Defaults to 1 if empty."
+        }
       }
     },
     "Variants": {
