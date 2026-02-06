@@ -5,10 +5,13 @@ import SeoSchema from "@/app/_components/seo/SeoSchema";
 
 type Props = {
   event: Event;
-  product?: Product | null;
+  products?: Product[];
 };
 
-export default function EventSeoMicrodata({ event, product }: Props) {
+export default function EventSeoMicrodata({ event, products = [] }: Props) {
+  // Use the lowest-priced product for SEO (products should already be sorted by price)
+  const lowestPriceProduct = products.length > 0 ? products[0] : null;
+
   const eventSchema = {
     "@context": "https://schema.org",
     "@type": "MusicEvent",
@@ -42,12 +45,12 @@ export default function EventSeoMicrodata({ event, product }: Props) {
       name: artist.name,
       jobTitle: "DJ",
     })),
-    ...(product &&
+    ...(lowestPriceProduct &&
       event.tickets.available && {
         offers: {
           "@type": "Offer",
           url: `${PUBLIC_BASE_WEB_URL}/events/${event.uid}`,
-          price: product.price.toString(),
+          price: lowestPriceProduct.price.toString(),
           priceCurrency: "EUR",
           availability: "https://schema.org/InStock",
         },

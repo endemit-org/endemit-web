@@ -1740,7 +1740,18 @@ interface ProductDocumentData {
         ];
       },
     ]
-  > /**
+  >;
+
+  /**
+   * Ticket quantity field in *Product*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: Number of ticket holders per product (for ticket packages). Defaults to 1 if empty.
+   * - **API ID Path**: product.ticket_quantity
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  ticket_quantity: prismic.NumberField /**
    * Variants field in *Product*
    *
    * - **Field Type**: Group

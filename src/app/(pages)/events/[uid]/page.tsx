@@ -11,7 +11,7 @@ import EventLineUp from "@/app/_components/event/EventLineUp";
 import EventLocation from "@/app/_components/event/EventLocation";
 import Link from "next/link";
 import { Product } from "@/domain/product/types/product";
-import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
+import { fetchProductsFromCmsByIds } from "@/domain/cms/operations/fetchProductFromCms";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import clsx from "clsx";
 import { Metadata } from "next";
@@ -67,10 +67,12 @@ export default async function EventPage({
 }) {
   const { uid } = await params;
   const event = await fetchEventFromCmsByUid(uid);
-  let product: Product | null = null;
+  let products: Product[] = [];
 
-  if (event?.tickets.productId) {
-    product = await fetchProductFromCmsById(event.tickets.productId);
+  if (event?.tickets.productIds && event.tickets.productIds.length > 0) {
+    products = await fetchProductsFromCmsByIds(event.tickets.productIds);
+    // Sort by price (low to high)
+    products.sort((a, b) => a.price - b.price);
   }
 
   if (
@@ -134,7 +136,7 @@ export default async function EventPage({
   if (!isPastEvent && event.tickets.shouldSellTickets) {
     defaultContent.push({
       label: "Tickets",
-      content: <EventTicketDisplay product={product} event={event} />,
+      content: <EventTicketDisplay products={products} event={event} />,
       id: "tickets",
       sortingWeight: 300,
       mobileOnly: true,
@@ -143,7 +145,7 @@ export default async function EventPage({
 
   return (
     <>
-      <EventSeoMicrodata product={product} event={event} />
+      <EventSeoMicrodata products={products} event={event} />
       <OuterPage className={"max-lg:pt-10"}>
         <PageHeadline
           title={event.name}
@@ -186,7 +188,9 @@ export default async function EventPage({
 
             // backgroundColor: event.colour,
           }}
-          className={"bg-neutral-950 relative"}
+          className={
+            "bg-neutral-950 relative shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
+          }
         >
           <div
             className={
@@ -298,7 +302,9 @@ export default async function EventPage({
 
           <section className={"max-lg:hidden flex-1"}>
             <div
-              className={" p-8 flex-1  bg-neutral-800 rounded-md h-fit"}
+              className={
+                "p-8 flex-1 bg-neutral-800 rounded-md h-fit rounded-bl-none shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
+              }
               style={{
                 backgroundImage: "url('/images/worms.png')",
                 backgroundRepeat: "repeat",
@@ -308,7 +314,7 @@ export default async function EventPage({
                 // backgroundColor: event.colour,
               }}
             >
-              <EventTicketDisplay product={product} event={event} />
+              <EventTicketDisplay products={products} event={event} />
             </div>
 
             <div className={"p4 text-center mt-10 "}>

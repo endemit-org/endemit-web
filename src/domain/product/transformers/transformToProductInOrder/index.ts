@@ -1,5 +1,8 @@
 import { ProductInOrder } from "@/domain/order/types/order";
-import { isProductTicket } from "@/domain/product/businessLogic";
+import {
+  isProductTicket,
+  getTicketQuantityForProduct,
+} from "@/domain/product/businessLogic";
 import { getTicketHoldersFromData } from "@/domain/checkout/actions/getTicketHoldersFromData";
 import { ComplementaryTicketField } from "@/domain/checkout/types/checkout";
 import { CartItem } from "@/domain/checkout/types/cartItem";
@@ -11,13 +14,16 @@ export const transformToProductInOrder = (
   let metadata;
 
   if (isProductTicket(cartItem) && complementaryTicketData) {
+    const ticketQuantity = getTicketQuantityForProduct(cartItem);
     const ticketHolders = getTicketHoldersFromData({
       complementaryTicketData,
       id: cartItem.id,
       quantity: cartItem.quantity,
+      ticketQuantity,
     });
     metadata = {
       ticketHolders,
+      ticketQuantity,
     };
   }
 
