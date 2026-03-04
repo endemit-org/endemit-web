@@ -4,7 +4,7 @@ import { useState } from "react";
 import ItemToggleIcon from "@/app/_components/icon/ItemToggleIcon";
 
 export interface AccordionItem {
-  title: string;
+  title: string | React.ReactNode;
   content: React.ReactNode;
 }
 
@@ -38,9 +38,23 @@ export default function Accordion({
   };
 
   return (
-    <div className={compact ? "w-full" : "w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"}>
+    <div
+      className={
+        compact
+          ? "w-full"
+          : "w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+      }
+    >
       {heading && (
-        <h2 className={compact ? "text-xl font-bold mb-4 text-neutral-200" : "text-3xl font-bold mb-8 text-gray-900"}>{heading}</h2>
+        <h2
+          className={
+            compact
+              ? "text-xl font-bold mb-4 text-neutral-200"
+              : "text-3xl font-bold mb-8 text-gray-900"
+          }
+        >
+          {heading}
+        </h2>
       )}
 
       <div className={compact ? "space-y-2" : "space-y-4"}>
@@ -54,9 +68,11 @@ export default function Accordion({
             >
               <button
                 onClick={() => toggleItem(index)}
-                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left bg-neutral-800 hover:bg-neutral-700 transition-colors`}
+                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left bg-neutral-900 hover:bg-neutral-800 transition-colors`}
               >
-                <span className={`${compact ? "text-base" : "text-lg"} font-semibold text-neutral-200`}>
+                <span
+                  className={`${compact ? "text-base" : "text-lg"}  text-neutral-200`}
+                >
                   {item.title}
                 </span>
                 <ItemToggleIcon isOpen={isOpen} />
@@ -64,10 +80,12 @@ export default function Accordion({
 
               <div
                 className={`overflow-hidden transition-all duration-300  ${
-                  isOpen ? "max-h-[600px]" : "max-h-0"
+                  isOpen ? "max-h-[1000px]" : "max-h-0"
                 }`}
               >
-                <div className={`${compact ? "p-4" : "p-6"} text-neutral-800 bg-neutral-200 prose max-w-none`}>
+                <div
+                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-70`}
+                >
                   {item.content}
                 </div>
               </div>

@@ -124,16 +124,16 @@ export default function Tabs({
           <h2 className="text-3xl font-bold mb-8 text-gray-900">{heading}</h2>
         )}
 
-        <div className="hidden lg:block border-b-2 border-neutral-700">
-          <nav className="flex space-x-8 overflow-x-auto " aria-label="Tabs">
+        <div className="hidden lg:block border-b-2 border-neutral-700 ">
+          <nav className="flex space-x-8 overflow-x-auto" aria-label="Tabs">
             {desktopTabs.map(item => (
               <button
                 key={item.id}
                 onClick={() => handleTabClick(item.id, true)}
                 className={`whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
                   activeTabId === item.id
-                    ? "border-blue-500 text-neutral-200"
-                    : "border-transparent text-neutral-950 hover:text-neutral-800 [text-shadow:0_0px_1px_rgba(255,255,255,0.4)] hover:border-neutral-300"
+                    ? "border-blue-500 text-neutral-200 backdrop-blur-lg rounded-t-md"
+                    : "border-transparent text-neutral-950 hover:backdrop-blur-sm hover:text-neutral-800 [text-shadow:0_0px_1px_rgba(255,255,255,0.4)] hover:border-neutral-300"
                 }`}
               >
                 {item.label}
