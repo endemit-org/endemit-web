@@ -21,6 +21,8 @@ import { isEventCompleted } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
+import ActionButton from "@/app/_components/form/ActionButton";
+import TicketIcon from "@/app/_components/icon/TicketIcon";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -122,11 +124,7 @@ export default async function EventPage({
   if (event.slices.length > 0) {
     defaultContent.push({
       label: "About",
-      content: (
-        <div>
-          <SliceDisplay slices={event.slices} />
-        </div>
-      ),
+      content: <SliceDisplay slices={event.slices} />,
       id: "overview",
       sortingWeight: 0,
       hideTitle: true,
@@ -280,15 +278,34 @@ export default async function EventPage({
             </div>
           </div>
         </div>
+        {!isPastEvent && event.tickets.shouldSellTickets ? (
+          <div className={"lg:hidden mb-16 z-50 relative"}>
+            <ActionButton
+              href={"#tickets"}
+              variant="secondary"
+              className={"flex gap-x-2"}
+            >
+              <TicketIcon />
+              Get tickets
+            </ActionButton>
+          </div>
+        ) : (
+          ""
+        )}
         <div
           className={
             "-left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
           }
         >
           <div className={"animate-marquee-move"}>
-            {Array(Math.ceil(200 / event.name.length))
-              .fill(event.name)
-              .join(" · ")}
+            {(() => {
+              const artistNames = event.artists?.map(a => a.name) ?? [];
+              const pattern = artistNames.length > 0
+                ? artistNames.map(name => `${event.name} · ${name}`).join(" · ")
+                : event.name;
+              const repeatCount = Math.ceil(200 / pattern.length);
+              return Array(repeatCount).fill(pattern).join(" · ");
+            })()}
           </div>
         </div>
 

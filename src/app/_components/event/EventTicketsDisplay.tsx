@@ -2,19 +2,79 @@
 
 import { Product } from "@/domain/product/types/product";
 import { Event } from "@/domain/event/types/event";
-import { isProductSellable } from "@/domain/product/businessLogic";
+import {
+  getTicketQuantityForProduct,
+  isProductSellable,
+} from "@/domain/product/businessLogic";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import Banner from "@/app/_components/ui/Banner";
 import Accordion from "@/app/_components/content/Accordion";
-import EventTicketAccordionItem, {
-  formatTicketTitle,
-} from "@/app/_components/event/EventTicketAccordionItem";
+import { formatPrice } from "@/lib/util/formatting";
+import TicketIcon from "@/app/_components/icon/TicketIcon";
 
 interface EventTicketDisplayProps {
   products: Product[];
   event: Event;
+}
+
+export function formatTicketTitle(product: Product) {
+  const ticketQuantity = getTicketQuantityForProduct(product);
+  const quantitySuffix = `${ticketQuantity} ${ticketQuantity === 1 ? "person" : "people"}`;
+  return (
+    <div>
+      <div className={"font-semibold flex gap-x-1.5 items-center"}>
+        <TicketIcon />
+        {product.name}
+      </div>
+      <div className={"text-sm text-neutral-400"}>
+        {quantitySuffix} - {formatPrice(product.price)}
+      </div>
+    </div>
+  );
+}
+
+function TicketPurchaseDisplay({
+  productAvailable,
+  product,
+  content,
+  showTicketQuantities = false,
+}: {
+  productAvailable: boolean | null;
+  product: Product;
+  content: React.ReactNode | null;
+  showTicketQuantities: boolean;
+}) {
+  const ticketQuantity = getTicketQuantityForProduct(product);
+
+  return (
+    <div className={"flex flex-col items-center"}>
+      {!productAvailable && content}
+
+      <div>
+        {product.images?.[0] && (
+          <ImageWithFallback
+            src={product.images[0].src}
+            alt={product.images[0].alt ?? ""}
+            width={400}
+            height={229}
+            placeholder={product.images[0].placeholder}
+          />
+        )}
+      </div>
+      <div className={"my-6 text-center"}>
+        <h2 className={"text-2xl"}>{product.name}</h2>
+        {showTicketQuantities && (
+          <p className="text-neutral-600 text-sm">
+            Includes tickets for {ticketQuantity}{" "}
+            {ticketQuantity === 1 ? "person" : "people"}
+          </p>
+        )}
+      </div>
+      {productAvailable && <ProductAddToCart product={product} />}
+    </div>
+  );
 }
 
 export default function EventTicketDisplay({
@@ -101,22 +161,12 @@ export default function EventTicketDisplay({
             ? "Tickets available now"
             : "Tickets not available online"}
         </div>
-
-        {!singleProductAvailable && content}
-
-        <div>
-          {singleProduct.images?.[0] && (
-            <ImageWithFallback
-              src={singleProduct.images[0].src}
-              alt={singleProduct.images[0].alt ?? ""}
-              width={400}
-              height={229}
-              placeholder={singleProduct.images[0].placeholder}
-            />
-          )}
-        </div>
-        <h2 className={"text-2xl my-6"}>{singleProduct.name}</h2>
-        {singleProductAvailable && <ProductAddToCart product={singleProduct} />}
+        {TicketPurchaseDisplay({
+          product: singleProduct,
+          productAvailable: singleProductAvailable,
+          content,
+          showTicketQuantities: false,
+        })}
       </div>
     );
   }
@@ -124,7 +174,12 @@ export default function EventTicketDisplay({
   // For multiple products - use accordion
   const accordionItems = products.map(product => ({
     title: formatTicketTitle(product),
-    content: <EventTicketAccordionItem product={product} />,
+    content: TicketPurchaseDisplay({
+      product,
+      productAvailable: product && isProductSellable(product).isSellable,
+      content,
+      showTicketQuantities: true,
+    }),
   }));
 
   return (
@@ -141,12 +196,7 @@ export default function EventTicketDisplay({
 
       {!hasAvailableProducts && content}
 
-      <Accordion
-        items={accordionItems}
-        allowMultiple={false}
-        defaultOpenIndex={0}
-        compact={true}
-      />
+      <Accordion items={accordionItems} allowMultiple={false} compact={true} />
     </div>
   );
 }

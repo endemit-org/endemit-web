@@ -114,7 +114,7 @@ export default function ArtistProfile({
                   <Link
                     href={link.url}
                     target="_blank"
-                    className="link text-[#d31c18] hover:text-[#87100e] flex gap-x-2 justify-center"
+                    className="link text-[#d31c18] hover:text-[#87100e] flex gap-x-2 lg:justify-center"
                   >
                     <Image
                       src={`/images/${link.type.toLowerCase().replace(" ", "")}.png`}

@@ -47,14 +47,22 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
     gridSizeType = slice.primary.grid_size_type ?? "small";
   }
 
+  if (!products) {
+    return;
+  }
+
+  const sortedProductsBySortingWeight = products.sort(
+    (a, b) => b.sortingWeight - a.sortingWeight
+  );
+
   return (
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      {products && products.length > 0 && (
+      {sortedProductsBySortingWeight.length > 0 && (
         <ProductSection
-          products={products}
+          products={sortedProductsBySortingWeight}
           title={slice.primary.title ?? undefined}
           description={slice.primary.description ?? undefined}
           renderFrame={slice.primary.render_frame ?? false}
