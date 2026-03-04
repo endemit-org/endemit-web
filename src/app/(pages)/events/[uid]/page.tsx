@@ -124,7 +124,11 @@ export default async function EventPage({
   if (event.slices.length > 0) {
     defaultContent.push({
       label: "About",
-      content: <SliceDisplay slices={event.slices} />,
+      content: (
+        <div>
+          <SliceDisplay slices={event.slices} />
+        </div>
+      ),
       id: "overview",
       sortingWeight: 0,
       hideTitle: true,
@@ -300,9 +304,12 @@ export default async function EventPage({
           <div className={"animate-marquee-move"}>
             {(() => {
               const artistNames = event.artists?.map(a => a.name) ?? [];
-              const pattern = artistNames.length > 0
-                ? artistNames.map(name => `${event.name} · ${name}`).join(" · ")
-                : event.name;
+              const pattern =
+                artistNames.length > 0
+                  ? artistNames
+                      .map(name => `${event.name} · ${name}`)
+                      .join(" · ")
+                  : event.name;
               const repeatCount = Math.ceil(200 / pattern.length);
               return Array(repeatCount).fill(pattern).join(" · ");
             })()}
