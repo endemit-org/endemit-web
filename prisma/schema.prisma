@@ -75,6 +75,7 @@ model Ticket {
   qrContent        Json?
   metadata         Json?
   attended         Boolean      @default(false)
+  isGuestList      Boolean      @default(false)
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt

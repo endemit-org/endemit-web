@@ -5,7 +5,6 @@ import path from "path";
 import sharp from "sharp";
 import satori from "satori";
 import fs from "fs";
-import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import type { ReactElement } from "react";
 
 interface TicketData {
@@ -52,11 +51,7 @@ export const generateTicketImage = async (
     cfg.coverImageSize
   );
   const logoBuffer = await loadLogo(cfg.logoSize);
-  const endemitLogoBuffer = await fetchAndResizeImage(
-    `${PUBLIC_BASE_WEB_URL}/images/endemit.png`,
-    200,
-    "contain"
-  );
+  const endemitLogoBuffer = await loadEndemitLogo(200);
 
   const qrMetadata = await sharp(qrBuffer).metadata();
   const qrWidth = qrMetadata.width || 420;
@@ -141,6 +136,23 @@ async function loadLogo(size: number): Promise<Buffer> {
     .resize(size, size, {
       fit: "inside",
       background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
+    .png()
+    .toBuffer();
+}
+
+async function loadEndemitLogo(size: number): Promise<Buffer> {
+  const logoPath = path.join(
+    process.cwd(),
+    "public",
+    "images",
+    "endemit.png"
+  );
+  return await sharp(logoPath)
+    .resize(size, size, {
+      fit: "contain",
+      position: "center",
+      background: { r: 255, g: 255, b: 255, alpha: 0 },
     })
     .png()
     .toBuffer();
