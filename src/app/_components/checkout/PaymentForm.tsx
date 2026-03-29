@@ -13,6 +13,7 @@ import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 interface ConfirmPaymentResult {
   success: boolean;
   orderId?: string;
+  paymentIntentId?: string;
   fullWalletPayment?: boolean;
 }
 
@@ -60,17 +61,18 @@ export default function PaymentForm({
       return;
     }
 
-    if (!result.orderId) {
+    if (!result.orderId || !result.paymentIntentId) {
       onError("Failed to create order");
       onProcessingChange(false);
       return;
     }
 
     // Step 2: Confirm payment with Stripe
+    // Use paymentIntentId in URL to avoid race condition with webhook
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${PUBLIC_BASE_WEB_URL}/store/checkout/success/${result.orderId}`,
+        return_url: `${PUBLIC_BASE_WEB_URL}/store/checkout/success/${result.paymentIntentId}`,
       },
     });
 

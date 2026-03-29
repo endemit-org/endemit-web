@@ -37,8 +37,13 @@ export function useWalletCredit({
   // Convert total to cents for calculations
   const totalCents = Math.round(total * 100);
 
-  // Calculate maximum wallet credit (total - minimum card payment)
+  // Calculate maximum wallet credit
   const maxWalletCredit = useMemo(() => {
+    // If wallet can cover the full amount, allow 100% wallet payment
+    if (walletBalance >= totalCents) {
+      return totalCents;
+    }
+    // If partial payment, ensure minimum card payment of 1 EUR
     if (totalCents <= MIN_CARD_PAYMENT) {
       return 0; // Can't use wallet if total is already at minimum
     }

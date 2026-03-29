@@ -43,6 +43,11 @@ export const getMaxWalletCredit = (
   totalCents: number,
   walletBalanceCents: number
 ): number => {
+  // If wallet can cover the full amount, allow 100% wallet payment
+  if (walletBalanceCents >= totalCents) {
+    return totalCents;
+  }
+  // If partial payment, ensure minimum card payment of 1 EUR
   if (totalCents <= MINIMUM_CARD_PAYMENT_CENTS) {
     return 0; // Can't use wallet if total is already at minimum
   }
@@ -57,8 +62,10 @@ export const isValidWalletCreditAmount = (
 ): boolean => {
   if (walletCreditCents <= 0) return true; // Not using wallet is always valid
   if (walletCreditCents > walletBalanceCents) return false; // Can't use more than balance
+  if (walletCreditCents > totalCents) return false; // Can't use more than total
   const remainingCents = totalCents - walletCreditCents;
-  return remainingCents >= MINIMUM_CARD_PAYMENT_CENTS;
+  // Allow full wallet payment (remaining = 0) or minimum card payment
+  return remainingCents === 0 || remainingCents >= MINIMUM_CARD_PAYMENT_CENTS;
 };
 
 export const canProceedToCheckout = (

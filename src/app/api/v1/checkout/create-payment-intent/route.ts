@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCheckoutRequest";
 import { createOrder } from "@/domain/order/operations/createOrder";
+import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";
 import { transformToProductInOrder } from "@/domain/product/transformers/transformToProductInOrder";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscribeEmailToGeneralList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
@@ -103,22 +104,34 @@ export async function POST(request: Request) {
     const totalInCents = Math.round(totals.total * 100);
     const amountToCharge = Math.max(0, totalInCents - validatedWalletCredit);
 
-    // Create order
-    const { order } = await createOrder({
-      stripeSessionId: paymentIntentId || `order_${Date.now()}`,
-      name: name ?? undefined,
-      email,
-      subtotal,
-      shippingCost,
-      discountAmount,
-      walletAmountUsed: validatedWalletCredit,
-      shippingRequired: shouldHaveShippingAddress,
-      shippingAddress,
-      orderItems: checkoutItems.map(checkoutItem =>
-        transformToProductInOrder(checkoutItem, complementaryTicketData)
-      ),
-      userId: currentUser?.id,
-    });
+    // Check if order already exists for this payment intent (idempotency)
+    let order;
+    if (paymentIntentId) {
+      const existingOrder = await getOrderByStripeSession(paymentIntentId);
+      if (existingOrder) {
+        order = existingOrder;
+      }
+    }
+
+    // Create order if it doesn't exist
+    if (!order) {
+      const result = await createOrder({
+        stripeSessionId: paymentIntentId || `order_${Date.now()}`,
+        name: name ?? undefined,
+        email,
+        subtotal,
+        shippingCost,
+        discountAmount,
+        walletAmountUsed: validatedWalletCredit,
+        shippingRequired: shouldHaveShippingAddress,
+        shippingAddress,
+        orderItems: checkoutItems.map(checkoutItem =>
+          transformToProductInOrder(checkoutItem, complementaryTicketData)
+        ),
+        userId: currentUser?.id,
+      });
+      order = result.order;
+    }
 
     // Handle newsletter subscription
     if (subscribeToNewsletter) {

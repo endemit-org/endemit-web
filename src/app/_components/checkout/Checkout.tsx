@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCheckoutState } from "@/app/_hooks/useCheckoutState";
 import { useProducts } from "@/app/_stores/ProductStore";
 import { isProductSellable } from "@/domain/product/businessLogic";
@@ -85,9 +85,11 @@ export default function Checkout({ products, userEmail }: Props) {
     setIsClient(true);
   }, []);
 
-  // Pre-fill email when user is logged in
+  // Pre-fill email when user is logged in (only once)
+  const emailPrefilledRef = useRef(false);
   useEffect(() => {
-    if (userEmail) {
+    if (userEmail && !emailPrefilledRef.current) {
+      emailPrefilledRef.current = true;
       actions.updateField("email", userEmail);
       actions.updateField("emailRepeat", userEmail);
     }

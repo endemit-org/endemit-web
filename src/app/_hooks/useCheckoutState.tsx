@@ -278,7 +278,11 @@ export function useCheckoutState() {
         orderId: result.orderId,
       }));
 
-      return { success: true, orderId: result.orderId };
+      return {
+        success: true,
+        orderId: result.orderId,
+        paymentIntentId: result.paymentIntentId || paymentIntentId || undefined,
+      };
     } catch (err) {
       setCheckoutError(err instanceof Error ? err.message : "Failed to process payment");
       return { success: false };
