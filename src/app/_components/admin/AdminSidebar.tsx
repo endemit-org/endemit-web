@@ -323,6 +323,32 @@ export function MobileNav({
     item => !item.permission || permissions.includes(item.permission)
   );
 
+  const { dashboard, internal, external } = organizeNavItems(filteredItems);
+
+  const renderNavItem = (item: NavItem) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      onClick={onClose}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
+      className={clsx(
+        "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+        isActive(item.href) && !item.external
+          ? "bg-gray-800 text-white"
+          : "text-gray-400 hover:bg-gray-800 hover:text-white"
+      )}
+    >
+      {item.icon}
+      {item.label}
+      {item.external && <ExternalLinkIcon />}
+    </Link>
+  );
+
+  const MobileDivider = () => (
+    <div className="my-2 border-t border-gray-800" />
+  );
+
   if (!isOpen) return null;
 
   return (
@@ -355,25 +381,11 @@ export function MobileNav({
           </button>
         </div>
         <nav className="px-4 py-6 space-y-1">
-          {filteredItems.map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              target={item.external ? "_blank" : undefined}
-              rel={item.external ? "noopener noreferrer" : undefined}
-              className={clsx(
-                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                isActive(item.href) && !item.external
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400 hover:bg-gray-800 hover:text-white"
-              )}
-            >
-              {item.icon}
-              {item.label}
-              {item.external && <ExternalLinkIcon />}
-            </Link>
-          ))}
+          {dashboard && renderNavItem(dashboard)}
+          {dashboard && <MobileDivider />}
+          {internal.map(renderNavItem)}
+          {external.length > 0 && <MobileDivider />}
+          {external.map(renderNavItem)}
         </nav>
       </div>
     </div>
@@ -383,6 +395,22 @@ export function MobileNav({
 interface AdminSidebarProps {
   permissions?: Permission[];
 }
+
+function organizeNavItems(items: NavItem[]) {
+  const dashboard = items.find(item => item.href === "/admin");
+  const internal = items
+    .filter(item => item.href !== "/admin" && !item.external)
+    .sort((a, b) => a.label.localeCompare(b.label));
+  const external = items
+    .filter(item => item.external)
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  return { dashboard, internal, external };
+}
+
+const Divider = () => (
+  <div className="my-2 border-t border-gray-800" />
+);
 
 export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
   const pathname = usePathname();
@@ -398,27 +426,35 @@ export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
     item => !item.permission || permissions.includes(item.permission)
   );
 
+  const { dashboard, internal, external } = organizeNavItems(filteredItems);
+
+  const renderNavItem = (item: NavItem) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
+      className={clsx(
+        "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+        isActive(item.href) && !item.external
+          ? "bg-gray-800 text-white"
+          : "text-gray-400 hover:bg-gray-800 hover:text-white"
+      )}
+    >
+      {item.icon}
+      {item.label}
+      {item.external && <ExternalLinkIcon />}
+    </Link>
+  );
+
   return (
     <aside className="w-64 bg-gray-900 min-h-screen flex-col hidden lg:flex">
       <nav className="flex-1 px-4 py-6 space-y-1">
-        {filteredItems.map(item => (
-          <Link
-            key={item.href}
-            href={item.href}
-            target={item.external ? "_blank" : undefined}
-            rel={item.external ? "noopener noreferrer" : undefined}
-            className={clsx(
-              "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-              isActive(item.href) && !item.external
-                ? "bg-gray-800 text-white"
-                : "text-gray-400 hover:bg-gray-800 hover:text-white"
-            )}
-          >
-            {item.icon}
-            {item.label}
-            {item.external && <ExternalLinkIcon />}
-          </Link>
-        ))}
+        {dashboard && renderNavItem(dashboard)}
+        {dashboard && <Divider />}
+        {internal.map(renderNavItem)}
+        {external.length > 0 && <Divider />}
+        {external.map(renderNavItem)}
       </nav>
     </aside>
   );
