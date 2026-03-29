@@ -27,7 +27,7 @@ interface SocialLink {
   alt: string;
   width?: number;
   height?: number;
-  id: "facebook" | "email" | "instagram" | "soundcloud";
+  id: "facebook" | "email" | "instagram" | "soundcloud" | "ra";
 }
 
 interface FooterInfo {
@@ -63,6 +63,12 @@ export default function Sidebar({
       href: "https://soundcloud.com/ende-mit",
       iconSrc: "/images/soundcloud.png",
       alt: "Soundcloud",
+    },
+    {
+      id: "ra",
+      href: "https://ra.co/promoters/133585",
+      iconSrc: "/images/residentadvisor.png",
+      alt: "RA",
     },
     {
       id: "facebook",

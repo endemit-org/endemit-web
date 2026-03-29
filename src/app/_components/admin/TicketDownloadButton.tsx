@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { generateTicketImageAction } from "@/domain/ticket/actions/generateTicketImageAction";
+import { sanitizeForFilename } from "@/lib/util/formatting";
 
 interface TicketDownloadButtonProps {
   ticketId: string;
   shortId: string;
+  holderName: string;
 }
 
 export default function TicketDownloadButton({
   ticketId,
   shortId,
+  holderName,
 }: TicketDownloadButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +47,7 @@ export default function TicketDownloadButton({
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `ticket-${shortId}.png`;
+      link.download = `ticket-${shortId}-${sanitizeForFilename(holderName)}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

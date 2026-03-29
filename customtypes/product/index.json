@@ -269,6 +269,13 @@
           "label": "Ticket quantity",
           "placeholder": "Number of ticket holders per product (for ticket packages). Defaults to 1 if empty."
         }
+      },
+      "ticket_template": {
+        "type": "Text",
+        "config": {
+          "label": "Ticket template",
+          "placeholder": "Template name for ticket design (e.g., 'guest', 'premium'). Leave empty for default."
+        }
       }
     },
     "Variants": {

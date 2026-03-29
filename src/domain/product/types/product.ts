@@ -123,6 +123,7 @@ export interface Product {
   }> | null;
   relatedEvent: ProductRelatedEvent | null;
   ticketQuantity: number | null;
+  ticketTemplate: string | null;
   specialNotice: string;
   displaySlicePosition: "Above description" | "Below description";
   checkoutDescription: string;

@@ -5,34 +5,21 @@ import {
   PaginatedOrders,
   serializeOrder,
 } from "@/domain/order/types/serialized";
-
-const PAGE_SIZE = 50;
+import {
+  DEFAULT_PAGE_SIZE,
+  calculatePagination,
+} from "@/lib/types/pagination";
 
 interface GetAllOrdersParams {
-  cursor?: string;
+  page?: number;
   pageSize?: number;
 }
 
 export const getAllOrders = async ({
-  cursor,
-  pageSize = PAGE_SIZE,
+  page = 1,
+  pageSize = DEFAULT_PAGE_SIZE,
 }: GetAllOrdersParams = {}): Promise<PaginatedOrders> => {
-  const [orders, totalCount, totalRevenueResult] = await Promise.all([
-    prisma.order.findMany({
-      take: pageSize + 1,
-      ...(cursor && {
-        cursor: { id: cursor },
-        skip: 1,
-      }),
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        _count: {
-          select: { tickets: true },
-        },
-      },
-    }),
+  const [totalCount, totalRevenueResult] = await Promise.all([
     prisma.order.count(),
     prisma.order.aggregate({
       where: {
@@ -44,14 +31,27 @@ export const getAllOrders = async ({
     }),
   ]);
 
-  const hasMore = orders.length > pageSize;
-  const ordersToReturn = hasMore ? orders.slice(0, -1) : orders;
-  const nextCursor = hasMore ? ordersToReturn[ordersToReturn.length - 1]?.id : null;
+  const pagination = calculatePagination(totalCount, page, pageSize);
+
+  const orders = await prisma.order.findMany({
+    skip: pagination.skip,
+    take: pagination.take,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      _count: {
+        select: { tickets: true },
+      },
+    },
+  });
 
   return {
-    orders: ordersToReturn.map(order => serializeOrder(order)),
-    nextCursor,
+    orders: orders.map(order => serializeOrder(order)),
     totalCount,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+    totalPages: pagination.totalPages,
     totalRevenue: Number(totalRevenueResult._sum.totalAmount ?? 0),
   };
 };

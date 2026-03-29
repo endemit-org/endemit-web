@@ -181,7 +181,7 @@ export default async function AdminTicketDetailPage({
               Actions
             </h2>
             <div className="flex gap-3">
-              <TicketDownloadButton ticketId={ticket.id} shortId={ticket.shortId} />
+              <TicketDownloadButton ticketId={ticket.id} shortId={ticket.shortId} holderName={ticket.ticketHolderName} />
               <Link
                 href={`/admin/events/${ticket.eventId}`}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-colors"

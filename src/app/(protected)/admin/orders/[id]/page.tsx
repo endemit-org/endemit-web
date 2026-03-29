@@ -102,7 +102,12 @@ export default async function AdminOrderDetailPage({
               )}
               <div className="flex justify-between">
                 <span className="text-gray-600">Email:</span>
-                <span className="font-medium">{order.email}</span>
+                <a
+                  href={`mailto:${order.email}`}
+                  className="font-medium text-blue-600 hover:text-blue-800"
+                >
+                  {order.email}
+                </a>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Date:</span>
@@ -226,18 +231,95 @@ export default async function AdminOrderDetailPage({
             </section>
           )}
 
-          {order.shippingRequired && order.shippingAddress && (
+          {order.shippingRequired && order.shippingAddress && (() => {
+            const addr = order.shippingAddress as {
+              name?: string;
+              address?: string;
+              city?: string;
+              postalCode?: string;
+              country?: string;
+              phone?: string;
+            };
+            return (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
                 Shipping Address
               </h2>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <pre className="text-sm whitespace-pre-wrap">
-                  {JSON.stringify(order.shippingAddress, null, 2)}
-                </pre>
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                {addr.name && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Name:</span>
+                    <span className="font-medium">{addr.name}</span>
+                  </div>
+                )}
+                {addr.address && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Address:</span>
+                    <span className="font-medium">{addr.address}</span>
+                  </div>
+                )}
+                {(addr.postalCode || addr.city) && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">City:</span>
+                    <span className="font-medium">
+                      {[addr.postalCode, addr.city].filter(Boolean).join(" ")}
+                    </span>
+                  </div>
+                )}
+                {addr.country && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Country:</span>
+                    <span className="font-medium">{addr.country}</span>
+                  </div>
+                )}
+                {addr.phone && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Phone:</span>
+                    <a
+                      href={`tel:${addr.phone}`}
+                      className="font-medium text-blue-600 hover:text-blue-800"
+                    >
+                      {addr.phone}
+                    </a>
+                  </div>
+                )}
+                <div className="pt-3 border-t border-gray-200">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      [addr.address, addr.postalCode, addr.city, addr.country]
+                        .filter(Boolean)
+                        .join(", ")
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    View on Google Maps
+                  </a>
+                </div>
               </div>
             </section>
-          )}
+            );
+          })()}
         </div>
       </div>
     </div>

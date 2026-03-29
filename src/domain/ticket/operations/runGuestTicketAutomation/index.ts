@@ -103,6 +103,7 @@ export const runGuestTicketAutomation = inngest.createFunction(
             ),
             price: formatPrice(Number(ticket.price)),
             coverImageUrl: eventData.promoImage.src,
+            template: "guest",
           });
 
           if (!image) {
@@ -121,6 +122,7 @@ export const runGuestTicketAutomation = inngest.createFunction(
         const result = await sendTicketEmail(
           {
             id: ticket.id,
+            shortId: ticket.shortId,
             eventName: ticket.eventName,
             ticketHolderName: ticket.ticketHolderName,
             ticketPayerEmail: ticket.ticketPayerEmail,

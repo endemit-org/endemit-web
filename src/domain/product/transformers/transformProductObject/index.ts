@@ -114,6 +114,9 @@ export const transformProductObject = async (product: ProductDocument) => {
           }
         : null,
     ticketQuantity: product.data.ticket_quantity ?? null,
+    // ticket_template field requires Prismic sync - use type assertion until types are regenerated
+    ticketTemplate:
+      (product.data as { ticket_template?: string }).ticket_template || null,
     specialNotice: product.data.special_notice,
     checkoutDescription: product.data.checkout_description,
     slices: product.data.slices,

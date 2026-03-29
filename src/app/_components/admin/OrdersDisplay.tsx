@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import OrdersTable from "@/app/_components/table/OrdersTable";
-import ActionButton from "@/app/_components/form/ActionButton";
+import Pagination from "@/app/_components/table/Pagination";
 import { fetchOrders } from "@/domain/order/actions/fetchOrdersAction";
 import { formatPrice } from "@/lib/util/formatting";
 import type {
@@ -18,18 +18,19 @@ interface OrdersDisplayProps {
 export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
   const router = useRouter();
   const [orders, setOrders] = useState(initialData.orders);
-  const [nextCursor, setNextCursor] = useState(initialData.nextCursor);
+  const [currentPage, setCurrentPage] = useState(initialData.page);
+  const [totalPages, setTotalPages] = useState(initialData.totalPages);
   const [totalCount, setTotalCount] = useState(initialData.totalCount);
   const [totalRevenue, setTotalRevenue] = useState(initialData.totalRevenue);
-  const [prevCursors, setPrevCursors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadPage = useCallback(async (cursor?: string) => {
+  const loadPage = useCallback(async (page: number) => {
     setIsLoading(true);
     try {
-      const data = await fetchOrders(cursor);
+      const data = await fetchOrders(page);
       setOrders(data.orders);
-      setNextCursor(data.nextCursor);
+      setCurrentPage(data.page);
+      setTotalPages(data.totalPages);
       setTotalCount(data.totalCount);
       setTotalRevenue(data.totalRevenue);
     } finally {
@@ -37,46 +38,24 @@ export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
     }
   }, []);
 
-  const handleNextPage = async () => {
-    if (!nextCursor) return;
-    const currentFirstId = orders[0]?.id;
-    if (currentFirstId) {
-      setPrevCursors(prev => [...prev, currentFirstId]);
-    }
-    await loadPage(nextCursor);
+  const handlePageChange = (page: number) => {
+    loadPage(page);
   };
 
-  const handlePrevPage = async () => {
-    if (prevCursors.length === 0) return;
-    const newPrevCursors = [...prevCursors];
-    newPrevCursors.pop();
-    setPrevCursors(newPrevCursors);
-
-    if (newPrevCursors.length === 0) {
-      await loadPage(undefined);
-    } else {
-      await loadPage(newPrevCursors[newPrevCursors.length - 1]);
-    }
-  };
-
-  const handleRefresh = async () => {
-    setPrevCursors([]);
-    await loadPage(undefined);
+  const handleRefresh = () => {
+    loadPage(currentPage);
   };
 
   const handleOrderClick = (order: SerializedOrder) => {
     router.push(`/admin/orders/${order.id}`);
   };
 
-  const currentPage = prevCursors.length + 1;
-  const totalPages = Math.ceil(totalCount / 50);
-
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Total Revenue:{" "}
+            Revenue:{" "}
             <strong className="text-green-600 text-lg">
               {formatPrice(totalRevenue)}
             </strong>
@@ -101,30 +80,12 @@ export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
         <OrdersTable orders={orders} onRowClick={handleOrderClick} />
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 bg-white p-4 rounded-lg shadow">
-        <div className="text-sm text-gray-600">
-          Page {currentPage} of {totalPages}
-        </div>
-        <div className="flex items-center gap-2">
-          <ActionButton
-            onClick={handlePrevPage}
-            disabled={isLoading || prevCursors.length === 0}
-            size="sm"
-            variant="secondary"
-          >
-            Previous
-          </ActionButton>
-          <ActionButton
-            onClick={handleNextPage}
-            disabled={isLoading || !nextCursor}
-            size="sm"
-            variant="secondary"
-          >
-            Next
-          </ActionButton>
-        </div>
-      </div>
-
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        isLoading={isLoading}
+      />
     </>
   );
 }

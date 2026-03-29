@@ -65,6 +65,7 @@ export async function generateTicketImageAction(
       ),
       price: formatPrice(Number(ticket.price)),
       coverImageUrl: event.promoImage.src,
+      template: ticket.isGuestList ? "guest" : "default",
     });
 
     return { success: true, image };

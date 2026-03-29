@@ -10,17 +10,20 @@ import {
 } from "@/app/_components/ui/ContextMenu";
 import { LogoutButton } from "@/app/_components/auth/LogoutButton";
 import { MobileNavTrigger, MobileNav } from "@/app/_components/admin/AdminSidebar";
+import type { Permission } from "@/domain/auth/config/permissions.config";
 
 interface AdminHeaderProps {
   userName: string | null;
   userEmail: string | null | undefined;
   userRoles: string[];
+  userPermissions?: Permission[];
 }
 
 export default function AdminHeader({
   userName,
   userEmail,
   userRoles,
+  userPermissions = [],
 }: AdminHeaderProps) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -81,6 +84,7 @@ export default function AdminHeader({
       <MobileNav
         isOpen={isMobileNavOpen}
         onClose={() => setIsMobileNavOpen(false)}
+        permissions={userPermissions}
       />
     </>
   );

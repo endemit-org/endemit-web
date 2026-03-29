@@ -110,7 +110,7 @@ export default async function AdminEventPage({
               <p className="text-gray-500">{event.venue.name}</p>
             )}
             {event.artists.length > 0 && (
-              <p className="text-gray-400 text-sm mt-2">
+              <p className="text-gray-400 text-sm mt-2 uppercase">
                 {event.artists.map(a => a.name).join(" • ")}
               </p>
             )}

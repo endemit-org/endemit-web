@@ -7,7 +7,7 @@ import { getAllOrders } from "@/domain/order/operations/getAllOrders";
 import { getOrderWithTickets } from "@/domain/order/operations/getOrderWithTickets";
 import type { PaginatedOrders, SerializedOrderWithTickets } from "@/domain/order/types/serialized";
 
-export async function fetchOrders(cursor?: string): Promise<PaginatedOrders> {
+export async function fetchOrders(page?: number): Promise<PaginatedOrders> {
   const user = await getCurrentUser();
   assert(user, "User not authenticated");
   assert(
@@ -15,7 +15,7 @@ export async function fetchOrders(cursor?: string): Promise<PaginatedOrders> {
     "User not authorized to read orders"
   );
 
-  return await getAllOrders({ cursor });
+  return await getAllOrders({ page });
 }
 
 export async function fetchOrderById(orderId: string): Promise<SerializedOrderWithTickets | null> {

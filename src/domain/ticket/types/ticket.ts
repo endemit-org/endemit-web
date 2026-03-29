@@ -18,6 +18,7 @@ export interface QrTicketPayload extends Omit<TicketPayload, "salt"> {
 export type TicketEmailData = Pick<
   Ticket,
   | "id"
+  | "shortId"
   | "eventName"
   | "ticketHolderName"
   | "ticketPayerEmail"

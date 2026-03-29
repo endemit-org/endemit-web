@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
-import { fetchTicketStatsForEvents } from "@/domain/ticket/actions/fetchTicketStatsAction";
+import { fetchEventsForAdmin } from "@/domain/event/actions/fetchEventsForAdminAction";
 import EventsList from "@/app/_components/admin/EventsList";
 
 export const metadata: Metadata = {
@@ -12,18 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminEventsPage() {
-  const events = await fetchEventsFromCms({});
-
-  // Sort events by date descending (newest first)
-  const sortedEvents = [...(events ?? [])].sort((a, b) => {
-    if (!a.date_start && !b.date_start) return 0;
-    if (!a.date_start) return 1;
-    if (!b.date_start) return -1;
-    return new Date(b.date_start).getTime() - new Date(a.date_start).getTime();
-  });
-
-  const eventIds = sortedEvents.map(e => e.id);
-  const ticketStats = await fetchTicketStatsForEvents(eventIds);
+  const initialData = await fetchEventsForAdmin();
 
   return (
     <div>
@@ -33,7 +21,7 @@ export default async function AdminEventsPage() {
           View and manage event tickets
         </p>
       </div>
-      <EventsList events={sortedEvents} ticketStats={ticketStats} />
+      <EventsList initialData={initialData} />
     </div>
   );
 }

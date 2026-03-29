@@ -24,6 +24,7 @@ export const transformToProductInOrder = (
     metadata = {
       ticketHolders,
       ticketQuantity,
+      ...(cartItem.ticketTemplate && { ticketTemplate: cartItem.ticketTemplate }),
     };
   }
 

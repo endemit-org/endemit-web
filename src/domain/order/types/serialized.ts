@@ -74,7 +74,9 @@ export function serializeOrderWithTickets(
 
 export interface PaginatedOrders {
   orders: SerializedOrder[];
-  nextCursor: string | null;
   totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   totalRevenue: number;
 }

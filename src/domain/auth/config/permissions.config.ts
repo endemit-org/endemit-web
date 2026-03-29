@@ -1,4 +1,7 @@
 export const PERMISSIONS = {
+  // Admin access
+  ADMIN_ACCESS: "admin:access",
+
   // User management
   USERS_READ: "users:read",
   USERS_CREATE: "users:create",
@@ -43,6 +46,12 @@ export const PERMISSIONS = {
   ANALYTICS_VIEW: "analytics:view",
   REPORTS_GENERATE: "reports:generate",
 
+  // Role management
+  ROLES_READ: "roles:read",
+  ROLES_CREATE: "roles:create",
+  ROLES_UPDATE: "roles:update",
+  ROLES_DELETE: "roles:delete",
+
   // System administration
   SYSTEM_SETTINGS: "system:settings",
   SYSTEM_LOGS: "system:logs",
@@ -54,6 +63,12 @@ export const PERMISSION_METADATA: Record<
   Permission,
   { name: string; description: string; resource: string; action: string }
 > = {
+  [PERMISSIONS.ADMIN_ACCESS]: {
+    name: "Admin Access",
+    description: "Access to the admin dashboard",
+    resource: "admin",
+    action: "access",
+  },
   [PERMISSIONS.USERS_READ]: {
     name: "Read Users",
     description: "View user profiles and information",
@@ -233,6 +248,30 @@ export const PERMISSION_METADATA: Record<
     description: "Generate and export reports",
     resource: "reports",
     action: "generate",
+  },
+  [PERMISSIONS.ROLES_READ]: {
+    name: "Read Roles",
+    description: "View roles and their permissions",
+    resource: "roles",
+    action: "read",
+  },
+  [PERMISSIONS.ROLES_CREATE]: {
+    name: "Create Roles",
+    description: "Create new roles",
+    resource: "roles",
+    action: "create",
+  },
+  [PERMISSIONS.ROLES_UPDATE]: {
+    name: "Update Roles",
+    description: "Edit roles and their permissions",
+    resource: "roles",
+    action: "update",
+  },
+  [PERMISSIONS.ROLES_DELETE]: {
+    name: "Delete Roles",
+    description: "Delete roles",
+    resource: "roles",
+    action: "delete",
   },
   [PERMISSIONS.SYSTEM_SETTINGS]: {
     name: "System Settings",

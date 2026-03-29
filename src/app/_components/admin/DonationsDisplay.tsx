@@ -1,16 +1,50 @@
 "use client";
 
+import { useState, useCallback } from "react";
+import Link from "next/link";
 import { formatPrice, formatDateTime } from "@/lib/util/formatting";
-import type { DonationsData } from "@/domain/order/actions/fetchDonationsAction";
+import Pagination from "@/app/_components/table/Pagination";
+import { fetchDonations } from "@/domain/order/actions/fetchDonationsAction";
+import type {
+  PaginatedDonations,
+  DonationItem,
+} from "@/domain/order/operations/getAllDonations";
 
 interface DonationsDisplayProps {
-  initialData: DonationsData;
+  initialData: PaginatedDonations;
 }
 
 export default function DonationsDisplay({
   initialData,
 }: DonationsDisplayProps) {
-  const { donations, totalAmount, count } = initialData;
+  const [donations, setDonations] = useState<DonationItem[]>(initialData.donations);
+  const [currentPage, setCurrentPage] = useState(initialData.page);
+  const [totalPages, setTotalPages] = useState(initialData.totalPages);
+  const [totalCount, setTotalCount] = useState(initialData.totalCount);
+  const [totalAmount, setTotalAmount] = useState(initialData.totalAmount);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadPage = useCallback(async (page: number) => {
+    setIsLoading(true);
+    try {
+      const data = await fetchDonations(page);
+      setDonations(data.donations);
+      setCurrentPage(data.page);
+      setTotalPages(data.totalPages);
+      setTotalCount(data.totalCount);
+      setTotalAmount(data.totalAmount);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handlePageChange = (page: number) => {
+    loadPage(page);
+  };
+
+  const handleRefresh = () => {
+    loadPage(currentPage);
+  };
 
   return (
     <div>
@@ -23,9 +57,19 @@ export default function DonationsDisplay({
             </strong>
           </div>
           <div className="text-sm text-gray-600">
-            Count: <strong className="text-gray-900">{count}</strong>
+            Count: <strong className="text-gray-900">{totalCount}</strong>
+          </div>
+          <div className="text-sm text-gray-600">
+            Showing: <strong className="text-gray-900">{donations.length}</strong>
           </div>
         </div>
+        <button
+          onClick={handleRefresh}
+          disabled={isLoading}
+          className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
+        >
+          {isLoading ? "Loading..." : "Refresh"}
+        </button>
       </div>
 
       <div className="bg-white shadow overflow-hidden rounded-lg">
@@ -58,6 +102,12 @@ export default function DonationsDisplay({
                   >
                     Amount
                   </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    Order
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -78,6 +128,14 @@ export default function DonationsDisplay({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-right font-medium text-green-600">
                       {formatPrice(donation.amount)}
                     </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-right">
+                      <Link
+                        href={`/admin/orders/${donation.orderId}`}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -89,6 +147,13 @@ export default function DonationsDisplay({
           </div>
         )}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

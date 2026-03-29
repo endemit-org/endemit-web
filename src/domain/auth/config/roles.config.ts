@@ -24,6 +24,8 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
     description: "Full system access with all permissions",
     isSystem: true,
     permissions: [
+      // Admin access
+      PERMISSIONS.ADMIN_ACCESS,
       // Users
       PERMISSIONS.USERS_READ,
       PERMISSIONS.USERS_CREATE,
@@ -59,6 +61,11 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
       // Analytics
       PERMISSIONS.ANALYTICS_VIEW,
       PERMISSIONS.REPORTS_GENERATE,
+      // Roles
+      PERMISSIONS.ROLES_READ,
+      PERMISSIONS.ROLES_CREATE,
+      PERMISSIONS.ROLES_UPDATE,
+      PERMISSIONS.ROLES_DELETE,
       // System
       PERMISSIONS.SYSTEM_SETTINGS,
       PERMISSIONS.SYSTEM_LOGS,
@@ -70,6 +77,8 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
     description: "Content and event management access",
     isSystem: true,
     permissions: [
+      // Admin access
+      PERMISSIONS.ADMIN_ACCESS,
       // Users (read only)
       PERMISSIONS.USERS_READ,
       // Orders

@@ -100,3 +100,12 @@ export const formatDayName = (date: Date) => {
     timeZone: "Europe/Ljubljana",
   });
 };
+
+export const sanitizeForFilename = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/gi, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 50);
+};
