@@ -46,6 +46,13 @@ export const PERMISSIONS = {
   ANALYTICS_VIEW: "analytics:view",
   REPORTS_GENERATE: "reports:generate",
 
+  // Wallet management
+  WALLETS_READ: "wallets:read",
+  WALLETS_MANAGE_BALANCE: "wallets:manage-balance",
+
+  // Transaction management
+  TRANSACTIONS_READ: "transactions:read",
+
   // Role management
   ROLES_READ: "roles:read",
   ROLES_CREATE: "roles:create",
@@ -248,6 +255,24 @@ export const PERMISSION_METADATA: Record<
     description: "Generate and export reports",
     resource: "reports",
     action: "generate",
+  },
+  [PERMISSIONS.WALLETS_READ]: {
+    name: "Read Wallets",
+    description: "View wallet balances and information",
+    resource: "wallets",
+    action: "read",
+  },
+  [PERMISSIONS.WALLETS_MANAGE_BALANCE]: {
+    name: "Manage Wallet Balance",
+    description: "Add or remove funds from wallets",
+    resource: "wallets",
+    action: "manage-balance",
+  },
+  [PERMISSIONS.TRANSACTIONS_READ]: {
+    name: "Read Transactions",
+    description: "View wallet transaction history",
+    resource: "transactions",
+    action: "read",
   },
   [PERMISSIONS.ROLES_READ]: {
     name: "Read Roles",

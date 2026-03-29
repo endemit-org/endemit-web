@@ -42,6 +42,14 @@ enum SignInType {
   OTC
 }
 
+enum WalletTransactionType {
+  CREDIT
+  DEBIT
+  PURCHASE
+  REFUND
+  ADJUSTMENT
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
@@ -53,6 +61,7 @@ model Order {
   totalAmount      Decimal     @db.Decimal(10, 2)
   shippingAmount   Decimal?    @db.Decimal(10, 2)
   discountAmount   Decimal?    @default(0) @db.Decimal(10, 2)
+  walletAmountUsed Int         @default(0)
   shippingRequired Boolean
   shippingAddress  Json?
   items            Json
@@ -109,11 +118,13 @@ model User {
   updatedAt     DateTime   @updatedAt
   lastLoginAt   DateTime?
 
-  sessions  Session[]
-  userRoles UserRole[]
-  ScanLog   ScanLog[]
-  otcTokens OtcToken[]
-  orders    Order[]
+  sessions            Session[]
+  userRoles           UserRole[]
+  ScanLog             ScanLog[]
+  otcTokens           OtcToken[]
+  orders              Order[]
+  wallet              Wallet?
+  createdTransactions WalletTransaction[] @relation("TransactionCreator")
 
   @@index([username])
   @@index([email])
@@ -203,4 +214,35 @@ model OtcRateLimit {
 
   @@index([email])
   @@index([createdAt])
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions WalletTransaction[]
+
+  @@index([userId])
+}
+
+model WalletTransaction {
+  id           String                @id @default(cuid())
+  walletId     String
+  wallet       Wallet                @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type         WalletTransactionType
+  amount       Int
+  balanceAfter Int
+  note         String?
+  createdById  String?
+  createdBy    User?                 @relation("TransactionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt    DateTime              @default(now())
+
+  @@index([walletId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([createdById])
 }

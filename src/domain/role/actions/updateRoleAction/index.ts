@@ -1,6 +1,7 @@
 "use server";
 
 import assert from "node:assert";
+import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { updateRole } from "@/domain/role/operations/updateRole";
@@ -26,5 +27,11 @@ export async function updateRoleAction(
     throw new Error("Cannot change slug of system roles");
   }
 
-  return await updateRole(id, input);
+  const updatedRole = await updateRole(id, input);
+
+  // Revalidate role-related pages
+  revalidatePath("/admin/roles");
+  revalidatePath(`/admin/roles/${id}`);
+
+  return updatedRole;
 }

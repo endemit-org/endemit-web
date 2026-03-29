@@ -9,6 +9,15 @@ export const formatPrice = (price: number, decimals: number = 0) => {
 
 export const formatDecimalPrice = (price: number) => formatPrice(price, 0);
 
+export const formatCurrency = (amount: number) => {
+  return amount.toLocaleString("sl-SI", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 export const formatNumber = (number: number, decimals: number = 0) => {
   return number.toLocaleString("sl-SI", {
     style: "decimal",

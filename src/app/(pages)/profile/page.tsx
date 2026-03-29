@@ -132,7 +132,10 @@ export default async function ProfilePage() {
                 </div>
               </Link>
 
-              <div className="bg-neutral-800/50 rounded-lg p-6 cursor-not-allowed">
+              <Link
+                href="/profile/wallet"
+                className="bg-neutral-800 hover:bg-neutral-700 rounded-lg p-6 transition-colors group"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                     <svg
@@ -150,18 +153,15 @@ export default async function ProfilePage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-medium text-neutral-500">
-                      Wallet
-                      <span className="ml-2 text-xs bg-neutral-700 text-neutral-400 px-2 py-0.5 rounded">
-                        Coming Soon
-                      </span>
+                    <h3 className="font-medium text-neutral-200 group-hover:text-white">
+                      My Wallet
                     </h3>
-                    <p className="text-sm text-neutral-500">
-                      Manage your balance
+                    <p className="text-sm text-neutral-400">
+                      View your balance
                     </p>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </section>
         </div>

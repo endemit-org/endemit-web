@@ -2,9 +2,10 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getUserById } from "@/domain/user/operations/getUserById";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
-import { formatDateTime } from "@/lib/util/formatting";
+import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
 import UserEditForm from "@/app/_components/admin/UserEditForm";
 import UserPasswordForm from "@/app/_components/admin/UserPasswordForm";
 import UserRolesManager from "@/app/_components/admin/UserRolesManager";
@@ -61,6 +62,9 @@ export default async function AdminUserDetailPage({
   const canManageRoles = currentUser.permissions.includes(
     PERMISSIONS.USERS_MANAGE_ROLES
   );
+  const canViewWallets = currentUser.permissions.includes(PERMISSIONS.WALLETS_READ);
+
+  const wallet = canViewWallets ? await getWalletByUserId(id) : null;
 
   return (
     <div>
@@ -175,6 +179,40 @@ export default async function AdminUserDetailPage({
               </div>
             </div>
           </section>
+
+          {/* Wallet */}
+          {canViewWallets && wallet && (
+            <section>
+              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+                Wallet
+              </h2>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-gray-600">Balance</div>
+                    <div
+                      className={clsx(
+                        "text-2xl font-bold",
+                        wallet.balance > 0
+                          ? "text-green-600"
+                          : wallet.balance < 0
+                            ? "text-red-600"
+                            : "text-gray-500"
+                      )}
+                    >
+                      {formatCurrency(wallet.balance / 100)}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/admin/wallets/${wallet.id}`}
+                    className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 border border-blue-300 hover:border-blue-400 rounded-md transition-colors"
+                  >
+                    Manage Wallet
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Edit User */}
           {canUpdate && (

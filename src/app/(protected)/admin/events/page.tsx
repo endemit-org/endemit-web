@@ -31,6 +31,28 @@ export default async function AdminEventsPage() {
           View and manage event tickets
         </p>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="text-sm font-medium text-gray-500">Total Events</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {initialData.totalCount.toLocaleString()}
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="text-sm font-medium text-gray-500">Active</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {initialData.activeCount.toLocaleString()}
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="text-sm font-medium text-gray-500">Tickets Sold</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {initialData.totalSold.toLocaleString()}
+          </div>
+        </div>
+      </div>
+
       <EventsList initialData={initialData} />
     </div>
   );

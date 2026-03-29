@@ -31,23 +31,35 @@ export const createUser = async (data: CreateUserInput): Promise<SerializedUser>
     passwordHash = await createPasswordHash(data.password);
   }
 
-  const user = await prisma.user.create({
-    data: {
-      username: data.username,
-      email: data.email,
-      name: data.name || null,
-      passwordHash,
-      signInType: data.signInType,
-      status: data.status || "ACTIVE",
-      emailVerified: data.signInType === "PASSWORD" ? new Date() : null,
-    },
-    include: {
-      userRoles: {
-        include: {
-          role: true,
+  const user = await prisma.$transaction(async tx => {
+    const newUser = await tx.user.create({
+      data: {
+        username: data.username,
+        email: data.email,
+        name: data.name || null,
+        passwordHash,
+        signInType: data.signInType,
+        status: data.status || "ACTIVE",
+        emailVerified: data.signInType === "PASSWORD" ? new Date() : null,
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
         },
       },
-    },
+    });
+
+    // Create wallet for new user
+    await tx.wallet.create({
+      data: {
+        userId: newUser.id,
+        balance: 0,
+      },
+    });
+
+    return newUser;
   });
 
   return {

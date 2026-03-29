@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getAllOrders } from "@/domain/order/operations/getAllOrders";
+import { getOrderStats } from "@/domain/order/operations/getOrderStats";
 import OrdersDisplay from "@/app/_components/admin/OrdersDisplay";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import { formatCurrency } from "@/lib/util/formatting";
 
 export const metadata: Metadata = {
   title: "Orders  •  Admin",
@@ -21,7 +23,10 @@ export default async function AdminOrdersPage() {
     redirect("/admin");
   }
 
-  const initialData = await getAllOrders();
+  const [initialData, stats] = await Promise.all([
+    getAllOrders(),
+    getOrderStats(),
+  ]);
 
   return (
     <div>
@@ -31,6 +36,28 @@ export default async function AdminOrdersPage() {
           View and manage all orders in the system
         </p>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="text-sm font-medium text-gray-500">Total Revenue</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {formatCurrency(stats.totalRevenue)}
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="text-sm font-medium text-gray-500">Paid Orders</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {stats.orderCount.toLocaleString()}
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="text-sm font-medium text-gray-500">Pending</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {stats.pendingCount.toLocaleString()}
+          </div>
+        </div>
+      </div>
+
       <OrdersDisplay initialData={initialData} />
     </div>
   );
