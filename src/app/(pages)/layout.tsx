@@ -19,24 +19,32 @@ export default async function ContentPageLayout({
         {menuItems && (
           <Sidebar
             navigationItems={[
+              ...(user
+                ? [
+                    {
+                      label: "My Profile",
+                      href: "/profile",
+                      type: "secondary" as const,
+                    },
+                  ]
+                : []),
               ...menuItems.items.map(item => ({
                 label: item.label,
                 href: item.link,
                 type: item.linkType,
                 ctaText: item.ctaText,
               })),
-              ...(user ? [{
-                label: "My Profile",
-                href: "/profile",
-                type: "secondary" as const,
-              }] : []),
             ]}
             hideCartOnPath={["/store/checkout"]}
-            user={user ? {
-              name: user.name,
-              email: user.email || null,
-              roles: user.roles,
-            } : null}
+            user={
+              user
+                ? {
+                    name: user.name,
+                    email: user.email || null,
+                    roles: user.roles,
+                  }
+                : null
+            }
           />
         )}
 

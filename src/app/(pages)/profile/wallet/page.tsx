@@ -6,8 +6,7 @@ import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId"
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import WalletBalance from "@/app/_components/profile/WalletBalance";
-import WalletTransactionList from "@/app/_components/profile/WalletTransactionList";
+import WalletDisplay from "@/app/_components/profile/WalletDisplay";
 
 export const metadata: Metadata = {
   title: "My Wallet",
@@ -60,16 +59,11 @@ export default async function WalletPage() {
             Back to Profile
           </Link>
 
-          {/* Balance Card */}
-          <WalletBalance balance={wallet?.balance ?? 0} />
-
-          {/* Transaction History */}
-          <section>
-            <h2 className="text-xl font-semibold text-neutral-200 mb-4">
-              Transaction History
-            </h2>
-            <WalletTransactionList transactions={wallet?.transactions ?? []} />
-          </section>
+          <WalletDisplay
+            userId={user.id}
+            initialBalance={wallet?.balance ?? 0}
+            initialTransactions={wallet?.transactions ?? []}
+          />
         </div>
       </InnerPage>
     </OuterPage>

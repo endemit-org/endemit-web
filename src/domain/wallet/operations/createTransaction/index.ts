@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import { broadcastToUser } from "@/lib/services/supabase/broadcast";
 import type { CreateTransactionInput, SerializedWalletTransaction } from "@/domain/wallet/types";
 import type { WalletTransactionType } from "@prisma/client";
 
@@ -22,7 +23,7 @@ export const createTransaction = async (
 
   // Use a transaction to ensure atomicity
   const result = await prisma.$transaction(async tx => {
-    // Get current wallet with lock
+    // Get current wallet with lock (include userId for broadcasting)
     const wallet = await tx.wallet.findUnique({
       where: { id: walletId },
     });
@@ -66,18 +67,34 @@ export const createTransaction = async (
       data: { balance: newBalance },
     });
 
-    return transaction;
+    return { transaction, userId: wallet.userId };
   });
 
-  return {
-    id: result.id,
-    walletId: result.walletId,
-    type: result.type,
-    amount: result.amount,
-    balanceAfter: result.balanceAfter,
-    note: result.note,
-    createdById: result.createdById,
-    createdAt: result.createdAt.toISOString(),
-    createdBy: result.createdBy,
+  const serializedTransaction: SerializedWalletTransaction = {
+    id: result.transaction.id,
+    walletId: result.transaction.walletId,
+    type: result.transaction.type,
+    amount: result.transaction.amount,
+    balanceAfter: result.transaction.balanceAfter,
+    note: result.transaction.note,
+    createdById: result.transaction.createdById,
+    createdAt: result.transaction.createdAt.toISOString(),
+    createdBy: result.transaction.createdBy,
   };
+
+  // Broadcast real-time update to the wallet owner
+  // Fire and forget - don't block the response on broadcast
+  broadcastToUser(result.userId, "wallet_transaction_created", {
+    transactionId: serializedTransaction.id,
+    walletId: serializedTransaction.walletId,
+    type: serializedTransaction.type,
+    amount: serializedTransaction.amount,
+    balanceAfter: serializedTransaction.balanceAfter,
+    note: serializedTransaction.note,
+    createdAt: serializedTransaction.createdAt,
+  }).catch(err => {
+    console.error("Failed to broadcast wallet transaction:", err);
+  });
+
+  return serializedTransaction;
 };

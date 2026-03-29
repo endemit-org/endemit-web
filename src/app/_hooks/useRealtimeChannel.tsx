@@ -7,12 +7,24 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 type BroadcastEvent =
   | "balance_updated"
   | "order_status_updated"
-  | "transaction_confirmed";
+  | "transaction_confirmed"
+  | "wallet_transaction_created";
+
+interface WalletTransactionPayload {
+  transactionId: string;
+  walletId: string;
+  type: string;
+  amount: number;
+  balanceAfter: number;
+  note: string | null;
+  createdAt: string;
+}
 
 interface BroadcastPayload {
   balance_updated: { balance: number };
   order_status_updated: { orderId: string; status: string };
   transaction_confirmed: { transactionId: string; success: boolean };
+  wallet_transaction_created: WalletTransactionPayload;
 }
 
 type EventHandler<E extends BroadcastEvent> = (

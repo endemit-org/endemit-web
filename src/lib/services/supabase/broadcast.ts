@@ -5,12 +5,24 @@ import { supabaseServer } from "./server";
 export type BroadcastEvent =
   | "balance_updated"
   | "order_status_updated"
-  | "transaction_confirmed";
+  | "transaction_confirmed"
+  | "wallet_transaction_created";
+
+export interface WalletTransactionPayload {
+  transactionId: string;
+  walletId: string;
+  type: string;
+  amount: number;
+  balanceAfter: number;
+  note: string | null;
+  createdAt: string;
+}
 
 export interface BroadcastPayload {
   balance_updated: { balance: number };
   order_status_updated: { orderId: string; status: string };
   transaction_confirmed: { transactionId: string; success: boolean };
+  wallet_transaction_created: WalletTransactionPayload;
 }
 
 /**

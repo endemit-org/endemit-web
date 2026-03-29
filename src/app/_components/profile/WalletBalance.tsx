@@ -8,9 +8,9 @@ interface WalletBalanceProps {
 
 export default function WalletBalance({ balance }: WalletBalanceProps) {
   return (
-    <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border border-purple-700/50 rounded-xl p-8">
+    <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-xl p-8">
       <div className="text-center">
-        <div className="text-sm text-purple-300 mb-2">Available Balance</div>
+        <div className="text-sm text-blue-300 mb-2">Available Balance</div>
         <div
           className={`text-4xl font-bold ${
             balance > 0
