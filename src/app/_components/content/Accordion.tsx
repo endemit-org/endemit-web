@@ -35,7 +35,12 @@ export default function Accordion({
 
   // Auto-expand specified item when it comes into view
   useEffect(() => {
-    if (autoExpandIndexOnView === undefined || hasAutoExpanded || items.length <= 1) return;
+    if (
+      autoExpandIndexOnView === undefined ||
+      hasAutoExpanded ||
+      items.length <= 1
+    )
+      return;
 
     const observer = new IntersectionObserver(
       entries => {
@@ -99,7 +104,11 @@ export default function Accordion({
             >
               <button
                 onClick={() => toggleItem(index)}
-                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left bg-neutral-900 hover:bg-neutral-800 transition-colors`}
+                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left transition-colors ${
+                  isOpen
+                    ? "bg-neutral-600/20 bg-opacity-70 backdrop-blur-sm "
+                    : "bg-neutral-900 hover:bg-neutral-800 "
+                }`}
               >
                 <span
                   className={`${compact ? "text-base" : "text-lg"}  text-neutral-200`}

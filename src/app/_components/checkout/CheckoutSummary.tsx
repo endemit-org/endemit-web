@@ -57,7 +57,7 @@ export default function CheckoutSummary({
   const showSubtotal = subTotal !== total;
 
   return (
-    <div className="text-md text-neutral-200 space-y-4 py-4">
+    <div className="text-md text-neutral-200 space-y-4 pt-4">
       {showSubtotal && (
         <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
       )}

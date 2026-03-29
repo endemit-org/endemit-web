@@ -9,15 +9,17 @@ import CheckoutItemList from "@/app/_components/checkout/CheckoutItemList";
 import CheckoutPromoCodeForm from "@/app/_components/checkout/CheckoutPromoCodeForm";
 import CheckoutDonation from "@/app/_components/checkout/CheckoutDonation";
 import CheckoutError from "@/app/_components/checkout/CheckoutError";
-import CheckoutActions from "@/app/_components/checkout/CheckoutActions";
 import CheckoutSummary from "@/app/_components/checkout/CheckoutSummary";
 import CheckoutWalletCredit from "@/app/_components/checkout/CheckoutWalletCredit";
+import StripeProvider from "@/app/_components/checkout/StripeProvider";
+import PaymentForm from "@/app/_components/checkout/PaymentForm";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 import ProductSection from "@/app/_components/product/ProductSection";
 import { Product } from "@/domain/product/types/product";
 import clsx from "clsx";
+import ActionButton from "@/app/_components/form/ActionButton";
 
 type Props = {
   products: Product[] | null;
@@ -28,6 +30,9 @@ export default function Checkout({ products, userEmail }: Props) {
   const [isClient, setIsClient] = useState(false);
   const [mobileStep, setMobileStep] = useState<1 | 2>(1);
   const [donationDismissed, setDonationDismissed] = useState(false);
+  const [paymentError, setPaymentError] = useState<string>("");
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
+  const [paymentInitialized, setPaymentInitialized] = useState(false);
   const { getProductByUid } = useProducts();
 
   const {
@@ -50,7 +55,31 @@ export default function Checkout({ products, userEmail }: Props) {
     validateForm,
     validationTriggered,
     walletCredit,
+    payment,
   } = useCheckoutState();
+
+  const hasItems = totalItems > 0;
+
+  // Auto-initialize payment when we have items (show card form immediately)
+  useEffect(() => {
+    if (
+      isClient &&
+      hasItems &&
+      !payment.isReady &&
+      !payment.isInitializing &&
+      !paymentInitialized
+    ) {
+      setPaymentInitialized(true);
+      actions.initPayment();
+    }
+  }, [
+    isClient,
+    hasItems,
+    payment.isReady,
+    payment.isInitializing,
+    paymentInitialized,
+    actions,
+  ]);
 
   useEffect(() => {
     setIsClient(true);
@@ -78,8 +107,6 @@ export default function Checkout({ products, userEmail }: Props) {
       });
     }
   };
-
-  const hasItems = totalItems > 0;
 
   const displayTotals = isClient
     ? totals
@@ -167,7 +194,13 @@ export default function Checkout({ products, userEmail }: Props) {
                 <div className="lg:hidden pt-4">
                   <button
                     onClick={handleNextStep}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                    disabled={!isFormValid}
+                    className={clsx(
+                      "w-full font-medium py-3 px-6 rounded-lg transition-colors",
+                      isFormValid
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-neutral-600 text-neutral-400 cursor-not-allowed"
+                    )}
                   >
                     Continue to Review & Pay
                   </button>
@@ -195,6 +228,15 @@ export default function Checkout({ products, userEmail }: Props) {
                 country={formData?.country}
                 editable={true}
               />
+
+              {showDonation && !donationDismissed && (
+                <CheckoutDonation
+                  donationAmount={displayTotals.donationAmount}
+                  roundedTotal={displayTotals.roundedTotal}
+                  onAddDonation={handleAddDonation}
+                  onDismiss={() => setDonationDismissed(true)}
+                />
+              )}
 
               <CheckoutSummary
                 subTotal={displayTotals.subTotal}
@@ -236,14 +278,6 @@ export default function Checkout({ products, userEmail }: Props) {
                 </div>
               )}
 
-              {showDonation && !donationDismissed && (
-                <CheckoutDonation
-                  donationAmount={displayTotals.donationAmount}
-                  roundedTotal={displayTotals.roundedTotal}
-                  onAddDonation={handleAddDonation}
-                  onDismiss={() => setDonationDismissed(true)}
-                />
-              )}
               {/* Mobile: Show message when form becomes invalid */}
               {!isFormValid && (
                 <div className="lg:hidden mb-4 p-3 bg-amber-900/30 border border-amber-700/40 rounded text-center">
@@ -259,12 +293,55 @@ export default function Checkout({ products, userEmail }: Props) {
                 </div>
               )}
 
-              <CheckoutActions
-                errorMessages={errorMessages}
-                onCheckout={actions.checkout}
-                canProceed={canProceed}
-                isProcessing={isProcessing}
-              />
+              {/* Payment Section */}
+              {paymentError && (
+                <div className="mb-4 p-3 bg-red-900/30 border border-red-700/40 rounded">
+                  <p className="text-sm text-red-200">{paymentError}</p>
+                </div>
+              )}
+
+              {payment.isReady && payment.clientSecret ? (
+                <StripeProvider clientSecret={payment.clientSecret}>
+                  <PaymentForm
+                    totalAmount={totals.total}
+                    isProcessing={isPaymentProcessing}
+                    onProcessingChange={setIsPaymentProcessing}
+                    onError={setPaymentError}
+                    canProceed={canProceed}
+                    onConfirmPayment={actions.confirmPayment}
+                  />
+                </StripeProvider>
+              ) : payment.isFullWalletPayment ? (
+                <div className="mt-4">
+                  <ActionButton
+                    onClick={async () => {
+                      const result = await actions.confirmPayment();
+                      if (!result.success) {
+                        setPaymentError("Failed to process payment");
+                      }
+                    }}
+                    disabled={!canProceed || isProcessing}
+                    variant="success"
+                    className="py-3 text-lg"
+                  >
+                    {isProcessing
+                      ? "Processing..."
+                      : "Complete Order (Wallet Payment)"}
+                  </ActionButton>
+                </div>
+              ) : (
+                <div className="mt-4 py-6 text-center">
+                  {payment.isInitializing ? (
+                    <div className="text-neutral-400 text-sm">
+                      Loading payment form...
+                    </div>
+                  ) : (
+                    <div className="text-neutral-400 text-sm">
+                      Preparing secure payment...
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Mobile: Back link to go to step 1 */}
               {isFormValid && (

@@ -5,6 +5,28 @@ import { CartItem } from "@/domain/checkout/types/cartItem";
 export interface CheckoutOptions {
   formData: CheckoutFormData;
   walletCreditAmount?: number; // Amount in cents to use from wallet
+  promoCode?: string;
+  paymentIntentId?: string; // Existing PaymentIntent to update
+}
+
+export interface InitPaymentOptions {
+  country?: string;
+  promoCode?: string;
+  walletCreditAmount?: number;
+}
+
+export interface InitPaymentResult {
+  clientSecret?: string;
+  paymentIntentId?: string;
+  amount: number;
+  fullWalletPayment: boolean;
+}
+
+export interface PaymentIntentResult {
+  clientSecret?: string;
+  paymentIntentId?: string;
+  orderId: string;
+  fullWalletPayment: boolean;
 }
 
 export interface CartStore {
@@ -28,9 +50,13 @@ export interface CartStore {
   // Bulk operations
   populateProducts: (products: Product[]) => void;
 
-  // Checkout process
+  // Checkout process (legacy - Stripe hosted checkout)
   checkout: (options: CheckoutOptions) => Promise<{
     sessionId: string;
     url: string;
   }>;
+
+  // Payment Intent flow (inline payment)
+  initPayment: (options: InitPaymentOptions) => Promise<InitPaymentResult>;
+  createPaymentIntent: (options: CheckoutOptions) => Promise<PaymentIntentResult>;
 }

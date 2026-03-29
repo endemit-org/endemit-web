@@ -47,7 +47,7 @@ export default function CheckoutDonation({
   onDismiss,
 }: CheckoutDonationProps) {
   return (
-    <div className="relative p-4 bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded mb-4 space-y-2 text-center">
+    <div className="relative p-4 bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded mb-4 space-y-2 text-center mt-6">
       <button
         onClick={onDismiss}
         className="absolute top-2 right-2 p-1 text-neutral-400 hover:text-white transition-colors"

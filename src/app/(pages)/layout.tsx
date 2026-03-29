@@ -22,7 +22,7 @@ export default async function ContentPageLayout({
               ...(user
                 ? [
                     {
-                      label: "Profile",
+                      label: "My Profile",
                       href: "/profile",
                       type: "secondary" as const,
                     },

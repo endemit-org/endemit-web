@@ -119,6 +119,7 @@ export async function getAllPosRegisters(): Promise<GetAllPosRegistersResult> {
     }
 
     // Remove orders from the returned data (we only needed them for stats)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { orders: _, ...registerWithoutOrders } = register;
     return {
       ...registerWithoutOrders,
