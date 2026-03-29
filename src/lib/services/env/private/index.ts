@@ -53,6 +53,7 @@ export const SUPABASE_PRIVATE_KEY = process.env.SUPABASE_PRIVATE_KEY!;
 export const POS_ORDER_SECRET = process.env.POS_ORDER_SECRET!;
 export const POS_ORDER_HASH_SPLIT_CONFIG =
   process.env.POS_ORDER_HASH_SPLIT_CONFIG!;
+export const DISCORD_POS_WEBHOOK = process.env.DISCORD_POS_WEBHOOK;
 
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;

@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
+import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyOnPosTransaction";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import type { WalletTransaction } from "@prisma/client";
 
@@ -41,9 +42,10 @@ export async function payPosOrder(
       throw new Error("Order belongs to another customer");
     }
 
-    // Get customer wallet
+    // Get customer wallet with user info
     const wallet = await tx.wallet.findUnique({
       where: { userId: customerId },
+      include: { user: { select: { name: true, email: true } } },
     });
 
     if (!wallet) {
@@ -142,6 +144,10 @@ export async function payPosOrder(
       transaction: lastTransaction!,
       wallet: { ...wallet, balance: currentBalance },
       paidAt,
+      debitTotal,
+      userName: wallet.user.name,
+      userEmail: wallet.user.email,
+      registerName: order.register.name,
     };
   });
 
@@ -166,6 +172,19 @@ export async function payPosOrder(
     tipAmount: result.order.tipAmount,
     paidAt: result.paidAt.toISOString(),
   });
+
+  // Notify Discord for DEBIT transactions only (not top-ups)
+  if (result.debitTotal > 0) {
+    notifyOnPosTransaction({
+      type: "DEBIT",
+      amount: result.debitTotal,
+      balanceAfter: result.transaction.balanceAfter,
+      note: result.transaction.note,
+      userName: result.userName,
+      userEmail: result.userEmail,
+      registerName: result.registerName,
+    }).catch(() => {}); // Fire and forget
+  }
 
   return {
     success: true,
