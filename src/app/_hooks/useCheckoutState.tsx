@@ -9,9 +9,11 @@ import { useNewsletterSubscription } from "@/app/_hooks/useNewsletterSubscriptio
 import { useWalletCredit } from "@/app/_hooks/useWalletCredit";
 import {
   canProceedToCheckout,
+  includesCurrencyProduct,
   includesDonationProduct,
   includesNonRefundableProduct,
   includesShippableProduct,
+  isOnlyCurrencyProducts,
   shouldShowDonationCTA,
 } from "@/domain/checkout/businessRules";
 import { getCheckoutWeight } from "@/domain/checkout/actions/getCheckoutWeight";
@@ -35,6 +37,8 @@ function useCheckoutRequirements(items: CartItem[]) {
       requiresShippingAddress: includesShippableProduct(items),
       includesNonRefundable: includesNonRefundableProduct(items),
       includesDonationInCart: includesDonationProduct(items),
+      includesCurrency: includesCurrencyProduct(items),
+      isOnlyCurrency: isOnlyCurrencyProducts(items),
       orderWeight: getCheckoutWeight(items),
     }),
     [items]
@@ -60,18 +64,20 @@ function useCheckoutTotals(
 function useDonationCalculations(
   total: number,
   items: CartItem[],
-  includesDonationInCart: boolean
+  includesDonationInCart: boolean,
+  isOnlyCurrency: boolean
 ) {
   return useMemo(() => {
     const roundedTotal = getRoundedUpTotal(total);
     const donationAmount = getSuggestedDonationAmount(roundedTotal, total);
-    const showDonation = shouldShowDonationCTA(
+    // Don't show donation CTA for currency-only carts (wallet top-ups)
+    const showDonation = !isOnlyCurrency && shouldShowDonationCTA(
       items,
       donationAmount,
       includesDonationInCart
     );
     return { roundedTotal, donationAmount, showDonation };
-  }, [total, items, includesDonationInCart]);
+  }, [total, items, includesDonationInCart, isOnlyCurrency]);
 }
 
 export function useCheckoutState() {
@@ -107,6 +113,8 @@ export function useCheckoutState() {
     requiresShippingAddress,
     includesNonRefundable,
     includesDonationInCart,
+    includesCurrency,
+    isOnlyCurrency,
     orderWeight,
   } = useCheckoutRequirements(items);
 
@@ -155,17 +163,17 @@ export function useCheckoutState() {
     discount
   );
 
-  // Wallet credit integration
+  // Wallet credit integration - disabled for currency top-ups
   const walletCredit = useWalletCredit({
     total: totalBeforeWallet,
-    enabled: items.length > 0,
+    enabled: items.length > 0 && !includesCurrency,
   });
 
   // Final total after wallet credit
   const total = totalBeforeWallet - walletCredit.walletCreditEur;
 
   const { roundedTotal, donationAmount, showDonation } =
-    useDonationCalculations(totalBeforeWallet, items, includesDonationInCart);
+    useDonationCalculations(totalBeforeWallet, items, includesDonationInCart, isOnlyCurrency);
 
   const consolidatedError = transformToConsolidatedCheckoutErrors([
     checkoutError,

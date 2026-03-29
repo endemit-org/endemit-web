@@ -5,7 +5,7 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import CheckoutSuccessConfetti from "@/app/_components/checkout/CheckoutSuccessConfetti";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import ActionButton from "@/app/_components/form/ActionButton";
+import CheckoutReturnButton from "@/app/_components/checkout/CheckoutReturnButton";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";
 import { getOrderById } from "@/domain/order/operations/getOrderById";
@@ -139,9 +139,7 @@ export default async function SuccessPage({
             )}
 
             {/* Action Button */}
-            <div className="inline-block">
-              <ActionButton href={"/store"}>Continue Shopping</ActionButton>
-            </div>
+            <CheckoutReturnButton />
           </div>
         </div>
       </InnerPage>

@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getVisibleProducts } from "@/domain/product/actions/getProducts";
+import { ProductCategory } from "@/domain/product/types/product";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -24,7 +26,15 @@ export default async function WalletPage() {
     redirect("/signin");
   }
 
-  const wallet = await getWalletByUserId(user.id);
+  const [wallet, allProducts] = await Promise.all([
+    getWalletByUserId(user.id),
+    getVisibleProducts(),
+  ]);
+
+  // Filter to currency products for top-up
+  const currencyProducts = allProducts.filter(
+    p => p.category === ProductCategory.CURRENCIES
+  );
 
   return (
     <OuterPage>
@@ -63,6 +73,7 @@ export default async function WalletPage() {
             userId={user.id}
             initialBalance={wallet?.balance ?? 0}
             initialTransactions={wallet?.transactions ?? []}
+            currencyProducts={currencyProducts}
           />
         </div>
       </InnerPage>

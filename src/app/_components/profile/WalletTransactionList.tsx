@@ -9,8 +9,8 @@ interface WalletTransactionListProps {
 }
 
 const typeLabels: Record<string, string> = {
-  CREDIT: "Credit Added",
-  DEBIT: "Funds Removed",
+  CREDIT: "Funds added",
+  DEBIT: "Funds deducted",
   PURCHASE: "Purchase",
   REFUND: "Refund",
   ADJUSTMENT: "Adjustment",
@@ -57,7 +57,7 @@ export default function WalletTransactionList({
 
   return (
     <div className="bg-neutral-800 rounded-lg overflow-hidden">
-      <div className="divide-y divide-neutral-700">
+      <div className="divide-y divide-neutral-700 max-h-80 overflow-y-auto">
         {transactions.map(tx => (
           <div
             key={tx.id}

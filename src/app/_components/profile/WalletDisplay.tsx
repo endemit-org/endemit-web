@@ -2,26 +2,31 @@
 
 import { useState, useCallback } from "react";
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
+import type { Product } from "@/domain/product/types/product";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import WalletBalance from "./WalletBalance";
 import WalletTransactionList from "./WalletTransactionList";
+import WalletTopUp from "./WalletTopUp";
 import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
 
 interface WalletDisplayProps {
   userId: string;
   initialBalance: number;
   initialTransactions: SerializedWalletTransaction[];
+  currencyProducts: Product[];
 }
 
 export default function WalletDisplay({
   userId,
   initialBalance,
   initialTransactions,
+  currencyProducts,
 }: WalletDisplayProps) {
   const [balance, setBalance] = useState(initialBalance);
   const [transactions, setTransactions] =
     useState<SerializedWalletTransaction[]>(initialTransactions);
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
+  const [isTopUpOpen, setIsTopUpOpen] = useState(false);
 
   const handleWalletUpdate = useCallback(
     (payload: {
@@ -100,10 +105,7 @@ export default function WalletDisplay({
           Scan to Pay
         </button>
         <button
-          onClick={() => {
-            // TODO: Implement Stripe top-up checkout
-            alert("Top-up via card coming soon!");
-          }}
+          onClick={() => setIsTopUpOpen(!isTopUpOpen)}
           className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-neutral-800 hover:bg-neutral-700 text-white font-medium rounded-xl border border-neutral-700 transition-colors"
         >
           <svg
@@ -122,6 +124,24 @@ export default function WalletDisplay({
           Top Up
         </button>
       </div>
+
+      {/* Top Up Section */}
+      {isTopUpOpen && (
+        <div className="bg-neutral-950 rounded-xl p-4 border border-neutral-700 relative overflow-hidden">
+          <div
+            className="absolute  h-full opacity-20 inset w-full left-0 top-0 pointer-events-none"
+            style={{
+              background: "url('/images/noise.gif') no-repeat center center",
+              backgroundSize: "200px",
+              backgroundRepeat: "repeat",
+            }}
+          ></div>
+          <WalletTopUp
+            products={currencyProducts}
+            onClose={() => setIsTopUpOpen(false)}
+          />
+        </div>
+      )}
 
       <div className={"text-sm italic text-neutral-400"}>
         Top up cashless by clicking the button above. You can top-up with cash

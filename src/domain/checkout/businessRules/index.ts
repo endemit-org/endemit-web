@@ -1,4 +1,5 @@
 import {
+  isProductCurrency,
   isProductDonation,
   isProductExcludedFromRefunds,
   isProductShippable,
@@ -25,6 +26,12 @@ export const includesDonationProduct = (cartItems: CartItem[]) => {
 };
 export const includesTicketProducts = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductTicket(item));
+};
+export const includesCurrencyProduct = (cartItems: CartItem[]) => {
+  return cartItems.some(item => isProductCurrency(item));
+};
+export const isOnlyCurrencyProducts = (cartItems: CartItem[]) => {
+  return cartItems.length > 0 && cartItems.every(item => isProductCurrency(item));
 };
 export const hasMinimumCheckoutValue = (total: number) => {
   return total >= 2;
