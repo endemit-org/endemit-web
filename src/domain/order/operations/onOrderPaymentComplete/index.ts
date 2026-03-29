@@ -7,9 +7,29 @@ import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms
 import { subscribeEmailToTicketBuyerList } from "@/domain/newsletter/actions/subscribeEmailToTicketBuyerList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { createTransaction } from "@/domain/wallet/operations/createTransaction";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
   const order = await updateOrderStatusPaid(paymentSessionId);
+
+  // Process wallet transaction if wallet credit was used (non-blocking)
+  if (order.walletAmountUsed > 0 && order.userId) {
+    try {
+      const wallet = await getWalletByUserId(order.userId);
+      if (wallet) {
+        await createTransaction({
+          walletId: wallet.id,
+          type: "PURCHASE",
+          amount: -order.walletAmountUsed, // Negative for PURCHASE
+          note: `Order #${order.id}`,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to process wallet transaction:", error);
+      // Continue with order processing even if wallet transaction fails
+    }
+  }
 
   await queueNewOrderAutomation({ orderId: order.id });
   const ticketItems = transformTicketsFromOrder(order);

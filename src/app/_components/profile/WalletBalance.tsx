@@ -23,7 +23,7 @@ export default function WalletBalance({ balance }: WalletBalanceProps) {
           {formatCurrency(balance / 100)}
         </div>
         <div className="text-xs text-neutral-400 mt-3">
-          Use your balance at checkout to pay for orders
+          Use your balance at selected events or at checkout.
         </div>
       </div>
     </div>

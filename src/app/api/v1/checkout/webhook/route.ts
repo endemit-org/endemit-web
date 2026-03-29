@@ -18,6 +18,8 @@ export async function POST(request: Request) {
       STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
+    console.error("Webhook signature verification failed:", err);
+
     return NextResponse.json(
       { error: `Webhook error ${err}` },
       { status: 400 }

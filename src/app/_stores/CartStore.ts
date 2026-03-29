@@ -114,7 +114,7 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
-      checkout: async formData => {
+      checkout: async options => {
         const items = get().items;
 
         if (items.length === 0) {
@@ -124,6 +124,7 @@ export const useCartStore = create<CartStore>()(
         set({ isLoading: true });
 
         try {
+          const { formData, walletCreditAmount } = options;
           const {
             email,
             emailRepeat,
@@ -148,6 +149,7 @@ export const useCartStore = create<CartStore>()(
               subscribeToNewsletter,
               discountCodeId,
               formData,
+              walletCreditAmount,
             }),
           });
 

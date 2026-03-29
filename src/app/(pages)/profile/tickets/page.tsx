@@ -9,7 +9,7 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import MyTicketsDisplay from "@/app/_components/profile/MyTicketsDisplay";
 
 export const metadata: Metadata = {
-  title: "My Tickets",
+  title: "Tickets",
   description: "View your event tickets",
   robots: {
     index: false,
@@ -29,7 +29,7 @@ export default async function ProfileTicketsPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="My Tickets"
+        title="Tickets"
         segments={[
           { label: "Endemit", path: "" },
           { label: "Profile", path: "profile" },

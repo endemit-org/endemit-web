@@ -10,6 +10,8 @@ import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscri
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
 import { getCurrentUser } from "@/lib/services/auth";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { isValidWalletCreditAmount } from "@/domain/checkout/businessRules";
 
 export async function POST(request: Request) {
   try {
@@ -33,7 +35,32 @@ export async function POST(request: Request) {
       shouldHaveShippingAddress,
       subtotal,
       shippingCost,
+      walletCreditAmount,
     } = validateCheckoutRequest(body, products);
+
+    // Validate wallet credit if provided
+    let validatedWalletCredit = 0;
+    if (walletCreditAmount > 0 && currentUser) {
+      const wallet = await getWalletByUserId(currentUser.id);
+      if (!wallet) {
+        throw new Error("Wallet not found");
+      }
+
+      // Calculate total in cents for validation
+      const totalCents = Math.round((subtotal + shippingCost) * 100);
+
+      if (
+        !isValidWalletCreditAmount(
+          walletCreditAmount,
+          totalCents,
+          wallet.balance
+        )
+      ) {
+        throw new Error("Invalid wallet credit amount");
+      }
+
+      validatedWalletCredit = walletCreditAmount;
+    }
 
     const lineItems = transformToCheckoutSessionLineItems({
       checkoutItems,
@@ -49,6 +76,7 @@ export async function POST(request: Request) {
       discountCodeId,
       email,
       shippingAddress,
+      walletCreditAmount: validatedWalletCredit,
     });
 
     await createOrder({
@@ -60,6 +88,7 @@ export async function POST(request: Request) {
       discountAmount: session.total_details?.amount_discount
         ? transformPriceFromStripe(session.total_details.amount_discount) * -1
         : 0,
+      walletAmountUsed: validatedWalletCredit,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
       orderItems: checkoutItems.map(checkoutItem =>

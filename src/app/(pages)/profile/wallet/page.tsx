@@ -9,7 +9,7 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import WalletDisplay from "@/app/_components/profile/WalletDisplay";
 
 export const metadata: Metadata = {
-  title: "My Wallet",
+  title: "Wallet",
   description: "View your wallet balance and transaction history",
   robots: {
     index: false,
@@ -29,7 +29,7 @@ export default async function WalletPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="My Wallet"
+        title="Wallet"
         segments={[
           { label: "Endemit", path: "" },
           { label: "Profile", path: "profile" },

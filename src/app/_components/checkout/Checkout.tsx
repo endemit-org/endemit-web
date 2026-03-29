@@ -11,6 +11,7 @@ import CheckoutDonation from "@/app/_components/checkout/CheckoutDonation";
 import CheckoutError from "@/app/_components/checkout/CheckoutError";
 import CheckoutActions from "@/app/_components/checkout/CheckoutActions";
 import CheckoutSummary from "@/app/_components/checkout/CheckoutSummary";
+import CheckoutWalletCredit from "@/app/_components/checkout/CheckoutWalletCredit";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
@@ -44,6 +45,7 @@ export default function Checkout({ products, userEmail }: Props) {
     actions,
     validateForm,
     validationTriggered,
+    walletCredit,
   } = useCheckoutState();
 
   useEffect(() => {
@@ -83,8 +85,11 @@ export default function Checkout({ products, userEmail }: Props) {
         shippingWeight: 0,
         discountAmount: 0,
         total: 0,
+        totalBeforeWallet: 0,
         roundedTotal: 0,
         donationAmount: 0,
+        walletCreditAmount: 0,
+        walletCreditEur: 0,
       };
   const displayCountry = isClient ? formData.country : "SI";
 
@@ -154,6 +159,8 @@ export default function Checkout({ products, userEmail }: Props) {
                 discountObject={discount}
                 discountAmount={displayTotals.discountAmount}
                 total={displayTotals.total}
+                totalBeforeWallet={displayTotals.totalBeforeWallet}
+                walletCreditEur={displayTotals.walletCreditEur}
                 orderWeight={displayTotals.shippingWeight}
                 country={displayCountry}
                 loadingShippingCost={isProcessing}
@@ -170,6 +177,23 @@ export default function Checkout({ products, userEmail }: Props) {
                   isLoading={isProcessing}
                 />
               )}
+
+              {hasItems && (
+                <div className="mt-4">
+                  <CheckoutWalletCredit
+                    walletBalance={walletCredit.balance}
+                    walletCreditAmount={walletCredit.creditAmount}
+                    maxWalletCredit={walletCredit.maxCredit}
+                    remainingToPay={walletCredit.remainingToPay}
+                    isLoading={walletCredit.isLoading}
+                    canUseWallet={walletCredit.canUse}
+                    isUsingWallet={walletCredit.isUsing}
+                    onToggle={actions.toggleWalletCredit}
+                    onAmountChange={actions.setWalletCreditAmount}
+                  />
+                </div>
+              )}
+
               {showDonation && (
                 <CheckoutDonation
                   donationAmount={displayTotals.donationAmount}

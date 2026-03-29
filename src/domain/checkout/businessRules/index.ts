@@ -30,6 +30,30 @@ export const hasMinimumCheckoutValue = (total: number) => {
   return total >= 2;
 };
 
+export const MINIMUM_CARD_PAYMENT_CENTS = 100; // 1 EUR minimum for card payments
+
+export const getMaxWalletCredit = (
+  totalCents: number,
+  walletBalanceCents: number
+): number => {
+  if (totalCents <= MINIMUM_CARD_PAYMENT_CENTS) {
+    return 0; // Can't use wallet if total is already at minimum
+  }
+  const maxUsable = totalCents - MINIMUM_CARD_PAYMENT_CENTS;
+  return Math.min(walletBalanceCents, maxUsable);
+};
+
+export const isValidWalletCreditAmount = (
+  walletCreditCents: number,
+  totalCents: number,
+  walletBalanceCents: number
+): boolean => {
+  if (walletCreditCents <= 0) return true; // Not using wallet is always valid
+  if (walletCreditCents > walletBalanceCents) return false; // Can't use more than balance
+  const remainingCents = totalCents - walletCreditCents;
+  return remainingCents >= MINIMUM_CARD_PAYMENT_CENTS;
+};
+
 export const canProceedToCheckout = (
   isFormValid: boolean,
   hasItems: boolean,

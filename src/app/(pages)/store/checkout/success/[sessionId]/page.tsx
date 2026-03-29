@@ -11,7 +11,7 @@ import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStr
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
 import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
-import { autoLoginAction } from "@/domain/auth/actions/autoLoginAction";
+import AutoLoginOnSuccess from "@/app/_components/checkout/AutoLoginOnSuccess";
 
 export const metadata: Metadata = {
   title: "✅ Order Confirmed",
@@ -46,11 +46,6 @@ export default async function SuccessPage({
 
   if (!order) {
     notFound();
-  }
-
-  // Auto-login: If user is not logged in and order has a userId, create a session
-  if (order.userId) {
-    await autoLoginAction(order.userId);
   }
 
   const tickets = transformTicketsFromOrder(order);
@@ -127,6 +122,7 @@ export default async function SuccessPage({
       </InnerPage>
       <ClearCheckoutValues />
       <CheckoutSuccessConfetti targetElementId={"successIcon"} />
+      {order.userId && <AutoLoginOnSuccess userId={order.userId} />}
     </OuterPage>
   );
 }

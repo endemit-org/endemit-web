@@ -9,7 +9,7 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import MyOrdersDisplay from "@/app/_components/profile/MyOrdersDisplay";
 
 export const metadata: Metadata = {
-  title: "My Orders",
+  title: "Orders",
   description: "View your order history",
   robots: {
     index: false,
@@ -29,7 +29,7 @@ export default async function ProfileOrdersPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="My Orders"
+        title="Orders"
         segments={[
           { label: "Endemit", path: "" },
           { label: "Profile", path: "profile" },

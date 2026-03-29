@@ -95,23 +95,23 @@ export default function OrderCard({ order }: OrderCardProps) {
               </div>
             ))}
 
-            {order.shippingAmount && order.shippingAmount > 0 && (
+            {order.shippingAmount && order.shippingAmount > 0 ? (
               <div className="flex justify-between items-center text-sm pt-2 border-t border-neutral-700">
                 <span className="text-neutral-400">Shipping</span>
                 <span className="text-neutral-400">
                   €{order.shippingAmount.toFixed(2)}
                 </span>
               </div>
-            )}
+            ) : null}
 
-            {order.discountAmount && order.discountAmount < 0 && (
+            {order.discountAmount && order.discountAmount < 0 ? (
               <div className="flex justify-between items-center text-sm">
                 <span className="text-green-400">Discount</span>
                 <span className="text-green-400">
                   €{order.discountAmount.toFixed(2)}
                 </span>
               </div>
-            )}
+            ) : null}
 
             <div className="flex justify-between items-center text-sm pt-2 border-t border-neutral-700">
               <span className="font-medium text-neutral-200">Total</span>

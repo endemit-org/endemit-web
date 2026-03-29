@@ -2,6 +2,11 @@ import { Product } from "@/domain/product/types/product";
 import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import { CartItem } from "@/domain/checkout/types/cartItem";
 
+export interface CheckoutOptions {
+  formData: CheckoutFormData;
+  walletCreditAmount?: number; // Amount in cents to use from wallet
+}
+
 export interface CartStore {
   items: CartItem[];
   isLoading: boolean;
@@ -24,7 +29,7 @@ export interface CartStore {
   populateProducts: (products: Product[]) => void;
 
   // Checkout process
-  checkout: (checkoutFormData: CheckoutFormData) => Promise<{
+  checkout: (options: CheckoutOptions) => Promise<{
     sessionId: string;
     url: string;
   }>;

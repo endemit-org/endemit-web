@@ -8,7 +8,7 @@ import Link from "next/link";
 import ProfileEditForm from "@/app/_components/profile/ProfileEditForm";
 
 export const metadata: Metadata = {
-  title: "My Profile",
+  title: "Profile",
   description: "View and manage your Endemit account",
   robots: {
     index: false,
@@ -26,7 +26,7 @@ export default async function ProfilePage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="My Profile"
+        title="Profile"
         segments={[
           { label: "Endemit", path: "" },
           { label: "Profile", path: "profile" },
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
               </div>
               <div>
                 <h3 className="text-lg font-medium text-neutral-200 group-hover:text-white">
-                  My Wallet
+                  Wallet
                 </h3>
                 <p className="text-sm text-neutral-400">
                   View your balance and transaction history
@@ -95,7 +95,7 @@ export default async function ProfilePage() {
                   </div>
                   <div>
                     <h3 className="font-medium text-neutral-200 group-hover:text-white">
-                      My Orders
+                      Orders
                     </h3>
                     <p className="text-sm text-neutral-400">
                       View your order history
@@ -126,7 +126,7 @@ export default async function ProfilePage() {
                   </div>
                   <div>
                     <h3 className="font-medium text-neutral-200 group-hover:text-white">
-                      My Tickets
+                      Tickets
                     </h3>
                     <p className="text-sm text-neutral-400">
                       View your event tickets

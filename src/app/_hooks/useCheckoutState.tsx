@@ -6,6 +6,7 @@ import { useCheckoutForm } from "@/app/_hooks/useCheckoutForm";
 import { useShippingCost } from "@/app/_hooks/useShippingCost";
 import { usePromoCodes } from "@/app/_hooks/usePromoCodes";
 import { useNewsletterSubscription } from "@/app/_hooks/useNewsletterSubscription";
+import { useWalletCredit } from "@/app/_hooks/useWalletCredit";
 import {
   canProceedToCheckout,
   includesDonationProduct,
@@ -127,14 +128,23 @@ export function useCheckoutState() {
     updateField("discountCodeId", discountCodeId);
   }, [discount?.success, discount?.promoCodeId, updateField]);
 
-  const { subTotal, total, discountAmount } = useCheckoutTotals(
+  const { subTotal, total: totalBeforeWallet, discountAmount } = useCheckoutTotals(
     subtotalPrice,
     shippingCost,
     discount
   );
 
+  // Wallet credit integration
+  const walletCredit = useWalletCredit({
+    total: totalBeforeWallet,
+    enabled: items.length > 0,
+  });
+
+  // Final total after wallet credit
+  const total = totalBeforeWallet - walletCredit.walletCreditEur;
+
   const { roundedTotal, donationAmount, showDonation } =
-    useDonationCalculations(total, items, includesDonationInCart);
+    useDonationCalculations(totalBeforeWallet, items, includesDonationInCart);
 
   const consolidatedError = transformToConsolidatedCheckoutErrors([
     checkoutError,
@@ -142,7 +152,7 @@ export function useCheckoutState() {
     promoError,
   ]);
 
-  const isProcessing = isCheckoutLoading || isLoadingShipping || isLoadingPromo;
+  const isProcessing = isCheckoutLoading || isLoadingShipping || isLoadingPromo || walletCredit.isLoading;
   const canProceed = canProceedToCheckout(
     isFormValid,
     items.length > 0,
@@ -156,7 +166,10 @@ export function useCheckoutState() {
     if (!canProceed) return;
 
     try {
-      await checkout(formData);
+      await checkout({
+        formData,
+        walletCreditAmount: walletCredit.walletCreditAmount,
+      });
     } catch (err) {
       setCheckoutError(err instanceof Error ? err.message : "Checkout failed");
     }
@@ -170,9 +183,12 @@ export function useCheckoutState() {
       shippingCost,
       shippingWeight,
       discountAmount,
+      totalBeforeWallet,
       total,
       roundedTotal,
       donationAmount,
+      walletCreditAmount: walletCredit.walletCreditAmount,
+      walletCreditEur: walletCredit.walletCreditEur,
     },
     formData,
     fieldErrors,
@@ -189,6 +205,15 @@ export function useCheckoutState() {
     isProcessing,
     error: consolidatedError,
     canProceed,
+    walletCredit: {
+      balance: walletCredit.walletBalance,
+      creditAmount: walletCredit.walletCreditAmount,
+      maxCredit: walletCredit.maxWalletCredit,
+      remainingToPay: walletCredit.remainingToPay,
+      isLoading: walletCredit.isLoading,
+      canUse: walletCredit.canUseWallet,
+      isUsing: walletCredit.isUsingWallet,
+    },
     actions: {
       updateField,
       updateTicketField,
@@ -199,6 +224,8 @@ export function useCheckoutState() {
       applyPromoCode,
       removePromoCode,
       checkout: handleCheckout,
+      setWalletCreditAmount: walletCredit.setWalletCreditAmount,
+      toggleWalletCredit: walletCredit.toggleWalletCredit,
     },
   };
 }

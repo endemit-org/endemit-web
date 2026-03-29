@@ -12,6 +12,7 @@ interface CreateOrderParams {
   subtotal: number;
   shippingCost: number;
   discountAmount: number;
+  walletAmountUsed?: number; // in cents
   shippingRequired: boolean;
   shippingAddress?: ShippingAddress;
   orderItems: ProductInOrder[];
@@ -32,6 +33,7 @@ export const createOrder = async ({
   subtotal,
   shippingCost,
   discountAmount,
+  walletAmountUsed = 0,
   shippingRequired,
   shippingAddress,
   orderItems,
@@ -58,6 +60,7 @@ export const createOrder = async ({
       totalAmount: subtotal + shippingCost + discountAmount,
       shippingAmount: shippingCost,
       discountAmount,
+      walletAmountUsed,
       shippingRequired,
       shippingAddress,
       items: JSON.parse(JSON.stringify(orderItems)),

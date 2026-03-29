@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const ALLOWED_DEV_ORIGINS = [
   "127.0.0.1",
-  "89.143.77.229",
+  "86.61.74.56",
   "localhost",
   "*.endemit.org",
 ];

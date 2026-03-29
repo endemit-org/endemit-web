@@ -58,6 +58,14 @@ export const findOrCreateUserByEmail = async (
     });
   }
 
+  // Create wallet for new user
+  await prisma.wallet.create({
+    data: {
+      userId: user.id,
+      balance: 0,
+    },
+  });
+
   return {
     user: {
       id: user.id,
