@@ -23,7 +23,7 @@ export default async function PosPage() {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/signin?redirect=/pos");
+    redirect("/auth/sign-in?redirect=/pos");
   }
 
   const assignments = await prisma.posRegisterSeller.findMany({
