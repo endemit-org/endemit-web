@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface SessionGuardProps {
   hasUser: boolean;
 }
 
 export default function SessionGuard({ hasUser }: SessionGuardProps) {
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {

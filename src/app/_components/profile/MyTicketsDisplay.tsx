@@ -36,22 +36,6 @@ export default function MyTicketsDisplay({ tickets }: MyTicketsDisplayProps) {
     );
   }
 
-  // Group tickets by event
-  const ticketsByEvent = tickets.reduce(
-    (acc, ticket) => {
-      const eventId = ticket.eventId;
-      if (!acc[eventId]) {
-        acc[eventId] = {
-          eventName: ticket.eventName,
-          tickets: [],
-        };
-      }
-      acc[eventId].tickets.push(ticket);
-      return acc;
-    },
-    {} as Record<string, { eventName: string; tickets: SerializedTicket[] }>
-  );
-
   // Separate into active and past tickets based on status
   const activeTickets = tickets.filter(
     t => t.status === "VALIDATED" || t.status === "PENDING"

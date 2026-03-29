@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface ProfileButtonProps {
   user: {
@@ -15,7 +14,6 @@ interface ProfileButtonProps {
 }
 
 export default function ProfileButton({ user, variant = "compact", onOpen }: ProfileButtonProps) {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

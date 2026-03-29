@@ -48,10 +48,10 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const allPermissions = Object.values(PERMISSIONS) as Permission[];
+  const allPermissions = useMemo(() => Object.values(PERMISSIONS) as Permission[], []);
   const groupedPermissions = useMemo(
     () => groupPermissionsByResource(allPermissions),
-    []
+    [allPermissions]
   );
 
   const handlePermissionToggle = (permission: Permission) => {
