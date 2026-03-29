@@ -50,7 +50,7 @@ export default function SignInForm() {
         <div
           className={"text-neutral-400 flex justify-center items-center w-full"}
         >
-          <div className="w-52">
+          <div className="w-52 text-neutral-300">
             <AnimatedEndemitLogo />
           </div>
         </div>

@@ -15,6 +15,7 @@ export const updateUser = async (
       ...(data.email !== undefined && { email: data.email }),
       ...(data.name !== undefined && { name: data.name }),
       ...(data.status !== undefined && { status: data.status }),
+      ...(data.image !== undefined && { image: data.image }),
     },
     include: {
       userRoles: {
@@ -31,6 +32,7 @@ export const updateUser = async (
     email: user.email,
     name: user.name,
     status: user.status,
+    signInType: user.signInType,
     image: user.image,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),

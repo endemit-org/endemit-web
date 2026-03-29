@@ -22,6 +22,7 @@ export interface AuthenticatedUser {
   status: UserStatus;
   roles: RoleSlug[];
   permissions: Permission[];
+  createdAt: Date;
 }
 
 export interface LoginCredentials {

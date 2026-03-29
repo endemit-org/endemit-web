@@ -17,6 +17,10 @@ const IMAGE_CONFIG = {
       protocol: "https" as const,
       hostname: "*.cdn.prismic.io",
     },
+    {
+      protocol: "https" as const,
+      hostname: "*.public.blob.vercel-storage.com",
+    },
   ],
 };
 

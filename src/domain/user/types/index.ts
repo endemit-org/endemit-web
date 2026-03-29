@@ -1,4 +1,4 @@
-import type { UserStatus } from "@prisma/client";
+import type { UserStatus, SignInType } from "@prisma/client";
 import type { RoleSlug } from "@/domain/auth/config/roles.config";
 
 export interface SerializedUser {
@@ -7,6 +7,7 @@ export interface SerializedUser {
   email: string | null;
   name: string | null;
   status: UserStatus;
+  signInType: SignInType;
   image: string | null;
   createdAt: string;
   updatedAt: string;
@@ -39,6 +40,7 @@ export interface UpdateUserInput {
   email?: string | null;
   name?: string | null;
   status?: UserStatus;
+  image?: string | null;
 }
 
 export interface CreateUserInput {

@@ -49,6 +49,7 @@ export const getUserById = async (
     email: user.email,
     name: user.name,
     status: user.status,
+    signInType: user.signInType,
     image: user.image,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),

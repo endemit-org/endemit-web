@@ -17,7 +17,7 @@ export const sendOtcEmail = async ({
   magicLink,
   expiresInMinutes,
 }: SendOtcEmailParams) => {
-  const magicLinkUrl = `${PUBLIC_BASE_WEB_URL}/signin/verify?token=${magicLink}`;
+  const magicLinkUrl = `${PUBLIC_BASE_WEB_URL}/api/v1/auth/magic-link?token=${magicLink}&email=${encodeURIComponent(email)}`;
 
   return await resend.emails.send({
     from: resendFromEmail,

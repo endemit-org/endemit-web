@@ -3,6 +3,7 @@ import SiteFooter from "@/app/_components/ui/SiteFooter";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import { getCurrentUser } from "@/lib/services/auth";
+import SessionGuard from "@/app/_components/auth/SessionGuard";
 
 export default async function ContentPageLayout({
   children,
@@ -17,12 +18,19 @@ export default async function ContentPageLayout({
       <div className="max-w-8xl m-auto">
         {menuItems && (
           <Sidebar
-            navigationItems={menuItems.items.map(item => ({
-              label: item.label,
-              href: item.link,
-              type: item.linkType,
-              ctaText: item.ctaText,
-            }))}
+            navigationItems={[
+              ...menuItems.items.map(item => ({
+                label: item.label,
+                href: item.link,
+                type: item.linkType,
+                ctaText: item.ctaText,
+              })),
+              ...(user ? [{
+                label: "My Profile",
+                href: "/profile",
+                type: "secondary" as const,
+              }] : []),
+            ]}
             hideCartOnPath={["/store/checkout"]}
             user={user ? {
               name: user.name,
@@ -49,6 +57,7 @@ export default async function ContentPageLayout({
         </div>
       </div>
       <PersistentPlayer />
+      <SessionGuard hasUser={!!user} />
     </>
   );
 }

@@ -22,5 +22,6 @@ export function index(user: UserWithRoles): AuthenticatedUser {
     status: user.status,
     roles: roleSlugs,
     permissions,
+    createdAt: user.createdAt,
   };
 }

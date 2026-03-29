@@ -149,6 +149,13 @@ export default function ProfileButton({ user, variant = "compact", onOpen }: Pro
               )}
             </div>
             <div className="p-2">
+              <Link
+                href="/profile"
+                onClick={() => setIsOpen(false)}
+                className="block w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
+              >
+                My Profile
+              </Link>
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
@@ -221,6 +228,13 @@ export default function ProfileButton({ user, variant = "compact", onOpen }: Pro
             )}
           </div>
           <div className="p-2">
+            <Link
+              href="/profile"
+              onClick={() => setIsOpen(false)}
+              className="block w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
+            >
+              My Profile
+            </Link>
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}

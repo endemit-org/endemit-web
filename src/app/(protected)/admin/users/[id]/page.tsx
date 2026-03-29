@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getUserById } from "@/domain/user/operations/getUserById";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
@@ -88,22 +89,64 @@ export default async function AdminUserDetailPage({
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                {user.username}
-              </h1>
-              {user.email && (
-                <p className="text-sm text-gray-500 mt-1">{user.email}</p>
-              )}
+            <div className="flex items-center gap-4">
+              {/* Avatar */}
+              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                {user.image ? (
+                  <Image
+                    src={user.image}
+                    alt={`${user.username}'s avatar`}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full">
+                    <svg
+                      className="w-8 h-8 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">
+                  {user.username}
+                </h1>
+                {user.email && (
+                  <p className="text-sm text-gray-500 mt-1">{user.email}</p>
+                )}
+              </div>
             </div>
-            <span
-              className={clsx(
-                "rounded-full px-3 py-1 text-sm font-medium self-start",
-                statusColors[user.status] || "bg-gray-100 text-gray-800"
-              )}
-            >
-              {user.status}
-            </span>
+            <div className="flex flex-wrap gap-2 self-start">
+              <span
+                className={clsx(
+                  "rounded-full px-3 py-1 text-sm font-medium",
+                  statusColors[user.status] || "bg-gray-100 text-gray-800"
+                )}
+              >
+                {user.status}
+              </span>
+              <span
+                className={clsx(
+                  "rounded-full px-3 py-1 text-sm font-medium",
+                  user.signInType === "PASSWORD"
+                    ? "bg-purple-100 text-purple-800"
+                    : "bg-indigo-100 text-indigo-800"
+                )}
+              >
+                {user.signInType === "PASSWORD" ? "Password" : "Magic Link"}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -145,8 +188,8 @@ export default async function AdminUserDetailPage({
             </section>
           )}
 
-          {/* Set Password */}
-          {canUpdate && (
+          {/* Set Password - only for PASSWORD auth type users */}
+          {canUpdate && user.signInType === "PASSWORD" && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
                 Set New Password

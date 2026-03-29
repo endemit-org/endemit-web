@@ -12,7 +12,10 @@ interface OtcVerifyFormProps {
   error?: string;
 }
 
-export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyFormProps) {
+export default function OtcVerifyForm({
+  email,
+  error: initialError,
+}: OtcVerifyFormProps) {
   const router = useRouter();
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState(initialError || "");
@@ -20,12 +23,24 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(60);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Focus first input on mount
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);
+
+  // Resend cooldown timer
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setResendCooldown(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const handleInputChange = (index: number, value: string) => {
     // Only allow alphanumeric characters
@@ -54,7 +69,10 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -80,7 +98,7 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
         setIsSuccess(true);
         // Delay redirect to show success animation
         setTimeout(() => {
-          router.push("/");
+          router.push("/profile");
           router.refresh();
         }, 1500);
       } else {
@@ -96,6 +114,8 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
   };
 
   const handleResend = async () => {
+    if (resendCooldown > 0) return;
+
     setError("");
     setResendSuccess(false);
     setIsResending(true);
@@ -104,6 +124,7 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
       const result = await requestOtcCode({ email });
       if (result.success) {
         setResendSuccess(true);
+        setResendCooldown(60);
         setCode(["", "", "", ""]);
         inputRefs.current[0]?.focus();
       } else {
@@ -120,7 +141,7 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
     <div className="min-h-[60vh] flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-8 bg-neutral-800 p-8 rounded-xl border border-neutral-700">
         <div className="flex justify-center items-center w-full">
-          <div className="w-40">
+          <div className="w-40 text-neutral-300">
             <AnimatedEndemitLogo />
           </div>
         </div>
@@ -143,7 +164,9 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
             {code.map((char, index) => (
               <input
                 key={index}
-                ref={el => { inputRefs.current[index] = el; }}
+                ref={el => {
+                  inputRefs.current[index] = el;
+                }}
                 type="text"
                 inputMode={index < 2 ? "text" : "numeric"}
                 maxLength={4}
@@ -174,7 +197,9 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
           {isSuccess ? (
             <div className="flex flex-col items-center justify-center py-4">
               <AnimatedSuccessIcon className="w-16 h-16" />
-              <p className="mt-4 text-sm text-green-400">Signed in successfully!</p>
+              <p className="mt-4 text-sm text-green-400">
+                Signed in successfully!
+              </p>
             </div>
           ) : (
             <>
@@ -190,10 +215,14 @@ export default function OtcVerifyForm({ email, error: initialError }: OtcVerifyF
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={isResending}
-                  className="text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50"
+                  disabled={isResending || resendCooldown > 0}
+                  className="text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isResending ? "Sending..." : "Resend code"}
+                  {isResending
+                    ? "Sending..."
+                    : resendCooldown > 0
+                      ? `Resend code (${resendCooldown}s)`
+                      : "Resend code"}
                 </button>
 
                 <div>

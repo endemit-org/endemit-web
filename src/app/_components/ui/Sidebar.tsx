@@ -180,7 +180,7 @@ export default function Sidebar({
 
       <div
         className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 ", {
-          "fixed inset-x-0 bottom-0 top-14  bg-neutral-950 flex flex-col":
+          "fixed inset-x-0 bottom-0 top-14  bg-neutral-950 bg-opacity-75 backdrop-blur-lg flex flex-col":
             isMenuOpen,
           hidden: !isMenuOpen,
         })}
