@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import Input from "@/app/_components/form/Input";
 import ActionButton from "@/app/_components/form/ActionButton";
@@ -23,27 +24,43 @@ export default function CheckoutPromoCodeForm({
   isLoading,
   errorMessage,
 }: CheckoutPromoCodeFormProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   // Show applied state
   if (discount?.success) {
     return (
-      <div className="flex text-sm justify-between mb-12">
+      <div className="flex text-sm justify-between mb-4">
         <span className="text-neutral-400">
           Promo code <strong>{discount.promoCodeKey}</strong> applied
         </span>{" "}
-        <div
+        <button
           onClick={onRemovePromoCodeAction}
-          className="text-neutral-400 link"
+          className="text-neutral-400 hover:text-white transition-colors"
         >
           Remove
-        </div>
+        </button>
       </div>
     );
   }
 
-  // Show input form
+  // Show collapsed state with link
+  if (!isExpanded) {
+    return (
+      <div className="mb-4">
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="text-sm text-neutral-400 hover:text-white transition-colors"
+        >
+          + Add promo code
+        </button>
+      </div>
+    );
+  }
+
+  // Show expanded input form
   return (
     <div className="mb-4">
-      <div className="flex gap-2 justify-between items-start ">
+      <div className="flex gap-2 justify-between items-start">
         <div className="flex-1 pb-3">
           <Input
             name="promoCode"
@@ -57,7 +74,6 @@ export default function CheckoutPromoCodeForm({
         <div>
           <ActionButton
             onClick={onApplyPromoCodeAction}
-            // disabled={isLoading || !promoCodeValue}
             variant={"secondary"}
             size={"sm"}
           >

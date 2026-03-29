@@ -54,10 +54,13 @@ export default function CheckoutSummary({
 }: Props) {
   const destinationCountry = getCountry(country);
   const showWalletCredit = walletCreditEur && walletCreditEur > 0;
+  const showSubtotal = subTotal !== total;
 
   return (
     <div className="text-md text-neutral-200 space-y-4 py-4">
-      <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
+      {showSubtotal && (
+        <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
+      )}
 
       {shippingCost > 0 && (
         <LineItem label={"Shipping:"}>
