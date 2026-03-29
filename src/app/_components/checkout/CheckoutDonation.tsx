@@ -27,8 +27,8 @@ export default function CheckoutDonation({
           and <strong>round up to {formatPrice(roundedTotal)}</strong>?
         </p>
         <p>
-          Donations support our voluntary work and help us keep ticket prices at
-          events low.
+          We are volunteers dedicated to a non-profit. Donations support our
+          work and help us keep ticket prices low.
         </p>
       </div>
 
