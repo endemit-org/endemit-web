@@ -72,7 +72,7 @@ export function useWalletCredit({
         setError(null);
         const result = await fetchMyWalletAction();
         setWalletBalance(result?.balance ?? 0);
-      } catch (err) {
+      } catch {
         // User might not be logged in - that's fine
         setWalletBalance(0);
         setError(null);

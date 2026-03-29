@@ -5,10 +5,7 @@ import {
   ShippingAddress,
 } from "@/domain/checkout/types/checkout";
 import { CheckoutValidationService } from "@/lib/services/validation/validation.service";
-import {
-  includesShippableProduct,
-  isValidWalletCreditAmount,
-} from "@/domain/checkout/businessRules";
+import { includesShippableProduct } from "@/domain/checkout/businessRules";
 import { Product } from "@/domain/product/types/product";
 import { transformToItemsForPayment } from "@/domain/checkout/transformers/transformToItemsForPayment";
 import { getCheckoutWeight } from "@/domain/checkout/actions/getCheckoutWeight";

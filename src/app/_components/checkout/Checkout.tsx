@@ -195,7 +195,6 @@ export default function Checkout({ products, userEmail }: Props) {
                 discountObject={discount}
                 discountAmount={displayTotals.discountAmount}
                 total={displayTotals.total}
-                totalBeforeWallet={displayTotals.totalBeforeWallet}
                 walletCreditEur={displayTotals.walletCreditEur}
                 orderWeight={displayTotals.shippingWeight}
                 country={displayCountry}

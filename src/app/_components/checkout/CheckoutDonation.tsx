@@ -14,12 +14,12 @@ export default function CheckoutDonation({
   onAddDonation,
 }: CheckoutDonationProps) {
   return (
-    <div className="p-4 bg-neutral-200 border border-neutral-400 rounded mb-4 space-y-2 text-center">
+    <div className="p-4 bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded mb-4 space-y-2 text-center">
       <h3 className={"text-xl"}>
         Donations keep us running{" "}
         <span className={"animate-bounce inline-block ml-2"}>🙏</span>
       </h3>
-      <div className="text-sm text-neutral-800 pb-6">
+      <div className="text-sm text-neutral-300 pb-6">
         <p className=" mb-2">
           Add <strong>{formatPrice(donationAmount)} donation</strong> to your
           total

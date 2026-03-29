@@ -10,7 +10,6 @@ interface Props {
   subTotal: number;
   shippingCost: number;
   total: number;
-  totalBeforeWallet?: number;
   walletCreditEur?: number;
   orderWeight: number;
   discountObject?: DiscountDetails;
@@ -47,7 +46,6 @@ export default function CheckoutSummary({
   discountObject,
   discountAmount,
   total,
-  totalBeforeWallet,
   walletCreditEur,
   orderWeight,
   country,
