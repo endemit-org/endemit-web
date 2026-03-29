@@ -2,6 +2,7 @@ import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
+import { getCurrentUser } from "@/lib/services/auth";
 
 export default async function ContentPageLayout({
   children,
@@ -9,6 +10,7 @@ export default async function ContentPageLayout({
   children: React.ReactNode;
 }>) {
   const menuItems = await fetchNavigationMenuFromCms();
+  const user = await getCurrentUser();
 
   return (
     <>
@@ -22,6 +24,11 @@ export default async function ContentPageLayout({
               ctaText: item.ctaText,
             }))}
             hideCartOnPath={["/store/checkout"]}
+            user={user ? {
+              name: user.name,
+              email: user.email || null,
+              roles: user.roles,
+            } : null}
           />
         )}
 

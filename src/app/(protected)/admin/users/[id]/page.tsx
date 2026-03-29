@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getUserById } from "@/domain/user/operations/getUserById";
 import { getCurrentUser } from "@/lib/services/auth";
@@ -43,17 +43,21 @@ export default async function AdminUserDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [user, currentUser] = await Promise.all([
-    getUserById(id),
-    getCurrentUser(),
-  ]);
+  const currentUser = await getCurrentUser();
+
+  // Permission check - must have USERS_READ to view this page
+  if (!currentUser?.permissions.includes(PERMISSIONS.USERS_READ)) {
+    redirect("/admin");
+  }
+
+  const user = await getUserById(id);
 
   if (!user) {
     notFound();
   }
 
-  const canUpdate = currentUser?.permissions.includes(PERMISSIONS.USERS_UPDATE);
-  const canManageRoles = currentUser?.permissions.includes(
+  const canUpdate = currentUser.permissions.includes(PERMISSIONS.USERS_UPDATE);
+  const canManageRoles = currentUser.permissions.includes(
     PERMISSIONS.USERS_MANAGE_ROLES
   );
 

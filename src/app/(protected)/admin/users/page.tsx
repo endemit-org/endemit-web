@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getAllUsers } from "@/domain/user/operations/getAllUsers";
 import UsersDisplay from "@/app/_components/admin/UsersDisplay";
+import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
 export const metadata: Metadata = {
   title: "Users  •  Admin",
@@ -11,7 +14,18 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminUsersPage() {
+  const currentUser = await getCurrentUser();
+
+  // Permission check - must have USERS_READ to view this page
+  if (!currentUser?.permissions.includes(PERMISSIONS.USERS_READ)) {
+    redirect("/admin");
+  }
+
   const initialData = await getAllUsers();
+
+  const canCreateUsers = currentUser.permissions.includes(
+    PERMISSIONS.USERS_CREATE
+  );
 
   return (
     <div>
@@ -21,7 +35,7 @@ export default async function AdminUsersPage() {
           View and manage all users in the system
         </p>
       </div>
-      <UsersDisplay initialData={initialData} />
+      <UsersDisplay initialData={initialData} canCreateUsers={canCreateUsers} />
     </div>
   );
 }

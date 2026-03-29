@@ -1,7 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTicketById } from "@/domain/ticket/operations/getTicketById";
 import { formatPrice, formatDateTime } from "@/lib/util/formatting";
+import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
 import TicketDownloadButton from "@/app/_components/admin/TicketDownloadButton";
 
@@ -29,6 +31,13 @@ export default async function AdminTicketDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const currentUser = await getCurrentUser();
+
+  // Permission check - must have TICKETS_READ_ALL to view this page
+  if (!currentUser?.permissions.includes(PERMISSIONS.TICKETS_READ_ALL)) {
+    redirect("/admin");
+  }
+
   const { id } = await params;
   const ticket = await getTicketById(id);
 

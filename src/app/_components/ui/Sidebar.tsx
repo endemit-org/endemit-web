@@ -10,6 +10,7 @@ import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import MenuClosedIcon from "@/app/_components/icon/MenuClosedIcon";
 import MenuOpenIcon from "@/app/_components/icon/MenuOpenIcon";
+import ProfileButton from "@/app/_components/auth/ProfileButton";
 
 interface NavigationItem {
   label: string;
@@ -35,6 +36,12 @@ interface FooterInfo {
   href?: string;
 }
 
+interface UserInfo {
+  name: string | null;
+  email: string | null;
+  roles: string[];
+}
+
 interface FlexibleSidebarProps {
   logoHref?: string;
   navigationItems: NavigationItem[];
@@ -43,6 +50,7 @@ interface FlexibleSidebarProps {
   showFooter?: boolean;
   hideCartOnPath?: string[];
   activeColor?: string;
+  user?: UserInfo | null;
 }
 
 export default function Sidebar({
@@ -53,6 +61,7 @@ export default function Sidebar({
   showFooter = true,
   hideCartOnPath,
   activeColor = "text-blue-500",
+  user = null,
 }: FlexibleSidebarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -149,7 +158,8 @@ export default function Sidebar({
         </Link>
       </div>
 
-      <div className="flex absolute right-0 top-0 lg:hidden gap-x-4">
+      <div className="flex absolute right-0 top-0 lg:hidden gap-x-2">
+        <ProfileButton user={user} variant="compact" onOpen={close} />
         {showCart && <Cart variant={"compact"} />}
 
         <button
@@ -210,8 +220,13 @@ export default function Sidebar({
           })}
         </nav>
 
-        {/* Pinned bottom section - Cart and Social */}
+        {/* Pinned bottom section - Profile, Cart and Social */}
         <div className="flex-shrink-0">
+          {/* Profile button - desktop only, hidden on mobile since it's in the header */}
+          <div className="hidden lg:block px-5 pb-4">
+            <ProfileButton user={user} variant="detailed" />
+          </div>
+
           {showCart && (
             <div className="px-5 pb-4">
               <Cart variant={"detailed"} />

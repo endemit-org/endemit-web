@@ -1,4 +1,4 @@
-import type { TicketTemplate, TicketTemplateId } from "../types/ticketTemplate";
+import type { TicketTemplate } from "../types/ticketTemplate";
 
 export const DEFAULT_TEMPLATE: TicketTemplate = {
   id: "default",
@@ -35,7 +35,7 @@ export const GUEST_TEMPLATE: TicketTemplate = {
   },
   textContent: {
     priceLabel: "VIP PASS",
-    tagline: "VIP TICKET :: NOT FOR SALE",
+    tagline: "GUEST PASS :: NOT FOR SALE",
     legalText: "Ticket admits one person. Non-transferable, non-refundable.",
   },
   invertLogo: true,

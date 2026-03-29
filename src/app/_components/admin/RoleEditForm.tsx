@@ -224,9 +224,6 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
             const allSelected = permissions.every(p =>
               selectedPermissions.includes(p.permission)
             );
-            const someSelected = permissions.some(p =>
-              selectedPermissions.includes(p.permission)
-            );
 
             return (
               <div key={resource} className="border border-gray-200 rounded-lg p-4">

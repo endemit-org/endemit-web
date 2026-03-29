@@ -9,11 +9,13 @@ import { transformToProductInOrder } from "@/domain/product/transformers/transfo
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscribeEmailToGeneralList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
+import { getCurrentUser } from "@/lib/services/auth";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const products = await fetchProductsFromCms({});
+    const currentUser = await getCurrentUser();
 
     if (!products || products.length === 0) {
       throw new Error("No products available for checkout");
@@ -63,6 +65,7 @@ export async function POST(request: Request) {
       orderItems: checkoutItems.map(checkoutItem =>
         transformToProductInOrder(checkoutItem, complementaryTicketData)
       ),
+      userId: currentUser?.id,
     });
 
     if (subscribeToNewsletter) {

@@ -37,9 +37,16 @@ enum TicketStatus {
   REFUNDED
 }
 
+enum SignInType {
+  PASSWORD
+  OTC
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
+  userId           String?
+  user             User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   name             String?
   email            String
   subtotal         Decimal     @db.Decimal(10, 2)
@@ -58,6 +65,7 @@ model Order {
 
   @@index([stripeSession])
   @@index([email])
+  @@index([userId])
 }
 
 model Ticket {
@@ -96,6 +104,7 @@ model User {
   passwordHash  String?
   image         String?
   status        UserStatus @default(ACTIVE)
+  signInType    SignInType @default(PASSWORD)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   lastLoginAt   DateTime?
@@ -103,6 +112,8 @@ model User {
   sessions  Session[]
   userRoles UserRole[]
   ScanLog   ScanLog[]
+  otcTokens OtcToken[]
+  orders    Order[]
 
   @@index([username])
   @@index([email])
@@ -167,4 +178,29 @@ model ScanLog {
   @@index([eventId])
   @@index([userId])
   @@index([ticketId])
+}
+
+model OtcToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  magicLink String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([code])
+  @@index([magicLink])
+  @@index([expiresAt])
+}
+
+model OtcRateLimit {
+  id        String   @id @default(cuid())
+  email     String
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
 }

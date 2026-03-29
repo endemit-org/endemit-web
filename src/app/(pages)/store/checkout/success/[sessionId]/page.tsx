@@ -11,6 +11,7 @@ import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStr
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
 import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
+import { getCurrentUser, createUserSession } from "@/lib/services/auth";
 
 export const metadata: Metadata = {
   title: "✅ Order Confirmed",
@@ -45,6 +46,12 @@ export default async function SuccessPage({
 
   if (!order) {
     notFound();
+  }
+
+  // Auto-login: If user is not logged in and order has a userId, create a session
+  const currentUser = await getCurrentUser();
+  if (!currentUser && order.userId) {
+    await createUserSession(order.userId);
   }
 
   const tickets = transformTicketsFromOrder(order);

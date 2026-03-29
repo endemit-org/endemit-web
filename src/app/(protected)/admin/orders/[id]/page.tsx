@@ -1,7 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getOrderWithTickets } from "@/domain/order/operations/getOrderWithTickets";
 import { formatPrice, formatDateTime } from "@/lib/util/formatting";
+import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
 
 export async function generateMetadata({
@@ -37,6 +39,13 @@ export default async function AdminOrderDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const currentUser = await getCurrentUser();
+
+  // Permission check - must have ORDERS_READ_ALL to view this page
+  if (!currentUser?.permissions.includes(PERMISSIONS.ORDERS_READ_ALL)) {
+    redirect("/admin");
+  }
+
   const { id } = await params;
   const order = await getOrderWithTickets(id);
 

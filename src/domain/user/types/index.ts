@@ -40,3 +40,12 @@ export interface UpdateUserInput {
   name?: string | null;
   status?: UserStatus;
 }
+
+export interface CreateUserInput {
+  username: string;
+  email: string;
+  name?: string;
+  password?: string;
+  signInType: "PASSWORD" | "OTC";
+  status?: UserStatus;
+}

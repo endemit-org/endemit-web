@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
       { error: "Server misconfiguration" },
       { status: 500 }
     );
+    run;
   }
 
   if (!vercelDeployHook) {
@@ -34,10 +35,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (secret !== expectedSecret) {
-    return NextResponse.json(
-      { error: "Invalid secret" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
   }
 
   let payload: PrismicWebhookPayload;

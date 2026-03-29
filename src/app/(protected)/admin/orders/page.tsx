@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getAllOrders } from "@/domain/order/operations/getAllOrders";
 import OrdersDisplay from "@/app/_components/admin/OrdersDisplay";
+import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
 export const metadata: Metadata = {
   title: "Orders  •  Admin",
@@ -11,6 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminOrdersPage() {
+  const currentUser = await getCurrentUser();
+
+  // Permission check - must have ORDERS_READ_ALL to view this page
+  if (!currentUser?.permissions.includes(PERMISSIONS.ORDERS_READ_ALL)) {
+    redirect("/admin");
+  }
+
   const initialData = await getAllOrders();
 
   return (

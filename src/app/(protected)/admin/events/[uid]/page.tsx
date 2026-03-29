@@ -2,7 +2,7 @@ import {
   fetchEventFromCmsByUid,
   fetchEventFromCmsById,
 } from "@/domain/cms/operations/fetchEventFromCms";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTicketsForEvent } from "@/domain/ticket/operations/getTicketsForEvent";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -47,6 +47,13 @@ export default async function AdminEventPage({
 }: {
   params: Promise<{ uid: string }>;
 }) {
+  const user = await getCurrentUser();
+
+  // Permission check - must have EVENTS_READ to view this page
+  if (!user?.permissions.includes(PERMISSIONS.EVENTS_READ)) {
+    redirect("/admin");
+  }
+
   const { uid } = await params;
   const event = await getEvent(uid);
 
@@ -54,16 +61,13 @@ export default async function AdminEventPage({
     notFound();
   }
 
-  const [initialTickets, user] = await Promise.all([
-    getTicketsForEvent(event.id),
-    getCurrentUser(),
-  ]);
+  const initialTickets = await getTicketsForEvent(event.id);
 
   const serializedTickets = initialTickets.map(ticket =>
     serializeTicket(ticket)
   );
 
-  const canCreateTickets = user?.permissions.includes(PERMISSIONS.TICKETS_CREATE) ?? false;
+  const canCreateTickets = user.permissions.includes(PERMISSIONS.TICKETS_CREATE);
 
   return (
     <div>

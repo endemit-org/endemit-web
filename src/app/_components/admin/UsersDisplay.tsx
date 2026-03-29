@@ -4,20 +4,26 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import UsersTable from "@/app/_components/table/UsersTable";
 import Pagination from "@/app/_components/table/Pagination";
+import UserCreateForm from "@/app/_components/admin/UserCreateForm";
 import { fetchUsers } from "@/domain/user/actions/fetchUsersAction";
 import type { PaginatedUsers, SerializedUser } from "@/domain/user/types";
 
 interface UsersDisplayProps {
   initialData: PaginatedUsers;
+  canCreateUsers?: boolean;
 }
 
-export default function UsersDisplay({ initialData }: UsersDisplayProps) {
+export default function UsersDisplay({
+  initialData,
+  canCreateUsers = false,
+}: UsersDisplayProps) {
   const router = useRouter();
   const [users, setUsers] = useState(initialData.users);
   const [currentPage, setCurrentPage] = useState(initialData.page);
   const [totalPages, setTotalPages] = useState(initialData.totalPages);
   const [totalCount, setTotalCount] = useState(initialData.totalCount);
   const [isLoading, setIsLoading] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const loadPage = useCallback(async (page: number) => {
     setIsLoading(true);
@@ -56,13 +62,23 @@ export default function UsersDisplay({ initialData }: UsersDisplayProps) {
             Showing: <strong className="text-gray-900">{users.length}</strong>
           </div>
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={isLoading}
-          className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
-        >
-          {isLoading ? "Loading..." : "Refresh"}
-        </button>
+        <div className="flex gap-2">
+          {canCreateUsers && (
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+            >
+              + Add User
+            </button>
+          )}
+          <button
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
+          >
+            {isLoading ? "Loading..." : "Refresh"}
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -75,6 +91,17 @@ export default function UsersDisplay({ initialData }: UsersDisplayProps) {
         onPageChange={handlePageChange}
         isLoading={isLoading}
       />
+
+      {canCreateUsers && (
+        <UserCreateForm
+          isOpen={showCreateForm}
+          onClose={() => setShowCreateForm(false)}
+          onSuccess={() => {
+            setShowCreateForm(false);
+            handleRefresh();
+          }}
+        />
+      )}
     </>
   );
 }

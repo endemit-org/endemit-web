@@ -3,8 +3,14 @@ import { inngest } from "@/lib/services/inngest";
 import { runTicketIssueAutomation } from "@/domain/ticket/operations/runTicketIssueAutomation";
 import { runGuestTicketAutomation } from "@/domain/ticket/operations/runGuestTicketAutomation";
 import { runNewOrderAutomation } from "@/domain/order/operations/runNewOrderAutomation";
+import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [runTicketIssueAutomation, runGuestTicketAutomation, runNewOrderAutomation],
+  functions: [
+    runTicketIssueAutomation,
+    runGuestTicketAutomation,
+    runNewOrderAutomation,
+    runOtcEmailAutomation,
+  ],
 });

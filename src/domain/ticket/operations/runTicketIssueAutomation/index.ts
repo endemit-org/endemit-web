@@ -6,7 +6,6 @@ import {
   TicketPayload,
   TicketQueueEvent,
 } from "@/domain/ticket/types/ticket";
-import type { TicketTemplateId } from "@/domain/ticket/types/ticketTemplate";
 import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
 import { generateSecureHash } from "@/domain/ticket/operations/generateSecureHash";

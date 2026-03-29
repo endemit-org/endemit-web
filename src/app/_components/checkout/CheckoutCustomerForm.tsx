@@ -31,6 +31,7 @@ interface CheckoutFormProps {
   submitForm: () => void;
   items: CartItem[];
   validationTriggered: boolean;
+  userEmail?: string;
 }
 
 function CheckoutFormSection({
@@ -67,6 +68,7 @@ export default function CheckoutCustomerForm({
   validateForm,
   validationTriggered,
   submitForm,
+  userEmail,
 }: CheckoutFormProps) {
   const destinationCountry = getCountry(formData.country);
   const includesTickets = includesTicketProducts(items);
@@ -84,7 +86,9 @@ export default function CheckoutCustomerForm({
     <div className="gap-y-8 flex flex-col">
       <CheckoutFormSection
         title={"Your contact information"}
-        description={`Ensure your email is correct as this is where you will receive your order
+        description={userEmail
+          ? "You are signed in. Your email will be used for this order."
+          : `Ensure your email is correct as this is where you will receive your order
           confirmation${includesTickets ? " and digital tickets" : ""}.`}
       >
         <Input
@@ -92,25 +96,28 @@ export default function CheckoutCustomerForm({
           label="E-mail"
           type="email"
           placeholder="jane@endemit.org"
-          value={formData.email}
+          value={userEmail || formData.email}
           onChangeAction={onFormChangeAction}
           onEnter={handleOnEnter}
-          errorMessage={errorMessages.email as string}
+          errorMessage={userEmail ? undefined : errorMessages.email as string}
           required={true}
           validationTriggered={validationTriggered}
+          disabled={!!userEmail}
         />
-        <Input
-          name="emailRepeat"
-          label="Repeat e-mail"
-          type="email"
-          placeholder="jane@endemit.org"
-          value={formData.emailRepeat}
-          onChangeAction={onFormChangeAction}
-          onEnter={handleOnEnter}
-          errorMessage={errorMessages.emailRepeat as string}
-          required={true}
-          validationTriggered={validationTriggered}
-        />
+        {!userEmail && (
+          <Input
+            name="emailRepeat"
+            label="Repeat e-mail"
+            type="email"
+            placeholder="jane@endemit.org"
+            value={formData.emailRepeat}
+            onChangeAction={onFormChangeAction}
+            onEnter={handleOnEnter}
+            errorMessage={errorMessages.emailRepeat as string}
+            required={true}
+            validationTriggered={validationTriggered}
+          />
+        )}
       </CheckoutFormSection>
 
       {includesTickets && ticketItems.length > 0 && (

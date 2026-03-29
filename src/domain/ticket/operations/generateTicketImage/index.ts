@@ -6,7 +6,7 @@ import sharp from "sharp";
 import satori from "satori";
 import fs from "fs";
 import type { ReactElement } from "react";
-import type { TicketTemplateId, TicketTemplate } from "../../types/ticketTemplate";
+import type { TicketTemplate } from "../../types/ticketTemplate";
 import { getTemplateById, DEFAULT_TEMPLATE } from "../../config/ticketTemplates";
 
 interface TicketData {

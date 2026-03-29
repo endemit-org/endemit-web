@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { fetchEventsForAdmin } from "@/domain/event/actions/fetchEventsForAdminAction";
 import EventsList from "@/app/_components/admin/EventsList";
+import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
 export const metadata: Metadata = {
   title: "Events  •  Admin",
@@ -11,6 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminEventsPage() {
+  const currentUser = await getCurrentUser();
+
+  // Permission check - must have EVENTS_READ to view this page
+  if (!currentUser?.permissions.includes(PERMISSIONS.EVENTS_READ)) {
+    redirect("/admin");
+  }
+
   const initialData = await fetchEventsForAdmin();
 
   return (

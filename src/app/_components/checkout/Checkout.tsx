@@ -19,9 +19,10 @@ import { Product } from "@/domain/product/types/product";
 
 type Props = {
   products: Product[] | null;
+  userEmail?: string;
 };
 
-export default function Checkout({ products }: Props) {
+export default function Checkout({ products, userEmail }: Props) {
   const [isClient, setIsClient] = useState(false);
   const { getProductByUid } = useProducts();
 
@@ -48,6 +49,14 @@ export default function Checkout({ products }: Props) {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Pre-fill email when user is logged in
+  useEffect(() => {
+    if (userEmail) {
+      actions.updateField("email", userEmail);
+      actions.updateField("emailRepeat", userEmail);
+    }
+  }, [userEmail, actions]);
 
   const handleAddDonation = (e: React.MouseEvent) => {
     const donationProduct = getProductByUid("donation-to-association");
@@ -120,6 +129,7 @@ export default function Checkout({ products }: Props) {
                   submitForm={actions.checkout}
                   validateForm={validateForm}
                   validationTriggered={validationTriggered}
+                  userEmail={userEmail}
                 />
               </>
             ))}

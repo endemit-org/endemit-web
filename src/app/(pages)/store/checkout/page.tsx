@@ -4,6 +4,7 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { prismic } from "@/lib/services/prismic";
+import { getCurrentUser } from "@/lib/services/auth";
 
 export const metadata: Metadata = {
   title: "Secure checkout",
@@ -16,6 +17,8 @@ export default async function CheckoutPage() {
     filters: [prismic.filter.at("my.product.featured_product", true)],
   });
 
+  const user = await getCurrentUser();
+
   return (
     <OuterPage>
       <PageHeadline
@@ -26,7 +29,7 @@ export default async function CheckoutPage() {
           { label: "Checkout", path: "checkout" },
         ]}
       />
-      <Checkout products={featuredProducts} />
+      <Checkout products={featuredProducts} userEmail={user?.email || undefined} />
     </OuterPage>
   );
 }

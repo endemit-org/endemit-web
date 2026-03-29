@@ -32,13 +32,12 @@ export default function ArtistEventCard({
       <div className="flex flex-col lg:flex-row gap-6 p-4">
         {/* Artist Photo */}
         <div className="lg:w-1/3 flex-shrink-0">
-          <div className="relative w-full  overflow-hidden ">
+          <div className="relative w-full aspect-[2/3] overflow-hidden bg-neutral-800">
             <ImageWithFallback
               src={artist.image?.src}
               alt={artist.image?.alt ?? artist.name}
-              width={400}
-              height={600}
-              className="w-full h-auto"
+              fill
+              className="object-cover"
               placeholder={artist.image?.placeholder}
             />
           </div>

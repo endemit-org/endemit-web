@@ -14,7 +14,7 @@ export const sendTicketEmail = async (
   return await resend.emails.send({
     from: resendFromEmail,
     to: ticket.ticketPayerEmail,
-    subject: `Ticket for ${ticket.eventName} (${ticket.ticketHolderName})`,
+    subject: `🎟️ Ticket for ${ticket.eventName} (${ticket.ticketHolderName})`,
     react: NewTicketToCustomerTemplate({ ticket }),
     attachments: [
       {
