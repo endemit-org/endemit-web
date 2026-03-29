@@ -6,7 +6,10 @@ export type BroadcastEvent =
   | "balance_updated"
   | "order_status_updated"
   | "transaction_confirmed"
-  | "wallet_transaction_created";
+  | "wallet_transaction_created"
+  | "pos_order_scanned"
+  | "pos_order_paid"
+  | "pos_order_cancelled";
 
 export interface WalletTransactionPayload {
   transactionId: string;
@@ -18,11 +21,37 @@ export interface WalletTransactionPayload {
   createdAt: string;
 }
 
+export interface PosOrderScannedPayload {
+  orderId: string;
+  shortCode: string;
+  customerId: string;
+  customerName: string;
+  balance: number;
+  hasEnoughBalance: boolean;
+}
+
+export interface PosOrderPaidPayload {
+  orderId: string;
+  shortCode: string;
+  total: number;
+  tipAmount: number;
+  paidAt: string;
+}
+
+export interface PosOrderCancelledPayload {
+  orderId: string;
+  shortCode: string;
+  reason: "seller" | "expired";
+}
+
 export interface BroadcastPayload {
   balance_updated: { balance: number };
   order_status_updated: { orderId: string; status: string };
   transaction_confirmed: { transactionId: string; success: boolean };
   wallet_transaction_created: WalletTransactionPayload;
+  pos_order_scanned: PosOrderScannedPayload;
+  pos_order_paid: PosOrderPaidPayload;
+  pos_order_cancelled: PosOrderCancelledPayload;
 }
 
 /**

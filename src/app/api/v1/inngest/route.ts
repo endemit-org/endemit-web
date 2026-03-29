@@ -5,6 +5,7 @@ import { runGuestTicketAutomation } from "@/domain/ticket/operations/runGuestTic
 import { runNewOrderAutomation } from "@/domain/order/operations/runNewOrderAutomation";
 import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
 import { runSupabaseKeepalive } from "@/domain/supabase/operations/runSupabaseKeepalive";
+import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrderExpiryAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -14,5 +15,6 @@ export const { GET, POST, PUT } = serve({
     runNewOrderAutomation,
     runOtcEmailAutomation,
     runSupabaseKeepalive,
+    runPosOrderExpiryAutomation,
   ],
 });

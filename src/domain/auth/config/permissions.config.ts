@@ -62,6 +62,20 @@ export const PERMISSIONS = {
   // System administration
   SYSTEM_SETTINGS: "system:settings",
   SYSTEM_LOGS: "system:logs",
+
+  // POS - Seller access
+  POS_ACCESS: "pos:access",
+  POS_SELL: "pos:sell",
+  POS_TOPUP: "pos:topup",
+
+  // POS - Admin management
+  POS_ITEMS_READ: "pos:items:read",
+  POS_ITEMS_WRITE: "pos:items:write",
+  POS_REGISTERS_READ: "pos:registers:read",
+  POS_REGISTERS_WRITE: "pos:registers:write",
+  POS_ORDERS_READ: "pos:orders:read",
+  POS_ORDERS_REFUND: "pos:orders:refund",
+  POS_TIPS_WITHDRAW: "pos:tips:withdraw",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -309,5 +323,69 @@ export const PERMISSION_METADATA: Record<
     description: "View system logs",
     resource: "system",
     action: "logs",
+  },
+
+  // POS - Seller access
+  [PERMISSIONS.POS_ACCESS]: {
+    name: "POS Access",
+    description: "Access the POS seller interface",
+    resource: "pos",
+    action: "access",
+  },
+  [PERMISSIONS.POS_SELL]: {
+    name: "POS Sell",
+    description: "Create orders at assigned registers",
+    resource: "pos",
+    action: "sell",
+  },
+  [PERMISSIONS.POS_TOPUP]: {
+    name: "POS Top-up",
+    description: "Process cash top-ups at registers",
+    resource: "pos",
+    action: "topup",
+  },
+
+  // POS - Admin management
+  [PERMISSIONS.POS_ITEMS_READ]: {
+    name: "Read POS Items",
+    description: "View POS items",
+    resource: "pos",
+    action: "items:read",
+  },
+  [PERMISSIONS.POS_ITEMS_WRITE]: {
+    name: "Manage POS Items",
+    description: "Create, edit, and delete POS items",
+    resource: "pos",
+    action: "items:write",
+  },
+  [PERMISSIONS.POS_REGISTERS_READ]: {
+    name: "Read POS Registers",
+    description: "View POS registers",
+    resource: "pos",
+    action: "registers:read",
+  },
+  [PERMISSIONS.POS_REGISTERS_WRITE]: {
+    name: "Manage POS Registers",
+    description: "Create, edit registers and assign items/sellers",
+    resource: "pos",
+    action: "registers:write",
+  },
+  [PERMISSIONS.POS_ORDERS_READ]: {
+    name: "Read POS Orders",
+    description: "View all POS orders",
+    resource: "pos",
+    action: "orders:read",
+  },
+  [PERMISSIONS.POS_ORDERS_REFUND]: {
+    name: "Refund POS Orders",
+    description: "Process refunds for POS orders",
+    resource: "pos",
+    action: "orders:refund",
+  },
+  [PERMISSIONS.POS_TIPS_WITHDRAW]: {
+    name: "Withdraw Tips",
+    description: "Withdraw tips from register tip pools",
+    resource: "pos",
+    action: "tips:withdraw",
   },
 };

@@ -1,8 +1,7 @@
 import type { User, Role, UserRole } from "@prisma/client";
 import type { AuthenticatedUser } from "@/domain/auth/types";
 import type { RoleSlug } from "@/domain/auth/config/roles.config";
-
-import { getUserPermissions } from "@/domain/auth/actions/getUserPermissions";
+import type { Permission } from "@/domain/auth/config/permissions.config";
 
 type UserWithRoles = User & {
   userRoles: (UserRole & { role: Role })[];
@@ -11,7 +10,12 @@ type UserWithRoles = User & {
 export function index(user: UserWithRoles): AuthenticatedUser {
   const roleSlugs = user.userRoles.map(ur => ur.role.slug as RoleSlug);
 
-  const permissions = getUserPermissions(roleSlugs);
+  // Collect permissions from all roles (from database)
+  const permissionsSet = new Set<Permission>();
+  user.userRoles.forEach(ur => {
+    ur.role.permissions.forEach(p => permissionsSet.add(p as Permission));
+  });
+  const permissions = Array.from(permissionsSet);
 
   return {
     id: user.id,

@@ -48,6 +48,31 @@ enum WalletTransactionType {
   PURCHASE
   REFUND
   ADJUSTMENT
+  POS_PURCHASE
+  POS_TIP
+  CARD_TOPUP
+  CASH_TOPUP
+}
+
+enum PosItemDirection {
+  CREDIT
+  DEBIT
+}
+
+enum PosItemStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PosRegisterStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PosOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
 }
 
 model Order {
@@ -125,6 +150,11 @@ model User {
   orders              Order[]
   wallet              Wallet?
   createdTransactions WalletTransaction[] @relation("TransactionCreator")
+
+  // POS relations
+  posRegisterAssignments PosRegisterSeller[]
+  posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
+  posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
 
   @@index([username])
   @@index([email])
@@ -239,10 +269,127 @@ model WalletTransaction {
   note         String?
   createdById  String?
   createdBy    User?                 @relation("TransactionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  posOrderId   String?
+  posOrder     PosOrder?             @relation(fields: [posOrderId], references: [id], onDelete: SetNull)
   createdAt    DateTime              @default(now())
 
   @@index([walletId])
   @@index([type])
   @@index([createdAt])
   @@index([createdById])
+  @@index([posOrderId])
+}
+
+// =============================================================================
+// POS (Point of Sale) Models
+// =============================================================================
+
+model PosItem {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  cost        Int // In cents
+  direction   PosItemDirection
+  status      PosItemStatus    @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  registers  PosRegisterItem[]
+  orderItems PosOrderItem[]
+
+  @@index([status])
+}
+
+model PosRegister {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  status      PosRegisterStatus @default(ACTIVE)
+  canTopUp    Boolean           @default(false)
+  tipPool     Int               @default(0) // Accumulated tips in cents
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  items   PosRegisterItem[]
+  sellers PosRegisterSeller[]
+  orders  PosOrder[]
+
+  @@index([status])
+}
+
+model PosRegisterItem {
+  id         String      @id @default(cuid())
+  registerId String
+  register   PosRegister @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       PosItem     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  assignedAt DateTime    @default(now())
+
+  @@unique([registerId, itemId])
+  @@index([registerId])
+  @@index([itemId])
+}
+
+model PosRegisterSeller {
+  id         String      @id @default(cuid())
+  registerId String
+  register   PosRegister @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt DateTime    @default(now())
+
+  @@unique([registerId, userId])
+  @@index([registerId])
+  @@index([userId])
+}
+
+model PosOrder {
+  id           String         @id @default(cuid())
+  orderHash    String         @unique
+  shortCode    String         @unique
+  registerId   String
+  register     PosRegister    @relation(fields: [registerId], references: [id])
+  sellerId     String
+  seller       User           @relation("PosOrderSeller", fields: [sellerId], references: [id])
+  customerId   String?
+  customer     User?          @relation("PosOrderCustomer", fields: [customerId], references: [id])
+  walletId     String?
+  subtotal     Int // In cents
+  tipAmount    Int            @default(0)
+  total        Int // subtotal + tipAmount
+  status       PosOrderStatus @default(PENDING)
+  scannedAt    DateTime?
+  paidAt       DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+  copiedFromId String?
+  expiresAt    DateTime
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  items        PosOrderItem[]
+  transactions WalletTransaction[]
+
+  @@index([orderHash])
+  @@index([shortCode])
+  @@index([registerId])
+  @@index([sellerId])
+  @@index([customerId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model PosOrderItem {
+  id       String   @id @default(cuid())
+  orderId  String
+  order    PosOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId   String
+  item     PosItem  @relation(fields: [itemId], references: [id])
+  name     String // Snapshot of item name at time of order
+  quantity Int
+  unitCost Int // Snapshot of item cost at time of order
+  total    Int // quantity * unitCost
+
+  @@index([orderId])
+  @@index([itemId])
 }
