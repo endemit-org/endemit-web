@@ -13,13 +13,14 @@ import Banner from "@/app/_components/ui/Banner";
 import Accordion from "@/app/_components/content/Accordion";
 import { formatPrice } from "@/lib/util/formatting";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
+import Image from "next/image";
 
 interface EventTicketDisplayProps {
   products: Product[];
   event: Event;
 }
 
-export function formatTicketTitle(product: Product) {
+export function formatTicketTitle(product: Product, isHot?: boolean) {
   const ticketQuantity = getTicketQuantityForProduct(product);
   const quantitySuffix = `${ticketQuantity} ${ticketQuantity === 1 ? "person" : "people"}`;
   return (
@@ -27,6 +28,15 @@ export function formatTicketTitle(product: Product) {
       <div className={"font-semibold flex gap-x-1.5 items-center"}>
         <TicketIcon />
         {product.name}
+        {isHot && (
+          <Image
+            src="/images/flame.gif"
+            alt="Hot"
+            className="w-5 h-5 ml-1"
+            width={40}
+            height={40}
+          />
+        )}
       </div>
       <div className={"text-sm text-neutral-400"}>
         {quantitySuffix} - {formatPrice(product.price)}
@@ -172,8 +182,9 @@ export default function EventTicketDisplay({
   }
 
   // For multiple products - use accordion
-  const accordionItems = products.map(product => ({
-    title: formatTicketTitle(product),
+  const middleIndex = Math.floor(products.length / 2);
+  const accordionItems = products.map((product, index) => ({
+    title: formatTicketTitle(product, index === middleIndex),
     content: TicketPurchaseDisplay({
       product,
       productAvailable: product && isProductSellable(product).isSellable,
@@ -196,7 +207,13 @@ export default function EventTicketDisplay({
 
       {!hasAvailableProducts && content}
 
-      <Accordion items={accordionItems} allowMultiple={false} compact={true} />
+      <Accordion
+        items={accordionItems}
+        allowMultiple={false}
+        compact={true}
+        autoExpandIndexOnView={middleIndex}
+        autoExpandDelay={500}
+      />
     </div>
   );
 }

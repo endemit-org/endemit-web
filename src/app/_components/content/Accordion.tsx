@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ItemToggleIcon from "@/app/_components/icon/ItemToggleIcon";
 
 export interface AccordionItem {
@@ -14,6 +14,8 @@ export interface AccordionProps {
   allowMultiple?: boolean;
   defaultOpenIndex?: number;
   compact?: boolean;
+  autoExpandIndexOnView?: number;
+  autoExpandDelay?: number;
 }
 
 export default function Accordion({
@@ -22,10 +24,38 @@ export default function Accordion({
   allowMultiple = false,
   defaultOpenIndex,
   compact = false,
+  autoExpandIndexOnView,
+  autoExpandDelay = 500,
 }: AccordionProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     defaultOpenIndex !== undefined ? [defaultOpenIndex] : []
   );
+  const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-expand specified item when it comes into view
+  useEffect(() => {
+    if (autoExpandIndexOnView === undefined || hasAutoExpanded || items.length <= 1) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && !hasAutoExpanded) {
+          const timer = setTimeout(() => {
+            setOpenIndexes([autoExpandIndexOnView]);
+            setHasAutoExpanded(true);
+          }, autoExpandDelay);
+          return () => clearTimeout(timer);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [autoExpandIndexOnView, autoExpandDelay, hasAutoExpanded, items.length]);
 
   const toggleItem = (index: number) => {
     if (allowMultiple) {
@@ -39,6 +69,7 @@ export default function Accordion({
 
   return (
     <div
+      ref={containerRef}
       className={
         compact
           ? "w-full"

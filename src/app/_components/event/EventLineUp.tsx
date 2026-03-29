@@ -13,7 +13,7 @@ type Props = {
 export default function EventLineUp({ artists }: Props) {
   const [sortBy, setSortBy] = useState<SortOption>("default");
 
-  type SortOption = "default" | "timestamp";
+  type SortOption = "default" | "timestamp" | "alphabetical";
 
   const sortedArtists = useMemo(() => {
     if (sortBy === "timestamp") {
@@ -22,6 +22,9 @@ export default function EventLineUp({ artists }: Props) {
           (a.start_time ? a.start_time.getTime() : 0) -
           (b.start_time ? b.start_time.getTime() : 0)
       );
+    }
+    if (sortBy === "alphabetical") {
+      return [...artists].sort((a, b) => a.name.localeCompare(b.name));
     }
     return artists;
   }, [artists, sortBy]);
@@ -58,6 +61,7 @@ export default function EventLineUp({ artists }: Props) {
             >
               <option value="default">Default</option>
               <option value="timestamp">Performance Time</option>
+              <option value="alphabetical">Alphabetically</option>
             </select>
           </div>
         )}
