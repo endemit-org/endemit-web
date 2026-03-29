@@ -2,6 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import UserIcon from "@/app/_components/icon/UserIcon";
+import WalletIcon from "@/app/_components/icon/WalletIcon";
+import ShoppingBagIcon from "@/app/_components/icon/ShoppingBagIcon";
+import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
+import LogoutIcon from "@/app/_components/icon/LogoutIcon";
+import ChevronDownIcon from "@/app/_components/icon/ChevronDownIcon";
 
 interface ProfileButtonProps {
   user: {
@@ -57,19 +63,7 @@ export default function ProfileButton({
           className="flex h-14 items-center px-3 text-gray-100 hover:text-gray-400"
           title="Sign In"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
+          <UserIcon className="w-6 h-6" />
         </Link>
       );
     }
@@ -80,19 +74,7 @@ export default function ProfileButton({
         className="flex items-center justify-end gap-2 text-sm text-neutral-400 hover:text-white transition-colors px-3 py-2"
       >
         <span>Sign In</span>
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
-        </svg>
+        <UserIcon className="w-5 h-5" />
       </Link>
     );
   }
@@ -113,19 +95,7 @@ export default function ProfileButton({
           title={user.name || user.email || "Profile"}
         >
           <div className="relative">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+            <UserIcon className="w-6 h-6" />
             <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
               <svg
                 className="w-2 h-2 text-white"
@@ -160,9 +130,7 @@ export default function ProfileButton({
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+                <UserIcon className="w-4 h-4" />
                 Profile
               </Link>
               <Link
@@ -170,9 +138,7 @@ export default function ProfileButton({
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
+                <WalletIcon className="w-4 h-4" />
                 Wallet
               </Link>
               <Link
@@ -180,9 +146,7 @@ export default function ProfileButton({
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
+                <ShoppingBagIcon className="w-4 h-4" />
                 Orders
               </Link>
               <Link
@@ -190,9 +154,7 @@ export default function ProfileButton({
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                </svg>
+                <TicketOutlineIcon className="w-4 h-4" />
                 Tickets
               </Link>
               <div className="border-t border-neutral-700 my-1"></div>
@@ -201,9 +163,7 @@ export default function ProfileButton({
                 disabled={isLoggingOut}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-neutral-700 rounded-md disabled:opacity-50"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
+                <LogoutIcon className="w-4 h-4" />
                 {isLoggingOut ? "Signing out..." : "Sign Out"}
               </button>
             </div>
@@ -221,19 +181,7 @@ export default function ProfileButton({
         className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors px-3 py-2 w-full min-w-0"
       >
         <div className="relative">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
+          <UserIcon className="w-5 h-5" />
           <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full flex items-center justify-center">
             <svg
               className="w-1.5 h-1.5 text-white"
@@ -251,19 +199,9 @@ export default function ProfileButton({
         <span className="truncate min-w-0 flex-1">
           {user.name || user.email}
         </span>
-        <svg
+        <ChevronDownIcon
           className={`w-4 h-4 ml-auto transition-transform ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        />
       </button>
 
       {isOpen && (
@@ -282,9 +220,7 @@ export default function ProfileButton({
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+              <UserIcon className="w-4 h-4" />
               Profile
             </Link>
             <Link
@@ -292,9 +228,7 @@ export default function ProfileButton({
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-              </svg>
+              <WalletIcon className="w-4 h-4" />
               Wallet
             </Link>
             <Link
@@ -302,9 +236,7 @@ export default function ProfileButton({
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
+              <ShoppingBagIcon className="w-4 h-4" />
               Orders
             </Link>
             <Link
@@ -312,9 +244,7 @@ export default function ProfileButton({
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-              </svg>
+              <TicketOutlineIcon className="w-4 h-4" />
               Tickets
             </Link>
             <div className="border-t border-neutral-700 my-1"></div>
@@ -323,9 +253,7 @@ export default function ProfileButton({
               disabled={isLoggingOut}
               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-neutral-700 rounded-md disabled:opacity-50"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+              <LogoutIcon className="w-4 h-4" />
               {isLoggingOut ? "Signing out..." : "Sign Out"}
             </button>
           </div>

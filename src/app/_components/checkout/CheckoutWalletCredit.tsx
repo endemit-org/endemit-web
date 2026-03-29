@@ -2,6 +2,7 @@
 
 import { formatCurrency } from "@/lib/util/formatting";
 import Spinner from "@/app/_components/ui/Spinner";
+import WalletIcon from "@/app/_components/icon/WalletIcon";
 
 interface CheckoutWalletCreditProps {
   walletBalance: number; // in cents
@@ -43,23 +44,11 @@ export default function CheckoutWalletCredit({
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded-lg p-4">
+    <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded-lg p-4 mb-6">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-            <svg
-              className="w-5 h-5 text-blue-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-              />
-            </svg>
+            <WalletIcon className="w-5 h-5 text-blue-400" />
           </div>
           <div>
             <h3 className="font-medium text-neutral-200">Use Wallet Credit</h3>
@@ -108,7 +97,9 @@ export default function CheckoutWalletCredit({
 
           <div className="pt-2 border-t border-blue-700/30">
             <div className="flex justify-between text-sm">
-              <span className="text-neutral-400">Remaining to pay by card:</span>
+              <span className="text-neutral-400">
+                Remaining to pay by card:
+              </span>
               <span className="text-neutral-200 font-medium">
                 {formatCurrency(remainingToPay)}
               </span>
