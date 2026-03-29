@@ -23,7 +23,6 @@ export async function POST(request: NextRequest) {
       { error: "Server misconfiguration" },
       { status: 500 }
     );
-    run;
   }
 
   if (!vercelDeployHook) {

@@ -61,22 +61,6 @@ export default async function ProfilePage() {
                   <span className="text-neutral-200">{user.name}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center py-2 border-b border-neutral-700">
-                <span className="text-neutral-400">Username</span>
-                <span className="text-neutral-200 font-mono text-sm">
-                  {user.username}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-neutral-400">Member since</span>
-                <span className="text-neutral-200">
-                  {new Date(user.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
             </div>
           </section>
 
