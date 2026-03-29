@@ -24,6 +24,9 @@ interface CheckoutFormProps {
   >;
   onFormChangeAction: (name: string, value: string | boolean) => void;
   onTicketFormChange: (name: string, value: string) => void;
+  onIncrementItem: (productId: string) => void;
+  onDecrementItem: (productId: string) => void;
+  onRemoveItem: (productId: string) => void;
   requiresShippingAddress: boolean;
   includesNonRefundable: boolean;
   showSubscribeToNewsletter: boolean;
@@ -62,6 +65,9 @@ export default function CheckoutCustomerForm({
   errorMessages,
   onFormChangeAction,
   onTicketFormChange,
+  onIncrementItem,
+  onDecrementItem,
+  onRemoveItem,
   requiresShippingAddress,
   includesNonRefundable,
   showSubscribeToNewsletter,
@@ -129,7 +135,39 @@ export default function CheckoutCustomerForm({
             const ticketQuantity = getTicketQuantityForProduct(item);
             const totalSlots = item.quantity * ticketQuantity;
             return (
-              <div key={`ticket-data-${item.id}}`}>
+              <div key={`ticket-data-${item.id}}`} className="mb-4">
+                <div className="flex items-center justify-between mb-2 pb-2 border-b border-neutral-700">
+                  <span className="text-sm text-neutral-300">{item.name}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onDecrementItem(item.id)}
+                      className="w-7 h-7 flex items-center justify-center rounded bg-neutral-700 hover:bg-neutral-600 text-neutral-200 transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className="text-sm text-neutral-200 w-6 text-center">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onIncrementItem(item.id)}
+                      className="w-7 h-7 flex items-center justify-center rounded bg-neutral-700 hover:bg-neutral-600 text-neutral-200 transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onRemoveItem(item.id)}
+                      className="ml-2 text-neutral-500 hover:text-red-400 text-sm transition-colors"
+                      aria-label="Remove ticket"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
                 {new Array(totalSlots).fill(0).map((_, index) => (
                   <CheckoutTicketForm
                     key={`${item.id}-${index}`}

@@ -27,6 +27,7 @@ type Props = {
 export default function Checkout({ products, userEmail }: Props) {
   const [isClient, setIsClient] = useState(false);
   const [mobileStep, setMobileStep] = useState<1 | 2>(1);
+  const [donationDismissed, setDonationDismissed] = useState(false);
   const { getProductByUid } = useProducts();
 
   const {
@@ -44,6 +45,7 @@ export default function Checkout({ products, userEmail }: Props) {
     isProcessing,
     error,
     canProceed,
+    isFormValid,
     actions,
     validateForm,
     validationTriggered,
@@ -96,6 +98,8 @@ export default function Checkout({ products, userEmail }: Props) {
   const displayCountry = isClient ? formData.country : "SI";
 
   const handleNextStep = () => {
+    validateForm("manual");
+    if (!isFormValid) return;
     setMobileStep(2);
     // Scroll to top on mobile when moving to step 2
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -132,10 +136,10 @@ export default function Checkout({ products, userEmail }: Props) {
                   <div className="pt-4">
                     Visit{" "}
                     <Link href={"/store"} className="link">
-                      our Endemit Store
+                      our Merch section
                     </Link>{" "}
-                    to select products for your purchase or view our trending
-                    items below.
+                    to select products for your purchase and support our
+                    non-profit work.
                   </div>
                 </div>
               </div>
@@ -146,6 +150,9 @@ export default function Checkout({ products, userEmail }: Props) {
                   errorMessages={errorMessages}
                   onFormChangeAction={actions.updateField}
                   onTicketFormChange={actions.updateTicketField}
+                  onIncrementItem={actions.incrementItem}
+                  onDecrementItem={actions.decrementItem}
+                  onRemoveItem={actions.removeItem}
                   requiresShippingAddress={requiresShippingAddress}
                   includesNonRefundable={includesNonRefundable}
                   showSubscribeToNewsletter={shouldShowNewsletter}
@@ -229,13 +236,29 @@ export default function Checkout({ products, userEmail }: Props) {
                 </div>
               )}
 
-              {showDonation && (
+              {showDonation && !donationDismissed && (
                 <CheckoutDonation
                   donationAmount={displayTotals.donationAmount}
                   roundedTotal={displayTotals.roundedTotal}
                   onAddDonation={handleAddDonation}
+                  onDismiss={() => setDonationDismissed(true)}
                 />
               )}
+              {/* Mobile: Show message when form becomes invalid */}
+              {!isFormValid && (
+                <div className="lg:hidden mb-4 p-3 bg-amber-900/30 border border-amber-700/40 rounded text-center">
+                  <p className="text-sm text-amber-200">
+                    Please go back to update ticket holder information.
+                  </p>
+                  <button
+                    onClick={handleBackStep}
+                    className="mt-2 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
+                  >
+                    ← Back to Information
+                  </button>
+                </div>
+              )}
+
               <CheckoutActions
                 errorMessages={errorMessages}
                 onCheckout={actions.checkout}
@@ -244,14 +267,16 @@ export default function Checkout({ products, userEmail }: Props) {
               />
 
               {/* Mobile: Back link to go to step 1 */}
-              <div className="lg:hidden mt-4 text-center">
-                <button
-                  onClick={handleBackStep}
-                  className="text-neutral-400 hover:text-white text-sm transition-colors"
-                >
-                  ← Back to Information
-                </button>
-              </div>
+              {isFormValid && (
+                <div className="lg:hidden mt-4 text-center">
+                  <button
+                    onClick={handleBackStep}
+                    className="text-neutral-400 hover:text-white text-sm transition-colors"
+                  >
+                    ← Back to Information
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>

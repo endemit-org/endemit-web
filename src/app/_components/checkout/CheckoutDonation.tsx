@@ -37,15 +37,36 @@ interface CheckoutDonationProps {
   donationAmount: number;
   roundedTotal: number;
   onAddDonation: (e: React.MouseEvent) => void;
+  onDismiss: () => void;
 }
 
 export default function CheckoutDonation({
   donationAmount,
   roundedTotal,
   onAddDonation,
+  onDismiss,
 }: CheckoutDonationProps) {
   return (
-    <div className="p-4 bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded mb-4 space-y-2 text-center">
+    <div className="relative p-4 bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded mb-4 space-y-2 text-center">
+      <button
+        onClick={onDismiss}
+        className="absolute top-2 right-2 p-1 text-neutral-400 hover:text-white transition-colors"
+        aria-label="Dismiss"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
       <h3 className={"text-xl text-neutral-200"}>
         Donations keep us running
         <RotatingEmoji />
