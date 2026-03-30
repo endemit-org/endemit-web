@@ -22,7 +22,7 @@ export default function ProfileEventsAttended({
   }
 
   return (
-    <div className="bg-neutral-800 rounded-lg overflow-hidden">
+    <div className="bg-neutral-900 rounded-lg overflow-hidden ">
       <div className="p-4 border-b border-neutral-700">
         <h3 className="text-lg font-semibold text-neutral-200">
           Events Attended
@@ -32,7 +32,7 @@ export default function ProfileEventsAttended({
         </p>
       </div>
 
-      <div className="py-4">
+      <div className="p-4">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map(event => (
             <EventMiniCard

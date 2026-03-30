@@ -34,7 +34,7 @@ export default function ProfileTable({
 }: ProfileTableProps) {
   if (isEmpty) {
     return (
-      <div className="bg-neutral-800 rounded-lg p-6">
+      <div className="bg-neutral-900 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-neutral-200">{title}</h3>
         </div>
@@ -59,7 +59,7 @@ export default function ProfileTable({
   }
 
   return (
-    <div className="bg-neutral-800 rounded-lg overflow-hidden">
+    <div className="bg-neutral-900 rounded-lg overflow-hidden p-2 max-sm:bg-neutral-800">
       <div className="flex items-center justify-between p-4 border-b border-neutral-700">
         <h3 className="text-lg font-semibold text-neutral-200">{title}</h3>
         {viewAllHref && count !== undefined && count > 5 ? (
@@ -108,7 +108,7 @@ export function ProfileTableRow({
       href={href}
       className={clsx(
         "p-4 flex items-center justify-between hover:bg-neutral-600/50 transition-colors block",
-        index % 2 === 0 ? "bg-neutral-800" : "bg-neutral-900/50"
+        index % 2 === 0 ? "bg-neutral-800" : "bg-neutral-700/50"
       )}
     >
       {children}
@@ -129,7 +129,7 @@ export function ProfileTableRowDiv({
     <div
       className={clsx(
         "p-4 flex items-center justify-between hover:bg-neutral-600/50 transition-colors",
-        index % 2 === 0 ? "bg-neutral-800" : "bg-neutral-900/50"
+        index % 2 === 0 ? "bg-neutral-800" : "bg-neutral-700/50"
       )}
     >
       {children}

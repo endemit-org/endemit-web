@@ -101,7 +101,7 @@ export default async function ProfilePage() {
         ]}
       />
 
-      <InnerPage className="overflow-visible">
+      <InnerPage className="overflow-visible max-sm:p-0 max-sm:bg-transparent">
         <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
           {/* Sidebar - fixed width on desktop, full width on mobile */}
           <div className="lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
@@ -115,7 +115,7 @@ export default async function ProfilePage() {
           </div>
 
           {/* Main content */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 max-sm:space-y-12">
             <ProfileTransactionsPreview
               userId={user.id}
               initialTransactions={recentTransactions}

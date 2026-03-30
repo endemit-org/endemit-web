@@ -39,19 +39,24 @@ export default function ProfileTicketsPreview({
 
         return (
           <ProfileTableRowDiv key={ticket.id} index={index}>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-neutral-200 font-medium truncate">
-                  {ticket.eventName} – {ticket.ticketHolderName}
-                </span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
-                >
-                  {ticket.status}
-                </span>
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <TicketOutlineIcon className="w-4 h-4 text-blue-400" />
               </div>
-              <div className="text-xs text-neutral-500 font-mono">
-                {ticket.shortId}
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-neutral-200 font-medium truncate">
+                    {ticket.eventName} – {ticket.ticketHolderName}
+                  </span>
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
+                  >
+                    {ticket.status}
+                  </span>
+                </div>
+                <div className="text-xs text-neutral-500 font-mono">
+                  {ticket.shortId}
+                </div>
               </div>
             </div>
             {isUsable && (
