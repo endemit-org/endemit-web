@@ -25,7 +25,7 @@ export default function Accordion({
   defaultOpenIndex,
   compact = false,
   autoExpandIndexOnView,
-  autoExpandDelay = 500,
+  autoExpandDelay = 1000,
 }: AccordionProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     defaultOpenIndex !== undefined ? [defaultOpenIndex] : []
