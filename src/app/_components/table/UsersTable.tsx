@@ -48,24 +48,7 @@ export default function UsersTable({
       key: "name",
       header: "Name",
       sortable: true,
-      render: user => (
-        <span className="text-sm">{user.name || "-"}</span>
-      ),
-    },
-    {
-      key: "status",
-      header: "Status",
-      sortable: true,
-      render: user => (
-        <span
-          className={clsx(
-            "rounded-full px-2 py-1 text-xs font-medium",
-            statusColors[user.status] || "bg-gray-100 text-gray-800"
-          )}
-        >
-          {user.status}
-        </span>
-      ),
+      render: user => <span className="text-sm">{user.name || "-"}</span>,
     },
     {
       key: "roles",

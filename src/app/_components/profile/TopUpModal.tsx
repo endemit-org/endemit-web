@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Product, ProductCategory } from "@/domain/product/types/product";
@@ -22,14 +22,22 @@ export default function TopUpModal({
 }: TopUpModalProps) {
   const router = useRouter();
   const { addItem, clearCart } = useCartActions();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Filter to only sellable currency products
-  const currencyProducts = products
-    .filter(p => p.category === ProductCategory.CURRENCIES)
-    .filter(p => isProductSellable(p).isSellable)
-    .sort((a, b) => a.price - b.price);
+  const currencyProducts = useMemo(
+    () =>
+      products
+        .filter(p => p.category === ProductCategory.CURRENCIES)
+        .filter(p => isProductSellable(p).isSellable)
+        .sort((a, b) => a.price - b.price),
+    [products]
+  );
+
+  // Preselect the second item (index 1) if available, otherwise first
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+    () => currencyProducts[1] ?? currencyProducts[0] ?? null
+  );
 
   const handleTopUp = async () => {
     if (!selectedProduct) return;
@@ -48,7 +56,8 @@ export default function TopUpModal({
   };
 
   const handleClose = () => {
-    setSelectedProduct(null);
+    // Reset to preselected item (second item or first)
+    setSelectedProduct(currencyProducts[1] ?? currencyProducts[0] ?? null);
     onClose();
   };
 

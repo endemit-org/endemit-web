@@ -2,23 +2,25 @@
 
 import { useState, useTransition } from "react";
 import type { PosItem, PosItemDirection, PosItemStatus } from "@prisma/client";
+import type { PosItemWithSalesCount } from "@/domain/pos/operations/getAllPosItems";
 import { createPosItemAction } from "@/domain/pos/actions/createPosItemAction";
 import { updatePosItemAction } from "@/domain/pos/actions/updatePosItemAction";
 
 interface Props {
-  initialItems: PosItem[];
+  initialItems: PosItemWithSalesCount[];
   canWrite: boolean;
 }
 
-function formatPrice(cents: number): string {
+function formatPrice(cents: number | undefined | null): string {
+  const value = cents ?? 0;
   return new Intl.NumberFormat("sl-SI", {
     style: "currency",
     currency: "EUR",
-  }).format(cents / 100);
+  }).format(value / 100);
 }
 
 export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState<PosItemWithSalesCount[]>(initialItems);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<PosItem | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -34,7 +36,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
     startTransition(async () => {
       const item = await createPosItemAction(input);
-      setItems(prev => [...prev, item]);
+      setItems(prev => [...prev, { ...item, soldLast30Days: 0, revenueLast30Days: 0 }]);
       setShowForm(false);
     });
   };
@@ -53,7 +55,13 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
     startTransition(async () => {
       const updated = await updatePosItemAction(input);
-      setItems(prev => prev.map(i => (i.id === updated.id ? updated : i)));
+      setItems(prev =>
+        prev.map(i =>
+          i.id === updated.id
+            ? { ...updated, soldLast30Days: i.soldLast30Days, revenueLast30Days: i.revenueLast30Days }
+            : i
+        )
+      );
       setEditingItem(null);
     });
   };
@@ -186,7 +194,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
         />
       )}
 
-      <div className="bg-white shadow overflow-hidden rounded-lg">
+      <div className="bg-white shadow rounded-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -201,6 +209,9 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Sold (30d)
               </th>
               {canWrite && (
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -247,6 +258,10 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                     {item.status}
                   </span>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <div className="text-gray-900">{item.soldLast30Days ?? 0} sold</div>
+                  <div className="text-gray-500">{formatPrice(item.revenueLast30Days ?? 0)}</div>
+                </td>
                 {canWrite && (
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <button
@@ -262,7 +277,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
             {items.length === 0 && (
               <tr>
                 <td
-                  colSpan={canWrite ? 5 : 4}
+                  colSpan={canWrite ? 6 : 5}
                   className="px-6 py-8 text-center text-gray-500"
                 >
                   No items found. Add your first item to get started.
