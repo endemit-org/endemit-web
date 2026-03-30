@@ -76,6 +76,7 @@ export type ProductRelatedEvent = {
   venueAddress: string;
   venueLogo: string;
   date: string;
+  hasCashlessPayments: boolean;
 };
 
 export interface Product {
@@ -123,6 +124,8 @@ export interface Product {
   }> | null;
   relatedEvent: ProductRelatedEvent | null;
   ticketQuantity: number | null;
+  ticketTemplate: string | null;
+  walletTopupReward: number | null;
   specialNotice: string;
   displaySlicePosition: "Above description" | "Below description";
   checkoutDescription: string;

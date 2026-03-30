@@ -1,4 +1,5 @@
 import {
+  isProductCurrency,
   isProductDonation,
   isProductExcludedFromRefunds,
   isProductShippable,
@@ -26,8 +27,45 @@ export const includesDonationProduct = (cartItems: CartItem[]) => {
 export const includesTicketProducts = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductTicket(item));
 };
+export const includesCurrencyProduct = (cartItems: CartItem[]) => {
+  return cartItems.some(item => isProductCurrency(item));
+};
+export const isOnlyCurrencyProducts = (cartItems: CartItem[]) => {
+  return cartItems.length > 0 && cartItems.every(item => isProductCurrency(item));
+};
 export const hasMinimumCheckoutValue = (total: number) => {
   return total >= 2;
+};
+
+export const MINIMUM_CARD_PAYMENT_CENTS = 100; // 1 EUR minimum for card payments
+
+export const getMaxWalletCredit = (
+  totalCents: number,
+  walletBalanceCents: number
+): number => {
+  // If wallet can cover the full amount, allow 100% wallet payment
+  if (walletBalanceCents >= totalCents) {
+    return totalCents;
+  }
+  // If partial payment, ensure minimum card payment of 1 EUR
+  if (totalCents <= MINIMUM_CARD_PAYMENT_CENTS) {
+    return 0; // Can't use wallet if total is already at minimum
+  }
+  const maxUsable = totalCents - MINIMUM_CARD_PAYMENT_CENTS;
+  return Math.min(walletBalanceCents, maxUsable);
+};
+
+export const isValidWalletCreditAmount = (
+  walletCreditCents: number,
+  totalCents: number,
+  walletBalanceCents: number
+): boolean => {
+  if (walletCreditCents <= 0) return true; // Not using wallet is always valid
+  if (walletCreditCents > walletBalanceCents) return false; // Can't use more than balance
+  if (walletCreditCents > totalCents) return false; // Can't use more than total
+  const remainingCents = totalCents - walletCreditCents;
+  // Allow full wallet payment (remaining = 0) or minimum card payment
+  return remainingCents === 0 || remainingCents >= MINIMUM_CARD_PAYMENT_CENTS;
 };
 
 export const canProceedToCheckout = (

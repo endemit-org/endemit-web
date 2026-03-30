@@ -5,8 +5,9 @@ import path from "path";
 import sharp from "sharp";
 import satori from "satori";
 import fs from "fs";
-import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import type { ReactElement } from "react";
+import type { TicketTemplate } from "../../types/ticketTemplate";
+import { getTemplateById, DEFAULT_TEMPLATE } from "../../config/ticketTemplates";
 
 interface TicketData {
   shortId: string;
@@ -20,6 +21,7 @@ interface TicketData {
   artists: string[];
   price: string;
   coverImageUrl: string;
+  template?: string; // Template name - resolved by getTemplateById, defaults to "default"
 }
 
 interface TicketConfig {
@@ -40,46 +42,58 @@ const DEFAULT_CONFIG: TicketConfig = {
   coverImageSize: 400,
 };
 
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 255, g: 255, b: 255 };
+}
+
 export const generateTicketImage = async (
   ticketData: TicketData,
   config: Partial<TicketConfig> = {}
 ): Promise<string> => {
   const cfg = { ...DEFAULT_CONFIG, ...config };
+  const template = ticketData.template
+    ? getTemplateById(ticketData.template)
+    : DEFAULT_TEMPLATE;
+  const scheme = template.colorScheme;
+  const bgColor = hexToRgb(scheme.background);
 
-  const qrBuffer = await createQRCode(ticketData.qrData, cfg);
+  const qrBuffer = await createQRCode(ticketData.qrData, cfg, template);
   const coverImageBuffer = await fetchAndResizeImage(
     ticketData.coverImageUrl,
     cfg.coverImageSize
   );
-  const logoBuffer = await loadLogo(cfg.logoSize);
-  const endemitLogoBuffer = await fetchAndResizeImage(
-    `${PUBLIC_BASE_WEB_URL}/images/endemit.png`,
-    200,
-    "contain"
-  );
+  const logoBuffer = await loadLogo(cfg.logoSize, template.invertLogo);
+  const endemitLogoBuffer = await loadEndemitLogo(200, template.invertLogo);
 
   const qrMetadata = await sharp(qrBuffer).metadata();
   const qrWidth = qrMetadata.width || 420;
   const qrHeight = qrMetadata.height || 420;
 
   const layout = calculateLayout(cfg, qrWidth, qrHeight);
-  const textSvg = await createTextOverlay(ticketData, cfg, layout);
-  const blackSquare = await createBlackSquare(650, 900);
+  const textSvg = await createTextOverlay(ticketData, cfg, layout, template);
+  const infoSquare = await createColoredSquare(650, 900, scheme.text);
 
   const ticketBuffer = await sharp({
     create: {
       width: cfg.canvasWidth,
       height: cfg.canvasHeight,
       channels: 4,
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
+      background: { r: bgColor.r, g: bgColor.g, b: bgColor.b, alpha: 1 },
     },
   })
     .composite([
-      createBorder(cfg),
+      createBorder(cfg, scheme.border),
       { input: qrBuffer, top: layout.qrTop, left: layout.qrLeft },
       { input: logoBuffer, top: 10, left: 10 },
       { input: logoBuffer, top: 1855, left: 1015 },
-      { input: blackSquare, top: 1100, left: layout.blackSquareLeft },
+      { input: infoSquare, top: 1100, left: layout.blackSquareLeft },
       {
         input: coverImageBuffer,
         top: layout.coverTop,
@@ -96,21 +110,25 @@ export const generateTicketImage = async (
 
 async function createQRCode(
   hashId: string,
-  cfg: TicketConfig
+  cfg: TicketConfig,
+  template: TicketTemplate
 ): Promise<Buffer> {
+  const scheme = template.colorScheme;
+
   const qrCodeDataUrl = await QRCode.toDataURL(hashId, {
     errorCorrectionLevel: "H",
     margin: 4,
     width: cfg.qrSize,
-    color: { dark: "#000000", light: "#ffffff" },
+    color: { dark: scheme.qrDark, light: scheme.qrLight },
   });
 
-  const logoBuffer = await loadLogo(cfg.logoSize);
+  const logoBuffer = await loadLogo(cfg.logoSize, template.invertLogo);
+  const qrLightRgb = hexToRgb(scheme.qrLight);
 
   const whitePadding = await sharp(
     Buffer.from(`
       <svg width="80" height="80">
-        <rect x="0" y="0" width="80" height="80" fill="white" fill-opacity="1" />
+        <rect x="0" y="0" width="80" height="80" fill="${scheme.qrLight}" fill-opacity="1" />
       </svg>`)
   )
     .composite([{ input: logoBuffer, gravity: "center" }])
@@ -124,23 +142,44 @@ async function createQRCode(
       bottom: 10,
       left: 10,
       right: 10,
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
+      background: { r: qrLightRgb.r, g: qrLightRgb.g, b: qrLightRgb.b, alpha: 1 },
     })
     .png()
     .toBuffer();
 }
 
-async function loadLogo(size: number): Promise<Buffer> {
-  const logoPath = path.join(
-    process.cwd(),
-    "public",
-    "images",
-    "endemit-logo.png"
-  );
-  return await sharp(logoPath)
+async function loadLogo(size: number, invertLogo: boolean = false): Promise<Buffer> {
+  const logoFile = invertLogo ? "endemit-logo-light.png" : "endemit-logo.png";
+  const logoPath = path.join(process.cwd(), "public", "images", logoFile);
+
+  // Fallback to regular logo if light version doesn't exist
+  const finalPath = fs.existsSync(logoPath)
+    ? logoPath
+    : path.join(process.cwd(), "public", "images", "endemit-logo.png");
+
+  return await sharp(finalPath)
     .resize(size, size, {
       fit: "inside",
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
+      background: { r: 255, g: 255, b: 255, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+}
+
+async function loadEndemitLogo(size: number, invertLogo: boolean = false): Promise<Buffer> {
+  const logoFile = invertLogo ? "endemit-light.png" : "endemit.png";
+  const logoPath = path.join(process.cwd(), "public", "images", logoFile);
+
+  // Fallback to regular logo if light version doesn't exist
+  const finalPath = fs.existsSync(logoPath)
+    ? logoPath
+    : path.join(process.cwd(), "public", "images", "endemit.png");
+
+  return await sharp(finalPath)
+    .resize(size, size, {
+      fit: "contain",
+      position: "center",
+      background: { r: 255, g: 255, b: 255, alpha: 0 },
     })
     .png()
     .toBuffer();
@@ -165,23 +204,25 @@ async function fetchAndResizeImage(
     .toBuffer();
 }
 
-async function createBlackSquare(
+async function createColoredSquare(
   width: number,
-  height: number
+  height: number,
+  color: string
 ): Promise<Buffer> {
+  const rgb = hexToRgb(color);
   return await sharp({
     create: {
       width,
       height,
       channels: 4,
-      background: { r: 0, g: 0, b: 0, alpha: 1 },
+      background: { r: rgb.r, g: rgb.g, b: rgb.b, alpha: 1 },
     },
   })
     .png()
     .toBuffer();
 }
 
-function createBorder(cfg: TicketConfig) {
+function createBorder(cfg: TicketConfig, borderColor: string) {
   return {
     input: Buffer.from(`
       <svg width="${cfg.canvasWidth}" height="${cfg.canvasHeight}">
@@ -191,7 +232,7 @@ function createBorder(cfg: TicketConfig) {
           width="${cfg.canvasWidth - cfg.borderWidth - 20}"
           height="${cfg.canvasHeight - cfg.borderWidth - 20}"
           fill="none"
-          stroke="black"
+          stroke="${borderColor}"
           stroke-width="${cfg.borderWidth}"
         />
       </svg>
@@ -221,16 +262,83 @@ function calculateLayout(cfg: TicketConfig, qrWidth: number, qrHeight: number) {
 async function createTextOverlay(
   data: TicketData,
   cfg: TicketConfig,
-  layout: ReturnType<typeof calculateLayout>
+  layout: ReturnType<typeof calculateLayout>,
+  template: TicketTemplate
 ): Promise<string> {
   const fontRegular = fs.readFileSync(
     path.join(process.cwd(), "public", "fonts", "DIN_Condensed_Bold.ttf")
   );
 
+  const scheme = template.colorScheme;
+  const textContent = template.textContent;
+
   const eventInfo =
     `${data.eventName} · ${data.eventDate} · ${data.eventDetails}`.toUpperCase();
   const firstPart = data.hashId.slice(0, 64).toUpperCase();
   const secondPart = data.hashId.slice(64).toUpperCase();
+
+  // Build price/label section based on template
+  const priceSectionChildren: ReactElement[] = [];
+
+  if (textContent.priceLabel) {
+    // Custom label (e.g., "VIP PASS")
+    priceSectionChildren.push({
+      type: "div",
+      props: {
+        style: {
+          position: "absolute",
+          top: 1765,
+          left: layout.centerX,
+          transform: "translateX(-50%) translateY(-100%)",
+          fontSize: 80,
+          fontWeight: "bolder",
+          color: scheme.accent,
+          whiteSpace: "nowrap",
+        },
+        children: textContent.priceLabel,
+      },
+    } as ReactElement);
+
+    // Optional tagline (e.g., "NOT FOR SALE")
+    if (textContent.tagline) {
+      priceSectionChildren.push({
+        type: "div",
+        props: {
+          style: {
+            position: "absolute",
+            top: 1805,
+            left: layout.centerX,
+            transform: "translateX(-50%) translateY(-100%)",
+            fontSize: 36,
+            color: scheme.textSecondary,
+            whiteSpace: "nowrap",
+          },
+          children: textContent.tagline,
+        },
+      } as ReactElement);
+    }
+  } else {
+    // Standard price display
+    priceSectionChildren.push({
+      type: "div",
+      props: {
+        style: {
+          position: "absolute",
+          top: 1785,
+          left: layout.centerX,
+          transform: "translateX(-50%) translateY(-100%)",
+          fontSize: 80,
+          fontWeight: "bolder",
+          color: scheme.accent,
+          whiteSpace: "nowrap",
+        },
+        children: data.price,
+      },
+    } as ReactElement);
+  }
+
+  // Determine text color for info box (inverted from the info box background)
+  const infoTextColor = scheme.background;
 
   const element: ReactElement = {
     type: "div",
@@ -243,6 +351,7 @@ async function createTextOverlay(
         fontFamily: "DIN",
       },
       children: [
+        // Header: TICKET ID
         {
           type: "div",
           props: {
@@ -253,12 +362,13 @@ async function createTextOverlay(
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 105,
               fontWeight: "bold",
-              color: "black",
+              color: scheme.text,
               whiteSpace: "nowrap",
             },
             children: `TICKET ${data.shortId}`,
           },
         },
+        // Left side event info (rotated)
         {
           type: "div",
           props: {
@@ -269,13 +379,14 @@ async function createTextOverlay(
               transform: `rotate(-90deg)`,
               transformOrigin: "left top",
               fontSize: 40,
-              color: "black",
+              color: scheme.text,
               letterSpacing: "1px",
               whiteSpace: "nowrap",
             },
             children: eventInfo,
           },
         },
+        // Left side hash (rotated)
         {
           type: "div",
           props: {
@@ -286,7 +397,7 @@ async function createTextOverlay(
               transform: `rotate(-90deg)`,
               transformOrigin: "left top",
               fontSize: 30,
-              color: "#AAAAAA",
+              color: scheme.textSecondary,
               letterSpacing: "10px",
               fontWeight: "lighter",
               whiteSpace: "nowrap",
@@ -294,6 +405,7 @@ async function createTextOverlay(
             children: firstPart,
           },
         },
+        // Right side event info (rotated)
         {
           type: "div",
           props: {
@@ -304,13 +416,14 @@ async function createTextOverlay(
               transform: `rotate(90deg)`,
               transformOrigin: "right top",
               fontSize: 40,
-              color: "black",
+              color: scheme.text,
               letterSpacing: "1px",
               whiteSpace: "nowrap",
             },
             children: eventInfo,
           },
         },
+        // Right side hash (rotated)
         {
           type: "div",
           props: {
@@ -321,7 +434,7 @@ async function createTextOverlay(
               transform: `rotate(90deg)`,
               transformOrigin: "right bottom",
               fontSize: 30,
-              color: "#AAAAAA",
+              color: scheme.textSecondary,
               letterSpacing: "10px",
               fontWeight: "lighter",
               whiteSpace: "nowrap",
@@ -329,6 +442,7 @@ async function createTextOverlay(
             children: secondPart,
           },
         },
+        // Legal text
         {
           type: "div",
           props: {
@@ -338,12 +452,13 @@ async function createTextOverlay(
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 26,
-              color: "white",
+              color: infoTextColor,
               whiteSpace: "nowrap",
             },
-            children: "Ticket admits one person. Ticket is non-refundable.",
+            children: textContent.legalText,
           },
         },
+        // Attendee name
         {
           type: "div",
           props: {
@@ -354,12 +469,13 @@ async function createTextOverlay(
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 46,
               fontWeight: "bold",
-              color: "white",
+              color: infoTextColor,
               whiteSpace: "nowrap",
             },
             children: data.attendeeName.toUpperCase(),
           },
         },
+        // Attendee email
         {
           type: "div",
           props: {
@@ -369,12 +485,13 @@ async function createTextOverlay(
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 26,
-              color: "white",
+              color: infoTextColor,
               whiteSpace: "nowrap",
             },
             children: data.attendeeEmail,
           },
         },
+        // Artists
         ...data.artists.map((artist, i) => ({
           type: "div",
           props: {
@@ -384,28 +501,14 @@ async function createTextOverlay(
               left: layout.centerX,
               transform: "translateX(-50%) translateY(-100%)",
               fontSize: 30,
-              color: "white",
+              color: infoTextColor,
               whiteSpace: "nowrap",
             },
             children: artist.toUpperCase(),
           },
         })),
-        {
-          type: "div",
-          props: {
-            style: {
-              position: "absolute",
-              top: 1785,
-              left: layout.centerX,
-              transform: "translateX(-50%) translateY(-100%)",
-              fontSize: 80,
-              fontWeight: "bolder",
-              color: "#222222",
-              whiteSpace: "nowrap",
-            },
-            children: data.price,
-          },
-        },
+        // Price section (either price or VIP PASS + tagline)
+        ...priceSectionChildren,
       ],
     },
   } as ReactElement;

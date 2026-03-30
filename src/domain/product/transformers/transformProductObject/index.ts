@@ -111,9 +111,19 @@ export const transformProductObject = async (product: ProductDocument) => {
             venueAddress: relatedEvent.data.venue_address,
             venueLogo: asLink(relatedEvent.data?.venue_logo),
             date: relatedEvent.data.date_start,
+            hasCashlessPayments:
+              (relatedEvent.data as { has_cashless_payments?: boolean })
+                .has_cashless_payments ?? false,
           }
         : null,
     ticketQuantity: product.data.ticket_quantity ?? null,
+    // ticket_template field requires Prismic sync - use type assertion until types are regenerated
+    ticketTemplate:
+      (product.data as { ticket_template?: string }).ticket_template || null,
+    // wallet_topup_reward field requires Prismic sync - use type assertion until types are regenerated
+    walletTopupReward:
+      (product.data as { wallet_topup_reward?: number }).wallet_topup_reward ??
+      null,
     specialNotice: product.data.special_notice,
     checkoutDescription: product.data.checkout_description,
     slices: product.data.slices,

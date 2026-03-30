@@ -1,13 +1,8 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
-import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
-import { LogoutButton } from "@/app/_components/auth/LogoutButton";
-import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
-import {
-  ContextMenu,
-  ContextMenuDivider,
-  ContextMenuLabel,
-} from "@/app/_components/ui/ContextMenu";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import AdminSidebar from "@/app/_components/admin/AdminSidebar";
+import AdminHeader from "@/app/_components/admin/AdminHeader";
 
 export default async function AdminLayout({
   children,
@@ -21,10 +16,8 @@ export default async function AdminLayout({
     redirect("/auth/sign-in");
   }
 
-  // Check if user has admin or moderator role
-  const hasAdminAccess = user.roles.some(
-    role => role === ROLE_SLUGS.ADMIN || role === ROLE_SLUGS.MODERATOR
-  );
+  // Check if user has admin access permission
+  const hasAdminAccess = user.permissions.includes(PERMISSIONS.ADMIN_ACCESS);
 
   if (!hasAdminAccess) {
     // Redirect to unauthorized page or home
@@ -32,56 +25,19 @@ export default async function AdminLayout({
   }
 
   return (
-    <>
-      <nav className="bg-white shadow-sm sticky top-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-black w-24 lg:w-32">
-                  <AnimatedEndemitLogo />
-                </h1>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <ContextMenu
-                trigger={
-                  <button className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none">
-                    <span>{user.name || user.email}</span>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                }
-              >
-                <ContextMenuLabel>
-                  <div className="font-medium">{user.name || user.email}</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {user.roles.join(", ")}
-                  </div>
-                </ContextMenuLabel>
-                <ContextMenuDivider />
-                <ContextMenuLabel>
-                  <LogoutButton />
-                </ContextMenuLabel>
-              </ContextMenu>
-            </div>
-          </div>
-        </div>
-      </nav>
-      <main className="py-10 p-4 lg:p-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">{children}</div>
-      </main>
-    </>
+    <div className="flex min-h-screen bg-gray-100">
+      <AdminSidebar permissions={user.permissions} />
+      <div className="flex-1 flex flex-col min-w-0">
+        <AdminHeader
+          userName={user.name}
+          userEmail={user.email}
+          userRoles={user.roles}
+          userPermissions={user.permissions}
+        />
+        <main className="flex-1 py-6 px-4 lg:px-8 overflow-x-auto">
+          <div className="max-w-7xl mx-auto">{children}</div>
+        </main>
+      </div>
+    </div>
   );
 }

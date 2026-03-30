@@ -91,6 +91,9 @@ export const runTicketIssueAutomation = inngest.createFunction(
           throw new Error("Missing parameters for ticket image generation");
         }
 
+        // Extract template from metadata if provided by product
+        const templateId = metadata?.ticketTemplate as string | undefined;
+
         const image = await generateTicketImage({
           shortId: issuedTicket.shortId,
           hashId: ticketBaseData.ticketHash,
@@ -105,6 +108,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
           ),
           price: formatPrice(Number(issuedTicket.price)),
           coverImageUrl: event.promoImage.src,
+          template: templateId,
         });
 
         if (!image) {
@@ -126,6 +130,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
         const result = await sendTicketEmail(
           {
             id: issuedTicket.id,
+            shortId: issuedTicket.shortId,
             eventName: issuedTicket.eventName,
             ticketHolderName: issuedTicket.ticketHolderName,
             ticketPayerEmail: issuedTicket.ticketPayerEmail,

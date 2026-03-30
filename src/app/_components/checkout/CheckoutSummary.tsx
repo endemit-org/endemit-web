@@ -10,6 +10,7 @@ interface Props {
   subTotal: number;
   shippingCost: number;
   total: number;
+  walletCreditEur?: number;
   orderWeight: number;
   discountObject?: DiscountDetails;
   discountAmount: number;
@@ -45,16 +46,21 @@ export default function CheckoutSummary({
   discountObject,
   discountAmount,
   total,
+  walletCreditEur,
   orderWeight,
   country,
   loadingShippingCost,
   loadingPromoCode,
 }: Props) {
   const destinationCountry = getCountry(country);
+  const showWalletCredit = walletCreditEur && walletCreditEur > 0;
+  const showSubtotal = subTotal !== total;
 
   return (
-    <div className="text-md text-neutral-200 space-y-4 py-4">
-      <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
+    <div className="text-md text-neutral-200 space-y-4 pt-4">
+      {showSubtotal && (
+        <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
+      )}
 
       {shippingCost > 0 && (
         <LineItem label={"Shipping:"}>
@@ -94,6 +100,12 @@ export default function CheckoutSummary({
           )}
         </LineItem>
       )}
+
+      {showWalletCredit ? (
+        <LineItem label={"Wallet Credit:"} className="text-blue-400">
+          <span>-{formatDecimalPrice(walletCreditEur)}</span>
+        </LineItem>
+      ) : null}
 
       <LineItem label={"Total:"} className={"text-2xl"}>
         {loadingPromoCode || loadingShippingCost ? (

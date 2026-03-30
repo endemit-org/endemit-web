@@ -1,0 +1,74 @@
+import "server-only";
+
+import { prisma } from "@/lib/services/prisma";
+import { prismicClient } from "@/lib/services/prismic";
+import { serializeTicket } from "@/domain/ticket/util";
+import type { SerializedTicket } from "@/domain/ticket/types/ticket";
+import type { EventDocument } from "@/prismicio-types";
+
+interface GetTicketsByUserIdOptions {
+  upcomingOnly?: boolean;
+  pastOnly?: boolean;
+}
+
+export const getTicketsByUserId = async (
+  userId: string,
+  options: GetTicketsByUserIdOptions = {}
+): Promise<SerializedTicket[]> => {
+  const { upcomingOnly = false, pastOnly = false } = options;
+
+  const tickets = await prisma.ticket.findMany({
+    where: {
+      order: {
+        userId,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  if ((!upcomingOnly && !pastOnly) || tickets.length === 0) {
+    return tickets.map(ticket => serializeTicket(ticket));
+  }
+
+  // Get unique event IDs
+  const eventIds = [...new Set(tickets.map(t => t.eventId))];
+
+  // Fetch events from CMS to get their dates
+  const events = await prismicClient
+    .getByIDs<EventDocument>(eventIds)
+    .catch(() => ({ results: [] }));
+
+  // Build map of event ID -> end date (or start date if no end)
+  const now = new Date();
+
+  const eventDateMap = new Map<string, Date | null>();
+  for (const event of events.results) {
+    const endDate = event.data.date_end
+      ? new Date(event.data.date_end)
+      : event.data.date_start
+        ? new Date(event.data.date_start)
+        : null;
+    eventDateMap.set(event.id, endDate);
+  }
+
+  // Filter tickets based on event date
+  const filteredTickets = tickets.filter(ticket => {
+    const eventDate = eventDateMap.get(ticket.eventId);
+
+    if (upcomingOnly) {
+      // Include if event hasn't ended yet (or no date = include it)
+      return !eventDate || eventDate >= now;
+    }
+
+    if (pastOnly) {
+      // Include if event has ended (exclude if no date)
+      return eventDate && eventDate < now;
+    }
+
+    return true;
+  });
+
+  return filteredTickets.map(ticket => serializeTicket(ticket));
+};

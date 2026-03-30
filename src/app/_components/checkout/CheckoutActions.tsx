@@ -29,6 +29,7 @@ export default function CheckoutActions({
       <ActionButton
         onClick={canProceed ? onCheckout : undefined}
         disabled={!canProceed}
+        variant="success"
         className={clsx(
           canProceed && "animate-rave-125bmp-delay hover:[animation:none]"
         )}

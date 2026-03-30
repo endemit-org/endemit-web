@@ -2,6 +2,9 @@ import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
+import { getCurrentUser } from "@/lib/services/auth";
+import SessionGuard from "@/app/_components/auth/SessionGuard";
+import UserIcon from "@/app/_components/icon/UserIcon";
 
 export default async function ContentPageLayout({
   children,
@@ -9,19 +12,41 @@ export default async function ContentPageLayout({
   children: React.ReactNode;
 }>) {
   const menuItems = await fetchNavigationMenuFromCms();
+  const user = await getCurrentUser();
 
   return (
     <>
       <div className="max-w-8xl m-auto">
         {menuItems && (
           <Sidebar
-            navigationItems={menuItems.items.map(item => ({
-              label: item.label,
-              href: item.link,
-              type: item.linkType,
-              ctaText: item.ctaText,
-            }))}
+            navigationItems={[
+              ...(user
+                ? [
+                    {
+                      label: "My Profile",
+                      href: "/profile",
+                      type: "secondary" as const,
+                      icon: <UserIcon className="w-5 h-5" />,
+                    },
+                  ]
+                : []),
+              ...menuItems.items.map(item => ({
+                label: item.label,
+                href: item.link,
+                type: item.linkType,
+                ctaText: item.ctaText,
+              })),
+            ]}
             hideCartOnPath={["/store/checkout"]}
+            user={
+              user
+                ? {
+                    name: user.name,
+                    email: user.email || null,
+                    roles: user.roles,
+                  }
+                : null
+            }
           />
         )}
 
@@ -42,6 +67,7 @@ export default async function ContentPageLayout({
         </div>
       </div>
       <PersistentPlayer />
+      <SessionGuard hasUser={!!user} />
     </>
   );
 }

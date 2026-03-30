@@ -9,6 +9,15 @@ export const formatPrice = (price: number, decimals: number = 0) => {
 
 export const formatDecimalPrice = (price: number) => formatPrice(price, 0);
 
+export const formatCurrency = (amount: number) => {
+  return amount.toLocaleString("sl-SI", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 export const formatNumber = (number: number, decimals: number = 0) => {
   return number.toLocaleString("sl-SI", {
     style: "decimal",
@@ -99,4 +108,13 @@ export const formatDayName = (date: Date) => {
     weekday: "long",
     timeZone: "Europe/Ljubljana",
   });
+};
+
+export const sanitizeForFilename = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/gi, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 50);
 };

@@ -1,0 +1,23 @@
+"use server";
+
+import assert from "node:assert";
+import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import { removeRoleFromUser } from "@/domain/auth/operations/removeRoleFromUser";
+import type { RoleSlug } from "@/domain/auth/config/roles.config";
+
+export async function removeRoleAction(
+  userId: string,
+  roleSlug: RoleSlug
+): Promise<{ success: boolean }> {
+  const user = await getCurrentUser();
+  assert(user, "User not authenticated");
+  assert(
+    user.permissions.includes(PERMISSIONS.USERS_MANAGE_ROLES),
+    "User not authorized to manage user roles"
+  );
+
+  await removeRoleFromUser(userId, roleSlug);
+
+  return { success: true };
+}

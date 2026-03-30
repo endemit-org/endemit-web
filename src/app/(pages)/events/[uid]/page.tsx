@@ -171,7 +171,7 @@ export default async function EventPage({
         ></div>
         <div
           className={
-            "absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
+            "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
           }
           style={
             event.coverImage
@@ -205,7 +205,7 @@ export default async function EventPage({
                   href={event.artAuthor.link}
                   target={"_blank"}
                   className={
-                    "absolute  left-0 bottom-0 hover:bg-neutral-900 bg-neutral-900/60 py-1 px-1 text-xs text-neutral-600"
+                    "absolute left-0 bottom-0 hover:bg-neutral-900 bg-neutral-900/60 py-1 px-1 text-xs text-neutral-600 backdrop-blur-sm"
                   }
                 >
                   Author: {event.artAuthor.text}
@@ -283,7 +283,7 @@ export default async function EventPage({
           </div>
         </div>
         {!isPastEvent && event.tickets.shouldSellTickets ? (
-          <div className={"lg:hidden mb-16 z-50 relative"}>
+          <div className={"lg:hidden mb-16 z-10 relative"}>
             <ActionButton
               href={"#tickets"}
               variant="secondary"

@@ -24,6 +24,9 @@ interface CheckoutFormProps {
   >;
   onFormChangeAction: (name: string, value: string | boolean) => void;
   onTicketFormChange: (name: string, value: string) => void;
+  onIncrementItem: (productId: string) => void;
+  onDecrementItem: (productId: string) => void;
+  onRemoveItem: (productId: string) => void;
   requiresShippingAddress: boolean;
   includesNonRefundable: boolean;
   showSubscribeToNewsletter: boolean;
@@ -31,6 +34,7 @@ interface CheckoutFormProps {
   submitForm: () => void;
   items: CartItem[];
   validationTriggered: boolean;
+  userEmail?: string;
 }
 
 function CheckoutFormSection({
@@ -61,12 +65,16 @@ export default function CheckoutCustomerForm({
   errorMessages,
   onFormChangeAction,
   onTicketFormChange,
+  onIncrementItem,
+  onDecrementItem,
+  onRemoveItem,
   requiresShippingAddress,
   includesNonRefundable,
   showSubscribeToNewsletter,
   validateForm,
   validationTriggered,
   submitForm,
+  userEmail,
 }: CheckoutFormProps) {
   const destinationCountry = getCountry(formData.country);
   const includesTickets = includesTicketProducts(items);
@@ -84,7 +92,9 @@ export default function CheckoutCustomerForm({
     <div className="gap-y-8 flex flex-col">
       <CheckoutFormSection
         title={"Your contact information"}
-        description={`Ensure your email is correct as this is where you will receive your order
+        description={userEmail
+          ? "You are signed in. Your email will be used for this order."
+          : `Ensure your email is correct as this is where you will receive your order
           confirmation${includesTickets ? " and digital tickets" : ""}.`}
       >
         <Input
@@ -92,25 +102,28 @@ export default function CheckoutCustomerForm({
           label="E-mail"
           type="email"
           placeholder="jane@endemit.org"
-          value={formData.email}
+          value={userEmail || formData.email}
           onChangeAction={onFormChangeAction}
           onEnter={handleOnEnter}
-          errorMessage={errorMessages.email as string}
+          errorMessage={userEmail ? undefined : errorMessages.email as string}
           required={true}
           validationTriggered={validationTriggered}
+          disabled={!!userEmail}
         />
-        <Input
-          name="emailRepeat"
-          label="Repeat e-mail"
-          type="email"
-          placeholder="jane@endemit.org"
-          value={formData.emailRepeat}
-          onChangeAction={onFormChangeAction}
-          onEnter={handleOnEnter}
-          errorMessage={errorMessages.emailRepeat as string}
-          required={true}
-          validationTriggered={validationTriggered}
-        />
+        {!userEmail && (
+          <Input
+            name="emailRepeat"
+            label="Repeat e-mail"
+            type="email"
+            placeholder="jane@endemit.org"
+            value={formData.emailRepeat}
+            onChangeAction={onFormChangeAction}
+            onEnter={handleOnEnter}
+            errorMessage={errorMessages.emailRepeat as string}
+            required={true}
+            validationTriggered={validationTriggered}
+          />
+        )}
       </CheckoutFormSection>
 
       {includesTickets && ticketItems.length > 0 && (
@@ -122,7 +135,39 @@ export default function CheckoutCustomerForm({
             const ticketQuantity = getTicketQuantityForProduct(item);
             const totalSlots = item.quantity * ticketQuantity;
             return (
-              <div key={`ticket-data-${item.id}}`}>
+              <div key={`ticket-data-${item.id}}`} className="mb-4">
+                <div className="flex items-center justify-between mb-2 pb-2 border-b border-neutral-700">
+                  <span className="text-sm text-neutral-300">{item.name}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onDecrementItem(item.id)}
+                      className="w-7 h-7 flex items-center justify-center rounded bg-neutral-700 hover:bg-neutral-600 text-neutral-200 transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className="text-sm text-neutral-200 w-6 text-center">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onIncrementItem(item.id)}
+                      className="w-7 h-7 flex items-center justify-center rounded bg-neutral-700 hover:bg-neutral-600 text-neutral-200 transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onRemoveItem(item.id)}
+                      className="ml-2 text-neutral-500 hover:text-red-400 text-sm transition-colors"
+                      aria-label="Remove ticket"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
                 {new Array(totalSlots).fill(0).map((_, index) => (
                   <CheckoutTicketForm
                     key={`${item.id}-${index}`}
