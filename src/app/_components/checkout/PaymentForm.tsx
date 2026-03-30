@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   PaymentElement,
   useStripe,
@@ -34,6 +35,7 @@ export default function PaymentForm({
   canProceed,
   onConfirmPayment,
 }: PaymentFormProps) {
+  const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();
   const [isReady, setIsReady] = useState(false);
@@ -69,15 +71,16 @@ export default function PaymentForm({
 
     // Step 2: Confirm payment with Stripe
     // Use paymentIntentId in URL to avoid race condition with webhook
-    const { error } = await stripe.confirmPayment({
+    // redirect: 'if_required' allows client-side navigation for simple payments
+    // while still supporting 3D Secure redirects when needed
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: `${PUBLIC_BASE_WEB_URL}/store/checkout/success/${result.paymentIntentId}`,
       },
+      redirect: "if_required",
     });
 
-    // This point is only reached if there's an immediate error
-    // (e.g., card declined). Otherwise, the customer is redirected.
     if (error) {
       if (error.type === "card_error" || error.type === "validation_error") {
         onError(error.message || "An error occurred with your payment.");
@@ -85,7 +88,11 @@ export default function PaymentForm({
         onError("An unexpected error occurred. Please try again.");
       }
       onProcessingChange(false);
+    } else if (paymentIntent?.status === "succeeded") {
+      // Payment succeeded without redirect, use client-side navigation
+      router.push(`/store/checkout/success/${result.paymentIntentId}`);
     }
+    // If redirect was required (3D Secure), user will be redirected via return_url
   };
 
   const isDisabled =

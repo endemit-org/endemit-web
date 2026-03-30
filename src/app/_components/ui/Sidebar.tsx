@@ -20,6 +20,7 @@ interface NavigationItem {
   onClick?: () => void;
   isBackButton?: boolean;
   isActive?: (pathname: string) => boolean;
+  icon?: React.ReactNode;
 }
 
 interface SocialLink {
@@ -212,6 +213,11 @@ export default function Sidebar({
                     }
                   >
                     {item.ctaText}
+                  </span>
+                )}
+                {item.icon && (
+                  <span className="inline-block mr-2 align-middle">
+                    {item.icon}
                   </span>
                 )}
                 {item.label}

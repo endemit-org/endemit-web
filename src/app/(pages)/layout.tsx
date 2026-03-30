@@ -4,6 +4,7 @@ import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigat
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import { getCurrentUser } from "@/lib/services/auth";
 import SessionGuard from "@/app/_components/auth/SessionGuard";
+import UserIcon from "@/app/_components/icon/UserIcon";
 
 export default async function ContentPageLayout({
   children,
@@ -25,6 +26,7 @@ export default async function ContentPageLayout({
                       label: "My Profile",
                       href: "/profile",
                       type: "secondary" as const,
+                      icon: <UserIcon className="w-5 h-5" />,
                     },
                   ]
                 : []),
