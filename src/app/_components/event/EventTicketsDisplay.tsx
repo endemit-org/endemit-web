@@ -14,6 +14,7 @@ import Accordion from "@/app/_components/content/Accordion";
 import { formatPrice } from "@/lib/util/formatting";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import Image from "next/image";
+import EventUrgencyBar from "./EventUrgencyBar";
 
 interface EventTicketDisplayProps {
   products: Product[];
@@ -32,7 +33,7 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
           <Image
             src="/images/flame.gif"
             alt="Hot"
-            className="w-5 h-5 ml-1"
+            className="w-5 h-5 h"
             width={40}
             height={40}
           />
@@ -165,12 +166,17 @@ export default function EventTicketDisplay({
     return (
       <div className={"flex flex-col items-center text-neutral-200"}>
         <div
-          className={"font-heading uppercase text-3xl text-neutral-400 mb-8"}
+          className={"font-heading uppercase text-3xl text-neutral-400 mb-4"}
         >
           {singleProductAvailable
             ? "Tickets available now"
             : "Tickets not available online"}
         </div>
+        {singleProductAvailable && event.date_start && (
+          <div className="w-full max-w-sm mb-4">
+            <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+          </div>
+        )}
         {TicketPurchaseDisplay({
           product: singleProduct,
           productAvailable: singleProductAvailable,
@@ -204,6 +210,11 @@ export default function EventTicketDisplay({
           ? "Tickets available now"
           : "Tickets not available online"}
       </div>
+      {hasAvailableProducts && event.date_start && (
+        <div className="mb-2">
+          <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+        </div>
+      )}
 
       {!hasAvailableProducts && content}
 

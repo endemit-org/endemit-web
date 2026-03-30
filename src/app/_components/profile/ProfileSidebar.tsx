@@ -88,10 +88,10 @@ export default function ProfileSidebar({
       {walletBalance !== null && (
         <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg text-center relative overflow-hidden">
           <div
-            className="absolute  h-full opacity-20 inset w-full top-0 left-0"
+            className="absolute  h-full opacity-10 inset w-full top-0 left-0"
             style={{
               background: "url('/images/noise.gif') no-repeat center center",
-              backgroundSize: "200px",
+              backgroundSize: "400px",
               backgroundRepeat: "repeat",
             }}
           ></div>

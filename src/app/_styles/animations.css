@@ -149,5 +149,18 @@
 }
 
 .animate-unblur-text {
-  animation: unblur 1s ease-out forwards;
+  animation: unblur 1.2s ease-out forwards;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 2.5s ease-in-out infinite;
 }
