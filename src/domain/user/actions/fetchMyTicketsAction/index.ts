@@ -11,5 +11,5 @@ export async function fetchMyTicketsAction(): Promise<SerializedTicket[]> {
     throw new Error("Not authenticated");
   }
 
-  return await getTicketsByUserId(currentUser.id);
+  return await getTicketsByUserId(currentUser.id, { upcomingOnly: true });
 }

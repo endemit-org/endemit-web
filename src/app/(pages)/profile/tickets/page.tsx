@@ -24,7 +24,7 @@ export default async function ProfileTicketsPage() {
     redirect("/signin");
   }
 
-  const tickets = await getTicketsByUserId(user.id);
+  const tickets = await getTicketsByUserId(user.id, { upcomingOnly: true });
 
   return (
     <OuterPage>
