@@ -128,6 +128,20 @@ export function WalletPayScanner({
     return 0;
   }, [customTip, selectedTip, scanResult]);
 
+  const reset = useCallback(() => {
+    setMode("scan");
+    setScanResult(null);
+    setSelectedTip(0);
+    setCustomTip("");
+    setError(null);
+    setIsCancelled(false);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    reset();
+    onClose();
+  }, [reset, onClose]);
+
   const handlePay = useCallback(async () => {
     if (!scanResult || isProcessing) return;
 
@@ -155,23 +169,14 @@ export function WalletPayScanner({
       setMode("success");
       setTimeout(() => {
         onPaymentComplete();
-        onClose();
+        handleClose();
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment failed");
     } finally {
       setIsProcessing(false);
     }
-  }, [scanResult, isProcessing, calculateTip, onPaymentComplete, onClose]);
-
-  const reset = useCallback(() => {
-    setMode("scan");
-    setScanResult(null);
-    setSelectedTip(0);
-    setCustomTip("");
-    setError(null);
-    setIsCancelled(false);
-  }, []);
+  }, [scanResult, isProcessing, calculateTip, onPaymentComplete, handleClose]);
 
   if (!isOpen) return null;
 
@@ -207,7 +212,7 @@ export function WalletPayScanner({
             {mode === "error" && "Error"}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
           >
             <svg

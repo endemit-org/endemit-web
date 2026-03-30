@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
 import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
 import clsx from "clsx";
@@ -59,9 +60,10 @@ export default function WalletTransactionList({
     <div className="bg-neutral-800 rounded-lg overflow-hidden">
       <div className="divide-y divide-neutral-700 max-h-80 overflow-y-auto">
         {transactions.map(tx => (
-          <div
+          <Link
             key={tx.id}
-            className="p-4 flex items-center justify-between hover:bg-neutral-700/50 transition-colors"
+            href={`/profile/wallet/transactions/${tx.id}`}
+            className="p-4 flex items-center justify-between hover:bg-neutral-700/50 transition-colors block"
           >
             <div className="flex items-center gap-4">
               <div
@@ -100,7 +102,7 @@ export default function WalletTransactionList({
                 Balance: {formatCurrency(tx.balanceAfter / 100)}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

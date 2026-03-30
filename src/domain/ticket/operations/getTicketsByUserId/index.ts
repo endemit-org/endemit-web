@@ -8,13 +8,14 @@ import type { EventDocument } from "@/prismicio-types";
 
 interface GetTicketsByUserIdOptions {
   upcomingOnly?: boolean;
+  pastOnly?: boolean;
 }
 
 export const getTicketsByUserId = async (
   userId: string,
   options: GetTicketsByUserIdOptions = {}
 ): Promise<SerializedTicket[]> => {
-  const { upcomingOnly = false } = options;
+  const { upcomingOnly = false, pastOnly = false } = options;
 
   const tickets = await prisma.ticket.findMany({
     where: {
@@ -27,7 +28,7 @@ export const getTicketsByUserId = async (
     },
   });
 
-  if (!upcomingOnly || tickets.length === 0) {
+  if ((!upcomingOnly && !pastOnly) || tickets.length === 0) {
     return tickets.map(ticket => serializeTicket(ticket));
   }
 
@@ -41,24 +42,33 @@ export const getTicketsByUserId = async (
 
   // Build map of event ID -> end date (or start date if no end)
   const now = new Date();
-  const upcomingEventIds = new Set(
-    events.results
-      .filter(event => {
-        const endDate = event.data.date_end
-          ? new Date(event.data.date_end)
-          : event.data.date_start
-            ? new Date(event.data.date_start)
-            : null;
-        // Include if event hasn't ended yet (or no date = include it)
-        return !endDate || endDate >= now;
-      })
-      .map(event => event.id)
-  );
 
-  // Filter tickets to only those for upcoming events
-  const upcomingTickets = tickets.filter(ticket =>
-    upcomingEventIds.has(ticket.eventId)
-  );
+  const eventDateMap = new Map<string, Date | null>();
+  for (const event of events.results) {
+    const endDate = event.data.date_end
+      ? new Date(event.data.date_end)
+      : event.data.date_start
+        ? new Date(event.data.date_start)
+        : null;
+    eventDateMap.set(event.id, endDate);
+  }
 
-  return upcomingTickets.map(ticket => serializeTicket(ticket));
+  // Filter tickets based on event date
+  const filteredTickets = tickets.filter(ticket => {
+    const eventDate = eventDateMap.get(ticket.eventId);
+
+    if (upcomingOnly) {
+      // Include if event hasn't ended yet (or no date = include it)
+      return !eventDate || eventDate >= now;
+    }
+
+    if (pastOnly) {
+      // Include if event has ended (exclude if no date)
+      return eventDate && eventDate < now;
+    }
+
+    return true;
+  });
+
+  return filteredTickets.map(ticket => serializeTicket(ticket));
 };

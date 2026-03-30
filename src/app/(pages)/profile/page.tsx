@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getOrdersByUserId } from "@/domain/order/operations/getOrdersByUserId";
+import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
+import { getVisibleProducts } from "@/domain/product/actions/getProducts";
+import { ProductCategory } from "@/domain/product/types/product";
+import { prismicClient } from "@/lib/services/prismic";
+import type { EventDocument } from "@/prismicio-types";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import Link from "next/link";
-import ProfileEditForm from "@/app/_components/profile/ProfileEditForm";
-import WalletIcon from "@/app/_components/icon/WalletIcon";
-import ShoppingBagIcon from "@/app/_components/icon/ShoppingBagIcon";
-import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
+import ProfileSidebar from "@/app/_components/profile/ProfileSidebar";
+import ProfileOrdersPreview from "@/app/_components/profile/ProfileOrdersPreview";
+import ProfileTransactionsPreview from "@/app/_components/profile/ProfileTransactionsPreview";
+import ProfileTicketsPreview from "@/app/_components/profile/ProfileTicketsPreview";
+import ProfileEventsAttended from "@/app/_components/profile/ProfileEventsAttended";
+import { getBlurDataURL } from "@/lib/util/util";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -26,6 +34,63 @@ export default async function ProfilePage() {
     redirect("/signin");
   }
 
+  // Fetch all data in parallel
+  const [wallet, orders, upcomingTickets, pastTickets, allProducts] =
+    await Promise.all([
+      getWalletByUserId(user.id),
+      getOrdersByUserId(user.id),
+      getTicketsByUserId(user.id, { upcomingOnly: true }),
+      getTicketsByUserId(user.id, { pastOnly: true }),
+      getVisibleProducts(),
+    ]);
+
+  // Filter to currency products for top-up
+  const currencyProducts = allProducts.filter(
+    p => p.category === ProductCategory.CURRENCIES
+  );
+
+  const recentOrders = orders.slice(0, 5);
+  const recentTransactions = wallet?.transactions.slice(0, 5) ?? [];
+  const recentTickets = upcomingTickets.slice(0, 5);
+
+  // Fetch event data for past events attended
+  const pastEventIds = [...new Set(pastTickets.map(t => t.eventId))];
+  let pastEvents: Array<{
+    id: string;
+    uid: string;
+    name: string;
+    dateStart: Date | null;
+    dateEnd: Date | null;
+    image: { src: string; alt: string | null; placeholder: string } | null;
+    link: string;
+  }> = [];
+
+  if (pastEventIds.length > 0) {
+    const eventsFromCms = await prismicClient
+      .getByIDs<EventDocument>(pastEventIds)
+      .catch(() => ({ results: [] }));
+
+    pastEvents = await Promise.all(
+      eventsFromCms.results.map(async event => ({
+        id: event.id,
+        uid: event.uid ?? "",
+        name: event.data.title ?? "Event",
+        dateStart: event.data.date_start
+          ? new Date(event.data.date_start)
+          : null,
+        dateEnd: event.data.date_end ? new Date(event.data.date_end) : null,
+        image: event.data.promo_image?.url
+          ? {
+              src: event.data.promo_image.url,
+              alt: event.data.promo_image.alt,
+              placeholder: await getBlurDataURL(event.data.promo_image.url),
+            }
+          : null,
+        link: event.data.enable_link_to_full_page ? `/events/${event.uid}` : "",
+      }))
+    );
+  }
+
   return (
     <OuterPage>
       <PageHeadline
@@ -36,102 +101,39 @@ export default async function ProfilePage() {
         ]}
       />
 
-      <InnerPage>
-        <div className="space-y-8">
-          {/* Wallet Card */}
-          <Link
-            href="/profile/wallet"
-            className="block bg-neutral-800 hover:bg-neutral-700 rounded-lg p-6 transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <WalletIcon className="w-6 h-6 text-blue-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-neutral-200 group-hover:text-white">
-                  Wallet
-                </h3>
-                <p className="text-sm text-neutral-400">
-                  View your balance and transaction history
-                </p>
-              </div>
-            </div>
-          </Link>
+      <InnerPage className="overflow-visible">
+        <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
+          {/* Sidebar - fixed width on desktop, full width on mobile */}
+          <div className="lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
+            <ProfileSidebar
+              name={user.name}
+              email={user.email!}
+              image={user.image}
+              walletBalance={wallet?.balance ?? null}
+              currencyProducts={currencyProducts}
+            />
+          </div>
 
-          {/* Quick Links */}
-          <section>
-            <h2 className="text-xl font-semibold text-neutral-200 mb-4">
-              Quick Links
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Link
-                href="/profile/orders"
-                className="bg-neutral-800 hover:bg-neutral-700 rounded-lg p-6 transition-colors group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                    <ShoppingBagIcon className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-neutral-200 group-hover:text-white">
-                      Orders
-                    </h3>
-                    <p className="text-sm text-neutral-400">
-                      View your order history
-                    </p>
-                  </div>
-                </div>
-              </Link>
+          {/* Main content */}
+          <div className="flex-1 space-y-6">
+            <ProfileOrdersPreview
+              orders={recentOrders}
+              totalCount={orders.length}
+            />
 
-              <Link
-                href="/profile/tickets"
-                className="bg-neutral-800 hover:bg-neutral-700 rounded-lg p-6 transition-colors group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                    <TicketOutlineIcon className="w-5 h-5 text-green-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-neutral-200 group-hover:text-white">
-                      Tickets
-                    </h3>
-                    <p className="text-sm text-neutral-400">
-                      View your event tickets
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </section>
+            <ProfileTransactionsPreview
+              userId={user.id}
+              initialTransactions={recentTransactions}
+              totalCount={wallet?.transactions.length ?? 0}
+            />
 
-          {/* Edit Profile */}
-          <section>
-            <h2 className="text-xl font-semibold text-neutral-200 mb-4">
-              Edit Profile
-            </h2>
-            <div className="bg-neutral-800 rounded-lg p-6">
-              <ProfileEditForm name={user.name} image={user.image} />
-            </div>
-          </section>
+            <ProfileTicketsPreview
+              tickets={recentTickets}
+              totalCount={upcomingTickets.length}
+            />
 
-          {/* Account Details */}
-          <section>
-            <h2 className="text-xl font-semibold text-neutral-200 mb-4">
-              Account Details
-            </h2>
-            <div className="bg-neutral-800 rounded-lg p-6 space-y-4">
-              <div className="flex justify-between items-center py-2 border-b border-neutral-700">
-                <span className="text-neutral-400">Email</span>
-                <span className="text-neutral-200">{user.email}</span>
-              </div>
-              {user.name && (
-                <div className="flex justify-between items-center py-2 border-b border-neutral-700">
-                  <span className="text-neutral-400">Name</span>
-                  <span className="text-neutral-200">{user.name}</span>
-                </div>
-              )}
-            </div>
-          </section>
+            <ProfileEventsAttended events={pastEvents} />
+          </div>
         </div>
       </InnerPage>
     </OuterPage>

@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import UserIcon from "@/app/_components/icon/UserIcon";
-import WalletIcon from "@/app/_components/icon/WalletIcon";
 import ShoppingBagIcon from "@/app/_components/icon/ShoppingBagIcon";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";
@@ -134,14 +133,6 @@ export default function ProfileButton({
                 Profile
               </Link>
               <Link
-                href="/profile/wallet"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
-              >
-                <WalletIcon className="w-4 h-4" />
-                Wallet
-              </Link>
-              <Link
                 href="/profile/orders"
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
@@ -222,14 +213,6 @@ export default function ProfileButton({
             >
               <UserIcon className="w-4 h-4" />
               Profile
-            </Link>
-            <Link
-              href="/profile/wallet"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 rounded-md"
-            >
-              <WalletIcon className="w-4 h-4" />
-              Wallet
             </Link>
             <Link
               href="/profile/orders"

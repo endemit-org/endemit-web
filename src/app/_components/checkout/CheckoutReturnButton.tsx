@@ -15,10 +15,10 @@ export default function CheckoutReturnButton() {
     }
   }, []);
 
-  if (returnUrl === "/profile/wallet") {
+  if (returnUrl === "/profile") {
     return (
       <div className="inline-block">
-        <ActionButton href={returnUrl}>Return to Wallet</ActionButton>
+        <ActionButton href={returnUrl}>Return to Profile</ActionButton>
       </div>
     );
   }

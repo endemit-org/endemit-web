@@ -86,7 +86,7 @@ export default function TicketCard({ ticket }: TicketCardProps) {
 
           {isUsable && (
             <Link
-              href={`/ticket/${ticket.shortId}`}
+              href={`/profile/tickets/${ticket.shortId}`}
               className="text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
             >
               View Ticket
