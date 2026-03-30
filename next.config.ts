@@ -5,6 +5,7 @@ const ALLOWED_DEV_ORIGINS = [
   "86.61.74.56",
   "localhost",
   "*.endemit.org",
+  "vabisabi-max.tail2eec81.ts.net",
 ];
 
 const IMAGE_CONFIG = {

@@ -18,7 +18,8 @@ export default function StripeProvider({
   const options: StripeElementsOptions = {
     clientSecret,
     appearance: {
-      theme: "night",
+      labels: "above",
+      inputs: "condensed",
       variables: {
         colorPrimary: "#16a34a",
         colorBackground: "#262626",

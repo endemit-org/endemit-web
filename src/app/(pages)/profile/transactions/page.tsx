@@ -46,8 +46,8 @@ export default async function ProfileTransactionsPage() {
         title="Transactions"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
-          { label: "Transactions", path: "profile/transactions" },
+          { label: "My Profile", path: "profile" },
+          { label: "Transactions", path: "transactions" },
         ]}
       />
 
@@ -77,7 +77,9 @@ export default async function ProfileTransactionsPage() {
         <ProfileTable
           title="Transaction History"
           count={transactions.length}
-          countLabel={transactions.length === 1 ? "transaction" : "transactions"}
+          countLabel={
+            transactions.length === 1 ? "transaction" : "transactions"
+          }
           isEmpty={transactions.length === 0}
           emptyIcon={<WalletIcon className="w-6 h-6 text-neutral-500" />}
           emptyMessage="No transactions yet"
@@ -109,7 +111,9 @@ export default async function ProfileTransactionsPage() {
                     <div className="text-neutral-200 text-sm">
                       {typeLabels[tx.type] || tx.type}
                     </div>
-                    <div className="text-xs text-neutral-500">{formattedDate}</div>
+                    <div className="text-xs text-neutral-500">
+                      {formattedDate}
+                    </div>
                   </div>
                 </div>
                 <div

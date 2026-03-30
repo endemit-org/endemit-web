@@ -62,7 +62,10 @@ async function resizeImage(file: File, maxSize: number): Promise<Blob> {
   });
 }
 
-export default function ProfileEditForm({ name: initialName, image: initialImage }: ProfileEditFormProps) {
+export default function ProfileEditForm({
+  name: initialName,
+  image: initialImage,
+}: ProfileEditFormProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -234,6 +237,17 @@ export default function ProfileEditForm({ name: initialName, image: initialImage
 
         {/* Name field */}
         <div className="flex-1 w-full">
+          {error && (
+            <div className="p-3 bg-red-900/50 border border-red-800 text-red-200 rounded-lg text-sm mb-8">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="p-3 bg-green-900/50 border border-green-800 text-green-200 rounded-lg text-sm mb-8">
+              Profile updated successfully
+            </div>
+          )}
           <label
             htmlFor="name"
             className="block text-sm font-medium text-neutral-300 mb-2"
@@ -248,28 +262,15 @@ export default function ProfileEditForm({ name: initialName, image: initialImage
             placeholder="Enter your name"
             className="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
+          <button
+            type="submit"
+            disabled={isLoading || isUploading}
+            className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-6"
+          >
+            {isLoading ? "Saving..." : "Save Changes"}
+          </button>
         </div>
       </div>
-
-      {error && (
-        <div className="p-3 bg-red-900/50 border border-red-800 text-red-200 rounded-lg text-sm">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="p-3 bg-green-900/50 border border-green-800 text-green-200 rounded-lg text-sm">
-          Profile updated successfully
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={isLoading || isUploading}
-        className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        {isLoading ? "Saving..." : "Save Changes"}
-      </button>
     </form>
   );
 }

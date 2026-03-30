@@ -34,7 +34,7 @@ export default function CheckoutReturnButton() {
   // Default: Continue Shopping
   return (
     <div className="inline-block">
-      <ActionButton href="/store">Continue Shopping</ActionButton>
+      <ActionButton href="/profile">Continue to profile</ActionButton>
     </div>
   );
 }

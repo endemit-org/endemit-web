@@ -9,6 +9,8 @@ import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
 import TopUpModal from "@/app/_components/profile/TopUpModal";
 import type { Product } from "@/domain/product/types/product";
+import { isEndemitPayEnabled } from "@/domain/wallet/businessRules";
+import ActionButton from "@/app/_components/form/ActionButton";
 
 interface ProfileSidebarProps {
   name: string | null;
@@ -16,6 +18,7 @@ interface ProfileSidebarProps {
   image: string | null;
   walletBalance: number | null;
   currencyProducts: Product[];
+  upcomingTickets: number | null;
 }
 
 export default function ProfileSidebar({
@@ -23,6 +26,7 @@ export default function ProfileSidebar({
   email,
   image,
   walletBalance,
+  upcomingTickets,
   currencyProducts,
 }: ProfileSidebarProps) {
   const router = useRouter();
@@ -114,68 +118,83 @@ export default function ProfileSidebar({
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <button
-          onClick={() => setIsPayScannerOpen(true)}
-          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <>
+          <ActionButton
+            onClick={() => setIsPayScannerOpen(true)}
+            disabled={!isEndemitPayEnabled()}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
-            />
-          </svg>
-          Scan to Pay
-        </button>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+              />
+            </svg>
+            Scan Endemit Pay
+          </ActionButton>
 
-        <button
-          onClick={() => setIsTopUpOpen(true)}
-          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 font-medium rounded-lg transition-colors"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <ActionButton
+            onClick={() => setIsTopUpOpen(true)}
+            disabled={!isEndemitPayEnabled()}
+            variant={"secondary"}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          Top Up
-        </button>
-
-        <Link
-          href="/profile/tickets"
-          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 font-medium rounded-lg transition-colors"
-        >
-          <TicketOutlineIcon className="w-5 h-5" />
-          View Tickets
-        </Link>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Top Up Wallet
+          </ActionButton>
+        </>
+        {upcomingTickets && (
+          <Link
+            href="/profile/tickets"
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 font-medium rounded-lg transition-colors"
+          >
+            <TicketOutlineIcon className="w-5 h-5" />
+            View Tickets
+          </Link>
+        )}
       </div>
 
+      {!isEndemitPayEnabled() && (
+        <div className="mt-6 text-center text-sm text-neutral-400">
+          Endemit Pay drives our cashless payments, it will be re-enabled before
+          the festival in August.
+        </div>
+      )}
+
       {/* Scan to Pay Modal */}
-      <WalletPayScanner
-        isOpen={isPayScannerOpen}
-        onClose={() => setIsPayScannerOpen(false)}
-        onPaymentComplete={handlePaymentComplete}
-      />
+      {isEndemitPayEnabled() && (
+        <WalletPayScanner
+          isOpen={isPayScannerOpen}
+          onClose={() => setIsPayScannerOpen(false)}
+          onPaymentComplete={handlePaymentComplete}
+        />
+      )}
 
       {/* Top Up Modal */}
-      <TopUpModal
-        isOpen={isTopUpOpen}
-        onClose={() => setIsTopUpOpen(false)}
-        products={currencyProducts}
-      />
+      {isEndemitPayEnabled() && (
+        <TopUpModal
+          isOpen={isTopUpOpen}
+          onClose={() => setIsTopUpOpen(false)}
+          products={currencyProducts}
+        />
+      )}
     </div>
   );
 }

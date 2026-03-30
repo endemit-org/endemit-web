@@ -65,9 +65,9 @@ export default async function ProfileOrderDetailPage({
         title="Order Details"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
-          { label: "Orders", path: "profile/orders" },
-          { label: `#${id.slice(-8)}`, path: `profile/orders/${id}` },
+          { label: "My Profile", path: "profile" },
+          { label: "Orders", path: "orders" },
+          { label: `#${id.slice(-8)}`, path: id },
         ]}
       />
 

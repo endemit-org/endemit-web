@@ -43,8 +43,8 @@ export default async function ProfileTicketsPage() {
         title="Tickets"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
-          { label: "Tickets", path: "profile/tickets" },
+          { label: "My Profile", path: "profile" },
+          { label: "Tickets", path: "tickets" },
         ]}
       />
 

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useCheckoutState } from "@/app/_hooks/useCheckoutState";
 import { useProducts } from "@/app/_stores/ProductStore";
 import { isProductSellable } from "@/domain/product/businessLogic";
+import { isOnlyCurrencyProducts } from "@/domain/checkout/businessRules";
 import CheckoutCustomerForm from "@/app/_components/checkout/CheckoutCustomerForm";
 import CheckoutItemList from "@/app/_components/checkout/CheckoutItemList";
 import CheckoutPromoCodeForm from "@/app/_components/checkout/CheckoutPromoCodeForm";
@@ -94,6 +95,26 @@ export default function Checkout({ products, userEmail }: Props) {
       actions.updateField("emailRepeat", userEmail);
     }
   }, [userEmail, actions]);
+
+  // Fast checkout for wallet top-ups: auto-accept terms, skip to step 2, set return URL
+  const fastCheckoutInitializedRef = useRef(false);
+  useEffect(() => {
+    if (
+      isClient &&
+      hasItems &&
+      userEmail &&
+      isOnlyCurrencyProducts(items) &&
+      !fastCheckoutInitializedRef.current
+    ) {
+      fastCheckoutInitializedRef.current = true;
+      actions.updateField("termsAndConditions", true);
+      setMobileStep(2);
+      // Ensure return URL is set for wallet top-ups
+      if (!localStorage.getItem("checkoutReturnUrl")) {
+        localStorage.setItem("checkoutReturnUrl", "/profile");
+      }
+    }
+  }, [isClient, hasItems, userEmail, items, actions]);
 
   const handleAddDonation = (e: React.MouseEvent) => {
     const donationProduct = getProductByUid("donation-to-association");
@@ -231,7 +252,10 @@ export default function Checkout({ products, userEmail }: Props) {
                 editable={true}
               />
 
-              {showDonation && !donationDismissed && (
+              {showDonation &&
+                !donationDismissed &&
+                !walletCredit.isLoading &&
+                !walletCredit.canUse && (
                 <CheckoutDonation
                   donationAmount={displayTotals.donationAmount}
                   roundedTotal={displayTotals.roundedTotal}

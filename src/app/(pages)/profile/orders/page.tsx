@@ -46,8 +46,8 @@ export default async function ProfileOrdersPage() {
         title="Orders"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
-          { label: "Orders", path: "profile/orders" },
+          { label: "My Profile", path: "profile" },
+          { label: "Orders", path: "orders" },
         ]}
       />
 
@@ -95,7 +95,9 @@ export default async function ProfileOrdersPage() {
                 index={index}
               >
                 <div className="flex items-center gap-4">
-                  <div className="text-sm text-neutral-400">{formattedDate}</div>
+                  <div className="text-sm text-neutral-400">
+                    {formattedDate}
+                  </div>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full ${statusColors[order.status] || "bg-gray-500/20 text-gray-400"}`}
                   >

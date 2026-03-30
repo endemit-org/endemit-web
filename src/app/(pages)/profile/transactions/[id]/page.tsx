@@ -73,9 +73,9 @@ export default async function ProfileTransactionDetailPage({
         title="Transaction Details"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
-          { label: "Transactions", path: "profile/transactions" },
-          { label: `#${id.slice(-8)}`, path: `profile/transactions/${id}` },
+          { label: "My Profile", path: "profile" },
+          { label: "Transactions", path: "transactions" },
+          { label: `#${id.slice(-8)}`, path: id },
         ]}
       />
 

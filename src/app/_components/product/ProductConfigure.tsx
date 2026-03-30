@@ -176,9 +176,7 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
               </div>
             </div>
 
-            <ActionButton href={"/store/checkout"}>
-              Checkout in cart
-            </ActionButton>
+            <ActionButton href={"/store/checkout"}>Checkout</ActionButton>
           </div>
         </>
       )}

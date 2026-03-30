@@ -16,7 +16,10 @@ import ProfileOrdersPreview from "@/app/_components/profile/ProfileOrdersPreview
 import ProfileTransactionsPreview from "@/app/_components/profile/ProfileTransactionsPreview";
 import ProfileTicketsPreview from "@/app/_components/profile/ProfileTicketsPreview";
 import ProfileEventsAttended from "@/app/_components/profile/ProfileEventsAttended";
+import ProfileUpcomingEventsPromo from "@/app/_components/profile/ProfileUpcomingEventsPromo";
 import { getBlurDataURL } from "@/lib/util/util";
+import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
+import { isEventCompleted } from "@/domain/event/businessLogic";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -35,13 +38,14 @@ export default async function ProfilePage() {
   }
 
   // Fetch all data in parallel
-  const [wallet, orders, upcomingTickets, pastTickets, allProducts] =
+  const [wallet, orders, upcomingTickets, pastTickets, allProducts, allEvents] =
     await Promise.all([
       getWalletByUserId(user.id),
       getOrdersByUserId(user.id),
       getTicketsByUserId(user.id, { upcomingOnly: true }),
       getTicketsByUserId(user.id, { pastOnly: true }),
       getVisibleProducts(),
+      fetchEventsFromCms({}),
     ]);
 
   // Filter to currency products for top-up
@@ -91,13 +95,37 @@ export default async function ProfilePage() {
     );
   }
 
+  // Get upcoming events user doesn't have tickets for
+  const userTicketEventIds = new Set(upcomingTickets.map(t => t.eventId));
+  const upcomingEventsForPromo = allEvents
+    ? allEvents
+        .filter(event => !isEventCompleted(event))
+        .filter(event => event.date_start !== null)
+        .filter(event => !userTicketEventIds.has(event.id))
+        .sort(
+          (a, b) =>
+            (a.date_start?.getTime() ?? 0) - (b.date_start?.getTime() ?? 0)
+        )
+        .slice(0, 3)
+        .map(event => ({
+          id: event.id,
+          uid: event.uid,
+          name: event.name,
+          dateStart: event.date_start,
+          dateEnd: event.date_end,
+          image: event.promoImage,
+          link: `/events/${event.uid}`,
+          hasTicketsAvailable: event.tickets.productIds.length > 0,
+        }))
+    : [];
+
   return (
     <OuterPage>
       <PageHeadline
-        title="Profile"
+        title="My Profile"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
+          { label: "My Profile", path: "profile" },
         ]}
       />
 
@@ -109,6 +137,7 @@ export default async function ProfilePage() {
               name={user.name}
               email={user.email!}
               image={user.image}
+              upcomingTickets={upcomingTickets.length}
               walletBalance={wallet?.balance ?? null}
               currencyProducts={currencyProducts}
             />
@@ -116,16 +145,22 @@ export default async function ProfilePage() {
 
           {/* Main content */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
-            <ProfileTransactionsPreview
-              userId={user.id}
-              initialTransactions={recentTransactions}
-              totalCount={wallet?.transactions.length ?? 0}
-            />
+            <ProfileUpcomingEventsPromo events={upcomingEventsForPromo} />
 
-            <ProfileTicketsPreview
-              tickets={recentTickets}
-              totalCount={upcomingTickets.length}
-            />
+            {recentTransactions.length > 0 && (
+              <ProfileTransactionsPreview
+                userId={user.id}
+                initialTransactions={recentTransactions}
+                totalCount={wallet?.transactions.length ?? 0}
+              />
+            )}
+
+            {upcomingTickets.length > 0 && (
+              <ProfileTicketsPreview
+                tickets={recentTickets}
+                totalCount={upcomingTickets.length}
+              />
+            )}
 
             <ProfileOrdersPreview
               orders={recentOrders}

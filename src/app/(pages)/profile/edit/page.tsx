@@ -29,8 +29,8 @@ export default async function ProfileEditPage() {
         title="Edit Profile"
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Profile", path: "profile" },
-          { label: "Edit", path: "profile/edit" },
+          { label: "My Profile", path: "profile" },
+          { label: "Edit", path: "edit" },
         ]}
       />
 
@@ -58,7 +58,7 @@ export default async function ProfileEditPage() {
             </Link>
           </div>
 
-          <div className="bg-neutral-800 rounded-lg p-6">
+          <div className="bg-neutral-900 rounded-lg p-6">
             <ProfileEditForm name={user.name} image={user.image} />
           </div>
         </div>

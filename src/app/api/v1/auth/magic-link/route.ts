@@ -7,6 +7,8 @@ export async function GET(request: Request) {
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
+  console.log("Magic link token:", request);
+
   if (!token) {
     // Redirect to signin with error
     return NextResponse.redirect(
@@ -29,10 +31,7 @@ export async function GET(request: Request) {
   if (email) {
     errorUrl.searchParams.set("email", email);
   }
-  errorUrl.searchParams.set(
-    "error",
-    result.error || "Invalid or expired link"
-  );
+  errorUrl.searchParams.set("error", result.error || "Invalid or expired link");
 
   return NextResponse.redirect(errorUrl);
 }

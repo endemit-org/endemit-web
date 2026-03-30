@@ -60,6 +60,14 @@ export const registerOtcUser = async ({
   // Assign the default "user" role
   await assignRoleToUser(user.id, ROLE_SLUGS.USER);
 
+  // Create wallet for new user
+  await prisma.wallet.create({
+    data: {
+      userId: user.id,
+      balance: 0,
+    },
+  });
+
   // Generate code and magic link
   const code = generateOtcCode();
   const magicLink = generateMagicLink();
