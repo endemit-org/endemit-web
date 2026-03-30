@@ -12,10 +12,12 @@ interface EventData {
 
 interface ProfileEventsAttendedProps {
   events: EventData[];
+  artistNames?: string[];
 }
 
 export default function ProfileEventsAttended({
   events,
+  artistNames = [],
 }: ProfileEventsAttendedProps) {
   if (events.length === 0) {
     return null;
@@ -46,6 +48,22 @@ export default function ProfileEventsAttended({
           ))}
         </div>
       </div>
+
+      {artistNames.length > 0 && (
+        <div className="p-4 border-t border-neutral-700">
+          <div className="flex items-baseline gap-2 mb-2">
+            <h4 className="text-sm font-medium text-neutral-400">
+              Artists at events
+            </h4>
+            <span className="text-xs text-neutral-500">
+              {artistNames.length}
+            </span>
+          </div>
+          <p className="text-lg text-neutral-300 leading-relaxed font-heading font-bold">
+            {artistNames.join(" · ")}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

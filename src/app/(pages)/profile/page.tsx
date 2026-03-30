@@ -95,6 +95,21 @@ export default async function ProfilePage() {
     );
   }
 
+  // Extract unique artists from past events the user attended
+  const pastEventsWithArtists = allEvents
+    ? allEvents.filter(event => pastEventIds.includes(event.id))
+    : [];
+
+  const uniqueArtistNames = new Set<string>();
+  for (const event of pastEventsWithArtists) {
+    for (const artist of event.artists) {
+      uniqueArtistNames.add(artist.name.toUpperCase());
+    }
+  }
+  const sortedArtistNames = [...uniqueArtistNames].sort((a, b) =>
+    a.localeCompare(b)
+  );
+
   // Get upcoming events user doesn't have tickets for
   const userTicketEventIds = new Set(upcomingTickets.map(t => t.eventId));
   const upcomingEventsForPromo = allEvents
@@ -168,7 +183,10 @@ export default async function ProfilePage() {
               totalCount={orders.length}
             />
 
-            <ProfileEventsAttended events={pastEvents} />
+            <ProfileEventsAttended
+              events={pastEvents}
+              artistNames={sortedArtistNames}
+            />
           </div>
         </div>
       </InnerPage>
