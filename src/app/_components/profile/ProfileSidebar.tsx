@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/util/formatting";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
+import LogoutIcon from "@/app/_components/icon/LogoutIcon";
 import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
 import TopUpModal from "@/app/_components/profile/TopUpModal";
 import type { Product } from "@/domain/product/types/product";
@@ -36,6 +37,20 @@ export default function ProfileSidebar({
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(initialWalletBalance);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/v1/auth/logout", { method: "POST" });
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      setIsLoggingOut(false);
+      setShowLogoutConfirm(false);
+    }
+  };
 
   const handlePaymentComplete = useCallback(() => {
     router.refresh();
@@ -85,25 +100,35 @@ export default function ProfileSidebar({
           {displayName}
         </h2>
         <p className="text-sm text-neutral-400">{email}</p>
-        <Link
-          href="/profile/edit"
-          className="mt-3 text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div className="mt-3 flex items-center justify-center gap-4">
+          <Link
+            href="/profile/edit"
+            className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-            />
-          </svg>
-          Edit Profile
-        </Link>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+              />
+            </svg>
+            Edit Profile
+          </Link>
+          <span className="text-neutral-600">|</span>
+          <button
+            onClick={() => setShowLogoutConfirm(true)}
+            className="text-sm text-neutral-400 hover:text-red-400 flex items-center gap-1 transition-colors"
+          >
+            <LogoutIcon className="w-4 h-4" />
+            Sign Out
+          </button>
+        </div>
       </div>
 
       {/* Wallet Balance */}
@@ -212,6 +237,42 @@ export default function ProfileSidebar({
           onClose={() => setIsTopUpOpen(false)}
           products={currencyProducts}
         />
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setShowLogoutConfirm(false)}
+        >
+          <div
+            className="bg-neutral-900 rounded-xl p-6 max-w-sm w-full mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-neutral-200 mb-2">
+              Sign Out
+            </h3>
+            <p className="text-sm text-neutral-400 mb-6">
+              Are you sure you want to sign out of your account?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                disabled={isLoggingOut}
+                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-200 bg-neutral-700 hover:bg-neutral-600 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {isLoggingOut ? "Signing out..." : "Sign Out"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

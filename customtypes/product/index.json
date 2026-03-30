@@ -257,7 +257,8 @@
                 "venue_name",
                 "date_start",
                 "venue_address",
-                "venue_logo"
+                "venue_logo",
+                "has_cashless_payments"
               ]
             }
           ]

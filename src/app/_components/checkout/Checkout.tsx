@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useCheckoutState } from "@/app/_hooks/useCheckoutState";
 import { useProducts } from "@/app/_stores/ProductStore";
 import { isProductSellable } from "@/domain/product/businessLogic";
@@ -18,16 +18,22 @@ import confetti from "canvas-confetti";
 import Link from "next/link";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 import ProductSection from "@/app/_components/product/ProductSection";
-import { Product } from "@/domain/product/types/product";
+import CheckoutCashlessTopUp from "@/app/_components/checkout/CheckoutCashlessTopUp";
+import { Product, ProductCategory } from "@/domain/product/types/product";
 import clsx from "clsx";
 import ActionButton from "@/app/_components/form/ActionButton";
 
 type Props = {
   products: Product[] | null;
+  currencyProducts?: Product[];
   userEmail?: string;
 };
 
-export default function Checkout({ products, userEmail }: Props) {
+export default function Checkout({
+  products,
+  currencyProducts = [],
+  userEmail,
+}: Props) {
   const [isClient, setIsClient] = useState(false);
   const [mobileStep, setMobileStep] = useState<1 | 2>(1);
   const [donationDismissed, setDonationDismissed] = useState(false);
@@ -60,6 +66,15 @@ export default function Checkout({ products, userEmail }: Props) {
   } = useCheckoutState();
 
   const hasItems = totalItems > 0;
+
+  // Check if cart has tickets for cashless events (hide donations if so)
+  const hasCashlessEventTickets = useMemo(() => {
+    return items.some(
+      item =>
+        item.category === ProductCategory.TICKETS &&
+        item.relatedEvent?.hasCashlessPayments === true
+    );
+  }, [items]);
 
   // Auto-initialize payment when we have items (show card form immediately)
   useEffect(() => {
@@ -160,6 +175,55 @@ export default function Checkout({ products, userEmail }: Props) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const PaymentFormComponent = () => {
+    return (
+      <>
+        {payment.isReady && payment.clientSecret ? (
+          <StripeProvider clientSecret={payment.clientSecret}>
+            <PaymentForm
+              totalAmount={totals.total}
+              isProcessing={isPaymentProcessing}
+              onProcessingChange={setIsPaymentProcessing}
+              onError={setPaymentError}
+              canProceed={canProceed}
+              onConfirmPayment={actions.confirmPayment}
+            />
+          </StripeProvider>
+        ) : payment.isFullWalletPayment ? (
+          <div className="mt-4">
+            <ActionButton
+              onClick={async () => {
+                const result = await actions.confirmPayment();
+                if (!result.success) {
+                  setPaymentError("Failed to process payment");
+                }
+              }}
+              disabled={!canProceed || isProcessing}
+              variant="success"
+              className="py-3 text-lg"
+            >
+              {isProcessing
+                ? "Processing..."
+                : "Complete Order (Wallet Payment)"}
+            </ActionButton>
+          </div>
+        ) : (
+          <div className="mt-4 py-6 text-center">
+            {payment.isInitializing ? (
+              <div className="text-neutral-400 text-sm">
+                Loading payment form...
+              </div>
+            ) : (
+              <div className="text-neutral-400 text-sm">
+                Preparing secure payment...
+              </div>
+            )}
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <CheckoutError error={error} />
@@ -252,18 +316,26 @@ export default function Checkout({ products, userEmail }: Props) {
                 editable={!isPaymentProcessing}
               />
 
+              <CheckoutCashlessTopUp
+                items={items}
+                currencyProducts={currencyProducts}
+                onAddTopUp={product => actions.addItem(product, 1)}
+                disabled={isPaymentProcessing}
+              />
+
               {showDonation &&
                 !donationDismissed &&
                 !walletCredit.isLoading &&
-                !walletCredit.canUse && (
-                <CheckoutDonation
-                  donationAmount={displayTotals.donationAmount}
-                  roundedTotal={displayTotals.roundedTotal}
-                  onAddDonation={handleAddDonation}
-                  onDismiss={() => setDonationDismissed(true)}
-                  disabled={isPaymentProcessing}
-                />
-              )}
+                !walletCredit.canUse &&
+                !hasCashlessEventTickets && (
+                  <CheckoutDonation
+                    donationAmount={displayTotals.donationAmount}
+                    roundedTotal={displayTotals.roundedTotal}
+                    onAddDonation={handleAddDonation}
+                    onDismiss={() => setDonationDismissed(true)}
+                    disabled={isPaymentProcessing}
+                  />
+                )}
 
               <CheckoutSummary
                 subTotal={displayTotals.subTotal}
@@ -329,48 +401,7 @@ export default function Checkout({ products, userEmail }: Props) {
                 </div>
               )}
 
-              {payment.isReady && payment.clientSecret ? (
-                <StripeProvider clientSecret={payment.clientSecret}>
-                  <PaymentForm
-                    totalAmount={totals.total}
-                    isProcessing={isPaymentProcessing}
-                    onProcessingChange={setIsPaymentProcessing}
-                    onError={setPaymentError}
-                    canProceed={canProceed}
-                    onConfirmPayment={actions.confirmPayment}
-                  />
-                </StripeProvider>
-              ) : payment.isFullWalletPayment ? (
-                <div className="mt-4">
-                  <ActionButton
-                    onClick={async () => {
-                      const result = await actions.confirmPayment();
-                      if (!result.success) {
-                        setPaymentError("Failed to process payment");
-                      }
-                    }}
-                    disabled={!canProceed || isProcessing}
-                    variant="success"
-                    className="py-3 text-lg"
-                  >
-                    {isProcessing
-                      ? "Processing..."
-                      : "Complete Order (Wallet Payment)"}
-                  </ActionButton>
-                </div>
-              ) : (
-                <div className="mt-4 py-6 text-center">
-                  {payment.isInitializing ? (
-                    <div className="text-neutral-400 text-sm">
-                      Loading payment form...
-                    </div>
-                  ) : (
-                    <div className="text-neutral-400 text-sm">
-                      Preparing secure payment...
-                    </div>
-                  )}
-                </div>
-              )}
+              {hasItems ? <PaymentFormComponent /> : null}
 
               {/* Mobile: Back link to go to step 1 */}
               {isFormValid && (

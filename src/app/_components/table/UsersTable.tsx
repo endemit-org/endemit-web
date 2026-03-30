@@ -5,14 +5,6 @@ import type { SerializedUser } from "@/domain/user/types";
 import { formatDateTime } from "@/lib/util/formatting";
 import clsx from "clsx";
 
-const statusColors: Record<string, string> = {
-  ACTIVE: "bg-green-100 text-green-800",
-  SUSPENDED: "bg-yellow-100 text-yellow-800",
-  BANNED: "bg-red-100 text-red-800",
-  PENDING_VERIFICATION: "bg-blue-100 text-blue-800",
-  DELETED: "bg-gray-100 text-gray-800",
-};
-
 const roleColors: Record<string, string> = {
   admin: "bg-purple-100 text-purple-800",
   moderator: "bg-blue-100 text-blue-800",

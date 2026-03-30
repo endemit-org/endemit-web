@@ -76,6 +76,7 @@ export type ProductRelatedEvent = {
   venueAddress: string;
   venueLogo: string;
   date: string;
+  hasCashlessPayments: boolean;
 };
 
 export interface Product {

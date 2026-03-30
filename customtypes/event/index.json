@@ -303,6 +303,15 @@
           "placeholder_true": "true",
           "default_value": false
         }
+      },
+      "has_cashless_payments": {
+        "type": "Boolean",
+        "config": {
+          "label": "Has cashless payments",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
       }
     },
     "Rich content": {

@@ -159,7 +159,7 @@ export default function Sidebar({
       </div>
 
       <div className="flex absolute right-0 top-0 lg:hidden gap-x-2">
-        <ProfileButton user={user} variant="compact" onOpen={close} />
+        <ProfileButton user={user} variant="compact" />
         {showCart && <Cart variant={"compact"} />}
 
         <button

@@ -13,11 +13,15 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const featuredProducts = await fetchProductsFromCms({
-    filters: [prismic.filter.at("my.product.featured_product", true)],
-  });
-
-  const user = await getCurrentUser();
+  const [featuredProducts, currencyProducts, user] = await Promise.all([
+    fetchProductsFromCms({
+      filters: [prismic.filter.at("my.product.featured_product", true)],
+    }),
+    fetchProductsFromCms({
+      filters: [prismic.filter.at("my.product.product_category", "Currencies")],
+    }),
+    getCurrentUser(),
+  ]);
 
   return (
     <OuterPage>
@@ -29,7 +33,11 @@ export default async function CheckoutPage() {
           { label: "Checkout", path: "checkout" },
         ]}
       />
-      <Checkout products={featuredProducts} userEmail={user?.email || undefined} />
+      <Checkout
+        products={featuredProducts}
+        currencyProducts={currencyProducts ?? []}
+        userEmail={user?.email || undefined}
+      />
     </OuterPage>
   );
 }

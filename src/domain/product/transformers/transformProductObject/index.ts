@@ -111,6 +111,9 @@ export const transformProductObject = async (product: ProductDocument) => {
             venueAddress: relatedEvent.data.venue_address,
             venueLogo: asLink(relatedEvent.data?.venue_logo),
             date: relatedEvent.data.date_start,
+            hasCashlessPayments:
+              (relatedEvent.data as { has_cashless_payments?: boolean })
+                .has_cashless_payments ?? false,
           }
         : null,
     ticketQuantity: product.data.ticket_quantity ?? null,
