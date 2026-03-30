@@ -116,11 +116,6 @@ export default async function ProfilePage() {
 
           {/* Main content */}
           <div className="flex-1 space-y-6">
-            <ProfileOrdersPreview
-              orders={recentOrders}
-              totalCount={orders.length}
-            />
-
             <ProfileTransactionsPreview
               userId={user.id}
               initialTransactions={recentTransactions}
@@ -130,6 +125,11 @@ export default async function ProfilePage() {
             <ProfileTicketsPreview
               tickets={recentTickets}
               totalCount={upcomingTickets.length}
+            />
+
+            <ProfileOrdersPreview
+              orders={recentOrders}
+              totalCount={orders.length}
             />
 
             <ProfileEventsAttended events={pastEvents} />

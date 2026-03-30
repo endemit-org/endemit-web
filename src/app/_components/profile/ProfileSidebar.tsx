@@ -86,18 +86,28 @@ export default function ProfileSidebar({
 
       {/* Wallet Balance */}
       {walletBalance !== null && (
-        <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg text-center">
-          <div className="text-xs text-blue-300 mb-1">Wallet Balance</div>
+        <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg text-center relative overflow-hidden">
           <div
-            className={`text-2xl font-bold ${
-              walletBalance > 0
-                ? "text-green-400"
-                : walletBalance < 0
-                  ? "text-red-400"
-                  : "text-neutral-300"
-            }`}
-          >
-            {formatCurrency(walletBalance / 100)}
+            className="absolute  h-full opacity-20 inset w-full top-0 left-0"
+            style={{
+              background: "url('/images/noise.gif') no-repeat center center",
+              backgroundSize: "200px",
+              backgroundRepeat: "repeat",
+            }}
+          ></div>
+          <div className={"relative z-10"}>
+            <div className="text-xs text-blue-300 mb-1">Wallet Balance</div>
+            <div
+              className={`text-2xl font-bold ${
+                walletBalance > 0
+                  ? "text-green-400"
+                  : walletBalance < 0
+                    ? "text-red-400"
+                    : "text-neutral-300"
+              }`}
+            >
+              {formatCurrency(walletBalance / 100)}
+            </div>
           </div>
         </div>
       )}

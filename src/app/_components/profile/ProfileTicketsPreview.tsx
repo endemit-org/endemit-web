@@ -42,7 +42,7 @@ export default function ProfileTicketsPreview({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-neutral-200 font-medium truncate">
-                  {ticket.eventName}
+                  {ticket.eventName} – {ticket.ticketHolderName}
                 </span>
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
@@ -50,8 +50,8 @@ export default function ProfileTicketsPreview({
                   {ticket.status}
                 </span>
               </div>
-              <div className="text-sm text-neutral-400 truncate">
-                {ticket.ticketHolderName}
+              <div className="text-xs text-neutral-500 font-mono">
+                {ticket.shortId}
               </div>
             </div>
             {isUsable && (

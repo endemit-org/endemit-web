@@ -190,10 +190,7 @@ export default async function ProfileOrderDetailPage({
                     >
                       <div>
                         <p className="text-neutral-200 font-medium">
-                          {ticket.eventName}
-                        </p>
-                        <p className="text-sm text-neutral-400">
-                          {ticket.ticketHolderName}
+                          {ticket.eventName} – {ticket.ticketHolderName}
                         </p>
                         <p className="text-xs text-neutral-500 font-mono mt-1">
                           {ticket.shortId}

@@ -30,6 +30,7 @@ export default function ProfileTransactionsPreview({
 }: ProfileTransactionsPreviewProps) {
   const [transactions, setTransactions] =
     useState<SerializedWalletTransaction[]>(initialTransactions);
+  const [count, setCount] = useState(totalCount);
 
   const handleWalletUpdate = useCallback(
     (payload: {
@@ -58,6 +59,7 @@ export default function ProfileTransactionsPreview({
           createdBy: null,
         };
 
+        setCount(c => c + 1);
         return [newTransaction, ...prev].slice(0, 5);
       });
     },
@@ -72,9 +74,10 @@ export default function ProfileTransactionsPreview({
 
   return (
     <ProfileTable
-      title="Transactions"
-      count={totalCount}
-      countLabel={totalCount === 1 ? "transaction" : "transactions"}
+      title="Cashless Transactions"
+      count={count}
+      countLabel={count === 1 ? "transaction" : "transactions"}
+      viewAllHref="/profile/transactions"
       isEmpty={transactions.length === 0}
       emptyIcon={<WalletIcon className="w-6 h-6 text-neutral-500" />}
       emptyMessage="No transactions yet"
@@ -88,7 +91,7 @@ export default function ProfileTransactionsPreview({
         return (
           <ProfileTableRow
             key={tx.id}
-            href={`/profile/wallet/transactions/${tx.id}`}
+            href={`/profile/transactions/${tx.id}`}
             index={index}
           >
             <div className="flex items-center gap-3">
