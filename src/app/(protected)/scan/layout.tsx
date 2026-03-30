@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
-import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { LogoutButton } from "@/app/_components/auth/LogoutButton";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import {
@@ -21,10 +21,8 @@ export default async function ScanLayout({
     redirect("/auth/sign-in?redirect=/scan");
   }
 
-  // Check if user has scanner or admin role
-  const hasScannerAccess = user.roles.some(
-    role => role === ROLE_SLUGS.SCANNER || role === ROLE_SLUGS.ADMIN
-  );
+  // Check if user has ticket scanning permission
+  const hasScannerAccess = user.permissions.includes(PERMISSIONS.TICKETS_SCAN);
 
   if (!hasScannerAccess) {
     // Redirect to unauthorized page or home

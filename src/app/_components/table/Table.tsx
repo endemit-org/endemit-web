@@ -152,9 +152,9 @@ export function Table<T>({
 
   return (
     <div
-      className={`overflow-hidden rounded-lg border border-gray-200 ${className}`}
+      className={`rounded-lg border border-gray-200 ${className}`}
     >
-      <div className="overflow-x-auto" style={{ maxHeight }}>
+      <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight }}>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="sticky top-0 bg-gray-50 z-10">
             <tr>

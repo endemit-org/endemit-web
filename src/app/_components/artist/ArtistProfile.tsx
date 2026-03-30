@@ -51,7 +51,7 @@ export default function ArtistProfile({
         <div className="flex-1">
           <div className="bg-gradient-to-b from-neutral-300 to-neutral-400 bg-clip-text text-transparent relative">
             <h1
-              className="text-5xl lg:text-7xl 2xl:text-8xl font-bold text-transparent bg-clip-text blur-[5px] top-0 absolute scale-110"
+              className="text-5xl lg:text-7xl 2xl:text-8xl font-bold text-transparent bg-clip-text blur-[5px] top-0 absolute scale-110 uppercase"
               style={
                 coverSrc
                   ? {
@@ -64,7 +64,7 @@ export default function ArtistProfile({
             >
               {artist.name}
             </h1>
-            <h2 className="text-5xl lg:text-7xl 2xl:text-8xl  text-neutral-300 relative">
+            <h2 className="text-5xl lg:text-7xl 2xl:text-8xl  text-neutral-300 relative uppercase">
               {artist.name}
             </h2>
             {artist.isEndemitCrew && (

@@ -18,6 +18,7 @@ export interface QrTicketPayload extends Omit<TicketPayload, "salt"> {
 export type TicketEmailData = Pick<
   Ticket,
   | "id"
+  | "shortId"
   | "eventName"
   | "ticketHolderName"
   | "ticketPayerEmail"
@@ -33,6 +34,7 @@ export type TicketEmailData = Pick<
 
 export enum TicketQueueEvent {
   CREATE_TICKET = "create-ticket",
+  PROCESS_GUEST_TICKET = "process-guest-ticket",
 }
 
 export type TicketCreationData = {

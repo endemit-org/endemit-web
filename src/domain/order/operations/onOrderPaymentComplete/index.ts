@@ -7,9 +7,73 @@ import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms
 import { subscribeEmailToTicketBuyerList } from "@/domain/newsletter/actions/subscribeEmailToTicketBuyerList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { createTransaction } from "@/domain/wallet/operations/createTransaction";
+import { ProductInOrder } from "@/domain/order/types/order";
+import { ProductCategory } from "@/domain/product/types/product";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
   const order = await updateOrderStatusPaid(paymentSessionId);
+
+  // Process wallet transactions (non-blocking)
+  if (order.userId) {
+    try {
+      const wallet = await getWalletByUserId(order.userId);
+      if (!wallet) {
+        console.error("User has no wallet:", order.userId);
+      } else {
+        const items = order.items as unknown as ProductInOrder[];
+
+        // Deduct wallet credit if used for purchase
+        if (order.walletAmountUsed > 0) {
+          await createTransaction({
+            walletId: wallet.id,
+            type: "PURCHASE",
+            amount: -order.walletAmountUsed,
+            note: `Order #${order.id}`,
+          });
+        }
+
+        // Credit wallet for currency product purchases
+        const currencyTotal = items
+          .filter(item => item.category === ProductCategory.CURRENCIES)
+          .reduce(
+            (sum, item) => sum + Math.round(item.price * 100) * item.quantity,
+            0
+          );
+
+        if (currencyTotal > 0) {
+          await createTransaction({
+            walletId: wallet.id,
+            type: "CREDIT",
+            amount: currencyTotal,
+            note: `Wallet top-up from Order #${order.id}`,
+          });
+        }
+
+        // Credit wallet for top-up rewards from products
+        const rewardTotal = items
+          .filter(item => item.walletTopupReward && item.walletTopupReward > 0)
+          .reduce(
+            (sum, item) =>
+              sum + Math.round(item.walletTopupReward! * 100) * item.quantity,
+            0
+          );
+
+        if (rewardTotal > 0) {
+          await createTransaction({
+            walletId: wallet.id,
+            type: "CREDIT",
+            amount: rewardTotal,
+            note: `Top up reward from Order #${order.id}`,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to process wallet transactions:", error);
+      // Continue with order processing even if wallet transactions fail
+    }
+  }
 
   await queueNewOrderAutomation({ orderId: order.id });
   const ticketItems = transformTicketsFromOrder(order);

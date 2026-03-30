@@ -17,8 +17,26 @@ export const updateOrderStatus = async (
   });
 };
 
+export const updateOrderStatusById = async (
+  orderId: string,
+  status: OrderStatus
+) => {
+  return await prisma.order.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      status,
+    },
+  });
+};
+
 export const updateOrderStatusPaid = async (stripeSessionId: string) => {
   return await updateOrderStatus(stripeSessionId, OrderStatus.PAID);
+};
+
+export const updateOrderStatusPaidById = async (orderId: string) => {
+  return await updateOrderStatusById(orderId, OrderStatus.PAID);
 };
 
 export const updateOrderStatusCancelled = async (stripeSessionId: string) => {

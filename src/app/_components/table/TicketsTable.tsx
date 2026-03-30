@@ -16,7 +16,14 @@ export default function TicketsTable({
       header: "Ticket ID",
       sortable: true,
       render: ticket => (
-        <span className="font-mono text-xs">{ticket.shortId}</span>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs">{ticket.shortId}</span>
+          {ticket.isGuestList && (
+            <span className="rounded-full px-2 py-0.5 text-xs bg-purple-100 text-purple-800 font-medium">
+              Guest
+            </span>
+          )}
+        </div>
       ),
     },
     {
@@ -28,20 +35,6 @@ export default function TicketsTable({
       key: "ticketPayerEmail",
       header: "Email",
       sortable: true,
-    },
-    {
-      key: "scanCount",
-      header: "Scans",
-      sortable: true,
-      render: ticket => (
-        <span
-          className={`font-medium ${
-            ticket.scanCount > 0 ? "text-green-600" : "text-gray-500"
-          }`}
-        >
-          {ticket.scanCount}
-        </span>
-      ),
     },
     {
       key: "status",

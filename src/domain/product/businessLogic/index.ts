@@ -84,6 +84,9 @@ export const getTicketQuantityForProduct = (product: Product): number => {
 export const isProductDonation = (product: Product) => {
   return product.category === ProductCategory.DONATIONS;
 };
+export const isProductCurrency = (product: Product) => {
+  return product.category === ProductCategory.CURRENCIES;
+};
 export const isProductConfigurable = (product: Product) => {
   return product.composition === ProductCompositionType.CONFIGURABLE;
 };

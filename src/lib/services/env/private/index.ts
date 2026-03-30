@@ -46,6 +46,15 @@ export const TICKET_SECRET = process.env.TICKET_SECRET!;
 export const TICKET_VERIFICATION_HASH_SPLIT_CONFIG =
   process.env.TICKET_VERIFICATION_HASH_SPLIT_CONFIG!;
 
+// Supabase
+export const SUPABASE_PRIVATE_KEY = process.env.SUPABASE_PRIVATE_KEY!;
+
+// POS
+export const POS_ORDER_SECRET = process.env.POS_ORDER_SECRET!;
+export const POS_ORDER_HASH_SPLIT_CONFIG =
+  process.env.POS_ORDER_HASH_SPLIT_CONFIG!;
+export const DISCORD_POS_WEBHOOK = process.env.DISCORD_POS_WEBHOOK;
+
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
 

@@ -87,4 +87,5 @@ export type CheckoutSessionRequestBody = {
   complementaryTicketData: ComplementaryTicketField;
   subscribeToNewsletter: boolean;
   discountCodeId?: string;
+  walletCreditAmount?: number; // Amount in cents to use from wallet
 };

@@ -10,6 +10,15 @@ export const PUBLIC_GOOGLE_MAP_API_KEY =
 export const PUBLIC_STRIPE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
 
+// Supabase
+export const PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+export const PUBLIC_SUPABASE_PUBLIC_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!;
+
+// Feature flags
+export const PUBLIC_ENDEMIT_PAY_ENABLED =
+  process.env.NEXT_PUBLIC_ENDEMIT_PAY_ENABLED === "true";
+
 // Validation
 if (!PUBLIC_API_URL) throw new Error("Missing NEXT_PUBLIC_API_URL");
 if (!PUBLIC_STRIPE_PUBLISHABLE_KEY)

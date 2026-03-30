@@ -24,6 +24,8 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
     description: "Full system access with all permissions",
     isSystem: true,
     permissions: [
+      // Admin access
+      PERMISSIONS.ADMIN_ACCESS,
       // Users
       PERMISSIONS.USERS_READ,
       PERMISSIONS.USERS_CREATE,
@@ -59,9 +61,30 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
       // Analytics
       PERMISSIONS.ANALYTICS_VIEW,
       PERMISSIONS.REPORTS_GENERATE,
+      // Roles
+      PERMISSIONS.ROLES_READ,
+      PERMISSIONS.ROLES_CREATE,
+      PERMISSIONS.ROLES_UPDATE,
+      PERMISSIONS.ROLES_DELETE,
+      // Wallets
+      PERMISSIONS.WALLETS_READ,
+      PERMISSIONS.WALLETS_MANAGE_BALANCE,
+      // Transactions
+      PERMISSIONS.TRANSACTIONS_READ,
       // System
       PERMISSIONS.SYSTEM_SETTINGS,
       PERMISSIONS.SYSTEM_LOGS,
+      // POS
+      PERMISSIONS.POS_ACCESS,
+      PERMISSIONS.POS_SELL,
+      PERMISSIONS.POS_TOPUP,
+      PERMISSIONS.POS_ITEMS_READ,
+      PERMISSIONS.POS_ITEMS_WRITE,
+      PERMISSIONS.POS_REGISTERS_READ,
+      PERMISSIONS.POS_REGISTERS_WRITE,
+      PERMISSIONS.POS_ORDERS_READ,
+      PERMISSIONS.POS_ORDERS_REFUND,
+      PERMISSIONS.POS_TIPS_WITHDRAW,
     ],
   },
   [ROLE_SLUGS.MODERATOR]: {
@@ -70,6 +93,8 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
     description: "Content and event management access",
     isSystem: true,
     permissions: [
+      // Admin access
+      PERMISSIONS.ADMIN_ACCESS,
       // Users (read only)
       PERMISSIONS.USERS_READ,
       // Orders
