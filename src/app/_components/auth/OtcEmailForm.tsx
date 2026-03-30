@@ -69,7 +69,7 @@ export default function OtcEmailForm() {
   };
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center py-12 px-4">
+    <div className="lg:min-h-[60vh] flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-8 bg-neutral-800 p-8 rounded-xl border border-neutral-700">
         <div className="flex justify-center items-center w-full">
           <div className="w-40 text-neutral-300">
@@ -84,7 +84,8 @@ export default function OtcEmailForm() {
           <p className="mt-2 text-sm text-neutral-400">
             {isNewAccount
               ? "No account found. Click below to create one."
-              : "Enter your email and we'll send you a code to sign in"}
+              : `Enter your email and we'll send you a code to sign in.\n
+              No passwords, no registrations, it just works!`}
           </p>
         </div>
 

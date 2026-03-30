@@ -138,7 +138,7 @@ export default function OtcVerifyForm({
   };
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center py-12 px-4">
+    <div className="lg:min-h-[60vh] flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full space-y-8 bg-neutral-800 p-8 rounded-xl border border-neutral-700">
         <div className="flex justify-center items-center w-full">
           <div className="w-40 text-neutral-300">

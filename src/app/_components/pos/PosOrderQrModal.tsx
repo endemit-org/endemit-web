@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import QRCode from "qrcode";
 import confetti from "canvas-confetti";
+import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 
 interface PosOrderSummary {
   id: string;
@@ -160,7 +161,7 @@ export function PosOrderQrModal({
               </div>
 
               {/* QR Code */}
-              <div className="flex justify-center mb-4">
+              <div className="flex flex-col items-center mb-4">
                 {qrDataUrl ? (
                   <img
                     src={qrDataUrl}
@@ -170,6 +171,9 @@ export function PosOrderQrModal({
                 ) : (
                   <div className="w-48 h-48 bg-gray-100 rounded-lg animate-pulse" />
                 )}
+                <div className="w-24 mt-2 text-neutral-400">
+                  <AnimatedEndemitLogo />
+                </div>
               </div>
 
               <p className="text-center text-sm text-gray-500 mb-4">

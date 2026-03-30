@@ -30,7 +30,7 @@ export default async function PosLayout({
   return (
     <>
       <nav className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-6">
               <Link href="/pos" className="flex-shrink-0 flex items-center">
@@ -78,9 +78,7 @@ export default async function PosLayout({
           </div>
         </div>
       </nav>
-      <main className="min-h-[calc(100vh-4rem)] bg-gray-50">
-        {children}
-      </main>
+      <main className="min-h-[calc(100vh-4rem)] bg-gray-50">{children}</main>
     </>
   );
 }

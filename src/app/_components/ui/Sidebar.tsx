@@ -140,7 +140,7 @@ export default function Sidebar({
   };
 
   return (
-    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800">
+    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bg-opacity-80 lg:backdrop-blur-sm lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800">
       <div className="flex h-14 items-center px-4 py-4 lg:h-auto ">
         <Link
           href={logoHref}
