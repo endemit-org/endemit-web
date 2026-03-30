@@ -1,7 +1,10 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
-import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
+import {
+  broadcastToChannel,
+  broadcastToUser,
+} from "@/lib/services/supabase/broadcast";
 import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyOnPosTransaction";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import type { WalletTransaction } from "@prisma/client";
@@ -171,6 +174,17 @@ export async function payPosOrder(
     total: result.order.total,
     tipAmount: result.order.tipAmount,
     paidAt: result.paidAt.toISOString(),
+  });
+
+  // Broadcast wallet transaction to customer's profile for real-time updates
+  await broadcastToUser(customerId, "wallet_transaction_created", {
+    transactionId: result.transaction.id,
+    walletId: result.wallet.id,
+    type: result.transaction.type,
+    amount: result.transaction.amount,
+    balanceAfter: result.transaction.balanceAfter,
+    note: result.transaction.note,
+    createdAt: result.transaction.createdAt.toISOString(),
   });
 
   // Notify Discord for DEBIT transactions only (not top-ups)

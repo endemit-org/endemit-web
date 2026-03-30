@@ -40,6 +40,7 @@ export const transformToProductInOrder = (
     type: cartItem.type,
     checkoutDescription: cartItem.checkoutDescription,
     relatedEvent: cartItem.relatedEvent?.id ?? null,
+    walletTopupReward: cartItem.walletTopupReward,
     metadata,
   };
   return ProductInOrder;

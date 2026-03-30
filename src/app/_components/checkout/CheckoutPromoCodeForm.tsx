@@ -13,6 +13,7 @@ interface CheckoutPromoCodeFormProps {
   onRemovePromoCodeAction: () => void;
   isLoading: boolean;
   errorMessage?: string | null;
+  disabled?: boolean;
 }
 
 export default function CheckoutPromoCodeForm({
@@ -23,6 +24,7 @@ export default function CheckoutPromoCodeForm({
   onRemovePromoCodeAction,
   isLoading,
   errorMessage,
+  disabled = false,
 }: CheckoutPromoCodeFormProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -35,7 +37,8 @@ export default function CheckoutPromoCodeForm({
         </span>{" "}
         <button
           onClick={onRemovePromoCodeAction}
-          className="text-neutral-400 hover:text-white transition-colors"
+          disabled={disabled}
+          className={`transition-colors ${disabled ? "text-neutral-600 cursor-not-allowed" : "text-neutral-400 hover:text-white"}`}
         >
           Remove
         </button>
@@ -49,7 +52,8 @@ export default function CheckoutPromoCodeForm({
       <div className="mb-4">
         <button
           onClick={() => setIsExpanded(true)}
-          className="text-sm text-neutral-400 hover:text-white transition-colors"
+          disabled={disabled}
+          className={`text-sm transition-colors ${disabled ? "text-neutral-600 cursor-not-allowed" : "text-neutral-400 hover:text-white"}`}
         >
           + Add promo code
         </button>
@@ -68,7 +72,7 @@ export default function CheckoutPromoCodeForm({
             value={promoCodeValue}
             onChangeAction={(name, value) => onPromoCodeChangeAction(value)}
             placeholder="Enter promo code"
-            disabled={isLoading}
+            disabled={isLoading || disabled}
           />
         </div>
         <div>
@@ -76,6 +80,7 @@ export default function CheckoutPromoCodeForm({
             onClick={onApplyPromoCodeAction}
             variant={"secondary"}
             size={"sm"}
+            disabled={disabled}
           >
             {isLoading && promoCodeValue ? "Applying..." : "Apply"}
           </ActionButton>

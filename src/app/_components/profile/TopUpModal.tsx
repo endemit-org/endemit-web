@@ -64,7 +64,7 @@ export default function TopUpModal({
         onClick={e => e.stopPropagation()}
       >
         <div
-          className="absolute h-full opacity-20 inset w-full left-0 top-0 pointer-events-none"
+          className="absolute h-full opacity-10 inset w-full left-0 top-0 pointer-events-none"
           style={{
             background: "url('/images/noise.gif') no-repeat center center",
             backgroundSize: "200px",
@@ -159,7 +159,7 @@ export default function TopUpModal({
               </button>
 
               <p className="text-xs text-neutral-500 text-center mt-4">
-                You can also top up with cash at the MERCH stand.
+                You can also top up the wallet with cash at the MERCH stand.
               </p>
             </>
           )}

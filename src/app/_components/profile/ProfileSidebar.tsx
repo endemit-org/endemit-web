@@ -11,8 +11,10 @@ import TopUpModal from "@/app/_components/profile/TopUpModal";
 import type { Product } from "@/domain/product/types/product";
 import { isEndemitPayEnabled } from "@/domain/wallet/businessRules";
 import ActionButton from "@/app/_components/form/ActionButton";
+import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 
 interface ProfileSidebarProps {
+  userId: string;
   name: string | null;
   email: string;
   image: string | null;
@@ -22,20 +24,36 @@ interface ProfileSidebarProps {
 }
 
 export default function ProfileSidebar({
+  userId,
   name,
   email,
   image,
-  walletBalance,
+  walletBalance: initialWalletBalance,
   upcomingTickets,
   currencyProducts,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(initialWalletBalance);
 
   const handlePaymentComplete = useCallback(() => {
     router.refresh();
   }, [router]);
+
+  // Subscribe to wallet transaction updates for real-time balance
+  const handleWalletUpdate = useCallback(
+    (payload: { balanceAfter: number }) => {
+      setWalletBalance(payload.balanceAfter);
+    },
+    []
+  );
+
+  useRealtimeChannel({
+    channelName: `user:${userId}`,
+    event: "wallet_transaction_created",
+    onMessage: handleWalletUpdate,
+  });
   const displayName = name || email.split("@")[0];
   const initials = displayName
     .split(" ")

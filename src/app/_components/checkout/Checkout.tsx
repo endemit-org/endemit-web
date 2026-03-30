@@ -249,7 +249,7 @@ export default function Checkout({ products, userEmail }: Props) {
                 items={items}
                 onRemoveItem={actions.removeItem}
                 country={formData?.country}
-                editable={true}
+                editable={!isPaymentProcessing}
               />
 
               {showDonation &&
@@ -261,6 +261,7 @@ export default function Checkout({ products, userEmail }: Props) {
                   roundedTotal={displayTotals.roundedTotal}
                   onAddDonation={handleAddDonation}
                   onDismiss={() => setDonationDismissed(true)}
+                  disabled={isPaymentProcessing}
                 />
               )}
 
@@ -285,6 +286,7 @@ export default function Checkout({ products, userEmail }: Props) {
                   onApplyPromoCodeAction={actions.applyPromoCode}
                   onRemovePromoCodeAction={actions.removePromoCode}
                   isLoading={isProcessing}
+                  disabled={isPaymentProcessing}
                 />
               )}
 
@@ -300,6 +302,7 @@ export default function Checkout({ products, userEmail }: Props) {
                     isUsingWallet={walletCredit.isUsing}
                     onToggle={actions.toggleWalletCredit}
                     onAmountChange={actions.setWalletCreditAmount}
+                    disabled={isPaymentProcessing}
                   />
                 </div>
               )}

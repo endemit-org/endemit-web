@@ -32,6 +32,8 @@ export interface PaymentIntentResult {
 export interface CartStore {
   items: CartItem[];
   isLoading: boolean;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 
   // Actions
   addItem: (product: Product, quantity?: number) => void;

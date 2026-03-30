@@ -506,7 +506,7 @@ export function WalletPayScanner({
                 ? "Processing..."
                 : hasTopUp
                   ? `Top-up ${formatPrice(creditTotal)}`
-                  : `Pay ${formatPrice(totalToPay)}`}
+                  : `ok, Pay ${formatPrice(totalToPay)}`}
             </button>
           </div>
         )}

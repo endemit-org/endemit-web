@@ -276,6 +276,13 @@
           "label": "Ticket template",
           "placeholder": "Template name for ticket design (e.g., 'guest', 'premium'). Leave empty for default."
         }
+      },
+      "wallet_topup_reward": {
+        "type": "Number",
+        "config": {
+          "label": "Wallet top-up reward (EUR)",
+          "placeholder": "Optional - Amount to add to user's wallet when purchased"
+        }
       }
     },
     "Variants": {

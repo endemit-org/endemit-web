@@ -134,6 +134,7 @@ export default async function ProfilePage() {
           {/* Sidebar - fixed width on desktop, full width on mobile */}
           <div className="lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
             <ProfileSidebar
+              userId={user.id}
               name={user.name}
               email={user.email!}
               image={user.image}

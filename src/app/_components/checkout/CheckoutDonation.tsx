@@ -38,6 +38,7 @@ interface CheckoutDonationProps {
   roundedTotal: number;
   onAddDonation: (e: React.MouseEvent) => void;
   onDismiss: () => void;
+  disabled?: boolean;
 }
 
 export default function CheckoutDonation({
@@ -45,6 +46,7 @@ export default function CheckoutDonation({
   roundedTotal,
   onAddDonation,
   onDismiss,
+  disabled = false,
 }: CheckoutDonationProps) {
   return (
     <div className="relative p-4 bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/40 rounded mb-4 space-y-2 text-center mt-6">
@@ -84,7 +86,7 @@ export default function CheckoutDonation({
         </p>
       </div>
 
-      <ActionButton onClick={onAddDonation} size={"sm"}>
+      <ActionButton onClick={onAddDonation} size={"sm"} disabled={disabled}>
         Add {formatPrice(donationAmount)} donation
       </ActionButton>
       <div>

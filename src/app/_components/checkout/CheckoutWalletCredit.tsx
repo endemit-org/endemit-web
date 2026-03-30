@@ -12,6 +12,7 @@ interface CheckoutWalletCreditProps {
   isLoading: boolean;
   canUseWallet: boolean;
   isUsingWallet: boolean;
+  disabled?: boolean;
   onToggle: () => void;
   onAmountChange: (amount: number) => void;
 }
@@ -24,6 +25,7 @@ export default function CheckoutWalletCredit({
   isLoading,
   canUseWallet,
   isUsingWallet,
+  disabled = false,
   onToggle,
   onAmountChange,
 }: CheckoutWalletCreditProps) {
@@ -57,11 +59,12 @@ export default function CheckoutWalletCredit({
             </p>
           </div>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
+        <label className={`relative inline-flex items-center ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>
           <input
             type="checkbox"
             checked={isUsingWallet}
             onChange={onToggle}
+            disabled={disabled}
             className="sr-only peer"
           />
           <div className="w-11 h-6 bg-neutral-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -86,7 +89,8 @@ export default function CheckoutWalletCredit({
                 step={100}
                 value={walletCreditAmount || 100}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                disabled={disabled}
+                className={`w-full h-2 bg-neutral-700 rounded-lg appearance-none accent-blue-500 ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
               />
               <div className="flex justify-between text-xs text-neutral-500">
                 <span>{formatCurrency(1)}</span>

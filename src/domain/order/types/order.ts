@@ -25,5 +25,6 @@ export interface ProductInOrder {
   quantity: number;
   currency: string;
   checkoutDescription: string;
+  walletTopupReward: number | null;
   metadata?: Record<string, string | number | boolean | string[]>;
 }
