@@ -25,12 +25,12 @@ function UrgencyBarDisplay({
   label?: string;
 }) {
   return (
-    <div className="mb-3 p-2 backdrop-blur-[1px] rounded-sm">
+    <div className="mb-3 p-2">
       <div className="flex items-center justify-between mb-1.5">
         <span
           className={clsx(
             "text-sm font-medium text-center w-full mb-1",
-            isRedPhase ? "text-red-400" : "text-neutral-300"
+            isRedPhase ? "text-red-400" : "text-neutral-400"
           )}
         >
           {isRedPhase
@@ -90,7 +90,7 @@ export default function EventUrgencyBar({
   // Demo mode: show multiple states for preview
   if (showDemo) {
     return (
-      <div className="space-y-4 p-4 bg-neutral-800/50 rounded-lg">
+      <div className="space-y-4 p-2 bg-neutral-800/50 rounded-lg">
         <p className="text-xs text-neutral-500 uppercase tracking-wide mb-2">
           Demo States (remove showDemo prop)
         </p>

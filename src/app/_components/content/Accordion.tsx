@@ -122,7 +122,7 @@ export default function Accordion({
                 }`}
               >
                 <div
-                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-70`}
+                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-50`}
                 >
                   {item.content}
                 </div>

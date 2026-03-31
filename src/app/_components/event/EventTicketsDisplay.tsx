@@ -174,17 +174,17 @@ export default function EventTicketDisplay({
             ? "Tickets available now"
             : "Tickets not available online"}
         </div>
-        {singleProductAvailable && event.date_start && (
-          <div className="w-full max-w-sm mb-4">
-            <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
-          </div>
-        )}
         {TicketPurchaseDisplay({
           product: singleProduct,
           productAvailable: singleProductAvailable,
           content,
           showTicketQuantities: false,
         })}
+        {singleProductAvailable && event.date_start && (
+          <div className="w-full max-w-sm mt-4">
+            <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+          </div>
+        )}
       </div>
     );
   }
@@ -212,11 +212,6 @@ export default function EventTicketDisplay({
           ? "Tickets available now"
           : "Tickets not available online"}
       </div>
-      {hasAvailableProducts && event.date_start && (
-        <div className="mb-2">
-          <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
-        </div>
-      )}
 
       {!hasAvailableProducts && content}
 
@@ -227,6 +222,12 @@ export default function EventTicketDisplay({
         autoExpandIndexOnView={middleIndex}
         autoExpandDelay={500}
       />
+
+      {hasAvailableProducts && event.date_start && (
+        <div className="mt-2">
+          <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+        </div>
+      )}
     </div>
   );
 }
