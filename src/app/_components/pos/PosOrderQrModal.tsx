@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 import confetti from "canvas-confetti";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import Image from "next/image";
 
 interface PosOrderSummary {
   id: string;
@@ -160,11 +161,13 @@ export function PosOrderQrModal({
               {/* QR Code */}
               <div className="flex flex-col items-center mb-4">
                 {qrDataUrl ? (
-                  //@next/next/no-img-element
-                  <img
+                  <Image
                     src={qrDataUrl}
                     alt="Order QR Code"
                     className="w-48 h-48 rounded-lg"
+                    unoptimized
+                    width={256}
+                    height={256}
                   />
                 ) : (
                   <div className="w-48 h-48 bg-gray-100 rounded-lg animate-pulse" />
