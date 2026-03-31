@@ -3,7 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTransactionById } from "@/domain/wallet/operations/getTransactionById";
-import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
+import { formatDateTime } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -113,7 +114,7 @@ export default async function ProfileTransactionDetailPage({
                 )}
               >
                 {isPositive ? "+" : ""}
-                {formatCurrency(transaction.amount / 100)}
+                {formatTokensFromCents(transaction.amount)}
               </div>
               <span
                 className={clsx(
@@ -137,7 +138,7 @@ export default async function ProfileTransactionDetailPage({
               <div className="flex justify-between">
                 <span className="text-neutral-400">Balance After</span>
                 <span className="text-neutral-200">
-                  {formatCurrency(transaction.balanceAfter / 100)}
+                  {formatTokensFromCents(transaction.balanceAfter)}
                 </span>
               </div>
 

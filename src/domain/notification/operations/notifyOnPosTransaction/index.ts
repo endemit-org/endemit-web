@@ -3,6 +3,7 @@ import "server-only";
 import { DiscordConnector } from "@/lib/services/discord";
 import { notificationFooter } from "@/domain/notification/util";
 import { DISCORD_POS_WEBHOOK } from "@/lib/services/env/private";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface PosTransactionNotification {
   type: "DEBIT" | "CREDIT" | "ADMIN_DEBIT" | "ADMIN_CREDIT";
@@ -16,10 +17,7 @@ interface PosTransactionNotification {
 }
 
 const formatCents = (cents: number): string => {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
+  return formatTokensFromCents(cents);
 };
 
 export async function notifyOnPosTransaction(data: PosTransactionNotification) {

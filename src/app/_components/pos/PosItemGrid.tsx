@@ -1,5 +1,7 @@
 "use client";
 
+import { formatTokensFromCents } from "@/lib/util/currency";
+
 interface PosItem {
   id: string;
   name: string;
@@ -12,13 +14,6 @@ interface Props {
   items: PosItem[];
   onAddItem: (item: PosItem) => void;
   disabledDirection?: "CREDIT" | "DEBIT" | null;
-}
-
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 export function PosItemGrid({ items, onAddItem, disabledDirection }: Props) {
@@ -54,7 +49,7 @@ export function PosItemGrid({ items, onAddItem, disabledDirection }: Props) {
               }`}
             >
               {item.direction === "CREDIT" ? "+" : ""}
-              {formatPrice(item.cost)}
+              {formatTokensFromCents(item.cost)}
             </span>
           </button>
         );

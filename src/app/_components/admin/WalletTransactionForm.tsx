@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { addWalletCreditAction } from "@/domain/wallet/actions/addWalletCreditAction";
 import { debitWalletAction } from "@/domain/wallet/actions/debitWalletAction";
-import { formatCurrency } from "@/lib/util/formatting";
+import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 
 interface WalletTransactionFormProps {
   walletId: string;
@@ -32,7 +32,7 @@ export default function WalletTransactionForm({
 
     if (type === "debit" && amountCents > currentBalance) {
       setError(
-        `Cannot debit more than current balance (${formatCurrency(currentBalance / 100)})`
+        `Cannot debit more than current balance (${formatTokensFromCents(currentBalance)})`
       );
       return;
     }
@@ -48,14 +48,14 @@ export default function WalletTransactionForm({
           amount: amountCents,
           note: note || undefined,
         });
-        setSuccess(`Added ${formatCurrency(amountCents / 100)} to wallet`);
+        setSuccess(`Added ${formatTokensFromCents(amountCents)} to wallet`);
       } else {
         await debitWalletAction({
           walletId,
           amount: amountCents,
           note: note || undefined,
         });
-        setSuccess(`Removed ${formatCurrency(amountCents / 100)} from wallet`);
+        setSuccess(`Removed ${formatTokensFromCents(amountCents)} from wallet`);
       }
 
       setAmount("");
@@ -88,7 +88,7 @@ export default function WalletTransactionForm({
             htmlFor="amount"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Amount (EUR)
+            Amount ({TOKEN_CONFIG.symbol})
           </label>
           <input
             type="number"

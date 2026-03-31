@@ -27,7 +27,9 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
   return (
     <div>
       <div className={"font-semibold flex gap-x-1.5 items-center"}>
-        <TicketIcon />
+        <span className={"opacity-65"}>
+          <TicketIcon />
+        </span>
         {product.name}
         {isHot && (
           <Image

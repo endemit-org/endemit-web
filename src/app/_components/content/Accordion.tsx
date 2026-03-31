@@ -106,13 +106,11 @@ export default function Accordion({
                 onClick={() => toggleItem(index)}
                 className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left transition-colors ${
                   isOpen
-                    ? "bg-neutral-600/20 bg-opacity-70 backdrop-blur-sm "
-                    : "bg-neutral-900 hover:bg-neutral-800 "
+                    ? "bg-black text-neutral-100 border-b-2 border-dotted border-b-neutral-600"
+                    : "bg-neutral-900 hover:bg-neutral-800 text-neutral-300"
                 }`}
               >
-                <span
-                  className={`${compact ? "text-base" : "text-lg"}  text-neutral-200`}
-                >
+                <span className={`${compact ? "text-base" : "text-lg"}  `}>
                   {item.title}
                 </span>
                 <ItemToggleIcon isOpen={isOpen} />

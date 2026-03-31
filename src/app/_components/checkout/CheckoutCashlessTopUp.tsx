@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import Image from "next/image";
 import { Product, ProductCategory } from "@/domain/product/types/product";
 import { isProductSellable } from "@/domain/product/businessLogic";
-import { formatPrice } from "@/lib/util/formatting";
+import { formatTokens } from "@/lib/util/currency";
 import type { CartItem } from "@/domain/checkout/types/cartItem";
 import clsx from "clsx";
 
@@ -107,7 +107,7 @@ export default function CheckoutCashlessTopUp({
               />
             )}
             <div className="text-base font-bold text-neutral-200">
-              {formatPrice(product.price)}
+              {formatTokens(product.price)}
             </div>
             <div className="text-xs text-blue-400 mt-0.5">+ Add</div>
           </button>

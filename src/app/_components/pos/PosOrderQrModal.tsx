@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import QRCode from "qrcode";
 import confetti from "canvas-confetti";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface PosOrderSummary {
   id: string;
@@ -32,13 +33,6 @@ interface Props {
   onClose: () => void;
   onCancel: () => void;
   onCopyToCart: () => void;
-}
-
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 export function PosOrderQrModal({
@@ -88,10 +82,13 @@ export function PosOrderQrModal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold">Order {order.shortCode}</h2>
-            <p className="text-sm text-gray-500">{formatPrice(order.total)}</p>
+          <div className="text-xl  text-center w-full">
+            Your total is{" "}
+            <span className={"font-bold"}>
+              {formatTokensFromCents(order.total)}
+            </span>
           </div>
+
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full"
@@ -135,7 +132,7 @@ export function PosOrderQrModal({
                 Payment Received
               </h3>
               <p className="text-2xl font-bold mb-1">
-                {formatPrice(order.total)}
+                {formatTokensFromCents(order.total)}
               </p>
               {hasTip && (
                 <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full text-white font-semibold shadow-lg animate-pulse">
@@ -146,7 +143,7 @@ export function PosOrderQrModal({
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
-                  <span>+{formatPrice(order.tipAmount!)} tip</span>
+                  <span>+{formatTokensFromCents(order.tipAmount!)} tip</span>
                 </div>
               )}
             </div>
@@ -175,10 +172,6 @@ export function PosOrderQrModal({
                   <AnimatedEndemitLogo />
                 </div>
               </div>
-
-              <p className="text-center text-sm text-gray-500 mb-4">
-                {formatPrice(order.total)}
-              </p>
 
               {/* Status */}
               {isScanned ? (
@@ -232,7 +225,8 @@ export function PosOrderQrModal({
                         {order.customerName || "Customer"} scanned
                       </p>
                       <p className="text-sm text-gray-600">
-                        Balance: {formatPrice(order.customerBalance || 0)}
+                        Balance:{" "}
+                        {formatTokensFromCents(order.customerBalance || 0)}
                         {order.hasEnoughBalance === false && (
                           <span className="text-red-600 ml-1">
                             (Insufficient)
@@ -256,7 +250,7 @@ export function PosOrderQrModal({
                       {item.quantity}x {item.name}
                     </span>
                     <span className="font-medium">
-                      {formatPrice(item.total)}
+                      {formatTokensFromCents(item.total)}
                     </span>
                   </div>
                 ))}
