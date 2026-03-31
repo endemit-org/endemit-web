@@ -54,6 +54,12 @@ const nextConfig: NextConfig = {
   async redirects() {
     return REDIRECTS;
   },
+  outputFileTracingIncludes: {
+    // Ticket image generation requires logo and font files
+    "/api/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+    "/admin/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+    "/profile/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+  },
 };
 
 export default nextConfig;

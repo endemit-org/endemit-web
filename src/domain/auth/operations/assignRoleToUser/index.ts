@@ -1,11 +1,10 @@
 import "server-only";
 
-import type { RoleSlug } from "@/domain/auth/config/roles.config";
 import { prisma } from "@/lib/services/prisma";
 
 export const assignRoleToUser = async (
   userId: string,
-  roleSlug: RoleSlug,
+  roleSlug: string,
   assignedBy?: string
 ) => {
   const role = await prisma.role.findUnique({
