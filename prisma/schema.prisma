@@ -19,11 +19,13 @@ enum OrderStatus {
   CREATED
   PROCESSING
   PAID
-  SHIPPED
-  DELIVERED
+  PREPARING
+  IN_DELIVERY
+  COMPLETED
   CANCELLED
   EXPIRED
   REFUND_REQUESTED
+  PARTIALLY_REFUNDED
   REFUNDED
 }
 
@@ -95,11 +97,36 @@ model Order {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
+  // Refund tracking
+  refundedAmount Int       @default(0) // Total cents refunded
+  refundedAt     DateTime?
+  refundedBy     String? // Admin user ID who processed the refund
+  refundReason   String?
+  stripeRefundId String? // Latest Stripe refund ID
+
   tickets Ticket[]
+  refunds OrderRefund[]
 
   @@index([stripeSession])
   @@index([email])
   @@index([userId])
+}
+
+model OrderRefund {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemIndex      Int // Index in order.items JSON array
+  quantity       Int // How many of this item refunded
+  amount         Int // Refund amount in cents
+  stripeRefundId String?
+  reason         String?
+  createdById    String
+  createdBy      User     @relation("RefundCreator", fields: [createdById], references: [id])
+  createdAt      DateTime @default(now())
+
+  @@index([orderId])
+  @@index([createdById])
 }
 
 model Ticket {
@@ -150,6 +177,7 @@ model User {
   orders              Order[]
   wallet              Wallet?
   createdTransactions WalletTransaction[] @relation("TransactionCreator")
+  createdRefunds      OrderRefund[]       @relation("RefundCreator")
 
   // POS relations
   posRegisterAssignments PosRegisterSeller[]

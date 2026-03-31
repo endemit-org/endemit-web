@@ -10,6 +10,7 @@ import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { CartItem } from "@/domain/checkout/types/cartItem";
 import { getResizedPrismicImage } from "@/lib/util/util";
+import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 interface Props {
   order: Order;
@@ -54,6 +55,24 @@ function NewOrderToMerchantTemplate({ order }: Props) {
             within the next 10 minutes.
           </Text>
         )}
+
+        <div style={{ marginBottom: "24px" }}>
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/admin/orders/${order.id}`}
+            style={{
+              display: "inline-block",
+              backgroundColor: "#18181b",
+              color: "#ffffff",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+            }}
+          >
+            View Order in Admin
+          </Link>
+        </div>
 
         {shippingAddress && (
           <div

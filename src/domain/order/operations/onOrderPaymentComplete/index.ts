@@ -2,7 +2,7 @@ import "server-only";
 
 import { queueNewOrderAutomation } from "@/domain/order/operations/queueNewOrderAutomation";
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
-import { updateOrderStatusPaid } from "@/domain/order/operations/updateOrderStatus";
+import { updateOrderStatusPaid, updateOrderStatusById } from "@/domain/order/operations/updateOrderStatus";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { subscribeEmailToTicketBuyerList } from "@/domain/newsletter/actions/subscribeEmailToTicketBuyerList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
@@ -10,10 +10,20 @@ import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTick
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
 import { createTransaction } from "@/domain/wallet/operations/createTransaction";
 import { ProductInOrder } from "@/domain/order/types/order";
-import { ProductCategory } from "@/domain/product/types/product";
+import { ProductCategory, ProductType } from "@/domain/product/types/product";
+import { OrderStatus } from "@prisma/client";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
-  const order = await updateOrderStatusPaid(paymentSessionId);
+  let order = await updateOrderStatusPaid(paymentSessionId);
+  const items = order.items as unknown as ProductInOrder[];
+
+  // Check if order has any physical items
+  const hasPhysicalItems = items.some(item => item.type === ProductType.PHYSICAL);
+
+  // Digital-only orders go straight to COMPLETED
+  if (!hasPhysicalItems) {
+    order = await updateOrderStatusById(order.id, OrderStatus.COMPLETED);
+  }
 
   // Process wallet transactions (non-blocking)
   if (order.userId) {
@@ -22,7 +32,6 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
       if (!wallet) {
         console.error("User has no wallet:", order.userId);
       } else {
-        const items = order.items as unknown as ProductInOrder[];
 
         // Deduct wallet credit if used for purchase
         if (order.walletAmountUsed > 0) {
