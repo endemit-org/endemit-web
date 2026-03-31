@@ -35,9 +35,9 @@ interface Props {
 
 const TIP_PRESETS = [
   { label: "No tip", value: 0 },
-  { label: "10%", percent: 10 },
-  { label: "15%", percent: 15 },
-  { label: "20%", percent: 20 },
+  { label: "12%", percent: 12 },
+  { label: "25%", percent: 25 },
+  { label: "Custom", value: -1 }, // -1 indicates custom
 ];
 
 export function WalletPayScanner({
@@ -51,7 +51,9 @@ export function WalletPayScanner({
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [selectedTip, setSelectedTip] = useState(0);
   const [customTip, setCustomTip] = useState("");
+  const [showCustomTip, setShowCustomTip] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCancelled, setIsCancelled] = useState(false);
 
@@ -67,68 +69,73 @@ export function WalletPayScanner({
     enabled: !!scanResult && mode === "confirm",
   });
 
-  const handleScan = useCallback(async (hash: string) => {
-    if (!hash.trim()) return;
+  const handleScan = useCallback(
+    async (hash: string) => {
+      if (!hash.trim() || isScanning) return;
 
-    try {
-      const response = await fetch(`/api/v1/pos/orders/${hash}/scan`, {
-        method: "POST",
-      });
+      setIsScanning(true);
+      setError(null);
 
-      const data = await response.json();
+      try {
+        const response = await fetch(`/api/v1/pos/orders/${hash}/scan`, {
+          method: "POST",
+        });
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to scan order");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to scan order");
+        }
+
+        setScanResult(data);
+        setMode("confirm");
+        setSelectedTip(0);
+        setCustomTip("");
+        setShowCustomTip(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to scan");
+        setMode("error");
+      } finally {
+        setIsScanning(false);
       }
-
-      setScanResult(data);
-      setMode("confirm");
-      setSelectedTip(0);
-      setCustomTip("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to scan");
-      setMode("error");
-    }
-  }, []);
+    },
+    [isScanning]
+  );
 
   const handleQrScan = useCallback(
     (result: { rawValue: string }[]) => {
-      if (result && result.length > 0 && mode === "scan") {
+      if (result && result.length > 0 && mode === "scan" && !isScanning) {
         const hash = result[0].rawValue.trim();
         if (hash) {
           handleScan(hash);
         }
       }
     },
-    [handleScan, mode]
+    [handleScan, mode, isScanning]
   );
 
   const calculateTip = useCallback(() => {
-    if (customTip) {
+    if (showCustomTip && customTip) {
       return Math.round(parseFloat(customTip) * 100) || 0;
     }
-    if (!scanResult) return 0;
+    if (!scanResult || selectedTip <= 0) return 0;
     // Calculate debit total for percentage-based tips
     const debitItems = scanResult.order.items.filter(
       i => i.direction === "DEBIT"
     );
     const debitSum = debitItems.reduce((sum, i) => sum + i.total, 0);
-    const preset = TIP_PRESETS.find(
-      t => t.value === selectedTip || t.percent === selectedTip
-    );
-    if (preset && "percent" in preset && preset.percent !== undefined) {
-      return Math.round((debitSum * preset.percent) / 100);
-    }
-    return 0;
-  }, [customTip, selectedTip, scanResult]);
+    return Math.round((debitSum * selectedTip) / 100);
+  }, [customTip, showCustomTip, selectedTip, scanResult]);
 
   const reset = useCallback(() => {
     setMode("scan");
     setScanResult(null);
     setSelectedTip(0);
     setCustomTip("");
+    setShowCustomTip(false);
     setError(null);
     setIsCancelled(false);
+    setIsScanning(false);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -196,7 +203,15 @@ export function WalletPayScanner({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-      <div className="bg-neutral-900 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden border border-neutral-700">
+      <div className="bg-neutral-900 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden border border-neutral-700 relative">
+        {/* Loading overlay for scanning */}
+        {isScanning && (
+          <div className="absolute inset-0 z-10 bg-neutral-900/95 flex flex-col items-center justify-center">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-white font-medium">Loading order...</p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">
@@ -263,7 +278,9 @@ export function WalletPayScanner({
                 type="text"
                 placeholder="AB12"
                 maxLength={4}
-                className="w-32 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-center text-2xl font-mono uppercase tracking-widest"
+                disabled={isScanning}
+                className="w-40 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-center text-2xl font-mono uppercase disabled:opacity-50 placeholder-neutral-700"
+                style={{ letterSpacing: "0.3em" }}
                 onChange={e => {
                   const value = e.target.value.toUpperCase();
                   e.target.value = value;
@@ -286,26 +303,17 @@ export function WalletPayScanner({
 
           {mode === "confirm" && scanResult && (
             <>
-              <div className="mb-4">
-                <div className="text-sm text-neutral-400 mb-1">
-                  {scanResult.order.register.name}
-                </div>
-                <div className="font-mono text-lg text-white">
-                  Order {scanResult.order.shortCode}
-                </div>
-              </div>
-
               {/* Items */}
-              <div className="bg-neutral-800 rounded-lg divide-y divide-neutral-700 mb-4">
+              <div className="bg-neutral-800/50 rounded-lg divide-y divide-neutral-700/50 mb-4">
                 {scanResult.order.items.map((item, i) => (
                   <div
                     key={i}
                     className="px-4 py-3 flex justify-between text-sm"
                   >
-                    <span className="text-neutral-300">
+                    <span className="text-neutral-400">
                       {item.quantity}x {item.name}
                     </span>
-                    <span className="text-white font-medium">
+                    <span className="text-neutral-300">
                       {formatTokensFromCents(item.total)}
                     </span>
                   </div>
@@ -315,91 +323,95 @@ export function WalletPayScanner({
               {/* Tip selection - only show for non-top-up orders */}
               {!hasTopUp && (
                 <div className="mb-4">
-                  <div className="text-sm text-neutral-400 mb-2">
+                  <div className="text-sm text-neutral-500 mb-2">
                     Add a tip?
                   </div>
                   <div className="grid grid-cols-4 gap-2">
-                    {TIP_PRESETS.map(preset => (
-                      <button
-                        key={preset.label}
-                        onClick={() => {
-                          const tipValue =
-                            "percent" in preset ? preset.percent : preset.value;
-                          setSelectedTip(tipValue ?? 0);
-                          setCustomTip("");
-                        }}
-                        className={`py-2 rounded-lg text-sm font-medium transition-colors ${
+                    {TIP_PRESETS.map(preset => {
+                      const isCustom = preset.value === -1;
+                      const isSelected = isCustom
+                        ? showCustomTip
+                        : !showCustomTip &&
                           selectedTip ===
                             ("percent" in preset
                               ? preset.percent
-                              : preset.value) && !customTip
-                            ? "bg-blue-600 text-white"
-                            : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
-                        }`}
-                      >
-                        {preset.label}
-                      </button>
-                    ))}
+                              : preset.value);
+
+                      return (
+                        <button
+                          key={preset.label}
+                          onClick={() => {
+                            if (isCustom) {
+                              setShowCustomTip(true);
+                              setSelectedTip(0);
+                            } else {
+                              setShowCustomTip(false);
+                              setCustomTip("");
+                              const tipValue =
+                                "percent" in preset
+                                  ? preset.percent
+                                  : preset.value;
+                              setSelectedTip(tipValue ?? 0);
+                            }
+                          }}
+                          className={`py-2 rounded-lg text-sm font-medium transition-colors ${
+                            isSelected
+                              ? "bg-blue-600 text-white"
+                              : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+                          }`}
+                        >
+                          {preset.label}
+                        </button>
+                      );
+                    })}
                   </div>
-                  <div className="mt-2">
-                    <input
-                      type="number"
-                      placeholder={`Custom tip in ${TOKEN_CONFIG.symbol}`}
-                      value={customTip}
-                      onChange={e => {
-                        setCustomTip(e.target.value);
-                        setSelectedTip(0);
-                      }}
-                      className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
-                    />
-                  </div>
+                  {showCustomTip && (
+                    <div className="mt-3">
+                      <input
+                        type="number"
+                        placeholder={`Enter amount in ${TOKEN_CONFIG.symbol}`}
+                        value={customTip}
+                        onChange={e => setCustomTip(e.target.value)}
+                        autoFocus
+                        className="w-full px-4 py-3 bg-neutral-800 border border-neutral-600 rounded-lg text-white text-center text-lg"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Totals */}
-              <div className="bg-neutral-800 rounded-lg p-4 mb-4">
-                {creditTotal > 0 && (
-                  <div className="flex justify-between text-sm text-green-400 mb-2">
-                    <span>Top-up</span>
-                    <span>+{formatTokensFromCents(creditTotal)}</span>
-                  </div>
-                )}
-                {debitTotal > 0 && (
-                  <div className="flex justify-between text-sm text-neutral-400 mb-2">
-                    <span>Purchase</span>
-                    <span>-{formatTokensFromCents(debitTotal)}</span>
-                  </div>
-                )}
+              {/* Total - prominent */}
+              <div className="bg-neutral-800 rounded-xl p-3 mb-4 text-center">
+                <div className="text-neutral-500 text-sm mb-1">
+                  {hasTopUp ? "Top-up Amount" : "Total to Pay"}
+                </div>
+                <div
+                  className={`text-4xl font-bold ${hasTopUp ? "text-green-400" : "text-white"}`}
+                >
+                  {hasTopUp
+                    ? `+${formatTokensFromCents(creditTotal)}`
+                    : formatTokensFromCents(totalToPay)}
+                </div>
                 {tipAmount > 0 && (
-                  <div className="flex justify-between text-sm text-neutral-400 mb-2">
-                    <span>Tip</span>
-                    <span>-{formatTokensFromCents(tipAmount)}</span>
+                  <div className="text-neutral-500 text-sm mt-1">
+                    includes {formatTokensFromCents(tipAmount)} tip
                   </div>
                 )}
               </div>
 
-              {/* Balance preview */}
-              <div
-                className={`rounded-lg p-4 mb-4 ${canPay ? "bg-neutral-800" : "bg-red-900/30 border border-red-700/50"}`}
-              >
-                <div className="flex items-center justify-between text-sm text-neutral-400 mb-2">
-                  <span>Current balance</span>
-                  <span>
-                    {formatTokensFromCents(scanResult.customer.balance)}
-                  </span>
-                </div>
-                <div
-                  className={`flex items-center justify-between  pt-2 border-t border-neutral-700 ${canPay ? "text-white" : "text-red-400"}`}
-                >
-                  <span>New balance</span>
-                  <span>{formatTokensFromCents(balanceAfter)}</span>
-                </div>
-                {!canPay && (
-                  <p className="text-xs text-red-400 mt-2">
-                    Insufficient balance. Please top up your wallet.
-                  </p>
-                )}
+              {/* Balance - toned down */}
+              <div className="flex justify-between text-xs text-neutral-500 mb-1 px-1">
+                <span>
+                  Balance: {formatTokensFromCents(scanResult.customer.balance)}
+                </span>
+                <span>After: {formatTokensFromCents(balanceAfter)}</span>
               </div>
+
+              {!canPay && (
+                <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 mb-4 text-red-400 text-sm text-center">
+                  Insufficient balance. Please top up your wallet.
+                </div>
+              )}
 
               {error && (
                 <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 mb-4 text-red-400 text-sm">
@@ -484,17 +496,11 @@ export function WalletPayScanner({
 
         {/* Actions */}
         {mode === "confirm" && (
-          <div className="px-6 py-4 border-t border-neutral-700 flex gap-3">
-            <button
-              onClick={reset}
-              className="flex-1 px-4 py-3 border border-neutral-600 rounded-lg text-neutral-300 hover:bg-neutral-800"
-            >
-              Cancel
-            </button>
+          <div className="px-6 pb-6 flex flex-col gap-3">
             <button
               onClick={handlePay}
               disabled={!canPay || isProcessing}
-              className={`flex-1 px-4 py-3 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`w-full px-4 py-4 text-white text-lg font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
                 hasTopUp
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-blue-600 hover:bg-blue-700"
@@ -505,6 +511,12 @@ export function WalletPayScanner({
                 : hasTopUp
                   ? `Top-up ${formatTokensFromCents(creditTotal)}`
                   : `Pay ${formatTokensFromCents(totalToPay)}`}
+            </button>
+            <button
+              onClick={reset}
+              className="text-neutral-500 hover:text-neutral-300 text-sm py-2 transition-colors"
+            >
+              Cancel
             </button>
           </div>
         )}

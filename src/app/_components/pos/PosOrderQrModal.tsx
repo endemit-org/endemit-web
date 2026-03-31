@@ -136,7 +136,7 @@ export function PosOrderQrModal({
                 {formatTokensFromCents(order.total)}
               </p>
               {hasTip && (
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full text-white font-semibold shadow-lg animate-pulse">
+                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full text-amber-900 font-semibold shadow-lg animate-pulse">
                   <svg
                     className="w-5 h-5"
                     fill="currentColor"
@@ -287,7 +287,7 @@ export function PosOrderQrModal({
               onClick={onClose}
               className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Next
+              Continue
             </button>
           </div>
         )}
