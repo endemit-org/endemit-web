@@ -160,6 +160,7 @@ export function PosOrderQrModal({
               {/* QR Code */}
               <div className="flex flex-col items-center mb-4">
                 {qrDataUrl ? (
+                  //@next/next/no-img-element
                   <img
                     src={qrDataUrl}
                     alt="Order QR Code"

@@ -115,7 +115,7 @@ export default function TopUpModal({
           ) : (
             <>
               <p className="text-sm text-neutral-400 mb-4">
-                Select an amount to add to your wallet
+                Select an amount of tokens to add to your wallet
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-6">

@@ -38,6 +38,7 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
             className="w-5 h-5 h"
             width={40}
             height={40}
+            unoptimized
           />
         )}
       </div>

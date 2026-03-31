@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
-import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
-import { getOrdersByUserId } from "@/domain/order/operations/getOrdersByUserId";
-import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
-import { getVisibleProducts } from "@/domain/product/actions/getProducts";
-import { ProductCategory } from "@/domain/product/types/product";
-import { prismicClient } from "@/lib/services/prismic";
-import type { EventDocument } from "@/prismicio-types";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import ProfileSidebar from "@/app/_components/profile/ProfileSidebar";
-import ProfileOrdersPreview from "@/app/_components/profile/ProfileOrdersPreview";
-import ProfileTransactionsPreview from "@/app/_components/profile/ProfileTransactionsPreview";
-import ProfileTicketsPreview from "@/app/_components/profile/ProfileTicketsPreview";
-import ProfileEventsAttended from "@/app/_components/profile/ProfileEventsAttended";
-import ProfileUpcomingEventsPromo from "@/app/_components/profile/ProfileUpcomingEventsPromo";
-import { getBlurDataURL } from "@/lib/util/util";
-import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
-import { isEventCompleted } from "@/domain/event/businessLogic";
+import {
+  ProfileSidebarSkeleton,
+  ProfileTableSkeleton,
+  EventsPromoSkeleton,
+  ProfileEventsAttendedSkeleton,
+} from "@/app/_components/ui/Skeletons";
+import ProfileSidebarAsync from "@/app/_components/profile/async/ProfileSidebarAsync";
+import ProfileTransactionsAsync from "@/app/_components/profile/async/ProfileTransactionsAsync";
+import ProfileTicketsAsync from "@/app/_components/profile/async/ProfileTicketsAsync";
+import ProfileOrdersAsync from "@/app/_components/profile/async/ProfileOrdersAsync";
+import ProfileEventsAttendedAsync from "@/app/_components/profile/async/ProfileEventsAttendedAsync";
+import ProfileUpcomingEventsAsync from "@/app/_components/profile/async/ProfileUpcomingEventsAsync";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -37,103 +34,6 @@ export default async function ProfilePage() {
     redirect("/signin");
   }
 
-  // Fetch all data in parallel
-  const [wallet, orders, upcomingTickets, pastTickets, allProducts, allEvents] =
-    await Promise.all([
-      getWalletByUserId(user.id),
-      getOrdersByUserId(user.id),
-      getTicketsByUserId(user.id, { upcomingOnly: true }),
-      getTicketsByUserId(user.id, { pastOnly: true }),
-      getVisibleProducts(),
-      fetchEventsFromCms({}),
-    ]);
-
-  // Filter to currency products for top-up
-  const currencyProducts = allProducts.filter(
-    p => p.category === ProductCategory.CURRENCIES
-  );
-
-  const recentOrders = orders.slice(0, 5);
-  const recentTransactions = wallet?.transactions.slice(0, 5) ?? [];
-  const recentTickets = upcomingTickets.slice(0, 5);
-
-  // Fetch event data for past events attended
-  const pastEventIds = [...new Set(pastTickets.map(t => t.eventId))];
-  let pastEvents: Array<{
-    id: string;
-    uid: string;
-    name: string;
-    dateStart: Date | null;
-    dateEnd: Date | null;
-    image: { src: string; alt: string | null; placeholder: string } | null;
-    link: string;
-  }> = [];
-
-  if (pastEventIds.length > 0) {
-    const eventsFromCms = await prismicClient
-      .getByIDs<EventDocument>(pastEventIds)
-      .catch(() => ({ results: [] }));
-
-    pastEvents = await Promise.all(
-      eventsFromCms.results.map(async event => ({
-        id: event.id,
-        uid: event.uid ?? "",
-        name: event.data.title ?? "Event",
-        dateStart: event.data.date_start
-          ? new Date(event.data.date_start)
-          : null,
-        dateEnd: event.data.date_end ? new Date(event.data.date_end) : null,
-        image: event.data.promo_image?.url
-          ? {
-              src: event.data.promo_image.url,
-              alt: event.data.promo_image.alt,
-              placeholder: await getBlurDataURL(event.data.promo_image.url),
-            }
-          : null,
-        link: event.data.enable_link_to_full_page ? `/events/${event.uid}` : "",
-      }))
-    );
-  }
-
-  // Extract unique artists from past events the user attended
-  const pastEventsWithArtists = allEvents
-    ? allEvents.filter(event => pastEventIds.includes(event.id))
-    : [];
-
-  const uniqueArtistNames = new Set<string>();
-  for (const event of pastEventsWithArtists) {
-    for (const artist of event.artists) {
-      uniqueArtistNames.add(artist.name.toUpperCase());
-    }
-  }
-  const sortedArtistNames = [...uniqueArtistNames].sort((a, b) =>
-    a.localeCompare(b)
-  );
-
-  // Get upcoming events user doesn't have tickets for
-  const userTicketEventIds = new Set(upcomingTickets.map(t => t.eventId));
-  const upcomingEventsForPromo = allEvents
-    ? allEvents
-        .filter(event => !isEventCompleted(event))
-        .filter(event => event.date_start !== null)
-        .filter(event => !userTicketEventIds.has(event.id))
-        .sort(
-          (a, b) =>
-            (a.date_start?.getTime() ?? 0) - (b.date_start?.getTime() ?? 0)
-        )
-        .slice(0, 3)
-        .map(event => ({
-          id: event.id,
-          uid: event.uid,
-          name: event.name,
-          dateStart: event.date_start,
-          dateEnd: event.date_end,
-          image: event.promoImage,
-          link: `/events/${event.uid}`,
-          hasTicketsAvailable: event.tickets.productIds.length > 0,
-        }))
-    : [];
-
   return (
     <OuterPage>
       <PageHeadline
@@ -146,47 +46,39 @@ export default async function ProfilePage() {
 
       <InnerPage className="overflow-visible max-sm:p-0 max-sm:bg-transparent">
         <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
-          {/* Sidebar - fixed width on desktop, full width on mobile */}
+          {/* Sidebar - streams in with wallet/tickets data */}
           <div className="lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
-            <ProfileSidebar
-              userId={user.id}
-              name={user.name}
-              email={user.email!}
-              image={user.image}
-              upcomingTickets={upcomingTickets.length}
-              walletBalance={wallet?.balance ?? null}
-              currencyProducts={currencyProducts}
-            />
+            <Suspense fallback={<ProfileSidebarSkeleton />}>
+              <ProfileSidebarAsync
+                userId={user.id}
+                name={user.name}
+                email={user.email!}
+                image={user.image}
+              />
+            </Suspense>
           </div>
 
-          {/* Main content */}
+          {/* Main content - streams progressively */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
-            <ProfileUpcomingEventsPromo events={upcomingEventsForPromo} />
+            <Suspense fallback={<EventsPromoSkeleton />}>
+              <ProfileUpcomingEventsAsync userId={user.id} />
+            </Suspense>
 
-            {recentTransactions.length > 0 && (
-              <ProfileTransactionsPreview
-                userId={user.id}
-                initialTransactions={recentTransactions}
-                totalCount={wallet?.transactions.length ?? 0}
-              />
-            )}
+            <Suspense fallback={<ProfileTableSkeleton title="Cashless Transactions" />}>
+              <ProfileTransactionsAsync userId={user.id} />
+            </Suspense>
 
-            {upcomingTickets.length > 0 && (
-              <ProfileTicketsPreview
-                tickets={recentTickets}
-                totalCount={upcomingTickets.length}
-              />
-            )}
+            <Suspense fallback={<ProfileTableSkeleton title="Upcoming Tickets" />}>
+              <ProfileTicketsAsync userId={user.id} />
+            </Suspense>
 
-            <ProfileOrdersPreview
-              orders={recentOrders}
-              totalCount={orders.length}
-            />
+            <Suspense fallback={<ProfileTableSkeleton title="Orders" />}>
+              <ProfileOrdersAsync userId={user.id} />
+            </Suspense>
 
-            <ProfileEventsAttended
-              events={pastEvents}
-              artistNames={sortedArtistNames}
-            />
+            <Suspense fallback={<ProfileEventsAttendedSkeleton />}>
+              <ProfileEventsAttendedAsync userId={user.id} />
+            </Suspense>
           </div>
         </div>
       </InnerPage>
