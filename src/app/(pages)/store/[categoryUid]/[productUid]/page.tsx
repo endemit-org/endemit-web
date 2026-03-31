@@ -69,8 +69,6 @@ export default async function ProductPage({
 
   const product = await fetchProductFromCmsByUid(productUid);
 
-  console.log("product", product);
-
   if (!product) {
     notFound();
   }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getUserById } from "@/domain/user/operations/getUserById";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getAllRoles } from "@/domain/role/operations/getAllRoles";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
@@ -64,7 +65,10 @@ export default async function AdminUserDetailPage({
   );
   const canViewWallets = currentUser.permissions.includes(PERMISSIONS.WALLETS_READ);
 
-  const wallet = canViewWallets ? await getWalletByUserId(id) : null;
+  const [wallet, allRoles] = await Promise.all([
+    canViewWallets ? getWalletByUserId(id) : null,
+    canManageRoles ? getAllRoles() : [],
+  ]);
 
   return (
     <div>
@@ -247,6 +251,7 @@ export default async function AdminUserDetailPage({
               <UserRolesManager
                 userId={user.id}
                 currentRoles={user.roles}
+                allRoles={allRoles}
                 canManageRoles={!!canManageRoles}
               />
             </div>
