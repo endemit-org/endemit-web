@@ -4,11 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { assignRoleAction } from "@/domain/user/actions/assignRoleAction";
 import { removeRoleAction } from "@/domain/user/actions/removeRoleAction";
-import {
-  ROLE_SLUGS,
-  ROLE_DEFINITIONS,
-  type RoleSlug,
-} from "@/domain/auth/config/roles.config";
+import type { SerializedRole } from "@/domain/role/types";
 import {
   PERMISSION_METADATA,
   type Permission,
@@ -17,7 +13,8 @@ import clsx from "clsx";
 
 interface UserRolesManagerProps {
   userId: string;
-  currentRoles: RoleSlug[];
+  currentRoles: string[];
+  allRoles: SerializedRole[];
   canManageRoles: boolean;
 }
 
@@ -26,9 +23,8 @@ const roleColors: Record<string, string> = {
   moderator: "bg-blue-100 text-blue-800 border-blue-300",
   scanner: "bg-green-100 text-green-800 border-green-300",
   user: "bg-gray-100 text-gray-800 border-gray-300",
+  seller: "bg-orange-100 text-orange-800 border-orange-300",
 };
-
-const allRoles = Object.values(ROLE_SLUGS);
 
 // Group permissions by resource for display
 function groupPermissionsByResource(permissions: Permission[]) {
@@ -48,19 +44,22 @@ function groupPermissionsByResource(permissions: Permission[]) {
 export default function UserRolesManager({
   userId,
   currentRoles,
+  allRoles,
   canManageRoles,
 }: UserRolesManagerProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const availableRoles = allRoles.filter(role => !currentRoles.includes(role));
+  const availableRoles = allRoles.filter(
+    role => !currentRoles.includes(role.slug)
+  );
 
-  // Compute aggregated permissions from all assigned roles
+  // Compute aggregated permissions from all assigned roles (using DB data)
   const aggregatedPermissions = useMemo(() => {
     const permSet = new Set<Permission>();
     for (const roleSlug of currentRoles) {
-      const roleDef = ROLE_DEFINITIONS[roleSlug];
+      const roleDef = allRoles.find(r => r.slug === roleSlug);
       if (roleDef) {
         for (const perm of roleDef.permissions) {
           permSet.add(perm);
@@ -68,19 +67,19 @@ export default function UserRolesManager({
       }
     }
     return Array.from(permSet).sort();
-  }, [currentRoles]);
+  }, [currentRoles, allRoles]);
 
   const groupedPermissions = useMemo(
     () => groupPermissionsByResource(aggregatedPermissions),
     [aggregatedPermissions]
   );
 
-  const handleAddRole = async (role: RoleSlug) => {
+  const handleAddRole = async (roleSlug: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await assignRoleAction(userId, role);
+      await assignRoleAction(userId, roleSlug);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add role");
@@ -89,12 +88,12 @@ export default function UserRolesManager({
     }
   };
 
-  const handleRemoveRole = async (role: RoleSlug) => {
+  const handleRemoveRole = async (roleSlug: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await removeRoleAction(userId, role);
+      await removeRoleAction(userId, roleSlug);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to remove role");
@@ -150,7 +149,7 @@ export default function UserRolesManager({
           <select
             onChange={e => {
               if (e.target.value) {
-                handleAddRole(e.target.value as RoleSlug);
+                handleAddRole(e.target.value);
                 e.target.value = "";
               }
             }}
@@ -159,8 +158,8 @@ export default function UserRolesManager({
           >
             <option value="">+ Add Role</option>
             {availableRoles.map(role => (
-              <option key={role} value={role}>
-                {role}
+              <option key={role.slug} value={role.slug}>
+                {role.name}
               </option>
             ))}
           </select>

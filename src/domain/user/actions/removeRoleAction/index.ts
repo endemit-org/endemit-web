@@ -4,11 +4,10 @@ import assert from "node:assert";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { removeRoleFromUser } from "@/domain/auth/operations/removeRoleFromUser";
-import type { RoleSlug } from "@/domain/auth/config/roles.config";
 
 export async function removeRoleAction(
   userId: string,
-  roleSlug: RoleSlug
+  roleSlug: string
 ): Promise<{ success: boolean }> {
   const user = await getCurrentUser();
   assert(user, "User not authenticated");

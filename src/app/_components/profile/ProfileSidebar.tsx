@@ -203,7 +203,7 @@ export default function ProfileSidebar({
             Top Up Wallet
           </ActionButton>
         </>
-        {upcomingTickets && (
+        {!!upcomingTickets && (
           <Link
             href="/profile/tickets"
             className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 font-medium rounded-lg transition-colors"

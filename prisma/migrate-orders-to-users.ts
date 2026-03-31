@@ -2,6 +2,25 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+async function ensureUserHasWallet(userId: string): Promise<boolean> {
+  const existingWallet = await prisma.wallet.findUnique({
+    where: { userId },
+  });
+
+  if (existingWallet) {
+    return false; // Already has wallet
+  }
+
+  await prisma.wallet.create({
+    data: {
+      userId,
+      balance: 0,
+    },
+  });
+
+  return true; // Created new wallet
+}
+
 async function migrateOrdersToUsers() {
   console.log("Starting migration: Creating users from orders...\n");
 
@@ -11,7 +30,9 @@ async function migrateOrdersToUsers() {
   });
 
   if (!userRole) {
-    console.error("Error: 'user' role not found in database. Please run seed first.");
+    console.error(
+      "Error: 'user' role not found in database. Please run seed first."
+    );
     process.exit(1);
   }
 
@@ -27,11 +48,14 @@ async function migrateOrdersToUsers() {
   });
 
   const uniqueEmails = ordersWithoutUser.map(o => o.email.toLowerCase().trim());
-  console.log(`Found ${uniqueEmails.length} unique emails in orders without linked users.\n`);
+  console.log(
+    `Found ${uniqueEmails.length} unique emails in orders without linked users.\n`
+  );
 
   let createdCount = 0;
   let existingCount = 0;
   let linkedOrdersCount = 0;
+  let walletsCreatedCount = 0;
 
   for (const email of uniqueEmails) {
     // Check if user already exists with this email
@@ -66,6 +90,13 @@ async function migrateOrdersToUsers() {
       console.log(`    + Assigned 'user' role`);
     }
 
+    // Ensure user has a wallet
+    const walletCreated = await ensureUserHasWallet(user.id);
+    if (walletCreated) {
+      console.log(`    + Created wallet`);
+      walletsCreatedCount++;
+    }
+
     // Link all orders with this email to this user
     const updateResult = await prisma.order.updateMany({
       where: {
@@ -89,6 +120,7 @@ async function migrateOrdersToUsers() {
   console.log("\n--- Migration Summary ---");
   console.log(`Users created: ${createdCount}`);
   console.log(`Users already existed: ${existingCount}`);
+  console.log(`Wallets created: ${walletsCreatedCount}`);
   console.log(`Orders linked to users: ${linkedOrdersCount}`);
   console.log("\nMigration completed successfully!");
 }

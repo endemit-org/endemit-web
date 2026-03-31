@@ -4,11 +4,10 @@ import assert from "node:assert";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { assignRoleToUser } from "@/domain/auth/operations/assignRoleToUser";
-import type { RoleSlug } from "@/domain/auth/config/roles.config";
 
 export async function assignRoleAction(
   userId: string,
-  roleSlug: RoleSlug
+  roleSlug: string
 ): Promise<{ success: boolean }> {
   const user = await getCurrentUser();
   assert(user, "User not authenticated");
