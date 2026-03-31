@@ -20,6 +20,7 @@ export interface SerializedOrder {
   createdAt: string;
   updatedAt: string;
   ticketCount: number;
+  refundedAmount: number;
 }
 
 export interface SerializedOrderWithTickets extends Omit<SerializedOrder, "ticketCount"> {
@@ -46,6 +47,7 @@ export function serializeOrder(
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
     ticketCount: order._count?.tickets ?? 0,
+    refundedAmount: order.refundedAmount,
   };
 }
 
@@ -69,6 +71,7 @@ export function serializeOrderWithTickets(
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
     tickets: order.tickets.map(ticket => serializeTicket(ticket)),
+    refundedAmount: order.refundedAmount,
   };
 }
 

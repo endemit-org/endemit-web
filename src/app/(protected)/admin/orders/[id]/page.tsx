@@ -4,6 +4,7 @@ import { getOrderWithTickets } from "@/domain/order/operations/getOrderWithTicke
 import { formatPrice, formatDateTime } from "@/lib/util/formatting";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import OrderActionsWrapper from "@/app/_components/admin/OrderActionsWrapper";
 import clsx from "clsx";
 
 export async function generateMetadata({
@@ -26,11 +27,13 @@ const statusColors: Record<string, string> = {
   CREATED: "bg-gray-100 text-gray-800",
   PROCESSING: "bg-yellow-100 text-yellow-800",
   PAID: "bg-green-100 text-green-800",
-  SHIPPED: "bg-blue-100 text-blue-800",
-  DELIVERED: "bg-green-100 text-green-800",
+  PREPARING: "bg-blue-100 text-blue-800",
+  IN_DELIVERY: "bg-indigo-100 text-indigo-800",
+  COMPLETED: "bg-green-100 text-green-800",
   CANCELLED: "bg-red-100 text-red-800",
   EXPIRED: "bg-gray-100 text-gray-800",
   REFUND_REQUESTED: "bg-orange-100 text-orange-800",
+  PARTIALLY_REFUNDED: "bg-amber-100 text-amber-800",
   REFUNDED: "bg-purple-100 text-purple-800",
 };
 
@@ -94,6 +97,18 @@ export default async function AdminOrderDetailPage({
             >
               {order.status}
             </span>
+          </div>
+
+          {/* Order Actions */}
+          <div className="mt-4">
+            <OrderActionsWrapper
+              orderId={order.id}
+              status={order.status}
+              items={order.items}
+              totalAmount={order.totalAmount}
+              refundedAmount={order.refundedAmount}
+              userPermissions={currentUser.permissions}
+            />
           </div>
         </div>
 
