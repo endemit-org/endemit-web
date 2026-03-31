@@ -99,7 +99,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
+    <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`} style={{ backgroundColor: "#000" }}>
       <body
         className="m-auto overflow-y-scroll bg-black"
         style={{

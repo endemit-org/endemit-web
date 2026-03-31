@@ -47,12 +47,14 @@ interface Props {
   };
   items: PosItem[];
   initialPendingOrders: PosOrderSummary[];
+  showBackButton?: boolean;
 }
 
 export function PosRegisterInterface({
   register,
   items,
   initialPendingOrders,
+  showBackButton = true,
 }: Props) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [pendingOrders, setPendingOrders] =
@@ -60,12 +62,22 @@ export function PosRegisterInterface({
   const [activeOrder, setActiveOrder] = useState<PosOrderSummary | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Sort items alphabetically
+  // Sort and filter items
   const sortedItems = useMemo(
     () => [...items].sort((a, b) => a.name.localeCompare(b.name)),
     [items]
   );
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return sortedItems;
+    const query = searchQuery.toLowerCase();
+    return sortedItems.filter(item =>
+      item.name.toLowerCase().includes(query)
+    );
+  }, [sortedItems, searchQuery]);
 
   // Real-time updates for this register
   useRealtimeChannel({
@@ -275,29 +287,7 @@ export function PosRegisterInterface({
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Desktop Header */}
         <div className="hidden lg:flex items-center gap-2 p-3 border-b bg-white">
-          <Link
-            href="/pos"
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
-          <span className="font-medium text-gray-900">{register.name}</span>
-        </div>
-        {/* Mobile Header with back button and sidebar toggle */}
-        <div className="flex items-center justify-between p-3 border-b bg-white lg:hidden">
-          <div className="flex items-center gap-2">
+          {showBackButton && (
             <Link
               href="/pos"
               className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -316,37 +306,137 @@ export function PosRegisterInterface({
                 />
               </svg>
             </Link>
-            <span className="font-medium text-gray-900">{register.name}</span>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-            {pendingOrders.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
-                {pendingOrders.length}
-              </span>
+          )}
+          <span className="font-medium text-gray-900 flex-1">{register.name}</span>
+
+          {/* Desktop Search */}
+          <div className="relative flex items-center">
+            {isSearchOpen ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search items..."
+                  autoFocus
+                  className="w-48 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setIsSearchOpen(false);
+                  }}
+                  className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
             )}
-          </button>
+          </div>
+        </div>
+        {/* Mobile Header with back button and sidebar toggle */}
+        <div className="flex items-center justify-between p-3 border-b bg-white lg:hidden">
+          {isSearchOpen ? (
+            /* Mobile Search Mode */
+            <div className="flex items-center gap-2 flex-1">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search items..."
+                autoFocus
+                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setIsSearchOpen(false);
+                }}
+                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            /* Normal Mobile Header */
+            <>
+              <div className="flex items-center gap-2">
+                {showBackButton && (
+                  <Link
+                    href="/pos"
+                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </Link>
+                )}
+                <span className="font-medium text-gray-900">{register.name}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  {pendingOrders.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
+                      {pendingOrders.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Items Grid */}
         <div className="flex-1 overflow-auto p-4">
           <PosItemGrid
-            items={sortedItems}
+            items={filteredItems}
             onAddItem={addToCart}
             disabledDirection={disabledDirection}
           />

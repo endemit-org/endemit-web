@@ -36,6 +36,8 @@ interface Props {
   onCopyToCart: () => void;
 }
 
+const AUTO_CLOSE_SECONDS = 5;
+
 export function PosOrderQrModal({
   order,
   onClose,
@@ -44,6 +46,7 @@ export function PosOrderQrModal({
 }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
+  const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(null);
 
   useEffect(() => {
     QRCode.toDataURL(order.orderHash, {
@@ -59,6 +62,31 @@ export function PosOrderQrModal({
   const isPaid = order.status === "PAID";
   const isScanned = !!order.scannedAt;
   const hasTip = (order.tipAmount ?? 0) > 0;
+
+  // Start auto-close countdown when paid
+  useEffect(() => {
+    if (isPaid && autoCloseCountdown === null) {
+      setAutoCloseCountdown(AUTO_CLOSE_SECONDS);
+    }
+  }, [isPaid, autoCloseCountdown]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (autoCloseCountdown === null || autoCloseCountdown <= 0) return;
+
+    const timer = setTimeout(() => {
+      setAutoCloseCountdown(autoCloseCountdown - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [autoCloseCountdown]);
+
+  // Auto-close when countdown reaches 0
+  useEffect(() => {
+    if (autoCloseCountdown === 0) {
+      onClose();
+    }
+  }, [autoCloseCountdown, onClose]);
 
   // Fire confetti when tip is received
   const fireConfetti = useCallback(() => {
@@ -289,6 +317,11 @@ export function PosOrderQrModal({
             >
               Continue
             </button>
+            {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
+              <p className="text-center text-sm text-gray-500 mt-2">
+                Closing in {autoCloseCountdown}s
+              </p>
+            )}
           </div>
         )}
       </div>
