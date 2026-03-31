@@ -71,9 +71,15 @@ export async function processCashTopup(input: ProcessCashTopupInput) {
     return { wallet, transaction, user: wallet.user };
   });
 
-  // Broadcast balance update to customer
-  await broadcastToUser(result.user.id, "balance_updated", {
-    balance: result.transaction.balanceAfter,
+  // Broadcast wallet transaction to customer (updates both balance and transaction list)
+  await broadcastToUser(result.user.id, "wallet_transaction_created", {
+    transactionId: result.transaction.id,
+    walletId: result.wallet.id,
+    type: result.transaction.type,
+    amount: result.transaction.amount,
+    balanceAfter: result.transaction.balanceAfter,
+    note: result.transaction.note,
+    createdAt: result.transaction.createdAt.toISOString(),
   });
 
   return {
