@@ -24,6 +24,16 @@ export default function EventSaveTheDateLister({
             backgroundRepeat: "repeat",
           }}
         ></div>
+        <div className="w-full h-full absolute object-fill overflow-hidden opacity-40 ">
+          <video
+            src={"/images/dancing_bck.mp4"}
+            loop={true}
+            muted={true}
+            autoPlay={true}
+            playsInline={true}
+            className={"w-full h-full object-cover"}
+          />
+        </div>
         <div
           className={"flex flex-col w-full h-full p-4 relative z-10 gap-y-6"}
         >

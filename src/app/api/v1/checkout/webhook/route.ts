@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { STRIPE_WEBHOOK_SECRET } from "@/lib/services/env/private";
 import { onOrderPaymentComplete } from "@/domain/order/operations/onOrderPaymentComplete";
 import { onOrderPaymentExpired } from "@/domain/order/operations/onOrderPaymentExpired";
+import { onRefundConfirmed } from "@/domain/order/operations/onRefundConfirmed";
 import Stripe from "stripe";
 
 export async function POST(request: Request) {
@@ -61,6 +62,12 @@ export async function POST(request: Request) {
           orderId: paymentIntent.metadata?.orderId,
           error: paymentIntent.last_payment_error?.message,
         });
+        break;
+      }
+
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        await onRefundConfirmed(charge);
         break;
       }
 

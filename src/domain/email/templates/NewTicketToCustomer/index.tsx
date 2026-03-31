@@ -172,6 +172,24 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
           </tbody>
         </table>
 
+        <div style={{ marginTop: "24px", marginBottom: "16px" }}>
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/profile/tickets/${ticket.shortId}`}
+            style={{
+              display: "inline-block",
+              backgroundColor: "#18181b",
+              color: "#ffffff",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+            }}
+          >
+            View Your Ticket
+          </Link>
+        </div>
+
         <Text className="text-gray-600 my-6">
           Questions? Contact us at{" "}
           <Link href="mailto:endemit@endemit.org" className="link">
