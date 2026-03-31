@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface PosOrderSummary {
   id: string;
@@ -22,13 +23,6 @@ interface Props {
   onSelectOrder: (order: PosOrderSummary) => void;
   onCancelOrder: (orderHash: string) => void;
   selectedOrderId?: string;
-}
-
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 function TimeRemaining({ expiresAt }: { expiresAt: string }) {
@@ -131,7 +125,7 @@ export function PosOrderQueue({
               </div>
 
               <div className="mt-2 flex items-center justify-between">
-                <span className="font-medium">{formatPrice(order.total)}</span>
+                <span className="font-medium">{formatTokensFromCents(order.total)}</span>
                 {order.scannedAt ? (
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full ${

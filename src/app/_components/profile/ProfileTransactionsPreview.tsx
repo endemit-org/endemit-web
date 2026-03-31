@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
-import { formatCurrency } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import WalletIcon from "@/app/_components/icon/WalletIcon";
 import ProfileTable, { ProfileTableRow } from "./ProfileTable";
@@ -118,7 +118,7 @@ export default function ProfileTransactionsPreview({
               )}
             >
               {tx.amount > 0 ? "+" : ""}
-              {formatCurrency(tx.amount / 100)}
+              {formatTokensFromCents(tx.amount)}
             </div>
           </ProfileTableRow>
         );

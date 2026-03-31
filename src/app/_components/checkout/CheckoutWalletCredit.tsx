@@ -1,6 +1,7 @@
 "use client";
 
 import { formatCurrency } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import Spinner from "@/app/_components/ui/Spinner";
 import WalletIcon from "@/app/_components/icon/WalletIcon";
 
@@ -55,7 +56,7 @@ export default function CheckoutWalletCredit({
           <div>
             <h3 className="font-medium text-neutral-200">Use Wallet Credit</h3>
             <p className="text-sm text-neutral-400">
-              Available: {formatCurrency(walletBalance / 100)}
+              Available: {formatTokensFromCents(walletBalance)}
             </p>
           </div>
         </div>
@@ -76,7 +77,7 @@ export default function CheckoutWalletCredit({
           <div className="flex justify-between text-sm">
             <span className="text-neutral-400">Amount to apply:</span>
             <span className="text-blue-400 font-medium">
-              -{formatCurrency(walletCreditAmount / 100)}
+              -{formatTokensFromCents(walletCreditAmount)}
             </span>
           </div>
 
@@ -93,8 +94,8 @@ export default function CheckoutWalletCredit({
                 className={`w-full h-2 bg-neutral-700 rounded-lg appearance-none accent-blue-500 ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
               />
               <div className="flex justify-between text-xs text-neutral-500">
-                <span>{formatCurrency(1)}</span>
-                <span>{formatCurrency(maxWalletCredit / 100)}</span>
+                <span>{formatTokensFromCents(100)}</span>
+                <span>{formatTokensFromCents(maxWalletCredit)}</span>
               </div>
             </div>
           )}

@@ -6,12 +6,10 @@ import { getAllPosRegisters } from "@/domain/pos/operations/getAllPosRegisters";
 import { getAllPosItems } from "@/domain/pos/operations/getAllPosItems";
 import { prisma } from "@/lib/services/prisma";
 import PosRegistersDisplay from "@/app/_components/admin/PosRegistersDisplay";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
+  return formatTokensFromCents(cents);
 }
 
 export const metadata: Metadata = {

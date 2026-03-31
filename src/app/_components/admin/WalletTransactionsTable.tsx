@@ -1,7 +1,8 @@
 "use client";
 
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
-import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
+import { formatDateTime } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import clsx from "clsx";
 
 interface WalletTransactionsTableProps {
@@ -84,11 +85,11 @@ export default function WalletTransactionsTable({
                   )}
                 >
                   {tx.amount > 0 ? "+" : ""}
-                  {formatCurrency(tx.amount / 100)}
+                  {formatTokensFromCents(tx.amount)}
                 </span>
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-gray-500">
-                {formatCurrency(tx.balanceAfter / 100)}
+                {formatTokensFromCents(tx.balanceAfter)}
               </td>
               <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
                 {tx.note || "-"}

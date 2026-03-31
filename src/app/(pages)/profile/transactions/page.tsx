@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
-import { formatCurrency } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -123,7 +123,7 @@ export default async function ProfileTransactionsPage() {
                   )}
                 >
                   {tx.amount > 0 ? "+" : ""}
-                  {formatCurrency(tx.amount / 100)}
+                  {formatTokensFromCents(tx.amount)}
                 </div>
               </ProfileTableRow>
             );

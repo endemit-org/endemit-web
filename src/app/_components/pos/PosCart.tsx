@@ -1,5 +1,7 @@
 "use client";
 
+import { formatTokensFromCents } from "@/lib/util/currency";
+
 interface PosItem {
   id: string;
   name: string;
@@ -18,13 +20,6 @@ interface Props {
   onClear: () => void;
   onCreateOrder: () => void;
   isCreating: boolean;
-}
-
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 export function PosCart({
@@ -56,7 +51,7 @@ export function PosCart({
                 {item.name}
               </span>
               <span className="text-xs text-gray-500">
-                {formatPrice(item.cost)} each
+                {formatTokensFromCents(item.cost)} each
               </span>
             </div>
             <div className="flex items-center gap-2 ml-2">
@@ -74,7 +69,7 @@ export function PosCart({
                 +
               </button>
               <span className="w-20 text-right font-medium">
-                {formatPrice(item.cost * quantity)}
+                {formatTokensFromCents(item.cost * quantity)}
               </span>
             </div>
           </div>
@@ -89,7 +84,7 @@ export function PosCart({
           Clear
         </button>
         <div className="flex items-center gap-4">
-          <span className="text-lg font-bold">{formatPrice(total)}</span>
+          <span className="text-lg font-bold">{formatTokensFromCents(total)}</span>
           <button
             onClick={onCreateOrder}
             disabled={isCreating}

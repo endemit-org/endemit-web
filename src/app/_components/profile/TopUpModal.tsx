@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Product, ProductCategory } from "@/domain/product/types/product";
 import { isProductSellable } from "@/domain/product/businessLogic";
 import { useCartActions } from "@/app/_stores/CartStore";
-import { formatPrice } from "@/lib/util/formatting";
+import { formatTokens } from "@/lib/util/currency";
 import clsx from "clsx";
 
 interface TopUpModalProps {
@@ -115,7 +115,7 @@ export default function TopUpModal({
           ) : (
             <>
               <p className="text-sm text-neutral-400 mb-4">
-                Select an amount to add to your wallet
+                Select an amount of tokens to add to your wallet
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-6">
@@ -141,7 +141,7 @@ export default function TopUpModal({
                       />
                     )}
                     <div className="text-xl font-bold text-neutral-200">
-                      {formatPrice(product.price)}
+                      {formatTokens(product.price)}
                     </div>
                     <div className="text-sm text-neutral-400 mt-1">
                       {product.name}
@@ -163,7 +163,7 @@ export default function TopUpModal({
                 {isLoading
                   ? "Redirecting..."
                   : selectedProduct
-                    ? `Add ${formatPrice(selectedProduct.price)} to Wallet`
+                    ? `Add ${formatTokens(selectedProduct.price)} to Wallet`
                     : "Select an amount"}
               </button>
 

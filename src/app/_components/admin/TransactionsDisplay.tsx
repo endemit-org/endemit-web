@@ -5,7 +5,8 @@ import Link from "next/link";
 import { fetchTransactionsAction } from "@/domain/wallet/actions/fetchTransactionsAction";
 import type { PaginatedTransactions } from "@/domain/wallet/types";
 import type { WalletTransactionType } from "@prisma/client";
-import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
+import { formatDateTime } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import Pagination from "@/app/_components/table/Pagination";
 import clsx from "clsx";
 
@@ -206,11 +207,11 @@ export default function TransactionsDisplay({
                       )}
                     >
                       {tx.amount > 0 ? "+" : ""}
-                      {formatCurrency(tx.amount / 100)}
+                      {formatTokensFromCents(tx.amount)}
                     </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-gray-500">
-                    {formatCurrency(tx.balanceAfter / 100)}
+                    {formatTokensFromCents(tx.balanceAfter)}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
                     {tx.note || "-"}

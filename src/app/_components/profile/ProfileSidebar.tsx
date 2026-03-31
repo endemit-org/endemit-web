@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { formatCurrency } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";
 import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
@@ -153,7 +153,7 @@ export default function ProfileSidebar({
                     : "text-neutral-300"
               }`}
             >
-              {formatCurrency(walletBalance / 100)}
+              {formatTokensFromCents(walletBalance)}
             </div>
           </div>
         </div>

@@ -27,7 +27,9 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
   return (
     <div>
       <div className={"font-semibold flex gap-x-1.5 items-center"}>
-        <TicketIcon />
+        <span className={"opacity-65"}>
+          <TicketIcon />
+        </span>
         {product.name}
         {isHot && (
           <Image
@@ -36,6 +38,7 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
             className="w-5 h-5 h"
             width={40}
             height={40}
+            unoptimized
           />
         )}
       </div>
@@ -172,17 +175,17 @@ export default function EventTicketDisplay({
             ? "Tickets available now"
             : "Tickets not available online"}
         </div>
-        {singleProductAvailable && event.date_start && (
-          <div className="w-full max-w-sm mb-4">
-            <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
-          </div>
-        )}
         {TicketPurchaseDisplay({
           product: singleProduct,
           productAvailable: singleProductAvailable,
           content,
           showTicketQuantities: false,
         })}
+        {singleProductAvailable && event.date_start && (
+          <div className="w-full max-w-sm mt-4">
+            <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+          </div>
+        )}
       </div>
     );
   }
@@ -210,11 +213,6 @@ export default function EventTicketDisplay({
           ? "Tickets available now"
           : "Tickets not available online"}
       </div>
-      {hasAvailableProducts && event.date_start && (
-        <div className="mb-2">
-          <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
-        </div>
-      )}
 
       {!hasAvailableProducts && content}
 
@@ -225,6 +223,12 @@ export default function EventTicketDisplay({
         autoExpandIndexOnView={middleIndex}
         autoExpandDelay={500}
       />
+
+      {hasAvailableProducts && event.date_start && (
+        <div className="mt-2">
+          <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+        </div>
+      )}
     </div>
   );
 }

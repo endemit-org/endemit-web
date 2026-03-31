@@ -5,6 +5,7 @@ import type { PosItem, PosItemDirection, PosItemStatus } from "@prisma/client";
 import type { PosItemWithSalesCount } from "@/domain/pos/operations/getAllPosItems";
 import { createPosItemAction } from "@/domain/pos/actions/createPosItemAction";
 import { updatePosItemAction } from "@/domain/pos/actions/updatePosItemAction";
+import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 
 interface Props {
   initialItems: PosItemWithSalesCount[];
@@ -12,11 +13,7 @@ interface Props {
 }
 
 function formatPrice(cents: number | undefined | null): string {
-  const value = cents ?? 0;
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(value / 100);
+  return formatTokensFromCents(cents ?? 0);
 }
 
 export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
@@ -99,7 +96,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Price (EUR)
+            Price ({TOKEN_CONFIG.symbol})
           </label>
           <input
             name="cost"
