@@ -57,6 +57,9 @@ export interface BroadcastPayload {
 /**
  * Broadcast a message to a specific user's channel.
  * Use this from server-side (API routes, Inngest functions) after DB updates.
+ *
+ * Uses httpSend() for direct HTTP REST delivery - optimal for serverless.
+ * No WebSocket connection attempt, no fallback warning.
  */
 export async function broadcastToUser<E extends BroadcastEvent>(
   userId: string,
@@ -65,11 +68,7 @@ export async function broadcastToUser<E extends BroadcastEvent>(
 ): Promise<void> {
   const channel = supabaseServer.channel(`user:${userId}`);
 
-  await channel.send({
-    type: "broadcast",
-    event,
-    payload,
-  });
+  await channel.httpSend(event, payload);
 
   await supabaseServer.removeChannel(channel);
 }
@@ -77,6 +76,9 @@ export async function broadcastToUser<E extends BroadcastEvent>(
 /**
  * Broadcast a message to a custom channel.
  * Useful for order-specific or transaction-specific updates.
+ *
+ * Uses httpSend() for direct HTTP REST delivery - optimal for serverless.
+ * No WebSocket connection attempt, no fallback warning.
  */
 export async function broadcastToChannel<E extends BroadcastEvent>(
   channelName: string,
@@ -85,11 +87,7 @@ export async function broadcastToChannel<E extends BroadcastEvent>(
 ): Promise<void> {
   const channel = supabaseServer.channel(channelName);
 
-  await channel.send({
-    type: "broadcast",
-    event,
-    payload,
-  });
+  await channel.httpSend(event, payload);
 
   await supabaseServer.removeChannel(channel);
 }
