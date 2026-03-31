@@ -4,7 +4,8 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import type { SerializedWallet, SerializedWalletTransaction } from "@/domain/wallet/types";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
-import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
+import { formatDateTime } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import WalletTransactionForm from "./WalletTransactionForm";
 import WalletTransactionsTable from "./WalletTransactionsTable";
 
@@ -101,7 +102,7 @@ export default function AdminWalletDetail({
                     : "text-gray-500"
               }`}
             >
-              {formatCurrency(balance / 100)}
+              {formatTokensFromCents(balance)}
             </div>
           </div>
         </div>

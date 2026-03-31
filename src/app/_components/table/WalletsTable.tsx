@@ -1,7 +1,8 @@
 "use client";
 
 import type { SerializedWallet } from "@/domain/wallet/types";
-import { formatDateTime, formatCurrency } from "@/lib/util/formatting";
+import { formatDateTime } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface WalletsTableProps {
   wallets: SerializedWallet[];
@@ -68,7 +69,7 @@ export default function WalletsTable({
                       : "text-gray-500"
                 }`}
               >
-                {formatCurrency(wallet.balance / 100)}
+                {formatTokensFromCents(wallet.balance)}
               </span>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

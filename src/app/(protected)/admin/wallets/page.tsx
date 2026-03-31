@@ -5,7 +5,7 @@ import { getWalletStats } from "@/domain/wallet/operations/getWalletStats";
 import WalletsDisplay from "@/app/_components/admin/WalletsDisplay";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
-import { formatCurrency } from "@/lib/util/formatting";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 export const metadata: Metadata = {
   title: "Wallets  •  Admin",
@@ -40,7 +40,7 @@ export default async function AdminWalletsPage() {
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Total Balance</div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
-            {formatCurrency(stats.totalBalance / 100)}
+            {formatTokensFromCents(stats.totalBalance)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">

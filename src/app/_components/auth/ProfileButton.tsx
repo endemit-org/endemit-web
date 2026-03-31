@@ -75,7 +75,7 @@ export default function ProfileButton({
         >
           <div className="relative">
             <UserIcon className="w-5 h-5" />
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full flex items-center justify-center">
+            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full flex items-center justify-center">
               <svg
                 className="w-1.5 h-1.5 text-white"
                 fill="currentColor"

@@ -5,6 +5,7 @@ import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllPosOrders } from "@/domain/pos/operations/getAllPosOrders";
 import { prisma } from "@/lib/services/prisma";
 import PosOrdersDisplay from "@/app/_components/admin/PosOrdersDisplay";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 export const metadata: Metadata = {
   title: "POS Orders  •  Admin",
@@ -96,28 +97,19 @@ export default async function AdminPosOrdersPage() {
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Revenue</div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
-            {new Intl.NumberFormat("sl-SI", {
-              style: "currency",
-              currency: "EUR",
-            }).format(totalRevenue / 100)}
+            {formatTokensFromCents(totalRevenue)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Tips</div>
           <div className="mt-1 text-2xl font-semibold text-amber-600">
-            {new Intl.NumberFormat("sl-SI", {
-              style: "currency",
-              currency: "EUR",
-            }).format(totalTips / 100)}
+            {formatTokensFromCents(totalTips)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Cash to Collect</div>
           <div className="mt-1 text-2xl font-semibold text-red-600">
-            {new Intl.NumberFormat("sl-SI", {
-              style: "currency",
-              currency: "EUR",
-            }).format(totalTopUps / 100)}
+            {formatTokensFromCents(totalTopUps)}
           </div>
         </div>
       </div>

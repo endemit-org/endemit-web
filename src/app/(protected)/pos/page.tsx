@@ -3,13 +3,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { prisma } from "@/lib/services/prisma";
 import Link from "next/link";
 import type { Metadata } from "next";
-
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
-}
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 export const metadata: Metadata = {
   title: "POS - Select Register",
@@ -161,17 +155,17 @@ export default async function PosPage() {
                             </span>
                             {register.stats.salesRevenue > 0 && (
                               <span className="text-gray-900 font-medium">
-                                {formatPrice(register.stats.salesRevenue)} revenue
+                                {formatTokensFromCents(register.stats.salesRevenue)} revenue
                               </span>
                             )}
                             {register.stats.tips > 0 && (
                               <span className="text-amber-600 font-medium">
-                                +{formatPrice(register.stats.tips)} tips
+                                +{formatTokensFromCents(register.stats.tips)} tips
                               </span>
                             )}
                             {register.stats.topUpsProcessed > 0 && (
                               <span className="text-red-600 font-medium">
-                                {formatPrice(register.stats.topUpsProcessed)} to collect
+                                {formatTokensFromCents(register.stats.topUpsProcessed)} to collect
                               </span>
                             )}
                           </div>

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import type { PosOrderStatus } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface Props {
   initialOrders: PosOrderWithRelations[];
@@ -14,10 +15,7 @@ interface Props {
 }
 
 function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
+  return formatTokensFromCents(cents);
 }
 
 function formatDate(dateString: string): string {

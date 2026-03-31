@@ -9,6 +9,7 @@ import { assignItemToRegisterAction } from "@/domain/pos/actions/assignItemToReg
 import { removeItemFromRegisterAction } from "@/domain/pos/actions/removeItemFromRegisterAction";
 import { assignSellerToRegisterAction } from "@/domain/pos/actions/assignSellerToRegisterAction";
 import { removeSellerFromRegisterAction } from "@/domain/pos/actions/removeSellerFromRegisterAction";
+import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface Props {
   initialRegisters: PosRegisterWithRelations[];
@@ -18,10 +19,7 @@ interface Props {
 }
 
 function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
+  return formatTokensFromCents(cents);
 }
 
 export default function PosRegistersDisplay({

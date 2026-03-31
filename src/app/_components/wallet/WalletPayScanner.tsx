@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
+import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 
 interface OrderDetails {
   id: string;
@@ -30,13 +31,6 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onPaymentComplete: () => void;
-}
-
-function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("sl-SI", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 const TIP_PRESETS = [
@@ -312,7 +306,7 @@ export function WalletPayScanner({
                       {item.quantity}x {item.name}
                     </span>
                     <span className="text-white font-medium">
-                      {formatPrice(item.total)}
+                      {formatTokensFromCents(item.total)}
                     </span>
                   </div>
                 ))}
@@ -350,7 +344,7 @@ export function WalletPayScanner({
                   <div className="mt-2">
                     <input
                       type="number"
-                      placeholder="Custom tip (€)"
+                      placeholder={`Custom tip in ${TOKEN_CONFIG.symbol}`}
                       value={customTip}
                       onChange={e => {
                         setCustomTip(e.target.value);
@@ -367,19 +361,19 @@ export function WalletPayScanner({
                 {creditTotal > 0 && (
                   <div className="flex justify-between text-sm text-green-400 mb-2">
                     <span>Top-up</span>
-                    <span>+{formatPrice(creditTotal)}</span>
+                    <span>+{formatTokensFromCents(creditTotal)}</span>
                   </div>
                 )}
                 {debitTotal > 0 && (
                   <div className="flex justify-between text-sm text-neutral-400 mb-2">
                     <span>Purchase</span>
-                    <span>-{formatPrice(debitTotal)}</span>
+                    <span>-{formatTokensFromCents(debitTotal)}</span>
                   </div>
                 )}
                 {tipAmount > 0 && (
                   <div className="flex justify-between text-sm text-neutral-400 mb-2">
                     <span>Tip</span>
-                    <span>-{formatPrice(tipAmount)}</span>
+                    <span>-{formatTokensFromCents(tipAmount)}</span>
                   </div>
                 )}
               </div>
@@ -390,13 +384,15 @@ export function WalletPayScanner({
               >
                 <div className="flex items-center justify-between text-sm text-neutral-400 mb-2">
                   <span>Current balance</span>
-                  <span>{formatPrice(scanResult.customer.balance)}</span>
+                  <span>
+                    {formatTokensFromCents(scanResult.customer.balance)}
+                  </span>
                 </div>
                 <div
-                  className={`flex items-center justify-between text-lg font-bold pt-2 border-t border-neutral-700 ${canPay ? "text-white" : "text-red-400"}`}
+                  className={`flex items-center justify-between  pt-2 border-t border-neutral-700 ${canPay ? "text-white" : "text-red-400"}`}
                 >
                   <span>New balance</span>
-                  <span>{formatPrice(balanceAfter)}</span>
+                  <span>{formatTokensFromCents(balanceAfter)}</span>
                 </div>
                 {!canPay && (
                   <p className="text-xs text-red-400 mt-2">
@@ -454,7 +450,9 @@ export function WalletPayScanner({
                 {hasTopUp ? "Balance Topped Up" : "Payment Complete"}
               </h3>
               <p className="text-neutral-400 mt-2">
-                {hasTopUp ? `+${formatPrice(creditTotal)} added` : "Thank you!"}
+                {hasTopUp
+                  ? `+${formatTokensFromCents(creditTotal)} added`
+                  : "Thank you!"}
               </p>
             </div>
           )}
@@ -505,8 +503,8 @@ export function WalletPayScanner({
               {isProcessing
                 ? "Processing..."
                 : hasTopUp
-                  ? `Top-up ${formatPrice(creditTotal)}`
-                  : `ok, Pay ${formatPrice(totalToPay)}`}
+                  ? `Top-up ${formatTokensFromCents(creditTotal)}`
+                  : `Pay ${formatTokensFromCents(totalToPay)}`}
             </button>
           </div>
         )}
