@@ -10,6 +10,7 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import ProfileTicketQrCode from "@/app/_components/profile/ProfileTicketQrCode";
 import ProfileTicketDownloadButton from "@/app/_components/profile/ProfileTicketDownloadButton";
+import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
 
 export const metadata: Metadata = {
   title: "Ticket",
@@ -224,12 +225,18 @@ export default async function ProfileTicketPage({
             </div>
           </div>
 
-          {/* Download Button */}
+          {/* Action Buttons */}
           {isUsable && (
-            <ProfileTicketDownloadButton
-              shortId={ticket.shortId}
-              holderName={ticket.ticketHolderName}
-            />
+            <div className="space-y-3">
+              <AddToWalletButton
+                ticketHash={ticket.ticketHash}
+                shortId={ticket.shortId}
+              />
+              <ProfileTicketDownloadButton
+                shortId={ticket.shortId}
+                holderName={ticket.ticketHolderName}
+              />
+            </div>
           )}
         </div>
       </InnerPage>

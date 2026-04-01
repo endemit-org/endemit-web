@@ -71,7 +71,7 @@ export default function Cart({ variant = "detailed" }: Props) {
             {displayItemCount > 0 && (
               <div className="bg-blue-400 w-5 lg:w-6 h-4 absolute mt-4 lg:mt-5 -z-10 animate-pulse"></div>
             )}
-            <ToteBagIcon />
+            <ToteBagIcon className={"w-4 lg:w-6"} />
             <div
               className={clsx(
                 "absolute rounded-full text-gray-100 px-1 ml-3 -mt-3 inline-block pt-0.5 font-heading",

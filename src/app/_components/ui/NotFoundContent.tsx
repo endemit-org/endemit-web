@@ -19,10 +19,10 @@ export default function NotFoundContent() {
             {`The page you're looking for doesn't exist or has been moved.`}
           </p>
           <Link
-            href="/public"
+            href="/"
             className="inline-block px-6 py-3 bg-red-500 hover:bg-red-600 transition-colors font-bold"
           >
-            Back to Home
+            Back to HomeI
           </Link>
         </div>
       </div>

@@ -95,7 +95,7 @@ export default async function EventPage({
       label: "Lineup",
       content: <EventLineUp artists={event.artists} />,
       id: "lineup",
-      sortingWeight: 200,
+      sortingWeight: 300,
     });
   }
 
@@ -140,7 +140,7 @@ export default async function EventPage({
       label: "Tickets",
       content: <EventTicketDisplay products={products} event={event} />,
       id: "tickets",
-      sortingWeight: 300,
+      sortingWeight: 400,
       mobileOnly: true,
     });
   }
@@ -286,7 +286,7 @@ export default async function EventPage({
           <div className={"lg:hidden mb-16 z-10 relative"}>
             <ActionButton
               href={"#tickets"}
-              variant="secondary"
+              variant="primary"
               className={"flex gap-x-2"}
             >
               <TicketIcon />

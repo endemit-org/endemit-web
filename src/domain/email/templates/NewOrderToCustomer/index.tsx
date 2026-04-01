@@ -48,24 +48,6 @@ function NewOrderToCustomerTemplate({ order }: Props) {
           )}
         </Text>
 
-        <div style={{ marginBottom: "24px" }}>
-          <Link
-            href={`${PUBLIC_BASE_WEB_URL}/profile/orders/${order.id}`}
-            style={{
-              display: "inline-block",
-              backgroundColor: "#18181b",
-              color: "#ffffff",
-              padding: "12px 24px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              fontWeight: 600,
-              fontSize: "14px",
-            }}
-          >
-            View Your Order
-          </Link>
-        </div>
-
         {hasTicketItems && (
           <Text className="text-gray-600 mb-6">
             Your tickets will be sent to your email within the next 10 minutes.
@@ -332,6 +314,33 @@ function NewOrderToCustomerTemplate({ order }: Props) {
             </tr>
           </tbody>
         </table>
+
+        <div
+          style={{
+            marginBottom: "48px",
+            marginTop: "24px",
+            textAlign: "center",
+            borderTop: "1px solid #e5e7eb",
+            paddingTop: "24px",
+          }}
+        >
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/profile/orders/${order.id}`}
+            style={{
+              display: "inline-block",
+              backgroundColor: "#18181b",
+              color: "#ffffff",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+            }}
+          >
+            View Your Order online
+          </Link>
+        </div>
+
         <Text className="text-gray-600 my-6">
           This email message serves as an invoice. Please feel free to reach out
           to our support team at{" "}

@@ -58,6 +58,12 @@ export const DISCORD_POS_WEBHOOK = process.env.DISCORD_POS_WEBHOOK;
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
 
+// Apple Wallet signing
+export const APPLE_PASS_CERTIFICATE = process.env.APPLE_PASS_CERTIFICATE!;
+export const APPLE_PASS_CERTIFICATE_PASSWORD =
+  process.env.APPLE_PASS_CERTIFICATE_PASSWORD!;
+export const APPLE_WWDR_CERTIFICATE = process.env.APPLE_WWDR_CERTIFICATE!;
+
 // Validation
 if (!DATABASE_URL) throw new Error("Missing DATABASE_URL");
 if (!STRIPE_SECRET_KEY) throw new Error("Missing STRIPE_SECRET_KEY");
