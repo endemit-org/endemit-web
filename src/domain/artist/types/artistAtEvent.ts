@@ -5,4 +5,5 @@ export type ArtistAtEvent = Artist & {
   end_time: Date | null;
   duration: number;
   stage: string | null;
+  soundcloudUrl: string | null;
 };

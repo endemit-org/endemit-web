@@ -78,6 +78,7 @@ export const transformEventObject = async (
               url: asLink(link.link),
             }))
           : [],
+        soundcloudUrl: (item as { soundcloud_url?: string }).soundcloud_url || null,
       });
     }
   }
