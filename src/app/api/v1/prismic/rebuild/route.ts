@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/services/prisma";
 
 interface PrismicWebhookPayload {
   type: string;
@@ -66,6 +67,29 @@ export async function POST(request: NextRequest) {
       type: payload.type,
       hasReleasesDeletion: Boolean(payload.releases?.deletion?.length),
     });
+  }
+
+  // Deduplicate using masterRef
+  if (payload.masterRef) {
+    try {
+      await prisma.webhookLog.create({
+        data: {
+          source: "prismic",
+          ref: payload.masterRef,
+        },
+      });
+    } catch (error) {
+      // Unique constraint violation = already processed
+      if ((error as { code?: string }).code === "P2002") {
+        console.log("Already processed masterRef:", payload.masterRef);
+        return NextResponse.json({
+          triggered: false,
+          reason: "Already processed this masterRef",
+          masterRef: payload.masterRef,
+        });
+      }
+      throw error;
+    }
   }
 
   // Trigger Vercel rebuild

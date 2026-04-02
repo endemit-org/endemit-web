@@ -15,6 +15,13 @@ export const getTicketByShortId = async (shortId: string) => {
           userId: true,
         },
       },
+      ScanLog: {
+        orderBy: { createdAt: "asc" },
+        take: 1,
+        select: {
+          createdAt: true,
+        },
+      },
     },
   });
 };

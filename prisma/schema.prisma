@@ -421,3 +421,17 @@ model PosOrderItem {
   @@index([orderId])
   @@index([itemId])
 }
+
+// =============================================================================
+// Webhook Deduplication
+// =============================================================================
+
+model WebhookLog {
+  id        String   @id @default(cuid())
+  source    String // e.g. "prismic"
+  ref       String // e.g. masterRef for deduplication
+  createdAt DateTime @default(now())
+
+  @@unique([source, ref])
+  @@index([createdAt])
+}
