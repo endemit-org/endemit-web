@@ -139,7 +139,7 @@ export default async function SuccessPage({
             )}
 
             {/* Action Button */}
-            <CheckoutReturnButton />
+            <CheckoutReturnButton orderId={order.id} />
           </div>
         </div>
       </InnerPage>

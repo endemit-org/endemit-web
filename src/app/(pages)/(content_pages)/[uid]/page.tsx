@@ -39,8 +39,9 @@ export async function generateMetadata({
   const images = buildOpenGraphImages({
     metaImage: contentPage.meta.image,
   });
+  const url = `https://endemit.org/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "article" });
 }
 
 export default async function ContentPage({

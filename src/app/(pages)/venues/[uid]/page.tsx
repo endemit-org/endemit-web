@@ -51,8 +51,9 @@ export async function generateMetadata({
     metaImage: venue.meta.image,
     fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
   });
+  const url = `https://endemit.org/venues/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "profile" });
 }
 
 export default async function VenuePage({

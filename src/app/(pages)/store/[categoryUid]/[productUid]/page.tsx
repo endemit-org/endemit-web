@@ -35,10 +35,11 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    categoryUid: string;
     productUid: string;
   }>;
 }): Promise<Metadata> {
-  const { productUid } = await params;
+  const { categoryUid, productUid } = await params;
   const product = await fetchProductFromCmsByUid(productUid);
 
   if (!product) {
@@ -54,8 +55,9 @@ export async function generateMetadata({
       ? product.images.map(image => image.src)
       : undefined,
   });
+  const url = `https://endemit.org/store/${categoryUid}/${productUid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url });
 }
 
 export default async function ProductPage({

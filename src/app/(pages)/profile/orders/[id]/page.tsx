@@ -115,6 +115,40 @@ export default async function ProfileOrderDetailPage({
             </div>
           </div>
 
+          {/* Shipping Address */}
+          {order.shippingRequired &&
+            order.shippingAddress &&
+            (() => {
+              const addr = order.shippingAddress as {
+                name?: string;
+                address?: string;
+                city?: string;
+                postalCode?: string;
+                country?: string;
+                phone?: string;
+              };
+              return (
+                <div className="rounded-lg p-4">
+                  <h2 className="text-lg font-semibold text-neutral-200 mb-4">
+                    Shipping Address
+                  </h2>
+                  <div className="space-y-2 text-neutral-300">
+                    {addr.name && <p>{addr.name}</p>}
+                    {addr.address && <p>{addr.address}</p>}
+                    {(addr.postalCode || addr.city) && (
+                      <p>
+                        {[addr.postalCode, addr.city].filter(Boolean).join(" ")}
+                      </p>
+                    )}
+                    {addr.country && <p>{addr.country}</p>}
+                    {addr.phone && (
+                      <p className="text-neutral-400">{addr.phone}</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
           {/* Items */}
           <div className="bg-neutral-800 rounded-lg overflow-hidden">
             <div className="p-4 border-b border-neutral-700">
@@ -225,40 +259,6 @@ export default async function ProfileOrderDetailPage({
               </div>
             </div>
           )}
-
-          {/* Shipping Address */}
-          {order.shippingRequired &&
-            order.shippingAddress &&
-            (() => {
-              const addr = order.shippingAddress as {
-                name?: string;
-                address?: string;
-                city?: string;
-                postalCode?: string;
-                country?: string;
-                phone?: string;
-              };
-              return (
-                <div className="bg-neutral-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold text-neutral-200 mb-4">
-                    Shipping Address
-                  </h2>
-                  <div className="space-y-2 text-neutral-300">
-                    {addr.name && <p>{addr.name}</p>}
-                    {addr.address && <p>{addr.address}</p>}
-                    {(addr.postalCode || addr.city) && (
-                      <p>
-                        {[addr.postalCode, addr.city].filter(Boolean).join(" ")}
-                      </p>
-                    )}
-                    {addr.country && <p>{addr.country}</p>}
-                    {addr.phone && (
-                      <p className="text-neutral-400">{addr.phone}</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
         </div>
       </InnerPage>
     </OuterPage>

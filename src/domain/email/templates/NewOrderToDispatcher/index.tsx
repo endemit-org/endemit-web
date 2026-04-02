@@ -330,7 +330,7 @@ function NewOrderToDispatcherTemplate({ order }: Props) {
               fontSize: "14px",
             }}
           >
-            View Order in Admin
+            Process Order in Admin
           </Link>
         </div>
 

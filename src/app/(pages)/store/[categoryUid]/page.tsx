@@ -34,8 +34,9 @@ export async function generateMetadata({
   const title = `${categoryName} • Store`;
   const description = `Official Endemit ${categoryName} available to purchase securely online.`;
   const images = buildOpenGraphImages({});
+  const url = `https://endemit.org/store/${categoryUid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "website" });
 }
 
 export default async function CategoryPage({

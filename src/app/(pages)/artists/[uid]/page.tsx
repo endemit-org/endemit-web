@@ -53,8 +53,9 @@ export async function generateMetadata({
     metaImage: artist.meta.image,
     fallbackImages: artist.image?.src ? [artist.image.src] : undefined,
   });
+  const url = `https://endemit.org/artists/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "profile" });
 }
 
 export default async function ArtistPage({

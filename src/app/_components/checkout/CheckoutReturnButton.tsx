@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import ActionButton from "@/app/_components/form/ActionButton";
 
-export default function CheckoutReturnButton() {
+export default function CheckoutReturnButton({ orderId }: { orderId: string }) {
   const [returnUrl, setReturnUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,7 +34,9 @@ export default function CheckoutReturnButton() {
   // Default: Continue Shopping
   return (
     <div className="inline-block">
-      <ActionButton href="/profile">Continue to profile</ActionButton>
+      <ActionButton href={`/profile/orders/${orderId}`}>
+        View order
+      </ActionButton>
     </div>
   );
 }
