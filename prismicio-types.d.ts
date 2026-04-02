@@ -1217,6 +1217,29 @@ type PodcastDocumentDataSlicesSlice = never;
  */
 interface PodcastDocumentData {
   /**
+   * Published field in *Podcast*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: podcast.published
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  published: prismic.BooleanField;
+
+  /**
+   * Tile field in *Podcast*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast.tile
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  tile: prismic.ImageField<never>;
+
+  /**
    * Cover image field in *Podcast*
    *
    * - **Field Type**: Image
@@ -2955,6 +2978,17 @@ export interface PodcastListSliceDefaultPrimary {
   description: prismic.KeyTextField;
 
   /**
+   * Episode count field in *PodcastList → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: 4
+   * - **API ID Path**: podcast_list.default.primary.episode_count
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  episode_count: prismic.SelectField<"2" | "4" | "8" | "all">;
+
+  /**
    * Render frame field in *PodcastList → Default → Primary*
    *
    * - **Field Type**: Boolean
@@ -2970,7 +3004,7 @@ export interface PodcastListSliceDefaultPrimary {
  * Default variation for PodcastList Slice
  *
  * - **API ID**: `default`
- * - **Description**: Default
+ * - **Description**: Grid
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type PodcastListSliceDefault = prismic.SharedSliceVariation<
@@ -2980,15 +3014,87 @@ export type PodcastListSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *PodcastList → Featured → Primary*
+ */
+export interface PodcastListSliceFeaturedPrimary {
+  /**
+   * Title field in *PodcastList → Featured → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast_list.featured.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *PodcastList → Featured → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast_list.featured.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Use latest episode field in *PodcastList → Featured → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: podcast_list.featured.primary.use_latest
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  use_latest: prismic.BooleanField;
+
+  /**
+   * Selected episode field in *PodcastList → Featured → Primary*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: podcast_list.featured.primary.selected_episode
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  selected_episode: prismic.ContentRelationshipField<"podcast">;
+
+  /**
+   * Render frame field in *PodcastList → Featured → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: podcast_list.featured.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
+}
+
+/**
+ * Featured variation for PodcastList Slice
+ *
+ * - **API ID**: `featured`
+ * - **Description**: Featured Episode
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PodcastListSliceFeatured = prismic.SharedSliceVariation<
+  "featured",
+  Simplify<PodcastListSliceFeaturedPrimary>,
+  never
+>;
+
+/**
  * Slice variation for *PodcastList*
  */
-type PodcastListSliceVariation = PodcastListSliceDefault;
+type PodcastListSliceVariation =
+  | PodcastListSliceDefault
+  | PodcastListSliceFeatured;
 
 /**
  * PodcastList Shared Slice
  *
  * - **API ID**: `podcast_list`
- * - **Description**: PodcastList
+ * - **Description**: Display podcast episodes in grid or featured layout
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type PodcastListSlice = prismic.SharedSlice<
@@ -3993,8 +4099,10 @@ declare module "@prismicio/client" {
       NewsletterSubscriptionSliceDefault,
       PodcastListSlice,
       PodcastListSliceDefaultPrimary,
+      PodcastListSliceFeaturedPrimary,
       PodcastListSliceVariation,
       PodcastListSliceDefault,
+      PodcastListSliceFeatured,
       PoemSlice,
       PoemSliceDefaultPrimary,
       PoemSliceVariation,

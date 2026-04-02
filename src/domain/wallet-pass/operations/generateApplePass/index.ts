@@ -4,7 +4,7 @@ import { PKPass } from "passkit-generator";
 import path from "path";
 import { getCertificates } from "../../utils/certificates";
 import { formatPrice, formatDate, formatTime } from "@/lib/util/formatting";
-import { getWalletStripUrls, fetchStripImages } from "../getWalletStripUrls";
+import { fetchStripImages } from "../getWalletStripUrls";
 
 export interface ApplePassTicketData {
   ticketId: string;

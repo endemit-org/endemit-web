@@ -42,5 +42,6 @@ export const transformArtistObject = async (artist: ArtistDocument) => {
       description: artist.data.meta_description,
       image: artist.data.meta_image?.url || null,
     },
+    slices: artist.data.slices,
   } as Artist;
 };

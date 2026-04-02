@@ -43,7 +43,7 @@ export default function EventSaveTheDateLister({
         >
           <div
             className={
-              "font-heading text-5xl font-black text-neutral-200 uppercase text-center @md:text-left @xl:text-center"
+              "font-heading text-5xl font-black text-neutral-200 uppercase text-center @md:text-left @2xl:text-center"
             }
           >
             Save the date
@@ -51,7 +51,7 @@ export default function EventSaveTheDateLister({
           </div>
           <div
             className={
-              " flex flex-col w-full gap-y-8 lg:gap-y-4 @shoulxl:grid @xl:grid-cols-2 @xl:gap-x-4"
+              " flex flex-col w-full gap-y-8 lg:gap-y-4 @2xl:grid @2xl:grid-cols-2 @2xl:gap-x-4"
             }
           >
             {saveTheDateItems?.map(item => {
