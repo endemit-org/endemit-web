@@ -61,7 +61,7 @@ export default function ProfileTicketDownloadButton({
   return (
     <div>
       <button
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={handleDownloadTicket}
         disabled={isGenerating}
       >

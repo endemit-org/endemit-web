@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
   const expectedSecret = process.env.PRISMIC_WEBHOOK_SECRET;
   const vercelDeployHook = process.env.VERCEL_DEPLOY_HOOK_URL;
 
+  console.log("Received Prismic webhook payload:", secret, { request });
+
   if (!expectedSecret) {
     console.error("PRISMIC_WEBHOOK_SECRET is not configured");
     return NextResponse.json(
@@ -54,8 +56,10 @@ export async function POST(request: NextRequest) {
     payload.type === "api-update" &&
     payload.releases?.deletion &&
     payload.releases.deletion.length > 0;
-
+  console.log({ payload });
   if (!isReleasePublished) {
+    console.log("Not a release publish event", payload.type);
+
     return NextResponse.json({
       triggered: false,
       reason: "Not a release publish event",

@@ -4,11 +4,13 @@ import { PKPass } from "passkit-generator";
 import path from "path";
 import { getCertificates } from "../../utils/certificates";
 import { formatPrice, formatDate, formatTime } from "@/lib/util/formatting";
+import { getWalletStripUrls, fetchStripImages } from "../getWalletStripUrls";
 
 export interface ApplePassTicketData {
   ticketId: string;
   shortId: string;
   ticketHash: string;
+  eventId: string;
   eventName: string;
   eventDate: Date | null;
   venueName: string | null;
@@ -61,6 +63,18 @@ export async function generateApplePass(
     throw new Error("Failed to create PKPass - pass model may be invalid");
   }
 
+  // Fetch and add dynamic strip images for this event
+  const stripImages = await fetchStripImages(data.eventId);
+  if (stripImages.strip3x) {
+    pass.addBuffer("strip@3x.png", stripImages.strip3x);
+  }
+  if (stripImages.strip2x) {
+    pass.addBuffer("strip@2x.png", stripImages.strip2x);
+  }
+  if (stripImages.strip) {
+    pass.addBuffer("strip.png", stripImages.strip);
+  }
+
   // Set the barcode with the QR content (same as the physical ticket)
   pass.setBarcodes({
     format: "PKBarcodeFormatQR",
@@ -81,7 +95,7 @@ export async function generateApplePass(
     value: data.ticketHolderName,
   });
 
-  // Secondary fields: EVENT, DATE
+  // Secondary fields: EVENT, TIME
   pass.secondaryFields.push({
     key: "eventName",
     label: "EVENT",
@@ -90,26 +104,26 @@ export async function generateApplePass(
 
   if (data.eventDate) {
     pass.secondaryFields.push({
-      key: "date",
-      label: "DATE",
-      value: formatDate(data.eventDate),
+      key: "time",
+      label: "TIME",
+      value: formatTime(data.eventDate),
     });
   }
 
-  // Auxiliary fields: VENUE, TIME
+  // Auxiliary fields: VENUE, DATE
   if (data.venueName) {
     pass.auxiliaryFields.push({
       key: "venue",
       label: "VENUE",
-      value: `@ ${data.venueName}`,
+      value: data.venueName,
     });
   }
 
   if (data.eventDate) {
     pass.auxiliaryFields.push({
-      key: "time",
-      label: "TIME",
-      value: formatTime(data.eventDate),
+      key: "date",
+      label: "DATE",
+      value: formatDate(data.eventDate),
     });
   }
 
@@ -146,8 +160,7 @@ export async function generateApplePass(
     value:
       "This ticket is valid for one person only. " +
       "Present this pass at the venue entrance. " +
-      "This ticket cannot be resold or transferred. " +
-      "No refunds unless the event is cancelled.",
+      "This ticket is non-refundable, but transferable. ",
   });
 
   pass.backFields.push({

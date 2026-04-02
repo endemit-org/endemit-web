@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTicketByShortId } from "@/domain/ticket/operations/getTicketByShortId";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
-import { formatEventDateAndTime } from "@/lib/util/formatting";
+import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import ProfileTicketQrCode from "@/app/_components/profile/ProfileTicketQrCode";
 import ProfileTicketDownloadButton from "@/app/_components/profile/ProfileTicketDownloadButton";
+import LiveTicketIndicator from "@/app/_components/profile/LiveTicketIndicator";
 import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
 
 export const metadata: Metadata = {
@@ -22,8 +24,8 @@ export const metadata: Metadata = {
 };
 
 const statusColors: Record<string, string> = {
-  VALIDATED: "bg-green-500/20 text-green-400",
-  PENDING: "bg-yellow-500/20 text-yellow-400",
+  VALIDATED: "bg-emerald-500/20 text-emerald-400",
+  PENDING: "bg-emerald-500/20 text-emerald-400",
   SCANNED: "bg-blue-500/20 text-blue-400",
   CANCELLED: "bg-red-500/20 text-red-400",
   BANNED: "bg-red-500/20 text-red-400",
@@ -32,8 +34,8 @@ const statusColors: Record<string, string> = {
 };
 
 const statusLabels: Record<string, string> = {
-  VALIDATED: "Valid",
-  PENDING: "Valid",
+  VALIDATED: "Ready to scan",
+  PENDING: "Ready to scan",
   SCANNED: "Used",
   CANCELLED: "Cancelled",
   BANNED: "Banned",
@@ -149,6 +151,7 @@ export default async function ProfileTicketPage({
                 <p className="text-xs text-neutral-500 text-center">
                   Show this QR code at the entrance
                 </p>
+                <LiveTicketIndicator ticketHash={ticket.ticketHash} />
               </div>
             ) : (
               <div className="text-center py-8">
@@ -192,8 +195,63 @@ export default async function ProfileTicketPage({
             )}
           </div>
 
+          {/* Action Buttons */}
+          {isUsable && (
+            <div className="space-y-3 mb-6">
+              <ProfileTicketDownloadButton
+                shortId={ticket.shortId}
+                holderName={ticket.ticketHolderName}
+              />
+              <AddToWalletButton
+                ticketHash={ticket.ticketHash}
+                shortId={ticket.shortId}
+              />
+            </div>
+          )}
+
+          {/* Event Info */}
+          {event && (
+            <Link
+              href={`/events/${event.uid}`}
+              className="block bg-neutral-800 rounded-lg overflow-hidden mb-6 hover:bg-neutral-750 transition-colors group"
+            >
+              <div className="flex items-center gap-4 p-4">
+                {event.promoImage?.src && (
+                  <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                    <Image
+                      src={event.promoImage.src}
+                      alt={event.promoImage.alt || event.name}
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-neutral-200 font-medium truncate group-hover:text-white transition-colors">
+                    {event.name}
+                  </p>
+                  <p className="text-sm text-neutral-400">View event details</p>
+                </div>
+                <svg
+                  className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          )}
+
           {/* Ticket Details */}
-          <div className="bg-neutral-800 rounded-lg p-6 mb-6">
+          <div className="p-3 mb-6">
             <h3 className="text-lg font-semibold text-neutral-200 mb-4">
               Ticket Details
             </h3>
@@ -216,6 +274,12 @@ export default async function ProfileTicketPage({
                   {ticket.ticketPayerEmail}
                 </span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Price</span>
+                <span className="text-neutral-200">
+                  {formatPrice(Number(ticket.price))}
+                </span>
+              </div>
               {ticket.scanCount > 0 && (
                 <div className="flex justify-between">
                   <span className="text-neutral-400">Times Scanned</span>
@@ -224,20 +288,6 @@ export default async function ProfileTicketPage({
               )}
             </div>
           </div>
-
-          {/* Action Buttons */}
-          {isUsable && (
-            <div className="space-y-3">
-              <AddToWalletButton
-                ticketHash={ticket.ticketHash}
-                shortId={ticket.shortId}
-              />
-              <ProfileTicketDownloadButton
-                shortId={ticket.shortId}
-                holderName={ticket.ticketHolderName}
-              />
-            </div>
-          )}
         </div>
       </InnerPage>
     </OuterPage>

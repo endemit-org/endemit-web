@@ -44,6 +44,7 @@ export async function GET(
       ticketId: ticket.id,
       shortId: ticket.shortId,
       ticketHash: ticket.ticketHash,
+      eventId: ticket.eventId,
       eventName: ticket.eventName,
       eventDate: event?.date_start ?? null,
       venueName: event?.venue?.name ?? null,
