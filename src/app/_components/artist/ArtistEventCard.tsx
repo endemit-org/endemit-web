@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { convertMonthsToMs } from "@/lib/util/converters";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
+import ArtistPreviewSetButton from "@/app/_components/artist/ArtistPreviewSetButton";
 
 interface ArtistCardProps {
   artist: ArtistAtEvent;
@@ -109,8 +110,18 @@ export default function ArtistEventCard({
             </div>
           )}
 
+          {artist.soundcloudUrl && (
+            <div className="mt-6">
+              <ArtistPreviewSetButton
+                soundcloudUrl={artist.soundcloudUrl}
+                artistName={artist.name}
+                artistImage={artist.image?.src}
+              />
+            </div>
+          )}
+
           {!artist.isB2b && (
-            <Link className={"link mt-6"} href={`/artists/${artist.uid}`}>
+            <Link className={"link mt-4"} href={`/artists/${artist.uid}`}>
               More about {artist.name}
             </Link>
           )}
@@ -119,7 +130,7 @@ export default function ArtistEventCard({
             <div className={"flex gap-x-4"}>
               {artist.b2bAttribution.map(artist => (
                 <Link
-                  className={"link mt-6"}
+                  className={"link mt-4"}
                   href={`/artists/${artist.uid}`}
                   key={artist.uid}
                 >

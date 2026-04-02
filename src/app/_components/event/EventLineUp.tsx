@@ -57,7 +57,7 @@ export default function EventLineUp({ artists }: Props) {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as SortOption)}
-              className="px-1 py-1 border border-gray-300 rounded text-sm bg-neutral-200 text-issun-boshi-purple"
+              className="px-1 py-1 border border-neutral-700 rounded text-sm bg-neutral-600 text-neutral-300"
             >
               <option value="default">Default</option>
               <option value="timestamp">Performance Time</option>
