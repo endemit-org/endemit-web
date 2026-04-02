@@ -1,6 +1,7 @@
 {
   "name": "endemit-web",
-  "version": "4.4.087rc",
+  "author": "Endemit",
+  "version": "4.4.087se",
   "private": true,
   "packageManager": "pnpm@9.13.0",
   "scripts": {

@@ -60,6 +60,8 @@ const nextConfig: NextConfig = {
     "/admin/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
     "/profile/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
   },
+  // Prevent bundling heavy Node.js packages - load them at runtime instead
+  serverExternalPackages: ["passkit-generator", "node-forge"],
 };
 
 export default nextConfig;

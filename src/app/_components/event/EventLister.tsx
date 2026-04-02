@@ -4,6 +4,7 @@ import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import clsx from "clsx";
 import EventSaveTheDateLister from "@/app/_components/event/EventSaveTheDateLister";
+import { Event } from "@/domain/event/types/event";
 
 type SaveTheDateItem = {
   title?: string;
@@ -11,6 +12,47 @@ type SaveTheDateItem = {
   date: Date;
   note?: string;
 };
+
+type ListItem =
+  | { type: "event"; event: Event }
+  | { type: "year"; year: number };
+
+function buildEventListWithYearSeparators(events: Event[]): ListItem[] {
+  const items: ListItem[] = [];
+  let lastYear: number | null = null;
+
+  for (const event of events) {
+    const eventYear = event.date_start?.getFullYear() ?? null;
+
+    // Add year separator when year changes (not for the first event)
+    if (eventYear !== null && lastYear !== null && eventYear !== lastYear) {
+      items.push({ type: "year", year: eventYear });
+    }
+
+    items.push({ type: "event", event });
+    lastYear = eventYear;
+  }
+
+  return items;
+}
+
+function YearCard({ year }: { year: number }) {
+  return (
+    <div className="relative overflow-hidden bg-neutral-900 rounded-sm flex items-center justify-center max-md:py-16 border-neutral-950 ">
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          background: "url('/images/noise.gif') no-repeat center center",
+          backgroundSize: "200px",
+          backgroundRepeat: "repeat",
+        }}
+      />
+      <div className="text-neutral-700 font-heading text-6xl md:text-7xl lg:text-8xl">
+        {year}
+      </div>
+    </div>
+  );
+}
 
 interface EventListProps {
   title?: string;
@@ -66,11 +108,26 @@ async function EventListContent({
           type === "Past" && "md:grid-cols-3"
         )}
       >
-        {filteredEvents.map((event, index) => (
-          <React.Fragment key={`${event.id}-${index}`}>
-            <EventPoster event={event}>{/*{event.children}*/}</EventPoster>
-          </React.Fragment>
-        ))}
+        {type === "Past"
+          ? buildEventListWithYearSeparators(filteredEvents).map(
+              (item, index) =>
+                item.type === "year" ? (
+                  <YearCard
+                    key={`year-${item.year}-${index}`}
+                    year={item.year}
+                  />
+                ) : (
+                  <EventPoster
+                    key={`${item.event.id}-${index}`}
+                    event={item.event}
+                  />
+                )
+            )
+          : filteredEvents.map((event, index) => (
+              <React.Fragment key={`${event.id}-${index}`}>
+                <EventPoster event={event} />
+              </React.Fragment>
+            ))}
         {showSaveTheDate && (
           <EventSaveTheDateLister saveTheDateItems={saveTheDateItems} />
         )}

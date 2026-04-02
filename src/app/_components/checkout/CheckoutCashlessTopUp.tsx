@@ -78,8 +78,8 @@ export default function CheckoutCashlessTopUp({
             Go Cashless at the Event
           </h4>
           <p className="text-smIf text-neutral-400 mt-1">
-            This event uses cashless payments with Endemit Pay. Preload your
-            wallet now and enjoy faster service at the bar and food stands.
+            This event uses cashless payments with EndePay. Preload your wallet
+            now and enjoy faster service at the bar and food stands.
           </p>
         </div>
       </div>

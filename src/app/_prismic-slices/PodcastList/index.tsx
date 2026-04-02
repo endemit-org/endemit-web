@@ -8,6 +8,7 @@ import { fetchPodcastFromCms } from "@/domain/cms/operations/fetchPodcastFromCms
 import PodcastSeriesSeoMicrodata from "@/app/_components/seo/PodcastSeriesSeoMicrodata";
 import PlayablePodcastCard from "@/app/_components/podcast/PlayablePodcastCard";
 import FeaturedPodcastCard from "@/app/_components/podcast/FeaturedPodcastCard";
+import ExpandablePodcastGrid from "@/app/_components/podcast/ExpandablePodcastGrid";
 
 /**
  * Props for `PodcastList`.
@@ -51,28 +52,38 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
           </p>
         )}
 
-        <div
-          className={clsx(
-            "grid gap-2 w-full",
-            episodeCountValue === "2"
-              ? "grid-cols-1 sm:grid-cols-2"
-              : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
-            (slice.primary.title || slice.primary.description) && "mt-8"
-          )}
-        >
-          {limitedPodcasts.map(podcast => (
-            <PlayablePodcastCard
-              key={podcast.id}
-              uid={podcast.uid}
-              name={podcast.name}
-              episodeNumber={podcast.number}
-              date={podcast.date}
-              image={podcast.tile ?? podcast.cover}
-              trackUrl={podcast.track.url}
-              artist={podcast.artist?.name}
+        {isAll ? (
+          <div className={(slice.primary.title || slice.primary.description) ? "mt-8" : ""}>
+            <ExpandablePodcastGrid
+              podcasts={limitedPodcasts}
+              initialCount={8}
+              gridCols="4"
             />
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div
+            className={clsx(
+              "grid gap-2 w-full",
+              episodeCountValue === "2"
+                ? "grid-cols-1 sm:grid-cols-2"
+                : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
+              (slice.primary.title || slice.primary.description) && "mt-8"
+            )}
+          >
+            {limitedPodcasts.map(podcast => (
+              <PlayablePodcastCard
+                key={podcast.id}
+                uid={podcast.uid}
+                name={podcast.name}
+                episodeNumber={podcast.number}
+                date={podcast.date}
+                image={podcast.tile ?? podcast.cover}
+                trackUrl={podcast.track.url}
+                artist={podcast.artist?.name}
+              />
+            ))}
+          </div>
+        )}
       </section>
     );
   }
