@@ -12,6 +12,8 @@ import CheckoutDonation from "@/app/_components/checkout/CheckoutDonation";
 import CheckoutError from "@/app/_components/checkout/CheckoutError";
 import CheckoutSummary from "@/app/_components/checkout/CheckoutSummary";
 import CheckoutWalletCredit from "@/app/_components/checkout/CheckoutWalletCredit";
+import CheckoutCartSummaryCollapsible from "@/app/_components/checkout/CheckoutCartSummaryCollapsible";
+import CheckoutStepIndicator from "@/app/_components/checkout/CheckoutStepIndicator";
 import StripeProvider from "@/app/_components/checkout/StripeProvider";
 import PaymentForm from "@/app/_components/checkout/PaymentForm";
 import confetti from "canvas-confetti";
@@ -35,12 +37,15 @@ export default function Checkout({
   userEmail,
 }: Props) {
   const [isClient, setIsClient] = useState(false);
-  const [mobileStep, setMobileStep] = useState<1 | 2>(1);
+  const [mobileStep, setMobileStep] = useState<1 | 2 | 3>(1);
   const [donationDismissed, setDonationDismissed] = useState(false);
   const [paymentError, setPaymentError] = useState<string>("");
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [paymentInitialized, setPaymentInitialized] = useState(false);
   const { getProductByUid } = useProducts();
+
+  // Track if user entered via quick checkout (for back navigation)
+  const isQuickCheckoutRef = useRef(false);
 
   const {
     items,
@@ -111,7 +116,7 @@ export default function Checkout({
     }
   }, [userEmail, actions]);
 
-  // Fast checkout for wallet top-ups: auto-accept terms, skip to step 2, set return URL
+  // Fast checkout for wallet top-ups: auto-accept terms, skip to step 3, set return URL
   const fastCheckoutInitializedRef = useRef(false);
   useEffect(() => {
     if (
@@ -122,8 +127,9 @@ export default function Checkout({
       !fastCheckoutInitializedRef.current
     ) {
       fastCheckoutInitializedRef.current = true;
+      isQuickCheckoutRef.current = true;
       actions.updateField("termsAndConditions", true);
-      setMobileStep(2);
+      setMobileStep(3);
       // Ensure return URL is set for wallet top-ups
       if (!localStorage.getItem("checkoutReturnUrl")) {
         localStorage.setItem("checkoutReturnUrl", "/profile");
@@ -162,39 +168,330 @@ export default function Checkout({
       };
   const displayCountry = isClient ? formData.country : "SI";
 
-  const handleNextStep = () => {
-    validateForm("manual");
-    if (!isFormValid) return;
+  // Mobile navigation: Step 1 (Cart) → Step 2 (Information)
+  const handleToInformation = () => {
     setMobileStep(2);
-    // Scroll to top on mobile when moving to step 2
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleBackStep = () => {
-    setMobileStep(1);
+  // Mobile navigation: Step 2 (Information) → Step 3 (Review & Pay)
+  const handleToPayment = () => {
+    validateForm("manual");
+    if (!isFormValid) return;
+    setMobileStep(3);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Mobile navigation: Back button handling
+  const handleBack = () => {
+    if (mobileStep === 3) {
+      // Quick checkout goes back to cart (step 1), normal flow goes to information (step 2)
+      if (isQuickCheckoutRef.current) {
+        setMobileStep(1);
+      } else {
+        setMobileStep(2);
+      }
+    } else if (mobileStep === 2) {
+      setMobileStep(1);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Mobile back link component
+  const MobileBackLink = () => (
+    <div className="lg:hidden mt-6 text-center">
+      <button
+        onClick={handleBack}
+        disabled={isPaymentProcessing}
+        className="text-neutral-400 hover:text-white text-sm transition-colors disabled:opacity-50"
+      >
+        ← Back
+      </button>
+    </div>
+  );
 
   return (
     <>
       <CheckoutError error={error} />
+
+      {/* Mobile step indicator */}
+      {isClient && hasItems && (
+        <CheckoutStepIndicator currentStep={mobileStep} />
+      )}
+
       <div className="flex gap-x-6 max-lg:flex-col">
-        {/* Step 1: Customer Information (always visible on desktop, step 1 on mobile) */}
+        {/* ========== MOBILE STEP 1: CART ========== */}
         <div
           className={clsx(
-            "bg-neutral-800 p-4 lg:p-6 lg:w-3/5 w-full rounded-md space-y-6",
+            "lg:hidden w-full max-lg:mb-6",
             mobileStep !== 1 && "max-lg:hidden"
           )}
         >
+          {isClient && (
+            <>
+              {!hasItems ? (
+                <div className="bg-neutral-800 p-4 rounded-md text-neutral-400 italic text-center flex flex-col justify-center items-center min-h-[200px]">
+                  <div>
+                    <div className="flex flex-col justify-center items-center mb-6 text-neutral-400">
+                      <AnimatedWarningIcon color="currentColor" />
+                    </div>
+                    Your cart is empty.
+                    <div className="pt-4">
+                      Visit{" "}
+                      <Link href={"/store"} className="link">
+                        our Merch section
+                      </Link>{" "}
+                      to select products for your purchase and support our
+                      non-profit work.
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-neutral-800 p-4 rounded-md space-y-4">
+                  <h3 className="text-xl font-medium font-heading text-neutral-200">
+                    Cart ({totalItems} {totalItems === 1 ? "item" : "items"})
+                  </h3>
+
+                  <CheckoutItemList
+                    items={items}
+                    onRemoveItem={actions.removeItem}
+                    country={formData?.country}
+                    editable={true}
+                  />
+
+                  <CheckoutCashlessTopUp
+                    items={items}
+                    currencyProducts={currencyProducts}
+                    onAddTopUp={product => actions.addItem(product, 1)}
+                    disabled={false}
+                  />
+
+                  {showDonation &&
+                    !donationDismissed &&
+                    !walletCredit.isLoading &&
+                    !walletCredit.canUse &&
+                    !hasCashlessEventTickets && (
+                      <CheckoutDonation
+                        donationAmount={displayTotals.donationAmount}
+                        roundedTotal={displayTotals.roundedTotal}
+                        onAddDonation={handleAddDonation}
+                        onDismiss={() => setDonationDismissed(true)}
+                        disabled={false}
+                      />
+                    )}
+
+                  {/* Subtotal summary for step 1 */}
+                  <div className="text-md text-neutral-200 pt-4 border-t border-neutral-700">
+                    <div className="flex justify-between text-lg">
+                      <span>Subtotal:</span>
+                      <span className="font-medium">
+                        {displayTotals.subTotal.toLocaleString("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Continue button */}
+                  <div className="pt-2">
+                    <button
+                      onClick={handleToInformation}
+                      className="w-full font-medium py-3 px-6 rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Continue to checkout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* ========== MOBILE STEP 2: INFORMATION ========== */}
+        <div
+          className={clsx(
+            "lg:hidden w-full max-lg:mb-6",
+            mobileStep !== 2 && "max-lg:hidden"
+          )}
+        >
+          {isClient && hasItems && (
+            <div className="bg-neutral-800 p-4 rounded-md space-y-6">
+              <CheckoutCustomerForm
+                formData={formData}
+                errorMessages={errorMessages}
+                onFormChangeAction={actions.updateField}
+                onTicketFormChange={actions.updateTicketField}
+                onIncrementItem={actions.incrementItem}
+                onDecrementItem={actions.decrementItem}
+                onRemoveItem={actions.removeItem}
+                requiresShippingAddress={requiresShippingAddress}
+                includesNonRefundable={includesNonRefundable}
+                showSubscribeToNewsletter={shouldShowNewsletter}
+                items={items}
+                submitForm={actions.checkout}
+                validateForm={validateForm}
+                validationTriggered={validationTriggered}
+                userEmail={userEmail}
+              />
+
+              {/* Continue button */}
+              <div className="pt-4">
+                <button
+                  onClick={handleToPayment}
+                  disabled={!isFormValid}
+                  className={clsx(
+                    "w-full font-medium py-3 px-6 rounded-lg transition-colors",
+                    isFormValid
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "bg-neutral-600 text-neutral-400 cursor-not-allowed"
+                  )}
+                >
+                  Continue to Review & Pay
+                </button>
+              </div>
+
+              <MobileBackLink />
+            </div>
+          )}
+        </div>
+
+        {/* ========== MOBILE STEP 3: REVIEW & PAY ========== */}
+        <div
+          className={clsx(
+            "lg:hidden w-full max-lg:mb-12",
+            mobileStep !== 3 && "max-lg:hidden"
+          )}
+        >
+          {isClient && hasItems && (
+            <div className="space-y-4">
+              <div className="bg-neutral-800 p-4 rounded-md space-y-4">
+                {/* Collapsible cart summary */}
+                <CheckoutCartSummaryCollapsible
+                  items={items}
+                  totalItems={totalItems}
+                  subTotal={displayTotals.subTotal}
+                  defaultExpanded={false}
+                />
+
+                <CheckoutSummary
+                  subTotal={displayTotals.subTotal}
+                  shippingCost={displayTotals.shippingCost}
+                  discountObject={discount}
+                  discountAmount={displayTotals.discountAmount}
+                  total={displayTotals.total}
+                  walletCreditEur={displayTotals.walletCreditEur}
+                  orderWeight={displayTotals.shippingWeight}
+                  country={displayCountry}
+                  loadingShippingCost={isProcessing}
+                  loadingPromoCode={isProcessing}
+                />
+
+                <CheckoutPromoCodeForm
+                  discount={discount}
+                  promoCodeValue={promoCodeValue}
+                  onPromoCodeChangeAction={actions.setPromoCodeValue}
+                  onApplyPromoCodeAction={actions.applyPromoCode}
+                  onRemovePromoCodeAction={actions.removePromoCode}
+                  isLoading={isProcessing}
+                  disabled={isPaymentProcessing}
+                />
+
+                <div className="mt-4">
+                  <CheckoutWalletCredit
+                    walletBalance={walletCredit.balance}
+                    walletCreditAmount={walletCredit.creditAmount}
+                    maxWalletCredit={walletCredit.maxCredit}
+                    remainingToPay={walletCredit.remainingToPay}
+                    isLoading={walletCredit.isLoading}
+                    canUseWallet={walletCredit.canUse}
+                    isUsingWallet={walletCredit.isUsing}
+                    onToggle={actions.toggleWalletCredit}
+                    onAmountChange={actions.setWalletCreditAmount}
+                    disabled={isPaymentProcessing}
+                  />
+                </div>
+
+                {/* Form invalid warning */}
+                {!isFormValid && (
+                  <div className="p-3 bg-amber-900/30 border border-amber-700/40 rounded text-center">
+                    <p className="text-sm text-amber-200">
+                      Please go back to update your information.
+                    </p>
+                    <button
+                      onClick={handleBack}
+                      className="mt-2 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
+                    >
+                      ← Back to Information
+                    </button>
+                  </div>
+                )}
+
+                {/* Payment error */}
+                {paymentError && (
+                  <div className="p-3 bg-red-900/30 border border-red-700/40 rounded">
+                    <p className="text-sm text-red-200">{paymentError}</p>
+                  </div>
+                )}
+
+                {/* Payment form */}
+                {payment.isReady && payment.clientSecret ? (
+                  <StripeProvider clientSecret={payment.clientSecret}>
+                    <PaymentForm
+                      totalAmount={totals.total}
+                      isProcessing={isPaymentProcessing}
+                      onProcessingChange={setIsPaymentProcessing}
+                      onError={setPaymentError}
+                      canProceed={canProceed}
+                      onConfirmPayment={actions.confirmPayment}
+                    />
+                  </StripeProvider>
+                ) : payment.isFullWalletPayment ? (
+                  <div className="mt-4">
+                    <ActionButton
+                      onClick={async () => {
+                        const result = await actions.confirmPayment();
+                        if (!result.success) {
+                          setPaymentError("Failed to process payment");
+                        }
+                      }}
+                      disabled={!canProceed || isProcessing}
+                      variant="success"
+                      className="py-3 text-lg"
+                    >
+                      {isProcessing
+                        ? "Processing..."
+                        : "Complete Order (Wallet Payment)"}
+                    </ActionButton>
+                  </div>
+                ) : (
+                  <div className="mt-4 py-6 text-center">
+                    {payment.isInitializing ? (
+                      <div className="text-neutral-400 text-sm">
+                        Loading payment form...
+                      </div>
+                    ) : (
+                      <div className="text-neutral-400 text-sm">
+                        Preparing secure payment...
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Back link (only show when form is valid) */}
+                {isFormValid && <MobileBackLink />}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ========== DESKTOP: LEFT SIDE - CUSTOMER FORM ========== */}
+        <div className="max-lg:hidden bg-neutral-800 p-6 lg:w-3/5 w-full rounded-md space-y-6">
           {isClient &&
             (!hasItems ? (
-              <div className="text-neutral-400 italic text-center h-full  flex flex-col justify-center items-center">
+              <div className="text-neutral-400 italic text-center h-full flex flex-col justify-center items-center">
                 <div>
-                  <div
-                    className={
-                      "flex flex-col justify-center items-center mb-6 text-neutral-400"
-                    }
-                  >
+                  <div className="flex flex-col justify-center items-center mb-6 text-neutral-400">
                     <AnimatedWarningIcon color="currentColor" />
                   </div>
                   Your cart is empty.
@@ -209,51 +506,28 @@ export default function Checkout({
                 </div>
               </div>
             ) : (
-              <>
-                <CheckoutCustomerForm
-                  formData={formData}
-                  errorMessages={errorMessages}
-                  onFormChangeAction={actions.updateField}
-                  onTicketFormChange={actions.updateTicketField}
-                  onIncrementItem={actions.incrementItem}
-                  onDecrementItem={actions.decrementItem}
-                  onRemoveItem={actions.removeItem}
-                  requiresShippingAddress={requiresShippingAddress}
-                  includesNonRefundable={includesNonRefundable}
-                  showSubscribeToNewsletter={shouldShowNewsletter}
-                  items={items}
-                  submitForm={actions.checkout}
-                  validateForm={validateForm}
-                  validationTriggered={validationTriggered}
-                  userEmail={userEmail}
-                />
-
-                {/* Mobile: Next button to go to step 2 */}
-                <div className="lg:hidden pt-4">
-                  <button
-                    onClick={handleNextStep}
-                    disabled={!isFormValid}
-                    className={clsx(
-                      "w-full font-medium py-3 px-6 rounded-lg transition-colors",
-                      isFormValid
-                        ? "bg-blue-600 hover:bg-blue-700 text-white"
-                        : "bg-neutral-600 text-neutral-400 cursor-not-allowed"
-                    )}
-                  >
-                    Continue to Review & Pay
-                  </button>
-                </div>
-              </>
+              <CheckoutCustomerForm
+                formData={formData}
+                errorMessages={errorMessages}
+                onFormChangeAction={actions.updateField}
+                onTicketFormChange={actions.updateTicketField}
+                onIncrementItem={actions.incrementItem}
+                onDecrementItem={actions.decrementItem}
+                onRemoveItem={actions.removeItem}
+                requiresShippingAddress={requiresShippingAddress}
+                includesNonRefundable={includesNonRefundable}
+                showSubscribeToNewsletter={shouldShowNewsletter}
+                items={items}
+                submitForm={actions.checkout}
+                validateForm={validateForm}
+                validationTriggered={validationTriggered}
+                userEmail={userEmail}
+              />
             ))}
         </div>
 
-        {/* Step 2: Cart & Payment (always visible on desktop, step 2 on mobile) */}
-        <div
-          className={clsx(
-            "lg:w-2/5 w-full lg:p-6 min-w-72 max-lg:mb-12",
-            mobileStep !== 2 && "max-lg:hidden"
-          )}
-        >
+        {/* ========== DESKTOP: RIGHT SIDE - CART & PAYMENT ========== */}
+        <div className="max-lg:hidden lg:w-2/5 w-full lg:p-6 min-w-72">
           {isClient && (
             <>
               <h3 className="text-2xl font-medium font-heading mb-3 text-neutral-200">
@@ -330,28 +604,14 @@ export default function Checkout({
                 </div>
               )}
 
-              {/* Mobile: Show message when form becomes invalid */}
-              {!isFormValid && (
-                <div className="lg:hidden mb-4 p-3 bg-amber-900/30 border border-amber-700/40 rounded text-center">
-                  <p className="text-sm text-amber-200">
-                    Please go back to update ticket holder information.
-                  </p>
-                  <button
-                    onClick={handleBackStep}
-                    className="mt-2 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
-                  >
-                    ← Back to Information
-                  </button>
-                </div>
-              )}
-
-              {/* Payment Section */}
+              {/* Payment error */}
               {paymentError && (
                 <div className="mb-4 p-3 bg-red-900/30 border border-red-700/40 rounded">
                   <p className="text-sm text-red-200">{paymentError}</p>
                 </div>
               )}
 
+              {/* Payment form */}
               {payment.isReady && payment.clientSecret ? (
                 <StripeProvider clientSecret={payment.clientSecret}>
                   <PaymentForm
@@ -392,18 +652,6 @@ export default function Checkout({
                       Preparing secure payment...
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* Mobile: Back link to go to step 1 */}
-              {isFormValid && (
-                <div className="lg:hidden mt-4 text-center">
-                  <button
-                    onClick={handleBackStep}
-                    className="text-neutral-400 hover:text-white text-sm transition-colors"
-                  >
-                    ← Back to Information
-                  </button>
                 </div>
               )}
             </>

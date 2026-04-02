@@ -15,8 +15,13 @@ type OpenGraphType =
   | "music.song"
   | "music.album"
   | "music.playlist"
-  | "profile"
-  | "product";
+  | "music.radio_station"
+  | "video.movie"
+  | "video.episode"
+  | "video.tv_show"
+  | "video.other"
+  | "book"
+  | "profile";
 
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;

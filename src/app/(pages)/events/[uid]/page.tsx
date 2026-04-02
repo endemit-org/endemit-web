@@ -23,6 +23,7 @@ import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
+import EventMiniCard from "@/app/_components/event/EventMiniCard";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -58,7 +59,13 @@ export async function generateMetadata({
   });
   const url = `https://endemit.org/events/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images, url, type: "website" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    url,
+    type: "website",
+  });
 }
 
 export default async function EventPage({
@@ -88,6 +95,20 @@ export default async function EventPage({
 
   const innerContentPages = await fetchInnerContentPagesForEvent(event.id);
   const isPastEvent = isEventCompleted(event);
+
+  // Fetch other events to explore for past events
+  let otherEvents: (typeof event)[] = [];
+  if (isPastEvent) {
+    const allEvents = await fetchEventsFromCms({});
+    otherEvents = (allEvents ?? [])
+      .filter(
+        e =>
+          e.uid !== event.uid &&
+          e.options.visibility !== "Hidden" &&
+          !e.options.externalEventLink
+      )
+      .slice(0, 4);
+  }
 
   const defaultContent = [] as TabItem[];
 
@@ -371,6 +392,31 @@ export default async function EventPage({
             </div>
           </section>
         </div>
+
+        {isPastEvent && otherEvents.length > 0 && (
+          <div className="mb-10 text-center relative z-10 mt-20 max-md:pb-32">
+            <h3 className="text-neutral-200 text-2xl py-6 max-md:pt-32">
+              More events to explore
+            </h3>
+            <div
+              className={clsx(
+                "grid sm:grid-cols-2 xl:grid-cols-4 w-full gap-2"
+              )}
+            >
+              {otherEvents.map(otherEvent => (
+                <EventMiniCard
+                  key={otherEvent.id}
+                  name={otherEvent.name}
+                  image={otherEvent.coverImage}
+                  dateStart={otherEvent.date_start}
+                  dateEnd={otherEvent.date_end}
+                  location={otherEvent.venue?.name}
+                  link={`/events/${otherEvent.uid}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </OuterPage>
     </>
   );

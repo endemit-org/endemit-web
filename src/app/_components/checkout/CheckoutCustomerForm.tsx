@@ -92,10 +92,12 @@ export default function CheckoutCustomerForm({
     <div className="gap-y-8 flex flex-col">
       <CheckoutFormSection
         title={"Your contact information"}
-        description={userEmail
-          ? "You are signed in. Your email will be used for this order."
-          : `Ensure your email is correct as this is where you will receive your order
-          confirmation${includesTickets ? " and digital tickets" : ""}.`}
+        description={
+          userEmail
+            ? "You are signed in. Your email will be used for this order."
+            : `Ensure your email is correct as this is where you will receive your order
+          confirmation${includesTickets ? " and digital tickets" : ""}.`
+        }
       >
         <Input
           name="email"
@@ -105,7 +107,7 @@ export default function CheckoutCustomerForm({
           value={userEmail || formData.email}
           onChangeAction={onFormChangeAction}
           onEnter={handleOnEnter}
-          errorMessage={userEmail ? undefined : errorMessages.email as string}
+          errorMessage={userEmail ? undefined : (errorMessages.email as string)}
           required={true}
           validationTriggered={validationTriggered}
           disabled={!!userEmail}
@@ -142,7 +144,7 @@ export default function CheckoutCustomerForm({
                     <button
                       type="button"
                       onClick={() => onDecrementItem(item.id)}
-                      className="w-7 h-7 flex items-center justify-center rounded bg-neutral-700 hover:bg-neutral-600 text-neutral-200 transition-colors"
+                      className="w-7 h-7 flex items-center justify-center rounded bg-blue-900 hover:bg-blue-800 text-neutral-200 transition-colors"
                       aria-label="Decrease quantity"
                     >
                       −
@@ -153,7 +155,7 @@ export default function CheckoutCustomerForm({
                     <button
                       type="button"
                       onClick={() => onIncrementItem(item.id)}
-                      className="w-7 h-7 flex items-center justify-center rounded bg-neutral-700 hover:bg-neutral-600 text-neutral-200 transition-colors"
+                      className="w-7 h-7 flex items-center justify-center rounded bg-blue-900 hover:bg-blue-800 text-neutral-200 transition-colors"
                       aria-label="Increase quantity"
                     >
                       +
