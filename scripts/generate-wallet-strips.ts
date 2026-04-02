@@ -11,6 +11,10 @@
  * 3. Uploads them to Vercel Blob storage
  */
 
+// Load .env file for local development (no-op if file doesn't exist)
+import { config } from "dotenv";
+config();
+
 import * as prismic from "@prismicio/client";
 import { put, list } from "@vercel/blob";
 import { generateWalletStrip } from "@/domain/wallet-pass/operations/generateWalletStrip";
