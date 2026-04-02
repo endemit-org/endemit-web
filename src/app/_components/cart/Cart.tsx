@@ -61,7 +61,9 @@ export default function Cart({ variant = "detailed" }: Props) {
         <div
           className={clsx(
             "text-2xl group-hover:text-gray-400 font-heading",
-            !isEmpty && isClient ? "text-blue-400" : "text-gray-400"
+            !isEmpty && isClient
+              ? "text-blue-400"
+              : "text-gray-400 max-md:hidden"
           )}
         >
           {formatPrice(displayTotalPrice)}
@@ -69,7 +71,7 @@ export default function Cart({ variant = "detailed" }: Props) {
         <div className="text-sm">
           <span className="text-gray-100 group-hover:text-gray-400 group-hover:scale-105 transition duration-200 inline-block">
             {displayItemCount > 0 && (
-              <div className="bg-blue-400 w-5 lg:w-6 h-4 absolute mt-4 lg:mt-5 -z-10 animate-pulse"></div>
+              <div className="bg-blue-400 w-4 lg:w-6 h-3.5 lg:h-4 absolute mt-3 lg:mt-5 -z-10 animate-pulse"></div>
             )}
             <ToteBagIcon className={"w-4 lg:w-6"} />
             <div

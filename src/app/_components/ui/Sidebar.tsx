@@ -152,8 +152,14 @@ export default function Sidebar({
       </div>
 
       <div className="flex absolute right-0 top-0 lg:hidden gap-x-2">
-        <ProfileButton variant="compact" />
-        {showCart && <Cart variant={"compact"} />}
+        {showCart && (
+          <div onClick={() => setIsMenuOpen(false)}>
+            <Cart variant={"compact"} />
+          </div>
+        )}
+        <div className={"max-md:-mr-4"} onClick={() => setIsMenuOpen(false)}>
+          <ProfileButton variant="compact" />
+        </div>
 
         <button
           type="button"
@@ -173,7 +179,7 @@ export default function Sidebar({
 
       <div
         className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 ", {
-          "fixed inset-x-0 bottom-0 top-14  bg-neutral-950 bg-opacity-75 backdrop-blur-lg flex flex-col":
+          "fixed inset-x-0 bottom-0 top-14  max-md:bg-neutral-950 max-md:bg-opacity-85 max-md:backdrop-blur-lg flex flex-col":
             isMenuOpen,
           hidden: !isMenuOpen,
         })}

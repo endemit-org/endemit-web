@@ -140,7 +140,7 @@ export default async function EventPage({
       label: "Tickets",
       content: <EventTicketDisplay products={products} event={event} />,
       id: "tickets",
-      sortingWeight: 400,
+      sortingWeight: 200,
       mobileOnly: true,
     });
   }
