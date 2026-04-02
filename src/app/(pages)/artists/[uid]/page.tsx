@@ -18,6 +18,7 @@ import ArtistSeoMicrodata from "@/app/_components/seo/ArtistSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import ArtistList from "@/app/_components/artist/ArtistList";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
 
 export async function generateStaticParams() {
   const artists = await fetchArtistsFromCms({});
@@ -112,6 +113,12 @@ export default async function ArtistPage({
               : {}
           }
         ></div>
+        {artist.slices && artist.slices.length > 0 && (
+          <>
+            <Spacer size={"large"} />
+            <SliceDisplay slices={artist.slices} />
+          </>
+        )}
         <Spacer size={"xlarge"} />
         {(showRelatedEvents || showRelatedPodcasts) && (
           <InnerPage>
@@ -129,7 +136,7 @@ export default async function ArtistPage({
                     date={podcast.date}
                     episodeNumber={podcast.number}
                     key={podcast.id}
-                    image={podcast.cover}
+                    image={podcast.tile}
                     name={podcast.name}
                     uid={podcast.uid}
                   />

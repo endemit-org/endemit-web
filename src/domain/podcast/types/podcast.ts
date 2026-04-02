@@ -11,11 +11,13 @@ export type PodcastTrackInList = {
 export interface Podcast {
   id: string;
   uid: string;
+  published: boolean;
   name: string;
   number: string;
   date: Date | null;
   description: RichTextField | null;
   footnote: string;
+  tile: CmsImage | null;
   cover: CmsImage | null;
   track: {
     url: string;

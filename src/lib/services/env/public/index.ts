@@ -17,7 +17,7 @@ export const PUBLIC_SUPABASE_PUBLIC_KEY =
 
 // Feature flags
 export const PUBLIC_ENDEMIT_PAY_ENABLED =
-  process.env.NEXT_PUBLIC_ENDEMIT_PAY_ENABLED === "true";
+  process.env.NEXT_PUBLIC_FEAT_ENDEMIT_PAY_ENABLED === "true";
 
 // Validation
 if (!PUBLIC_API_URL) throw new Error("Missing NEXT_PUBLIC_API_URL");

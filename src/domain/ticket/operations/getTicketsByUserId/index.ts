@@ -70,5 +70,26 @@ export const getTicketsByUserId = async (
     return true;
   });
 
+  // Sort by event date
+  // Upcoming: ascending (soonest first)
+  // Past: descending (most recent first)
+  filteredTickets.sort((a, b) => {
+    const dateA = eventDateMap.get(a.eventId);
+    const dateB = eventDateMap.get(b.eventId);
+
+    // Handle null dates - push them to the end
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+
+    if (upcomingOnly) {
+      // Ascending for upcoming (soonest first)
+      return dateA.getTime() - dateB.getTime();
+    } else {
+      // Descending for past (most recent first)
+      return dateB.getTime() - dateA.getTime();
+    }
+  });
+
   return filteredTickets.map(ticket => serializeTicket(ticket));
 };

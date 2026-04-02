@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/services/prisma";
 
 interface PrismicWebhookPayload {
   type: string;
@@ -16,6 +17,8 @@ export async function POST(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get("secret");
   const expectedSecret = process.env.PRISMIC_WEBHOOK_SECRET;
   const vercelDeployHook = process.env.VERCEL_DEPLOY_HOOK_URL;
+
+  console.log("Received Prismic webhook payload:", secret, { request });
 
   if (!expectedSecret) {
     console.error("PRISMIC_WEBHOOK_SECRET is not configured");
@@ -54,14 +57,39 @@ export async function POST(request: NextRequest) {
     payload.type === "api-update" &&
     payload.releases?.deletion &&
     payload.releases.deletion.length > 0;
-
+  console.log({ payload });
   if (!isReleasePublished) {
+    console.log("Not a release publish event", payload.type);
+
     return NextResponse.json({
       triggered: false,
       reason: "Not a release publish event",
       type: payload.type,
       hasReleasesDeletion: Boolean(payload.releases?.deletion?.length),
     });
+  }
+
+  // Deduplicate using masterRef
+  if (payload.masterRef) {
+    try {
+      await prisma.webhookLog.create({
+        data: {
+          source: "prismic",
+          ref: payload.masterRef,
+        },
+      });
+    } catch (error) {
+      // Unique constraint violation = already processed
+      if ((error as { code?: string }).code === "P2002") {
+        console.log("Already processed masterRef:", payload.masterRef);
+        return NextResponse.json({
+          triggered: false,
+          reason: "Already processed this masterRef",
+          masterRef: payload.masterRef,
+        });
+      }
+      throw error;
+    }
   }
 
   // Trigger Vercel rebuild

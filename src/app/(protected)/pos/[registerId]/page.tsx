@@ -24,15 +24,23 @@ export default async function PosRegisterPage({ params }: Props) {
     redirect("/signin?redirect=/pos");
   }
 
-  // Check assignment
-  const assignment = await prisma.posRegisterSeller.findUnique({
-    where: {
-      registerId_userId: {
-        registerId,
-        userId: user.id,
+  // Check assignment and count user's registers
+  const [assignment, userRegisterCount] = await Promise.all([
+    prisma.posRegisterSeller.findUnique({
+      where: {
+        registerId_userId: {
+          registerId,
+          userId: user.id,
+        },
       },
-    },
-  });
+    }),
+    prisma.posRegisterSeller.count({
+      where: {
+        userId: user.id,
+        register: { status: "ACTIVE" },
+      },
+    }),
+  ]);
 
   if (!assignment) {
     redirect("/pos");
@@ -84,6 +92,7 @@ export default async function PosRegisterPage({ params }: Props) {
         canTopUp: register.canTopUp,
       }}
       items={items}
+      showBackButton={userRegisterCount > 1}
       initialPendingOrders={pendingOrders.map(o => ({
         id: o.id,
         shortCode: o.shortCode,

@@ -22,6 +22,21 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
           {ticket.eventName} was generated. Please save this email and present
           the attached ticket at the entrance of the event.
         </Text>
+        <Text className="text-gray-600 mb-6">
+          You may use the attached ticket file, the{" "}
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/profile/tickets/${ticket.shortId}`}
+          >
+            ticket in your profile
+          </Link>{" "}
+          or your{" "}
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticket.ticketHash}`}
+          >
+            Apple Wallet Ticket
+          </Link>{" "}
+          <span className={"italic"}>(iOS only)</span> to enter the event.
+        </Text>
 
         <div
           style={{
@@ -110,40 +125,11 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
           </table>
         </div>
 
-        <div
-          className="bg-neutral-800 border border-neutral-700"
-          style={{
-            borderRadius: "8px",
-            padding: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          <Text className="text-sm font-semibold mb-1 text-neutral-200 mt-0">
-            Important Information
-          </Text>
-          <Text className="text-sm text-neutral-400 my-1">
-            • This ticket is valid for one person
-            <br />
-            • Ticket is non-refundable, but you can transfer it to someone else
-            <br />•{" "}
-            <Link
-              href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
-              className="link"
-            >
-              Code of conduct
-            </Link>{" "}
-            applies at all our events
-            <br />
-            • Event entry is subject to venue&#39;s terms and conditions
-            <br />• Show this QR code at the entrance
-          </Text>
-        </div>
-
         <table
           style={{
             width: "100%",
-            borderTop: "1px solid #e5e7eb",
-            paddingTop: "16px",
+            borderBottom: "1px solid #e5e7eb",
+            paddingBottom: "16px",
           }}
         >
           <tbody>
@@ -172,7 +158,13 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
           </tbody>
         </table>
 
-        <div style={{ marginTop: "24px", marginBottom: "16px" }}>
+        <div
+          style={{
+            marginTop: "48px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
           <Link
             href={`${PUBLIC_BASE_WEB_URL}/profile/tickets/${ticket.shortId}`}
             style={{
@@ -186,8 +178,69 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
               fontSize: "14px",
             }}
           >
-            View Your Ticket
+            View Your Ticket online
           </Link>
+        </div>
+
+        <div style={{ marginBottom: "48px", textAlign: "center" }}>
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticket.ticketHash}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              backgroundColor: "#000000",
+              color: "#ffffff",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+              border: "1px solid #404040",
+            }}
+          >
+            <Img
+              src={`${PUBLIC_BASE_WEB_URL}/images/apple_wallet.png`}
+              alt="Apple Wallet"
+              width={28}
+              height={22}
+              style={{
+                display: "inline-block",
+                verticalAlign: "middle",
+                marginRight: "6px",
+              }}
+            />
+            Add to Apple Wallet
+          </Link>
+        </div>
+
+        <div
+          className="bg-neutral-800 border border-neutral-700"
+          style={{
+            borderRadius: "8px",
+            padding: "16px",
+            marginBottom: "24px",
+          }}
+        >
+          <Text className="text-sm font-semibold mb-1 text-neutral-200 mt-0">
+            Important Information
+          </Text>
+          <Text className="text-sm text-neutral-400 my-1">
+            • This ticket is valid for one person
+            <br />
+            • Ticket is non-refundable, but you can transfer it to someone else
+            <br />•{" "}
+            <Link
+              href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
+              className="link"
+            >
+              Code of conduct
+            </Link>{" "}
+            applies at all our events
+            <br />
+            • Event entry is subject to venue&#39;s terms and conditions
+            <br />• Show this QR code at the entrance
+          </Text>
         </div>
 
         <Text className="text-gray-600 my-6">
