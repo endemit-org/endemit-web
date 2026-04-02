@@ -5,7 +5,21 @@ type OpenGraphImageInput = {
   metaImage?: string | null;
   fallbackImages?: string[] | null;
   width?: number;
+  height?: number;
+  quality?: number;
 };
+
+type OpenGraphType =
+  | "website"
+  | "article"
+  | "music.song"
+  | "music.album"
+  | "music.playlist"
+  | "profile"
+  | "product";
+
+const OG_IMAGE_WIDTH = 1200;
+const OG_IMAGE_HEIGHT = 630;
 
 const defaultOgImage = `${PUBLIC_BASE_WEB_URL}/images/og/endemit-og.png`;
 
@@ -14,42 +28,55 @@ export const getDefaultOgImage = () => defaultOgImage;
 export const buildOpenGraphImages = ({
   metaImage,
   fallbackImages,
-  width = 1200,
+  width = OG_IMAGE_WIDTH,
+  height = OG_IMAGE_HEIGHT,
+  quality = 70,
 }: OpenGraphImageInput) => {
   if (metaImage) {
-    return [{ url: getResizedPrismicImage(metaImage, { width }) }];
+    return [
+      { url: getResizedPrismicImage(metaImage, { width, quality }), width, height },
+    ];
   }
 
   if (fallbackImages?.length) {
     return fallbackImages.map(img => ({
-      url: getResizedPrismicImage(img, { width }),
+      url: getResizedPrismicImage(img, { width, quality }),
+      width,
+      height,
     }));
   }
 
-  return [{ url: getDefaultOgImage() }];
+  return [{ url: getDefaultOgImage(), width, height }];
 };
 
 export const buildOpenGraphObject = ({
   title,
   description,
   images,
+  url,
+  type = "website",
 }: {
   title?: string;
   description?: string;
-  images?: { url: string }[];
+  images?: { url: string; width?: number; height?: number }[];
+  url?: string;
+  type?: OpenGraphType;
 }) => {
   return {
     title,
     description,
+    alternates: url ? { canonical: url } : undefined,
     openGraph: {
       title,
       description,
       images,
+      url,
+      type,
     },
     twitter: {
       title,
       description,
-      images,
+      images: images?.map(img => img.url),
     },
   };
 };

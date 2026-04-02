@@ -56,8 +56,9 @@ export async function generateMetadata({
     metaImage: event.meta.image,
     fallbackImages: event.promoImage?.src ? [event.promoImage.src] : undefined,
   });
+  const url = `https://endemit.org/events/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "website" });
 }
 
 export default async function EventPage({
