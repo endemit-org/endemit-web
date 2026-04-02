@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { SerializedTicket } from "@/domain/ticket/types/ticket";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
-import ProfileTable, { ProfileTableRowDiv } from "./ProfileTable";
+import ProfileTable, { ProfileTableRow, ProfileTableRowDiv } from "./ProfileTable";
 
 interface ProfileTicketsPreviewProps {
   tickets: SerializedTicket[];
@@ -11,11 +10,19 @@ interface ProfileTicketsPreviewProps {
 }
 
 const statusColors: Record<string, string> = {
-  VALIDATED: "bg-green-500/20 text-green-400",
-  PENDING: "bg-yellow-500/20 text-yellow-400",
+  VALIDATED: "bg-emerald-500/20 text-emerald-400",
+  PENDING: "bg-emerald-500/20 text-emerald-400",
   SCANNED: "bg-blue-500/20 text-blue-400",
   CANCELLED: "bg-red-500/20 text-red-400",
   BANNED: "bg-red-500/20 text-red-400",
+};
+
+const statusLabels: Record<string, string> = {
+  VALIDATED: "Ready",
+  PENDING: "Ready",
+  SCANNED: "Used",
+  CANCELLED: "Cancelled",
+  BANNED: "Banned",
 };
 
 export default function ProfileTicketsPreview({
@@ -37,8 +44,8 @@ export default function ProfileTicketsPreview({
         const isUsable =
           ticket.status === "VALIDATED" || ticket.status === "PENDING";
 
-        return (
-          <ProfileTableRowDiv key={ticket.id} index={index}>
+        const rowContent = (
+          <>
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
                 <TicketOutlineIcon className="w-4 h-4 text-blue-400" />
@@ -51,7 +58,7 @@ export default function ProfileTicketsPreview({
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
                   >
-                    {ticket.status}
+                    {statusLabels[ticket.status] || ticket.status}
                   </span>
                 </div>
                 <div className="text-xs text-neutral-500 font-mono">
@@ -59,14 +66,24 @@ export default function ProfileTicketsPreview({
                 </div>
               </div>
             </div>
-            {isUsable && (
-              <Link
-                href={`/profile/tickets/${ticket.shortId}`}
-                className="ml-4 text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors flex-shrink-0"
-              >
-                View
-              </Link>
-            )}
+          </>
+        );
+
+        if (isUsable) {
+          return (
+            <ProfileTableRow
+              key={ticket.id}
+              index={index}
+              href={`/profile/tickets/${ticket.shortId}`}
+            >
+              {rowContent}
+            </ProfileTableRow>
+          );
+        }
+
+        return (
+          <ProfileTableRowDiv key={ticket.id} index={index}>
+            {rowContent}
           </ProfileTableRowDiv>
         );
       })}

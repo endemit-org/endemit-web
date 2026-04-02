@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import clsx from "clsx";
 
 interface EventUrgencyBarProps {
@@ -19,13 +19,20 @@ function UrgencyBarDisplay({
   percentage,
   isRedPhase,
   label,
+  fadeIn = false,
 }: {
   percentage: number;
   isRedPhase: boolean;
   label?: string;
+  fadeIn?: boolean;
 }) {
   return (
-    <div className="mb-3 p-2">
+    <div
+      className={clsx(
+        "mb-3 p-2 transition-opacity duration-500",
+        fadeIn ? "opacity-100" : "opacity-100"
+      )}
+    >
       <div className="flex items-center justify-between mb-1.5">
         <span
           className={clsx(
@@ -58,7 +65,18 @@ export default function EventUrgencyBar({
   eventStartDate,
   showDemo = false,
 }: EventUrgencyBarProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { shouldShow, percentage, isRedPhase } = useMemo(() => {
+    // Only calculate on client to avoid hydration mismatch
+    if (!mounted) {
+      return { shouldShow: false, percentage: 0, isRedPhase: false };
+    }
+
     const now = new Date();
     const hoursUntilEvent =
       (eventStartDate.getTime() - now.getTime()) / (1000 * 60 * 60);
@@ -85,7 +103,7 @@ export default function EventUrgencyBar({
     const red = hoursUntilEvent <= RED_THRESHOLD_HOURS;
 
     return { shouldShow: true, percentage: pct, isRedPhase: red };
-  }, [eventStartDate]);
+  }, [eventStartDate, mounted]);
 
   // Demo mode: show multiple states for preview
   if (showDemo) {
@@ -132,5 +150,14 @@ export default function EventUrgencyBar({
     return null;
   }
 
-  return <UrgencyBarDisplay percentage={percentage} isRedPhase={isRedPhase} />;
+  return (
+    <div
+      className={clsx(
+        "transition-opacity duration-500",
+        mounted ? "opacity-100" : "opacity-0"
+      )}
+    >
+      <UrgencyBarDisplay percentage={percentage} isRedPhase={isRedPhase} />
+    </div>
+  );
 }

@@ -42,7 +42,7 @@ export default function PodcastSection({
             date={podcast.date}
             episodeNumber={podcast.number}
             key={podcast.id}
-            image={podcast.cover}
+            image={podcast.tile ?? podcast.cover}
             name={podcast.name}
             uid={podcast.uid}
           />

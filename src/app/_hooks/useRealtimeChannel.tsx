@@ -11,7 +11,8 @@ type BroadcastEvent =
   | "wallet_transaction_created"
   | "pos_order_scanned"
   | "pos_order_paid"
-  | "pos_order_cancelled";
+  | "pos_order_cancelled"
+  | "ticket_scanned";
 
 interface WalletTransactionPayload {
   transactionId: string;
@@ -46,6 +47,13 @@ interface PosOrderCancelledPayload {
   reason: "seller" | "expired";
 }
 
+interface TicketScannedPayload {
+  ticketId: string;
+  shortId: string;
+  status: string;
+  scannedAt: string;
+}
+
 interface BroadcastPayload {
   balance_updated: { balance: number };
   order_status_updated: { orderId: string; status: string };
@@ -54,6 +62,7 @@ interface BroadcastPayload {
   pos_order_scanned: PosOrderScannedPayload;
   pos_order_paid: PosOrderPaidPayload;
   pos_order_cancelled: PosOrderCancelledPayload;
+  ticket_scanned: TicketScannedPayload;
 }
 
 type EventHandler<E extends BroadcastEvent> = (

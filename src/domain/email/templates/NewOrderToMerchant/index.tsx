@@ -56,24 +56,6 @@ function NewOrderToMerchantTemplate({ order }: Props) {
           </Text>
         )}
 
-        <div style={{ marginBottom: "24px" }}>
-          <Link
-            href={`${PUBLIC_BASE_WEB_URL}/admin/orders/${order.id}`}
-            style={{
-              display: "inline-block",
-              backgroundColor: "#18181b",
-              color: "#ffffff",
-              padding: "12px 24px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              fontWeight: 600,
-              fontSize: "14px",
-            }}
-          >
-            View Order in Admin
-          </Link>
-        </div>
-
         {shippingAddress && (
           <div
             style={{
@@ -331,6 +313,32 @@ function NewOrderToMerchantTemplate({ order }: Props) {
             </tr>
           </tbody>
         </table>
+        <div
+          style={{
+            marginBottom: "48px",
+            marginTop: "24px",
+            textAlign: "center",
+            borderTop: "1px solid #e5e7eb",
+            paddingTop: "24px",
+          }}
+        >
+          <Link
+            href={`${PUBLIC_BASE_WEB_URL}/admin/orders/${order.id}`}
+            style={{
+              display: "inline-block",
+              backgroundColor: "#18181b",
+              color: "#ffffff",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+            }}
+          >
+            View Order in Admin
+          </Link>
+        </div>
+
         <Text className="text-gray-600 my-6">
           Please feel free to reach out to the customer if you need to align any
           details of the order via{" "}

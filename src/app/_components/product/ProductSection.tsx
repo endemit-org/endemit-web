@@ -35,7 +35,7 @@ export default function ProductSection({
 
       <div
         className={clsx(
-          "sm:grid w-full gap-2",
+          "grid w-full gap-2",
           gridType === "small"
             ? "sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
             : "sm:grid-cols-1 xl:grid-cols-2",

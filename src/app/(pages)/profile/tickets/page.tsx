@@ -21,11 +21,19 @@ export const metadata: Metadata = {
 };
 
 const statusColors: Record<string, string> = {
-  VALIDATED: "bg-green-500/20 text-green-400",
-  PENDING: "bg-yellow-500/20 text-yellow-400",
+  VALIDATED: "bg-emerald-500/20 text-emerald-400",
+  PENDING: "bg-emerald-500/20 text-emerald-400",
   SCANNED: "bg-blue-500/20 text-blue-400",
   CANCELLED: "bg-red-500/20 text-red-400",
   BANNED: "bg-red-500/20 text-red-400",
+};
+
+const statusLabels: Record<string, string> = {
+  VALIDATED: "Ready",
+  PENDING: "Ready",
+  SCANNED: "Used",
+  CANCELLED: "Cancelled",
+  BANNED: "Banned",
 };
 
 export default async function ProfileTicketsPage() {
@@ -102,7 +110,7 @@ export default async function ProfileTicketsPage() {
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
                       >
-                        {ticket.status}
+                        {statusLabels[ticket.status] || ticket.status}
                       </span>
                     </div>
                     <div className="text-xs text-neutral-500 font-mono">

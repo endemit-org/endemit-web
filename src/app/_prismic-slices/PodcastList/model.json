@@ -2,36 +2,97 @@
   "id": "podcast_list",
   "type": "SharedSlice",
   "name": "PodcastList",
-  "description": "PodcastList",
+  "description": "Display podcast episodes in grid or featured layout with playable functionality",
   "variations": [
     {
       "id": "default",
-      "name": "Default",
+      "name": "Grid",
       "docURL": "...",
       "version": "initial",
-      "description": "Default",
+      "description": "Display latest episodes in a grid layout (2 or 4 episodes)",
       "imageUrl": "",
       "primary": {
         "title": {
           "type": "Text",
           "config": {
             "label": "Title",
-            "placeholder": ""
+            "placeholder": "Section title (optional)"
           }
         },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
-            "placeholder": ""
+            "placeholder": "Section description (optional)"
+          }
+        },
+        "episode_count": {
+          "type": "Select",
+          "config": {
+            "label": "Number of episodes",
+            "placeholder": "Select episode count",
+            "options": ["2", "4", "8", "all"],
+            "default_value": "4"
           }
         },
         "render_frame": {
           "type": "Boolean",
           "config": {
             "label": "Render frame",
-            "placeholder_false": "false",
-            "placeholder_true": "true",
+            "placeholder_false": "No background",
+            "placeholder_true": "With background",
+            "default_value": false
+          }
+        }
+      },
+      "items": {}
+    },
+    {
+      "id": "featured",
+      "name": "Featured Episode",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Display a single featured episode with details",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "Section title (optional)"
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": "Section description (optional)"
+          }
+        },
+        "use_latest": {
+          "type": "Boolean",
+          "config": {
+            "label": "Use latest episode",
+            "placeholder_false": "Select specific episode",
+            "placeholder_true": "Show latest episode",
+            "default_value": true
+          }
+        },
+        "selected_episode": {
+          "type": "Link",
+          "config": {
+            "label": "Selected episode",
+            "placeholder": "Choose a specific episode (when not using latest)",
+            "select": "document",
+            "customtypes": ["podcast"]
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "No background",
+            "placeholder_true": "With background",
             "default_value": false
           }
         }

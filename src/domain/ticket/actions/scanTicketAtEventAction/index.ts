@@ -6,10 +6,12 @@ import assert from "node:assert";
 import { getCurrentUser } from "@/lib/services/auth";
 import {
   TICKET_ALREADY_SCANNED_MESSAGE,
-  scanTicketByHash,
+  TICKET_INVALID_HASH_MESSAGE,
+  scanTicketByPayload,
 } from "@/domain/ticket/operations/scanTicketByHash";
 import { getTicketSummaryForEvent } from "@/domain/ticket/operations/getTicketSummaryForEvent";
 import { notifyOnTicketScanned } from "@/domain/notification/operations/notifyOnTicketScanned";
+import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 
 export const scanTicketAtEventAction = async ({
   scannedData,
@@ -24,7 +26,7 @@ export const scanTicketAtEventAction = async ({
   let scannedTicketData;
 
   try {
-    scannedTicketData = await scanTicketByHash(scannedData.hash);
+    scannedTicketData = await scanTicketByPayload(scannedData);
   } catch (error) {
     if (
       error instanceof Error &&
@@ -37,6 +39,17 @@ export const scanTicketAtEventAction = async ({
       };
     }
 
+    if (
+      error instanceof Error &&
+      error.message === TICKET_INVALID_HASH_MESSAGE
+    ) {
+      return {
+        success: false as const,
+        reason: "invalid_hash" as const,
+        message: TICKET_INVALID_HASH_MESSAGE,
+      };
+    }
+
     return {
       success: false as const,
       reason: "unknown" as const,
@@ -45,10 +58,18 @@ export const scanTicketAtEventAction = async ({
     };
   }
 
-  await createScanLogEntry({
+  const scanLogEntry = await createScanLogEntry({
     ticketId: scannedTicketData.id,
     userId: user.id,
     eventId: scannedData.eventId,
+  });
+
+  // Broadcast to ticket-specific channel so the ticket page updates in real-time
+  await broadcastToChannel(`ticket:${scannedTicketData.shortId}`, "ticket_scanned", {
+    ticketId: scannedTicketData.id,
+    shortId: scannedTicketData.shortId,
+    status: "SCANNED",
+    scannedAt: scanLogEntry.createdAt.toISOString(),
   });
 
   const scanCount = await getTicketSummaryForEvent(scannedData.eventId);

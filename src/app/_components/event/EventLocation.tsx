@@ -38,9 +38,9 @@ function EventLocationDetails({ venue }: Props) {
                 lng: venue?.coordinates.longitude,
               },
               customIcon: {
-                url: "/images/endemit-icon-small.png",
-                scaledSize: { width: 60, height: 60 },
-                anchor: { x: 20, y: 40 },
+                url: "/images/navigation_pin.gif",
+                scaledSize: { width: 65, height: 95 },
+                anchor: { x: 32, y: 90 },
               },
             },
           ]}
@@ -51,6 +51,12 @@ function EventLocationDetails({ venue }: Props) {
           }}
         />
       )}
+
+      <div className={"text-center mt-6"}>
+        <Link className={"link"} href={venue.mapLocationUrl} target={"_blank"}>
+          Show directions in Google Maps
+        </Link>
+      </div>
     </>
   );
 }
