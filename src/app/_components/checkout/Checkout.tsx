@@ -237,9 +237,9 @@ export default function Checkout({
                     </div>
                     Your cart is empty.
                     <div className="pt-4">
-                      Visit{" "}
+                      Visit the{" "}
                       <Link href={"/store"} className="link">
-                        our Merch section
+                        Support us section
                       </Link>{" "}
                       to select products for your purchase and support our
                       non-profit work.
@@ -496,9 +496,9 @@ export default function Checkout({
                   </div>
                   Your cart is empty.
                   <div className="pt-4">
-                    Visit{" "}
+                    Visit the{" "}
                     <Link href={"/store"} className="link">
-                      our Merch section
+                      Support us section
                     </Link>{" "}
                     to select products for your purchase and support our
                     non-profit work.
