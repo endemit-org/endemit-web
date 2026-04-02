@@ -612,47 +612,51 @@ export default function Checkout({
               )}
 
               {/* Payment form */}
-              {payment.isReady && payment.clientSecret ? (
-                <StripeProvider clientSecret={payment.clientSecret}>
-                  <PaymentForm
-                    totalAmount={totals.total}
-                    isProcessing={isPaymentProcessing}
-                    onProcessingChange={setIsPaymentProcessing}
-                    onError={setPaymentError}
-                    canProceed={canProceed}
-                    onConfirmPayment={actions.confirmPayment}
-                  />
-                </StripeProvider>
-              ) : payment.isFullWalletPayment ? (
-                <div className="mt-4">
-                  <ActionButton
-                    onClick={async () => {
-                      const result = await actions.confirmPayment();
-                      if (!result.success) {
-                        setPaymentError("Failed to process payment");
-                      }
-                    }}
-                    disabled={!canProceed || isProcessing}
-                    variant="success"
-                    className="py-3 text-lg"
-                  >
-                    {isProcessing
-                      ? "Processing..."
-                      : "Complete Order (Wallet Payment)"}
-                  </ActionButton>
-                </div>
-              ) : (
-                <div className="mt-4 py-6 text-center">
-                  {payment.isInitializing ? (
-                    <div className="text-neutral-400 text-sm">
-                      Loading payment form...
+              {hasItems && (
+                <>
+                  {payment.isReady && payment.clientSecret ? (
+                    <StripeProvider clientSecret={payment.clientSecret}>
+                      <PaymentForm
+                        totalAmount={totals.total}
+                        isProcessing={isPaymentProcessing}
+                        onProcessingChange={setIsPaymentProcessing}
+                        onError={setPaymentError}
+                        canProceed={canProceed}
+                        onConfirmPayment={actions.confirmPayment}
+                      />
+                    </StripeProvider>
+                  ) : payment.isFullWalletPayment ? (
+                    <div className="mt-4">
+                      <ActionButton
+                        onClick={async () => {
+                          const result = await actions.confirmPayment();
+                          if (!result.success) {
+                            setPaymentError("Failed to process payment");
+                          }
+                        }}
+                        disabled={!canProceed || isProcessing}
+                        variant="success"
+                        className="py-3 text-lg"
+                      >
+                        {isProcessing
+                          ? "Processing..."
+                          : "Complete Order (Wallet Payment)"}
+                      </ActionButton>
                     </div>
                   ) : (
-                    <div className="text-neutral-400 text-sm">
-                      Preparing secure payment...
+                    <div className="mt-4 py-6 text-center">
+                      {payment.isInitializing ? (
+                        <div className="text-neutral-400 text-sm">
+                          Loading payment form...
+                        </div>
+                      ) : (
+                        <div className="text-neutral-400 text-sm">
+                          Preparing secure payment...
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
+                </>
               )}
             </>
           )}
