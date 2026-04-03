@@ -44,6 +44,7 @@ interface TicketContentProps {
     status: string;
     scanCount: number;
     qrContent: unknown;
+    isGuestList: boolean;
   };
   event: {
     uid: string;
@@ -203,7 +204,7 @@ export default function TicketContent({
           )}
         </div>
         {/* Status Badge */}
-        <div className="flex justify-center mb-6 relative z-10 ">
+        <div className="flex justify-center gap-2 mb-6 relative z-10 ">
           <span
             className={`text-sm px-3 py-1 rounded-full transition-all ${
               justScanned ? "animate-pulse" : ""
@@ -211,12 +212,23 @@ export default function TicketContent({
           >
             {statusLabels[status] || status}
           </span>
+          {ticket.isGuestList && (
+            <span className="text-sm px-3 py-1 rounded-full bg-purple-500/20 text-purple-400">
+              Guest
+            </span>
+          )}
         </div>
         {/* QR Code */}
         {isUsable ? (
           <div className="flex flex-col items-center relative z-10">
-            <div className="bg-white p-4 rounded-xl mb-4">
-              <ProfileTicketQrCode qrData={qrData} size={280} />
+            <div
+              className={`p-4 rounded-xl mb-4 ${ticket.isGuestList ? "bg-neutral-900" : "bg-white"}`}
+            >
+              <ProfileTicketQrCode
+                qrData={qrData}
+                size={280}
+                isGuestList={ticket.isGuestList}
+              />
             </div>
             <p className="text-xs text-neutral-200 text-center">
               Show this QR code at the entrance

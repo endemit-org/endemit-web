@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { addGuestTicketsAction } from "@/domain/ticket/actions/addGuestTicketAction";
 import ActionButton from "@/app/_components/form/ActionButton";
+import UserAutocomplete from "./UserAutocomplete";
+import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
 
 interface AddGuestTicketFormProps {
   eventId: string;
@@ -20,6 +22,7 @@ export default function AddGuestTicketForm({
   const [ticketCount, setTicketCount] = useState(1);
   const [names, setNames] = useState<string[]>([""]);
   const [email, setEmail] = useState("");
+  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(null);
   const [sendEmail, setSendEmail] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -40,6 +43,14 @@ export default function AddGuestTicketForm({
     const newNames = [...names];
     newNames[index] = value;
     setNames(newNames);
+  };
+
+  const handleUserSelect = (user: UserSearchResult) => {
+    setSelectedUser(user);
+    // Auto-fill the first name if it's empty and we only have one ticket
+    if (ticketCount === 1 && names[0] === "" && user.name) {
+      setNames([user.name]);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,6 +78,7 @@ export default function AddGuestTicketForm({
       setTicketCount(1);
       setNames([""]);
       setEmail("");
+      setSelectedUser(null);
       setSendEmail(false);
       onTicketAdded?.();
 
@@ -194,15 +206,15 @@ export default function AddGuestTicketForm({
           >
             Email (for all tickets)
           </label>
-          <input
-            type="email"
-            id="guest-email"
+          <UserAutocomplete
             value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-            placeholder="Enter guest email"
+            onChange={setEmail}
+            onUserSelect={handleUserSelect}
+            placeholder="Search existing user or enter new email"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Type to search existing users or enter a new email address
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
