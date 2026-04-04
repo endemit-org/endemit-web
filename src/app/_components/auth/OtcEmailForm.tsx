@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { requestOtcCode } from "@/domain/auth/actions/requestOtcCode";
@@ -9,7 +9,10 @@ import { registerOtcUser } from "@/domain/auth/actions/registerOtcUser";
 
 export default function OtcEmailForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const searchParams = useSearchParams();
+  const initialEmail = searchParams.get("email") || "";
+  const callbackUrl = searchParams.get("callbackUrl") || "";
+  const [email, setEmail] = useState(initialEmail);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isNewAccount, setIsNewAccount] = useState(false);
@@ -26,7 +29,9 @@ export default function OtcEmailForm() {
         const result = await registerOtcUser({ email });
 
         if (result.success) {
-          router.push(`/signin/verify?email=${encodeURIComponent(email)}`);
+          const verifyParams = new URLSearchParams({ email });
+          if (callbackUrl) verifyParams.set("callbackUrl", callbackUrl);
+          router.push(`/signin/verify?${verifyParams.toString()}`);
         } else {
           setError(
             result.error || "Failed to create account. Please try again."
@@ -38,7 +43,9 @@ export default function OtcEmailForm() {
         const result = await requestOtcCode({ email });
 
         if (result.success) {
-          router.push(`/signin/verify?email=${encodeURIComponent(email)}`);
+          const verifyParams = new URLSearchParams({ email });
+          if (callbackUrl) verifyParams.set("callbackUrl", callbackUrl);
+          router.push(`/signin/verify?${verifyParams.toString()}`);
         } else if (result.error === "NO_ACCOUNT") {
           // Change button to registration mode
           setIsNewAccount(true);

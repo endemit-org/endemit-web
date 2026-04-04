@@ -112,6 +112,11 @@ export default async function ProfileTicketsPage() {
                       >
                         {statusLabels[ticket.status] || ticket.status}
                       </span>
+                      {ticket.isGuestList && (
+                        <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0 bg-purple-500/20 text-purple-400">
+                          Guest
+                        </span>
+                      )}
                     </div>
                     <div className="text-xs text-neutral-500 font-mono">
                       {ticket.shortId}

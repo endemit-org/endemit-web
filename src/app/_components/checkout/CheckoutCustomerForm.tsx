@@ -29,7 +29,6 @@ interface CheckoutFormProps {
   onRemoveItem: (productId: string) => void;
   requiresShippingAddress: boolean;
   includesNonRefundable: boolean;
-  showSubscribeToNewsletter: boolean;
   validateForm: (type: "manual" | "auto") => boolean;
   submitForm: () => void;
   items: CartItem[];
@@ -70,7 +69,6 @@ export default function CheckoutCustomerForm({
   onRemoveItem,
   requiresShippingAddress,
   includesNonRefundable,
-  showSubscribeToNewsletter,
   validateForm,
   validationTriggered,
   submitForm,
@@ -340,18 +338,6 @@ export default function CheckoutCustomerForm({
         </div>
       </CheckboxInput>
 
-      {showSubscribeToNewsletter && (
-        <CheckboxInput
-          value={formData.subscribeToNewsletter}
-          name="subscribeToNewsletter"
-          onChangeAction={onFormChangeAction}
-          required={false}
-          validationTriggered={validationTriggered}
-        >
-          I would like to receive an occasional endemit newsletter with updates
-          on new events and offers.
-        </CheckboxInput>
-      )}
     </div>
   );
 }

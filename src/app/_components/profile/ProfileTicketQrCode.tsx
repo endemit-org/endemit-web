@@ -7,11 +7,13 @@ import QRCode from "qrcode";
 interface ProfileTicketQrCodeProps {
   qrData: string;
   size?: number;
+  isGuestList?: boolean;
 }
 
 export default function ProfileTicketQrCode({
   qrData,
   size = 280,
+  isGuestList = false,
 }: ProfileTicketQrCodeProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
@@ -22,12 +24,12 @@ export default function ProfileTicketQrCode({
       width: size,
       margin: 2,
       color: {
-        dark: "#000000",
-        light: "#ffffff",
+        dark: isGuestList ? "#ffffff" : "#000000",
+        light: isGuestList ? "#171717" : "#ffffff",
       },
       errorCorrectionLevel: "H",
     }).then(setQrDataUrl);
-  }, [qrData, size]);
+  }, [qrData, size, isGuestList]);
 
   if (!qrDataUrl) {
     return (
@@ -49,7 +51,7 @@ export default function ProfileTicketQrCode({
       />
       {/* Logo overlay */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-sm"
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-sm ${isGuestList ? "bg-neutral-900" : "bg-white"}`}
         style={{ width: logoSize + 8, height: logoSize + 8 }}
       >
         <Image

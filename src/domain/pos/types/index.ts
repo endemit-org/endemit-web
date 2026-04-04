@@ -55,3 +55,12 @@ export interface PayPosOrderResult {
 }
 
 export type { PosItem, PosRegister, PosOrder, PosOrderItem, PosOrderStatus };
+
+// Inngest queue events
+export enum PosQueueEvent {
+  NOTIFY_ON_TRANSACTION = "pos/notify.transaction",
+}
+
+export interface PosTransactionNotificationData {
+  orderId: string;
+}
