@@ -52,6 +52,10 @@ export default async function ProfileTicketPage({
   // Fetch event details for date/venue
   const event = await fetchEventFromCmsById(ticket.eventId);
 
+  // Check if event has passed (use date_end, fallback to date_start)
+  const eventEndDate = event?.date_end ?? event?.date_start ?? null;
+  const isEventPassed = eventEndDate ? new Date(eventEndDate) < new Date() : false;
+
   // Get initial scannedAt from ScanLog
   const initialScannedAt =
     ticket.ScanLog.length > 0
@@ -121,6 +125,7 @@ export default async function ProfileTicketPage({
           formattedEventDate={
             event?.date_start ? formatEventDateAndTime(event.date_start) : null
           }
+          isEventPassed={isEventPassed}
         />
       </InnerPage>
     </OuterPage>
