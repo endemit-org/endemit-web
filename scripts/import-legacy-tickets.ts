@@ -296,7 +296,6 @@ async function importLegacyTickets(
             discountAmount: 0,
             walletAmountUsed: 0,
             shippingRequired: false,
-            shippingAddress: null,
             items: [
               {
                 id: `legacy_ticket_${globalTicketIndex}`,

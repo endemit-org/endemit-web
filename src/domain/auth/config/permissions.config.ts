@@ -76,6 +76,10 @@ export const PERMISSIONS = {
   POS_ORDERS_READ: "pos:orders:read",
   POS_ORDERS_REFUND: "pos:orders:refund",
   POS_TIPS_WITHDRAW: "pos:tips:withdraw",
+
+  // Announcements
+  ANNOUNCEMENTS_READ: "announcements:read",
+  ANNOUNCEMENTS_WRITE: "announcements:write",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -387,5 +391,19 @@ export const PERMISSION_METADATA: Record<
     description: "Withdraw tips from register tip pools",
     resource: "pos",
     action: "tips:withdraw",
+  },
+
+  // Announcements
+  [PERMISSIONS.ANNOUNCEMENTS_READ]: {
+    name: "Read Announcements",
+    description: "View announcements",
+    resource: "announcements",
+    action: "read",
+  },
+  [PERMISSIONS.ANNOUNCEMENTS_WRITE]: {
+    name: "Manage Announcements",
+    description: "Create, edit, and delete announcements",
+    resource: "announcements",
+    action: "write",
   },
 };

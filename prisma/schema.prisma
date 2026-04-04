@@ -77,6 +77,11 @@ enum PosOrderStatus {
   CANCELLED
 }
 
+enum AnnouncementType {
+  INFO
+  WARNING
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
@@ -183,6 +188,9 @@ model User {
   posRegisterAssignments PosRegisterSeller[]
   posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
   posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
+
+  // Announcements
+  announcementDismissals AnnouncementDismissal[]
 
   @@index([username])
   @@index([email])
@@ -434,4 +442,36 @@ model WebhookLog {
 
   @@unique([source, ref])
   @@index([createdAt])
+}
+
+// =============================================================================
+// Announcements
+// =============================================================================
+
+model Announcement {
+  id         String                  @id @default(cuid())
+  title      String?
+  message    String
+  type       AnnouncementType        @default(INFO)
+  isActive   Boolean                 @default(true)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  dismissals AnnouncementDismissal[]
+
+  @@index([isActive])
+}
+
+model AnnouncementDismissal {
+  id             String       @id @default(cuid())
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dismissedAt    DateTime     @default(now())
+
+  @@unique([announcementId, userId])
+  @@index([userId])
+  @@index([announcementId])
 }
