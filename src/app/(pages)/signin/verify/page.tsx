@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ email?: string; error?: string }>;
+  searchParams: Promise<{ email?: string; error?: string; callbackUrl?: string }>;
 }
 
 export default async function VerifyPage({ searchParams }: PageProps) {
@@ -35,6 +35,7 @@ export default async function VerifyPage({ searchParams }: PageProps) {
     <OtcVerifyForm
       email={params.email}
       error={params.error}
+      callbackUrl={params.callbackUrl}
     />
   );
 }

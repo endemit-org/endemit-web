@@ -1,6 +1,7 @@
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
 import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
 import { getVisibleProducts } from "@/domain/product/actions/getProducts";
+import { checkUserIsDonor } from "@/domain/order/operations/checkUserIsDonor";
 import { ProductCategory } from "@/domain/product/types/product";
 import ProfileSidebar from "@/app/_components/profile/ProfileSidebar";
 
@@ -17,10 +18,11 @@ export default async function ProfileSidebarAsync({
   email,
   image,
 }: ProfileSidebarAsyncProps) {
-  const [wallet, upcomingTickets, allProducts] = await Promise.all([
+  const [wallet, upcomingTickets, allProducts, isDonor] = await Promise.all([
     getWalletByUserId(userId),
     getTicketsByUserId(userId, { upcomingOnly: true }),
     getVisibleProducts(),
+    checkUserIsDonor(userId),
   ]);
 
   const currencyProducts = allProducts.filter(
@@ -36,6 +38,7 @@ export default async function ProfileSidebarAsync({
       walletBalance={wallet?.balance ?? null}
       currencyProducts={currencyProducts}
       upcomingTickets={upcomingTickets.length}
+      isDonor={isDonor}
     />
   );
 }

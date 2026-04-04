@@ -1,6 +1,6 @@
 import "server-only";
 
-import { resend, resendFromEmail } from "@/lib/services/resend";
+import { resend, resendFromEmail, isBlockedEmail } from "@/lib/services/resend";
 import { Order } from "@prisma/client";
 import { NewOrderToCustomerTemplate } from "@/domain/email/templates";
 
@@ -11,6 +11,11 @@ export const sendOrderEmailToCustomer = async (
     filename: string;
   }
 ) => {
+  if (isBlockedEmail(order.email)) {
+    console.log(`Skipping email to blocked address: ${order.email}`);
+    return null;
+  }
+
   return await resend.emails.send({
     from: resendFromEmail,
     to: order.email,

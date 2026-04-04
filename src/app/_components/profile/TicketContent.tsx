@@ -175,9 +175,9 @@ export default function TicketContent({
     <div className="max-w-lg mx-auto">
       {/* QR Code Section */}
       <div
-        className={`bg-neutral-950 rounded-lg p-6 mb-6 transition-all duration-500 relative overflow-hidden ${
+        className={` rounded-lg p-6 mb-6 transition-all duration-500 relative overflow-hidden ${
           justScanned ? "ring-2 ring-blue-500 ring-opacity-50" : ""
-        }`}
+        } ${ticket.isGuestList ? "bg-purple-900" : "bg-neutral-900"}`}
       >
         {isUsable && (
           <div className="w-full h-full absolute object-fill overflow-hidden opacity-60 top-0 left-0 z-0 ">

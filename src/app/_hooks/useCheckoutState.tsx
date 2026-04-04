@@ -5,7 +5,6 @@ import { useCart, useCartStore } from "@/app/_stores/CartStore";
 import { useCheckoutForm } from "@/app/_hooks/useCheckoutForm";
 import { useShippingCost } from "@/app/_hooks/useShippingCost";
 import { usePromoCodes } from "@/app/_hooks/usePromoCodes";
-import { useNewsletterSubscription } from "@/app/_hooks/useNewsletterSubscription";
 import { useWalletCredit } from "@/app/_hooks/useWalletCredit";
 import {
   canProceedToCheckout,
@@ -128,12 +127,6 @@ export function useCheckoutState() {
     validateForm,
   } = useCheckoutForm(requiresShippingAddress, items, setValidationTriggered);
 
-  const emailIsValid =
-    fieldErrors !== null && !fieldErrors.email && !fieldErrors.emailRepeat;
-  const { shouldShowNewsletter } = useNewsletterSubscription(
-    formData.email,
-    emailIsValid
-  );
 
   const {
     shippingCost,
@@ -329,7 +322,6 @@ export function useCheckoutState() {
     fieldErrors,
     errorMessages,
     isFormValid,
-    shouldShowNewsletter,
     validateForm,
     validationTriggered,
     discount,

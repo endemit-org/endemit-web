@@ -10,11 +10,13 @@ import { requestOtcCode } from "@/domain/auth/actions/requestOtcCode";
 interface OtcVerifyFormProps {
   email: string;
   error?: string;
+  callbackUrl?: string;
 }
 
 export default function OtcVerifyForm({
   email,
   error: initialError,
+  callbackUrl,
 }: OtcVerifyFormProps) {
   const router = useRouter();
   const [code, setCode] = useState(["", "", "", ""]);
@@ -98,7 +100,7 @@ export default function OtcVerifyForm({
         setIsSuccess(true);
         // Delay redirect to show success animation
         setTimeout(() => {
-          router.push("/profile");
+          router.push(callbackUrl || "/profile");
           router.refresh();
         }, 1500);
       } else {

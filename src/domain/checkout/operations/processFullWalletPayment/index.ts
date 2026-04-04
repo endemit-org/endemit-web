@@ -7,9 +7,9 @@ import { createTransaction } from "@/domain/wallet/operations/createTransaction"
 import { queueNewOrderAutomation } from "@/domain/order/operations/queueNewOrderAutomation";
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
-import { subscribeEmailToTicketBuyerList } from "@/domain/newsletter/actions/subscribeEmailToTicketBuyerList";
-import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
+import { subscribeOrderToNewsletter } from "@/domain/newsletter/operations/subscribeOrderToNewsletter";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
+import { ProductInOrder } from "@/domain/order/types/order";
 
 export const processFullWalletPayment = async (orderId: string) => {
   // First, get and validate the order
@@ -57,11 +57,16 @@ export const processFullWalletPayment = async (orderId: string) => {
     data: { status: OrderStatus.PAID },
   });
 
+  const items = updatedOrder.items as unknown as ProductInOrder[];
+
   // Process order automation (same as onOrderPaymentComplete)
   await queueNewOrderAutomation({ orderId: updatedOrder.id });
 
   // Process tickets if applicable
   const ticketItems = transformTicketsFromOrder(updatedOrder);
+
+  // Collect event IDs from ticket items for newsletter subscription
+  const ticketEventIds: string[] = [];
 
   if (ticketItems) {
     for (const ticketItem of ticketItems) {
@@ -76,6 +81,9 @@ export const processFullWalletPayment = async (orderId: string) => {
         continue;
       }
 
+      // Collect event ID for newsletter subscription
+      ticketEventIds.push(relatedEvent);
+
       const eventData = await fetchEventFromCmsById(relatedEvent);
       if (!ticketHolders || !eventData) {
         console.error("Missing ticket holders or event data", {
@@ -86,13 +94,8 @@ export const processFullWalletPayment = async (orderId: string) => {
         continue;
       }
 
-      const subscriptionResponse = await subscribeEmailToTicketBuyerList(
-        updatedOrder.email,
-        eventData.uid
-      );
-      if (subscriptionResponse) {
-        await notifyOnNewSubscriber(updatedOrder.email, "Ticket buyers Newsletter");
-      }
+      // Divide price by number of ticket holders for bundles
+      const pricePerTicket = ticketItem.price / ticketHolders.length;
 
       ticketHolders.forEach(ticketHolderName => {
         queueTicketIssueAutomation({
@@ -100,7 +103,7 @@ export const processFullWalletPayment = async (orderId: string) => {
           eventName: eventData.name,
           ticketHolderName,
           ticketPayerEmail: updatedOrder.email,
-          price: ticketItem.price,
+          price: pricePerTicket,
           orderId: updatedOrder.id,
           metadata: {
             productName: ticketItem.name ?? "Default",
@@ -110,6 +113,10 @@ export const processFullWalletPayment = async (orderId: string) => {
       });
     }
   }
+
+  // Subscribe to newsletter with tags based on order items
+  // This handles: category-based tags, festival tags, Events/LastEvent fields
+  await subscribeOrderToNewsletter(updatedOrder.email, items, ticketEventIds, updatedOrder.name);
 
   return updatedOrder;
 };

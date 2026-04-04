@@ -6,10 +6,12 @@ import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 interface AddToWalletButtonProps {
   ticketHash: string;
   shortId: string;
+  size?: "sm" | "default";
 }
 
 export default function AddToWalletButton({
   ticketHash,
+  size = "default",
 }: AddToWalletButtonProps) {
   const [isAppleDevice, setIsAppleDevice] = useState<boolean | null>(null);
   const [showWarning, setShowWarning] = useState(false);
@@ -61,7 +63,7 @@ export default function AddToWalletButton({
       <button
         onClick={handleClick}
         disabled={isLoading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black hover:bg-neutral-900 text-white font-medium rounded-lg transition-colors border border-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        className={`w-full flex items-center justify-center gap-2 px-4 bg-black hover:bg-neutral-900 text-white font-medium rounded-lg transition-colors border border-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed ${size === "sm" ? "py-2" : "py-3"}`}
       >
         {isLoading ? (
           <>

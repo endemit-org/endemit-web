@@ -53,7 +53,6 @@ export default function Checkout({
     totals,
     formData,
     errorMessages,
-    shouldShowNewsletter,
     discount,
     promoCodeValue,
     showDonation,
@@ -327,7 +326,6 @@ export default function Checkout({
                 onRemoveItem={actions.removeItem}
                 requiresShippingAddress={requiresShippingAddress}
                 includesNonRefundable={includesNonRefundable}
-                showSubscribeToNewsletter={shouldShowNewsletter}
                 items={items}
                 submitForm={actions.checkout}
                 validateForm={validateForm}
@@ -516,7 +514,6 @@ export default function Checkout({
                 onRemoveItem={actions.removeItem}
                 requiresShippingAddress={requiresShippingAddress}
                 includesNonRefundable={includesNonRefundable}
-                showSubscribeToNewsletter={shouldShowNewsletter}
                 items={items}
                 submitForm={actions.checkout}
                 validateForm={validateForm}

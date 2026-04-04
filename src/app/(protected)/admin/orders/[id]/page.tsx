@@ -37,6 +37,26 @@ const statusColors: Record<string, string> = {
   REFUNDED: "bg-purple-100 text-purple-800",
 };
 
+const ticketStatusColors: Record<string, string> = {
+  VALIDATED: "bg-emerald-100 text-emerald-800",
+  PENDING: "bg-emerald-100 text-emerald-800",
+  SCANNED: "bg-blue-100 text-blue-800",
+  CANCELLED: "bg-red-100 text-red-800",
+  BANNED: "bg-red-100 text-red-800",
+  REFUND_REQUESTED: "bg-orange-100 text-orange-800",
+  REFUNDED: "bg-gray-100 text-gray-800",
+};
+
+const ticketStatusLabels: Record<string, string> = {
+  VALIDATED: "Ready to scan",
+  PENDING: "Ready to scan",
+  SCANNED: "Used",
+  CANCELLED: "Cancelled",
+  BANNED: "Banned",
+  REFUND_REQUESTED: "Refund Requested",
+  REFUNDED: "Refunded",
+};
+
 export default async function AdminOrderDetailPage({
   params,
 }: {
@@ -204,9 +224,9 @@ export default async function AdminOrderDetailPage({
                   <Link
                     key={ticket.id}
                     href={`/admin/tickets/${ticket.id}`}
-                    className="block p-4 hover:bg-gray-100 transition-colors"
+                    className="flex items-center p-4 hover:bg-gray-100 transition-colors group"
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex-1 flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium">{ticket.eventName}</p>
@@ -227,20 +247,29 @@ export default async function AdminOrderDetailPage({
                         <span
                           className={clsx(
                             "inline-block rounded-full px-2 py-1 text-xs font-medium",
-                            ticket.status === "SCANNED"
-                              ? "bg-green-100 text-green-800"
-                              : ticket.status === "PENDING"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-gray-800"
+                            ticketStatusColors[ticket.status] || "bg-gray-100 text-gray-800"
                           )}
                         >
-                          {ticket.status}
+                          {ticketStatusLabels[ticket.status] || ticket.status}
                         </span>
                         <p className="text-sm font-medium mt-1">
                           {formatPrice(ticket.price)}
                         </p>
                       </div>
                     </div>
+                    <svg
+                      className="w-5 h-5 text-gray-400 group-hover:text-gray-600 ml-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </Link>
                 ))}
               </div>

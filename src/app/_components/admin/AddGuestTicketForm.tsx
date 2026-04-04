@@ -4,7 +4,6 @@ import { useState } from "react";
 import { addGuestTicketsAction } from "@/domain/ticket/actions/addGuestTicketAction";
 import ActionButton from "@/app/_components/form/ActionButton";
 import UserAutocomplete from "./UserAutocomplete";
-import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
 
 interface AddGuestTicketFormProps {
   eventId: string;
@@ -22,7 +21,6 @@ export default function AddGuestTicketForm({
   const [ticketCount, setTicketCount] = useState(1);
   const [names, setNames] = useState<string[]>([""]);
   const [email, setEmail] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(null);
   const [sendEmail, setSendEmail] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -45,8 +43,7 @@ export default function AddGuestTicketForm({
     setNames(newNames);
   };
 
-  const handleUserSelect = (user: UserSearchResult) => {
-    setSelectedUser(user);
+  const handleUserSelect = (user: { name: string | null }) => {
     // Auto-fill the first name if it's empty and we only have one ticket
     if (ticketCount === 1 && names[0] === "" && user.name) {
       setNames([user.name]);
@@ -78,7 +75,6 @@ export default function AddGuestTicketForm({
       setTicketCount(1);
       setNames([""]);
       setEmail("");
-      setSelectedUser(null);
       setSendEmail(false);
       onTicketAdded?.();
 

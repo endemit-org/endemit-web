@@ -33,7 +33,6 @@ export async function POST(request: Request) {
       email,
       checkoutItems,
       shippingAddress,
-      subscribeToNewsletter,
       complementaryTicketData,
       shouldHaveShippingAddress,
       subtotal,
@@ -133,12 +132,10 @@ export async function POST(request: Request) {
       order = result.order;
     }
 
-    // Handle newsletter subscription
-    if (subscribeToNewsletter) {
-      const subscriptionResponse = await subscribeEmailToGeneralList(email);
-      if (subscriptionResponse) {
-        await notifyOnNewSubscriber(email, "General Newsletter");
-      }
+    // Subscribe all customers to general email list
+    const subscriptionResponse = await subscribeEmailToGeneralList(email);
+    if (subscriptionResponse.success) {
+      await notifyOnNewSubscriber(email, "General Newsletter");
     }
 
     // If full wallet payment (no card needed)
