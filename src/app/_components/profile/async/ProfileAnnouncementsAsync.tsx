@@ -12,10 +12,5 @@ export default async function ProfileAnnouncementsAsync({
 
   // Always render client component to maintain realtime subscription
   // even when no announcements exist initially
-  return (
-    <ProfileAnnouncementsBanner
-      userId={userId}
-      initialAnnouncements={announcements}
-    />
-  );
+  return <ProfileAnnouncementsBanner initialAnnouncements={announcements} />;
 }

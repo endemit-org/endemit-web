@@ -10,12 +10,10 @@ import type { Announcement } from "@prisma/client";
 const POLL_INTERVAL_MS = 60_000; // 1 minute
 
 interface ProfileAnnouncementsBannerProps {
-  userId: string;
   initialAnnouncements: Announcement[];
 }
 
 export default function ProfileAnnouncementsBanner({
-  userId,
   initialAnnouncements,
 }: ProfileAnnouncementsBannerProps) {
   const [announcements, setAnnouncements] =
@@ -27,7 +25,9 @@ export default function ProfileAnnouncementsBanner({
     try {
       const fresh = await fetchActiveAnnouncementsAction();
       // Filter out any we've dismissed this session
-      const filtered = fresh.filter((a) => !dismissedIdsRef.current.has(a.id));
+      const filtered = fresh.filter(
+        (a: Announcement) => !dismissedIdsRef.current.has(a.id)
+      );
       setAnnouncements(filtered);
     } catch {
       // Silent fail - don't disrupt user experience
@@ -40,7 +40,7 @@ export default function ProfileAnnouncementsBanner({
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        silentPoll();
+        void silentPoll();
       }
     };
 
