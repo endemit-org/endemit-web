@@ -1,12 +1,23 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import { OrderStatus } from "@prisma/client";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ProductCategory } from "@/domain/product/types/product";
 import {
   DEFAULT_PAGE_SIZE,
   calculatePagination,
 } from "@/lib/types/pagination";
+
+// Statuses that represent successful payment
+const PAID_STATUSES: OrderStatus[] = [
+  OrderStatus.PAID,
+  OrderStatus.PREPARING,
+  OrderStatus.IN_DELIVERY,
+  OrderStatus.COMPLETED,
+  OrderStatus.REFUND_REQUESTED,
+  OrderStatus.PARTIALLY_REFUNDED,
+];
 
 export interface DonationItem {
   orderId: string;
@@ -34,10 +45,10 @@ export const getAllDonations = async ({
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
 }: GetAllDonationsParams = {}): Promise<PaginatedDonations> => {
-  // Fetch all completed orders to extract donations
+  // Fetch all paid orders to extract donations
   const completedOrders = await prisma.order.findMany({
     where: {
-      status: "PAID",
+      status: { in: PAID_STATUSES },
     },
     orderBy: {
       createdAt: "desc",
