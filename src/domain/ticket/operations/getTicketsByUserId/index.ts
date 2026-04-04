@@ -42,6 +42,7 @@ export const getTicketsByUserId = async (
 
   // Build map of event ID -> end date (or start date if no end)
   const now = new Date();
+  const BUFFER_HOURS = 3;
 
   const eventDateMap = new Map<string, Date | null>();
   for (const event of events.results) {
@@ -58,8 +59,10 @@ export const getTicketsByUserId = async (
     const eventDate = eventDateMap.get(ticket.eventId);
 
     if (upcomingOnly) {
-      // Include if event hasn't ended yet (or no date = include it)
-      return !eventDate || eventDate >= now;
+      // Include if event hasn't ended yet + 3 hour buffer (or no date = include it)
+      if (!eventDate) return true;
+      const cutoffDate = new Date(eventDate.getTime() + BUFFER_HOURS * 60 * 60 * 1000);
+      return cutoffDate >= now;
     }
 
     if (pastOnly) {

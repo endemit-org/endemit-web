@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTicketById } from "@/domain/ticket/operations/getTicketById";
-import { formatPrice, formatDateTime } from "@/lib/util/formatting";
+import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
@@ -119,7 +119,7 @@ export default async function AdminTicketDetailPage({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Email</span>
-                <span>{ticket.ticketPayerEmail}</span>
+                <span>{formatEmailForDisplay(ticket.ticketPayerEmail)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Event</span>
@@ -166,7 +166,7 @@ export default async function AdminTicketDetailPage({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Email</span>
-                    <span>{ticket.order.email}</span>
+                    <span>{formatEmailForDisplay(ticket.order.email)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Order Status</span>

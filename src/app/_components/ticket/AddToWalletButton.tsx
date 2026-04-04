@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { logTicketDownloadAction } from "@/domain/ticket/actions/logTicketDownloadAction";
 
 interface AddToWalletButtonProps {
   ticketHash: string;
@@ -11,6 +12,7 @@ interface AddToWalletButtonProps {
 
 export default function AddToWalletButton({
   ticketHash,
+  shortId,
   size = "default",
 }: AddToWalletButtonProps) {
   const [isAppleDevice, setIsAppleDevice] = useState<boolean | null>(null);
@@ -29,9 +31,11 @@ export default function AddToWalletButton({
     setIsAppleDevice(isApple);
   }, []);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (isAppleDevice) {
       setIsLoading(true);
+      // Log download to Discord (fire and forget)
+      logTicketDownloadAction({ ticketShortId: shortId, downloadType: "apple_wallet" });
       // On Apple devices, navigate directly to the pass URL
       // iOS will automatically open the Wallet app
       window.location.href = walletPassUrl;
@@ -47,6 +51,8 @@ export default function AddToWalletButton({
   const handleForceDownload = () => {
     setIsLoading(true);
     setShowWarning(false);
+    // Log download to Discord (fire and forget)
+    logTicketDownloadAction({ ticketShortId: shortId, downloadType: "apple_wallet" });
     window.location.href = walletPassUrl;
     setTimeout(() => setIsLoading(false), 3000);
   };

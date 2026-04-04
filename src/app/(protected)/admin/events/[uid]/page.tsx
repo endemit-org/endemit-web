@@ -11,6 +11,7 @@ import { serializeTicket } from "@/domain/ticket/util";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import { isEventCompleted } from "@/domain/event/businessLogic";
 
 export const revalidate = 60;
 
@@ -67,7 +68,8 @@ export default async function AdminEventPage({
     serializeTicket(ticket)
   );
 
-  const canCreateTickets = user.permissions.includes(PERMISSIONS.TICKETS_CREATE);
+  const canCreateTickets =
+    user.permissions.includes(PERMISSIONS.TICKETS_CREATE) && !isEventCompleted(event);
 
   return (
     <div>

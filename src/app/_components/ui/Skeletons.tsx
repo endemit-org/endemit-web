@@ -1,3 +1,18 @@
+export function AnnouncementBannerSkeleton() {
+  return (
+    <div className="mb-6 space-y-3">
+      <div className="animate-pulse bg-neutral-800 rounded-lg p-4 flex items-start gap-3">
+        <div className="w-5 h-5 bg-neutral-700 rounded-full flex-shrink-0 mt-0.5" />
+        <div className="flex-1">
+          <div className="h-4 w-3/4 bg-neutral-700 rounded mb-2" />
+          <div className="h-3 w-1/2 bg-neutral-700/70 rounded" />
+        </div>
+        <div className="w-5 h-5 bg-neutral-700 rounded flex-shrink-0" />
+      </div>
+    </div>
+  );
+}
+
 export function ProfileSidebarSkeleton() {
   return (
     <div className="bg-neutral-950 rounded-lg p-6 animate-pulse">

@@ -5,6 +5,8 @@ import { addGuestTicketsAction } from "@/domain/ticket/actions/addGuestTicketAct
 import ActionButton from "@/app/_components/form/ActionButton";
 import UserAutocomplete from "./UserAutocomplete";
 
+const NO_EMAIL_PLACEHOLDER = "guest@import.endemit.org";
+
 interface AddGuestTicketFormProps {
   eventId: string;
   eventName: string;
@@ -61,7 +63,7 @@ export default function AddGuestTicketForm({
         eventId,
         eventName,
         ticketHolders: names.map(name => ({ name: name.trim() })),
-        ticketHolderEmail: email,
+        ticketHolderEmail: sendEmail ? email : NO_EMAIL_PLACEHOLDER,
         sendEmail,
       });
 
@@ -71,7 +73,9 @@ export default function AddGuestTicketForm({
       }
 
       const ticketText = result.ticketCount === 1 ? "ticket" : "tickets";
-      setSuccess(`${result.ticketCount} guest ${ticketText} created${sendEmail ? " and email sent" : ""}`);
+      setSuccess(
+        `${result.ticketCount} guest ${ticketText} created${sendEmail ? " and email sent" : ""}`
+      );
       setTicketCount(1);
       setNames([""]);
       setEmail("");
@@ -160,7 +164,9 @@ export default function AddGuestTicketForm({
               type="number"
               id="ticket-count"
               value={ticketCount}
-              onChange={e => handleTicketCountChange(parseInt(e.target.value) || 1)}
+              onChange={e =>
+                handleTicketCountChange(parseInt(e.target.value) || 1)
+              }
               min={1}
               max={10}
               className="w-16 text-center px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
@@ -195,24 +201,6 @@ export default function AddGuestTicketForm({
           ))}
         </div>
 
-        <div>
-          <label
-            htmlFor="guest-email"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Email (for all tickets)
-          </label>
-          <UserAutocomplete
-            value={email}
-            onChange={setEmail}
-            onUserSelect={handleUserSelect}
-            placeholder="Search existing user or enter new email"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            Type to search existing users or enter a new email address
-          </p>
-        </div>
-
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -222,9 +210,29 @@ export default function AddGuestTicketForm({
             className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
           />
           <label htmlFor="send-email" className="text-sm text-gray-700">
-            Send tickets via email to recipient
+            Send tickets via email
           </label>
         </div>
+
+        {sendEmail && (
+          <div>
+            <label
+              htmlFor="guest-email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Email (for all tickets)
+            </label>
+            <UserAutocomplete
+              value={email}
+              onChange={setEmail}
+              onUserSelect={handleUserSelect}
+              placeholder="Search existing user or enter new email"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Type to search existing users or enter a new email address
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm">
@@ -241,11 +249,13 @@ export default function AddGuestTicketForm({
         <div className="flex gap-2">
           <ActionButton
             type="submit"
-            disabled={isSubmitting || !allNamesValid || !email}
+            disabled={isSubmitting || !allNamesValid || (sendEmail && !email)}
             variant="primary"
             size="sm"
           >
-            {isSubmitting ? "Creating..." : `Create ${ticketCount} Guest Ticket${ticketCount > 1 ? "s" : ""}`}
+            {isSubmitting
+              ? "Creating..."
+              : `Create ${ticketCount} Guest Ticket${ticketCount > 1 ? "s" : ""}`}
           </ActionButton>
           <ActionButton
             type="button"

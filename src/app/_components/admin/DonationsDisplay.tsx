@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { formatPrice, formatDateTime } from "@/lib/util/formatting";
+import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
 import Pagination from "@/app/_components/table/Pagination";
 import { fetchDonations } from "@/domain/order/actions/fetchDonationsAction";
 import type {
@@ -123,7 +123,7 @@ export default function DonationsDisplay({
                       {donation.orderName || "Anonymous"}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {donation.orderEmail}
+                      {formatEmailForDisplay(donation.orderEmail)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-right font-medium text-green-600">
                       {formatPrice(donation.amount)}

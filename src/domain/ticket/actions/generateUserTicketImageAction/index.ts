@@ -6,6 +6,7 @@ import { generateTicketImage } from "@/domain/ticket/operations/generateTicketIm
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
+import { notifyOnTicketDownload } from "@/domain/notification/operations/notifyOnTicketDownload";
 
 interface GenerateTicketImageResult {
   success: boolean;
@@ -85,6 +86,17 @@ export async function generateUserTicketImageAction(
       coverImageUrl: event.promoImage.src,
       template: ticket.isGuestList ? "guest" : "default",
     });
+
+    // Log download to Discord (fire and forget)
+    if (user.email) {
+      notifyOnTicketDownload({
+        downloadType: "image",
+        ticketShortId: ticket.shortId,
+        userEmail: user.email,
+        userName: user.name ?? null,
+        eventName: ticket.eventName,
+      }).catch(() => {});
+    }
 
     return { success: true, image };
   } catch (error) {

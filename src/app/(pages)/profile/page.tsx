@@ -17,6 +17,7 @@ import ProfileTicketsAsync from "@/app/_components/profile/async/ProfileTicketsA
 import ProfileOrdersAsync from "@/app/_components/profile/async/ProfileOrdersAsync";
 import ProfileEventsAttendedAsync from "@/app/_components/profile/async/ProfileEventsAttendedAsync";
 import ProfileUpcomingEventsAsync from "@/app/_components/profile/async/ProfileUpcomingEventsAsync";
+import ProfileAnnouncementsAsync from "@/app/_components/profile/async/ProfileAnnouncementsAsync";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -45,6 +46,11 @@ export default async function ProfilePage() {
       />
 
       <InnerPage className="overflow-visible max-sm:p-0 max-sm:bg-transparent">
+        {/* Announcements banner - always mounted for realtime subscription */}
+        <Suspense fallback={null}>
+          <ProfileAnnouncementsAsync userId={user.id} />
+        </Suspense>
+
         <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
           {/* Sidebar - streams in with wallet/tickets data */}
           <div className="lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
