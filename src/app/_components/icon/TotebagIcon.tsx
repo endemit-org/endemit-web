@@ -1,10 +1,14 @@
-export default function ToteBagIcon() {
+export default function ToteBagIcon({
+  className = "w-5 lg:w-6",
+}: {
+  className?: string;
+}) {
   return (
     <svg
       id="a"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 17.5 28.6"
-      className={"w-5 lg:w-6"}
+      className={className}
     >
       <path
         fill="currentColor"

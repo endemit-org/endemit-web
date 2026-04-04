@@ -13,23 +13,43 @@ import Banner from "@/app/_components/ui/Banner";
 import Accordion from "@/app/_components/content/Accordion";
 import { formatPrice } from "@/lib/util/formatting";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
+import Image from "next/image";
+import EventUrgencyBar from "./EventUrgencyBar";
 
 interface EventTicketDisplayProps {
   products: Product[];
   event: Event;
 }
 
-export function formatTicketTitle(product: Product) {
+export function formatTicketTitle(product: Product, isHot?: boolean) {
   const ticketQuantity = getTicketQuantityForProduct(product);
   const quantitySuffix = `${ticketQuantity} ${ticketQuantity === 1 ? "person" : "people"}`;
   return (
     <div>
       <div className={"font-semibold flex gap-x-1.5 items-center"}>
-        <TicketIcon />
         {product.name}
+        {isHot && (
+          <Image
+            src="/images/flame.gif"
+            alt="Hot"
+            className="w-5 h-5 h"
+            width={40}
+            height={40}
+            unoptimized
+          />
+        )}
       </div>
-      <div className={"text-sm text-neutral-400"}>
-        {quantitySuffix} - {formatPrice(product.price)}
+      <div className={"text-sm text-neutral-400 flex gap-x-1.5 items-center"}>
+        <span className={"flex gap-x-1 opacity-65"}>
+          {Array(ticketQuantity)
+            .keys()
+            .map(i => (
+              <TicketIcon key={`ticket-icon-${i}`} />
+            ))}
+        </span>
+        <span>
+          {quantitySuffix} - {formatPrice(product.price)}
+        </span>
       </div>
     </div>
   );
@@ -155,7 +175,7 @@ export default function EventTicketDisplay({
     return (
       <div className={"flex flex-col items-center text-neutral-200"}>
         <div
-          className={"font-heading uppercase text-3xl text-neutral-400 mb-8"}
+          className={"font-heading uppercase text-3xl text-neutral-400 mb-4"}
         >
           {singleProductAvailable
             ? "Tickets available now"
@@ -167,13 +187,19 @@ export default function EventTicketDisplay({
           content,
           showTicketQuantities: false,
         })}
+        {singleProductAvailable && event.date_start && (
+          <div className="w-full max-w-sm mt-4">
+            <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+          </div>
+        )}
       </div>
     );
   }
 
   // For multiple products - use accordion
-  const accordionItems = products.map(product => ({
-    title: formatTicketTitle(product),
+  const middleIndex = Math.floor(products.length / 2);
+  const accordionItems = products.map((product, index) => ({
+    title: formatTicketTitle(product, index === middleIndex),
     content: TicketPurchaseDisplay({
       product,
       productAvailable: product && isProductSellable(product).isSellable,
@@ -196,7 +222,19 @@ export default function EventTicketDisplay({
 
       {!hasAvailableProducts && content}
 
-      <Accordion items={accordionItems} allowMultiple={false} compact={true} />
+      <Accordion
+        items={accordionItems}
+        allowMultiple={false}
+        compact={true}
+        autoExpandIndexOnView={middleIndex}
+        autoExpandDelay={500}
+      />
+
+      {hasAvailableProducts && event.date_start && (
+        <div className="mt-2">
+          <EventUrgencyBar eventStartDate={new Date(event.date_start)} />
+        </div>
+      )}
     </div>
   );
 }

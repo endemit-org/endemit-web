@@ -67,10 +67,12 @@ export default function Tabs({
         .filter(Boolean) as HTMLElement[];
 
       const scrollPosition = window.scrollY - 300;
+      const scrollMargin = 74; // matches scroll-my-16 (16 * 4px) + 10px padding
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i];
-        if (section.offsetTop <= scrollPosition) {
+        // Account for scroll margin when determining active section
+        if (section.offsetTop + scrollMargin <= scrollPosition) {
           const tabId = section.getAttribute("data-tab-id");
           if (tabId && tabId !== activeTabId) {
             setActiveTabId(tabId);
@@ -155,7 +157,7 @@ export default function Tabs({
           {items.map(item => (
             <div
               key={item.id}
-              className="first:pt-0 pt-28"
+              className="first:pt-0 pt-28 scroll-my-16"
               id={!item.hideTitle ? item.id : undefined}
               data-tab-id={item.id}
             >

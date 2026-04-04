@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { STRIPE_WEBHOOK_SECRET } from "@/lib/services/env/private";
 import { onOrderPaymentComplete } from "@/domain/order/operations/onOrderPaymentComplete";
 import { onOrderPaymentExpired } from "@/domain/order/operations/onOrderPaymentExpired";
+import { onRefundConfirmed } from "@/domain/order/operations/onRefundConfirmed";
+import Stripe from "stripe";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -18,6 +20,8 @@ export async function POST(request: Request) {
       STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
+    console.error("Webhook signature verification failed:", err);
+
     return NextResponse.json(
       { error: `Webhook error ${err}` },
       { status: 400 }
@@ -41,12 +45,29 @@ export async function POST(request: Request) {
       }
 
       case "payment_intent.succeeded": {
-        // If we want to handle capturing of funds
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+        // Only process if this is from our inline payment flow
+        // (has orderId in metadata, not from a checkout session)
+        if (paymentIntent.metadata?.orderId) {
+          await onOrderPaymentComplete(paymentIntent.id);
+        }
         break;
       }
 
       case "payment_intent.payment_failed": {
-        // If we want to handle capturing of funds
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.error("Payment failed:", {
+          paymentIntentId: paymentIntent.id,
+          orderId: paymentIntent.metadata?.orderId,
+          error: paymentIntent.last_payment_error?.message,
+        });
+        break;
+      }
+
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        await onRefundConfirmed(charge);
         break;
       }
 

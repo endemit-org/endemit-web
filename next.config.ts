@@ -2,9 +2,10 @@ import type { NextConfig } from "next";
 
 const ALLOWED_DEV_ORIGINS = [
   "127.0.0.1",
-  "89.143.77.229",
+  "86.61.74.56",
   "localhost",
   "*.endemit.org",
+  "vabisabi-max.tail2eec81.ts.net",
 ];
 
 const IMAGE_CONFIG = {
@@ -16,6 +17,10 @@ const IMAGE_CONFIG = {
     {
       protocol: "https" as const,
       hostname: "*.cdn.prismic.io",
+    },
+    {
+      protocol: "https" as const,
+      hostname: "*.public.blob.vercel-storage.com",
     },
   ],
 };
@@ -49,6 +54,14 @@ const nextConfig: NextConfig = {
   async redirects() {
     return REDIRECTS;
   },
+  outputFileTracingIncludes: {
+    // Ticket image generation requires logo and font files
+    "/api/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+    "/admin/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+    "/profile/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+  },
+  // Prevent bundling heavy Node.js packages - load them at runtime instead
+  serverExternalPackages: ["passkit-generator", "node-forge"],
 };
 
 export default nextConfig;

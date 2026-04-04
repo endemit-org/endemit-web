@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ItemToggleIcon from "@/app/_components/icon/ItemToggleIcon";
 
 export interface AccordionItem {
@@ -14,6 +14,8 @@ export interface AccordionProps {
   allowMultiple?: boolean;
   defaultOpenIndex?: number;
   compact?: boolean;
+  autoExpandIndexOnView?: number;
+  autoExpandDelay?: number;
 }
 
 export default function Accordion({
@@ -22,10 +24,43 @@ export default function Accordion({
   allowMultiple = false,
   defaultOpenIndex,
   compact = false,
+  autoExpandIndexOnView,
+  autoExpandDelay = 1000,
 }: AccordionProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     defaultOpenIndex !== undefined ? [defaultOpenIndex] : []
   );
+  const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-expand specified item when it comes into view
+  useEffect(() => {
+    if (
+      autoExpandIndexOnView === undefined ||
+      hasAutoExpanded ||
+      items.length <= 1
+    )
+      return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && !hasAutoExpanded) {
+          const timer = setTimeout(() => {
+            setOpenIndexes([autoExpandIndexOnView]);
+            setHasAutoExpanded(true);
+          }, autoExpandDelay);
+          return () => clearTimeout(timer);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [autoExpandIndexOnView, autoExpandDelay, hasAutoExpanded, items.length]);
 
   const toggleItem = (index: number) => {
     if (allowMultiple) {
@@ -39,6 +74,7 @@ export default function Accordion({
 
   return (
     <div
+      ref={containerRef}
       className={
         compact
           ? "w-full"
@@ -68,11 +104,13 @@ export default function Accordion({
             >
               <button
                 onClick={() => toggleItem(index)}
-                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left bg-neutral-900 hover:bg-neutral-800 transition-colors`}
+                className={`w-full flex items-center justify-between ${compact ? "p-4" : "p-6"} text-left transition-colors ${
+                  isOpen
+                    ? "bg-black text-neutral-100 border-b-2 border-dotted border-b-neutral-600"
+                    : "bg-neutral-900 hover:bg-neutral-800 text-neutral-300"
+                }`}
               >
-                <span
-                  className={`${compact ? "text-base" : "text-lg"}  text-neutral-200`}
-                >
+                <span className={`${compact ? "text-base" : "text-lg"}  `}>
                   {item.title}
                 </span>
                 <ItemToggleIcon isOpen={isOpen} />
@@ -84,7 +122,7 @@ export default function Accordion({
                 }`}
               >
                 <div
-                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-70`}
+                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-50`}
                 >
                   {item.content}
                 </div>

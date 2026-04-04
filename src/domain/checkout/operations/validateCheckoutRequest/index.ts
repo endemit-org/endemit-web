@@ -69,5 +69,6 @@ export const validateCheckoutRequest = (
     discountCodeId: body.discountCodeId || undefined,
     subtotal,
     shippingCost,
+    walletCreditAmount: body.walletCreditAmount || 0,
   };
 };

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import clsx from "clsx";
 import { Podcast } from "@/domain/podcast/types/podcast";
 import PodcastCard from "@/app/_components/podcast/PodcastCard";
@@ -7,6 +10,7 @@ interface Props {
   title?: string;
   description?: string;
   renderFrame?: boolean;
+  initialCount?: number;
 }
 
 export default function PodcastSection({
@@ -14,10 +18,16 @@ export default function PodcastSection({
   title,
   description,
   renderFrame = true,
+  initialCount = 8,
 }: Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   if (podcasts.length === 0) {
     return;
   }
+
+  const hasMore = podcasts.length > initialCount;
+  const visiblePodcasts = isExpanded ? podcasts : podcasts.slice(0, initialCount);
 
   return (
     <section
@@ -37,18 +47,18 @@ export default function PodcastSection({
           title || description ? "mt-8" : "mt-0"
         )}
       >
-        {podcasts.map(podcast => (
+        {visiblePodcasts.map(podcast => (
           <PodcastCard
             date={podcast.date}
             episodeNumber={podcast.number}
             key={podcast.id}
-            image={podcast.cover}
+            image={podcast.tile ?? podcast.cover}
             name={podcast.name}
             uid={podcast.uid}
           />
         ))}
-        {podcasts.length < 4 &&
-          Array.from({ length: 4 - podcasts.length }).map((_, index) => (
+        {visiblePodcasts.length < 4 &&
+          Array.from({ length: 4 - visiblePodcasts.length }).map((_, index) => (
             <div
               key={`filler-${index}`}
               className="bg-neutral-900 w-full h-full items-center justify-center hidden sm:flex xl:hidden 2xl:flex"
@@ -61,6 +71,19 @@ export default function PodcastSection({
             </div>
           ))}
       </div>
+
+      {hasMore && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-neutral-400 hover:text-neutral-200 text-sm transition-colors"
+          >
+            {isExpanded
+              ? "Show less"
+              : `View all ${podcasts.length} episodes`}
+          </button>
+        </div>
+      )}
     </section>
   );
 }

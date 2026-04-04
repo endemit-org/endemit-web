@@ -23,6 +23,7 @@ import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
+import EventMiniCard from "@/app/_components/event/EventMiniCard";
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -56,8 +57,15 @@ export async function generateMetadata({
     metaImage: event.meta.image,
     fallbackImages: event.promoImage?.src ? [event.promoImage.src] : undefined,
   });
+  const url = `https://endemit.org/events/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    url,
+    type: "website",
+  });
 }
 
 export default async function EventPage({
@@ -88,6 +96,20 @@ export default async function EventPage({
   const innerContentPages = await fetchInnerContentPagesForEvent(event.id);
   const isPastEvent = isEventCompleted(event);
 
+  // Fetch other events to explore for past events
+  let otherEvents: (typeof event)[] = [];
+  if (isPastEvent) {
+    const allEvents = await fetchEventsFromCms({});
+    otherEvents = (allEvents ?? [])
+      .filter(
+        e =>
+          e.uid !== event.uid &&
+          e.options.visibility !== "Hidden" &&
+          !e.options.externalEventLink
+      )
+      .slice(0, 4);
+  }
+
   const defaultContent = [] as TabItem[];
 
   if (event.options.showEventLineup) {
@@ -95,7 +117,7 @@ export default async function EventPage({
       label: "Lineup",
       content: <EventLineUp artists={event.artists} />,
       id: "lineup",
-      sortingWeight: 200,
+      sortingWeight: 300,
     });
   }
 
@@ -140,7 +162,7 @@ export default async function EventPage({
       label: "Tickets",
       content: <EventTicketDisplay products={products} event={event} />,
       id: "tickets",
-      sortingWeight: 300,
+      sortingWeight: 200,
       mobileOnly: true,
     });
   }
@@ -171,7 +193,7 @@ export default async function EventPage({
         ></div>
         <div
           className={
-            "absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
+            "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
           }
           style={
             event.coverImage
@@ -205,7 +227,7 @@ export default async function EventPage({
                   href={event.artAuthor.link}
                   target={"_blank"}
                   className={
-                    "absolute  left-0 bottom-0 hover:bg-neutral-900 bg-neutral-900/60 py-1 px-1 text-xs text-neutral-600"
+                    "absolute left-0 bottom-0 hover:bg-neutral-900 bg-neutral-900/60 py-1 px-1 text-xs text-neutral-600 backdrop-blur-sm"
                   }
                 >
                   Author: {event.artAuthor.text}
@@ -283,10 +305,10 @@ export default async function EventPage({
           </div>
         </div>
         {!isPastEvent && event.tickets.shouldSellTickets ? (
-          <div className={"lg:hidden mb-16 z-50 relative"}>
+          <div className={"lg:hidden mb-16 z-10 relative"}>
             <ActionButton
               href={"#tickets"}
-              variant="secondary"
+              variant="primary"
               className={"flex gap-x-2"}
             >
               <TicketIcon />
@@ -370,6 +392,31 @@ export default async function EventPage({
             </div>
           </section>
         </div>
+
+        {isPastEvent && otherEvents.length > 0 && (
+          <div className="mb-10 text-center relative z-10 mt-20 max-md:pb-32">
+            <h3 className="text-neutral-200 text-2xl py-6 max-md:pt-32">
+              More events to explore
+            </h3>
+            <div
+              className={clsx(
+                "grid sm:grid-cols-2 xl:grid-cols-4 w-full gap-2"
+              )}
+            >
+              {otherEvents.map(otherEvent => (
+                <EventMiniCard
+                  key={otherEvent.id}
+                  name={otherEvent.name}
+                  image={otherEvent.coverImage}
+                  dateStart={otherEvent.date_start}
+                  dateEnd={otherEvent.date_end}
+                  location={otherEvent.venue?.name}
+                  link={`/events/${otherEvent.uid}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </OuterPage>
     </>
   );

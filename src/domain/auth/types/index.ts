@@ -1,4 +1,4 @@
-import type { User, Session, Role, UserRole, UserStatus } from "@prisma/client";
+import type { User, Session, Role, UserRole, UserStatus, SignInType, OtcToken } from "@prisma/client";
 import type { Permission } from "@/domain/auth/config/permissions.config";
 import type { RoleSlug } from "@/domain/auth/config/roles.config";
 
@@ -22,6 +22,7 @@ export interface AuthenticatedUser {
   status: UserStatus;
   roles: RoleSlug[];
   permissions: Permission[];
+  createdAt: Date;
 }
 
 export interface LoginCredentials {
@@ -54,4 +55,37 @@ export interface UpdateUserData {
 export interface AuthorizationResult {
   authorized: boolean;
   reason?: string;
+}
+
+export interface OtcRequestResult {
+  success: boolean;
+  error?: string;
+  rateLimitRemaining?: number;
+}
+
+export interface OtcVerifyResult {
+  success: boolean;
+  error?: string;
+  userId?: string;
+}
+
+export interface CreateOtcTokenData {
+  userId: string;
+  code: string;
+  magicLink: string;
+  expiresAt: Date;
+}
+
+export type { SignInType, OtcToken };
+
+// OTC Email Queue Types
+export enum OtcQueueEvent {
+  SEND_OTC_EMAIL = "send-otc-email",
+}
+
+export interface OtcEmailQueueData {
+  email: string;
+  code: string;
+  magicLink: string;
+  expiresInMinutes: number;
 }

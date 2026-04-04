@@ -1,15 +1,23 @@
 import "server-only";
 
-import { prismicClient } from "@/lib/services/prismic";
+import { prismicClient, prismic } from "@/lib/services/prismic";
 import { transformPodcastObject } from "@/domain/podcast/transformers/transformPodcastObject";
 
 export const fetchPodcastsFromCms = async ({
   pageSize = 200,
   filters,
+  includeUnpublished = false,
 }: {
   pageSize?: number;
   filters?: string[];
+  includeUnpublished?: boolean;
 }) => {
+  // Build filters array, always filtering for published unless explicitly including unpublished
+  const allFilters = [...(filters ?? [])];
+  if (!includeUnpublished) {
+    allFilters.push(prismic.filter.at("my.podcast.published", true));
+  }
+
   const podcasts = await prismicClient.getAllByType("podcast", {
     pageSize,
     orderings: [
@@ -18,7 +26,7 @@ export const fetchPodcastsFromCms = async ({
         direction: "desc",
       },
     ],
-    ...(filters && { filters }),
+    ...(allFilters.length > 0 && { filters: allFilters }),
   });
 
   if (!podcasts) {

@@ -6,6 +6,8 @@ export const DATABASE_URL = process.env.DATABASE_URL!;
 // Discord Webhooks
 export const DISCORD_NEWSLETTER_WEBHOOK =
   process.env.DISCORD_NEWSLETTER_WEBHOOK!;
+export const DISCORD_APPLE_WALLET_WEBHOOK =
+  process.env.DISCORD_APPLE_WALLET_WEBHOOK!;
 export const DISCORD_ORDERS_WEBHOOK = process.env.DISCORD_ORDERS_WEBHOOK!;
 export const DISCORD_TICKET_PURCHASE_WEBHOOK =
   process.env.DISCORD_TICKET_PURCHASE_WEBHOOK!;
@@ -46,8 +48,23 @@ export const TICKET_SECRET = process.env.TICKET_SECRET!;
 export const TICKET_VERIFICATION_HASH_SPLIT_CONFIG =
   process.env.TICKET_VERIFICATION_HASH_SPLIT_CONFIG!;
 
+// Supabase
+export const SUPABASE_PRIVATE_KEY = process.env.SUPABASE_PRIVATE_KEY!;
+
+// POS
+export const POS_ORDER_SECRET = process.env.POS_ORDER_SECRET!;
+export const POS_ORDER_HASH_SPLIT_CONFIG =
+  process.env.POS_ORDER_HASH_SPLIT_CONFIG!;
+export const DISCORD_POS_WEBHOOK = process.env.DISCORD_POS_WEBHOOK;
+
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
+
+// Apple Wallet signing
+export const APPLE_PASS_CERTIFICATE = process.env.APPLE_PASS_CERTIFICATE!;
+export const APPLE_PASS_CERTIFICATE_PASSWORD =
+  process.env.APPLE_PASS_CERTIFICATE_PASSWORD!;
+export const APPLE_WWDR_CERTIFICATE = process.env.APPLE_WWDR_CERTIFICATE!;
 
 // Validation
 if (!DATABASE_URL) throw new Error("Missing DATABASE_URL");

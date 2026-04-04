@@ -14,8 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const images = buildOpenGraphImages({
     metaImage: homePage?.data.meta_image.url,
   });
+  const url = "https://endemit.org";
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "website" });
 }
 
 export default async function Home() {

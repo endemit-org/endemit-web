@@ -4,14 +4,14 @@ import { PodcastDocument } from "@/prismicio-types";
 import { getBlurDataURL } from "@/lib/util/util";
 import { CmsImage } from "@/domain/cms/types/common";
 
-const transformCoverImage = async (
-  coverImage: PodcastDocument["data"]["cover_image"]
+const transformImage = async (
+  image: PodcastDocument["data"]["cover_image"] | PodcastDocument["data"]["tile"]
 ) => {
-  if (!isFilled.image(coverImage)) return null;
+  if (!isFilled.image(image)) return null;
   return {
-    src: coverImage.url,
-    alt: coverImage.alt ?? "",
-    placeholder: await getBlurDataURL(coverImage.url!),
+    src: image.url,
+    alt: image.alt ?? "",
+    placeholder: await getBlurDataURL(image.url!),
   } as CmsImage;
 };
 
@@ -44,6 +44,7 @@ export const transformPodcastObject = async (
   return {
     id: podcast.id,
     uid: podcast.uid,
+    published: podcast.data.published ?? false,
     name: podcast.data.episode_name ?? "",
     number: podcast.data.episode_number ?? "",
     date: podcast.data.episode_date
@@ -51,7 +52,8 @@ export const transformPodcastObject = async (
       : null,
     description: podcast.data.episode_description,
     footnote: podcast.data.footnote ?? "",
-    cover: await transformCoverImage(podcast.data.cover_image),
+    tile: await transformImage(podcast.data.tile),
+    cover: await transformImage(podcast.data.cover_image),
     track: {
       url: podcast.data.track_url ?? "",
     },

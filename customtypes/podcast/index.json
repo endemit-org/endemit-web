@@ -12,6 +12,26 @@
           "label": "UID"
         }
       },
+      "published": {
+        "type": "Boolean",
+        "config": {
+          "label": "Published",
+          "default_value": false,
+          "placeholder_false": "Draft",
+          "placeholder_true": "Published"
+        }
+      },
+      "tile": {
+        "type": "Image",
+        "config": {
+          "label": "Tile",
+          "constraint": {
+            "width": 800,
+            "height": 800
+          },
+          "thumbnails": []
+        }
+      },
       "cover_image": {
         "type": "Image",
         "config": {

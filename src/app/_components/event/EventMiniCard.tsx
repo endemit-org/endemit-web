@@ -56,7 +56,7 @@ export default function EventMiniCard({
               width={800}
               height={800}
               loading="lazy"
-              className="aspect-square w-full object-cover group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out  xl:aspect-7/8 "
+              className="aspect-square w-full object-cover group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out  xl:aspect-7/8 z-40"
             />
           )}
         </div>

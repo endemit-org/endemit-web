@@ -5,12 +5,15 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import CheckoutSuccessConfetti from "@/app/_components/checkout/CheckoutSuccessConfetti";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import ActionButton from "@/app/_components/form/ActionButton";
+import CheckoutReturnButton from "@/app/_components/checkout/CheckoutReturnButton";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";
+import { getOrderById } from "@/domain/order/operations/getOrderById";
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
 import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
+import AutoLoginOnSuccess from "@/app/_components/checkout/AutoLoginOnSuccess";
+import { OrderStatus } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "✅ Order Confirmed",
@@ -21,6 +24,35 @@ export const metadata: Metadata = {
     follow: false,
   },
 };
+
+async function getOrderForSession(sessionId: string) {
+  // Check if it's a checkout session ID (starts with cs_)
+  if (sessionId.startsWith("cs_")) {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.status !== "complete") {
+      return null;
+    }
+    return await getOrderByStripeSession(sessionId);
+  }
+
+  // Check if it's a PaymentIntent ID (starts with pi_)
+  if (sessionId.startsWith("pi_")) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(sessionId);
+    if (paymentIntent.status !== "succeeded") {
+      return null;
+    }
+    // Order is stored with PaymentIntent ID in stripeSession field
+    return await getOrderByStripeSession(sessionId);
+  }
+
+  // Otherwise, assume it's an order ID (for full wallet payments)
+  const order = await getOrderById(sessionId);
+  if (order && order.status === OrderStatus.PAID) {
+    return order;
+  }
+
+  return null;
+}
 
 export default async function SuccessPage({
   params,
@@ -35,13 +67,7 @@ export default async function SuccessPage({
     notFound();
   }
 
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-  if (session.status !== "complete") {
-    notFound();
-  }
-
-  const order = await getOrderByStripeSession(sessionId);
+  const order = await getOrderForSession(sessionId);
 
   if (!order) {
     notFound();
@@ -113,14 +139,13 @@ export default async function SuccessPage({
             )}
 
             {/* Action Button */}
-            <div className="inline-block">
-              <ActionButton href={"/store"}>Continue Shopping</ActionButton>
-            </div>
+            <CheckoutReturnButton orderId={order.id} />
           </div>
         </div>
       </InnerPage>
       <ClearCheckoutValues />
       <CheckoutSuccessConfetti targetElementId={"successIcon"} />
+      {order.userId && <AutoLoginOnSuccess userId={order.userId} />}
     </OuterPage>
   );
 }

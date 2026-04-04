@@ -15,6 +15,8 @@ import { fetchEventsForVenueFromCms } from "@/domain/cms/operations/fetchEventsF
 import EventLocation from "@/app/_components/event/EventLocation";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import VenueSeoMicrodata from "@/app/_components/seo/VenueSeoMicrodata";
+import ArtistList from "@/app/_components/artist/ArtistList";
+import type { Artist } from "@/domain/artist/types/artist";
 
 export async function generateStaticParams() {
   const venues = await fetchVenuesFromCms({});
@@ -49,8 +51,9 @@ export async function generateMetadata({
     metaImage: venue.meta.image,
     fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
   });
+  const url = `https://endemit.org/venues/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images });
+  return buildOpenGraphObject({ title, description, images, url, type: "profile" });
 }
 
 export default async function VenuePage({
@@ -77,6 +80,28 @@ export default async function VenuePage({
     : null;
 
   const showRelatedEvents = relatedEvents && relatedEvents?.length > 0;
+
+  // Extract unique artists from all events at this venue
+  const uniqueArtists: Artist[] = [];
+  const seenArtistIds = new Set<string>();
+
+  if (relatedEvents) {
+    for (const event of relatedEvents) {
+      for (const artist of event.artists) {
+        if (!seenArtistIds.has(artist.id)) {
+          seenArtistIds.add(artist.id);
+          uniqueArtists.push(artist);
+        }
+      }
+    }
+  }
+
+  // Sort artists alphabetically
+  const sortedArtists = uniqueArtists.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  const showArtists = sortedArtists.length > 0;
 
   return (
     <>
@@ -141,6 +166,17 @@ export default async function VenuePage({
                 })}
             </div>
           </InnerPage>
+        )}
+
+        {showArtists && (
+          <>
+            <Spacer size={"large"} />
+            <ArtistList
+              artists={sortedArtists}
+              includeFrame
+              title={`Artists performed at ${venue.name}`}
+            />
+          </>
         )}
 
         <EndemitSubscribe

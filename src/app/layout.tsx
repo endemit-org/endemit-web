@@ -101,10 +101,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
       <body
-        className="m-auto overflow-y-scroll bg-black"
+        className="m-auto overflow-y-scroll"
         style={{
           backgroundImage: "url('/images/endemit-pattern.svg')",
           backgroundSize: "110px",
+          backgroundColor: "#000",
         }}
       >
         <VercelAnalytics />

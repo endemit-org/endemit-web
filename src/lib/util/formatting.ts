@@ -9,6 +9,15 @@ export const formatPrice = (price: number, decimals: number = 0) => {
 
 export const formatDecimalPrice = (price: number) => formatPrice(price, 0);
 
+export const formatCurrency = (amount: number) => {
+  return amount.toLocaleString("sl-SI", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 export const formatNumber = (number: number, decimals: number = 0) => {
   return number.toLocaleString("sl-SI", {
     style: "decimal",
@@ -99,4 +108,31 @@ export const formatDayName = (date: Date) => {
     weekday: "long",
     timeZone: "Europe/Ljubljana",
   });
+};
+
+export const sanitizeForFilename = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/gi, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 50);
+};
+
+/**
+ * Checks if an email is a placeholder/import email that shouldn't be displayed.
+ */
+export const isPlaceholderEmail = (email: string): boolean => {
+  return email.endsWith("@import.endemit.org");
+};
+
+/**
+ * Formats an email for display, returning a fallback for placeholder or null emails.
+ */
+export const formatEmailForDisplay = (
+  email: string | null | undefined,
+  fallback: string = "No email"
+): string => {
+  if (!email) return fallback;
+  return isPlaceholderEmail(email) ? fallback : email;
 };

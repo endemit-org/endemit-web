@@ -19,11 +19,13 @@ enum OrderStatus {
   CREATED
   PROCESSING
   PAID
-  SHIPPED
-  DELIVERED
+  PREPARING
+  IN_DELIVERY
+  COMPLETED
   CANCELLED
   EXPIRED
   REFUND_REQUESTED
+  PARTIALLY_REFUNDED
   REFUNDED
 }
 
@@ -37,15 +39,61 @@ enum TicketStatus {
   REFUNDED
 }
 
+enum SignInType {
+  PASSWORD
+  OTC
+}
+
+enum WalletTransactionType {
+  CREDIT
+  DEBIT
+  PURCHASE
+  REFUND
+  ADJUSTMENT
+  POS_PURCHASE
+  POS_TIP
+  CARD_TOPUP
+  CASH_TOPUP
+}
+
+enum PosItemDirection {
+  CREDIT
+  DEBIT
+}
+
+enum PosItemStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PosRegisterStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PosOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum AnnouncementType {
+  INFO
+  WARNING
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
+  userId           String?
+  user             User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   name             String?
   email            String
   subtotal         Decimal     @db.Decimal(10, 2)
   totalAmount      Decimal     @db.Decimal(10, 2)
   shippingAmount   Decimal?    @db.Decimal(10, 2)
   discountAmount   Decimal?    @default(0) @db.Decimal(10, 2)
+  walletAmountUsed Int         @default(0)
   shippingRequired Boolean
   shippingAddress  Json?
   items            Json
@@ -54,10 +102,36 @@ model Order {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
+  // Refund tracking
+  refundedAmount Int       @default(0) // Total cents refunded
+  refundedAt     DateTime?
+  refundedBy     String? // Admin user ID who processed the refund
+  refundReason   String?
+  stripeRefundId String? // Latest Stripe refund ID
+
   tickets Ticket[]
+  refunds OrderRefund[]
 
   @@index([stripeSession])
   @@index([email])
+  @@index([userId])
+}
+
+model OrderRefund {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemIndex      Int // Index in order.items JSON array
+  quantity       Int // How many of this item refunded
+  amount         Int // Refund amount in cents
+  stripeRefundId String?
+  reason         String?
+  createdById    String
+  createdBy      User     @relation("RefundCreator", fields: [createdById], references: [id])
+  createdAt      DateTime @default(now())
+
+  @@index([orderId])
+  @@index([createdById])
 }
 
 model Ticket {
@@ -75,6 +149,7 @@ model Ticket {
   qrContent        Json?
   metadata         Json?
   attended         Boolean      @default(false)
+  isGuestList      Boolean      @default(false)
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
@@ -95,13 +170,27 @@ model User {
   passwordHash  String?
   image         String?
   status        UserStatus @default(ACTIVE)
+  signInType    SignInType @default(PASSWORD)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   lastLoginAt   DateTime?
 
-  sessions  Session[]
-  userRoles UserRole[]
-  ScanLog   ScanLog[]
+  sessions            Session[]
+  userRoles           UserRole[]
+  ScanLog             ScanLog[]
+  otcTokens           OtcToken[]
+  orders              Order[]
+  wallet              Wallet?
+  createdTransactions WalletTransaction[] @relation("TransactionCreator")
+  createdRefunds      OrderRefund[]       @relation("RefundCreator")
+
+  // POS relations
+  posRegisterAssignments PosRegisterSeller[]
+  posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
+  posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
+
+  // Announcements
+  announcementDismissals AnnouncementDismissal[]
 
   @@index([username])
   @@index([email])
@@ -166,4 +255,223 @@ model ScanLog {
   @@index([eventId])
   @@index([userId])
   @@index([ticketId])
+}
+
+model OtcToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  magicLink String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([code])
+  @@index([magicLink])
+  @@index([expiresAt])
+}
+
+model OtcRateLimit {
+  id        String   @id @default(cuid())
+  email     String
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions WalletTransaction[]
+
+  @@index([userId])
+}
+
+model WalletTransaction {
+  id           String                @id @default(cuid())
+  walletId     String
+  wallet       Wallet                @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type         WalletTransactionType
+  amount       Int
+  balanceAfter Int
+  note         String?
+  createdById  String?
+  createdBy    User?                 @relation("TransactionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  posOrderId   String?
+  posOrder     PosOrder?             @relation(fields: [posOrderId], references: [id], onDelete: SetNull)
+  createdAt    DateTime              @default(now())
+
+  @@index([walletId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([createdById])
+  @@index([posOrderId])
+}
+
+// =============================================================================
+// POS (Point of Sale) Models
+// =============================================================================
+
+model PosItem {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  cost        Int // In cents
+  direction   PosItemDirection
+  status      PosItemStatus    @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  registers  PosRegisterItem[]
+  orderItems PosOrderItem[]
+
+  @@index([status])
+}
+
+model PosRegister {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  status      PosRegisterStatus @default(ACTIVE)
+  canTopUp    Boolean           @default(false)
+  tipPool     Int               @default(0) // Accumulated tips in cents
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  items   PosRegisterItem[]
+  sellers PosRegisterSeller[]
+  orders  PosOrder[]
+
+  @@index([status])
+}
+
+model PosRegisterItem {
+  id         String      @id @default(cuid())
+  registerId String
+  register   PosRegister @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       PosItem     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  assignedAt DateTime    @default(now())
+
+  @@unique([registerId, itemId])
+  @@index([registerId])
+  @@index([itemId])
+}
+
+model PosRegisterSeller {
+  id         String      @id @default(cuid())
+  registerId String
+  register   PosRegister @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt DateTime    @default(now())
+
+  @@unique([registerId, userId])
+  @@index([registerId])
+  @@index([userId])
+}
+
+model PosOrder {
+  id           String         @id @default(cuid())
+  orderHash    String         @unique
+  shortCode    String         @unique
+  registerId   String
+  register     PosRegister    @relation(fields: [registerId], references: [id])
+  sellerId     String
+  seller       User           @relation("PosOrderSeller", fields: [sellerId], references: [id])
+  customerId   String?
+  customer     User?          @relation("PosOrderCustomer", fields: [customerId], references: [id])
+  walletId     String?
+  subtotal     Int // In cents
+  tipAmount    Int            @default(0)
+  total        Int // subtotal + tipAmount
+  status       PosOrderStatus @default(PENDING)
+  scannedAt    DateTime?
+  paidAt       DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+  copiedFromId String?
+  expiresAt    DateTime
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  items        PosOrderItem[]
+  transactions WalletTransaction[]
+
+  @@index([orderHash])
+  @@index([shortCode])
+  @@index([registerId])
+  @@index([sellerId])
+  @@index([customerId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model PosOrderItem {
+  id       String   @id @default(cuid())
+  orderId  String
+  order    PosOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId   String
+  item     PosItem  @relation(fields: [itemId], references: [id])
+  name     String // Snapshot of item name at time of order
+  quantity Int
+  unitCost Int // Snapshot of item cost at time of order
+  total    Int // quantity * unitCost
+
+  @@index([orderId])
+  @@index([itemId])
+}
+
+// =============================================================================
+// Webhook Deduplication
+// =============================================================================
+
+model WebhookLog {
+  id        String   @id @default(cuid())
+  source    String // e.g. "prismic"
+  ref       String // e.g. masterRef for deduplication
+  createdAt DateTime @default(now())
+
+  @@unique([source, ref])
+  @@index([createdAt])
+}
+
+// =============================================================================
+// Announcements
+// =============================================================================
+
+model Announcement {
+  id         String                  @id @default(cuid())
+  title      String?
+  message    String
+  type       AnnouncementType        @default(INFO)
+  isActive   Boolean                 @default(true)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  dismissals AnnouncementDismissal[]
+
+  @@index([isActive])
+}
+
+model AnnouncementDismissal {
+  id             String       @id @default(cuid())
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dismissedAt    DateTime     @default(now())
+
+  @@unique([announcementId, userId])
+  @@index([userId])
+  @@index([announcementId])
 }

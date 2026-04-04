@@ -24,6 +24,7 @@ export const transformToProductInOrder = (
     metadata = {
       ticketHolders,
       ticketQuantity,
+      ...(cartItem.ticketTemplate && { ticketTemplate: cartItem.ticketTemplate }),
     };
   }
 
@@ -39,6 +40,7 @@ export const transformToProductInOrder = (
     type: cartItem.type,
     checkoutDescription: cartItem.checkoutDescription,
     relatedEvent: cartItem.relatedEvent?.id ?? null,
+    walletTopupReward: cartItem.walletTopupReward,
     metadata,
   };
   return ProductInOrder;

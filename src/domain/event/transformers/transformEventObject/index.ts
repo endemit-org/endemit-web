@@ -78,6 +78,7 @@ export const transformEventObject = async (
               url: asLink(link.link),
             }))
           : [],
+        soundcloudUrl: (item as { soundcloud_url?: string }).soundcloud_url || null,
       });
     }
   }
@@ -151,6 +152,9 @@ export const transformEventObject = async (
       available: ticketProductIds.length > 0,
       productIds: ticketProductIds,
     },
+    hasCashlessPayments:
+      (event.data as { has_cashless_payments?: boolean }).has_cashless_payments ??
+      false,
     annotation: event.data.annotation,
     type: event.data.event_type,
     date_start: event.data.date_start ? new Date(event.data.date_start) : null,

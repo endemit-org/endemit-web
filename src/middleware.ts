@@ -8,7 +8,11 @@ const STAGING_LOGIN_PATH = "/staging-login";
 function handleCORS(request: NextRequest) {
   const origin = request.headers.get("origin") || "";
 
-  const allowedOrigins = ["http://127.0.0.1", "http://localhost"];
+  const allowedOrigins = [
+    "http://127.0.0.1",
+    "http://localhost",
+    "https://vabisabi-max.tail2eec81.ts.net",
+  ];
 
   const isAllowed =
     allowedOrigins.some(allowed => origin.startsWith(allowed)) ||

@@ -223,6 +223,13 @@
                 "select": "media",
                 "allowText": true
               }
+            },
+            "soundcloud_url": {
+              "type": "Text",
+              "config": {
+                "label": "SoundCloud URL",
+                "placeholder": "URL to SoundCloud track/set for preview"
+              }
             }
           }
         }
@@ -299,6 +306,15 @@
         "type": "Boolean",
         "config": {
           "label": "Free admission (no tickets)",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
+      "has_cashless_payments": {
+        "type": "Boolean",
+        "config": {
+          "label": "Has cashless payments",
           "placeholder_false": "false",
           "placeholder_true": "true",
           "default_value": false

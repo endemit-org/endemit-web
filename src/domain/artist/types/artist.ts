@@ -1,5 +1,5 @@
 import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
-import { RichTextField } from "@prismicio/client";
+import { RichTextField, SliceZone } from "@prismicio/client";
 
 export enum ArtistLinkType {
   Soundcloud = "Soundcloud",
@@ -25,4 +25,5 @@ export type Artist = {
   b2bAttribution: { name: string; uid: string; id: string }[] | null;
   updatedAt: Date;
   meta: CmsMetaData;
+  slices: SliceZone;
 };

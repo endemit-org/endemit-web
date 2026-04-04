@@ -42,7 +42,7 @@ export default function ArtistSnippet({
           className="rounded-lg"
         />
         <div className="flex-1">
-          <h4 className={clsx("text-xl", nameClassName)}>{artist.name}</h4>
+          <h4 className={clsx("text-xl uppercase", nameClassName)}>{artist.name}</h4>
           <div className={clsx("text-lg ", descriptionClassName)}>
             {!isLive && artist.start_time && `${formatTime(artist.start_time)}`}
             {isLive && (

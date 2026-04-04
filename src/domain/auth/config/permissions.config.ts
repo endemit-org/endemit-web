@@ -1,4 +1,7 @@
 export const PERMISSIONS = {
+  // Admin access
+  ADMIN_ACCESS: "admin:access",
+
   // User management
   USERS_READ: "users:read",
   USERS_CREATE: "users:create",
@@ -43,9 +46,40 @@ export const PERMISSIONS = {
   ANALYTICS_VIEW: "analytics:view",
   REPORTS_GENERATE: "reports:generate",
 
+  // Wallet management
+  WALLETS_READ: "wallets:read",
+  WALLETS_MANAGE_BALANCE: "wallets:manage-balance",
+
+  // Transaction management
+  TRANSACTIONS_READ: "transactions:read",
+
+  // Role management
+  ROLES_READ: "roles:read",
+  ROLES_CREATE: "roles:create",
+  ROLES_UPDATE: "roles:update",
+  ROLES_DELETE: "roles:delete",
+
   // System administration
   SYSTEM_SETTINGS: "system:settings",
   SYSTEM_LOGS: "system:logs",
+
+  // POS - Seller access
+  POS_ACCESS: "pos:access",
+  POS_SELL: "pos:sell",
+  POS_TOPUP: "pos:topup",
+
+  // POS - Admin management
+  POS_ITEMS_READ: "pos:items:read",
+  POS_ITEMS_WRITE: "pos:items:write",
+  POS_REGISTERS_READ: "pos:registers:read",
+  POS_REGISTERS_WRITE: "pos:registers:write",
+  POS_ORDERS_READ: "pos:orders:read",
+  POS_ORDERS_REFUND: "pos:orders:refund",
+  POS_TIPS_WITHDRAW: "pos:tips:withdraw",
+
+  // Announcements
+  ANNOUNCEMENTS_READ: "announcements:read",
+  ANNOUNCEMENTS_WRITE: "announcements:write",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -54,6 +88,12 @@ export const PERMISSION_METADATA: Record<
   Permission,
   { name: string; description: string; resource: string; action: string }
 > = {
+  [PERMISSIONS.ADMIN_ACCESS]: {
+    name: "Admin Access",
+    description: "Access to the admin dashboard",
+    resource: "admin",
+    action: "access",
+  },
   [PERMISSIONS.USERS_READ]: {
     name: "Read Users",
     description: "View user profiles and information",
@@ -234,6 +274,48 @@ export const PERMISSION_METADATA: Record<
     resource: "reports",
     action: "generate",
   },
+  [PERMISSIONS.WALLETS_READ]: {
+    name: "Read Wallets",
+    description: "View wallet balances and information",
+    resource: "wallets",
+    action: "read",
+  },
+  [PERMISSIONS.WALLETS_MANAGE_BALANCE]: {
+    name: "Manage Wallet Balance",
+    description: "Add or remove funds from wallets",
+    resource: "wallets",
+    action: "manage-balance",
+  },
+  [PERMISSIONS.TRANSACTIONS_READ]: {
+    name: "Read Transactions",
+    description: "View wallet transaction history",
+    resource: "transactions",
+    action: "read",
+  },
+  [PERMISSIONS.ROLES_READ]: {
+    name: "Read Roles",
+    description: "View roles and their permissions",
+    resource: "roles",
+    action: "read",
+  },
+  [PERMISSIONS.ROLES_CREATE]: {
+    name: "Create Roles",
+    description: "Create new roles",
+    resource: "roles",
+    action: "create",
+  },
+  [PERMISSIONS.ROLES_UPDATE]: {
+    name: "Update Roles",
+    description: "Edit roles and their permissions",
+    resource: "roles",
+    action: "update",
+  },
+  [PERMISSIONS.ROLES_DELETE]: {
+    name: "Delete Roles",
+    description: "Delete roles",
+    resource: "roles",
+    action: "delete",
+  },
   [PERMISSIONS.SYSTEM_SETTINGS]: {
     name: "System Settings",
     description: "Manage system settings",
@@ -245,5 +327,83 @@ export const PERMISSION_METADATA: Record<
     description: "View system logs",
     resource: "system",
     action: "logs",
+  },
+
+  // POS - Seller access
+  [PERMISSIONS.POS_ACCESS]: {
+    name: "POS Access",
+    description: "Access the POS seller interface",
+    resource: "pos",
+    action: "access",
+  },
+  [PERMISSIONS.POS_SELL]: {
+    name: "POS Sell",
+    description: "Create orders at assigned registers",
+    resource: "pos",
+    action: "sell",
+  },
+  [PERMISSIONS.POS_TOPUP]: {
+    name: "POS Top-up",
+    description: "Process cash top-ups at registers",
+    resource: "pos",
+    action: "topup",
+  },
+
+  // POS - Admin management
+  [PERMISSIONS.POS_ITEMS_READ]: {
+    name: "Read POS Items",
+    description: "View POS items",
+    resource: "pos",
+    action: "items:read",
+  },
+  [PERMISSIONS.POS_ITEMS_WRITE]: {
+    name: "Manage POS Items",
+    description: "Create, edit, and delete POS items",
+    resource: "pos",
+    action: "items:write",
+  },
+  [PERMISSIONS.POS_REGISTERS_READ]: {
+    name: "Read POS Registers",
+    description: "View POS registers",
+    resource: "pos",
+    action: "registers:read",
+  },
+  [PERMISSIONS.POS_REGISTERS_WRITE]: {
+    name: "Manage POS Registers",
+    description: "Create, edit registers and assign items/sellers",
+    resource: "pos",
+    action: "registers:write",
+  },
+  [PERMISSIONS.POS_ORDERS_READ]: {
+    name: "Read POS Orders",
+    description: "View all POS orders",
+    resource: "pos",
+    action: "orders:read",
+  },
+  [PERMISSIONS.POS_ORDERS_REFUND]: {
+    name: "Refund POS Orders",
+    description: "Process refunds for POS orders",
+    resource: "pos",
+    action: "orders:refund",
+  },
+  [PERMISSIONS.POS_TIPS_WITHDRAW]: {
+    name: "Withdraw Tips",
+    description: "Withdraw tips from register tip pools",
+    resource: "pos",
+    action: "tips:withdraw",
+  },
+
+  // Announcements
+  [PERMISSIONS.ANNOUNCEMENTS_READ]: {
+    name: "Read Announcements",
+    description: "View announcements",
+    resource: "announcements",
+    action: "read",
+  },
+  [PERMISSIONS.ANNOUNCEMENTS_WRITE]: {
+    name: "Manage Announcements",
+    description: "Create, edit, and delete announcements",
+    resource: "announcements",
+    action: "write",
   },
 };

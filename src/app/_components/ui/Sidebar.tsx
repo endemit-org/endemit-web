@@ -10,6 +10,7 @@ import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import MenuClosedIcon from "@/app/_components/icon/MenuClosedIcon";
 import MenuOpenIcon from "@/app/_components/icon/MenuOpenIcon";
+import ProfileButton from "@/app/_components/auth/ProfileButton";
 
 interface NavigationItem {
   label: string;
@@ -19,6 +20,7 @@ interface NavigationItem {
   onClick?: () => void;
   isBackButton?: boolean;
   isActive?: (pathname: string) => boolean;
+  icon?: React.ReactNode;
 }
 
 interface SocialLink {
@@ -27,7 +29,7 @@ interface SocialLink {
   alt: string;
   width?: number;
   height?: number;
-  id: "facebook" | "email" | "instagram" | "soundcloud";
+  id: "facebook" | "email" | "instagram" | "soundcloud" | "ra";
 }
 
 interface FooterInfo {
@@ -63,6 +65,12 @@ export default function Sidebar({
       href: "https://soundcloud.com/ende-mit",
       iconSrc: "/images/soundcloud.png",
       alt: "Soundcloud",
+    },
+    {
+      id: "ra",
+      href: "https://ra.co/promoters/133585",
+      iconSrc: "/images/residentadvisor.png",
+      alt: "RA",
     },
     {
       id: "facebook",
@@ -125,7 +133,7 @@ export default function Sidebar({
   };
 
   return (
-    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800">
+    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bg-opacity-80 lg:backdrop-blur-sm lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800">
       <div className="flex h-14 items-center px-4 py-4 lg:h-auto ">
         <Link
           href={logoHref}
@@ -143,8 +151,15 @@ export default function Sidebar({
         </Link>
       </div>
 
-      <div className="flex absolute right-0 top-0 lg:hidden gap-x-4">
-        {showCart && <Cart variant={"compact"} />}
+      <div className="flex absolute right-0 top-0 lg:hidden gap-x-2">
+        {showCart && (
+          <div onClick={() => setIsMenuOpen(false)}>
+            <Cart variant={"compact"} />
+          </div>
+        )}
+        <div className={"max-md:-mr-4"} onClick={() => setIsMenuOpen(false)}>
+          <ProfileButton variant="compact" />
+        </div>
 
         <button
           type="button"
@@ -164,7 +179,7 @@ export default function Sidebar({
 
       <div
         className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 ", {
-          "fixed inset-x-0 bottom-0 top-14  bg-neutral-950 flex flex-col":
+          "fixed inset-x-0 bottom-0 top-14  max-md:bg-neutral-950 max-md:bg-opacity-85 max-md:backdrop-blur-lg flex flex-col":
             isMenuOpen,
           hidden: !isMenuOpen,
         })}
@@ -198,14 +213,24 @@ export default function Sidebar({
                     {item.ctaText}
                   </span>
                 )}
+                {item.icon && (
+                  <span className="inline-block mr-2 align-middle">
+                    {item.icon}
+                  </span>
+                )}
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Pinned bottom section - Cart and Social */}
+        {/* Pinned bottom section - Profile, Cart and Social */}
         <div className="flex-shrink-0">
+          {/* Profile button - desktop only, hidden on mobile since it's in the header */}
+          <div className="hidden lg:block px-5 pb-4">
+            <ProfileButton variant="detailed" />
+          </div>
+
           {showCart && (
             <div className="px-5 pb-4">
               <Cart variant={"detailed"} />

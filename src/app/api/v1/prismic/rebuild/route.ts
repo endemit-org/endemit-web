@@ -1,0 +1,122 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/services/prisma";
+
+interface PrismicWebhookPayload {
+  type: string;
+  secret?: string;
+  masterRef?: string;
+  releases?: {
+    addition?: unknown[];
+    update?: unknown[];
+    deletion?: unknown[];
+  };
+  documents?: unknown[];
+}
+
+export async function POST(request: NextRequest) {
+  const secret = request.nextUrl.searchParams.get("secret");
+  const expectedSecret = process.env.PRISMIC_WEBHOOK_SECRET;
+  const vercelDeployHook = process.env.VERCEL_DEPLOY_HOOK_URL;
+
+  console.log("Received Prismic webhook payload:", secret, { request });
+
+  if (!expectedSecret) {
+    console.error("PRISMIC_WEBHOOK_SECRET is not configured");
+    return NextResponse.json(
+      { error: "Server misconfiguration" },
+      { status: 500 }
+    );
+  }
+
+  if (!vercelDeployHook) {
+    console.error("VERCEL_DEPLOY_HOOK_URL is not configured");
+    return NextResponse.json(
+      { error: "Server misconfiguration" },
+      { status: 500 }
+    );
+  }
+
+  if (secret !== expectedSecret) {
+    return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
+  }
+
+  let payload: PrismicWebhookPayload;
+  try {
+    payload = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 }
+    );
+  }
+
+  // Check if this is a release publish event
+  // When a release is published in Prismic, it appears as releases.deletion
+  // because the release gets merged into master and "deleted"
+  const isReleasePublished =
+    payload.type === "api-update" &&
+    payload.releases?.deletion &&
+    payload.releases.deletion.length > 0;
+  console.log({ payload });
+  if (!isReleasePublished) {
+    console.log("Not a release publish event", payload.type);
+
+    return NextResponse.json({
+      triggered: false,
+      reason: "Not a release publish event",
+      type: payload.type,
+      hasReleasesDeletion: Boolean(payload.releases?.deletion?.length),
+    });
+  }
+
+  // Deduplicate using masterRef
+  if (payload.masterRef) {
+    try {
+      await prisma.webhookLog.create({
+        data: {
+          source: "prismic",
+          ref: payload.masterRef,
+        },
+      });
+    } catch (error) {
+      // Unique constraint violation = already processed
+      if ((error as { code?: string }).code === "P2002") {
+        console.log("Already processed masterRef:", payload.masterRef);
+        return NextResponse.json({
+          triggered: false,
+          reason: "Already processed this masterRef",
+          masterRef: payload.masterRef,
+        });
+      }
+      throw error;
+    }
+  }
+
+  // Trigger Vercel rebuild
+  try {
+    const response = await fetch(vercelDeployHook, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      console.error("Failed to trigger Vercel deploy:", await response.text());
+      return NextResponse.json(
+        { error: "Failed to trigger rebuild" },
+        { status: 502 }
+      );
+    }
+
+    console.log("Vercel rebuild triggered successfully from Prismic release");
+
+    return NextResponse.json({
+      triggered: true,
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error("Error triggering Vercel deploy:", error);
+    return NextResponse.json(
+      { error: "Failed to trigger rebuild" },
+      { status: 502 }
+    );
+  }
+}

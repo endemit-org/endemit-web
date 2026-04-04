@@ -147,20 +147,22 @@ export default function ImageGalleryWithMasonry({
             >
               <ChevronNextIcon />
             </button>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex justify-center gap-2">
-              {sliderImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => scrollToDesktopSlide(index)}
-                  className={`h-2 w-2 rounded-full transition-all ${
-                    desktopSlide === index
-                      ? "bg-neutral-100 w-4"
-                      : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
+            {sliderImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex justify-center gap-2">
+                {sliderImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => scrollToDesktopSlide(index)}
+                    className={`h-2 w-2 rounded-full transition-all ${
+                      desktopSlide === index
+                        ? "bg-neutral-100 w-4"
+                        : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div
@@ -280,21 +282,23 @@ export default function ImageGalleryWithMasonry({
           </>
         )}
 
-        {/* Dots Indicator */}
-        <div className="-mt-6 flex justify-center gap-2">
-          {images.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollToSlide(index)}
-              className={`h-2 w-2 rounded-full transition-all ${
-                currentSlide === index
-                  ? "bg-neutral-100 w-4"
-                  : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+        {/* Dots Indicator - Only show if more than 1 image */}
+        {images.length > 1 && (
+          <div className="-mt-6 flex justify-center gap-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => scrollToSlide(index)}
+                className={`h-2 w-2 rounded-full transition-all ${
+                  currentSlide === index
+                    ? "bg-neutral-100 w-4"
+                    : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {lightboxIndex !== null && (
