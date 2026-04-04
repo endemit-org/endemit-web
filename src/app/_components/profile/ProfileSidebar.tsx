@@ -22,6 +22,7 @@ interface ProfileSidebarProps {
   walletBalance: number | null;
   currencyProducts: Product[];
   upcomingTickets: number | null;
+  isDonor?: boolean;
 }
 
 export default function ProfileSidebar({
@@ -32,6 +33,7 @@ export default function ProfileSidebar({
   walletBalance: initialWalletBalance,
   upcomingTickets,
   currencyProducts,
+  isDonor,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
@@ -100,6 +102,22 @@ export default function ProfileSidebar({
           {displayName}
         </h2>
         <p className="text-sm text-neutral-400">{email}</p>
+        {isDonor && (
+          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-yellow-900/50 to-amber-800/30 border border-yellow-600/50 rounded-full">
+            <svg
+              className="w-4 h-4 text-yellow-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.477V16h2a1 1 0 110 2H8a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span className="text-xs font-medium text-yellow-300">Donor</span>
+          </div>
+        )}
         <div className="mt-3 flex items-center justify-center gap-4">
           <Link
             href="/profile/edit"
@@ -142,7 +160,7 @@ export default function ProfileSidebar({
               backgroundRepeat: "repeat",
             }}
           ></div>
-          <div className={"relative z-10"}>
+          <div className={"relative z-10 text-center"}>
             <div className="text-xs text-blue-300 mb-1">Wallet Balance</div>
             <div
               className={`text-2xl font-bold ${
@@ -185,6 +203,7 @@ export default function ProfileSidebar({
           <ActionButton
             onClick={() => setIsTopUpOpen(true)}
             variant={"secondary"}
+            disabled={!isEndemitPayEnabled()}
           >
             <svg
               className="w-5 h-5"
@@ -230,12 +249,13 @@ export default function ProfileSidebar({
       )}
 
       {/* Top Up Modal */}
-
-      <TopUpModal
-        isOpen={isTopUpOpen}
-        onClose={() => setIsTopUpOpen(false)}
-        products={currencyProducts}
-      />
+      {isEndemitPayEnabled() && (
+        <TopUpModal
+          isOpen={isTopUpOpen}
+          onClose={() => setIsTopUpOpen(false)}
+          products={currencyProducts}
+        />
+      )}
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (

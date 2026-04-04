@@ -6,6 +6,7 @@ import {
   broadcastToUser,
 } from "@/lib/services/supabase/broadcast";
 import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyOnPosTransaction";
+import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransactionEmail";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import type { WalletTransaction } from "@prisma/client";
 
@@ -199,6 +200,9 @@ export async function payPosOrder(
       registerName: result.registerName,
     }).catch(() => {}); // Fire and forget
   }
+
+  // Queue email notification (handled by Inngest for reliability)
+  queuePosTransactionEmail({ orderId: result.order.id }).catch(() => {}); // Fire and forget
 
   return {
     success: true,

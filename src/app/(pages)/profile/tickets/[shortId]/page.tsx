@@ -104,6 +104,7 @@ export default async function ProfileTicketPage({
             status: ticket.status,
             scanCount: ticket.scanCount,
             qrContent: ticket.qrContent,
+            isGuestList: ticket.isGuestList,
           }}
           event={
             event

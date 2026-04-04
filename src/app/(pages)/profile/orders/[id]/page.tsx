@@ -36,18 +36,45 @@ const statusColors: Record<string, string> = {
   DELIVERED: "bg-green-500/20 text-green-400",
 };
 
+const ticketStatusColors: Record<string, string> = {
+  VALIDATED: "bg-emerald-500/20 text-emerald-400",
+  PENDING: "bg-emerald-500/20 text-emerald-400",
+  SCANNED: "bg-blue-500/20 text-blue-400",
+  CANCELLED: "bg-red-500/20 text-red-400",
+  BANNED: "bg-red-500/20 text-red-400",
+  REFUND_REQUESTED: "bg-orange-500/20 text-orange-400",
+  REFUNDED: "bg-gray-500/20 text-gray-400",
+};
+
+const ticketStatusLabels: Record<string, string> = {
+  VALIDATED: "Ready to scan",
+  PENDING: "Ready to scan",
+  SCANNED: "Used",
+  CANCELLED: "Cancelled",
+  BANNED: "Banned",
+  REFUND_REQUESTED: "Refund Requested",
+  REFUNDED: "Refunded",
+};
+
 export default async function ProfileOrderDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/signin");
+    // Fetch order to get email for signin prefill
+    const order = await getOrderWithTickets(id);
+    const params = new URLSearchParams();
+    if (order?.email) {
+      params.set("email", order.email);
+    }
+    params.set("callbackUrl", `/profile/orders/${id}`);
+    redirect(`/signin?${params.toString()}`);
   }
 
-  const { id } = await params;
   const order = await getOrderWithTickets(id);
 
   if (!order) {
@@ -212,50 +239,46 @@ export default async function ProfileOrderDetailPage({
                 </h2>
               </div>
               <div className="divide-y divide-neutral-700">
-                {order.tickets.map(ticket => {
-                  const isUsable =
-                    ticket.status === "VALIDATED" ||
-                    ticket.status === "PENDING";
-
-                  return (
-                    <div
-                      key={ticket.id}
-                      className="p-4 flex items-center justify-between"
-                    >
-                      <div>
-                        <p className="text-neutral-200 font-medium">
-                          {ticket.eventName} – {ticket.ticketHolderName}
-                        </p>
-                        <p className="text-xs text-neutral-500 font-mono mt-1">
-                          {ticket.shortId}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={clsx(
-                            "rounded-full px-2 py-1 text-xs font-medium",
-                            ticket.status === "SCANNED" ||
-                              ticket.status === "VALIDATED"
-                              ? "bg-green-500/20 text-green-400"
-                              : ticket.status === "PENDING"
-                                ? "bg-yellow-500/20 text-yellow-400"
-                                : "bg-gray-500/20 text-gray-400"
-                          )}
-                        >
-                          {ticket.status}
-                        </span>
-                        {isUsable && (
-                          <Link
-                            href={`/profile/tickets/${ticket.shortId}`}
-                            className="text-sm px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
-                          >
-                            View
-                          </Link>
-                        )}
-                      </div>
+                {order.tickets.map(ticket => (
+                  <Link
+                    key={ticket.id}
+                    href={`/profile/tickets/${ticket.shortId}`}
+                    className="p-4 flex items-center justify-between hover:bg-neutral-700/50 transition-colors group"
+                  >
+                    <div>
+                      <p className="text-neutral-200 font-medium">
+                        {ticket.eventName} – {ticket.ticketHolderName}
+                      </p>
+                      <p className="text-xs text-neutral-500 font-mono mt-1">
+                        {ticket.shortId}
+                      </p>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={clsx(
+                          "rounded-full px-2 py-1 text-xs font-medium",
+                          ticketStatusColors[ticket.status] ||
+                            "bg-gray-500/20 text-gray-400"
+                        )}
+                      >
+                        {ticketStatusLabels[ticket.status] || ticket.status}
+                      </span>
+                      <svg
+                        className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           )}

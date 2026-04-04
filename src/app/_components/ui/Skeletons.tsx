@@ -3,26 +3,27 @@ export function ProfileSidebarSkeleton() {
     <div className="bg-neutral-950 rounded-lg p-6 animate-pulse">
       {/* Avatar */}
       <div className="flex flex-col items-center text-center mb-6">
-        <div className="w-24 h-24 mb-4 rounded-full bg-neutral-800" />
+        <div className="w-24 h-24 mb-4 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30" />
         <div className="h-6 w-32 bg-neutral-800 rounded mb-2" />
         <div className="h-4 w-40 bg-neutral-800 rounded" />
-        <div className="mt-3 flex items-center gap-4">
+        <div className="mt-3 flex items-center justify-center gap-4">
           <div className="h-4 w-20 bg-neutral-800 rounded" />
+          <span className="text-neutral-600">|</span>
           <div className="h-4 w-16 bg-neutral-800 rounded" />
         </div>
       </div>
 
       {/* Wallet Balance */}
-      <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700/30 rounded-lg">
-        <div className="h-3 w-24 bg-neutral-800 rounded mx-auto mb-2" />
-        <div className="h-8 w-20 bg-neutral-800 rounded mx-auto" />
+      <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg">
+        <div className="h-3 w-24 bg-blue-800/50 rounded mx-auto mb-2" />
+        <div className="h-8 w-24 bg-blue-800/50 rounded mx-auto" />
       </div>
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <div className="h-12 bg-neutral-800 rounded-lg" />
-        <div className="h-12 bg-neutral-800 rounded-lg" />
-        <div className="h-12 bg-neutral-800 rounded-lg" />
+        <div className="h-12 bg-blue-600/50 rounded-lg" />
+        <div className="h-12 bg-neutral-700 rounded-lg" />
+        <div className="h-12 bg-neutral-700 rounded-lg" />
       </div>
     </div>
   );
@@ -41,7 +42,7 @@ export function ProfileTableSkeleton({
     <div className="bg-neutral-900 rounded-lg overflow-hidden p-2 max-sm:bg-neutral-800 animate-pulse">
       <div className="flex items-center justify-between p-4 border-b border-neutral-700">
         <h3 className="text-lg font-semibold text-neutral-200">{title}</h3>
-        <div className="h-4 w-16 bg-neutral-700 rounded" />
+        <div className="h-4 w-20 bg-neutral-700 rounded" />
       </div>
 
       <div>
@@ -52,14 +53,16 @@ export function ProfileTableSkeleton({
               i % 2 === 0 ? "bg-neutral-800" : "bg-neutral-700/50"
             }`}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-neutral-700" />
-              <div>
-                <div className="h-4 w-24 bg-neutral-700 rounded mb-1" />
-                <div className="h-3 w-16 bg-neutral-700/70 rounded" />
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="h-4 w-32 bg-neutral-700 rounded" />
+                  <div className="h-5 w-12 bg-emerald-500/20 rounded-full" />
+                </div>
+                <div className="h-3 w-20 bg-neutral-700/50 rounded" />
               </div>
             </div>
-            <div className="h-5 w-16 bg-neutral-700 rounded" />
           </div>
         ))}
       </div>
@@ -72,7 +75,7 @@ export function EventsPromoSkeleton() {
     <div className="bg-neutral-900 rounded-lg overflow-hidden animate-pulse">
       <div className="p-4 border-b border-blue-700/30">
         <div className="h-6 w-40 bg-neutral-800 rounded mb-2" />
-        <div className="h-4 w-56 bg-neutral-800/70 rounded" />
+        <div className="h-4 w-56 bg-neutral-800/50 rounded" />
       </div>
 
       <div className="p-4 space-y-3">
@@ -82,10 +85,13 @@ export function EventsPromoSkeleton() {
             className="flex gap-4 p-3 bg-neutral-900/50 rounded-lg"
           >
             <div className="w-16 h-16 flex-shrink-0 rounded-md bg-neutral-800" />
-            <div className="flex-1">
-              <div className="h-5 w-32 bg-neutral-800 rounded mb-2" />
-              <div className="h-4 w-24 bg-neutral-800/70 rounded mb-2" />
-              <div className="h-5 w-28 bg-green-900/30 rounded" />
+            <div className="flex-1 min-w-0">
+              <div className="h-5 w-36 bg-neutral-800 rounded mb-2" />
+              <div className="h-4 w-28 bg-neutral-800/50 rounded mb-2" />
+              <div className="h-5 w-24 bg-green-400/10 rounded" />
+            </div>
+            <div className="flex items-center">
+              <div className="w-5 h-5 bg-neutral-800 rounded" />
             </div>
           </div>
         ))}
@@ -203,41 +209,57 @@ export function TicketDetailSkeleton() {
     <div className="max-w-lg mx-auto animate-pulse">
       {/* QR Code Section */}
       <div className="bg-neutral-950 rounded-lg p-6 mb-6">
+        {/* Ticket ID */}
         <div className="text-center mb-6">
-          <div className="h-7 w-48 bg-neutral-800 rounded mx-auto mb-2" />
-          <div className="h-4 w-32 bg-neutral-800/70 rounded mx-auto mb-1" />
-          <div className="h-4 w-24 bg-neutral-800/50 rounded mx-auto" />
+          <div className="h-10 w-40 bg-neutral-800 rounded mx-auto mb-2" />
+          <div className="h-4 w-56 bg-neutral-800/50 rounded mx-auto" />
         </div>
 
         {/* Status Badge */}
-        <div className="flex justify-center mb-6">
-          <div className="h-7 w-16 bg-neutral-800 rounded-full" />
+        <div className="flex justify-center gap-2 mb-6">
+          <div className="h-7 w-24 bg-emerald-500/20 rounded-full" />
         </div>
 
         {/* QR Code placeholder */}
         <div className="flex flex-col items-center">
-          <div className="bg-neutral-800 p-4 rounded-xl mb-4">
-            <div className="w-[280px] h-[280px] bg-neutral-700 rounded" />
+          <div className="bg-white p-4 rounded-xl mb-4">
+            <div className="w-[280px] h-[280px] bg-neutral-200 rounded" />
           </div>
-          <div className="h-3 w-48 bg-neutral-800/70 rounded" />
+          <div className="h-3 w-48 bg-neutral-800/70 rounded mb-2" />
+          <div className="h-4 w-32 bg-neutral-800/50 rounded" />
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="space-y-3 mb-6">
+        <div className="h-12 bg-blue-600/50 rounded-lg" />
+        <div className="h-12 bg-black/50 border border-neutral-700 rounded-lg" />
+      </div>
+
+      {/* Event Info Card */}
+      <div className="bg-neutral-800 rounded-lg p-4 mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-lg bg-neutral-700 flex-shrink-0" />
+          <div className="flex-1">
+            <div className="h-5 w-40 bg-neutral-700 rounded mb-2" />
+            <div className="h-4 w-28 bg-neutral-700/70 rounded" />
+          </div>
+          <div className="w-5 h-5 bg-neutral-700 rounded" />
         </div>
       </div>
 
       {/* Ticket Details */}
-      <div className="bg-neutral-800 rounded-lg p-6 mb-6">
-        <div className="h-6 w-32 bg-neutral-700 rounded mb-4" />
+      <div className="p-3 mb-6">
+        <div className="h-6 w-32 bg-neutral-800 rounded mb-4" />
         <div className="space-y-3">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3, 4].map(i => (
             <div key={i} className="flex justify-between">
-              <div className="h-4 w-24 bg-neutral-700 rounded" />
-              <div className="h-4 w-32 bg-neutral-700 rounded" />
+              <div className="h-4 w-24 bg-neutral-800 rounded" />
+              <div className="h-4 w-32 bg-neutral-800 rounded" />
             </div>
           ))}
         </div>
       </div>
-
-      {/* Download Button */}
-      <div className="h-12 bg-neutral-800 rounded-lg" />
     </div>
   );
 }

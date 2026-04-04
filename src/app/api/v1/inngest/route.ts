@@ -7,6 +7,7 @@ import { runOrderCleanupAutomation } from "@/domain/order/operations/runOrderCle
 import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
 import { runSupabaseKeepalive } from "@/domain/supabase/operations/runSupabaseKeepalive";
 import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrderExpiryAutomation";
+import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPosTransactionEmailAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -18,5 +19,6 @@ export const { GET, POST, PUT } = serve({
     runOtcEmailAutomation,
     runSupabaseKeepalive,
     runPosOrderExpiryAutomation,
+    runPosTransactionEmailAutomation,
   ],
 });

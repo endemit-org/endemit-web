@@ -30,7 +30,6 @@ export async function POST(request: Request) {
       orderWeight,
       shippingAddress,
       discountCodeId,
-      subscribeToNewsletter,
       complementaryTicketData,
       shouldHaveShippingAddress,
       subtotal,
@@ -97,11 +96,10 @@ export async function POST(request: Request) {
       userId: currentUser?.id,
     });
 
-    if (subscribeToNewsletter) {
-      const subscriptionResponse = await subscribeEmailToGeneralList(email);
-      if (subscriptionResponse) {
-        await notifyOnNewSubscriber(email, "General Newsletter");
-      }
+    // Subscribe all customers to general email list
+    const subscriptionResponse = await subscribeEmailToGeneralList(email);
+    if (subscriptionResponse.success) {
+      await notifyOnNewSubscriber(email, "General Newsletter");
     }
 
     return NextResponse.json(

@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
 import TicketDownloadButton from "@/app/_components/admin/TicketDownloadButton";
+import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
 
 export async function generateMetadata({
   params,
@@ -189,8 +190,11 @@ export default async function AdminTicketDetailPage({
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
               Actions
             </h2>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap items-start gap-4">
               <TicketDownloadButton ticketId={ticket.id} shortId={ticket.shortId} holderName={ticket.ticketHolderName} />
+              <div className="w-56">
+                <AddToWalletButton ticketHash={ticket.ticketHash} shortId={ticket.shortId} size="sm" />
+              </div>
               <Link
                 href={`/admin/events/${ticket.eventId}`}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-colors"
