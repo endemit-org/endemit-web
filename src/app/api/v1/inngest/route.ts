@@ -8,6 +8,8 @@ import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutom
 import { runSupabaseKeepalive } from "@/domain/supabase/operations/runSupabaseKeepalive";
 import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrderExpiryAutomation";
 import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPosTransactionEmailAutomation";
+import { runEventReminderAutomation } from "@/domain/email/operations/runEventReminderAutomation";
+import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -20,5 +22,7 @@ export const { GET, POST, PUT } = serve({
     runSupabaseKeepalive,
     runPosOrderExpiryAutomation,
     runPosTransactionEmailAutomation,
+    runEventReminderAutomation,
+    runSingleEventReminderAutomation,
   ],
 });

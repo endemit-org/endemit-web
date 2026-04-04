@@ -1,7 +1,7 @@
 "use client";
 
 import { SerializedOrderWithTickets } from "@/domain/order/types/serialized";
-import { formatPrice, formatDateTime } from "@/lib/util/formatting";
+import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
 import clsx from "clsx";
 import Link from "next/link";
 
@@ -81,7 +81,7 @@ export default function OrderDetailsDialog({
                   )}
                   <div className="flex justify-between">
                     <span className="text-gray-600">Email:</span>
-                    <span className="font-medium">{order.email}</span>
+                    <span className="font-medium">{formatEmailForDisplay(order.email)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Date:</span>
@@ -153,7 +153,7 @@ export default function OrderDetailsDialog({
                           <div>
                             <p className="font-medium">{ticket.eventName}</p>
                             <p className="text-sm text-gray-500">
-                              {ticket.ticketHolderName} • {ticket.ticketPayerEmail}
+                              {ticket.ticketHolderName} • {formatEmailForDisplay(ticket.ticketPayerEmail)}
                             </p>
                             <p className="text-xs text-gray-400 font-mono mt-1">
                               {ticket.shortId}

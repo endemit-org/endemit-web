@@ -2,7 +2,7 @@
 
 import { Column, Table } from "@/app/_components/table/Table";
 import { SerializedOrder } from "@/domain/order/types/serialized";
-import { formatPrice, formatDateTime } from "@/lib/util/formatting";
+import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
 import clsx from "clsx";
 
 const statusColors: Record<string, string> = {
@@ -38,7 +38,7 @@ export default function OrdersTable({
       header: "Email",
       sortable: true,
       render: order => (
-        <span className="text-sm">{order.email}</span>
+        <span className="text-sm">{formatEmailForDisplay(order.email)}</span>
       ),
     },
     {

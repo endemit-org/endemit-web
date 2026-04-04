@@ -55,6 +55,7 @@ interface TicketContentProps {
   } | null;
   initialScannedAt: string | null;
   formattedEventDate: string | null;
+  isEventPassed?: boolean;
 }
 
 export default function TicketContent({
@@ -62,6 +63,7 @@ export default function TicketContent({
   event,
   initialScannedAt,
   formattedEventDate,
+  isEventPassed = false,
 }: TicketContentProps) {
   const [status, setStatus] = useState(ticket.status);
   const [scannedAt, setScannedAt] = useState<string | null>(initialScannedAt);
@@ -75,7 +77,8 @@ export default function TicketContent({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [qrContent, setQrContent] = useState(ticket.qrContent);
 
-  const isUsable = status === "VALIDATED" || status === "PENDING";
+  const hasUsableStatus = status === "VALIDATED" || status === "PENDING";
+  const isUsable = hasUsableStatus && !isEventPassed;
   const qrData = qrContent ? JSON.stringify(qrContent) : ticket.ticketHash;
 
   // Rotate QR code hash every 5 seconds for anti-screenshot protection
@@ -173,6 +176,35 @@ export default function TicketContent({
 
   return (
     <div className="max-w-lg mx-auto">
+      {/* Event Passed Banner */}
+      {isEventPassed && hasUsableStatus && (
+        <div className="mb-4 p-4 rounded-lg bg-amber-900/30 border border-amber-600/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+              <svg
+                className="w-5 h-5 text-amber-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-amber-300 font-medium">Event has ended</p>
+              <p className="text-amber-400/70 text-sm">
+                This ticket was not used at the event
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* QR Code Section */}
       <div
         className={` rounded-lg p-6 mb-6 transition-all duration-500 relative overflow-hidden ${

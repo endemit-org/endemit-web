@@ -118,3 +118,21 @@ export const sanitizeForFilename = (name: string): string => {
     .replace(/^-|-$/g, "")
     .slice(0, 50);
 };
+
+/**
+ * Checks if an email is a placeholder/import email that shouldn't be displayed.
+ */
+export const isPlaceholderEmail = (email: string): boolean => {
+  return email.endsWith("@import.endemit.org");
+};
+
+/**
+ * Formats an email for display, returning a fallback for placeholder or null emails.
+ */
+export const formatEmailForDisplay = (
+  email: string | null | undefined,
+  fallback: string = "No email"
+): string => {
+  if (!email) return fallback;
+  return isPlaceholderEmail(email) ? fallback : email;
+};

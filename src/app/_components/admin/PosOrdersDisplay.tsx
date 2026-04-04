@@ -5,6 +5,7 @@ import type { PosOrderStatus } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import { formatEmailForDisplay } from "@/lib/util/formatting";
 
 interface Props {
   initialOrders: PosOrderWithRelations[];
@@ -166,7 +167,7 @@ export default function PosOrdersDisplay({
                         {order.customer.name || "Unnamed"}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {order.customer.email || ""}
+                        {order.customer.email ? formatEmailForDisplay(order.customer.email, "") : ""}
                       </div>
                     </div>
                   ) : (
@@ -290,7 +291,7 @@ export default function PosOrdersDisplay({
                 <div>
                   <span className="text-gray-500">Seller</span>
                   <div className="mt-1 font-medium">
-                    {selectedOrder.seller.name || selectedOrder.seller.email || "Unknown"}
+                    {selectedOrder.seller.name || formatEmailForDisplay(selectedOrder.seller.email, "Unknown")}
                   </div>
                 </div>
                 <div>
@@ -298,8 +299,7 @@ export default function PosOrdersDisplay({
                   <div className="mt-1 font-medium">
                     {selectedOrder.customer
                       ? selectedOrder.customer.name ||
-                        selectedOrder.customer.email ||
-                        "Unknown"
+                        formatEmailForDisplay(selectedOrder.customer.email, "Unknown")
                       : "None"}
                   </div>
                 </div>
