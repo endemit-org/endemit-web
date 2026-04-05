@@ -22,8 +22,6 @@ export default function EventsList({ initialData }: EventsListProps) {
   const [currentPage, setCurrentPage] = useState(initialData.page);
   const [totalPages, setTotalPages] = useState(initialData.totalPages);
   const [totalCount, setTotalCount] = useState(initialData.totalCount);
-  const [totalRevenue, setTotalRevenue] = useState(initialData.totalRevenue);
-  const [totalSold, setTotalSold] = useState(initialData.totalSold);
   const [activeCount, setActiveCount] = useState(initialData.activeCount);
   const [completedCount, setCompletedCount] = useState(initialData.completedCount);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,8 +35,6 @@ export default function EventsList({ initialData }: EventsListProps) {
       setCurrentPage(data.page);
       setTotalPages(data.totalPages);
       setTotalCount(data.totalCount);
-      setTotalRevenue(data.totalRevenue);
-      setTotalSold(data.totalSold);
       setActiveCount(data.activeCount);
       setCompletedCount(data.completedCount);
     } finally {
@@ -58,16 +54,6 @@ export default function EventsList({ initialData }: EventsListProps) {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          <div className="text-sm text-gray-600">
-            Revenue:{" "}
-            <strong className="text-green-600 text-lg">
-              {formatPrice(totalRevenue)}
-            </strong>
-          </div>
-          <div className="text-sm text-gray-600">
-            Sold:{" "}
-            <strong className="text-gray-900 text-lg">{totalSold}</strong>
-          </div>
           <div className="text-sm text-gray-600">
             Events: <strong className="text-gray-900">{totalCount}</strong>
           </div>

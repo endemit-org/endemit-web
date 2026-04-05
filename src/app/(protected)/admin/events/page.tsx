@@ -4,6 +4,7 @@ import { fetchEventsForAdmin } from "@/domain/event/actions/fetchEventsForAdminA
 import EventsList from "@/app/_components/admin/EventsList";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import { formatPrice } from "@/lib/util/formatting";
 
 export const metadata: Metadata = {
   title: "Events  •  Admin",
@@ -40,9 +41,9 @@ export default async function AdminEventsPage() {
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Active</div>
-          <div className="mt-1 text-2xl font-semibold text-gray-900">
-            {initialData.activeCount.toLocaleString()}
+          <div className="text-sm font-medium text-gray-500">Revenue</div>
+          <div className="mt-1 text-2xl font-semibold text-green-600">
+            {formatPrice(initialData.totalRevenue)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">

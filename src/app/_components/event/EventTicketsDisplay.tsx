@@ -41,11 +41,9 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
       </div>
       <div className={"text-sm text-neutral-400 flex gap-x-1.5 items-center"}>
         <span className={"flex gap-x-1 opacity-65"}>
-          {Array(ticketQuantity)
-            .keys()
-            .map(i => (
-              <TicketIcon key={`ticket-icon-${i}`} />
-            ))}
+          {[...Array(ticketQuantity).keys()].map(i => (
+            <TicketIcon key={`ticket-icon-${i}`} />
+          ))}
         </span>
         <span>
           {quantitySuffix} - {formatPrice(product.price)}
