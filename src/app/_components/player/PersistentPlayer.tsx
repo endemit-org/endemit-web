@@ -70,18 +70,6 @@ export function PersistentPlayer() {
     }
   }, []);
 
-  useEffect(() => {
-    if (isVisible) {
-      const height = isExpanded ? EXPANDED_HEIGHT : COLLAPSED_HEIGHT;
-      document.body.style.paddingBottom = `${height}px`;
-    } else {
-      document.body.style.paddingBottom = "0";
-    }
-
-    return () => {
-      document.body.style.paddingBottom = "0";
-    };
-  }, [isVisible, isExpanded]);
 
   // Initialize widget and bind events
   useEffect(() => {
