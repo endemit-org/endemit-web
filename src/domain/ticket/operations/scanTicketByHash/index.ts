@@ -10,6 +10,9 @@ export const TICKET_ALREADY_SCANNED_MESSAGE =
 export const TICKET_INVALID_HASH_MESSAGE =
   "Invalid ticket - hash verification failed.";
 
+export const TICKET_REFUNDED_MESSAGE =
+  "This ticket has been refunded and is no longer valid.";
+
 export const scanTicketByHash = async (ticketHash: string) => {
   const ticket = await prisma.ticket.findUnique({
     where: {
@@ -19,6 +22,10 @@ export const scanTicketByHash = async (ticketHash: string) => {
 
   if (!ticket) {
     throw new Error("Ticket not found");
+  }
+
+  if (ticket.status === "REFUNDED") {
+    throw new Error(TICKET_REFUNDED_MESSAGE);
   }
 
   if (ticket.attended || ticket.status === "SCANNED" || ticket.scanCount > 0) {
@@ -58,6 +65,10 @@ export const scanTicketByPayload = async (payload: QrTicketPayload) => {
   const isValidHash = verifyTicketHash(payload);
   if (!isValidHash) {
     throw new Error(TICKET_INVALID_HASH_MESSAGE);
+  }
+
+  if (ticket.status === "REFUNDED") {
+    throw new Error(TICKET_REFUNDED_MESSAGE);
   }
 
   if (ticket.attended || ticket.status === "SCANNED" || ticket.scanCount > 0) {

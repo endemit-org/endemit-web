@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import {
   TICKET_ALREADY_SCANNED_MESSAGE,
   TICKET_INVALID_HASH_MESSAGE,
+  TICKET_REFUNDED_MESSAGE,
   scanTicketByPayload,
 } from "@/domain/ticket/operations/scanTicketByHash";
 import { getTicketSummaryForEvent } from "@/domain/ticket/operations/getTicketSummaryForEvent";
@@ -47,6 +48,17 @@ export const scanTicketAtEventAction = async ({
         success: false as const,
         reason: "invalid_hash" as const,
         message: TICKET_INVALID_HASH_MESSAGE,
+      };
+    }
+
+    if (
+      error instanceof Error &&
+      error.message === TICKET_REFUNDED_MESSAGE
+    ) {
+      return {
+        success: false as const,
+        reason: "refunded" as const,
+        message: TICKET_REFUNDED_MESSAGE,
       };
     }
 
