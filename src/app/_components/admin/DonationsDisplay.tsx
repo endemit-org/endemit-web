@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
+import { formatPrice, formatEmailForDisplay } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import Pagination from "@/app/_components/table/Pagination";
 import { fetchDonations } from "@/domain/order/actions/fetchDonationsAction";
 import type {
@@ -117,7 +118,7 @@ export default function DonationsDisplay({
                     className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                   >
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {formatDateTime(new Date(donation.createdAt))}
+                      <ClientDate date={donation.createdAt} />
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                       {donation.orderName || "Anonymous"}

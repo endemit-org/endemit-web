@@ -1,8 +1,8 @@
 "use client";
 
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
-import { formatDateTime } from "@/lib/util/formatting";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
 
 interface WalletTransactionsTableProps {
@@ -65,7 +65,7 @@ export default function WalletTransactionsTable({
           {transactions.map(tx => (
             <tr key={tx.id}>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                {formatDateTime(new Date(tx.createdAt))}
+                <ClientDate date={tx.createdAt} />
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <span

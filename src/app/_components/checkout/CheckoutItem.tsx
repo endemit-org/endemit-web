@@ -4,7 +4,8 @@ import {
 } from "@/domain/product/businessLogic";
 import { ensureTypeIsDate } from "@/lib/util/util";
 import Link from "next/link";
-import { formatDateTime, formatDecimalPrice } from "@/lib/util/formatting";
+import { formatDecimalPrice } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import CartQtyControl from "@/app/_components/cart/CartQtyControl";
 import shippingService from "@/lib/services/shipping";
 import { CountryCode } from "@/domain/checkout/types/country";
@@ -110,7 +111,7 @@ export default function CheckoutItem({
             isProductSellableByCutoffDate(item) && (
               <div className="text-neutral-400  text-sm pt-2">
                 This item is available for sale until{" "}
-                {formatDateTime(ensureTypeIsDate(item.limits.cutoffTimestamp))}
+                <ClientDate date={ensureTypeIsDate(item.limits.cutoffTimestamp)} />
               </div>
             )}
         </>

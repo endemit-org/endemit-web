@@ -6,6 +6,7 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import WalletIcon from "@/app/_components/icon/WalletIcon";
 import ProfileTable, { ProfileTableRow } from "./ProfileTable";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
 
 interface ProfileTransactionsPreviewProps {
@@ -81,13 +82,7 @@ export default function ProfileTransactionsPreview({
       emptyIcon={<WalletIcon className="w-6 h-6 text-neutral-500" />}
       emptyMessage="No transactions yet"
     >
-      {transactions.map((tx, index) => {
-        const formattedDate = new Date(tx.createdAt).toLocaleDateString(
-          "en-US",
-          { month: "short", day: "numeric" }
-        );
-
-        return (
+      {transactions.map((tx, index) => (
           <ProfileTableRow
             key={tx.id}
             href={`/profile/transactions/${tx.id}`}
@@ -108,7 +103,11 @@ export default function ProfileTransactionsPreview({
                 <div className="text-neutral-200 text-sm">
                   {typeLabels[tx.type] || tx.type}
                 </div>
-                <div className="text-xs text-neutral-500">{formattedDate}</div>
+                <ClientDate
+                  date={tx.createdAt}
+                  format="date"
+                  className="text-xs text-neutral-500"
+                />
               </div>
             </div>
             <div
@@ -121,8 +120,7 @@ export default function ProfileTransactionsPreview({
               {formatTokensFromCents(tx.amount)}
             </div>
           </ProfileTableRow>
-        );
-      })}
+      ))}
     </ProfileTable>
   );
 }
