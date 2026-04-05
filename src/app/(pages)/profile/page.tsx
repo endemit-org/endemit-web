@@ -10,6 +10,7 @@ import {
   ProfileTableSkeleton,
   EventsPromoSkeleton,
   ProfileEventsAttendedSkeleton,
+  ProfileAccessButtonsSkeleton,
 } from "@/app/_components/ui/Skeletons";
 import ProfileSidebarAsync from "@/app/_components/profile/async/ProfileSidebarAsync";
 import ProfileTransactionsAsync from "@/app/_components/profile/async/ProfileTransactionsAsync";
@@ -18,6 +19,7 @@ import ProfileOrdersAsync from "@/app/_components/profile/async/ProfileOrdersAsy
 import ProfileEventsAttendedAsync from "@/app/_components/profile/async/ProfileEventsAttendedAsync";
 import ProfileUpcomingEventsAsync from "@/app/_components/profile/async/ProfileUpcomingEventsAsync";
 import ProfileAnnouncementsAsync from "@/app/_components/profile/async/ProfileAnnouncementsAsync";
+import ProfileAccessButtonsAsync from "@/app/_components/profile/async/ProfileAccessButtonsAsync";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -66,6 +68,11 @@ export default async function ProfilePage() {
 
           {/* Main content - streams progressively */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
+            {/* Access buttons for staff (admin, POS, scanner) */}
+            <Suspense fallback={<ProfileAccessButtonsSkeleton />}>
+              <ProfileAccessButtonsAsync userId={user.id} />
+            </Suspense>
+
             <Suspense fallback={<EventsPromoSkeleton />}>
               <ProfileUpcomingEventsAsync userId={user.id} />
             </Suspense>
