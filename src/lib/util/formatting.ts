@@ -4,10 +4,11 @@ export const formatPrice = (price: number, decimals: number = 0) => {
     currency: "EUR",
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
+    useGrouping: true,
   });
 };
 
-export const formatDecimalPrice = (price: number) => formatPrice(price, 0);
+export const formatDecimalPrice = (price: number) => formatPrice(price, 2);
 
 export const formatCurrency = (amount: number) => {
   return amount.toLocaleString("sl-SI", {
@@ -15,6 +16,7 @@ export const formatCurrency = (amount: number) => {
     currency: "EUR",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
+    useGrouping: true,
   });
 };
 

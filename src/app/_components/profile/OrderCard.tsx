@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { SerializedOrder } from "@/domain/order/types/serialized";
 import type { ProductInOrder } from "@/domain/order/types/order";
+import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface OrderCardProps {
   order: SerializedOrder;
@@ -18,12 +19,6 @@ const statusColors: Record<string, string> = {
 
 export default function OrderCard({ order }: OrderCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const formattedDate = new Date(order.createdAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 
   const items = order.items as ProductInOrder[];
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -57,7 +52,11 @@ export default function OrderCard({ order }: OrderCardProps) {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-neutral-400">{formattedDate}</span>
+            <ClientDate
+              date={order.createdAt}
+              format="date"
+              className="text-sm text-neutral-400"
+            />
             <svg
               className={`w-5 h-5 text-neutral-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
               fill="none"

@@ -18,6 +18,7 @@ import StripeProvider from "@/app/_components/checkout/StripeProvider";
 import PaymentForm from "@/app/_components/checkout/PaymentForm";
 import confetti from "canvas-confetti";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/util/formatting";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 import ProductSection from "@/app/_components/product/ProductSection";
 import CheckoutCashlessTopUp from "@/app/_components/checkout/CheckoutCashlessTopUp";
@@ -284,10 +285,7 @@ export default function Checkout({
                     <div className="flex justify-between text-lg">
                       <span>Subtotal:</span>
                       <span className="font-medium">
-                        {displayTotals.subTotal.toLocaleString("de-DE", {
-                          style: "currency",
-                          currency: "EUR",
-                        })}
+                        {formatCurrency(displayTotals.subTotal)}
                       </span>
                     </div>
                   </div>

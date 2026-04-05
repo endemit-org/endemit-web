@@ -39,7 +39,7 @@ export default async function AdminWalletsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Total Balance</div>
-          <div className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="mt-1 text-2xl font-semibold text-green-600">
             {formatTokensFromCents(stats.totalBalance)}
           </div>
         </div>

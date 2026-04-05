@@ -9,15 +9,9 @@ export default async function ProtectedLayout({
   const user = await getCurrentUser();
 
   return (
-    <body
-      className="m-auto overflow-y-scroll bg-neutral-950 "
-      style={{
-        backgroundImage: "url('/images/endemit-pattern.svg')",
-        backgroundSize: "110px",
-      }}
-    >
-      <div className="min-h-screen ">{children}</div>
+    <>
+      <div className="min-h-screen">{children}</div>
       <SessionGuard hasUser={!!user} />
-    </body>
+    </>
   );
 }

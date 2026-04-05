@@ -25,6 +25,7 @@ export function formatTokens(
   const formatted = amount.toLocaleString(TOKEN_CONFIG.locale, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
+    useGrouping: true,
   });
   return `${formatted} ${TOKEN_CONFIG.symbol}`;
 }

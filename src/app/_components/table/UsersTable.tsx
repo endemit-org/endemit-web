@@ -2,7 +2,7 @@
 
 import { Column, Table } from "@/app/_components/table/Table";
 import type { SerializedUser } from "@/domain/user/types";
-import { formatDateTime } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
 
 const roleColors: Record<string, string> = {
@@ -70,11 +70,11 @@ export default function UsersTable({
       header: "Last Login",
       sortable: true,
       render: user => (
-        <span className="text-sm text-gray-600">
-          {user.lastLoginAt
-            ? formatDateTime(new Date(user.lastLoginAt))
-            : "Never"}
-        </span>
+        user.lastLoginAt ? (
+          <ClientDate date={user.lastLoginAt} className="text-sm text-gray-600" />
+        ) : (
+          <span className="text-sm text-gray-600">Never</span>
+        )
       ),
       accessor: user =>
         user.lastLoginAt ? new Date(user.lastLoginAt).getTime() : 0,
