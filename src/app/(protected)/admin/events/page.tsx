@@ -35,15 +35,15 @@ export default async function AdminEventsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Total Events</div>
-          <div className="mt-1 text-2xl font-semibold text-gray-900">
-            {initialData.totalCount.toLocaleString()}
+          <div className="text-sm font-medium text-gray-500">Total revenue</div>
+          <div className="mt-1 text-2xl font-semibold text-green-600">
+            {formatPrice(initialData.totalRevenue)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Revenue</div>
-          <div className="mt-1 text-2xl font-semibold text-green-600">
-            {formatPrice(initialData.totalRevenue)}
+          <div className="text-sm font-medium text-gray-500">Total Events</div>
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
+            {initialData.totalCount.toLocaleString()}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">

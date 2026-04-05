@@ -22,34 +22,35 @@ export default async function AdminPosOrdersPage() {
     redirect("/admin");
   }
 
-  const [ordersResult, registers, stats, paidOrdersWithItems] = await Promise.all([
-    getAllPosOrders({ page: 1 }),
-    prisma.posRegister.findMany({
-      select: { id: true, name: true },
-      orderBy: { name: "asc" },
-    }),
-    prisma.posOrder.groupBy({
-      by: ["status"],
-      _count: true,
-      _sum: {
-        tipAmount: true,
-      },
-    }),
-    // Get paid orders with items to calculate revenue (DEBIT only) and top-ups (CREDIT)
-    prisma.posOrder.findMany({
-      where: { status: "PAID" },
-      select: {
-        items: {
-          select: {
-            total: true,
-            item: {
-              select: { direction: true },
+  const [ordersResult, registers, stats, paidOrdersWithItems] =
+    await Promise.all([
+      getAllPosOrders({ page: 1 }),
+      prisma.posRegister.findMany({
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      }),
+      prisma.posOrder.groupBy({
+        by: ["status"],
+        _count: true,
+        _sum: {
+          tipAmount: true,
+        },
+      }),
+      // Get paid orders with items to calculate revenue (DEBIT only) and top-ups (CREDIT)
+      prisma.posOrder.findMany({
+        where: { status: "PAID" },
+        select: {
+          items: {
+            select: {
+              total: true,
+              item: {
+                select: { direction: true },
+              },
             },
           },
         },
-      },
-    }),
-  ]);
+      }),
+    ]);
 
   const statusCounts = Object.fromEntries(
     stats.map(s => [s.status, { count: s._count }])
@@ -90,13 +91,13 @@ export default async function AdminPosOrdersPage() {
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Paid</div>
-          <div className="mt-1 text-2xl font-semibold text-green-600">
+          <div className="mt-1 text-2xl font-semibold text-gray-900">
             {statusCounts.PAID?.count ?? 0}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">Revenue</div>
-          <div className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="mt-1 text-2xl font-semibold text-green-600">
             {formatTokensFromCents(totalRevenue)}
           </div>
         </div>
@@ -107,7 +108,9 @@ export default async function AdminPosOrdersPage() {
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Cash to Collect</div>
+          <div className="text-sm font-medium text-gray-500">
+            Cash to Collect
+          </div>
           <div className="mt-1 text-2xl font-semibold text-red-600">
             {formatTokensFromCents(totalTopUps)}
           </div>
