@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 export function LogoutButton() {
   const router = useRouter();
 
-  const handleLogout = async () => {
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     try {
       const response = await fetch("/api/v1/auth/logout", {
         method: "POST",
@@ -15,7 +18,7 @@ export function LogoutButton() {
         const redirectTo = window.location.pathname || "";
 
         router.push(
-          `/auth/sign-in${redirectTo ? `?redirect=${redirectTo}` : ""}`
+          `/signin${redirectTo ? `?callbackUrl=${encodeURIComponent(redirectTo)}` : ""}`
         );
         router.refresh();
       }
@@ -24,5 +27,13 @@ export function LogoutButton() {
     }
   };
 
-  return <span onClick={handleLogout}>Sign out</span>;
+  return (
+    <button
+      type="button"
+      onClick={handleLogout}
+      className="w-full text-left"
+    >
+      Sign out
+    </button>
+  );
 }

@@ -10,7 +10,6 @@ import {
   ProfileTableSkeleton,
   EventsPromoSkeleton,
   ProfileEventsAttendedSkeleton,
-  ProfileAccessButtonsSkeleton,
 } from "@/app/_components/ui/Skeletons";
 import ProfileSidebarAsync from "@/app/_components/profile/async/ProfileSidebarAsync";
 import ProfileTransactionsAsync from "@/app/_components/profile/async/ProfileTransactionsAsync";
@@ -69,7 +68,7 @@ export default async function ProfilePage() {
           {/* Main content - streams progressively */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
             {/* Access buttons for staff (admin, POS, scanner) */}
-            <Suspense fallback={<ProfileAccessButtonsSkeleton />}>
+            <Suspense fallback={null}>
               <ProfileAccessButtonsAsync userId={user.id} />
             </Suspense>
 

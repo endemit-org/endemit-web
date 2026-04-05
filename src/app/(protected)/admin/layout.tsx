@@ -13,7 +13,7 @@ export default async function AdminLayout({
 
   // Redirect to sign-in if not authenticated
   if (!user) {
-    redirect("/auth/sign-in");
+    redirect("/signin?callbackUrl=/admin");
   }
 
   // Check if user has admin access permission

@@ -231,7 +231,7 @@ export default function OtcEmailForm() {
               {error.includes("password") && (
                 <div className="mt-3">
                   <Link
-                    href="/auth/sign-in"
+                    href="/signin/password"
                     className="text-sm text-blue-400 hover:text-blue-300 underline"
                   >
                     Sign in with password

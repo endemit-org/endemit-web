@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -257,41 +258,44 @@ export default function ProfileSidebar({
         />
       )}
 
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          onClick={() => setShowLogoutConfirm(false)}
-        >
+      {/* Logout Confirmation Modal - rendered via portal */}
+      {showLogoutConfirm &&
+        typeof document !== "undefined" &&
+        createPortal(
           <div
-            className="bg-neutral-900 rounded-xl p-6 max-w-sm w-full mx-4"
-            onClick={e => e.stopPropagation()}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowLogoutConfirm(false)}
           >
-            <h3 className="text-lg font-semibold text-neutral-200 mb-2">
-              Sign Out
-            </h3>
-            <p className="text-sm text-neutral-400 mb-6">
-              Are you sure you want to sign out of your account?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowLogoutConfirm(false)}
-                disabled={isLoggingOut}
-                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-200 bg-neutral-700 hover:bg-neutral-600 rounded-lg transition-colors disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
-              >
-                {isLoggingOut ? "Signing out..." : "Sign Out"}
-              </button>
+            <div
+              className="bg-neutral-900 rounded-xl p-6 max-w-sm w-full mx-4"
+              onClick={e => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold text-neutral-200 mb-2">
+                Sign Out
+              </h3>
+              <p className="text-sm text-neutral-400 mb-6">
+                Are you sure you want to sign out of your account?
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  disabled={isLoggingOut}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-neutral-200 bg-neutral-700 hover:bg-neutral-600 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isLoggingOut ? "Signing out..." : "Sign Out"}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
