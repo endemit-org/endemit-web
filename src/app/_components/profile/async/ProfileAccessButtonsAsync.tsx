@@ -133,18 +133,31 @@ export default async function ProfileAccessButtonsAsync({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-      {buttons.map(button => (
-        <Link
-          key={button.href}
-          href={button.href}
-          target="_blank"
-          className={`flex items-center justify-center gap-2 px-4 py-3 ${button.bgColor} ${button.hoverColor} text-white font-medium rounded-lg transition-colors`}
+    <div className="flex mb-6 bg-neutral-950 rounded-lg overflow-hidden border border-neutral-800">
+      {/* Vertical CREW label */}
+      <div className="flex items-center justify-center px-2 bg-neutral-900 border-r border-neutral-800">
+        <span
+          className="text-white/80 text-xs font-bold tracking-widest"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
-          {button.icon}
-          <span>{button.label}</span>
-        </Link>
-      ))}
+          CREW
+        </span>
+      </div>
+
+      {/* Buttons grid */}
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 p-3">
+        {buttons.map(button => (
+          <Link
+            key={button.href}
+            href={button.href}
+            target="_blank"
+            className={`flex items-center justify-center gap-2 px-4 py-3 ${button.bgColor} ${button.hoverColor} text-white font-medium rounded-lg transition-colors`}
+          >
+            {button.icon}
+            <span>{button.label}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
