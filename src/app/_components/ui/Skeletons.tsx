@@ -137,6 +137,19 @@ export function ProfileEventsAttendedSkeleton() {
   );
 }
 
+export function ProfileAccessButtonsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 animate-pulse">
+      {[1, 2, 3].map(i => (
+        <div
+          key={i}
+          className="h-14 bg-neutral-800 rounded-lg"
+        />
+      ))}
+    </div>
+  );
+}
+
 // Back link skeleton used in subpages
 export function BackLinkSkeleton() {
   return (

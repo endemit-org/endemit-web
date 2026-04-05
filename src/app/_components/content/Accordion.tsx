@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import ItemToggleIcon from "@/app/_components/icon/ItemToggleIcon";
 
 export interface AccordionItem {
@@ -32,8 +32,78 @@ export default function Accordion({
   );
   const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isInViewRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const expandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-expand specified item when it comes into view
+  // Function to attempt auto-expand when conditions are met
+  const tryAutoExpand = useCallback(() => {
+    if (hasAutoExpanded || autoExpandIndexOnView === undefined) return;
+
+    // Clear any existing expand timeout
+    if (expandTimeoutRef.current) {
+      clearTimeout(expandTimeoutRef.current);
+      expandTimeoutRef.current = null;
+    }
+
+    // Only start timer if in view
+    if (isInViewRef.current) {
+      expandTimeoutRef.current = setTimeout(() => {
+        // Only auto-expand if no item is currently selected
+        setOpenIndexes(current => {
+          if (current.length === 0) {
+            setHasAutoExpanded(true);
+            return [autoExpandIndexOnView];
+          }
+          // User already selected something, don't override
+          setHasAutoExpanded(true); // Prevent future auto-expand attempts
+          return current;
+        });
+      }, autoExpandDelay);
+    }
+  }, [autoExpandDelay, autoExpandIndexOnView, hasAutoExpanded]);
+
+  // Track scroll state - cancel and restart expand timer on scroll
+  useEffect(() => {
+    if (
+      autoExpandIndexOnView === undefined ||
+      hasAutoExpanded ||
+      items.length <= 1
+    )
+      return;
+
+    const handleScroll = () => {
+      // Cancel expand timer while scrolling
+      if (expandTimeoutRef.current) {
+        clearTimeout(expandTimeoutRef.current);
+        expandTimeoutRef.current = null;
+      }
+
+      // Reset scroll timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // After scroll stops, try to auto-expand
+      scrollTimeoutRef.current = setTimeout(() => {
+        tryAutoExpand();
+      }, 150); // 150ms after scroll stops
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      if (expandTimeoutRef.current) {
+        clearTimeout(expandTimeoutRef.current);
+      }
+    };
+  }, [autoExpandIndexOnView, hasAutoExpanded, items.length, tryAutoExpand]);
+
+  // Auto-expand specified item when it comes into view and user stops scrolling
   useEffect(() => {
     if (
       autoExpandIndexOnView === undefined ||
@@ -44,12 +114,17 @@ export default function Accordion({
 
     const observer = new IntersectionObserver(
       entries => {
+        isInViewRef.current = entries[0].isIntersecting;
+
         if (entries[0].isIntersecting && !hasAutoExpanded) {
-          const timer = setTimeout(() => {
-            setOpenIndexes([autoExpandIndexOnView]);
-            setHasAutoExpanded(true);
-          }, autoExpandDelay);
-          return () => clearTimeout(timer);
+          // Start expand timer (will be cancelled if user scrolls)
+          tryAutoExpand();
+        } else {
+          // Cancel timer if element leaves view
+          if (expandTimeoutRef.current) {
+            clearTimeout(expandTimeoutRef.current);
+            expandTimeoutRef.current = null;
+          }
         }
       },
       { threshold: 0.5 }
@@ -60,7 +135,7 @@ export default function Accordion({
     }
 
     return () => observer.disconnect();
-  }, [autoExpandIndexOnView, autoExpandDelay, hasAutoExpanded, items.length]);
+  }, [autoExpandIndexOnView, hasAutoExpanded, items.length, tryAutoExpand]);
 
   const toggleItem = (index: number) => {
     if (allowMultiple) {

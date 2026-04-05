@@ -39,6 +39,7 @@ export function PersistentPlayer() {
     currentTrack,
     isVisible,
     isExpanded,
+    isPlaying,
     hasHydrated,
     close,
     toggleExpanded,
@@ -48,11 +49,26 @@ export function PersistentPlayer() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const widgetRef = useRef<ReturnType<typeof window.SC.Widget> | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [showTapOverlay, setShowTapOverlay] = useState(false);
 
   // Hydrate store from localStorage on client mount
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  // Show tap overlay when a new track is loaded (not on initial page load)
+  useEffect(() => {
+    if (currentTrack && !isInitialLoad) {
+      setShowTapOverlay(true);
+    }
+  }, [currentTrack, isInitialLoad]);
+
+  // Hide tap overlay when playing starts
+  useEffect(() => {
+    if (isPlaying) {
+      setShowTapOverlay(false);
+    }
+  }, [isPlaying]);
 
   // Load SoundCloud Widget API
   useEffect(() => {
@@ -69,19 +85,6 @@ export function PersistentPlayer() {
       };
     }
   }, []);
-
-  useEffect(() => {
-    if (isVisible) {
-      const height = isExpanded ? EXPANDED_HEIGHT : COLLAPSED_HEIGHT;
-      document.body.style.paddingBottom = `${height}px`;
-    } else {
-      document.body.style.paddingBottom = "0";
-    }
-
-    return () => {
-      document.body.style.paddingBottom = "0";
-    };
-  }, [isVisible, isExpanded]);
 
   // Initialize widget and bind events
   useEffect(() => {
@@ -117,9 +120,7 @@ export function PersistentPlayer() {
   useEffect(() => {
     if (currentTrack && widgetRef.current && window.SC) {
       // Check if this is initial load from localStorage
-      const shouldAutoplay = isInitialLoad
-        ? getStoredPlayState()
-        : true; // Always autoplay when user clicks a new track
+      const shouldAutoplay = isInitialLoad ? getStoredPlayState() : true; // Always autoplay when user clicks a new track
 
       widgetRef.current.load(currentTrack.url, { auto_play: shouldAutoplay });
 
@@ -191,7 +192,24 @@ export function PersistentPlayer() {
               </div>
             </div>
 
-            <div className={`flex-1 overflow-hidden -pr-1`}>
+            <div className={`flex-1 overflow-hidden -pr-1 relative`}>
+              {/* Mobile tap-to-play overlay - clicks pass through to iframe */}
+              {showTapOverlay && (
+                <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center lg:hidden">
+                  <div className="bg-blue-600 px-4 py-2 rounded-full flex items-center gap-2 animate-pulse shadow-lg">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span className="text-white text-sm font-medium">
+                      Allow play
+                    </span>
+                  </div>
+                </div>
+              )}
               <iframe
                 ref={iframeRef}
                 width="100%"
@@ -199,7 +217,7 @@ export function PersistentPlayer() {
                 scrolling="no"
                 frameBorder="no"
                 allow="autoplay"
-                className={`rounded-none -m-l-[118px] w-[calc(100%+112px)] invert hue-rotate-[185deg] mix-blend-lighten -ml-[110px] -pr-[5px] ${isExpanded ? "" : "-mt-[53px] "}`}
+                className={`rounded-none -m-l-[118px] w-[calc(100%+112px)] invert hue-rotate-[185deg] mix-blend-lighten -ml-[110px] -pr-[5px] ${isExpanded ? "" : "-mt-[53px] "} ${showTapOverlay ? "opacity-0" : ""}`}
                 src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(
                   currentTrack.url
                 )}&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`}

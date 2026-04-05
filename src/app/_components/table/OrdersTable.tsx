@@ -2,7 +2,8 @@
 
 import { Column, Table } from "@/app/_components/table/Table";
 import { SerializedOrder } from "@/domain/order/types/serialized";
-import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
+import { formatPrice, formatEmailForDisplay } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
 
 const statusColors: Record<string, string> = {
@@ -84,9 +85,7 @@ export default function OrdersTable({
       header: "Date",
       sortable: true,
       render: order => (
-        <span className="text-sm text-gray-600">
-          {formatDateTime(new Date(order.createdAt))}
-        </span>
+        <ClientDate date={order.createdAt} className="text-sm text-gray-600" />
       ),
       accessor: order => new Date(order.createdAt).getTime(),
     },

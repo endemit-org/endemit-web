@@ -4,8 +4,8 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import type { SerializedWallet, SerializedWalletTransaction } from "@/domain/wallet/types";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
-import { formatDateTime } from "@/lib/util/formatting";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import WalletTransactionForm from "./WalletTransactionForm";
 import WalletTransactionsTable from "./WalletTransactionsTable";
 
@@ -121,11 +121,11 @@ export default function AdminWalletDetail({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Created:</span>
-              <span>{formatDateTime(new Date(initialWallet.createdAt))}</span>
+              <ClientDate date={initialWallet.createdAt} />
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Last Updated:</span>
-              <span>{formatDateTime(new Date(initialWallet.updatedAt))}</span>
+              <ClientDate date={initialWallet.updatedAt} />
             </div>
           </div>
         </section>

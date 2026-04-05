@@ -17,7 +17,7 @@ export default async function PosPage() {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/auth/sign-in?redirect=/pos");
+    redirect("/signin?callbackUrl=/pos");
   }
 
   const assignments = await prisma.posRegisterSeller.findMany({

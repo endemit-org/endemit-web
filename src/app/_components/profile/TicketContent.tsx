@@ -9,6 +9,7 @@ import ProfileTicketDownloadButton from "./ProfileTicketDownloadButton";
 import LiveTicketIndicator from "./LiveTicketIndicator";
 import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import { formatPrice } from "@/lib/util/formatting";
 import { updateTicketHolderNameAction } from "@/domain/ticket/actions/updateTicketHolderNameAction";
 import { regenerateTicketQrAction } from "@/domain/ticket/actions/regenerateTicketQrAction";
@@ -118,17 +119,6 @@ export default function TicketContent({
     event: "ticket_scanned",
     onMessage: handleScanEvent,
   });
-
-  const formatScannedAt = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   const handleSaveName = async () => {
     const trimmedName = editedName.trim();
@@ -491,9 +481,7 @@ export default function TicketContent({
           {scannedAt && (
             <div className="flex justify-between">
               <span className="text-neutral-400">Scanned at</span>
-              <span className="text-neutral-200">
-                {formatScannedAt(scannedAt)}
-              </span>
+              <ClientDate date={scannedAt} className="text-neutral-200" />
             </div>
           )}
         </div>

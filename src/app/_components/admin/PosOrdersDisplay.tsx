@@ -6,6 +6,7 @@ import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrd
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { formatEmailForDisplay } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface Props {
   initialOrders: PosOrderWithRelations[];
@@ -17,13 +18,6 @@ interface Props {
 
 function formatPrice(cents: number): string {
   return formatTokensFromCents(cents);
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleString("sl-SI", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
 }
 
 const statusStyles: Record<PosOrderStatus, string> = {
@@ -194,7 +188,7 @@ export default function PosOrdersDisplay({
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatDate(order.createdAt)}
+                  <ClientDate date={order.createdAt} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                   <button
@@ -305,19 +299,19 @@ export default function PosOrdersDisplay({
                 </div>
                 <div>
                   <span className="text-gray-500">Created</span>
-                  <div className="mt-1">{formatDate(selectedOrder.createdAt)}</div>
+                  <div className="mt-1"><ClientDate date={selectedOrder.createdAt} /></div>
                 </div>
                 {selectedOrder.paidAt && (
                   <div>
                     <span className="text-gray-500">Paid</span>
-                    <div className="mt-1">{formatDate(selectedOrder.paidAt)}</div>
+                    <div className="mt-1"><ClientDate date={selectedOrder.paidAt} /></div>
                   </div>
                 )}
                 {selectedOrder.cancelledAt && (
                   <div className="col-span-2">
                     <span className="text-gray-500">Cancelled</span>
                     <div className="mt-1">
-                      {formatDate(selectedOrder.cancelledAt)}
+                      <ClientDate date={selectedOrder.cancelledAt} />
                       {selectedOrder.cancelReason && (
                         <span className="text-gray-500 ml-2">
                           ({selectedOrder.cancelReason})

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { fetchTransactionsAction } from "@/domain/wallet/actions/fetchTransactionsAction";
 import type { PaginatedTransactions } from "@/domain/wallet/types";
 import type { WalletTransactionType } from "@prisma/client";
-import { formatDateTime } from "@/lib/util/formatting";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import Pagination from "@/app/_components/table/Pagination";
 import clsx from "clsx";
 
@@ -177,7 +177,7 @@ export default function TransactionsDisplay({
               {transactions.map(tx => (
                 <tr key={tx.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                    {formatDateTime(new Date(tx.createdAt))}
+                    <ClientDate date={tx.createdAt} />
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <Link
