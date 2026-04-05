@@ -2,6 +2,7 @@ import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
+import PlayerContentWrapper from "@/app/_components/player/PlayerContentWrapper";
 
 export default async function ContentPageLayout({
   children,
@@ -11,7 +12,7 @@ export default async function ContentPageLayout({
   const menuItems = await fetchNavigationMenuFromCms();
 
   return (
-    <>
+    <PlayerContentWrapper>
       <div className="max-w-8xl m-auto">
         {menuItems && (
           <Sidebar
@@ -42,6 +43,6 @@ export default async function ContentPageLayout({
         </div>
       </div>
       <PersistentPlayer />
-    </>
+    </PlayerContentWrapper>
   );
 }

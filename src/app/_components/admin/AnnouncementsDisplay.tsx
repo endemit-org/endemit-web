@@ -8,6 +8,7 @@ import { createAnnouncementAction } from "@/domain/announcement/actions/createAn
 import { updateAnnouncementAction } from "@/domain/announcement/actions/updateAnnouncementAction";
 import { deleteAnnouncementAction } from "@/domain/announcement/actions/deleteAnnouncementAction";
 import { AnnouncementType } from "@prisma/client";
+import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface AnnouncementsDisplayProps {
   initialData: AnnouncementWithStatus[];
@@ -380,13 +381,13 @@ export default function AnnouncementsDisplay({
                           {announcement.startsAt && (
                             <div>
                               From:{" "}
-                              {new Date(announcement.startsAt).toLocaleString()}
+                              <ClientDate date={announcement.startsAt} />
                             </div>
                           )}
                           {announcement.endsAt && (
                             <div>
                               Until:{" "}
-                              {new Date(announcement.endsAt).toLocaleString()}
+                              <ClientDate date={announcement.endsAt} />
                             </div>
                           )}
                         </div>

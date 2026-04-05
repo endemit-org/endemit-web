@@ -55,7 +55,7 @@ export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Revenue:{" "}
+            Paid, not complete:{" "}
             <strong className="text-green-600 text-lg">
               {formatPrice(totalRevenue)}
             </strong>

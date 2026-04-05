@@ -18,7 +18,7 @@ export default async function ScanLayout({
 
   // Redirect to sign-in if not authenticated
   if (!user) {
-    redirect("/auth/sign-in?redirect=/scan");
+    redirect("/signin?callbackUrl=/scan");
   }
 
   // Check if user has ticket scanning permission

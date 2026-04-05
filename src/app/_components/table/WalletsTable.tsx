@@ -1,8 +1,8 @@
 "use client";
 
 import type { SerializedWallet } from "@/domain/wallet/types";
-import { formatDateTime } from "@/lib/util/formatting";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface WalletsTableProps {
   wallets: SerializedWallet[];
@@ -73,7 +73,7 @@ export default function WalletsTable({
               </span>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {formatDateTime(new Date(wallet.updatedAt))}
+              <ClientDate date={wallet.updatedAt} />
             </td>
           </tr>
         ))}

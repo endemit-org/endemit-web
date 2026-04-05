@@ -18,7 +18,7 @@ export default async function PosLayout({
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/auth/sign-in?redirect=/pos");
+    redirect("/signin?callbackUrl=/pos");
   }
 
   const hasPosAccess = user.permissions.includes(PERMISSIONS.POS_ACCESS);

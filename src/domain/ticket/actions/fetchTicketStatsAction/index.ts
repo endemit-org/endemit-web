@@ -60,10 +60,14 @@ async function fetchTicketStatsForEventInternal(
 ): Promise<TicketStats> {
   const [total, sold, scanned, pending, validated, cancelled, refunded, revenueResult, guestList] =
     await Promise.all([
-      // Total includes all tickets (guest + sold)
-      prisma.ticket.count({ where: { eventId } }),
-      // Sold excludes guest list tickets
-      prisma.ticket.count({ where: { eventId, isGuestList: false } }),
+      // Total includes all tickets (guest + sold) except refunded
+      prisma.ticket.count({
+        where: { eventId, status: { not: TicketStatus.REFUNDED } }
+      }),
+      // Sold excludes guest list tickets and refunded tickets
+      prisma.ticket.count({
+        where: { eventId, isGuestList: false, status: { not: TicketStatus.REFUNDED } }
+      }),
       prisma.ticket.count({
         where: { eventId, status: TicketStatus.SCANNED },
       }),
@@ -79,9 +83,9 @@ async function fetchTicketStatsForEventInternal(
       prisma.ticket.count({
         where: { eventId, status: TicketStatus.REFUNDED },
       }),
-      // Revenue only from sold tickets (not guest list)
+      // Revenue only from sold tickets (not guest list, not refunded)
       prisma.ticket.aggregate({
-        where: { eventId, isGuestList: false },
+        where: { eventId, isGuestList: false, status: { not: TicketStatus.REFUNDED } },
         _sum: {
           price: true,
         },

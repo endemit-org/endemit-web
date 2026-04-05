@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { terminateSessionAction } from "@/domain/user/actions/terminateSessionAction";
 import { terminateAllSessionsAction } from "@/domain/user/actions/terminateAllSessionsAction";
-import { formatDateTime } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import type { SerializedSession } from "@/domain/user/types";
 
 interface UserSessionsTableProps {
@@ -112,7 +112,7 @@ export default function UserSessionsTable({
             {sessions.map(session => (
               <tr key={session.id}>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                  {formatDateTime(new Date(session.createdAt))}
+                  <ClientDate date={session.createdAt} />
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                   {session.ipAddress || "-"}
@@ -124,7 +124,7 @@ export default function UserSessionsTable({
                   {parseUserAgent(session.userAgent)}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                  {formatDateTime(new Date(session.expiresAt))}
+                  <ClientDate date={session.expiresAt} />
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-right">
                   <button

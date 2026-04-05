@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, TicketStatus } from "@prisma/client";
 
 export const createTicketTransaction = async ({
   eventId,
@@ -43,7 +43,7 @@ export const createTicketTransaction = async ({
     });
 
     const ticketCount = await tx.ticket.count({
-      where: { eventId },
+      where: { eventId, status: { not: TicketStatus.REFUNDED } },
     });
 
     return {

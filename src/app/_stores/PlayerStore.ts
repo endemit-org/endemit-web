@@ -103,6 +103,7 @@ export const usePlayerStore = create<PlayerState>(set => ({
       currentTrack: track,
       isVisible: true,
       isExpanded: false,
+      isPlaying: false, // Reset so tap-to-play overlay shows on mobile
     });
   },
 

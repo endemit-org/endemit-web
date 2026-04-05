@@ -1,7 +1,8 @@
 "use client";
 
 import { SerializedOrderWithTickets } from "@/domain/order/types/serialized";
-import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
+import { formatPrice, formatEmailForDisplay } from "@/lib/util/formatting";
+import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
 import Link from "next/link";
 
@@ -85,9 +86,7 @@ export default function OrderDetailsDialog({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Date:</span>
-                    <span className="font-medium">
-                      {formatDateTime(new Date(order.createdAt))}
-                    </span>
+                    <ClientDate date={order.createdAt} className="font-medium" />
                   </div>
                 </div>
               </section>
