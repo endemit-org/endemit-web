@@ -4,7 +4,7 @@ import { queueNewOrderAutomation } from "@/domain/order/operations/queueNewOrder
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
 import { updateOrderStatusPaid, updateOrderStatusById } from "@/domain/order/operations/updateOrderStatus";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
-import { subscribeOrderToNewsletter } from "@/domain/newsletter/operations/subscribeOrderToNewsletter";
+import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
 import { createTransaction } from "@/domain/wallet/operations/createTransaction";
@@ -137,9 +137,15 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
     }
   }
 
-  // Subscribe to newsletter with tags based on order items
+  // Queue newsletter subscription with tags based on order items
   // This handles: category-based tags, festival tags, Events/LastEvent fields
-  await subscribeOrderToNewsletter(order.email, items, ticketEventIds, order.name);
+  // Using queue to avoid race condition with checkout's basic subscription
+  await queueOrderNewsletterSubscription({
+    email: order.email,
+    items,
+    ticketEventIds,
+    customerName: order.name,
+  });
 
   return order;
 };

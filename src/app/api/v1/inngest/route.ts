@@ -10,6 +10,7 @@ import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrder
 import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPosTransactionEmailAutomation";
 import { runEventReminderAutomation } from "@/domain/email/operations/runEventReminderAutomation";
 import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
+import { runOrderNewsletterAutomation } from "@/domain/newsletter/operations/runOrderNewsletterAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -24,5 +25,6 @@ export const { GET, POST, PUT } = serve({
     runPosTransactionEmailAutomation,
     runEventReminderAutomation,
     runSingleEventReminderAutomation,
+    runOrderNewsletterAutomation,
   ],
 });
