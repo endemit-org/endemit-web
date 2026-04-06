@@ -4,7 +4,7 @@ import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms
 import { subscribeEmailToList } from "@/domain/newsletter/actions/subscribeEmailToList";
 import { getSubscriberFromList } from "@/domain/newsletter/actions/getSubscriberFromList";
 import { EMAIL_NEWSLETTER_GENERAL_LIST_ID } from "@/lib/services/emailOctopus/emailOctopus";
-import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
+import { notifyOnSubscriberUpdated } from "@/domain/notification/operations/notifyOnSubscriberUpdated";
 import {
   determineSubscriberData,
   mergeEventsField,
@@ -63,7 +63,15 @@ export async function subscribeOrderToNewsletter(
   ticketEventIds?: string[],
   customerName?: string | null
 ): Promise<{ success: boolean; isNew?: boolean }> {
+  const logPrefix = `[OrderNewsletter:${email}]`;
   const listId = EMAIL_NEWSLETTER_GENERAL_LIST_ID;
+
+  console.log(`${logPrefix} Starting order newsletter subscription`, {
+    itemCount: items.length,
+    ticketEventIds,
+    customerName: customerName ? "[provided]" : "[none]",
+    categories: [...new Set(items.map(i => i.category))],
+  });
 
   // Fetch event data for all unique ticket events
   const uniqueEventIds = [...new Set(ticketEventIds?.filter(Boolean) ?? [])];
@@ -79,6 +87,11 @@ export async function subscribeOrderToNewsletter(
       });
     }
   }
+
+  console.log(`${logPrefix} Fetched event data`, {
+    eventCount: eventDataList.length,
+    events: eventDataList.map(e => ({ name: e.name, type: e.type })),
+  });
 
   // Determine tags from order items
   const firstEventData = eventDataList[0];
@@ -96,9 +109,17 @@ export async function subscribeOrderToNewsletter(
     }
   }
 
+  console.log(`${logPrefix} Determined tags`, { tags: subscriberData.tags });
+
   // Check if subscriber already exists (for Events field merging and isNew tracking)
   const existingSubscriber = await getSubscriberFromList(email, listId);
   const wasExistingSubscriber = existingSubscriber.exists;
+
+  console.log(`${logPrefix} Existing subscriber check`, {
+    exists: wasExistingSubscriber,
+    existingEvents: existingSubscriber.subscriber?.fields?.Events,
+    existingLastEvent: existingSubscriber.subscriber?.fields?.LastEvent,
+  });
 
   // Build fields object
   const fields: {
@@ -106,7 +127,7 @@ export async function subscribeOrderToNewsletter(
     LastName?: string;
     Events?: string;
     LastEvent?: string;
-    EventCount?: string;
+    EventCount?: number;
     LastEventDate?: string;
   } = {};
 
@@ -145,8 +166,7 @@ export async function subscribeOrderToNewsletter(
     fields.LastEvent = lastEventName;
 
     // EventCount: count unique events from the merged Events field
-    const eventCount = eventsField ? eventsField.split(",").length : 0;
-    fields.EventCount = String(eventCount);
+    fields.EventCount = eventsField ? eventsField.split(",").length : 0;
 
     // LastEventDate: find the latest event date from current order
     const eventsWithDates = eventDataList.filter(e => e.date_start !== null);
@@ -169,18 +189,38 @@ export async function subscribeOrderToNewsletter(
 
   // Subscribe with tags and fields
   const hasFields = Object.keys(fields).length > 0;
+
+  console.log(`${logPrefix} Prepared subscription data`, {
+    tags: subscriberData.tags,
+    fields,
+    hasFields,
+  });
+
   const result = await subscribeEmailToList(email, listId, {
     tags: subscriberData.tags.length > 0 ? subscriberData.tags : undefined,
     fields: hasFields ? fields : undefined,
   });
 
-  // Notify on new subscriber with tags
-  const isNew = result.success && !wasExistingSubscriber;
-  if (isNew && subscriberData.tags.length > 0) {
-    await notifyOnNewSubscriber(
+  // Notify on subscriber update (always when successful)
+  const isNew = !wasExistingSubscriber;
+
+  console.log(`${logPrefix} Subscription result`, {
+    success: result.success,
+    isNew,
+    error: result.error,
+  });
+
+  if (result.success) {
+    const lastEventName = eventDataList.length > 0
+      ? eventDataList[eventDataList.length - 1].name
+      : undefined;
+
+    await notifyOnSubscriberUpdated({
       email,
-      `General Newsletter (${subscriberData.tags.join(", ")})`
-    );
+      tags: subscriberData.tags,
+      eventName: lastEventName,
+      isNew,
+    });
   }
 
   return {

@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     assert(email, "Email is required");
 
     const subscriptionResponse = await subscribeEmailToGeneralList(email);
-    if (subscriptionResponse) {
+    if (subscriptionResponse.success && subscriptionResponse.isNew) {
       await notifyOnNewSubscriber(email, "General Newsletter");
     }
 

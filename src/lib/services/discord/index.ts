@@ -3,16 +3,32 @@ import {
   DiscordWebhookPayload,
 } from "@/domain/notification/types/discord";
 
+/**
+ * Discord webhook connector with load balancing support.
+ *
+ * Accepts a comma-delimited string of webhook URLs.
+ * On each send, a random webhook is selected from the pool.
+ */
 class DiscordConnector {
-  readonly webhookUrl: string;
+  readonly webhookUrls: string[];
 
-  constructor(webhookUrl: string) {
-    this.webhookUrl = webhookUrl;
+  constructor(webhookUrls: string) {
+    this.webhookUrls = webhookUrls
+      .split(",")
+      .map(url => url.trim())
+      .filter(url => url.length > 0);
+  }
+
+  private getRandomWebhook(): string {
+    const index = Math.floor(Math.random() * this.webhookUrls.length);
+    return this.webhookUrls[index];
   }
 
   async send(payload: DiscordWebhookPayload): Promise<void> {
+    const webhookUrl = this.getRandomWebhook();
+
     try {
-      const response = await fetch(this.webhookUrl, {
+      const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
