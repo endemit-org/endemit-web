@@ -8,6 +8,7 @@ import {
   isTicketPending,
   isTicketScanned,
 } from "@/domain/ticket/businessLogic";
+import { TicketStatus } from "@prisma/client";
 import { fetchTicketsForEvent } from "@/domain/ticket/actions/getTicketsForEventAction";
 import { convertSecondsToMs } from "@/lib/util/converters";
 import { SerializedTicket } from "@/domain/ticket/types/ticket";
@@ -58,13 +59,15 @@ export default function EventTicketsDisplay({
 
   const ticketsScanned = tickets.filter(ticket => isTicketScanned(ticket));
   const ticketsRemaining = tickets.filter(ticket => isTicketPending(ticket));
-  const ticketsGuest = tickets.filter(ticket => ticket.isGuestList);
-  const ticketsSold = tickets.filter(ticket => !ticket.isGuestList);
+  const ticketsGuest = tickets.filter(ticket => ticket.isGuestList && ticket.status !== TicketStatus.REFUNDED);
+  // Exclude refunded tickets from sold count and revenue (matching backend logic)
+  const ticketsSold = tickets.filter(ticket => !ticket.isGuestList && ticket.status !== TicketStatus.REFUNDED);
   const ticketsSoldAmount = ticketsSold.length;
   const ticketsScannedAmount = ticketsScanned.length;
   const ticketsRemainingAmount = ticketsRemaining.length;
   const ticketsGuestAmount = ticketsGuest.length;
-  const totalTickets = tickets.length;
+  // Total excludes refunded tickets
+  const totalTickets = tickets.filter(ticket => ticket.status !== TicketStatus.REFUNDED).length;
 
   const ticketsAttendedRatio =
     totalTickets > 0 ? ticketsScannedAmount / totalTickets : 0;

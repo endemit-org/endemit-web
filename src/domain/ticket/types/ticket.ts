@@ -35,6 +35,7 @@ export type TicketEmailData = Pick<
 export enum TicketQueueEvent {
   CREATE_TICKET = "create-ticket",
   PROCESS_GUEST_TICKET = "process-guest-ticket",
+  PROCESS_DOOR_SALE_TICKET = "process-door-sale-ticket",
 }
 
 export type TicketCreationData = {

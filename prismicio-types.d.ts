@@ -96,7 +96,28 @@ export interface ArtistDocumentDataLinksItem {
   link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 }
 
-type ArtistDocumentDataSlicesSlice = never;
+type ArtistDocumentDataSlicesSlice =
+  | CollabPromoSlice
+  | BannerSlice
+  | SaveTheDateSlice
+  | VenueListSlice
+  | SoundCloudSlice
+  | PoemSlice
+  | VinylPromoSectionSlice
+  | EventListSlice
+  | SpacerSlice
+  | ArtistListSlice
+  | TabsSlice
+  | GridTileSlice
+  | AccordionSlice
+  | ImageGallerySlice
+  | HeroSlice
+  | PodcastListSlice
+  | ProductListSlice
+  | TextColumnSlice
+  | EmbedBlockSlice
+  | NewsletterSubscriptionSlice
+  | ContentSectionSlice;
 
 /**
  * Item in *Artist → B2B attributed to artist*
@@ -278,6 +299,7 @@ export type ArtistDocument<Lang extends string = string> =
 
 type ContentPageDocumentDataSlicesSlice =
   | BannerSlice
+  | CollabPromoSlice
   | SaveTheDateSlice
   | VenueListSlice
   | SoundCloudSlice
@@ -515,10 +537,21 @@ export interface EventDocumentDataArtistsItem {
    * - **Documentation**: https://prismic.io/docs/fields/link-to-media
    */
   video_override: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * SoundCloud URL field in *Event → Artists*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: URL to SoundCloud track/set for preview
+   * - **API ID Path**: event.artists[].soundcloud_url
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  soundcloud_url: prismic.KeyTextField;
 }
 
 type EventDocumentDataSlicesSlice =
   | BannerSlice
+  | CollabPromoSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | ArtistListSlice
@@ -804,7 +837,30 @@ interface EventDocumentData {
    * - **Tab**: Attributes
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
-  free_admission: prismic.BooleanField /**
+  free_admission: prismic.BooleanField;
+
+  /**
+   * Has cashless payments field in *Event*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event.has_cashless_payments
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  has_cashless_payments: prismic.BooleanField;
+
+  /**
+   * Cash ticket price (at doors) field in *Event*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event.cash_ticket_price
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  cash_ticket_price: prismic.NumberField /**
    * Slice Zone field in *Event*
    *
    * - **Field Type**: Slice Zone
@@ -917,6 +973,7 @@ export type FooterContentDocument<Lang extends string = string> =
 
 type HomePageDocumentDataSlicesSlice =
   | BannerSlice
+  | CollabPromoSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | EventListSlice
@@ -1000,6 +1057,7 @@ export type HomePageDocument<Lang extends string = string> =
 
 type InnerContentDocumentDataSlicesSlice =
   | SnowfallSlice
+  | CollabPromoSlice
   | SoundCloudSlice
   | VinylPromoSectionSlice
   | PoemSlice
@@ -1760,6 +1818,7 @@ interface ProductDocumentData {
           "date_start",
           "venue_address",
           "venue_logo",
+          "has_cashless_payments",
         ];
       },
     ]
@@ -1774,7 +1833,29 @@ interface ProductDocumentData {
    * - **Tab**: Attributes
    * - **Documentation**: https://prismic.io/docs/fields/number
    */
-  ticket_quantity: prismic.NumberField /**
+  ticket_quantity: prismic.NumberField;
+
+  /**
+   * Ticket template field in *Product*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Template name for ticket design (e.g., 'guest', 'premium'). Leave empty for default.
+   * - **API ID Path**: product.ticket_template
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  ticket_template: prismic.KeyTextField;
+
+  /**
+   * Wallet top-up reward (EUR) field in *Product*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: Optional - Amount to add to user's wallet when purchased
+   * - **API ID Path**: product.wallet_topup_reward
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  wallet_topup_reward: prismic.NumberField /**
    * Variants field in *Product*
    *
    * - **Field Type**: Group
@@ -2253,6 +2334,142 @@ type BannerSliceVariation = BannerSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type BannerSlice = prismic.SharedSlice<"banner", BannerSliceVariation>;
+
+/**
+ * Item in *CollabPromo → Default → Primary → Products (2-3)*
+ */
+export interface CollabPromoSliceDefaultPrimaryProductsItem {
+  /**
+   * Product field in *CollabPromo → Default → Primary → Products (2-3)*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.products[].product
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  product: ContentRelationshipFieldWithData<
+    [{ id: "product"; fields: ["title"] }]
+  >;
+}
+
+/**
+ * Primary content in *CollabPromo → Default → Primary*
+ */
+export interface CollabPromoSliceDefaultPrimary {
+  /**
+   * Title field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Collaboration title
+   * - **API ID Path**: collab_promo.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Describe the collaboration
+   * - **API ID Path**: collab_promo.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Collaborator Logo field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.logo
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  logo: prismic.ImageField<never>;
+
+  /**
+   * Media Image field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.media_image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  media_image: prismic.ImageField<never>;
+
+  /**
+   * Media Video (takes priority over image) field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.media_video
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  media_video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * Products (2-3) field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.products[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  products: prismic.GroupField<
+    Simplify<CollabPromoSliceDefaultPrimaryProductsItem>
+  >;
+
+  /**
+   * Info Panel Position field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Info Left
+   * - **API ID Path**: collab_promo.default.primary.layout_position
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  layout_position: prismic.SelectField<"Info Left" | "Info Right", "filled">;
+
+  /**
+   * Color Theme field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Dark
+   * - **API ID Path**: collab_promo.default.primary.color_theme
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  color_theme: prismic.SelectField<"Dark" | "Muted" | "Vibrant", "filled">;
+}
+
+/**
+ * Default variation for CollabPromo Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Collaboration promo with 2-3 products
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type CollabPromoSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<CollabPromoSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *CollabPromo*
+ */
+type CollabPromoSliceVariation = CollabPromoSliceDefault;
+
+/**
+ * CollabPromo Shared Slice
+ *
+ * - **API ID**: `collab_promo`
+ * - **Description**: Collaboration promotion section with products, logo, and media
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type CollabPromoSlice = prismic.SharedSlice<
+  "collab_promo",
+  CollabPromoSliceVariation
+>;
 
 /**
  * Primary content in *TextBlock → Default → Primary*
@@ -2954,42 +3171,42 @@ export type NewsletterSubscriptionSlice = prismic.SharedSlice<
 >;
 
 /**
- * Primary content in *PodcastList → Default → Primary*
+ * Primary content in *PodcastList → Grid → Primary*
  */
 export interface PodcastListSliceDefaultPrimary {
   /**
-   * Title field in *PodcastList → Default → Primary*
+   * Title field in *PodcastList → Grid → Primary*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: *None*
+   * - **Placeholder**: Section title (optional)
    * - **API ID Path**: podcast_list.default.primary.title
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   title: prismic.KeyTextField;
 
   /**
-   * Description field in *PodcastList → Default → Primary*
+   * Description field in *PodcastList → Grid → Primary*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: *None*
+   * - **Placeholder**: Section description (optional)
    * - **API ID Path**: podcast_list.default.primary.description
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   description: prismic.KeyTextField;
 
   /**
-   * Episode count field in *PodcastList → Default → Primary*
+   * Number of episodes field in *PodcastList → Grid → Primary*
    *
    * - **Field Type**: Select
-   * - **Placeholder**: *None*
+   * - **Placeholder**: Select episode count
    * - **Default Value**: 4
    * - **API ID Path**: podcast_list.default.primary.episode_count
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
-  episode_count: prismic.SelectField<"2" | "4" | "8" | "all">;
+  episode_count: prismic.SelectField<"2" | "4" | "8" | "all", "filled">;
 
   /**
-   * Render frame field in *PodcastList → Default → Primary*
+   * Render frame field in *PodcastList → Grid → Primary*
    *
    * - **Field Type**: Boolean
    * - **Placeholder**: *None*
@@ -3001,10 +3218,10 @@ export interface PodcastListSliceDefaultPrimary {
 }
 
 /**
- * Default variation for PodcastList Slice
+ * Grid variation for PodcastList Slice
  *
  * - **API ID**: `default`
- * - **Description**: Grid
+ * - **Description**: Display latest episodes in a grid layout (2 or 4 episodes)
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type PodcastListSliceDefault = prismic.SharedSliceVariation<
@@ -3014,31 +3231,31 @@ export type PodcastListSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *PodcastList → Featured → Primary*
+ * Primary content in *PodcastList → Featured Episode → Primary*
  */
 export interface PodcastListSliceFeaturedPrimary {
   /**
-   * Title field in *PodcastList → Featured → Primary*
+   * Title field in *PodcastList → Featured Episode → Primary*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: *None*
+   * - **Placeholder**: Section title (optional)
    * - **API ID Path**: podcast_list.featured.primary.title
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   title: prismic.KeyTextField;
 
   /**
-   * Description field in *PodcastList → Featured → Primary*
+   * Description field in *PodcastList → Featured Episode → Primary*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: *None*
+   * - **Placeholder**: Section description (optional)
    * - **API ID Path**: podcast_list.featured.primary.description
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   description: prismic.KeyTextField;
 
   /**
-   * Use latest episode field in *PodcastList → Featured → Primary*
+   * Use latest episode field in *PodcastList → Featured Episode → Primary*
    *
    * - **Field Type**: Boolean
    * - **Placeholder**: *None*
@@ -3049,17 +3266,17 @@ export interface PodcastListSliceFeaturedPrimary {
   use_latest: prismic.BooleanField;
 
   /**
-   * Selected episode field in *PodcastList → Featured → Primary*
+   * Selected episode field in *PodcastList → Featured Episode → Primary*
    *
    * - **Field Type**: Content Relationship
-   * - **Placeholder**: *None*
+   * - **Placeholder**: Choose a specific episode (when not using latest)
    * - **API ID Path**: podcast_list.featured.primary.selected_episode
    * - **Documentation**: https://prismic.io/docs/fields/content-relationship
    */
   selected_episode: prismic.ContentRelationshipField<"podcast">;
 
   /**
-   * Render frame field in *PodcastList → Featured → Primary*
+   * Render frame field in *PodcastList → Featured Episode → Primary*
    *
    * - **Field Type**: Boolean
    * - **Placeholder**: *None*
@@ -3071,10 +3288,10 @@ export interface PodcastListSliceFeaturedPrimary {
 }
 
 /**
- * Featured variation for PodcastList Slice
+ * Featured Episode variation for PodcastList Slice
  *
  * - **API ID**: `featured`
- * - **Description**: Featured Episode
+ * - **Description**: Display a single featured episode with details
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type PodcastListSliceFeatured = prismic.SharedSliceVariation<
@@ -3094,7 +3311,7 @@ type PodcastListSliceVariation =
  * PodcastList Shared Slice
  *
  * - **API ID**: `podcast_list`
- * - **Description**: Display podcast episodes in grid or featured layout
+ * - **Description**: Display podcast episodes in grid or featured layout with playable functionality
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type PodcastListSlice = prismic.SharedSlice<
@@ -4064,6 +4281,11 @@ declare module "@prismicio/client" {
       BannerSliceDefaultPrimary,
       BannerSliceVariation,
       BannerSliceDefault,
+      CollabPromoSlice,
+      CollabPromoSliceDefaultPrimaryProductsItem,
+      CollabPromoSliceDefaultPrimary,
+      CollabPromoSliceVariation,
+      CollabPromoSliceDefault,
       ContentSectionSlice,
       ContentSectionSliceDefaultPrimary,
       ContentSectionSliceVariation,

@@ -14,6 +14,9 @@
             "banner": {
               "type": "SharedSlice"
             },
+            "collab_promo": {
+              "type": "SharedSlice"
+            },
             "snowfall": {
               "type": "SharedSlice"
             },
