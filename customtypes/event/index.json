@@ -319,6 +319,13 @@
           "placeholder_true": "true",
           "default_value": false
         }
+      },
+      "cash_ticket_price": {
+        "type": "Number",
+        "config": {
+          "label": "Cash ticket price (at doors)",
+          "placeholder": ""
+        }
       }
     },
     "Rich content": {

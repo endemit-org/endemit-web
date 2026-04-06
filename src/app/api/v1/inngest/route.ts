@@ -2,6 +2,7 @@ import { serve } from "inngest/next";
 import { inngest } from "@/lib/services/inngest";
 import { runTicketIssueAutomation } from "@/domain/ticket/operations/runTicketIssueAutomation";
 import { runGuestTicketAutomation } from "@/domain/ticket/operations/runGuestTicketAutomation";
+import { runDoorSaleTicketAutomation } from "@/domain/ticket/operations/runDoorSaleTicketAutomation";
 import { runNewOrderAutomation } from "@/domain/order/operations/runNewOrderAutomation";
 import { runOrderCleanupAutomation } from "@/domain/order/operations/runOrderCleanupAutomation";
 import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
@@ -17,6 +18,7 @@ export const { GET, POST, PUT } = serve({
   functions: [
     runTicketIssueAutomation,
     runGuestTicketAutomation,
+    runDoorSaleTicketAutomation,
     runNewOrderAutomation,
     runOrderCleanupAutomation,
     runOtcEmailAutomation,

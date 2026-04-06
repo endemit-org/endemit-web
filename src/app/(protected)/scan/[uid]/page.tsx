@@ -11,6 +11,8 @@ import QRScanner from "@/app/_components/ticket/QrScanner";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import TicketsDisplay from "@/app/_components/ticket/TicketDisplay";
 import { serializeTicket } from "@/domain/ticket/util";
+import ScannerTabs from "@/app/_components/ticket/ScannerTabs";
+import DoorSaleForm from "@/app/_components/ticket/DoorSaleForm";
 
 export const revalidate = 60;
 
@@ -52,6 +54,10 @@ export default async function EventScanPage({
   const isInFuture = !isEventCompleted(event);
   const isScanningEnabled = isEventScanningEnabled(event);
   const showScanner = isScanningEnabled && isInFuture;
+  const showDoorSale =
+    isInFuture &&
+    event.cashTicketPrice !== null &&
+    event.cashTicketPrice > 0;
 
   const initialTickets = await getTicketsForEvent(event.id);
   const serializedTickets = initialTickets.map(ticket =>
@@ -69,30 +75,70 @@ export default async function EventScanPage({
         ]}
       />
       <div className="flex flex-col gap-y-8 mt-12">
-        <div className={"p-4 bg-neutral-800 flex gap-4 gap-x-8 rounded"}>
-          <div>
-            <ImageWithFallback
-              src={event.coverImage?.src}
-              alt={event.coverImage?.alt ?? ""}
-              placeholder={event.coverImage?.placeholder}
-              width={200}
-              height={200}
-              className={"aspect-square object-fill"}
-            />
+        <div className={"p-4 bg-neutral-800 flex flex-col md:flex-row gap-4 gap-x-8 rounded"}>
+          <div className="flex gap-4 gap-x-8">
+            <div className="shrink-0">
+              <ImageWithFallback
+                src={event.coverImage?.src}
+                alt={event.coverImage?.alt ?? ""}
+                placeholder={event.coverImage?.placeholder}
+                width={200}
+                height={200}
+                className={"aspect-square object-fill"}
+              />
+            </div>
+            <div className={"text-neutral-300"}>
+              <div className="font-semibold text-lg">{event.name}</div>
+              <div>
+                <strong>{event.venue?.name}, </strong>
+                {event.date_start && formatEventDateAndTime(event.date_start)}
+              </div>
+              <div className={"uppercase mt-6 font-bold"}>
+                {event.artists.map(artist => artist.name).join(" · ")}
+              </div>
+              <div className="mt-10 hidden md:block">
+                <ScannerTabs
+                  showDoorSale={showDoorSale}
+                  scannerContent={
+                    showScanner ? (
+                      <QRScanner eventId={event.id} />
+                    ) : (
+                      <div>Scanning is not enabled</div>
+                    )
+                  }
+                  doorSaleContent={
+                    showDoorSale && (
+                      <DoorSaleForm
+                        eventId={event.id}
+                        eventName={event.name}
+                        cashTicketPrice={event.cashTicketPrice!}
+                      />
+                    )
+                  }
+                />
+              </div>
+            </div>
           </div>
-          <div className={"text-neutral-300"}>
-            <div className="font-semibold text-lg">{event.name}</div>
-            <div>
-              <strong>{event.venue?.name}, </strong>
-              {event.date_start && formatEventDateAndTime(event.date_start)}
-            </div>
-            <div className={"uppercase mt-6 font-bold"}>
-              {event.artists.map(artist => artist.name).join(" · ")}
-            </div>
-            <div className="mt-10">
-              {showScanner && <QRScanner eventId={event.id} />}
-              {!showScanner && <div>Scanning is not enabled</div>}
-            </div>
+          <div className="md:hidden w-full">
+            <ScannerTabs
+              showDoorSale={showDoorSale}
+              scannerContent={
+                showScanner ? (
+                  <QRScanner eventId={event.id} />
+                ) : (
+                  <div>Scanning is not enabled</div>
+                )
+              }
+              doorSaleContent={
+                showDoorSale && (
+                  <DoorSaleForm
+                    eventId={event.id}
+                    eventName={event.name}
+                    cashTicketPrice={event.cashTicketPrice!}
+                  />
+                )
+              }
+            />
           </div>
         </div>
 
