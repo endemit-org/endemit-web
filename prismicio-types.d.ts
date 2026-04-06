@@ -97,6 +97,7 @@ export interface ArtistDocumentDataLinksItem {
 }
 
 type ArtistDocumentDataSlicesSlice =
+  | CollabPromoSlice
   | BannerSlice
   | SaveTheDateSlice
   | VenueListSlice
@@ -298,6 +299,7 @@ export type ArtistDocument<Lang extends string = string> =
 
 type ContentPageDocumentDataSlicesSlice =
   | BannerSlice
+  | CollabPromoSlice
   | SaveTheDateSlice
   | VenueListSlice
   | SoundCloudSlice
@@ -549,6 +551,7 @@ export interface EventDocumentDataArtistsItem {
 
 type EventDocumentDataSlicesSlice =
   | BannerSlice
+  | CollabPromoSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | ArtistListSlice
@@ -970,6 +973,7 @@ export type FooterContentDocument<Lang extends string = string> =
 
 type HomePageDocumentDataSlicesSlice =
   | BannerSlice
+  | CollabPromoSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | EventListSlice
@@ -1053,6 +1057,7 @@ export type HomePageDocument<Lang extends string = string> =
 
 type InnerContentDocumentDataSlicesSlice =
   | SnowfallSlice
+  | CollabPromoSlice
   | SoundCloudSlice
   | VinylPromoSectionSlice
   | PoemSlice
@@ -2329,6 +2334,142 @@ type BannerSliceVariation = BannerSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type BannerSlice = prismic.SharedSlice<"banner", BannerSliceVariation>;
+
+/**
+ * Item in *CollabPromo → Default → Primary → Products (2-3)*
+ */
+export interface CollabPromoSliceDefaultPrimaryProductsItem {
+  /**
+   * Product field in *CollabPromo → Default → Primary → Products (2-3)*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.products[].product
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  product: ContentRelationshipFieldWithData<
+    [{ id: "product"; fields: ["title"] }]
+  >;
+}
+
+/**
+ * Primary content in *CollabPromo → Default → Primary*
+ */
+export interface CollabPromoSliceDefaultPrimary {
+  /**
+   * Title field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Collaboration title
+   * - **API ID Path**: collab_promo.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Describe the collaboration
+   * - **API ID Path**: collab_promo.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Collaborator Logo field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.logo
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  logo: prismic.ImageField<never>;
+
+  /**
+   * Media Image field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.media_image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  media_image: prismic.ImageField<never>;
+
+  /**
+   * Media Video (takes priority over image) field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.media_video
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  media_video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * Products (2-3) field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: collab_promo.default.primary.products[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  products: prismic.GroupField<
+    Simplify<CollabPromoSliceDefaultPrimaryProductsItem>
+  >;
+
+  /**
+   * Info Panel Position field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Info Left
+   * - **API ID Path**: collab_promo.default.primary.layout_position
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  layout_position: prismic.SelectField<"Info Left" | "Info Right", "filled">;
+
+  /**
+   * Color Theme field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Dark
+   * - **API ID Path**: collab_promo.default.primary.color_theme
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  color_theme: prismic.SelectField<"Dark" | "Muted" | "Vibrant", "filled">;
+}
+
+/**
+ * Default variation for CollabPromo Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Collaboration promo with 2-3 products
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type CollabPromoSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<CollabPromoSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *CollabPromo*
+ */
+type CollabPromoSliceVariation = CollabPromoSliceDefault;
+
+/**
+ * CollabPromo Shared Slice
+ *
+ * - **API ID**: `collab_promo`
+ * - **Description**: Collaboration promotion section with products, logo, and media
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type CollabPromoSlice = prismic.SharedSlice<
+  "collab_promo",
+  CollabPromoSliceVariation
+>;
 
 /**
  * Primary content in *TextBlock → Default → Primary*
@@ -4140,6 +4281,11 @@ declare module "@prismicio/client" {
       BannerSliceDefaultPrimary,
       BannerSliceVariation,
       BannerSliceDefault,
+      CollabPromoSlice,
+      CollabPromoSliceDefaultPrimaryProductsItem,
+      CollabPromoSliceDefaultPrimary,
+      CollabPromoSliceVariation,
+      CollabPromoSliceDefault,
       ContentSectionSlice,
       ContentSectionSliceDefaultPrimary,
       ContentSectionSliceVariation,
