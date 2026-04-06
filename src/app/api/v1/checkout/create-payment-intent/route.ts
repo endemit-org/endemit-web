@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { prisma } from "@/lib/services/prisma";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCheckoutRequest";
 import { createOrder } from "@/domain/order/operations/createOrder";
@@ -206,6 +207,12 @@ export async function POST(request: Request) {
       automatic_payment_methods: {
         enabled: true,
       },
+    });
+
+    // Update order with the actual payment intent ID so webhook can find it
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { stripeSession: paymentIntent.id },
     });
 
     return NextResponse.json(
