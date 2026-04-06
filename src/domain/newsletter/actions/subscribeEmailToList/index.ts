@@ -7,7 +7,7 @@ interface SubscribeOptions {
     LastName?: string;
     Events?: string;
     LastEvent?: string;
-    EventCount?: string;
+    EventCount?: number;
     LastEventDate?: string;
   };
 }
@@ -16,7 +16,7 @@ type UpsertPayload = {
   email_address: string;
   status: "subscribed" | "unsubscribed" | "pending";
   tags?: Record<string, boolean>;
-  fields?: Record<string, string>;
+  fields?: Record<string, string | number>;
 };
 
 /**
@@ -33,6 +33,8 @@ export const subscribeEmailToList = async (
   listId: string,
   options?: SubscribeOptions
 ) => {
+  const logPrefix = `[EmailOctopus:${email}]`;
+
   try {
     const payload: UpsertPayload = {
       email_address: email,
@@ -62,13 +64,19 @@ export const subscribeEmailToList = async (
       if (options.fields.LastEvent) {
         payload.fields.LastEvent = options.fields.LastEvent;
       }
-      if (options.fields.EventCount) {
+      if (options.fields.EventCount !== undefined) {
         payload.fields.EventCount = options.fields.EventCount;
       }
       if (options.fields.LastEventDate) {
         payload.fields.LastEventDate = options.fields.LastEventDate;
       }
     }
+
+    console.log(`${logPrefix} Upserting contact`, {
+      listId,
+      tags: payload.tags ? Object.keys(payload.tags) : [],
+      fields: payload.fields,
+    });
 
     const response = await fetch(
       `https://api.emailoctopus.com/lists/${listId}/contacts`,
@@ -84,15 +92,25 @@ export const subscribeEmailToList = async (
     const data = await response.json();
 
     if (!response.ok) {
+      const errorMsg = data.error?.message || "Failed to subscribe: " + JSON.stringify(data);
+      console.error(`${logPrefix} API error`, {
+        status: response.status,
+        error: errorMsg,
+      });
       return {
         success: false,
-        error: data.error?.message || "Failed to subscribe: " + JSON.stringify(data),
+        error: errorMsg,
       };
     }
 
+    console.log(`${logPrefix} Upsert successful`, {
+      contactId: data.id,
+      status: data.status,
+    });
+
     return { success: true, data };
   } catch (error) {
-    console.error("Error occurred: ", error);
+    console.error(`${logPrefix} Unexpected error`, error);
     return { success: false, error: "An unexpected error occurred" };
   }
 };

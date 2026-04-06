@@ -135,7 +135,7 @@ export async function POST(request: Request) {
 
     // Subscribe all customers to general email list
     const subscriptionResponse = await subscribeEmailToGeneralList(email);
-    if (subscriptionResponse.success) {
+    if (subscriptionResponse.success && subscriptionResponse.isNew) {
       await notifyOnNewSubscriber(email, "General Newsletter");
     }
 
