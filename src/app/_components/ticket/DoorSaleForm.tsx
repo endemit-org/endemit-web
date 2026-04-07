@@ -20,18 +20,27 @@ export default function DoorSaleForm({
 }: DoorSaleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [totalAmount, setTotalAmount] = useState(cashTicketPrice);
   const [email, setEmail] = useState("");
   const [sendEmail, setSendEmail] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const totalAmount = quantity * cashTicketPrice;
+  const pricePerTicket = Math.round(totalAmount / quantity);
 
   const handleQuantityChange = (delta: number) => {
     const newQuantity = Math.max(1, Math.min(20, quantity + delta));
     setQuantity(newQuantity);
+    setTotalAmount(newQuantity * cashTicketPrice);
     setShowConfirm(false);
+  };
+
+  const handleTotalChange = (value: string) => {
+    const cents = Math.round(parseFloat(value || "0") * 100);
+    if (!isNaN(cents) && cents >= 0) {
+      setTotalAmount(cents);
+    }
   };
 
   const handleProceedToConfirm = () => {
@@ -53,7 +62,7 @@ export default function DoorSaleForm({
         eventId,
         eventName,
         quantity,
-        pricePerTicket: cashTicketPrice,
+        totalPrice: totalAmount,
         ticketHolderEmail: email || undefined,
         sendEmail: sendEmail && !!email,
       });
@@ -69,6 +78,7 @@ export default function DoorSaleForm({
         `${result.ticketCount} door sale ${ticketText} created for ${formatPrice(totalAmount / 100)}${sendEmail && email ? " - email sent" : ""}`
       );
       setQuantity(1);
+      setTotalAmount(cashTicketPrice);
       setEmail("");
       setSendEmail(false);
       setShowConfirm(false);
@@ -125,14 +135,26 @@ export default function DoorSaleForm({
             </div>
           </div>
 
-          {/* Price display */}
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <div className="text-sm text-green-700">Total to collect:</div>
-            <div className="text-3xl font-bold text-green-800">
-              {formatPrice(totalAmount / 100)}
+          {/* Editable total price */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Total Amount (editable)
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">
+                €
+              </span>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={(totalAmount / 100).toFixed(2)}
+                onChange={e => handleTotalChange(e.target.value)}
+                className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-gray-900 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:ring-green-500"
+              />
             </div>
-            <div className="text-sm text-green-600 mt-1">
-              {quantity} x {formatPrice(cashTicketPrice / 100)} per ticket
+            <div className="text-sm text-gray-500 mt-1">
+              {quantity} tickets × {formatPrice(pricePerTicket / 100)} each
             </div>
           </div>
 

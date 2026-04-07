@@ -393,6 +393,9 @@
             },
             "accordion": {
               "type": "SharedSlice"
+            },
+            "ticket_price_progress": {
+              "type": "SharedSlice"
             }
           }
         }

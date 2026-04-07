@@ -1,0 +1,61 @@
+{
+  "id": "ticket_price_progress",
+  "type": "SharedSlice",
+  "name": "TicketPriceProgress",
+  "description": "Shows ticket price progression with steps that reveal based on date",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default variation",
+      "imageUrl": "",
+      "primary": {
+        "heading": {
+          "type": "Text",
+          "config": {
+            "label": "Heading",
+            "placeholder": "Ticket Prices"
+          }
+        },
+        "subheading": {
+          "type": "Text",
+          "config": {
+            "label": "Subheading",
+            "placeholder": "Get your tickets before the price increases"
+          }
+        }
+      },
+      "items": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Step Title",
+            "placeholder": "Early Bird"
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Step Description",
+            "placeholder": "Limited availability"
+          }
+        },
+        "price": {
+          "type": "Number",
+          "config": {
+            "label": "Price (in cents)",
+            "placeholder": "1500"
+          }
+        },
+        "available_until": {
+          "type": "Timestamp",
+          "config": {
+            "label": "Available Until"
+          }
+        }
+      }
+    }
+  ]
+}

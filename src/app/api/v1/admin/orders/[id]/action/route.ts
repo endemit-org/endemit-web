@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { updateOrderStatusValidated } from "@/domain/order/operations/updateOrderStatus";
 import { requestRefund, cancelRefundRequest } from "@/domain/order/operations/processRefund";
+import { sendOrderShippedEmail } from "@/domain/email/operations/sendOrderShippedEmail";
 import { prisma } from "@/lib/services/prisma";
 import { OrderAction } from "@/domain/order/operations/getOrderActions";
 
@@ -34,6 +35,7 @@ export async function POST(
     const { id: orderId } = await params;
     const body = await request.json();
     const action = body.action as OrderAction;
+    const sendEmail = body.sendEmail === true;
 
     if (!action) {
       return NextResponse.json({ error: "Missing action" }, { status: 400 });
@@ -79,6 +81,16 @@ export async function POST(
     }
 
     await updateOrderStatusValidated(orderId, targetStatus);
+
+    // Send shipping notification email if requested
+    if (action === "mark_in_delivery" && sendEmail) {
+      try {
+        await sendOrderShippedEmail(orderId);
+      } catch (emailError) {
+        console.error("Failed to send shipping notification email:", emailError);
+        // Don't fail the request if email fails - the status was already updated
+      }
+    }
 
     return NextResponse.json({ success: true, action, newStatus: targetStatus });
   } catch (error) {

@@ -1,0 +1,168 @@
+[
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "heading": {
+        "__TYPE__": "FieldContent",
+        "value": "Ticket Prices",
+        "type": "Text"
+      },
+      "subheading": {
+        "__TYPE__": "FieldContent",
+        "value": "Get your tickets early and save! Prices increase as we get closer to the event.",
+        "type": "Text"
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": [
+          [
+            "title",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Super Early Bird",
+              "type": "Text"
+            }
+          ],
+          [
+            "description",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Limited to first 100 tickets",
+              "type": "Text"
+            }
+          ],
+          [
+            "price",
+            {
+              "__TYPE__": "FieldContent",
+              "value": 1500,
+              "type": "Number"
+            }
+          ],
+          [
+            "available_until",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "2024-01-15T23:59:59+00:00",
+              "type": "Timestamp"
+            }
+          ]
+        ]
+      },
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": [
+          [
+            "title",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Early Bird",
+              "type": "Text"
+            }
+          ],
+          [
+            "description",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Best value for early supporters",
+              "type": "Text"
+            }
+          ],
+          [
+            "price",
+            {
+              "__TYPE__": "FieldContent",
+              "value": 2000,
+              "type": "Number"
+            }
+          ],
+          [
+            "available_until",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "2024-02-15T23:59:59+00:00",
+              "type": "Timestamp"
+            }
+          ]
+        ]
+      },
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": [
+          [
+            "title",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Regular",
+              "type": "Text"
+            }
+          ],
+          [
+            "description",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Standard pricing",
+              "type": "Text"
+            }
+          ],
+          [
+            "price",
+            {
+              "__TYPE__": "FieldContent",
+              "value": 2500,
+              "type": "Number"
+            }
+          ],
+          [
+            "available_until",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "2024-03-15T23:59:59+00:00",
+              "type": "Timestamp"
+            }
+          ]
+        ]
+      },
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": [
+          [
+            "title",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Late",
+              "type": "Text"
+            }
+          ],
+          [
+            "description",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "Last chance to get tickets",
+              "type": "Text"
+            }
+          ],
+          [
+            "price",
+            {
+              "__TYPE__": "FieldContent",
+              "value": 3000,
+              "type": "Number"
+            }
+          ],
+          [
+            "available_until",
+            {
+              "__TYPE__": "FieldContent",
+              "value": "2024-04-01T23:59:59+00:00",
+              "type": "Timestamp"
+            }
+          ]
+        ]
+      }
+    ]
+  }
+]

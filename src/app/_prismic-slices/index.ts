@@ -23,6 +23,7 @@ export const components = {
   spacer: dynamic(() => import("./Spacer")),
   tabs: dynamic(() => import("./Tabs")),
   text_column: dynamic(() => import("./TextColumns")),
+  ticket_price_progress: dynamic(() => import("./TicketPriceProgress")),
   venue_list: dynamic(() => import("./VenueList")),
   vinyl_promo_section: dynamic(() => import("./VinylPromoSection")),
 };

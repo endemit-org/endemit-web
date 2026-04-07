@@ -38,6 +38,7 @@ export default function OrderActions({
   const [pendingAction, setPendingAction] = useState<OrderAction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sendEmailFlags, setSendEmailFlags] = useState<Record<string, boolean>>({});
 
   // Build context and get available actions
   const context = buildOrderContext({
@@ -50,7 +51,7 @@ export default function OrderActions({
   const allActions = getOrderActions(context);
   const actions = filterActionsByPermissions(allActions, userPermissions);
 
-  const handleAction = async (action: OrderAction) => {
+  const handleAction = async (action: OrderAction, sendEmail?: boolean) => {
     // Special handling for refund actions that need a dialog
     if (action === "process_refund" || action === "request_refund") {
       onOpenRefundDialog?.();
@@ -65,7 +66,7 @@ export default function OrderActions({
       const response = await fetch(`/api/v1/admin/orders/${orderId}/action`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, sendEmail }),
       });
 
       if (!response.ok) {
@@ -102,10 +103,14 @@ export default function OrderActions({
             config={config}
             isLoading={isLoading && pendingAction === config.action}
             disabled={isLoading}
-            onConfirm={() => handleAction(config.action)}
+            onConfirm={() => handleAction(config.action, sendEmailFlags[config.action])}
             onRequestConfirmation={() => setPendingAction(config.action)}
             showConfirmation={pendingAction === config.action && config.requiresConfirmation}
             onCancelConfirmation={() => setPendingAction(null)}
+            sendEmail={sendEmailFlags[config.action] ?? false}
+            onSendEmailChange={(checked) =>
+              setSendEmailFlags((prev) => ({ ...prev, [config.action]: checked }))
+            }
           />
         ))}
       </div>
@@ -121,6 +126,8 @@ interface ActionButtonProps {
   onRequestConfirmation: () => void;
   showConfirmation: boolean;
   onCancelConfirmation: () => void;
+  sendEmail: boolean;
+  onSendEmailChange: (checked: boolean) => void;
 }
 
 function ActionButton({
@@ -131,6 +138,8 @@ function ActionButton({
   onRequestConfirmation,
   showConfirmation,
   onCancelConfirmation,
+  sendEmail,
+  onSendEmailChange,
 }: ActionButtonProps) {
   const buttonClasses = clsx(
     "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
@@ -168,13 +177,27 @@ function ActionButton({
   }
 
   return (
-    <button
-      className={buttonClasses}
-      onClick={config.requiresConfirmation ? onRequestConfirmation : onConfirm}
-      disabled={disabled}
-      title={config.description}
-    >
-      {isLoading ? "Processing..." : config.label}
-    </button>
+    <div className="flex flex-col gap-1">
+      <button
+        className={buttonClasses}
+        onClick={config.requiresConfirmation ? onRequestConfirmation : onConfirm}
+        disabled={disabled}
+        title={config.description}
+      >
+        {isLoading ? "Processing..." : config.label}
+      </button>
+      {config.showEmailCheckbox && (
+        <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={sendEmail}
+            onChange={(e) => onSendEmailChange(e.target.checked)}
+            disabled={disabled}
+            className="rounded border-gray-300"
+          />
+          {config.emailCheckboxLabel}
+        </label>
+      )}
+    </div>
   );
 }

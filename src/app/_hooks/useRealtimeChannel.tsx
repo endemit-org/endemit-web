@@ -32,6 +32,8 @@ interface PosOrderScannedPayload {
   shortCode: string;
   customerId: string;
   customerName: string;
+  customerFirstName: string | null;
+  customerImage: string | null;
   balance: number;
   hasEnoughBalance: boolean;
 }
