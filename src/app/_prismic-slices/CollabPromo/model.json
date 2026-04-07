@@ -1,0 +1,112 @@
+{
+  "id": "collab_promo",
+  "type": "SharedSlice",
+  "name": "CollabPromo",
+  "description": "Collaboration promotion section with products, logo, and media",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Collaboration promo with 2-3 products",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "Collaboration title"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "placeholder": "Describe the collaboration",
+            "allowTargetBlank": true,
+            "multi": "paragraph,strong,em,hyperlink"
+          }
+        },
+        "logo": {
+          "type": "Image",
+          "config": {
+            "label": "Collaborator Logo",
+            "constraint": {
+              "height": 200
+            },
+            "thumbnails": []
+          }
+        },
+        "media_image": {
+          "type": "Image",
+          "config": {
+            "label": "Media Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "media_video": {
+          "type": "Link",
+          "config": {
+            "label": "Media Video (takes priority over image)",
+            "placeholder": "",
+            "select": "media",
+            "allowText": false
+          }
+        },
+        "products": {
+          "type": "Group",
+          "config": {
+            "label": "Products (2-3)",
+            "repeat": true,
+            "fields": {
+              "product": {
+                "type": "Link",
+                "config": {
+                  "label": "Product",
+                  "select": "document",
+                  "repeat": false,
+                  "customtypes": [
+                    {
+                      "id": "product",
+                      "fields": ["title"]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "layout_position": {
+          "type": "Select",
+          "config": {
+            "label": "Info Panel Position",
+            "placeholder": "",
+            "options": ["Info Left", "Info Right"],
+            "default_value": "Info Left"
+          }
+        },
+        "color_theme": {
+          "type": "Select",
+          "config": {
+            "label": "Color Theme",
+            "placeholder": "",
+            "options": ["Dark", "Muted", "Vibrant"],
+            "default_value": "Dark"
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "Frameless",
+            "placeholder_true": "With frame",
+            "default_value": true
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

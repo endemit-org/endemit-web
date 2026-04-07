@@ -1,6 +1,6 @@
 import { Product } from "@/domain/product/types/product";
 import { formatDateTime } from "@/lib/util/formatting";
-import { isProductShippable } from "@/domain/product/businessLogic";
+import { isProductShippable, isCutoffWithin48Hours } from "@/domain/product/businessLogic";
 import { ensureTypeIsDate } from "@/lib/util/util";
 
 export const getProductLimits = (product: Product) => {
@@ -23,8 +23,12 @@ export const getProductLimits = (product: Product) => {
   }
 
   if (productLimit?.cutoffTimestamp) {
-    const date = ensureTypeIsDate(productLimit.cutoffTimestamp);
-    limitMessages.push(`Available only until ${formatDateTime(date)}`);
+    if (isCutoffWithin48Hours(product)) {
+      const date = ensureTypeIsDate(productLimit.cutoffTimestamp);
+      limitMessages.push(`Available only until ${formatDateTime(date)}`);
+    } else {
+      limitMessages.push("Limited availability at this price");
+    }
   }
 
   return limitMessages;

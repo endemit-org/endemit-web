@@ -150,6 +150,7 @@ model Ticket {
   metadata         Json?
   attended         Boolean      @default(false)
   isGuestList      Boolean      @default(false)
+  isDoorSale       Boolean      @default(false)
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt

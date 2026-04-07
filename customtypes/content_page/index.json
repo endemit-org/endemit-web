@@ -36,6 +36,9 @@
             "banner": {
               "type": "SharedSlice"
             },
+            "collab_promo": {
+              "type": "SharedSlice"
+            },
             "save_the_date": {
               "type": "SharedSlice"
             },

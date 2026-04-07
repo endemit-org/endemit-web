@@ -59,6 +59,9 @@
             "snowfall": {
               "type": "SharedSlice"
             },
+            "collab_promo": {
+              "type": "SharedSlice"
+            },
             "sound_cloud": {
               "type": "SharedSlice"
             },

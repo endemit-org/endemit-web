@@ -51,6 +51,7 @@ export type Event = {
     available: boolean;
     productIds: string[];
   };
+  cashTicketPrice: number | null;
   hasCashlessPayments: boolean;
   annotation?: string;
   type: EventType;
