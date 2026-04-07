@@ -20,27 +20,27 @@ export interface OrderStats {
 }
 
 export const getOrderStats = async (): Promise<OrderStats> => {
-  const [paidOrders, pendingCount] = await Promise.all([
-    prisma.order.findMany({
+  // Use aggregate queries instead of fetching all orders
+  const [paidOrdersAggregate, pendingCount] = await Promise.all([
+    prisma.order.aggregate({
       where: { status: { in: PAID_STATUSES } },
-      select: {
+      _sum: {
         totalAmount: true,
         refundedAmount: true,
       },
+      _count: true,
     }),
     prisma.order.count({ where: { status: OrderStatus.CREATED } }),
   ]);
 
   // Calculate revenue: totalAmount minus any refunded amounts
-  const totalRevenue = paidOrders.reduce((sum, order) => {
-    const orderTotal = Number(order.totalAmount);
-    const refunded = order.refundedAmount ?? 0;
-    return sum + (orderTotal - refunded / 100); // refundedAmount is in cents
-  }, 0);
+  const totalAmount = Number(paidOrdersAggregate._sum.totalAmount ?? 0);
+  const refundedAmount = (paidOrdersAggregate._sum.refundedAmount ?? 0) / 100; // refundedAmount is in cents
+  const totalRevenue = totalAmount - refundedAmount;
 
   return {
     totalRevenue,
-    orderCount: paidOrders.length,
+    orderCount: paidOrdersAggregate._count,
     pendingCount,
   };
 };

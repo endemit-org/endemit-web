@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { autoLoginAction } from "@/domain/auth/actions/autoLoginAction";
+import { notifyAuthStateChanged } from "@/app/_hooks/useCurrentUser";
 
 interface AutoLoginOnSuccessProps {
   userId: string;
@@ -9,7 +10,12 @@ interface AutoLoginOnSuccessProps {
 
 export default function AutoLoginOnSuccess({ userId }: AutoLoginOnSuccessProps) {
   useEffect(() => {
-    autoLoginAction(userId).catch(console.error);
+    autoLoginAction(userId)
+      .then(() => {
+        // Notify useCurrentUser hooks to refetch
+        notifyAuthStateChanged();
+      })
+      .catch(console.error);
   }, [userId]);
 
   return null;
