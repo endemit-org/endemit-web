@@ -80,12 +80,15 @@ export const runDoorSaleTicketAutomation = inngest.createFunction(
           if (
             !eventData?.promoImage?.src ||
             !eventData?.date_start ||
-            !eventData?.venue ||
-            !eventData?.artists ||
-            eventData?.artists?.length === 0
+            !eventData?.venue
           ) {
             throw new Error("Missing event data for ticket image generation");
           }
+
+          // Only include artists if lineup is shown
+          const artistNames = eventData.options.showEventLineup && eventData.artists?.length > 0
+            ? splitArtistsIntoLines(eventData.artists.map(artist => artist.name))
+            : [];
 
           const image = await generateTicketImage({
             shortId: ticket.shortId,
@@ -96,9 +99,7 @@ export const runDoorSaleTicketAutomation = inngest.createFunction(
             eventDate: formatEventDateAndTime(eventData.date_start),
             attendeeName: ticket.ticketHolderName,
             attendeeEmail: ticket.ticketPayerEmail,
-            artists: splitArtistsIntoLines(
-              eventData.artists.map(artist => artist.name)
-            ),
+            artists: artistNames,
             price: formatPrice(Number(ticket.price)),
             coverImageUrl: eventData.promoImage.src,
             template: "default",

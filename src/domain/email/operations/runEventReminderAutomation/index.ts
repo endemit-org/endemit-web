@@ -81,10 +81,12 @@ export const runEventReminderAutomation = inngest.createFunction(
               mapUrl: event.venue.mapLocationUrl ?? "",
             }
           : null,
-        artists:
-          event.artists
-            ?.filter((a): a is NonNullable<typeof a> => a !== null)
-            .map(a => ({ name: a.name ?? "" })) ?? [],
+        // Only include artists if lineup is shown
+        artists: event.options.showEventLineup
+          ? (event.artists
+              ?.filter((a): a is NonNullable<typeof a> => a !== null)
+              .map(a => ({ name: a.name ?? "" })) ?? [])
+          : [],
       }));
     });
 

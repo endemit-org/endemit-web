@@ -11,6 +11,7 @@ import { fetchPodcastsFromCms } from "@/domain/cms/operations/fetchPodcastsFromC
 import { transformPageToSitemapEntries } from "@/lib/util/sitemap";
 import { getCategoriesWithSlugs } from "@/lib/util/util";
 import { isEventVisible } from "@/domain/event/businessLogic";
+import { isProductVisible } from "@/domain/product/businessLogic";
 
 const baseUrl = PUBLIC_BASE_WEB_URL;
 
@@ -85,7 +86,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getImages: item => [item.image?.src],
   });
 
-  const productPages = transformPageToSitemapEntries(productPageItems, {
+  const visibleProducts = productPageItems?.filter(isProductVisible) ?? null;
+  const productPages = transformPageToSitemapEntries(visibleProducts, {
     getUrl: item => getProductLink(item.uid, item.category, true),
     changeFrequency: "weekly",
     priority: 1,

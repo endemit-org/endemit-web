@@ -84,15 +84,18 @@ export const runTicketIssueAutomation = inngest.createFunction(
           !ticketBaseData ||
           !event?.promoImage?.src ||
           !event?.date_start ||
-          !event?.venue ||
-          !event?.artists ||
-          event?.artists?.length === 0
+          !event?.venue
         ) {
           throw new Error("Missing parameters for ticket image generation");
         }
 
         // Extract template from metadata if provided by product
         const templateId = metadata?.ticketTemplate as string | undefined;
+
+        // Only include artists if lineup is shown
+        const artistNames = event.options.showEventLineup && event.artists?.length > 0
+          ? splitArtistsIntoLines(event.artists.map(artist => artist.name))
+          : [];
 
         const image = await generateTicketImage({
           shortId: issuedTicket.shortId,
@@ -103,9 +106,7 @@ export const runTicketIssueAutomation = inngest.createFunction(
           eventDate: formatEventDateAndTime(event.date_start),
           attendeeName: ticketHolderName,
           attendeeEmail: ticketPayerEmail,
-          artists: splitArtistsIntoLines(
-            event.artists.map(artist => artist.name)
-          ),
+          artists: artistNames,
           price: formatPrice(Number(issuedTicket.price)),
           coverImageUrl: event.promoImage.src,
           template: templateId,
