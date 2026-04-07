@@ -4,7 +4,7 @@ import { inngest } from "@/lib/services/inngest";
 import { supabaseServer } from "@/lib/services/supabase";
 
 /**
- * Scheduled function that pings Supabase every 4 hours to prevent
+ * Scheduled function that pings Supabase every 2 hours to prevent
  * free tier project from pausing due to inactivity.
  *
  * Performs both database and realtime activity to ensure Supabase
@@ -12,7 +12,7 @@ import { supabaseServer } from "@/lib/services/supabase";
  */
 export const runSupabaseKeepalive = inngest.createFunction(
   { id: "supabase-keepalive", retries: 3 },
-  { cron: "0 */4 * * *" },
+  { cron: "0 */2 * * *" },
   async ({ step }) => {
     const timestamp = new Date().toISOString();
 

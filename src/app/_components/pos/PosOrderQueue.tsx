@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import Image from "next/image";
 
 interface PosOrderSummary {
   id: string;
@@ -15,6 +16,8 @@ interface PosOrderSummary {
   createdAt: string;
   items: Array<{ itemId: string; name: string; quantity: number; total: number }>;
   customerName?: string;
+  customerFirstName?: string | null;
+  customerImage?: string | null;
   hasEnoughBalance?: boolean;
 }
 
@@ -127,17 +130,40 @@ export function PosOrderQueue({
               <div className="mt-2 flex items-center justify-between">
                 <span className="font-medium">{formatTokensFromCents(order.total)}</span>
                 {order.scannedAt ? (
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${
-                      order.hasEnoughBalance === false
-                        ? "bg-red-100 text-red-700"
-                        : "bg-green-100 text-green-700"
-                    }`}
-                  >
-                    {order.hasEnoughBalance === false
-                      ? "Low balance"
-                      : `Scanned by ${order.customerName || "customer"}`}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className={`w-5 h-5 rounded-full flex items-center justify-center overflow-hidden ${
+                        order.hasEnoughBalance === false
+                          ? "bg-red-100"
+                          : "bg-gradient-to-br from-blue-500 to-purple-600"
+                      }`}
+                    >
+                      {order.customerImage ? (
+                        <Image
+                          src={order.customerImage}
+                          alt=""
+                          width={20}
+                          height={20}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-[10px] font-bold text-white">
+                          {(order.customerFirstName || order.customerName || "?")[0].toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={`text-xs ${
+                        order.hasEnoughBalance === false
+                          ? "text-red-700"
+                          : "text-green-700"
+                      }`}
+                    >
+                      {order.hasEnoughBalance === false
+                        ? "Low balance"
+                        : order.customerFirstName || order.customerName || "Scanned"}
+                    </span>
+                  </div>
                 ) : (
                   <span className="text-xs text-gray-400">
                     Waiting for scan
