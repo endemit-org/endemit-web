@@ -7,8 +7,6 @@ import { fetchActiveAnnouncementsAction } from "@/domain/announcement/actions/fe
 import AnnouncementBanner from "@/app/_components/profile/AnnouncementBanner";
 import type { Announcement } from "@prisma/client";
 
-const POLL_INTERVAL_MS = 60_000; // 1 minute
-
 interface ProfileAnnouncementsBannerProps {
   initialAnnouncements: Announcement[];
 }
@@ -20,8 +18,8 @@ export default function ProfileAnnouncementsBanner({
     useState<Announcement[]>(initialAnnouncements);
   const dismissedIdsRef = useRef<Set<string>>(new Set());
 
-  // Silent poll for scheduled announcements
-  const silentPoll = useCallback(async () => {
+  // Fetch announcements (for scheduled ones that become active)
+  const fetchAnnouncements = useCallback(async () => {
     try {
       const fresh = await fetchActiveAnnouncementsAction();
       // Filter out any we've dismissed this session
@@ -34,23 +32,21 @@ export default function ProfileAnnouncementsBanner({
     }
   }, []);
 
-  // Poll every minute + on tab focus
+  // Refresh only when user returns to tab (catches scheduled announcements)
+  // No interval polling - realtime handles immediate announcements
   useEffect(() => {
-    const interval = setInterval(silentPoll, POLL_INTERVAL_MS);
-
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        void silentPoll();
+        void fetchAnnouncements();
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      clearInterval(interval);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [silentPoll]);
+  }, [fetchAnnouncements]);
 
   // Subscribe to new announcements
   useRealtimeChannel({

@@ -51,13 +51,16 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
 
   const session = await getSessionByToken(sessionToken);
 
+  // Session not found - clear the invalid cookie
   if (!session) {
+    cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
-  // Check if session is expired
+  // Check if session is expired - delete session and clear cookie
   if (session.expiresAt < new Date()) {
     await deleteSession(sessionToken);
+    cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
