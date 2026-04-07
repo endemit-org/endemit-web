@@ -179,7 +179,7 @@ export default function Sidebar({
 
       <div
         className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 ", {
-          "fixed inset-x-0 bottom-0 top-14  max-md:bg-neutral-950 max-md:bg-opacity-85 max-md:backdrop-blur-lg flex flex-col":
+          "fixed inset-x-0 bottom-0 top-14  max-lg:bg-neutral-950 max-lg:bg-opacity-85 max-lg:backdrop-blur-lg flex flex-col":
             isMenuOpen,
           hidden: !isMenuOpen,
         })}

@@ -29,7 +29,8 @@ export async function fetchTicketStatsForEvent(
     "User not authorized to read tickets"
   );
 
-  return fetchTicketStatsForEventInternal(eventId);
+  const results = await fetchTicketStatsForEventsInternal([eventId]);
+  return results[eventId] ?? createEmptyStats(eventId);
 }
 
 export async function fetchTicketStatsForEvents(
@@ -42,69 +43,105 @@ export async function fetchTicketStatsForEvents(
     "User not authorized to read tickets"
   );
 
-  const stats = await Promise.all(
-    eventIds.map(eventId => fetchTicketStatsForEventInternal(eventId))
-  );
-
-  return stats.reduce(
-    (acc, stat) => {
-      acc[stat.eventId] = stat;
-      return acc;
-    },
-    {} as Record<string, TicketStats>
-  );
+  return fetchTicketStatsForEventsInternal(eventIds);
 }
 
-async function fetchTicketStatsForEventInternal(
-  eventId: string
-): Promise<TicketStats> {
-  const [total, sold, scanned, pending, validated, cancelled, refunded, revenueResult, guestList] =
-    await Promise.all([
-      // Total includes all tickets (guest + sold) except refunded
-      prisma.ticket.count({
-        where: { eventId, status: { not: TicketStatus.REFUNDED } }
-      }),
-      // Sold excludes guest list tickets and refunded tickets
-      prisma.ticket.count({
-        where: { eventId, isGuestList: false, status: { not: TicketStatus.REFUNDED } }
-      }),
-      prisma.ticket.count({
-        where: { eventId, status: TicketStatus.SCANNED },
-      }),
-      prisma.ticket.count({
-        where: { eventId, status: TicketStatus.PENDING },
-      }),
-      prisma.ticket.count({
-        where: { eventId, status: TicketStatus.VALIDATED },
-      }),
-      prisma.ticket.count({
-        where: { eventId, status: TicketStatus.CANCELLED },
-      }),
-      prisma.ticket.count({
-        where: { eventId, status: TicketStatus.REFUNDED },
-      }),
-      // Revenue only from sold tickets (not guest list, not refunded)
-      prisma.ticket.aggregate({
-        where: { eventId, isGuestList: false, status: { not: TicketStatus.REFUNDED } },
-        _sum: {
-          price: true,
-        },
-      }),
-      prisma.ticket.count({
-        where: { eventId, isGuestList: true },
-      }),
-    ]);
-
+function createEmptyStats(eventId: string): TicketStats {
   return {
     eventId,
-    total,
-    sold,
-    scanned,
-    pending,
-    validated,
-    cancelled,
-    refunded,
-    revenue: Number(revenueResult._sum.price ?? 0),
-    guestList,
+    total: 0,
+    sold: 0,
+    scanned: 0,
+    pending: 0,
+    validated: 0,
+    cancelled: 0,
+    refunded: 0,
+    revenue: 0,
+    guestList: 0,
   };
+}
+
+async function fetchTicketStatsForEventsInternal(
+  eventIds: string[]
+): Promise<Record<string, TicketStats>> {
+  if (eventIds.length === 0) return {};
+
+  // Single query: group by eventId, status, isGuestList with sum of price
+  const [groupedStats, revenueStats] = await Promise.all([
+    prisma.ticket.groupBy({
+      by: ["eventId", "status", "isGuestList"],
+      where: { eventId: { in: eventIds } },
+      _count: { id: true },
+    }),
+    prisma.ticket.groupBy({
+      by: ["eventId"],
+      where: {
+        eventId: { in: eventIds },
+        isGuestList: false,
+        status: { not: TicketStatus.REFUNDED },
+      },
+      _sum: { price: true },
+    }),
+  ]);
+
+  // Build revenue map
+  const revenueMap = new Map<string, number>();
+  for (const row of revenueStats) {
+    revenueMap.set(row.eventId, Number(row._sum.price ?? 0));
+  }
+
+  // Initialize stats for all requested events
+  const statsMap: Record<string, TicketStats> = {};
+  for (const eventId of eventIds) {
+    statsMap[eventId] = createEmptyStats(eventId);
+  }
+
+  // Process grouped results
+  for (const row of groupedStats) {
+    const stats = statsMap[row.eventId];
+    if (!stats) continue;
+
+    const count = row._count.id;
+
+    // Count by status
+    switch (row.status) {
+      case TicketStatus.SCANNED:
+        stats.scanned += count;
+        break;
+      case TicketStatus.PENDING:
+        stats.pending += count;
+        break;
+      case TicketStatus.VALIDATED:
+        stats.validated += count;
+        break;
+      case TicketStatus.CANCELLED:
+        stats.cancelled += count;
+        break;
+      case TicketStatus.REFUNDED:
+        stats.refunded += count;
+        break;
+    }
+
+    // Total excludes refunded
+    if (row.status !== TicketStatus.REFUNDED) {
+      stats.total += count;
+    }
+
+    // Sold excludes guest list and refunded
+    if (!row.isGuestList && row.status !== TicketStatus.REFUNDED) {
+      stats.sold += count;
+    }
+
+    // Guest list count
+    if (row.isGuestList) {
+      stats.guestList += count;
+    }
+  }
+
+  // Add revenue
+  for (const eventId of eventIds) {
+    statsMap[eventId].revenue = revenueMap.get(eventId) ?? 0;
+  }
+
+  return statsMap;
 }

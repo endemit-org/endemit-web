@@ -1,5 +1,9 @@
-import { Event, EventType } from "@/domain/event/types/event";
+import { Event, EventType, EventVisibility } from "@/domain/event/types/event";
 import { isDateInPast } from "@/lib/util/util";
+
+export const isEventVisible = (event: Event) => {
+  return event.options.visibility !== EventVisibility.Hidden;
+};
 
 export const isEventCompleted = (event: Event) => {
   if (!event.date_end) {

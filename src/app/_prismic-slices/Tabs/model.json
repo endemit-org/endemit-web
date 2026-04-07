@@ -41,6 +41,45 @@
           }
         }
       }
+    },
+    {
+      "id": "innerContent",
+      "name": "Inner Content",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Each tab displays content from a linked inner content page",
+      "imageUrl": "",
+      "primary": {
+        "heading": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Heading",
+            "single": "heading2"
+          }
+        }
+      },
+      "items": {
+        "tabLabel": {
+          "type": "Text",
+          "config": {
+            "label": "Tab Label"
+          }
+        },
+        "tabId": {
+          "type": "Text",
+          "config": {
+            "label": "Tab ID (for URL hash)"
+          }
+        },
+        "inner_content": {
+          "type": "Link",
+          "config": {
+            "label": "Inner Content",
+            "select": "document",
+            "customtypes": ["inner_content"]
+          }
+        }
+      }
     }
   ]
 }

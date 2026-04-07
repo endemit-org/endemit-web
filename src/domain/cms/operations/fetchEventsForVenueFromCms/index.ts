@@ -1,6 +1,7 @@
 import "server-only";
 
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
+import { isEventVisible } from "@/domain/event/businessLogic";
 
 export const fetchEventsForVenueFromCms = async (venueId: string) => {
   const events = await fetchEventsFromCms({});
@@ -9,5 +10,7 @@ export const fetchEventsForVenueFromCms = async (venueId: string) => {
     return null;
   }
 
-  return events.filter(event => event.venue && event.venue.id === venueId);
+  return events
+    .filter(event => isEventVisible(event))
+    .filter(event => event.venue && event.venue.id === venueId);
 };

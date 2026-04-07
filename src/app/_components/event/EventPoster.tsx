@@ -115,7 +115,7 @@ export default function EventPoster({ event }: EventProps) {
                   {event.venue?.name}
                 </p>
               )}
-              {event.artists && event.artists.length > 0 && (
+              {event.options.showEventLineup && event.artists && event.artists.length > 0 && (
                 <div className="text-[clamp(1rem,6cqi,2rem)] text-neutral-200 font-heading uppercase tracking-wider">
                   {event.artists.map(
                     (artist, index) => `${index > 0 ? " • " : ""}${artist.name}`

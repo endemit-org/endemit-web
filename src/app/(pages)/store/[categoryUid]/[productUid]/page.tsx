@@ -18,6 +18,7 @@ import clsx from "clsx";
 import ProductSeoMicrodata from "@/app/_components/seo/ProductSeoMicrodata";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import { isProductVisible } from "@/domain/product/businessLogic";
 
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
@@ -26,7 +27,7 @@ export async function generateStaticParams() {
     return [];
   }
 
-  return products.map(product => ({
+  return products.filter(isProductVisible).map(product => ({
     productUid: product.uid,
   }));
 }
@@ -71,7 +72,7 @@ export default async function ProductPage({
 
   const product = await fetchProductFromCmsByUid(productUid);
 
-  if (!product) {
+  if (!product || !isProductVisible(product)) {
     notFound();
   }
 

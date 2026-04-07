@@ -8,9 +8,10 @@ import { convertMonthsToMs } from "@/lib/util/converters";
 
 type Props = {
   artists: ArtistAtEvent[];
+  showArtistTimes?: boolean;
 };
 
-export default function EventLineUp({ artists }: Props) {
+export default function EventLineUp({ artists, showArtistTimes = true }: Props) {
   const [sortBy, setSortBy] = useState<SortOption>("default");
 
   type SortOption = "default" | "timestamp" | "alphabetical";
@@ -60,14 +61,20 @@ export default function EventLineUp({ artists }: Props) {
               className="px-1 py-1 border border-neutral-700 rounded text-sm bg-neutral-600 text-neutral-300"
             >
               <option value="default">Default</option>
-              <option value="timestamp">Performance Time</option>
+              {showArtistTimes && (
+                <option value="timestamp">Performance Time</option>
+              )}
               <option value="alphabetical">Alphabetically</option>
             </select>
           </div>
         )}
       </div>
       {sortedArtists.map((artist: ArtistAtEvent) => (
-        <ArtistEventCard artist={artist} key={artist.id} />
+        <ArtistEventCard
+          artist={artist}
+          key={artist.id}
+          showTimes={showArtistTimes}
+        />
       ))}{" "}
     </div>
   );

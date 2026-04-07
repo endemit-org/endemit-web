@@ -302,6 +302,15 @@
           "default_value": false
         }
       },
+      "hide_lineup_section": {
+        "type": "Boolean",
+        "config": {
+          "label": "Hide lineup section",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
       "free_admission": {
         "type": "Boolean",
         "config": {
@@ -392,6 +401,9 @@
               "type": "SharedSlice"
             },
             "accordion": {
+              "type": "SharedSlice"
+            },
+            "ticket_price_progress": {
               "type": "SharedSlice"
             }
           }

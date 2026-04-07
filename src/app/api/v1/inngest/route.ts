@@ -5,6 +5,7 @@ import { runGuestTicketAutomation } from "@/domain/ticket/operations/runGuestTic
 import { runDoorSaleTicketAutomation } from "@/domain/ticket/operations/runDoorSaleTicketAutomation";
 import { runNewOrderAutomation } from "@/domain/order/operations/runNewOrderAutomation";
 import { runOrderCleanupAutomation } from "@/domain/order/operations/runOrderCleanupAutomation";
+import { runRefundEmailAutomation } from "@/domain/order/operations/runRefundEmailAutomation";
 import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
 import { runSupabaseKeepalive } from "@/domain/supabase/operations/runSupabaseKeepalive";
 import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrderExpiryAutomation";
@@ -12,6 +13,7 @@ import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPos
 import { runEventReminderAutomation } from "@/domain/email/operations/runEventReminderAutomation";
 import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
 import { runOrderNewsletterAutomation } from "@/domain/newsletter/operations/runOrderNewsletterAutomation";
+import { runEventClaimAutomation } from "@/domain/claim/operations/runEventClaimAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -21,6 +23,7 @@ export const { GET, POST, PUT } = serve({
     runDoorSaleTicketAutomation,
     runNewOrderAutomation,
     runOrderCleanupAutomation,
+    runRefundEmailAutomation,
     runOtcEmailAutomation,
     runSupabaseKeepalive,
     runPosOrderExpiryAutomation,
@@ -28,5 +31,6 @@ export const { GET, POST, PUT } = serve({
     runEventReminderAutomation,
     runSingleEventReminderAutomation,
     runOrderNewsletterAutomation,
+    runEventClaimAutomation,
   ],
 });

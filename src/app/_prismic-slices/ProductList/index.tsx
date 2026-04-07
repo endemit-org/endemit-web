@@ -5,6 +5,7 @@ import { SliceComponentProps } from "@prismicio/react";
 import { prismic } from "@/lib/services/prismic";
 import ProductSection from "@/app/_components/product/ProductSection";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
+import { isProductVisible } from "@/domain/product/businessLogic";
 
 /**
  * Props for `ProductList`.
@@ -51,7 +52,9 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
     return;
   }
 
-  const sortedProductsBySortingWeight = products.sort(
+  const visibleProducts = products.filter(isProductVisible);
+
+  const sortedProductsBySortingWeight = visibleProducts.sort(
     (a, b) => b.sortingWeight - a.sortingWeight
   );
 

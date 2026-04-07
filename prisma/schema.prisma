@@ -82,6 +82,11 @@ enum AnnouncementType {
   WARNING
 }
 
+enum EventClaimStatus {
+  PENDING
+  APPROVED
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
@@ -115,6 +120,8 @@ model Order {
   @@index([stripeSession])
   @@index([email])
   @@index([userId])
+  @@index([status])
+  @@index([status, createdAt])
 }
 
 model OrderRefund {
@@ -160,6 +167,9 @@ model Ticket {
   @@index([eventId])
   @@index([ticketPayerEmail])
   @@index([orderId])
+  @@index([eventId, status])
+  @@index([eventId, isGuestList])
+  @@index([status])
 }
 
 model User {
@@ -192,6 +202,9 @@ model User {
 
   // Announcements
   announcementDismissals AnnouncementDismissal[]
+
+  // Event Claims
+  eventClaims EventClaim[]
 
   @@index([username])
   @@index([email])
@@ -414,6 +427,7 @@ model PosOrder {
   @@index([customerId])
   @@index([status])
   @@index([expiresAt])
+  @@index([status, expiresAt])
 }
 
 model PosOrderItem {
@@ -475,4 +489,24 @@ model AnnouncementDismissal {
   @@unique([announcementId, userId])
   @@index([userId])
   @@index([announcementId])
+}
+
+// =============================================================================
+// Event Claims
+// =============================================================================
+
+model EventClaim {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId    String
+  eventName  String
+  status     EventClaimStatus @default(PENDING)
+  createdAt  DateTime         @default(now())
+  approvedAt DateTime?
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([userId, eventId])
+  @@index([userId])
+  @@index([status])
 }

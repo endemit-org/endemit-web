@@ -45,6 +45,8 @@ export type Event = {
     enabledTicketScanning: boolean;
     externalEventLink?: string;
     showEventLineup: boolean;
+    hideLineupSection: boolean;
+    showArtistTimes: boolean;
   };
   tickets: {
     shouldSellTickets: boolean;
