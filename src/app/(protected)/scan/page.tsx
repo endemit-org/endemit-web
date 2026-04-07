@@ -7,6 +7,7 @@ import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import type { Metadata } from "next";
 import clsx from "clsx";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Ticket scanner",
@@ -22,6 +23,14 @@ export default async function ScanPage() {
   const eventsToDisplay = eventsToScan?.filter(event => {
     return !isEventCompleted(event);
   });
+
+  // Auto-redirect if there's only one scannable event
+  const scannableEvents = eventsToDisplay?.filter(
+    event => event.options.enabledTicketScanning
+  );
+  if (scannableEvents?.length === 1) {
+    redirect(`/scan/${scannableEvents[0].uid}`);
+  }
 
   return (
     <OuterPage>
