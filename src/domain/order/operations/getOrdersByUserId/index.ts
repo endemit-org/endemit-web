@@ -6,8 +6,11 @@ import {
   serializeOrder,
 } from "@/domain/order/types/serialized";
 
+const MAX_ORDERS_PER_USER = 500;
+
 export const getOrdersByUserId = async (
-  userId: string
+  userId: string,
+  limit?: number
 ): Promise<SerializedOrder[]> => {
   const orders = await prisma.order.findMany({
     where: {
@@ -21,6 +24,7 @@ export const getOrdersByUserId = async (
         select: { tickets: true },
       },
     },
+    take: limit ?? MAX_ORDERS_PER_USER,
   });
 
   return orders.map(order => serializeOrder(order));

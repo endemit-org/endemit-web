@@ -2,7 +2,9 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 
-export const getOrdersByEmail = async (email: string) => {
+const MAX_ORDERS_PER_EMAIL = 500;
+
+export const getOrdersByEmail = async (email: string, limit?: number) => {
   return await prisma.order.findMany({
     where: {
       email,
@@ -10,5 +12,6 @@ export const getOrdersByEmail = async (email: string) => {
     orderBy: {
       createdAt: "desc",
     },
+    take: limit ?? MAX_ORDERS_PER_EMAIL,
   });
 };

@@ -120,6 +120,8 @@ model Order {
   @@index([stripeSession])
   @@index([email])
   @@index([userId])
+  @@index([status])
+  @@index([status, createdAt])
 }
 
 model OrderRefund {
@@ -165,6 +167,9 @@ model Ticket {
   @@index([eventId])
   @@index([ticketPayerEmail])
   @@index([orderId])
+  @@index([eventId, status])
+  @@index([eventId, isGuestList])
+  @@index([status])
 }
 
 model User {
@@ -422,6 +427,7 @@ model PosOrder {
   @@index([customerId])
   @@index([status])
   @@index([expiresAt])
+  @@index([status, expiresAt])
 }
 
 model PosOrderItem {

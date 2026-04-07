@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, Prisma } from "@prisma/client";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ProductCategory } from "@/domain/product/types/product";
 import {
@@ -45,28 +45,33 @@ export const getAllDonations = async ({
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
 }: GetAllDonationsParams = {}): Promise<PaginatedDonations> => {
-  // Fetch all paid orders to extract donations
-  const completedOrders = await prisma.order.findMany({
-    where: {
-      status: { in: PAID_STATUSES },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      items: true,
-      createdAt: true,
-    },
-  });
+  // Use raw query to filter orders containing donations in JSON items array
+  // This is more efficient than fetching all orders and filtering in memory
+  const ordersWithDonations = await prisma.$queryRaw<
+    Array<{
+      id: string;
+      email: string;
+      name: string | null;
+      items: Prisma.JsonValue;
+      createdAt: Date;
+    }>
+  >`
+    SELECT id, email, name, items, "createdAt"
+    FROM "Order"
+    WHERE status = ANY(${PAID_STATUSES}::text[]::"OrderStatus"[])
+    AND EXISTS (
+      SELECT 1 FROM jsonb_array_elements(items) AS item
+      WHERE item->>'category' = ${ProductCategory.DONATIONS}
+    )
+    ORDER BY "createdAt" DESC
+    LIMIT 2000
+  `;
 
-  // Extract all donations from orders
+  // Extract all donations from filtered orders
   const allDonations: DonationItem[] = [];
   let totalAmount = 0;
 
-  for (const order of completedOrders) {
+  for (const order of ordersWithDonations) {
     const items = order.items as unknown as ProductInOrder[];
 
     for (const item of items) {
