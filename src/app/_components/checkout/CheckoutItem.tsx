@@ -112,12 +112,12 @@ export default function CheckoutItem({
             isProductSellableByCutoffDate(item) && (
               <div className="text-neutral-400  text-sm pt-2">
                 {isCutoffWithin48Hours(item) ? (
-                  <span className="text-orange-400">Limited availability</span>
-                ) : (
                   <>
-                    This item is available for sale until{" "}
+                    <span className="text-orange-400">This item is available for sale until</span>{" "}
                     <ClientDate date={ensureTypeIsDate(item.limits.cutoffTimestamp)} />
                   </>
+                ) : (
+                  <span>Limited availability at this price</span>
                 )}
               </div>
             )}
