@@ -24,10 +24,10 @@ export const getProductLimits = (product: Product) => {
 
   if (productLimit?.cutoffTimestamp) {
     if (isCutoffWithin48Hours(product)) {
-      limitMessages.push("Limited availability");
-    } else {
       const date = ensureTypeIsDate(productLimit.cutoffTimestamp);
       limitMessages.push(`Available only until ${formatDateTime(date)}`);
+    } else {
+      limitMessages.push("Limited availability at this price");
     }
   }
 
