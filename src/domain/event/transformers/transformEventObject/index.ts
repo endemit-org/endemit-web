@@ -152,6 +152,8 @@ export const transformEventObject = async (
       available: ticketProductIds.length > 0,
       productIds: ticketProductIds,
     },
+    cashTicketPrice:
+      (event.data as { cash_ticket_price?: number }).cash_ticket_price ?? null,
     hasCashlessPayments:
       (event.data as { has_cashless_payments?: boolean }).has_cashless_payments ??
       false,

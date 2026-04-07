@@ -2,6 +2,7 @@ import { serve } from "inngest/next";
 import { inngest } from "@/lib/services/inngest";
 import { runTicketIssueAutomation } from "@/domain/ticket/operations/runTicketIssueAutomation";
 import { runGuestTicketAutomation } from "@/domain/ticket/operations/runGuestTicketAutomation";
+import { runDoorSaleTicketAutomation } from "@/domain/ticket/operations/runDoorSaleTicketAutomation";
 import { runNewOrderAutomation } from "@/domain/order/operations/runNewOrderAutomation";
 import { runOrderCleanupAutomation } from "@/domain/order/operations/runOrderCleanupAutomation";
 import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
@@ -10,12 +11,14 @@ import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrder
 import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPosTransactionEmailAutomation";
 import { runEventReminderAutomation } from "@/domain/email/operations/runEventReminderAutomation";
 import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
+import { runOrderNewsletterAutomation } from "@/domain/newsletter/operations/runOrderNewsletterAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
     runTicketIssueAutomation,
     runGuestTicketAutomation,
+    runDoorSaleTicketAutomation,
     runNewOrderAutomation,
     runOrderCleanupAutomation,
     runOtcEmailAutomation,
@@ -24,5 +27,6 @@ export const { GET, POST, PUT } = serve({
     runPosTransactionEmailAutomation,
     runEventReminderAutomation,
     runSingleEventReminderAutomation,
+    runOrderNewsletterAutomation,
   ],
 });

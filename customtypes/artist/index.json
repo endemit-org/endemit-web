@@ -84,6 +84,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "collab_promo": {
+              "type": "SharedSlice"
+            },
             "banner": {
               "type": "SharedSlice"
             },

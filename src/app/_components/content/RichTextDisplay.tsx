@@ -42,11 +42,19 @@ const components: JSXMapSerializer = {
     );
   },
   paragraph: ({ children }) => <p className="mb-4">{children}</p>,
-  hyperlink: ({ node, children }) => (
-    <Link href={node.data.url!} className="link">
-      {children}
-    </Link>
-  ),
+  hyperlink: ({ node, children }) => {
+    const target = (node.data as { target?: string }).target;
+    return (
+      <Link
+        href={node.data.url!}
+        className="link"
+        target={target || undefined}
+        rel={target === "_blank" ? "noopener noreferrer" : undefined}
+      >
+        {children}
+      </Link>
+    );
+  },
   list: ({ children }) => <ul className={"list-disc"}>{children}</ul>,
 };
 

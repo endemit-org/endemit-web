@@ -1,6 +1,7 @@
 import {
   isProductSellable,
   isProductSellableByCutoffDate,
+  isCutoffWithin48Hours,
 } from "@/domain/product/businessLogic";
 import { ensureTypeIsDate } from "@/lib/util/util";
 import Link from "next/link";
@@ -110,8 +111,14 @@ export default function CheckoutItem({
           {item.limits?.cutoffTimestamp &&
             isProductSellableByCutoffDate(item) && (
               <div className="text-neutral-400  text-sm pt-2">
-                This item is available for sale until{" "}
-                <ClientDate date={ensureTypeIsDate(item.limits.cutoffTimestamp)} />
+                {isCutoffWithin48Hours(item) ? (
+                  <>
+                    <span className="text-orange-400">This item is available for sale until</span>{" "}
+                    <ClientDate date={ensureTypeIsDate(item.limits.cutoffTimestamp)} />
+                  </>
+                ) : (
+                  <span>Limited availability at this price</span>
+                )}
               </div>
             )}
         </>

@@ -21,6 +21,16 @@ export const isProductSellableByCutoffDate = (product: Product) => {
   return isWithinCutoff;
 };
 
+export const isCutoffWithin48Hours = (product: Product) => {
+  if (!product.limits?.cutoffTimestamp) {
+    return false;
+  }
+  const now = new Date().getTime();
+  const cutoffDate = new Date(product.limits.cutoffTimestamp).getTime();
+  const hoursRemaining = (cutoffDate - now) / (1000 * 60 * 60);
+  return hoursRemaining > 0 && hoursRemaining <= 48;
+};
+
 export const isProductSellableByRegion = (product: Product, region: Region) => {
   if (!product.limits?.regionalEligibility) {
     return true;

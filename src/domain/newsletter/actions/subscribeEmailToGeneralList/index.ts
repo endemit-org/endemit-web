@@ -18,22 +18,40 @@ interface SubscribeToGeneralListOptions {
  *
  * @param email - Email address to subscribe
  * @param options - Optional tags and event name
+ * @returns Result with success status and isNew flag indicating if this was a new subscriber
  */
 export const subscribeEmailToGeneralList = async (
   email: string,
   options?: SubscribeToGeneralListOptions
-) => {
+): Promise<{ success: boolean; isNew: boolean; error?: string }> => {
+  const logPrefix = `[GeneralList:${email}]`;
   const listId = EMAIL_NEWSLETTER_GENERAL_LIST_ID;
+
+  console.log(`${logPrefix} Starting subscription`, {
+    hasEventName: !!options?.eventName,
+    tags: options?.tags,
+  });
+
+  // Check if subscriber already exists
+  const existingSubscriber = await getSubscriberFromList(email, listId);
+  const isNew = !existingSubscriber.exists;
+
+  console.log(`${logPrefix} Subscriber status`, {
+    isNew,
+    existingEvents: existingSubscriber.subscriber?.fields?.Events,
+  });
 
   // If no event name, just subscribe with tags
   if (!options?.eventName) {
-    return subscribeEmailToList(email, listId, {
+    const result = await subscribeEmailToList(email, listId, {
       tags: options?.tags,
     });
+    console.log(`${logPrefix} Basic subscription result`, {
+      success: result.success,
+      isNew,
+    });
+    return { ...result, isNew };
   }
-
-  // Fetch existing subscriber to get current Events field
-  const existingSubscriber = await getSubscriberFromList(email, listId);
 
   let eventsField: string;
   if (existingSubscriber.exists && existingSubscriber.subscriber) {
@@ -45,11 +63,19 @@ export const subscribeEmailToGeneralList = async (
     eventsField = options.eventName;
   }
 
-  return subscribeEmailToList(email, listId, {
+  const result = await subscribeEmailToList(email, listId, {
     tags: options.tags,
     fields: {
       Events: eventsField,
       LastEvent: options.eventName,
     },
   });
+
+  console.log(`${logPrefix} Subscription with event result`, {
+    success: result.success,
+    isNew,
+    eventsField,
+  });
+
+  return { ...result, isNew };
 };

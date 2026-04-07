@@ -8,11 +8,11 @@ const ORDER_EXPIRY_HOURS = 24;
 
 /**
  * Scheduled function that expires unpaid orders (status CREATED) that are older than 24 hours.
- * Runs every hour.
+ * Runs every 6 hours.
  */
 export const runOrderCleanupAutomation = inngest.createFunction(
   { id: "order-cleanup", retries: 3 },
-  { cron: "0 * * * *" }, // Every hour at minute 0
+  { cron: "0 */6 * * *" }, // Every 6 hours
   async ({ step }) => {
     const expiryThreshold = new Date(
       Date.now() - ORDER_EXPIRY_HOURS * 60 * 60 * 1000
