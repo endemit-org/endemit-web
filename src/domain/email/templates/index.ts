@@ -1,3 +1,4 @@
+export * from "./EventClaimApproval";
 export * from "./EventReminder";
 export * from "./NewOrderToCustomer";
 export * from "./NewTicketToCustomer";
