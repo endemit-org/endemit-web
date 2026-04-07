@@ -100,14 +100,23 @@ export default async function EventPage({
   let otherEvents: (typeof event)[] = [];
   if (isPastEvent) {
     const allEvents = await fetchEventsFromCms({});
-    otherEvents = (allEvents ?? [])
-      .filter(
-        e =>
-          e.uid !== event.uid &&
-          e.options.visibility !== "Hidden" &&
-          !e.options.externalEventLink
-      )
-      .slice(0, 4);
+    const filteredEvents = (allEvents ?? []).filter(
+      e =>
+        e.uid !== event.uid &&
+        e.options.visibility !== "Hidden" &&
+        !e.options.externalEventLink
+    );
+
+    // Shuffle array using Fisher-Yates algorithm for random selection
+    for (let i = filteredEvents.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredEvents[i], filteredEvents[j]] = [
+        filteredEvents[j],
+        filteredEvents[i],
+      ];
+    }
+
+    otherEvents = filteredEvents.slice(0, 4);
   }
 
   const defaultContent = [] as TabItem[];
@@ -115,7 +124,12 @@ export default async function EventPage({
   if (event.options.showEventLineup && !event.options.hideLineupSection) {
     defaultContent.push({
       label: "Lineup",
-      content: <EventLineUp artists={event.artists} />,
+      content: (
+        <EventLineUp
+          artists={event.artists}
+          showArtistTimes={event.options.showArtistTimes}
+        />
+      ),
       id: "lineup",
       sortingWeight: 300,
     });
@@ -344,7 +358,7 @@ export default async function EventPage({
 
         <div className={"relative flex"}>
           <div className={"lg:w-2/3 w-full"}>
-            {!isPastEvent && event.options.showEventLineup && !event.options.hideLineupSection && (
+            {!isPastEvent && event.options.showEventLineup && !event.options.hideLineupSection && event.options.showArtistTimes && (
               <ArtistCarousel artists={event.artists} headline={"Set times"} />
             )}
             <Tabs items={defaultContent} sortByWeight={true} />

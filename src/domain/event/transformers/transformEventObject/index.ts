@@ -149,6 +149,7 @@ export const transformEventObject = async (
       hideLineupSection:
         (event.data as { hide_lineup_section?: boolean }).hide_lineup_section ??
         false,
+      showArtistTimes: event.data.show_artist_times ?? true,
     },
     tickets: {
       shouldSellTickets: !event.data.free_admission,
