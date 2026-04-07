@@ -42,5 +42,5 @@ export default function ProductCountdown({ cutoffTimestamp }: Props) {
     return () => clearInterval(interval);
   }, [cutoffTimestamp]);
 
-  return <div>Available for {timeRemaining}</div>;
+  return <div className={"py-2"}>{timeRemaining} remaining</div>;
 }
