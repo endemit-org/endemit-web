@@ -10,6 +10,7 @@ import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { fetchPodcastsFromCms } from "@/domain/cms/operations/fetchPodcastsFromCms";
 import { transformPageToSitemapEntries } from "@/lib/util/sitemap";
 import { getCategoriesWithSlugs } from "@/lib/util/util";
+import { isEventVisible } from "@/domain/event/businessLogic";
 
 const baseUrl = PUBLIC_BASE_WEB_URL;
 
@@ -58,7 +59,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: page.meta.priority ?? 0.8,
     })) ?? [];
 
-  const eventPages = transformPageToSitemapEntries(eventPageItems, {
+  const visibleEvents = eventPageItems?.filter(event => isEventVisible(event)) ?? null;
+  const eventPages = transformPageToSitemapEntries(visibleEvents, {
     getUrl: item => `${baseUrl}/events/${item.uid}`,
     changeFrequency: "monthly",
     priority: 1,

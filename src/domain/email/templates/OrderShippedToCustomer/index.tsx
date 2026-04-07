@@ -11,16 +11,13 @@ function OrderShippedToCustomerTemplate({ orderId }: Props) {
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">Your order has been shipped!</h1>
+        <h1 className="text-2xl font-bold mb-2">
+          Your order has been shipped!
+        </h1>
         <Text className="text-gray-800 mb-2">Order #{orderId}</Text>
         <Text className="text-gray-600 mb-6">
           Great news! Your order is now on its way to you. You can expect
           delivery within the next couple of work days.
-        </Text>
-
-        <Text className="text-gray-600 mb-6">
-          We will notify you once your order has been delivered. In the
-          meantime, you can track the status of your order online.
         </Text>
 
         <div

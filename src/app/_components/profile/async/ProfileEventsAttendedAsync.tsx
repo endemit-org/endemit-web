@@ -1,6 +1,7 @@
 import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { getEventClaimsByUserId } from "@/domain/claim/operations/getEventClaimsByUserId";
+import { isEventVisible } from "@/domain/event/businessLogic";
 import { prismicClient } from "@/lib/services/prismic";
 import { getBlurDataURL } from "@/lib/util/util";
 import type { EventDocument } from "@/prismicio-types";
@@ -70,9 +71,11 @@ export default async function ProfileEventsAttendedAsync({
     }))
   );
 
-  // Extract unique artists from all attended events
+  // Extract unique artists from all attended events (only visible ones)
   const pastEventsWithArtists = allEvents
-    ? allEvents.filter((event: Event) => allAttendedEventIds.includes(event.id))
+    ? allEvents
+        .filter((event: Event) => isEventVisible(event))
+        .filter((event: Event) => allAttendedEventIds.includes(event.id))
     : [];
 
   const uniqueArtistNames = new Set<string>();
@@ -94,6 +97,7 @@ export default async function ProfileEventsAttendedAsync({
 
   const claimableEvents = allEvents
     ? allEvents
+        .filter((event: Event) => isEventVisible(event))
         .filter((event: Event) => {
           // Must be past event
           const eventEnd = event.date_end ?? event.date_start;

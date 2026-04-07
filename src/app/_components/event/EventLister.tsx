@@ -1,7 +1,7 @@
 import EventPoster from "@/app/_components/event/EventPoster";
 import React from "react";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
-import { isEventCompleted } from "@/domain/event/businessLogic";
+import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
 import clsx from "clsx";
 import EventSaveTheDateLister from "@/app/_components/event/EventSaveTheDateLister";
 import { Event } from "@/domain/event/types/event";
@@ -69,10 +69,11 @@ async function EventListContent({
 
   if (!events) return null;
 
-  let filteredEvents = events;
+  // Filter out hidden events first
+  let filteredEvents = events.filter(event => isEventVisible(event));
 
   if (type === "Upcoming") {
-    filteredEvents = events
+    filteredEvents = filteredEvents
       .filter(event => !isEventCompleted(event))
       .filter(event => event.date_start !== null)
       //@ts-expect-error Typescript doesnt get that it cant be null
@@ -80,7 +81,7 @@ async function EventListContent({
   }
 
   if (type === "Past") {
-    filteredEvents = events
+    filteredEvents = filteredEvents
       .filter(event => isEventCompleted(event))
       .filter(event => event.date_start !== null)
       //@ts-expect-error Typescript doesnt get that it cant be null

@@ -32,11 +32,6 @@ const REDIRECTS = [
     permanent: true,
   },
   {
-    source: "/festival",
-    destination: "/events/endemit-festival",
-    permanent: true,
-  },
-  {
     source: "/endemit-festival/:path*",
     destination: "/events/endemit-festival/:path*",
     permanent: true,

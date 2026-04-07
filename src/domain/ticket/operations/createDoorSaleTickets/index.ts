@@ -53,7 +53,7 @@ export const createDoorSaleTickets = async ({
           ticketCount: quantity,
           cashReceived: totalAmount,
         },
-        status: "PAID",
+        status: "COMPLETED",
       },
     });
 
