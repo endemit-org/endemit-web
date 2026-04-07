@@ -13,7 +13,7 @@ interface Props {
   orderId: string;
 }
 
-function TicketInvalidationTemplate({ tickets, orderId }: Props) {
+function TicketInvalidationTemplate({ tickets }: Props) {
   const ticketCount = tickets.length;
   const ticketText = ticketCount === 1 ? "ticket" : "tickets";
 
