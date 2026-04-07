@@ -6,16 +6,19 @@ import { serializeTicket } from "@/domain/ticket/util";
 import type { SerializedTicket } from "@/domain/ticket/types/ticket";
 import type { EventDocument } from "@/prismicio-types";
 
+const MAX_TICKETS_PER_USER = 500;
+
 interface GetTicketsByUserIdOptions {
   upcomingOnly?: boolean;
   pastOnly?: boolean;
+  limit?: number;
 }
 
 export const getTicketsByUserId = async (
   userId: string,
   options: GetTicketsByUserIdOptions = {}
 ): Promise<SerializedTicket[]> => {
-  const { upcomingOnly = false, pastOnly = false } = options;
+  const { upcomingOnly = false, pastOnly = false, limit } = options;
 
   const tickets = await prisma.ticket.findMany({
     where: {
@@ -26,6 +29,7 @@ export const getTicketsByUserId = async (
     orderBy: {
       createdAt: "desc",
     },
+    take: limit ?? MAX_TICKETS_PER_USER,
   });
 
   if ((!upcomingOnly && !pastOnly) || tickets.length === 0) {

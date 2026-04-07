@@ -6,11 +6,11 @@ import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 
 /**
  * Scheduled function that expires pending POS orders that have passed their expiry time.
- * Runs every 5 minutes.
+ * Runs once per day at 4am Ljubljana time.
  */
 export const runPosOrderExpiryAutomation = inngest.createFunction(
   { id: "pos-order-expiry", retries: 3 },
-  { cron: "*/5 * * * *" }, // Every 5 minutes
+  { cron: "TZ=Europe/Ljubljana 0 4 * * *" }, // Daily at 4am Ljubljana
   async ({ step }) => {
     const expiredOrders = await step.run("find-expired-orders", async () => {
       return await prisma.posOrder.findMany({
