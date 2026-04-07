@@ -38,7 +38,7 @@ interface Props {
   onCopyToCart: () => void;
 }
 
-const AUTO_CLOSE_SECONDS = 5;
+const AUTO_CLOSE_SECONDS = 30;
 
 export function PosOrderQrModal({
   order,
@@ -48,7 +48,9 @@ export function PosOrderQrModal({
 }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
-  const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(null);
+  const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     QRCode.toDataURL(order.orderHash, {
@@ -227,14 +229,22 @@ export function PosOrderQrModal({
                       {order.customerImage ? (
                         <Image
                           src={order.customerImage}
-                          alt={order.customerFirstName || order.customerName || "Customer"}
+                          alt={
+                            order.customerFirstName ||
+                            order.customerName ||
+                            "Customer"
+                          }
                           width={48}
                           height={48}
                           className="w-full h-full object-cover"
                         />
                       ) : (
                         <span className="text-lg font-bold text-white">
-                          {(order.customerFirstName || order.customerName || "?")
+                          {(
+                            order.customerFirstName ||
+                            order.customerName ||
+                            "?"
+                          )
                             .split(" ")
                             .map(n => n[0])
                             .join("")
@@ -245,7 +255,10 @@ export function PosOrderQrModal({
                     </div>
                     <div>
                       <p className="font-medium">
-                        {order.customerFirstName || order.customerName || "Customer"} scanned
+                        {order.customerFirstName ||
+                          order.customerName ||
+                          "Customer"}{" "}
+                        scanned
                       </p>
                       <p className="text-sm text-gray-600">
                         Balance:{" "}
