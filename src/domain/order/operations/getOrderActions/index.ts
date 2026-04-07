@@ -20,6 +20,8 @@ export interface OrderActionConfig {
   requiresConfirmation: boolean;
   variant: ActionVariant;
   permission?: string;
+  showEmailCheckbox?: boolean;
+  emailCheckboxLabel?: string;
 }
 
 export interface OrderContext {
@@ -116,6 +118,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
         description: "Order has been shipped",
         requiresConfirmation: false,
         variant: "default",
+        showEmailCheckbox: true,
+        emailCheckboxLabel: "Send shipping notification email",
       });
 
       actions.push({

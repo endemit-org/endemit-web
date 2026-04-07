@@ -1,6 +1,7 @@
 import "server-only";
 
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
+import { isEventVisible } from "@/domain/event/businessLogic";
 
 export const fetchEventsForArtistFromCms = async (artistId: string) => {
   const events = await fetchEventsFromCms({});
@@ -9,14 +10,16 @@ export const fetchEventsForArtistFromCms = async (artistId: string) => {
     return null;
   }
 
-  return events.filter(
-    event =>
-      event.artists.some(artist => artist.id === artistId) ||
-      event.artists.some(
-        artist =>
-          artist.isB2b &&
-          artist.b2bAttribution &&
-          artist.b2bAttribution.some(b2b => b2b.id === artistId)
-      )
-  );
+  return events
+    .filter(event => isEventVisible(event))
+    .filter(
+      event =>
+        event.artists.some(artist => artist.id === artistId) ||
+        event.artists.some(
+          artist =>
+            artist.isB2b &&
+            artist.b2bAttribution &&
+            artist.b2bAttribution.some(b2b => b2b.id === artistId)
+        )
+    );
 };

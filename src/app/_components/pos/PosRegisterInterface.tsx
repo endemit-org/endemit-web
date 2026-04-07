@@ -28,6 +28,8 @@ interface PosOrderSummary {
   createdAt: string;
   items: Array<{ itemId: string; name: string; quantity: number; total: number }>;
   customerName?: string;
+  customerFirstName?: string | null;
+  customerImage?: string | null;
   customerBalance?: number;
   hasEnoughBalance?: boolean;
   tipAmount?: number;
@@ -91,6 +93,8 @@ export function PosRegisterInterface({
                 ...o,
                 scannedAt: new Date().toISOString(),
                 customerName: payload.customerName,
+                customerFirstName: payload.customerFirstName,
+                customerImage: payload.customerImage,
                 customerBalance: payload.balance,
                 hasEnoughBalance: payload.hasEnoughBalance,
               }
@@ -104,6 +108,8 @@ export function PosRegisterInterface({
                 ...prev,
                 scannedAt: new Date().toISOString(),
                 customerName: payload.customerName,
+                customerFirstName: payload.customerFirstName,
+                customerImage: payload.customerImage,
                 customerBalance: payload.balance,
                 hasEnoughBalance: payload.hasEnoughBalance,
               }

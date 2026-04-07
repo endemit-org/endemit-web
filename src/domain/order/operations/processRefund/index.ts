@@ -9,6 +9,7 @@ import {
   calculateRefundLimit,
   RefundItemSelection,
 } from "@/domain/order/operations/calculateRefundLimit";
+import { queueRefundEmailAutomation } from "@/domain/order/operations/runRefundEmailAutomation";
 
 export interface ProcessRefundInput {
   orderId: string;
@@ -263,21 +264,44 @@ export async function processRefund(
     };
   });
 
-  // 7. Return result
+  // 7. Build refunded items for response
+  const refundedItemsList = refundLimit.itemBreakdown
+    .filter((b) => b.maxRefundableAmount > 0)
+    .map((b) => ({
+      itemIndex: b.itemIndex,
+      itemName: b.itemName,
+      quantity: b.maxRefundableQuantity,
+      amount: b.maxRefundableAmount,
+    }));
+
+  // 8. Check if tickets were refunded
+  const ticketItemIndicesForEmail = refundLimit.itemBreakdown
+    .filter(
+      (b) =>
+        b.maxRefundableAmount > 0 &&
+        orderItems[b.itemIndex]?.category === ProductCategory.TICKETS
+    )
+    .map((b) => b.itemIndex);
+
+  const ticketsRefunded = ticketItemIndicesForEmail.length > 0 && order.tickets.length > 0;
+
+  // 9. Queue refund email automation
+  await queueRefundEmailAutomation({
+    orderId: order.id,
+    refundedAmount: refundLimit.maxRefundAmount,
+    refundedItems: refundedItemsList,
+    shippingRefunded: refundLimit.shippingRefundable > 0 ? refundLimit.shippingRefundable : undefined,
+    ticketsRefunded,
+  });
+
+  // 10. Return result
   return {
     success: true,
     orderId: order.id,
     refundedAmount: refundLimit.maxRefundAmount,
     stripeRefundId,
     newOrderStatus: result.newStatus,
-    refundedItems: refundLimit.itemBreakdown
-      .filter((b) => b.maxRefundableAmount > 0)
-      .map((b) => ({
-        itemIndex: b.itemIndex,
-        itemName: b.itemName,
-        quantity: b.maxRefundableQuantity,
-        amount: b.maxRefundableAmount,
-      })),
+    refundedItems: refundedItemsList,
   };
 }
 

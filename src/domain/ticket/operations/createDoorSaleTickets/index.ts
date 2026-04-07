@@ -15,7 +15,7 @@ interface CreateDoorSaleTicketsInput {
   eventId: string;
   eventName: string;
   quantity: number;
-  pricePerTicket: number;
+  totalPrice: number;
   ticketHolderEmail?: string;
   createdByUserId: string;
 }
@@ -24,14 +24,15 @@ export const createDoorSaleTickets = async ({
   eventId,
   eventName,
   quantity,
-  pricePerTicket,
+  totalPrice,
   ticketHolderEmail,
   createdByUserId,
 }: CreateDoorSaleTicketsInput) => {
   const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 16);
   const doorSaleSessionId = `doorsale_${nanoid()}`;
   const email = ticketHolderEmail || DOOR_SALE_PLACEHOLDER_EMAIL;
-  const totalAmount = quantity * pricePerTicket;
+  const totalAmount = totalPrice;
+  const pricePerTicket = Math.round(totalPrice / quantity);
 
   return await prisma.$transaction(async tx => {
     // Create a door sale order (cash payment)
@@ -52,7 +53,7 @@ export const createDoorSaleTickets = async ({
           ticketCount: quantity,
           cashReceived: totalAmount,
         },
-        status: "PAID",
+        status: "COMPLETED",
       },
     });
 

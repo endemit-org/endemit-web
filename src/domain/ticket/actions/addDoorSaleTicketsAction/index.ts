@@ -13,7 +13,7 @@ interface AddDoorSaleTicketsInput {
   eventId: string;
   eventName: string;
   quantity: number;
-  pricePerTicket: number;
+  totalPrice: number;
   ticketHolderEmail?: string;
   sendEmail: boolean;
 }
@@ -41,9 +41,9 @@ export async function addDoorSaleTicketsAction(
       return { success: false, error: "User not authorized for door sales" };
     }
 
-    const { eventId, eventName, quantity, pricePerTicket, ticketHolderEmail, sendEmail } = input;
+    const { eventId, eventName, quantity, totalPrice, ticketHolderEmail, sendEmail } = input;
 
-    if (!eventId || !eventName || quantity < 1 || pricePerTicket < 0) {
+    if (!eventId || !eventName || quantity < 1 || totalPrice < 0) {
       return { success: false, error: "Missing required fields" };
     }
 
@@ -52,7 +52,7 @@ export async function addDoorSaleTicketsAction(
       eventId,
       eventName,
       quantity,
-      pricePerTicket,
+      totalPrice,
       ticketHolderEmail,
       createdByUserId: user.id,
     });

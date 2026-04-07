@@ -61,18 +61,25 @@ export async function scanPosOrder(
     throw new Error("Order has expired");
   }
 
-  // Get customer wallet
+  // Get customer wallet and profile
   const customer = await prisma.user.findUnique({
     where: { id: customerId },
-    include: { wallet: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      wallet: { select: { balance: true } },
+    },
   });
 
   if (!customer) {
     throw new Error("Customer not found");
   }
 
-  const balance = customer.wallet?.balance ?? 0;
+  const balance = Number(customer.wallet?.balance ?? 0);
   const hasEnoughBalance = balance >= order.total;
+  const customerFirstName = customer.name?.split(" ")[0] || null;
 
   // Update order with scan info
   await prisma.posOrder.update({
@@ -89,6 +96,8 @@ export async function scanPosOrder(
     shortCode: order.shortCode,
     customerId,
     customerName: customer.name || customer.email || "Unknown",
+    customerFirstName,
+    customerImage: customer.image,
     balance,
     hasEnoughBalance,
   });

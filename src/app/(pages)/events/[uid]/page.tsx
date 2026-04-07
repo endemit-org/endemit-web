@@ -100,22 +100,36 @@ export default async function EventPage({
   let otherEvents: (typeof event)[] = [];
   if (isPastEvent) {
     const allEvents = await fetchEventsFromCms({});
-    otherEvents = (allEvents ?? [])
-      .filter(
-        e =>
-          e.uid !== event.uid &&
-          e.options.visibility !== "Hidden" &&
-          !e.options.externalEventLink
-      )
-      .slice(0, 4);
+    const filteredEvents = (allEvents ?? []).filter(
+      e =>
+        e.uid !== event.uid &&
+        e.options.visibility !== "Hidden" &&
+        !e.options.externalEventLink
+    );
+
+    // Shuffle array using Fisher-Yates algorithm for random selection
+    for (let i = filteredEvents.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredEvents[i], filteredEvents[j]] = [
+        filteredEvents[j],
+        filteredEvents[i],
+      ];
+    }
+
+    otherEvents = filteredEvents.slice(0, 4);
   }
 
   const defaultContent = [] as TabItem[];
 
-  if (event.options.showEventLineup) {
+  if (event.options.showEventLineup && !event.options.hideLineupSection) {
     defaultContent.push({
       label: "Lineup",
-      content: <EventLineUp artists={event.artists} />,
+      content: (
+        <EventLineUp
+          artists={event.artists}
+          showArtistTimes={event.options.showArtistTimes}
+        />
+      ),
       id: "lineup",
       sortingWeight: 300,
     });
@@ -265,25 +279,27 @@ export default async function EventPage({
                 </div>
               )}
 
-              <div className="flex-1 flex flex-col lg:@container lg:justify-center ">
-                <div
-                  className={clsx(
-                    event.artists.length > 4 &&
-                      "lg:overflow-y-auto  lg:max-h-56 scrollbar-thin scrollbar-track-neutral-800 scrollbar-thumb-neutral-600 hover:scrollbar-thumb-neutral-500"
-                  )}
-                >
-                  {event.artists.map(artist => (
-                    <h3
-                      className={
-                        "max-lg:text-3xl lg:text-[clamp(1.7rem,20cqi,5rem)] lg:leading-[clamp(1.9rem,20.2cqi,5.2rem)] max-lg:text-center max-lg:w-full"
-                      }
-                      key={`artist-marquee-${artist.id}`}
-                    >
-                      {artist.name}
-                    </h3>
-                  ))}
+              {event.options.showEventLineup && event.artists.length > 0 && (
+                <div className="flex-1 flex flex-col lg:@container lg:justify-center ">
+                  <div
+                    className={clsx(
+                      event.artists.length > 4 &&
+                        "lg:overflow-y-auto  lg:max-h-56 scrollbar-thin scrollbar-track-neutral-800 scrollbar-thumb-neutral-600 hover:scrollbar-thumb-neutral-500"
+                    )}
+                  >
+                    {event.artists.map(artist => (
+                      <h3
+                        className={
+                          "max-lg:text-3xl lg:text-[clamp(1.7rem,20cqi,5rem)] lg:leading-[clamp(1.9rem,20.2cqi,5.2rem)] max-lg:text-center max-lg:w-full"
+                        }
+                        key={`artist-marquee-${artist.id}`}
+                      >
+                        {artist.name}
+                      </h3>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <div
                 className={"flex gap-x-2 text-sm lg:text-md flex-shrink-0"}
                 id={"overview"}
@@ -325,7 +341,9 @@ export default async function EventPage({
         >
           <div className={"animate-marquee-move"}>
             {(() => {
-              const artistNames = event.artists?.map(a => a.name) ?? [];
+              const artistNames = event.options.showEventLineup
+                ? (event.artists?.map(a => a.name) ?? [])
+                : [];
               const pattern =
                 artistNames.length > 0
                   ? artistNames
@@ -340,7 +358,7 @@ export default async function EventPage({
 
         <div className={"relative flex"}>
           <div className={"lg:w-2/3 w-full"}>
-            {!isPastEvent && (
+            {!isPastEvent && event.options.showEventLineup && !event.options.hideLineupSection && event.options.showArtistTimes && (
               <ArtistCarousel artists={event.artists} headline={"Set times"} />
             )}
             <Tabs items={defaultContent} sortByWeight={true} />
