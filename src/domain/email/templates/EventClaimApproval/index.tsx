@@ -4,31 +4,31 @@ import { Text, Link } from "@react-email/components";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 interface Props {
-  orderId: string;
+  eventName: string;
 }
 
-function OrderShippedToCustomerTemplate({ orderId }: Props) {
+function EventClaimApprovalTemplate({ eventName }: Props) {
   return (
     <MasterTemplate>
       <div>
         <h1 className="text-2xl font-bold mb-2">
-          Your order has been shipped!
+          Event Added to Your Profile!
         </h1>
-        <Text className="text-gray-800 mb-2">Order #{orderId}</Text>
         <Text className="text-gray-600 mb-6">
-          Great news! Your order is now on its way to you. You can expect
-          delivery within the next couple of work days.
+          Great news! <strong>{eventName}</strong> has been added to your
+          &quot;Events Attended&quot; list. Thanks for being part of our
+          community!
         </Text>
 
         <div
           style={{
-            marginBottom: "32px",
-            marginTop: "24px",
+            marginTop: "32px",
+            marginBottom: "16px",
             textAlign: "center",
           }}
         >
           <Link
-            href={`${PUBLIC_BASE_WEB_URL}/profile/orders/${orderId}`}
+            href={`${PUBLIC_BASE_WEB_URL}/profile`}
             style={{
               display: "inline-block",
               backgroundColor: "#18181b",
@@ -40,12 +40,12 @@ function OrderShippedToCustomerTemplate({ orderId }: Props) {
               fontSize: "14px",
             }}
           >
-            View Your Order
+            View Your Profile
           </Link>
         </div>
 
-        <Text className="text-gray-600 text-sm">
-          Questions about your delivery? Contact us at{" "}
+        <Text className="text-gray-600 my-6">
+          Questions? Contact us at{" "}
           <Link href="mailto:endemit@endemit.org" className="link">
             endemit@endemit.org
           </Link>
@@ -55,4 +55,4 @@ function OrderShippedToCustomerTemplate({ orderId }: Props) {
   );
 }
 
-export { OrderShippedToCustomerTemplate };
+export { EventClaimApprovalTemplate };

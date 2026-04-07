@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
+import { isEventVisible } from "@/domain/event/businessLogic";
 
 export async function GET() {
   try {
     const events = await fetchEventsFromCms({});
+    const visibleEvents = events?.filter(event => isEventVisible(event)) ?? [];
 
-    return NextResponse.json(events, { status: 200 });
+    return NextResponse.json(visibleEvents, { status: 200 });
   } catch (error) {
     console.error("Error fetching events from Prismic:", error);
     return NextResponse.json(

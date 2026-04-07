@@ -7,6 +7,7 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import { isProductVisible } from "@/domain/product/businessLogic";
 
 export async function generateStaticParams() {
   const categories = getCategoriesWithSlugs;
@@ -54,11 +55,12 @@ export default async function CategoryPage({
     notFound();
   }
 
-  const products = await fetchProductsFromCms({
+  const allProducts = await fetchProductsFromCms({
     filters: [prismic.filter.at("my.product.product_category", categoryName)],
   });
+  const products = allProducts?.filter(isProductVisible) ?? [];
 
-  const productsExistInCategory = products && products.length > 0;
+  const productsExistInCategory = products.length > 0;
 
   return (
     <OuterPage>

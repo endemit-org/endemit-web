@@ -1,6 +1,6 @@
 import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
-import { isEventCompleted } from "@/domain/event/businessLogic";
+import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
 import ProfileUpcomingEventsPromo from "@/app/_components/profile/ProfileUpcomingEventsPromo";
 
 interface ProfileUpcomingEventsAsyncProps {
@@ -22,8 +22,9 @@ export default async function ProfileUpcomingEventsAsync({
   // Get events user already has tickets for
   const userTicketEventIds = new Set(upcomingTickets.map(t => t.eventId));
 
-  // Filter to upcoming events user doesn't have tickets for
+  // Filter to upcoming visible events user doesn't have tickets for
   const upcomingEventsForPromo = allEvents
+    .filter(event => isEventVisible(event))
     .filter(event => !isEventCompleted(event))
     .filter(event => event.date_start !== null)
     .filter(event => !userTicketEventIds.has(event.id))

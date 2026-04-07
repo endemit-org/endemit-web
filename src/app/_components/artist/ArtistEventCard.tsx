@@ -15,6 +15,7 @@ interface ArtistCardProps {
   nameClassName?: HTMLProps<HTMLElement>["className"];
   descriptionClassName?: HTMLProps<HTMLElement>["className"];
   timeClassName?: HTMLProps<HTMLElement>["className"];
+  showTimes?: boolean;
 }
 
 export default function ArtistEventCard({
@@ -23,6 +24,7 @@ export default function ArtistEventCard({
   nameClassName = "font-bold mb-4 text-neutral-200",
   descriptionClassName = "text-neutral-300 ",
   timeClassName = "text-neutral-200",
+  showTimes = true,
 }: ArtistCardProps) {
   const isMoreThanThreeMonthsAgo = artist.start_time
     ? new Date(artist.start_time).getTime() < Date.now() - convertMonthsToMs(3)
@@ -43,7 +45,8 @@ export default function ArtistEventCard({
             />
           </div>
           {/* Stage and Time Info */}
-          {!isMoreThanThreeMonthsAgo &&
+          {showTimes &&
+            !isMoreThanThreeMonthsAgo &&
             artist.start_time &&
             artist.end_time && (
               <div className=" space-y-2 text-center  bg-neutral-950 p-2">
