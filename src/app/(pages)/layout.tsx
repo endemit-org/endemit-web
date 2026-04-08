@@ -1,5 +1,6 @@
 import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
+import BackToTopButton from "@/app/_components/ui/BackToTopButton";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import PlayerContentWrapper from "@/app/_components/player/PlayerContentWrapper";
@@ -42,6 +43,7 @@ export default async function ContentPageLayout({
           <SiteFooter />
         </div>
       </div>
+      <BackToTopButton />
       <PersistentPlayer />
     </PlayerContentWrapper>
   );
