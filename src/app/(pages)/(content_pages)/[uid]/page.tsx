@@ -8,6 +8,9 @@ import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const contentPages = await fetchContentPagesFromCms({});
 
