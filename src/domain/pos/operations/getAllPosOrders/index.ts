@@ -1,9 +1,13 @@
+import "server-only";
+
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { PosOrderStatus } from "@prisma/client";
 import {
   DEFAULT_PAGE_SIZE,
   calculatePagination,
 } from "@/lib/types/pagination";
+import { CacheTags } from "@/lib/services/cache";
 
 export interface PosOrderWithRelations {
   id: string;
@@ -57,7 +61,7 @@ export interface GetAllPosOrdersResult {
   totalPages: number;
 }
 
-export async function getAllPosOrders({
+async function getAllPosOrdersUncached({
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
   status,
@@ -136,4 +140,19 @@ export async function getAllPosOrders({
     pageSize: pagination.pageSize,
     totalPages: pagination.totalPages,
   };
+}
+
+/**
+ * Get all POS orders (cached)
+ */
+export function getAllPosOrders(
+  params: GetAllPosOrdersParams = {}
+): Promise<GetAllPosOrdersResult> {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, status = "", registerId = "" } = params;
+
+  return unstable_cache(
+    () => getAllPosOrdersUncached(params),
+    ["admin-pos-orders", String(page), String(pageSize), status, registerId],
+    { tags: [CacheTags.admin.pos.orders()] }
+  )();
 }

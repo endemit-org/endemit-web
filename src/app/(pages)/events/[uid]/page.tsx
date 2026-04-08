@@ -17,7 +17,7 @@ import clsx from "clsx";
 import { Metadata } from "next";
 import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
-import { isEventCompleted } from "@/domain/event/businessLogic";
+import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
@@ -88,11 +88,7 @@ export default async function EventPage({
     products.sort((a, b) => a.price - b.price);
   }
 
-  if (
-    !event ||
-    event.options.visibility === "Hidden" ||
-    event.options.externalEventLink
-  ) {
+  if (!event || !isEventVisible(event) || event.options.externalEventLink) {
     notFound();
   }
 
@@ -105,9 +101,7 @@ export default async function EventPage({
     const allEvents = await fetchEventsFromCms({});
     const filteredEvents = (allEvents ?? []).filter(
       e =>
-        e.uid !== event.uid &&
-        e.options.visibility !== "Hidden" &&
-        !e.options.externalEventLink
+        e.uid !== event.uid && isEventVisible(e) && !e.options.externalEventLink
     );
 
     // Shuffle array using Fisher-Yates algorithm for random selection

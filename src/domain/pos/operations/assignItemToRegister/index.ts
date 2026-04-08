@@ -1,4 +1,7 @@
+import "server-only";
+
 import { prisma } from "@/lib/services/prisma";
+import { bustOnPosRegisterChanged } from "@/lib/services/cache";
 
 export interface AssignItemToRegisterInput {
   registerId: string;
@@ -14,4 +17,6 @@ export async function assignItemToRegister(
       itemId: input.itemId,
     },
   });
+
+  await bustOnPosRegisterChanged();
 }

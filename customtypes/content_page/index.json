@@ -28,6 +28,23 @@
           "default_value": true
         }
       },
+      "background_image": {
+        "type": "Image",
+        "config": {
+          "label": "Background image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "background_animated": {
+        "type": "Boolean",
+        "config": {
+          "label": "Animate background",
+          "placeholder_false": "Static",
+          "placeholder_true": "Animated",
+          "default_value": true
+        }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
@@ -58,6 +75,9 @@
               "type": "SharedSlice"
             },
             "spacer": {
+              "type": "SharedSlice"
+            },
+            "horizontal_rule": {
               "type": "SharedSlice"
             },
             "artist_list": {

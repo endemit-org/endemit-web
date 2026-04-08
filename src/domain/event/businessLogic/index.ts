@@ -2,6 +2,7 @@ import { Event, EventType, EventVisibility } from "@/domain/event/types/event";
 import { isDateInPast } from "@/lib/util/util";
 
 export const isEventVisible = (event: Event) => {
+  if (process.env.FEAT_IGNORE_VISIBILITY === "true") return true;
   return event.options.visibility !== EventVisibility.Hidden;
 };
 

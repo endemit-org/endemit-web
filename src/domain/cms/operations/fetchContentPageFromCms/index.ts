@@ -12,5 +12,5 @@ export const fetchContentPageFromCms = async (pageUid: string) => {
     return null;
   }
 
-  return transformContentPageObject(prismicPage);
+  return await transformContentPageObject(prismicPage);
 };

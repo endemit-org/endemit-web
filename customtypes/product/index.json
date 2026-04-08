@@ -178,6 +178,9 @@
             "spacer": {
               "type": "SharedSlice"
             },
+            "horizontal_rule": {
+              "type": "SharedSlice"
+            },
             "image_gallery": {
               "type": "SharedSlice"
             },

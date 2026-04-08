@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { Prisma, TicketStatus } from "@prisma/client";
+import { bustOnTicketIssued } from "@/lib/services/cache";
 
 export const createTicketTransaction = async ({
   eventId,
@@ -26,7 +27,13 @@ export const createTicketTransaction = async ({
   orderId: string;
   metadata?: Prisma.InputJsonValue;
 }) => {
-  return await prisma.$transaction(async tx => {
+  const result = await prisma.$transaction(async tx => {
+    // Get order to find userId
+    const order = await tx.order.findUnique({
+      where: { id: orderId },
+      select: { userId: true },
+    });
+
     const ticket = await tx.ticket.create({
       data: {
         eventId,
@@ -49,6 +56,15 @@ export const createTicketTransaction = async ({
     return {
       ticketCount,
       ticket,
+      userId: order?.userId ?? null,
     };
   });
+
+  // Bust ticket caches
+  await bustOnTicketIssued(result.ticket.id, result.userId, eventId);
+
+  return {
+    ticketCount: result.ticketCount,
+    ticket: result.ticket,
+  };
 };

@@ -1,6 +1,8 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
+import { CacheTags } from "@/lib/services/cache";
 
 export interface WalletStats {
   totalBalance: number;
@@ -8,7 +10,7 @@ export interface WalletStats {
   transactionCount: number;
 }
 
-export const getWalletStats = async (): Promise<WalletStats> => {
+const getWalletStatsUncached = async (): Promise<WalletStats> => {
   const [balanceAgg, transactionCount] = await Promise.all([
     prisma.wallet.aggregate({
       _sum: { balance: true },
@@ -22,4 +24,13 @@ export const getWalletStats = async (): Promise<WalletStats> => {
     walletCount: balanceAgg._count,
     transactionCount,
   };
+};
+
+/**
+ * Get wallet statistics (cached)
+ */
+export const getWalletStats = (): Promise<WalletStats> => {
+  return unstable_cache(getWalletStatsUncached, ["admin-wallet-stats"], {
+    tags: [CacheTags.admin.wallets.stats()],
+  })();
 };

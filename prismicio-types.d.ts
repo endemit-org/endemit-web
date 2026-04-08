@@ -106,6 +106,7 @@ type ArtistDocumentDataSlicesSlice =
   | VinylPromoSectionSlice
   | EventListSlice
   | SpacerSlice
+  | HorizontalRuleSlice
   | ArtistListSlice
   | TabsSlice
   | GridTileSlice
@@ -307,6 +308,7 @@ type ContentPageDocumentDataSlicesSlice =
   | VinylPromoSectionSlice
   | EventListSlice
   | SpacerSlice
+  | HorizontalRuleSlice
   | ArtistListSlice
   | TabsSlice
   | GridTileSlice
@@ -346,6 +348,29 @@ interface ContentPageDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   render_frame: prismic.BooleanField;
+
+  /**
+   * Background image field in *Content page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: content_page.background_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  background_image: prismic.ImageField<never>;
+
+  /**
+   * Animate background field in *Content page*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: content_page.background_animated
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  background_animated: prismic.BooleanField;
 
   /**
    * Slice Zone field in *Content page*
@@ -564,6 +589,7 @@ type EventDocumentDataSlicesSlice =
   | TabsSlice
   | ProductListSlice
   | SpacerSlice
+  | HorizontalRuleSlice
   | HeroSlice
   | GridTileSlice
   | ImageGallerySlice
@@ -980,6 +1006,7 @@ type HomePageDocumentDataSlicesSlice =
   | ArtistListSlice
   | VinylPromoSectionSlice
   | SpacerSlice
+  | HorizontalRuleSlice
   | TabsSlice
   | TextColumnSlice
   | PodcastListSlice
@@ -1062,6 +1089,7 @@ type InnerContentDocumentDataSlicesSlice =
   | VinylPromoSectionSlice
   | PoemSlice
   | SpacerSlice
+  | HorizontalRuleSlice
   | TextColumnSlice
   | ProductListSlice
   | PodcastListSlice
@@ -1534,6 +1562,7 @@ type ProductDocumentDataSlicesSlice =
   | ContentSectionSlice
   | GridTileSlice
   | SpacerSlice
+  | HorizontalRuleSlice
   | ImageGallerySlice
   | SoundCloudSlice;
 
@@ -2139,6 +2168,17 @@ export interface AccordionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   allowMultiple: prismic.BooleanField;
+
+  /**
+   * Render frame field in *Accordion → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: accordion.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
 }
 
 /**
@@ -3831,6 +3871,36 @@ type SpacerSliceVariation = SpacerSliceDefault;
 export type SpacerSlice = prismic.SharedSlice<"spacer", SpacerSliceVariation>;
 
 /**
+ * Default variation for HorizontalRule Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HorizontalRuleSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Record<string, never>,
+  never
+>;
+
+/**
+ * Slice variation for *HorizontalRule*
+ */
+type HorizontalRuleSliceVariation = HorizontalRuleSliceDefault;
+
+/**
+ * HorizontalRule Shared Slice
+ *
+ * - **API ID**: `horizontal_rule`
+ * - **Description**: Horizontal divider line
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HorizontalRuleSlice = prismic.SharedSlice<
+  "horizontal_rule",
+  HorizontalRuleSliceVariation
+>;
+
+/**
  * Primary content in *Tabs → Default → Primary*
  */
 export interface TabsSliceDefaultPrimary {
@@ -4354,6 +4424,9 @@ declare module "@prismicio/client" {
       SpacerSliceDefaultPrimary,
       SpacerSliceVariation,
       SpacerSliceDefault,
+      HorizontalRuleSlice,
+      HorizontalRuleSliceVariation,
+      HorizontalRuleSliceDefault,
       TabsSlice,
       TabsSliceDefaultPrimary,
       TabsSliceDefaultItem,

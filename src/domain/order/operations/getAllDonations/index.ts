@@ -1,5 +1,6 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import { OrderStatus, Prisma } from "@prisma/client";
 import { ProductInOrder } from "@/domain/order/types/order";
@@ -8,6 +9,7 @@ import {
   DEFAULT_PAGE_SIZE,
   calculatePagination,
 } from "@/lib/types/pagination";
+import { CacheTags } from "@/lib/services/cache";
 
 // Statuses that represent successful payment
 const PAID_STATUSES: OrderStatus[] = [
@@ -41,7 +43,7 @@ interface GetAllDonationsParams {
   pageSize?: number;
 }
 
-export const getAllDonations = async ({
+const getAllDonationsUncached = async ({
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
 }: GetAllDonationsParams = {}): Promise<PaginatedDonations> => {
@@ -105,4 +107,19 @@ export const getAllDonations = async ({
     pageSize: pagination.pageSize,
     totalPages: pagination.totalPages,
   };
+};
+
+/**
+ * Get all donations (cached)
+ */
+export const getAllDonations = (
+  params: GetAllDonationsParams = {}
+): Promise<PaginatedDonations> => {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE } = params;
+
+  return unstable_cache(
+    () => getAllDonationsUncached(params),
+    ["admin-donations", String(page), String(pageSize)],
+    { tags: [CacheTags.admin.orders.donations()] }
+  )();
 };

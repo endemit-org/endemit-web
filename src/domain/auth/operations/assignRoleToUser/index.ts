@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import { bustOnRoleAssigned } from "@/lib/services/cache";
 
 export const assignRoleToUser = async (
   userId: string,
@@ -38,6 +39,8 @@ export const assignRoleToUser = async (
       role: true,
     },
   });
+
+  await bustOnRoleAssigned(userId);
 
   return userRole;
 };

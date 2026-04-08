@@ -35,6 +35,9 @@
             "spacer": {
               "type": "SharedSlice"
             },
+            "horizontal_rule": {
+              "type": "SharedSlice"
+            },
             "tabs": {
               "type": "SharedSlice"
             },
