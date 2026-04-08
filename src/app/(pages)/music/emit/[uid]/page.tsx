@@ -13,6 +13,9 @@ import { prismic } from "@/lib/services/prismic";
 import PodcastEpisodeSeoMicrodata from "@/app/_components/seo/PodcastEpisodeSeoMicrodata";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const podcasts = await fetchPodcastsFromCms({});
 

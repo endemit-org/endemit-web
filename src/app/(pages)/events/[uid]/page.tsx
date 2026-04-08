@@ -25,6 +25,9 @@ import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
 

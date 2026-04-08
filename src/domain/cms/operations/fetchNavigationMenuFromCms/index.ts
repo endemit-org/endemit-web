@@ -22,6 +22,6 @@ export const fetchNavigationMenuFromCms = unstable_cache(
   ["navigation-menu"],
   {
     tags: ["prismic", "navigation"],
-    revalidate: 3600, // 1 hour fallback, webhook handles immediate updates
+    // No revalidate - rely on webhook calling revalidateTag("prismic")
   }
 );

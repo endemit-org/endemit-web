@@ -18,6 +18,9 @@ import VenueSeoMicrodata from "@/app/_components/seo/VenueSeoMicrodata";
 import ArtistList from "@/app/_components/artist/ArtistList";
 import type { Artist } from "@/domain/artist/types/artist";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const venues = await fetchVenuesFromCms({});
 
@@ -53,7 +56,13 @@ export async function generateMetadata({
   });
   const url = `https://endemit.org/venues/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images, url, type: "profile" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    url,
+    type: "profile",
+  });
 }
 
 export default async function VenuePage({
