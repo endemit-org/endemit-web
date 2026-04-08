@@ -1,13 +1,15 @@
 import { FC } from "react";
 import TicketPriceProgressClient, {
-  type PriceStep,
+  type PriceStepData,
 } from "./TicketPriceProgressClient";
 
 interface PriceStepItem {
   title: string | null;
   description: string | null;
   price: number | null;
+  available_from: string | null;
   available_until: string | null;
+  is_visible: boolean | null;
 }
 
 interface TicketPriceProgressSlice {
@@ -26,8 +28,8 @@ interface TicketPriceProgressProps {
 }
 
 /**
- * Server component that processes price steps and sanitizes future prices.
- * Future prices are replaced with fake values so they can't be inspected in dev tools.
+ * Server component that passes price step data to the client.
+ * Prices for future steps are hidden to prevent inspection.
  */
 const TicketPriceProgress: FC<TicketPriceProgressProps> = ({ slice }) => {
   const { primary, items } = slice;
@@ -37,55 +39,26 @@ const TicketPriceProgress: FC<TicketPriceProgressProps> = ({ slice }) => {
 
   const now = new Date();
 
-  // Process steps and determine their state based on dates
-  const steps: PriceStep[] = items.map((item, index) => {
-    const availableUntil = item.available_until
-      ? new Date(item.available_until)
+  // Process steps - hide prices for steps that haven't started yet (unless visible)
+  const steps: PriceStepData[] = items.map((item, index) => {
+    const availableFrom = item.available_from
+      ? new Date(item.available_from)
       : null;
 
-    // Determine if this step's date has passed
-    const isPast = availableUntil ? now > availableUntil : false;
-
-    // Find if this is the current active step
-    // Current = first step whose date hasn't passed yet
-    const isCurrentStep =
-      !isPast &&
-      items.findIndex((i) => {
-        const date = i.available_until ? new Date(i.available_until) : null;
-        return date ? now <= date : true;
-      }) === index;
-
-    // For future steps (not past and not current), hide real price
-    const isFuture = !isPast && !isCurrentStep;
+    // Show price if the step has started OR if it's marked as visible
+    const hasStarted = !availableFrom || now >= availableFrom;
+    const isVisible = item.is_visible ?? true;
+    const showPrice = hasStarted || isVisible;
 
     return {
       title: item.title || `Step ${index + 1}`,
       description: item.description || null,
-      // Only send real price for past and current steps
-      price: isFuture ? null : item.price ?? null,
-      availableUntil: availableUntil?.toISOString() ?? null,
-      state: isPast ? "completed" : isCurrentStep ? "current" : "future",
+      price: showPrice ? (item.price ?? null) : null,
+      availableFrom: item.available_from || null,
+      availableUntil: item.available_until || null,
+      isVisible: isVisible,
     };
   });
-
-  // If no current step found (all dates passed), mark the last one as current
-  const hasCurrentStep = steps.some((s) => s.state === "current");
-  if (!hasCurrentStep && steps.length > 0) {
-    const lastStep = steps[steps.length - 1];
-    if (lastStep.state === "completed") {
-      // All steps completed - keep as is
-    } else {
-      // Mark first non-completed as current
-      const firstFuture = steps.find((s) => s.state === "future");
-      if (firstFuture) {
-        firstFuture.state = "current";
-        // Now we need to show the price for current
-        const originalIndex = steps.indexOf(firstFuture);
-        const originalItem = items[originalIndex];
-        firstFuture.price = originalItem.price ?? null;
-      }
-    }
-  }
 
   return (
     <section

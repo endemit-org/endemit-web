@@ -1,9 +1,11 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { PaginatedTransactions } from "@/domain/wallet/types";
 import type { WalletTransactionType } from "@prisma/client";
 import { DEFAULT_PAGE_SIZE, calculatePagination } from "@/lib/types/pagination";
+import { CacheTags } from "@/lib/services/cache";
 
 interface GetAllTransactionsParams {
   page?: number;
@@ -12,12 +14,10 @@ interface GetAllTransactionsParams {
   search?: string;
 }
 
-export const getAllTransactions = async ({
-  page = 1,
-  pageSize = DEFAULT_PAGE_SIZE,
-  type,
-  search,
-}: GetAllTransactionsParams = {}): Promise<PaginatedTransactions> => {
+const getAllTransactionsUncached = async (
+  params: GetAllTransactionsParams = {}
+): Promise<PaginatedTransactions> => {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, type, search } = params;
   const where: Record<string, unknown> = {};
 
   if (type) {
@@ -86,4 +86,19 @@ export const getAllTransactions = async ({
     pageSize: pagination.pageSize,
     totalPages: pagination.totalPages,
   };
+};
+
+/**
+ * Get all transactions (cached)
+ */
+export const getAllTransactions = (
+  params: GetAllTransactionsParams = {}
+): Promise<PaginatedTransactions> => {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, type = "", search = "" } = params;
+
+  return unstable_cache(
+    () => getAllTransactionsUncached(params),
+    ["admin-transactions", String(page), String(pageSize), type, search],
+    { tags: [CacheTags.admin.wallets.transactions()] }
+  )();
 };

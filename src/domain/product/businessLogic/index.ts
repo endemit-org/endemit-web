@@ -80,6 +80,7 @@ export const isProductDigital = (product: Product) => {
   return product.type === ProductType.DIGITAL;
 };
 export const isProductVisible = (product: Product) => {
+  if (process.env.FEAT_IGNORE_VISIBILITY === "true") return true;
   return product.visibility === ProductVisibility.VISIBLE;
 };
 export const isProductTicket = (product: Product) => {

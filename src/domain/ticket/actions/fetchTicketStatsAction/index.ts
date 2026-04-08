@@ -1,10 +1,12 @@
 "use server";
 
 import assert from "node:assert";
+import { unstable_cache } from "next/cache";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { prisma } from "@/lib/services/prisma";
 import { TicketStatus } from "@prisma/client";
+import { CacheTags } from "@/lib/services/cache";
 
 export interface TicketStats {
   eventId: string;
@@ -29,8 +31,7 @@ export async function fetchTicketStatsForEvent(
     "User not authorized to read tickets"
   );
 
-  const results = await fetchTicketStatsForEventsInternal([eventId]);
-  return results[eventId] ?? createEmptyStats(eventId);
+  return fetchTicketStatsForEventCached(eventId);
 }
 
 export async function fetchTicketStatsForEvents(
@@ -43,7 +44,14 @@ export async function fetchTicketStatsForEvents(
     "User not authorized to read tickets"
   );
 
-  return fetchTicketStatsForEventsInternal(eventIds);
+  // Fetch each event's stats using cached function
+  const results: Record<string, TicketStats> = {};
+  await Promise.all(
+    eventIds.map(async eventId => {
+      results[eventId] = await fetchTicketStatsForEventCached(eventId);
+    })
+  );
+  return results;
 }
 
 function createEmptyStats(eventId: string): TicketStats {
@@ -61,7 +69,7 @@ function createEmptyStats(eventId: string): TicketStats {
   };
 }
 
-async function fetchTicketStatsForEventsInternal(
+async function fetchTicketStatsForEventsUncached(
   eventIds: string[]
 ): Promise<Record<string, TicketStats>> {
   if (eventIds.length === 0) return {};
@@ -144,4 +152,18 @@ async function fetchTicketStatsForEventsInternal(
   }
 
   return statsMap;
+}
+
+/**
+ * Cached version of ticket stats for a single event
+ */
+function fetchTicketStatsForEventCached(eventId: string): Promise<TicketStats> {
+  return unstable_cache(
+    async () => {
+      const results = await fetchTicketStatsForEventsUncached([eventId]);
+      return results[eventId] ?? createEmptyStats(eventId);
+    },
+    ["ticket-stats-event", eventId],
+    { tags: [CacheTags.admin.tickets.statsForEvent(eventId)] }
+  )();
 }

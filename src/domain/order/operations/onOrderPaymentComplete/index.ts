@@ -6,11 +6,15 @@ import { updateOrderStatusPaid, updateOrderStatusById } from "@/domain/order/ope
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
-import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { createTransaction } from "@/domain/wallet/operations/createTransaction";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ProductCategory, ProductType } from "@/domain/product/types/product";
 import { OrderStatus } from "@prisma/client";
+import {
+  bustOnOrderCreated,
+  bustOnDonationReceived,
+} from "@/lib/services/cache";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
   let order = await updateOrderStatusPaid(paymentSessionId);
@@ -25,9 +29,10 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
   }
 
   // Process wallet transactions (non-blocking)
+  // Use fresh wallet data for transaction processing (not cached)
   if (order.userId) {
     try {
-      const wallet = await getWalletByUserId(order.userId);
+      const wallet = await getWalletByUserIdFresh(order.userId);
       if (!wallet) {
         console.error("User has no wallet:", order.userId);
       } else {
@@ -146,6 +151,17 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
     ticketEventIds,
     customerName: order.name,
   });
+
+  // Bust caches for order and user data
+  await bustOnOrderCreated(order.id, order.userId);
+
+  // Check if order has donations and bust donation caches
+  const hasDonations = items.some(
+    item => item.category === ProductCategory.DONATIONS
+  );
+  if (hasDonations) {
+    await bustOnDonationReceived();
+  }
 
   return order;
 };
