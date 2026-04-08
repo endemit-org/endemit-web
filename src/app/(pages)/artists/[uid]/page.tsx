@@ -20,6 +20,9 @@ import ArtistList from "@/app/_components/artist/ArtistList";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const artists = await fetchArtistsFromCms({});
 

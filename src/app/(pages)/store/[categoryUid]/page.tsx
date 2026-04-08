@@ -9,6 +9,9 @@ import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromC
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductVisible } from "@/domain/product/businessLogic";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const categories = getCategoriesWithSlugs;
 

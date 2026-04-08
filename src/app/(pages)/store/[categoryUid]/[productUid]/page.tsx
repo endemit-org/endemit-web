@@ -20,6 +20,9 @@ import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCm
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductVisible } from "@/domain/product/businessLogic";
 
+// Static until next deploy - no ISR
+export const revalidate = false;
+
 export async function generateStaticParams() {
   const products = await fetchProductsFromCms({});
 
