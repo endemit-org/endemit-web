@@ -3,6 +3,7 @@ import "server-only";
 import { prisma } from "@/lib/services/prisma";
 import { verifyTicketHash } from "@/domain/ticket/operations/verifyTicketHash";
 import type { QrTicketPayload } from "@/domain/ticket/types/ticket";
+import { bustOnTicketScanned } from "@/lib/services/cache";
 
 export const TICKET_ALREADY_SCANNED_MESSAGE =
   "This ticket has already been scanned.";
@@ -32,7 +33,7 @@ export const scanTicketByHash = async (ticketHash: string) => {
     throw new Error(TICKET_ALREADY_SCANNED_MESSAGE);
   }
 
-  return await prisma.ticket.update({
+  const updatedTicket = await prisma.ticket.update({
     where: {
       ticketHash: ticketHash,
     },
@@ -42,6 +43,10 @@ export const scanTicketByHash = async (ticketHash: string) => {
       scanCount: { increment: 1 },
     },
   });
+
+  await bustOnTicketScanned(updatedTicket.id, updatedTicket.shortId, updatedTicket.eventId);
+
+  return updatedTicket;
 };
 
 /**
@@ -75,7 +80,7 @@ export const scanTicketByPayload = async (payload: QrTicketPayload) => {
     throw new Error(TICKET_ALREADY_SCANNED_MESSAGE);
   }
 
-  return await prisma.ticket.update({
+  const updatedTicket = await prisma.ticket.update({
     where: {
       shortId: payload.shortId,
     },
@@ -85,4 +90,8 @@ export const scanTicketByPayload = async (payload: QrTicketPayload) => {
       scanCount: { increment: 1 },
     },
   });
+
+  await bustOnTicketScanned(updatedTicket.id, updatedTicket.shortId, updatedTicket.eventId);
+
+  return updatedTicket;
 };

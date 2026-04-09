@@ -7,6 +7,7 @@ import { generateSecureHash } from "@/domain/ticket/operations/generateSecureHas
 import { transformToQrContent } from "@/domain/ticket/transformers/transformToQrContent";
 import { TicketPayload } from "@/domain/ticket/types/ticket";
 import { customAlphabet } from "nanoid";
+import { bustOnOrderCreated, bustOnTicketIssued } from "@/lib/services/cache";
 
 const DOOR_SALE_PLACEHOLDER_EMAIL = "doorsale@import.endemit.org";
 const DOOR_SALE_PLACEHOLDER_NAME = "Door Sale";
@@ -34,7 +35,7 @@ export const createDoorSaleTickets = async ({
   const totalAmount = totalPrice;
   const pricePerTicket = Math.round(totalPrice / quantity);
 
-  return await prisma.$transaction(async tx => {
+  const result = await prisma.$transaction(async tx => {
     // Create a door sale order (cash payment)
     const doorSaleOrder = await tx.order.create({
       data: {
@@ -112,4 +113,12 @@ export const createDoorSaleTickets = async ({
       totalAmount,
     };
   });
+
+  // Bust caches after transaction completes
+  await bustOnOrderCreated(result.order.id, null);
+  for (const ticket of result.tickets) {
+    await bustOnTicketIssued(ticket.id, null, eventId);
+  }
+
+  return result;
 };

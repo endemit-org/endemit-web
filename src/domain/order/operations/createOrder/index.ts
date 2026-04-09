@@ -4,6 +4,7 @@ import { prisma } from "@/lib/services/prisma";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { Prisma } from "@prisma/client";
 import { findOrCreateUserByEmail } from "@/domain/user/operations/findOrCreateUserByEmail";
+import { bustOnOrderCreated } from "@/lib/services/cache";
 
 interface CreateOrderParams {
   stripeSessionId: string;
@@ -67,6 +68,8 @@ export const createOrder = async ({
       metadata,
     },
   });
+
+  await bustOnOrderCreated(order.id, resolvedUserId);
 
   return {
     order,

@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
+import { bustOnUserCreated, bustOnWalletCreated } from "@/lib/services/cache";
 
 interface FindOrCreateUserResult {
   user: {
@@ -65,6 +66,9 @@ export const findOrCreateUserByEmail = async (
       balance: 0,
     },
   });
+
+  await bustOnUserCreated();
+  await bustOnWalletCreated(user.id);
 
   return {
     user: {

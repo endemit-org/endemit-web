@@ -3,6 +3,7 @@ import "server-only";
 import { inngest } from "@/lib/services/inngest";
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
+import { bustOnPosOrderCreated } from "@/lib/services/cache";
 
 /**
  * Scheduled function that expires pending POS orders that have passed their expiry time.
@@ -72,6 +73,10 @@ export const runPosOrderExpiryAutomation = inngest.createFunction(
           );
         }
       }
+    });
+
+    await step.run("bust-cache", async () => {
+      await bustOnPosOrderCreated();
     });
 
     return { expired: expiredOrders.length };

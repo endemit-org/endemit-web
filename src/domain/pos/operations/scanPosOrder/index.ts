@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
+import { bustOnPosOrderCreated } from "@/lib/services/cache";
 import type { ScanPosOrderResult } from "@/domain/pos/types";
 
 export async function scanPosOrder(
@@ -101,6 +102,8 @@ export async function scanPosOrder(
     balance,
     hasEnoughBalance,
   });
+
+  await bustOnPosOrderCreated();
 
   return {
     order,
