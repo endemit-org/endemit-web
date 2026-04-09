@@ -18,6 +18,10 @@ export type ProductListProps = SliceComponentProps<Content.ProductListSlice>;
 const ProductList: FC<ProductListProps> = async ({ slice }) => {
   let products = null;
   let gridSizeType: "small" | "large" = "small";
+  // Type will be available after running Slice Machine to regenerate types
+  const quickAddToCart =
+    (slice.primary as { quick_add_to_cart?: boolean }).quick_add_to_cart ??
+    false;
 
   if (slice.variation === "default" && slice.primary.category) {
     products = await fetchProductsFromCms({
@@ -70,6 +74,7 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
           description={slice.primary.description ?? undefined}
           renderFrame={slice.primary.render_frame ?? false}
           gridType={gridSizeType}
+          quickAddToCart={quickAddToCart}
         />
       )}
     </section>

@@ -1,5 +1,7 @@
 import {
+  Product,
   ProductCategory,
+  ProductCompositionType,
   ProductImage,
   ProductStatus,
 } from "@/domain/product/types/product";
@@ -9,6 +11,8 @@ import { formatPrice } from "@/lib/util/formatting";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import React from "react";
+import ProductCardQuickAdd from "@/app/_components/product/ProductCardQuickAdd";
+import { isProductSellable } from "@/domain/product/businessLogic";
 
 interface ProductCardProps {
   video?: string;
@@ -19,6 +23,8 @@ interface ProductCardProps {
   category: ProductCategory;
   status: ProductStatus;
   callToAction?: string;
+  quickAddToCart?: boolean;
+  product?: Product;
 }
 
 export default function ProductCard({
@@ -30,11 +36,19 @@ export default function ProductCard({
   image,
   video,
   callToAction,
+  quickAddToCart,
+  product,
 }: ProductCardProps) {
+  const showQuickAdd =
+    quickAddToCart &&
+    product &&
+    product.composition === ProductCompositionType.SINGLE &&
+    isProductSellable(product).isSellable;
+
   return (
     <div
       className={
-        "group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full"
+        "group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full relative"
       }
     >
       <ProductStatusTag
@@ -79,10 +93,13 @@ export default function ProductCard({
               {callToAction ?? category}
             </p>
           </div>
-          <div className={"pl-2"}>
+          <div className={"pl-2 flex flex-col items-end"}>
             <p className="text-lg font-medium text-gray-500">
               {formatPrice(price)}
             </p>
+            {showQuickAdd && product && (
+              <ProductCardQuickAdd product={product} />
+            )}
           </div>
         </div>
       </Link>
