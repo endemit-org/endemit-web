@@ -4,6 +4,7 @@ import { prisma } from "@/lib/services/prisma";
 import { createPasswordHash } from "@/domain/auth/operations/createPasswordHash";
 import type { CreateUserInput, SerializedUser } from "@/domain/user/types";
 import type { RoleSlug } from "@/domain/auth/config/roles.config";
+import { bustOnUserCreated, bustOnWalletCreated } from "@/lib/services/cache";
 
 export const createUser = async (data: CreateUserInput): Promise<SerializedUser> => {
   // Check if username already exists
@@ -61,6 +62,9 @@ export const createUser = async (data: CreateUserInput): Promise<SerializedUser>
 
     return newUser;
   });
+
+  await bustOnUserCreated();
+  await bustOnWalletCreated(user.id);
 
   return {
     id: user.id,

@@ -3,6 +3,7 @@ import "server-only";
 import type { RegisterData } from "@/domain/auth/types";
 import { createPasswordHash } from "@/domain/auth/operations/createPasswordHash";
 import { prisma } from "@/lib/services/prisma";
+import { bustOnUserCreated, bustOnWalletCreated } from "@/lib/services/cache";
 
 export const createUser = async (data: RegisterData) => {
   const passwordHash = await createPasswordHash(data.password);
@@ -22,6 +23,10 @@ export const createUser = async (data: RegisterData) => {
       balance: 0,
     },
   });
+
+  // Bust caches for new user
+  await bustOnUserCreated();
+  await bustOnWalletCreated(user.id);
 
   return user;
 };

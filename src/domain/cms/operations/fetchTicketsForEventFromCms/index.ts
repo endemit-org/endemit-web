@@ -4,6 +4,7 @@ import { prismicClient } from "@/lib/services/prismic";
 import { transformProductObject } from "@/domain/product/transformers/transformProductObject";
 import { isFilled } from "@prismicio/client";
 import { ProductDocument } from "@/prismicio-types";
+import { FEAT_IGNORE_VISIBILITY } from "@/lib/services/env/private";
 
 export const fetchTicketsForEventFromCms = async (eventId: string) => {
   const products = (await prismicClient.getAllByType("product", {
@@ -23,11 +24,11 @@ export const fetchTicketsForEventFromCms = async (eventId: string) => {
       return false;
     }
 
+    const isVisible =
+      FEAT_IGNORE_VISIBILITY || product.data.product_visibility === "Visible";
+
     return (
-      product.data.price &&
-      product.data.price > 0 &&
-      eventDoc.id === eventId &&
-      product.data.product_visibility === "Visible"
+      product.data.price && product.data.price > 0 && eventDoc.id === eventId && isVisible
     );
   });
 

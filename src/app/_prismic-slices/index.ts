@@ -12,6 +12,7 @@ export const components = {
   event_list: dynamic(() => import("./EventList")),
   grid_tile: dynamic(() => import("./TileGrid")),
   hero: dynamic(() => import("./Hero")),
+  horizontal_rule: dynamic(() => import("./HorizontalRule")),
   image_gallery: dynamic(() => import("./ImageGallery")),
   newsletter_subscription: dynamic(() => import("./Newsletter")),
   podcast_list: dynamic(() => import("./PodcastList")),

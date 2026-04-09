@@ -3,12 +3,13 @@ import "server-only";
 import { OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/services/prisma";
 import { validateTransition } from "./transitions";
+import { bustOnOrderStatusChanged } from "@/lib/services/cache";
 
 export const updateOrderStatus = async (
   stripeSessionId: string,
   status: OrderStatus
 ) => {
-  return await prisma.order.update({
+  const order = await prisma.order.update({
     where: {
       stripeSession: stripeSessionId,
     },
@@ -16,13 +17,17 @@ export const updateOrderStatus = async (
       status,
     },
   });
+
+  await bustOnOrderStatusChanged(order.id, order.userId);
+
+  return order;
 };
 
 export const updateOrderStatusById = async (
   orderId: string,
   status: OrderStatus
 ) => {
-  return await prisma.order.update({
+  const order = await prisma.order.update({
     where: {
       id: orderId,
     },
@@ -30,6 +35,10 @@ export const updateOrderStatusById = async (
       status,
     },
   });
+
+  await bustOnOrderStatusChanged(order.id, order.userId);
+
+  return order;
 };
 
 /**
@@ -51,10 +60,14 @@ export const updateOrderStatusValidated = async (
 
   validateTransition(order.status, newStatus);
 
-  return await prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: { status: newStatus },
   });
+
+  await bustOnOrderStatusChanged(updatedOrder.id, updatedOrder.userId);
+
+  return updatedOrder;
 };
 
 export const updateOrderStatusPaid = async (stripeSessionId: string) => {

@@ -66,6 +66,10 @@ export const APPLE_PASS_CERTIFICATE_PASSWORD =
   process.env.APPLE_PASS_CERTIFICATE_PASSWORD!;
 export const APPLE_WWDR_CERTIFICATE = process.env.APPLE_WWDR_CERTIFICATE!;
 
+// Feature flags
+export const FEAT_IGNORE_VISIBILITY =
+  process.env.FEAT_IGNORE_VISIBILITY === "true";
+
 // Validation
 if (!DATABASE_URL) throw new Error("Missing DATABASE_URL");
 if (!STRIPE_SECRET_KEY) throw new Error("Missing STRIPE_SECRET_KEY");

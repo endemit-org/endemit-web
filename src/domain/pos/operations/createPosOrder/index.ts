@@ -4,6 +4,7 @@ import { prisma } from "@/lib/services/prisma";
 import { generatePosOrderHash } from "@/domain/pos/operations/generatePosOrderHash";
 import { generatePosShortCode } from "@/domain/pos/operations/generatePosShortCode";
 import type { CreatePosOrderInput, PosOrderPayload } from "@/domain/pos/types";
+import { bustOnPosOrderCreated } from "@/lib/services/cache";
 
 const ORDER_EXPIRY_MINUTES = 15;
 
@@ -116,6 +117,8 @@ export async function createPosOrder(input: CreatePosOrderInput) {
       register: true,
     },
   });
+
+  await bustOnPosOrderCreated();
 
   return updatedOrder;
 }

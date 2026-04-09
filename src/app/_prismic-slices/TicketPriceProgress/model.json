@@ -49,10 +49,25 @@
             "placeholder": "1500"
           }
         },
+        "available_from": {
+          "type": "Timestamp",
+          "config": {
+            "label": "Available From"
+          }
+        },
         "available_until": {
           "type": "Timestamp",
           "config": {
             "label": "Available Until"
+          }
+        },
+        "is_visible": {
+          "type": "Boolean",
+          "config": {
+            "label": "Is Visible (for future steps)",
+            "default_value": true,
+            "placeholder_false": "Hidden",
+            "placeholder_true": "Visible"
           }
         }
       }

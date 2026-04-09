@@ -1,7 +1,9 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import { OrderStatus } from "@prisma/client";
+import { CacheTags } from "@/lib/services/cache";
 
 // Statuses that represent successful payment (count towards revenue)
 const PAID_STATUSES: OrderStatus[] = [
@@ -19,7 +21,7 @@ export interface OrderStats {
   pendingCount: number;
 }
 
-export const getOrderStats = async (): Promise<OrderStats> => {
+const getOrderStatsUncached = async (): Promise<OrderStats> => {
   // Use aggregate queries instead of fetching all orders
   const [paidOrdersAggregate, pendingCount] = await Promise.all([
     prisma.order.aggregate({
@@ -43,4 +45,13 @@ export const getOrderStats = async (): Promise<OrderStats> => {
     orderCount: paidOrdersAggregate._count,
     pendingCount,
   };
+};
+
+/**
+ * Get order statistics (cached)
+ */
+export const getOrderStats = (): Promise<OrderStats> => {
+  return unstable_cache(getOrderStatsUncached, ["admin-order-stats"], {
+    tags: [CacheTags.admin.orders.stats()],
+  })();
 };

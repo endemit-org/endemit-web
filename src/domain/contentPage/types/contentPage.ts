@@ -1,4 +1,4 @@
-import { CmsMetaData } from "@/domain/cms/types/common";
+import { CmsImage, CmsMetaData } from "@/domain/cms/types/common";
 import { SliceZone } from "@prismicio/client";
 
 export type ContentPage = {
@@ -6,6 +6,8 @@ export type ContentPage = {
   uid: string;
   title: string;
   renderFrame: boolean;
+  backgroundImage: CmsImage | null;
+  backgroundAnimated: boolean;
   slices: SliceZone;
   meta: CmsMetaData;
   updatedAt: Date;

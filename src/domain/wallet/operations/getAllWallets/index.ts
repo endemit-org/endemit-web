@@ -1,8 +1,10 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { PaginatedWallets } from "@/domain/wallet/types";
 import { DEFAULT_PAGE_SIZE, calculatePagination } from "@/lib/types/pagination";
+import { CacheTags } from "@/lib/services/cache";
 
 interface GetAllWalletsParams {
   page?: number;
@@ -10,11 +12,10 @@ interface GetAllWalletsParams {
   search?: string;
 }
 
-export const getAllWallets = async ({
-  page = 1,
-  pageSize = DEFAULT_PAGE_SIZE,
-  search,
-}: GetAllWalletsParams = {}): Promise<PaginatedWallets> => {
+const getAllWalletsUncached = async (
+  params: GetAllWalletsParams = {}
+): Promise<PaginatedWallets> => {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, search } = params;
   const where = search
     ? {
         user: {
@@ -61,4 +62,19 @@ export const getAllWallets = async ({
     pageSize: pagination.pageSize,
     totalPages: pagination.totalPages,
   };
+};
+
+/**
+ * Get all wallets (cached)
+ */
+export const getAllWallets = (
+  params: GetAllWalletsParams = {}
+): Promise<PaginatedWallets> => {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, search = "" } = params;
+
+  return unstable_cache(
+    () => getAllWalletsUncached(params),
+    ["admin-wallets", String(page), String(pageSize), search],
+    { tags: [CacheTags.admin.wallets.list()] }
+  )();
 };

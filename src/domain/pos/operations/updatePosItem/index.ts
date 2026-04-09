@@ -1,5 +1,8 @@
+import "server-only";
+
 import { prisma } from "@/lib/services/prisma";
 import type { PosItem, PosItemDirection, PosItemStatus } from "@prisma/client";
+import { bustOnPosItemChanged } from "@/lib/services/cache";
 
 export interface UpdatePosItemInput {
   id: string;
@@ -23,6 +26,8 @@ export async function updatePosItem(
       ...(input.status !== undefined && { status: input.status }),
     },
   });
+
+  await bustOnPosItemChanged();
 
   return item;
 }

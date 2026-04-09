@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { CreateEventClaimData } from "@/domain/claim/types";
+import { bustOnEventClaimed } from "@/lib/services/cache";
 
 export const createEventClaim = async (data: CreateEventClaimData) => {
   const existing = await prisma.eventClaim.findUnique({
@@ -17,7 +18,7 @@ export const createEventClaim = async (data: CreateEventClaimData) => {
     throw new Error("You have already claimed this event");
   }
 
-  return await prisma.eventClaim.create({
+  const claim = await prisma.eventClaim.create({
     data: {
       userId: data.userId,
       eventId: data.eventId,
@@ -25,4 +26,9 @@ export const createEventClaim = async (data: CreateEventClaimData) => {
       status: "PENDING",
     },
   });
+
+  // Bust claims cache
+  await bustOnEventClaimed(data.userId);
+
+  return claim;
 };

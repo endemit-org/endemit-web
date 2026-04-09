@@ -1,5 +1,8 @@
+import "server-only";
+
 import { prisma } from "@/lib/services/prisma";
 import type { PosRegister, PosRegisterStatus } from "@prisma/client";
+import { bustOnPosRegisterChanged } from "@/lib/services/cache";
 
 export interface UpdatePosRegisterInput {
   id: string;
@@ -21,6 +24,8 @@ export async function updatePosRegister(
       ...(input.canTopUp !== undefined && { canTopUp: input.canTopUp }),
     },
   });
+
+  await bustOnPosRegisterChanged();
 
   return register;
 }

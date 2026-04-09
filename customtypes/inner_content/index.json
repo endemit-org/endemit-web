@@ -74,6 +74,9 @@
             "spacer": {
               "type": "SharedSlice"
             },
+            "horizontal_rule": {
+              "type": "SharedSlice"
+            },
             "text_column": {
               "type": "SharedSlice"
             },

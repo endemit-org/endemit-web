@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import ItemToggleIcon from "@/app/_components/icon/ItemToggleIcon";
+import clsx from "clsx";
 
 export interface AccordionItem {
   title: string | React.ReactNode;
@@ -16,6 +17,7 @@ export interface AccordionProps {
   compact?: boolean;
   autoExpandIndexOnView?: number;
   autoExpandDelay?: number;
+  renderFrame?: boolean;
 }
 
 export default function Accordion({
@@ -26,6 +28,7 @@ export default function Accordion({
   compact = false,
   autoExpandIndexOnView,
   autoExpandDelay = 1000,
+  renderFrame = false,
 }: AccordionProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     defaultOpenIndex !== undefined ? [defaultOpenIndex] : []
@@ -150,19 +153,19 @@ export default function Accordion({
   return (
     <div
       ref={containerRef}
-      className={
-        compact
-          ? "w-full"
-          : "w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-      }
+      className={clsx(
+        "w-full",
+        compact && "",
+        !compact && "py-8",
+        renderFrame && "p-4 lg:p-10 max-lg:py-8 bg-neutral-800 rounded-md"
+      )}
     >
       {heading && (
         <h2
-          className={
-            compact
-              ? "text-xl font-bold mb-4 text-neutral-200"
-              : "text-3xl font-bold mb-8 text-gray-900"
-          }
+          className={clsx(
+            "font-bold text-neutral-200",
+            compact ? "text-xl mb-4" : "text-3xl mb-8"
+          )}
         >
           {heading}
         </h2>
@@ -197,7 +200,7 @@ export default function Accordion({
                 }`}
               >
                 <div
-                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-50`}
+                  className={`${compact ? "p-4" : "p-6"} bg-neutral-950 bg-opacity-50 text-neutral-300`}
                 >
                   {item.content}
                 </div>

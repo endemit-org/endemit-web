@@ -1,5 +1,6 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { PaginatedUsers, SerializedUser } from "@/domain/user/types";
 import type { RoleSlug } from "@/domain/auth/config/roles.config";
@@ -7,13 +8,14 @@ import {
   DEFAULT_PAGE_SIZE,
   calculatePagination,
 } from "@/lib/types/pagination";
+import { CacheTags } from "@/lib/services/cache";
 
 interface GetAllUsersParams {
   page?: number;
   pageSize?: number;
 }
 
-export const getAllUsers = async ({
+const getAllUsersUncached = async ({
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
 }: GetAllUsersParams = {}): Promise<PaginatedUsers> => {
@@ -56,4 +58,19 @@ export const getAllUsers = async ({
     pageSize: pagination.pageSize,
     totalPages: pagination.totalPages,
   };
+};
+
+/**
+ * Get all users (cached)
+ */
+export const getAllUsers = (
+  params: GetAllUsersParams = {}
+): Promise<PaginatedUsers> => {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE } = params;
+
+  return unstable_cache(
+    () => getAllUsersUncached(params),
+    ["admin-users", String(page), String(pageSize)],
+    { tags: [CacheTags.admin.users.list()] }
+  )();
 };

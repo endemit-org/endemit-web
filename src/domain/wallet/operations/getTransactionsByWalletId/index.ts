@@ -1,8 +1,10 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
 import { DEFAULT_PAGE_SIZE, calculatePagination } from "@/lib/types/pagination";
+import { CacheTags } from "@/lib/services/cache";
 
 interface GetTransactionsByWalletIdParams {
   walletId: string;
@@ -18,7 +20,7 @@ interface PaginatedWalletTransactions {
   totalPages: number;
 }
 
-export const getTransactionsByWalletId = async ({
+const getTransactionsByWalletIdUncached = async ({
   walletId,
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
@@ -61,4 +63,19 @@ export const getTransactionsByWalletId = async ({
     pageSize: pagination.pageSize,
     totalPages: pagination.totalPages,
   };
+};
+
+/**
+ * Get transactions for a wallet (cached)
+ */
+export const getTransactionsByWalletId = (
+  params: GetTransactionsByWalletIdParams
+): Promise<PaginatedWalletTransactions> => {
+  const { walletId, page = 1, pageSize = DEFAULT_PAGE_SIZE } = params;
+
+  return unstable_cache(
+    () => getTransactionsByWalletIdUncached(params),
+    ["transactions-wallet", walletId, String(page), String(pageSize)],
+    { tags: [CacheTags.item.walletTransactions(walletId)] }
+  )();
 };
