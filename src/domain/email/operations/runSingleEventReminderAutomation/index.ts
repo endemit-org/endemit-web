@@ -37,11 +37,14 @@ export const runSingleEventReminderAutomation = inngest.createFunction(
     const artistNames = artists.map(a => a.name);
     const artistLines = splitArtistsIntoLines(artistNames);
 
-    // Generate ticket images
-    const attachments = await step.run("generate-ticket-images", async () => {
-      return Promise.all(
+    // Generate ticket images and send email in a single step
+    // to avoid serializing large base64 images between steps
+    await step.run("generate-and-send-email", async () => {
+      const attachments = await Promise.all(
         tickets.map(async ticket => {
-          const templateId = ticket.metadata?.ticketTemplate as string | undefined;
+          const templateId = ticket.metadata?.ticketTemplate as
+            | string
+            | undefined;
 
           const imageBase64 = await generateTicketImage({
             shortId: ticket.shortId,
@@ -66,10 +69,7 @@ export const runSingleEventReminderAutomation = inngest.createFunction(
           };
         })
       );
-    });
 
-    // Send the email
-    await step.run("send-email", async () => {
       await sendEventReminderEmail({
         recipientEmail,
         eventName,
