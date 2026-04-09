@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
+import { bustOnPosOrderCreated } from "@/lib/services/cache";
 
 export async function cancelPosOrder(
   orderHash: string,
@@ -54,6 +55,8 @@ export async function cancelPosOrder(
       reason,
     }
   );
+
+  await bustOnPosOrderCreated();
 
   return updatedOrder;
 }

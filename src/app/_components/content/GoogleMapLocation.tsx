@@ -162,6 +162,7 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
       center={center}
       zoom={zoom}
       options={{
+        mapTypeId: "hybrid",
         styles: darkMode ? darkModeStyles : undefined,
         ...mapOptions,
       }}

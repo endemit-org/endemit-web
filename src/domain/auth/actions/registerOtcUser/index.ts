@@ -9,6 +9,7 @@ import { createOtcToken } from "@/domain/auth/operations/createOtcToken";
 import { queueOtcEmail } from "@/domain/auth/operations/queueOtcEmail";
 import { assignRoleToUser } from "@/domain/auth/operations/assignRoleToUser";
 import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
+import { bustOnUserCreated, bustOnWalletCreated } from "@/lib/services/cache";
 import type { OtcRequestResult } from "@/domain/auth/types";
 
 const OTC_EXPIRATION_MINUTES = 10;
@@ -67,6 +68,10 @@ export const registerOtcUser = async ({
       balance: 0,
     },
   });
+
+  // Bust caches for new user
+  await bustOnUserCreated();
+  await bustOnWalletCreated(user.id);
 
   // Generate code and magic link
   const code = generateOtcCode();

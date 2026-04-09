@@ -2,6 +2,7 @@ import "server-only";
 
 import { inngest } from "@/lib/services/inngest";
 import { prisma } from "@/lib/services/prisma";
+import { bustOnOrderStatusChanged } from "@/lib/services/cache";
 
 // Orders older than this will be marked as expired
 const ORDER_EXPIRY_HOURS = 24;
@@ -46,6 +47,13 @@ export const runOrderCleanupAutomation = inngest.createFunction(
           status: "EXPIRED",
         },
       });
+    });
+
+    await step.run("bust-cache", async () => {
+      // Bust cache for each expired order
+      for (const order of expiredOrders) {
+        await bustOnOrderStatusChanged(order.id, null);
+      }
     });
 
     return {

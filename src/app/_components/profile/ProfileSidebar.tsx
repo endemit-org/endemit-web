@@ -204,7 +204,6 @@ export default function ProfileSidebar({
           <ActionButton
             onClick={() => setIsTopUpOpen(true)}
             variant={"secondary"}
-            disabled={!isEndemitPayEnabled()}
           >
             <svg
               className="w-5 h-5"
@@ -250,13 +249,12 @@ export default function ProfileSidebar({
       )}
 
       {/* Top Up Modal */}
-      {isEndemitPayEnabled() && (
-        <TopUpModal
-          isOpen={isTopUpOpen}
-          onClose={() => setIsTopUpOpen(false)}
-          products={currencyProducts}
-        />
-      )}
+
+      <TopUpModal
+        isOpen={isTopUpOpen}
+        onClose={() => setIsTopUpOpen(false)}
+        products={currencyProducts}
+      />
 
       {/* Logout Confirmation Modal - rendered via portal */}
       {showLogoutConfirm &&

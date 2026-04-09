@@ -9,6 +9,7 @@ import { transformTicketsFromOrder } from "@/domain/order/transformers/transform
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
+import { bustOnOrderStatusChanged } from "@/lib/services/cache";
 import { ProductInOrder } from "@/domain/order/types/order";
 
 export const processFullWalletPayment = async (orderId: string) => {
@@ -56,6 +57,9 @@ export const processFullWalletPayment = async (orderId: string) => {
     where: { id: orderId },
     data: { status: OrderStatus.PAID },
   });
+
+  // Bust order status cache
+  await bustOnOrderStatusChanged(orderId, order.userId);
 
   const items = updatedOrder.items as unknown as ProductInOrder[];
 

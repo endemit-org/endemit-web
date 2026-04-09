@@ -7,6 +7,7 @@ import { generateSecureHash } from "@/domain/ticket/operations/generateSecureHas
 import { transformToQrContent } from "@/domain/ticket/transformers/transformToQrContent";
 import { TicketPayload } from "@/domain/ticket/types/ticket";
 import { customAlphabet } from "nanoid";
+import { bustOnOrderCreated, bustOnTicketIssued } from "@/lib/services/cache";
 
 interface TicketHolder {
   name: string;
@@ -30,7 +31,7 @@ export const createGuestTickets = async ({
   const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 16);
   const guestSessionId = `guestlist_${nanoid()}`;
 
-  return await prisma.$transaction(async tx => {
+  const result = await prisma.$transaction(async tx => {
     // Create a guest list order (no payment)
     const guestOrder = await tx.order.create({
       data: {
@@ -102,4 +103,12 @@ export const createGuestTickets = async ({
       guestTicketCount,
     };
   });
+
+  // Bust caches after transaction completes
+  await bustOnOrderCreated(result.order.id, null);
+  for (const ticket of result.tickets) {
+    await bustOnTicketIssued(ticket.id, null, eventId);
+  }
+
+  return result;
 };

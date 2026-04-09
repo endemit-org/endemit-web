@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToUser } from "@/lib/services/supabase/broadcast";
+import { bustOnPosTopUp } from "@/lib/services/cache";
 
 interface ProcessCashTopupInput {
   registerId: string;
@@ -81,6 +82,8 @@ export async function processCashTopup(input: ProcessCashTopupInput) {
     note: result.transaction.note,
     createdAt: result.transaction.createdAt.toISOString(),
   });
+
+  await bustOnPosTopUp(result.user.id);
 
   return {
     success: true,

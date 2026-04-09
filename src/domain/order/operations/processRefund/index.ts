@@ -10,6 +10,7 @@ import {
   RefundItemSelection,
 } from "@/domain/order/operations/calculateRefundLimit";
 import { queueRefundEmailAutomation } from "@/domain/order/operations/runRefundEmailAutomation";
+import { bustOnOrderRefunded, bustOnOrderStatusChanged } from "@/lib/services/cache";
 
 export interface ProcessRefundInput {
   orderId: string;
@@ -294,7 +295,10 @@ export async function processRefund(
     ticketsRefunded,
   });
 
-  // 10. Return result
+  // 10. Bust caches
+  await bustOnOrderRefunded(order.id, order.userId);
+
+  // 11. Return result
   return {
     success: true,
     orderId: order.id,
@@ -333,7 +337,7 @@ export async function requestRefund(
     throw new Error(`Cannot request refund for order in status: ${order.status}`);
   }
 
-  await prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: {
       status: "REFUND_REQUESTED",
@@ -343,6 +347,8 @@ export async function requestRefund(
       },
     },
   });
+
+  await bustOnOrderStatusChanged(orderId, updatedOrder.userId);
 }
 
 /**
@@ -375,8 +381,10 @@ export async function cancelRefundRequest(
     throw new Error(`Cannot restore to status: ${restoreToStatus}`);
   }
 
-  await prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: { status: restoreToStatus },
   });
+
+  await bustOnOrderStatusChanged(orderId, updatedOrder.userId);
 }
