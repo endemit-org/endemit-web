@@ -26,7 +26,7 @@ interface TicketData {
  */
 export const runEventReminderAutomation = inngest.createFunction(
   { id: "run-event-reminder-automation", retries: 3 },
-  { cron: "TZ=Europe/Ljubljana 0 18 * * *" }, // 6pm Ljubljana daily
+  { cron: "TZ=Europe/Ljubljana 30 17 * * *" }, // 5:30pm Ljubljana daily
   async ({ step }) => {
     // Get today's date for idempotency key
     const reminderDate = await step.run("get-reminder-date", async () => {
@@ -138,8 +138,9 @@ export const runEventReminderAutomation = inngest.createFunction(
           );
 
           let emailsQueued = 0;
+          const DELAY_BETWEEN_EMAILS_SECONDS = 5;
 
-          // Queue email for each unique payer
+          // Queue email for each unique payer with staggered delays
           for (const [recipientEmail, recipientTickets] of Object.entries(
             ticketsByEmail
           )) {
@@ -166,7 +167,8 @@ export const runEventReminderAutomation = inngest.createFunction(
                   metadata: t.metadata as Record<string, unknown> | null,
                 })),
               },
-              reminderDate
+              reminderDate,
+              emailsQueued * DELAY_BETWEEN_EMAILS_SECONDS
             );
 
             emailsQueued++;

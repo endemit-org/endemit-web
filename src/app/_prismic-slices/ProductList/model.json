@@ -51,6 +51,15 @@
             "placeholder_true": "true",
             "default_value": false
           }
+        },
+        "quick_add_to_cart": {
+          "type": "Boolean",
+          "config": {
+            "label": "Quick add to cart",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
         }
       },
       "items": {}
@@ -81,6 +90,15 @@
           "type": "Boolean",
           "config": {
             "label": "Render frame",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
+        "quick_add_to_cart": {
+          "type": "Boolean",
+          "config": {
+            "label": "Quick add to cart",
             "placeholder_false": "false",
             "placeholder_true": "true",
             "default_value": false
@@ -154,6 +172,15 @@
               "small",
               "large"
             ]
+          }
+        },
+        "quick_add_to_cart": {
+          "type": "Boolean",
+          "config": {
+            "label": "Quick add to cart",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
           }
         }
       },

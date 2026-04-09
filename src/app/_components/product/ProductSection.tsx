@@ -8,6 +8,7 @@ interface Props {
   description?: string;
   renderFrame?: boolean;
   gridType?: "small" | "large";
+  quickAddToCart?: boolean;
 }
 
 export default function ProductSection({
@@ -16,6 +17,7 @@ export default function ProductSection({
   description,
   renderFrame = true,
   gridType,
+  quickAddToCart = false,
 }: Props) {
   if (products.length === 0) {
     return;
@@ -52,6 +54,8 @@ export default function ProductSection({
             uid={product.uid}
             price={product.price}
             category={product.category}
+            quickAddToCart={quickAddToCart}
+            product={product}
           />
         ))}
       </div>
