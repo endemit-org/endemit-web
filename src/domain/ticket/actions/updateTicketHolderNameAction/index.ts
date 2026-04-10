@@ -5,6 +5,7 @@ import { prisma } from "@/lib/services/prisma";
 import { revalidatePath } from "next/cache";
 import { generateSecureHash } from "@/domain/ticket/operations/generateSecureHash";
 import { transformToQrContent } from "@/domain/ticket/transformers/transformToQrContent";
+import { bustOnTicketIssued } from "@/lib/services/cache";
 import type { TicketPayload } from "@/domain/ticket/types/ticket";
 import type { Prisma } from "@prisma/client";
 
@@ -83,7 +84,7 @@ export async function updateTicketHolderNameAction(
   const newQrContent = transformToQrContent(newTicketHash, ticketPayload);
 
   // Update the ticket with new name, hash, and QR content
-  await prisma.ticket.update({
+  const updatedTicket = await prisma.ticket.update({
     where: { shortId },
     data: {
       ticketHolderName: trimmedName,
@@ -91,6 +92,9 @@ export async function updateTicketHolderNameAction(
       qrContent: newQrContent as unknown as Prisma.InputJsonValue,
     },
   });
+
+  // Bust ticket cache
+  await bustOnTicketIssued(updatedTicket.id, ticket.order.userId, updatedTicket.eventId);
 
   // Revalidate the ticket page
   revalidatePath(`/profile/tickets/${shortId}`);

@@ -56,6 +56,30 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "venue_list": {
+              "type": "SharedSlice"
+            },
+            "save_the_date": {
+              "type": "SharedSlice"
+            },
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "event_list": {
+              "type": "SharedSlice"
+            },
+            "ticket_price_progress": {
+              "type": "SharedSlice"
+            },
+            "banner": {
+              "type": "SharedSlice"
+            },
+            "artist_list": {
+              "type": "SharedSlice"
+            },
+            "blurred_blob": {
+              "type": "SharedSlice"
+            },
             "snowfall": {
               "type": "SharedSlice"
             },
@@ -72,6 +96,9 @@
               "type": "SharedSlice"
             },
             "spacer": {
+              "type": "SharedSlice"
+            },
+            "horizontal_rule": {
               "type": "SharedSlice"
             },
             "text_column": {

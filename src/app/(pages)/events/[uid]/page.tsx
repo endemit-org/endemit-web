@@ -17,13 +17,17 @@ import clsx from "clsx";
 import { Metadata } from "next";
 import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
 import { getResizedPrismicImage } from "@/lib/util/util";
-import { isEventCompleted } from "@/domain/event/businessLogic";
+import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
+import BlurredTextPlaceholder from "@/app/_components/content/BlurredTextPlaceholder";
+
+// Static until next deploy - no ISR
+export const revalidate = false;
 
 export async function generateStaticParams() {
   const events = await fetchEventsFromCms({});
@@ -85,11 +89,7 @@ export default async function EventPage({
     products.sort((a, b) => a.price - b.price);
   }
 
-  if (
-    !event ||
-    event.options.visibility === "Hidden" ||
-    event.options.externalEventLink
-  ) {
+  if (!event || !isEventVisible(event) || event.options.externalEventLink) {
     notFound();
   }
 
@@ -102,9 +102,7 @@ export default async function EventPage({
     const allEvents = await fetchEventsFromCms({});
     const filteredEvents = (allEvents ?? []).filter(
       e =>
-        e.uid !== event.uid &&
-        e.options.visibility !== "Hidden" &&
-        !e.options.externalEventLink
+        e.uid !== event.uid && isEventVisible(e) && !e.options.externalEventLink
     );
 
     // Shuffle array using Fisher-Yates algorithm for random selection
@@ -300,6 +298,13 @@ export default async function EventPage({
                   </div>
                 </div>
               )}
+
+              {(!event.options.showEventLineup || event.artists.length === 0) &&
+                !isPastEvent && (
+                  <div className="flex-1 flex flex-col w-full lg:@container lg:justify-center">
+                    <BlurredTextPlaceholder lineCount={3} className="py-4" />
+                  </div>
+                )}
               <div
                 className={"flex gap-x-2 text-sm lg:text-md flex-shrink-0"}
                 id={"overview"}
@@ -358,9 +363,15 @@ export default async function EventPage({
 
         <div className={"relative flex"}>
           <div className={"lg:w-2/3 w-full"}>
-            {!isPastEvent && event.options.showEventLineup && !event.options.hideLineupSection && event.options.showArtistTimes && (
-              <ArtistCarousel artists={event.artists} headline={"Set times"} />
-            )}
+            {!isPastEvent &&
+              event.options.showEventLineup &&
+              !event.options.hideLineupSection &&
+              event.options.showArtistTimes && (
+                <ArtistCarousel
+                  artists={event.artists}
+                  headline={"Set times"}
+                />
+              )}
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
 

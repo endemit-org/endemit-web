@@ -3,6 +3,7 @@ import "server-only";
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 import { UpdateAnnouncementInput } from "@/domain/announcement/types/announcement";
+import { bustOnAnnouncementChanged } from "@/lib/services/cache";
 
 /**
  * Update an announcement and broadcast changes.
@@ -40,6 +41,8 @@ export async function updateAnnouncement(input: UpdateAnnouncementInput) {
       id: announcement.id,
     });
   }
+
+  await bustOnAnnouncementChanged();
 
   return announcement;
 }

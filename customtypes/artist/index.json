@@ -111,6 +111,9 @@
             "spacer": {
               "type": "SharedSlice"
             },
+            "horizontal_rule": {
+              "type": "SharedSlice"
+            },
             "artist_list": {
               "type": "SharedSlice"
             },

@@ -1,0 +1,49 @@
+{
+  "id": "blurred_blob",
+  "type": "SharedSlice",
+  "name": "BlurredBlob",
+  "description": "Animated blurred text placeholder",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "heading": {
+          "type": "Text",
+          "config": {
+            "label": "Heading",
+            "placeholder": "Optional heading above the blob"
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": "Optional description below the heading"
+          }
+        },
+        "line_count": {
+          "type": "Number",
+          "config": {
+            "label": "Line count",
+            "placeholder": "Number of blurred lines (default: 4)"
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

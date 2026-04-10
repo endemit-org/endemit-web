@@ -1,5 +1,9 @@
+import "server-only";
+
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { PosItem } from "@prisma/client";
+import { CacheTags } from "@/lib/services/cache";
 
 export interface PosItemWithSalesCount extends PosItem {
   soldLast30Days: number;
@@ -10,7 +14,7 @@ export interface GetAllPosItemsResult {
   items: PosItemWithSalesCount[];
 }
 
-export async function getAllPosItems(): Promise<GetAllPosItemsResult> {
+async function getAllPosItemsUncached(): Promise<GetAllPosItemsResult> {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -52,4 +56,13 @@ export async function getAllPosItems(): Promise<GetAllPosItemsResult> {
   }));
 
   return { items: itemsWithSales };
+}
+
+/**
+ * Get all POS items (cached)
+ */
+export function getAllPosItems(): Promise<GetAllPosItemsResult> {
+  return unstable_cache(getAllPosItemsUncached, ["admin-pos-items"], {
+    tags: [CacheTags.admin.pos.items()],
+  })();
 }

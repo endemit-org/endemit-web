@@ -4,6 +4,7 @@ import { prisma } from "@/lib/services/prisma";
 import { broadcastToUser } from "@/lib/services/supabase/broadcast";
 import type { CreateTransactionInput, SerializedWalletTransaction } from "@/domain/wallet/types";
 import type { WalletTransactionType } from "@prisma/client";
+import { bustOnTransactionCreated } from "@/lib/services/cache";
 
 const CREDIT_TYPES: WalletTransactionType[] = ["CREDIT", "REFUND"];
 const DEBIT_TYPES: WalletTransactionType[] = ["DEBIT", "PURCHASE"];
@@ -95,6 +96,13 @@ export const createTransaction = async (
   }).catch(err => {
     console.error("Failed to broadcast wallet transaction:", err);
   });
+
+  // Bust wallet and transaction caches
+  await bustOnTransactionCreated(
+    serializedTransaction.id,
+    result.userId,
+    walletId
+  );
 
   return serializedTransaction;
 };

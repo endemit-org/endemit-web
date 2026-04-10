@@ -7,6 +7,11 @@ import { notFound } from "next/navigation";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { Metadata } from "next";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import { getResizedPrismicImage } from "@/lib/util/util";
+import clsx from "clsx";
+
+// Static until next deploy - no ISR
+export const revalidate = false;
 
 export async function generateStaticParams() {
   const contentPages = await fetchContentPagesFromCms({});
@@ -41,7 +46,13 @@ export async function generateMetadata({
   });
   const url = `https://endemit.org/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images, url, type: "article" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    url,
+    type: "article",
+  });
 }
 
 export default async function ContentPage({
@@ -68,6 +79,29 @@ export default async function ContentPage({
         ]}
       />
 
+      {contentPage.backgroundImage && (
+        <>
+          <div
+            className={clsx(
+              "absolute z-0 -top-20 h-[700px] blur-2xl -left-10 -right-10 bg-cover opacity-60 @container",
+              contentPage.backgroundAnimated && "animate-blurred-backdrop"
+            )}
+            style={{
+              backgroundImage: `url('${getResizedPrismicImage(contentPage.backgroundImage.src, { width: 400, quality: 50 })}')`,
+            }}
+          />
+          <div
+            className={clsx(
+              "max-lg:hidden z-0 absolute -bottom-28 h-[800px] blur-2xl -left-10 -right-10 bg-cover opacity-60 @container",
+              contentPage.backgroundAnimated && "animate-blurred-backdrop"
+            )}
+            style={{
+              backgroundImage: `url('${getResizedPrismicImage(contentPage.backgroundImage.src, { width: 400, quality: 50 })}')`,
+            }}
+          />
+        </>
+      )}
+
       {contentPage.renderFrame && (
         <InnerPage>
           {contentPage.slices && <SliceDisplay slices={contentPage.slices} />}
@@ -75,7 +109,9 @@ export default async function ContentPage({
       )}
 
       {!contentPage.renderFrame && contentPage.slices && (
-        <SliceDisplay slices={contentPage.slices} />
+        <div className={"relative"}>
+          <SliceDisplay slices={contentPage.slices} />
+        </div>
       )}
     </OuterPage>
   );

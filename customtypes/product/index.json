@@ -154,6 +154,30 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "ticket_price_progress": {
+              "type": "SharedSlice"
+            },
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "poem": {
+              "type": "SharedSlice"
+            },
+            "save_the_date": {
+              "type": "SharedSlice"
+            },
+            "event_list": {
+              "type": "SharedSlice"
+            },
+            "artist_list": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            },
+            "blurred_blob": {
+              "type": "SharedSlice"
+            },
             "banner": {
               "type": "SharedSlice"
             },
@@ -176,6 +200,9 @@
               "type": "SharedSlice"
             },
             "spacer": {
+              "type": "SharedSlice"
+            },
+            "horizontal_rule": {
               "type": "SharedSlice"
             },
             "image_gallery": {

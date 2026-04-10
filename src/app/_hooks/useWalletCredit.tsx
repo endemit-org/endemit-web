@@ -53,7 +53,7 @@ export function useWalletCredit({
   }, [totalCents, walletBalance]);
 
   // Can user use wallet credit?
-  const canUseWallet = walletBalance > 0 && maxWalletCredit > 0;
+  const canUseWallet = enabled && walletBalance > 0 && maxWalletCredit > 0;
 
   // Is wallet credit currently being used?
   const isUsingWallet = walletCreditAmount > 0;
@@ -68,6 +68,8 @@ export function useWalletCredit({
   useEffect(() => {
     if (!enabled) {
       setIsLoading(false);
+      // Reset wallet credit when disabled (e.g., when currency product added)
+      setWalletCreditAmountState(0);
       return;
     }
 

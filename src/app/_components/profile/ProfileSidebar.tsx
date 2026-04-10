@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { formatTokensFromCents } from "@/lib/util/currency";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";
 import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
@@ -14,6 +13,9 @@ import type { Product } from "@/domain/product/types/product";
 import { isEndemitPayEnabled } from "@/domain/wallet/businessRules";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
+import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
+import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
+import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 
 interface ProfileSidebarProps {
   userId: string;
@@ -42,6 +44,27 @@ export default function ProfileSidebar({
   const [walletBalance, setWalletBalance] = useState(initialWalletBalance);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const walletRef = useRef<HTMLDivElement>(null);
+  const prevBalanceRef = useRef(initialWalletBalance);
+  const pendingUpdateRef = useRef<{ direction: "in" | "out"; balance: number } | null>(null);
+  const { animations, showGlow, glowDirection, triggerAnimation, removeAnimation } =
+    useWalletAnimation();
+
+  // Check if any modal is open
+  const isModalOpen = isPayScannerOpen || isTopUpOpen || showLogoutConfirm;
+
+  // Trigger pending animation and balance update when modals close
+  useEffect(() => {
+    if (!isModalOpen && pendingUpdateRef.current) {
+      const { direction, balance } = pendingUpdateRef.current;
+      pendingUpdateRef.current = null;
+      // Small delay for modal close animation
+      setTimeout(() => {
+        setWalletBalance(balance);
+        triggerAnimation(direction, walletRef.current);
+      }, 100);
+    }
+  }, [isModalOpen, triggerAnimation]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -62,9 +85,30 @@ export default function ProfileSidebar({
   // Subscribe to wallet transaction updates for real-time balance
   const handleWalletUpdate = useCallback(
     (payload: { balanceAfter: number }) => {
-      setWalletBalance(payload.balanceAfter);
+      const prevBalance = prevBalanceRef.current ?? 0;
+      const newBalance = payload.balanceAfter;
+
+      // Always update the ref to track latest balance
+      prevBalanceRef.current = newBalance;
+
+      // Determine animation direction
+      const direction = newBalance > prevBalance ? "in" : newBalance < prevBalance ? "out" : null;
+
+      if (direction) {
+        if (isModalOpen) {
+          // Store pending update to trigger when modal closes
+          pendingUpdateRef.current = { direction, balance: newBalance };
+        } else {
+          // Trigger immediately
+          setWalletBalance(newBalance);
+          triggerAnimation(direction, walletRef.current);
+        }
+      } else {
+        // No animation needed, just update balance
+        setWalletBalance(newBalance);
+      }
     },
-    []
+    [triggerAnimation, isModalOpen]
   );
 
   useRealtimeChannel({
@@ -152,30 +196,39 @@ export default function ProfileSidebar({
 
       {/* Wallet Balance */}
       {walletBalance !== null && (
-        <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg text-center relative overflow-hidden">
+        <WalletAnimationRenderer
+          animations={animations}
+          showGlow={showGlow}
+          glowDirection={glowDirection}
+          onAnimationComplete={removeAnimation}
+        >
           <div
-            className="absolute  h-full opacity-10 inset w-full top-0 left-0"
-            style={{
-              background: "url('/images/noise.gif') no-repeat center center",
-              backgroundSize: "400px",
-              backgroundRepeat: "repeat",
-            }}
-          ></div>
-          <div className={"relative z-10 text-center"}>
-            <div className="text-xs text-blue-300 mb-1">Wallet Balance</div>
+            ref={walletRef}
+            className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg text-center relative overflow-hidden"
+          >
             <div
-              className={`text-2xl font-bold ${
-                walletBalance > 0
-                  ? "text-green-400"
-                  : walletBalance < 0
-                    ? "text-red-400"
-                    : "text-neutral-300"
-              }`}
-            >
-              {formatTokensFromCents(walletBalance)}
+              className="absolute h-full opacity-10 inset w-full top-0 left-0"
+              style={{
+                background: "url('/images/noise.gif') no-repeat center center",
+                backgroundSize: "400px",
+                backgroundRepeat: "repeat",
+              }}
+            ></div>
+            <div className="relative z-10 text-center">
+              <div className="text-xs text-blue-300 mb-1">Wallet Balance</div>
+              <AnimatedBalance
+                value={walletBalance}
+                className={`text-2xl font-bold ${
+                  walletBalance > 0
+                    ? "text-green-400"
+                    : walletBalance < 0
+                      ? "text-red-400"
+                      : "text-neutral-300"
+                }`}
+              />
             </div>
           </div>
-        </div>
+        </WalletAnimationRenderer>
       )}
 
       {/* Action Buttons */}
@@ -204,7 +257,6 @@ export default function ProfileSidebar({
           <ActionButton
             onClick={() => setIsTopUpOpen(true)}
             variant={"secondary"}
-            disabled={!isEndemitPayEnabled()}
           >
             <svg
               className="w-5 h-5"
@@ -250,13 +302,12 @@ export default function ProfileSidebar({
       )}
 
       {/* Top Up Modal */}
-      {isEndemitPayEnabled() && (
-        <TopUpModal
-          isOpen={isTopUpOpen}
-          onClose={() => setIsTopUpOpen(false)}
-          products={currencyProducts}
-        />
-      )}
+
+      <TopUpModal
+        isOpen={isTopUpOpen}
+        onClose={() => setIsTopUpOpen(false)}
+        products={currencyProducts}
+      />
 
       {/* Logout Confirmation Modal - rendered via portal */}
       {showLogoutConfirm &&

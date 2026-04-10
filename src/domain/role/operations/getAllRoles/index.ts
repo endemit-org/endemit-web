@@ -1,10 +1,12 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { SerializedRole } from "@/domain/role/types";
 import type { Permission } from "@/domain/auth/config/permissions.config";
+import { CacheTags } from "@/lib/services/cache";
 
-export const getAllRoles = async (): Promise<SerializedRole[]> => {
+const getAllRolesUncached = async (): Promise<SerializedRole[]> => {
   const roles = await prisma.role.findMany({
     orderBy: {
       name: "asc",
@@ -29,4 +31,13 @@ export const getAllRoles = async (): Promise<SerializedRole[]> => {
     createdAt: role.createdAt.toISOString(),
     updatedAt: role.updatedAt.toISOString(),
   }));
+};
+
+/**
+ * Get all roles (cached)
+ */
+export const getAllRoles = (): Promise<SerializedRole[]> => {
+  return unstable_cache(getAllRolesUncached, ["admin-roles"], {
+    tags: [CacheTags.admin.roles.list()],
+  })();
 };

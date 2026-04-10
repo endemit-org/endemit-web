@@ -58,6 +58,18 @@ export default function Lightbox({
     }
   }, [localIndex]);
 
+  // Scroll to the initial image on mount
+  useEffect(() => {
+    if (sliderRef.current && currentIndex > 0) {
+      const slideWidth = sliderRef.current.offsetWidth;
+      sliderRef.current.scrollTo({
+        left: slideWidth * currentIndex,
+        behavior: "instant",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
+
   // Scroll to the current image when index changes from outside (button/keyboard)
   useEffect(() => {
     if (sliderRef.current && currentIndex !== localIndex) {

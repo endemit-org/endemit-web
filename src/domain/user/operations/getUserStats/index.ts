@@ -1,6 +1,8 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
+import { CacheTags } from "@/lib/services/cache";
 
 export interface UserStats {
   totalUsers: number;
@@ -8,7 +10,7 @@ export interface UserStats {
   newUsersThisMonth: number;
 }
 
-export const getUserStats = async (): Promise<UserStats> => {
+const getUserStatsUncached = async (): Promise<UserStats> => {
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
@@ -26,4 +28,13 @@ export const getUserStats = async (): Promise<UserStats> => {
     activeUsers,
     newUsersThisMonth,
   };
+};
+
+/**
+ * Get user statistics (cached)
+ */
+export const getUserStats = (): Promise<UserStats> => {
+  return unstable_cache(getUserStatsUncached, ["admin-user-stats"], {
+    tags: [CacheTags.admin.users.stats()],
+  })();
 };

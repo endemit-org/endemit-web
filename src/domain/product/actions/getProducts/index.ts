@@ -7,8 +7,8 @@ async function getProducts(): Promise<Product[]> {
   try {
     const baseUrl = PUBLIC_API_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}${getApiPath("products/list")}`, {
-      cache: "force-cache", // or 'force-cache' for static generation
-      next: { revalidate: 60 * 60 * 2 }, // Revalidate every 2 hours
+      cache: "force-cache",
+      next: { tags: ["prismic", "products"] }, // Revalidated by Prismic webhook
     });
 
     if (!response.ok) {

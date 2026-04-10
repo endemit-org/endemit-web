@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import { bustOnRoleChanged } from "@/lib/services/cache";
 
 export const deleteRole = async (id: string): Promise<void> => {
   // Check if role is a system role
@@ -16,4 +17,6 @@ export const deleteRole = async (id: string): Promise<void> => {
   await prisma.role.delete({
     where: { id },
   });
+
+  await bustOnRoleChanged(id);
 };

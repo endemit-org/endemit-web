@@ -1,6 +1,5 @@
 import {
   Product,
-  ProductCategory,
   ProductCompositionType,
   ProductStatus,
 } from "@/domain/product/types/product";
@@ -8,21 +7,6 @@ import {
 import { asLink, asText, isFilled } from "@prismicio/client";
 import { ProductDocument } from "@/prismicio-types";
 import { getBlurDataURL } from "@/lib/util/util";
-import { isEndemitPayEnabled } from "@/domain/wallet/businessRules";
-
-/**
- * Applies business rules to determine the effective product status.
- * - Currency products show "Coming soon" when EndePay is disabled.
- */
-function getEffectiveStatus(
-  status: ProductStatus,
-  category: ProductCategory
-): ProductStatus {
-  if (category === ProductCategory.CURRENCIES && !isEndemitPayEnabled()) {
-    return ProductStatus.COMING_SOON;
-  }
-  return status;
-}
 
 export const transformProductObject = async (product: ProductDocument) => {
   const hasVariants =
@@ -80,10 +64,7 @@ export const transformProductObject = async (product: ProductDocument) => {
           : null,
         category: relatedProduct.data.product_category,
         productType: relatedProduct.data.product_type,
-        status: getEffectiveStatus(
-          relatedProduct.data.product_status as ProductStatus,
-          relatedProduct.data.product_category as ProductCategory
-        ),
+        status: relatedProduct.data.product_status as ProductStatus,
         visibility: relatedProduct.data.product_visibility,
         images,
         price: relatedProduct.data.price,
@@ -103,10 +84,7 @@ export const transformProductObject = async (product: ProductDocument) => {
     price: product.data.price,
     currency: "eur",
     type: product.data.product_type,
-    status: getEffectiveStatus(
-      product.data.product_status as ProductStatus,
-      product.data.product_category as ProductCategory
-    ),
+    status: product.data.product_status as ProductStatus,
     visibility: product.data.product_visibility,
     category: product.data.product_category,
     isFeatured: product.data.featured_product ?? false,

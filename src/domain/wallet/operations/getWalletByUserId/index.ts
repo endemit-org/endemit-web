@@ -1,9 +1,11 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import type { SerializedWalletWithTransactions } from "@/domain/wallet/types";
+import { CacheTags } from "@/lib/services/cache";
 
-export const getWalletByUserId = async (
+const getWalletByUserIdUncached = async (
   userId: string
 ): Promise<SerializedWalletWithTransactions | null> => {
   const wallet = await prisma.wallet.findUnique({
@@ -56,3 +58,24 @@ export const getWalletByUserId = async (
     })),
   };
 };
+
+/**
+ * Get wallet for a user (cached)
+ * FOR DISPLAY ONLY - Do not use for payment validation!
+ * Use getWalletByUserIdFresh() for validation.
+ */
+export const getWalletByUserId = (
+  userId: string
+): Promise<SerializedWalletWithTransactions | null> => {
+  return unstable_cache(
+    () => getWalletByUserIdUncached(userId),
+    ["wallet-user", userId],
+    { tags: [CacheTags.user.wallet(userId)] }
+  )();
+};
+
+/**
+ * Get wallet for a user (FRESH - no cache)
+ * Use this for payment validation and balance checks.
+ */
+export const getWalletByUserIdFresh = getWalletByUserIdUncached;

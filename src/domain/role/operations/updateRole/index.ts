@@ -3,6 +3,7 @@ import "server-only";
 import { prisma } from "@/lib/services/prisma";
 import type { UpdateRoleInput, SerializedRole } from "@/domain/role/types";
 import type { Permission } from "@/domain/auth/config/permissions.config";
+import { bustOnRoleChanged } from "@/lib/services/cache";
 
 export const updateRole = async (
   id: string,
@@ -24,6 +25,8 @@ export const updateRole = async (
       },
     },
   });
+
+  await bustOnRoleChanged(role.id);
 
   return {
     id: role.id,

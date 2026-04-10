@@ -1,9 +1,11 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
 import { OrderStatus, Prisma } from "@prisma/client";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ProductCategory } from "@/domain/product/types/product";
+import { CacheTags } from "@/lib/services/cache";
 
 // Statuses that represent successful payment
 const PAID_STATUSES: OrderStatus[] = [
@@ -38,7 +40,7 @@ export interface AggregatedDonorsResult {
   totalDonations: number;
 }
 
-export const getAggregatedDonors = async (): Promise<AggregatedDonorsResult> => {
+const getAggregatedDonorsUncached = async (): Promise<AggregatedDonorsResult> => {
   // Use raw query to filter only orders containing donations in JSON items array
   const ordersWithDonations = await prisma.$queryRaw<
     Array<{
@@ -134,4 +136,13 @@ export const getAggregatedDonors = async (): Promise<AggregatedDonorsResult> => 
     totalAmount,
     totalDonations,
   };
+};
+
+/**
+ * Get aggregated donors (cached)
+ */
+export const getAggregatedDonors = (): Promise<AggregatedDonorsResult> => {
+  return unstable_cache(getAggregatedDonorsUncached, ["admin-donors"], {
+    tags: [CacheTags.admin.orders.donors()],
+  })();
 };

@@ -3,6 +3,7 @@ import "server-only";
 import { prisma } from "@/lib/services/prisma";
 import type { CreateRoleInput, SerializedRole } from "@/domain/role/types";
 import type { Permission } from "@/domain/auth/config/permissions.config";
+import { bustOnRoleChanged } from "@/lib/services/cache";
 
 export const createRole = async (input: CreateRoleInput): Promise<SerializedRole> => {
   const role = await prisma.role.create({
@@ -21,6 +22,8 @@ export const createRole = async (input: CreateRoleInput): Promise<SerializedRole
       },
     },
   });
+
+  await bustOnRoleChanged(role.id);
 
   return {
     id: role.id,

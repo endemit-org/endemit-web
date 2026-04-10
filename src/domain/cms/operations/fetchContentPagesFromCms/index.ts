@@ -19,7 +19,7 @@ export const fetchContentPagesFromCms = async ({
     return null;
   }
 
-  return contentPages.map(contentPage =>
-    transformContentPageObject(contentPage)
+  return await Promise.all(
+    contentPages.map(contentPage => transformContentPageObject(contentPage))
   );
 };

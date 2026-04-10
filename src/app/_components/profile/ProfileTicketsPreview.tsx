@@ -41,8 +41,10 @@ export default function ProfileTicketsPreview({
       emptyAction={{ label: "Browse events", href: "/events" }}
     >
       {tickets.map((ticket, index) => {
-        const isUsable =
-          ticket.status === "VALIDATED" || ticket.status === "PENDING";
+        const isClickable =
+          ticket.status === "VALIDATED" ||
+          ticket.status === "PENDING" ||
+          ticket.status === "SCANNED";
 
         const rowContent = (
           <>
@@ -69,7 +71,7 @@ export default function ProfileTicketsPreview({
           </>
         );
 
-        if (isUsable) {
+        if (isClickable) {
           return (
             <ProfileTableRow
               key={ticket.id}

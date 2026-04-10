@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import { bustOnRoleAssigned } from "@/lib/services/cache";
 
 export const removeRoleFromUser = async (
   userId: string,
@@ -22,4 +23,6 @@ export const removeRoleFromUser = async (
       },
     },
   });
+
+  await bustOnRoleAssigned(userId);
 };

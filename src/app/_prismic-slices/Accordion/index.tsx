@@ -36,6 +36,7 @@ const AccordionSlice: FC<AccordionProps> = ({ slice }) => {
         heading={heading}
         items={accordionItems}
         allowMultiple={primary.allowMultiple || false}
+        renderFrame={primary.render_frame || false}
       />
     </section>
   );

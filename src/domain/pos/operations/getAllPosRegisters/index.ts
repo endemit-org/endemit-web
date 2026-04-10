@@ -1,4 +1,8 @@
+import "server-only";
+
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
+import { CacheTags } from "@/lib/services/cache";
 
 export interface RegisterTrafficStats {
   salesRevenue: number; // DEBIT items total
@@ -46,7 +50,7 @@ export interface GetAllPosRegistersResult {
   registers: PosRegisterWithRelations[];
 }
 
-export async function getAllPosRegisters(): Promise<GetAllPosRegistersResult> {
+async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
   const registers = await prisma.posRegister.findMany({
     orderBy: [{ status: "asc" }, { name: "asc" }],
     include: {
@@ -128,4 +132,13 @@ export async function getAllPosRegisters(): Promise<GetAllPosRegistersResult> {
   });
 
   return { registers: registersWithTraffic as PosRegisterWithRelations[] };
+}
+
+/**
+ * Get all POS registers (cached)
+ */
+export function getAllPosRegisters(): Promise<GetAllPosRegistersResult> {
+  return unstable_cache(getAllPosRegistersUncached, ["admin-pos-registers"], {
+    tags: [CacheTags.admin.pos.registers()],
+  })();
 }
