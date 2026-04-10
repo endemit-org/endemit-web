@@ -97,6 +97,7 @@ export default function OtcEmailForm() {
             result.error || "Failed to create account. Please try again."
           );
           setIsNewAccount(false);
+          setIsLoading(false);
         }
       } else {
         // Check auth mode first
@@ -149,11 +150,11 @@ export default function OtcEmailForm() {
           router.push(`/signin/verify?${verifyParams.toString()}`);
         } else {
           setError(result.error || "Failed to send code. Please try again.");
+          setIsLoading(false);
         }
       }
     } catch {
       setError("An error occurred. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
