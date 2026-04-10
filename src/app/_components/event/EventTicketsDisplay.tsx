@@ -220,13 +220,15 @@ export default function EventTicketDisplay({
 
       {!hasAvailableProducts && content}
 
-      <Accordion
-        items={accordionItems}
-        allowMultiple={false}
-        compact={true}
-        autoExpandIndexOnView={middleIndex}
-        autoExpandDelay={500}
-      />
+      {hasAvailableProducts && (
+        <Accordion
+          items={accordionItems}
+          allowMultiple={false}
+          compact={true}
+          autoExpandIndexOnView={middleIndex}
+          autoExpandDelay={500}
+        />
+      )}
 
       {hasAvailableProducts && event.date_start && (
         <div className="mt-2">

@@ -6,6 +6,7 @@ export const components = {
   accordion: dynamic(() => import("./Accordion")),
   artist_list: dynamic(() => import("./ArtistList")),
   banner: dynamic(() => import("./Banner")),
+  blurred_blob: dynamic(() => import("./BlurredBlob")),
   collab_promo: dynamic(() => import("./CollabPromo")),
   content_section: dynamic(() => import("./TextBlock")),
   embed_block: dynamic(() => import("./EmbedBlock")),

@@ -24,6 +24,7 @@ import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
+import BlurredTextPlaceholder from "@/app/_components/content/BlurredTextPlaceholder";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -297,6 +298,13 @@ export default async function EventPage({
                   </div>
                 </div>
               )}
+
+              {(!event.options.showEventLineup || event.artists.length === 0) &&
+                !isPastEvent && (
+                  <div className="flex-1 flex flex-col w-full lg:@container lg:justify-center">
+                    <BlurredTextPlaceholder lineCount={3} className="py-4" />
+                  </div>
+                )}
               <div
                 className={"flex gap-x-2 text-sm lg:text-md flex-shrink-0"}
                 id={"overview"}
@@ -355,9 +363,15 @@ export default async function EventPage({
 
         <div className={"relative flex"}>
           <div className={"lg:w-2/3 w-full"}>
-            {!isPastEvent && event.options.showEventLineup && !event.options.hideLineupSection && event.options.showArtistTimes && (
-              <ArtistCarousel artists={event.artists} headline={"Set times"} />
-            )}
+            {!isPastEvent &&
+              event.options.showEventLineup &&
+              !event.options.hideLineupSection &&
+              event.options.showArtistTimes && (
+                <ArtistCarousel
+                  artists={event.artists}
+                  headline={"Set times"}
+                />
+              )}
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
 

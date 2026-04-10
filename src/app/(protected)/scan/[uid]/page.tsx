@@ -2,6 +2,7 @@ import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCm
 import { notFound } from "next/navigation";
 import {
   isEventCompleted,
+  isEventDoorSaleAvailable,
   isEventScanningEnabled,
 } from "@/domain/event/businessLogic";
 import { getTicketsForEvent } from "@/domain/ticket/operations/getTicketsForEvent";
@@ -54,10 +55,7 @@ export default async function EventScanPage({
   const isInFuture = !isEventCompleted(event);
   const isScanningEnabled = isEventScanningEnabled(event);
   const showScanner = isScanningEnabled && isInFuture;
-  const showDoorSale =
-    isInFuture &&
-    event.cashTicketPrice !== null &&
-    event.cashTicketPrice > 0;
+  const showDoorSale = isEventDoorSaleAvailable(event);
 
   const initialTickets = await getTicketsForEvent(event.id);
   const serializedTickets = initialTickets.map(ticket =>
