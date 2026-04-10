@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Product,
   ProductCategory,
@@ -10,7 +12,7 @@ import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
 import { formatPrice } from "@/lib/util/formatting";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
-import React from "react";
+import React, { useRef } from "react";
 import ProductCardQuickAdd from "@/app/_components/product/ProductCardQuickAdd";
 import { isProductSellable } from "@/domain/product/businessLogic";
 
@@ -45,8 +47,11 @@ export default function ProductCard({
     product.composition === ProductCompositionType.SINGLE &&
     isProductSellable(product).isSellable;
 
+  const cardRef = useRef<HTMLDivElement>(null);
+
   return (
     <div
+      ref={cardRef}
       className={
         "group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full relative"
       }
@@ -98,7 +103,7 @@ export default function ProductCard({
               {formatPrice(price)}
             </p>
             {showQuickAdd && product && (
-              <ProductCardQuickAdd product={product} />
+              <ProductCardQuickAdd product={product} cardRef={cardRef} />
             )}
           </div>
         </div>
