@@ -1098,6 +1098,14 @@ export type HomePageDocument<Lang extends string = string> =
   >;
 
 type InnerContentDocumentDataSlicesSlice =
+  | VenueListSlice
+  | SaveTheDateSlice
+  | TabsSlice
+  | EventListSlice
+  | TicketPriceProgressSlice
+  | BannerSlice
+  | ArtistListSlice
+  | BlurredBlobSlice
   | SnowfallSlice
   | CollabPromoSlice
   | SoundCloudSlice
@@ -2411,6 +2419,16 @@ export interface BlurredBlobSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   heading: prismic.KeyTextField;
+
+  /**
+   * Description field in *BlurredBlob → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Optional description below the heading
+   * - **API ID Path**: blurred_blob.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
 
   /**
    * Line count field in *BlurredBlob → Default → Primary*
