@@ -50,6 +50,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "blurred_blob": {
+              "type": "SharedSlice"
+            },
             "banner": {
               "type": "SharedSlice"
             },
