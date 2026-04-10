@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 import { useCartActions } from "@/app/_stores/CartStore";
 import { Product } from "@/domain/product/types/product";
@@ -9,9 +10,10 @@ import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 
 interface Props {
   product: Product;
+  cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-export default function ProductCardQuickAdd({ product }: Props) {
+export default function ProductCardQuickAdd({ product, cardRef }: Props) {
   const { addItem } = useCartActions();
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -28,6 +30,44 @@ export default function ProductCardQuickAdd({ product }: Props) {
     setShowSuccess(false);
   };
 
+  const popoverContent = (
+    <div
+      className={clsx(
+        "absolute inset-0 bg-neutral-800/80 backdrop-blur-md transition-opacity duration-300 flex flex-col justify-between p-4 text-neutral-200 z-30 rounded-sm",
+        showSuccess ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}
+    >
+      <button
+        className="absolute right-2 top-2 p-2 cursor-pointer hover:scale-110 transition-transform text-xl"
+        onClick={handleClose}
+        aria-label="Close"
+      >
+        ⤫
+      </button>
+
+      <div className="flex-1 flex flex-col justify-center items-center text-center px-6 min-h-0">
+        {showSuccess && (
+          <div className="flex w-full justify-center mb-2 text-neutral-100">
+            <AnimatedSuccessIcon
+              color="currentColor"
+              className="w-8 h-8"
+              strokeWidth={7}
+            />
+          </div>
+        )}
+        <div>
+          <strong>{product.name}</strong> was added to your cart!
+        </div>
+      </div>
+
+      <div className="flex-shrink-0">
+        <ActionButton href="/store/checkout" size="sm">
+          Checkout
+        </ActionButton>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <button
@@ -37,39 +77,9 @@ export default function ProductCardQuickAdd({ product }: Props) {
         Add to cart
       </button>
 
-      <div
-        className={clsx(
-          "absolute inset-0 bg-neutral-600 transition-opacity duration-300 flex flex-col p-4 text-neutral-200 z-30 rounded-sm",
-          showSuccess ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-      >
-        <button
-          className="absolute right-2 top-2 p-2 cursor-pointer hover:scale-110 transition-transform text-xl"
-          onClick={handleClose}
-          aria-label="Close"
-        >
-          ⤫
-        </button>
-
-        <div className="flex-1 flex flex-col justify-center items-center text-center pr-6">
-          {showSuccess && (
-            <div className="flex w-full justify-center mb-2 text-neutral-100">
-              <AnimatedSuccessIcon
-                color="currentColor"
-                className="w-8 h-8"
-                strokeWidth={7}
-              />
-            </div>
-          )}
-          <div>
-            <strong>{product.name}</strong> was added to your cart!
-          </div>
-        </div>
-
-        <ActionButton href="/store/checkout" size="sm">
-          Checkout
-        </ActionButton>
-      </div>
+      {cardRef?.current
+        ? createPortal(popoverContent, cardRef.current)
+        : popoverContent}
     </>
   );
 }
