@@ -58,6 +58,7 @@ export {
   // Tickets
   bustOnTicketIssued,
   bustOnTicketScanned,
+  bustOnTicketScanReverted,
   bustOnTicketTransferred,
   // Wallet & Transactions
   bustOnWalletCreated,

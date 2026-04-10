@@ -19,6 +19,9 @@ export const scanTicketByHash = async (ticketHash: string) => {
     where: {
       ticketHash: ticketHash,
     },
+    include: {
+      order: { select: { userId: true } },
+    },
   });
 
   if (!ticket) {
@@ -44,7 +47,12 @@ export const scanTicketByHash = async (ticketHash: string) => {
     },
   });
 
-  await bustOnTicketScanned(updatedTicket.id, updatedTicket.shortId, updatedTicket.eventId);
+  await bustOnTicketScanned(
+    updatedTicket.id,
+    updatedTicket.shortId,
+    updatedTicket.eventId,
+    ticket.order.userId
+  );
 
   return updatedTicket;
 };
@@ -59,6 +67,9 @@ export const scanTicketByPayload = async (payload: QrTicketPayload) => {
   const ticket = await prisma.ticket.findUnique({
     where: {
       shortId: payload.shortId,
+    },
+    include: {
+      order: { select: { userId: true } },
     },
   });
 
@@ -91,7 +102,12 @@ export const scanTicketByPayload = async (payload: QrTicketPayload) => {
     },
   });
 
-  await bustOnTicketScanned(updatedTicket.id, updatedTicket.shortId, updatedTicket.eventId);
+  await bustOnTicketScanned(
+    updatedTicket.id,
+    updatedTicket.shortId,
+    updatedTicket.eventId,
+    ticket.order.userId
+  );
 
   return updatedTicket;
 };
