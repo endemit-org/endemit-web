@@ -11,6 +11,7 @@ export type BroadcastEvent =
   | "pos_order_paid"
   | "pos_order_cancelled"
   | "ticket_scanned"
+  | "ticket_scan_reverted"
   | "announcement_created"
   | "announcement_updated"
   | "announcement_deleted";
@@ -57,6 +58,13 @@ export interface TicketScannedPayload {
   scannedAt: string;
 }
 
+export interface TicketScanRevertedPayload {
+  ticketId: string;
+  shortId: string;
+  status: string;
+  revertedAt: string;
+}
+
 export interface AnnouncementPayload {
   id: string;
   title: string | null;
@@ -77,6 +85,7 @@ export interface BroadcastPayload {
   pos_order_paid: PosOrderPaidPayload;
   pos_order_cancelled: PosOrderCancelledPayload;
   ticket_scanned: TicketScannedPayload;
+  ticket_scan_reverted: TicketScanRevertedPayload;
   announcement_created: AnnouncementPayload;
   announcement_updated: AnnouncementPayload;
   announcement_deleted: AnnouncementDeletedPayload;

@@ -1,11 +1,14 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTicketById } from "@/domain/ticket/operations/getTicketById";
+import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
+import { isEventCompleted } from "@/domain/event/businessLogic";
 import { formatPrice, formatDateTime, formatEmailForDisplay } from "@/lib/util/formatting";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
 import TicketDownloadButton from "@/app/_components/admin/TicketDownloadButton";
+import RevertTicketScanButton from "@/app/_components/admin/RevertTicketScanButton";
 import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
 
 export async function generateMetadata({
@@ -45,6 +48,11 @@ export default async function AdminTicketDetailPage({
   if (!ticket) {
     notFound();
   }
+
+  // Fetch event to check if it's completed (for scan revert availability)
+  const event = await fetchEventFromCmsById(ticket.eventId);
+  const eventCompleted = event ? isEventCompleted(event) : true;
+  const canRevertScan = ticket.status === "SCANNED" && !eventCompleted;
 
   const isInvalid =
     ticket.status === "CANCELLED" ||
@@ -195,6 +203,9 @@ export default async function AdminTicketDetailPage({
               <div className="w-56">
                 <AddToWalletButton ticketHash={ticket.ticketHash} shortId={ticket.shortId} size="sm" />
               </div>
+              {canRevertScan && (
+                <RevertTicketScanButton ticketId={ticket.id} />
+              )}
               <Link
                 href={`/admin/events/${ticket.eventId}`}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-colors"
