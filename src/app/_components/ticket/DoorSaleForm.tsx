@@ -145,9 +145,8 @@ export default function DoorSaleForm({
                 €
               </span>
               <input
-                type="number"
-                step="0.01"
-                min="0"
+                type="text"
+                inputMode="decimal"
                 value={(totalAmount / 100).toFixed(2)}
                 onChange={e => handleTotalChange(e.target.value)}
                 className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-gray-900 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:ring-green-500"

@@ -144,13 +144,44 @@ export async function bustOnTicketIssued(
 export async function bustOnTicketScanned(
   ticketId: string,
   shortId: string,
-  eventId: string
+  eventId: string,
+  userId: string | null
 ) {
   const tags: CacheTag[] = [
     itemTags.ticket(ticketId),
     itemTags.ticketShort(shortId),
     adminTicketTags.scannedForEvent(eventId),
+    adminTicketTags.statsForEvent(eventId),
+    adminTicketTags.summaryForEvent(eventId),
   ];
+
+  if (userId) {
+    tags.push(userTags.tickets(userId), userTags.ticketsUpcoming(userId));
+  }
+
+  await bustTags(tags);
+}
+
+/**
+ * Bust caches when ticket scan is reverted
+ */
+export async function bustOnTicketScanReverted(
+  ticketId: string,
+  shortId: string,
+  eventId: string,
+  userId: string | null
+) {
+  const tags: CacheTag[] = [
+    itemTags.ticket(ticketId),
+    itemTags.ticketShort(shortId),
+    adminTicketTags.scannedForEvent(eventId),
+    adminTicketTags.statsForEvent(eventId),
+    adminTicketTags.summaryForEvent(eventId),
+  ];
+
+  if (userId) {
+    tags.push(userTags.tickets(userId), userTags.ticketsUpcoming(userId));
+  }
 
   await bustTags(tags);
 }
