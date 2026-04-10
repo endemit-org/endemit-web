@@ -299,6 +299,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | BlurredBlobSlice
   | BannerSlice
   | CollabPromoSlice
   | SaveTheDateSlice
@@ -320,7 +321,8 @@ type ContentPageDocumentDataSlicesSlice =
   | TextColumnSlice
   | EmbedBlockSlice
   | NewsletterSubscriptionSlice
-  | ContentSectionSlice;
+  | ContentSectionSlice
+  | TicketPriceProgressSlice;
 
 /**
  * Content for Content page documents
@@ -595,7 +597,8 @@ type EventDocumentDataSlicesSlice =
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
   | ContentSectionSlice
-  | AccordionSlice;
+  | AccordionSlice
+  | TicketPriceProgressSlice;
 
 /**
  * Content for Event documents
@@ -854,6 +857,18 @@ interface EventDocumentData {
   hide_lineup: prismic.BooleanField;
 
   /**
+   * Hide lineup section field in *Event*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event.hide_lineup_section
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  hide_lineup_section: prismic.BooleanField;
+
+  /**
    * Free admission (no tickets) field in *Event*
    *
    * - **Field Type**: Boolean
@@ -1083,6 +1098,14 @@ export type HomePageDocument<Lang extends string = string> =
   >;
 
 type InnerContentDocumentDataSlicesSlice =
+  | VenueListSlice
+  | SaveTheDateSlice
+  | TabsSlice
+  | EventListSlice
+  | TicketPriceProgressSlice
+  | BannerSlice
+  | ArtistListSlice
+  | BlurredBlobSlice
   | SnowfallSlice
   | CollabPromoSlice
   | SoundCloudSlice
@@ -1554,6 +1577,14 @@ export interface ProductDocumentDataRelatedProductsItem {
 }
 
 type ProductDocumentDataSlicesSlice =
+  | TicketPriceProgressSlice
+  | TabsSlice
+  | PoemSlice
+  | SaveTheDateSlice
+  | EventListSlice
+  | ArtistListSlice
+  | AccordionSlice
+  | BlurredBlobSlice
   | BannerSlice
   | HeroSlice
   | TextColumnSlice
@@ -2376,6 +2407,82 @@ type BannerSliceVariation = BannerSliceDefault;
 export type BannerSlice = prismic.SharedSlice<"banner", BannerSliceVariation>;
 
 /**
+ * Primary content in *BlurredBlob → Default → Primary*
+ */
+export interface BlurredBlobSliceDefaultPrimary {
+  /**
+   * Heading field in *BlurredBlob → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Optional heading above the blob
+   * - **API ID Path**: blurred_blob.default.primary.heading
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  heading: prismic.KeyTextField;
+
+  /**
+   * Description field in *BlurredBlob → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Optional description below the heading
+   * - **API ID Path**: blurred_blob.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Line count field in *BlurredBlob → Default → Primary*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: Number of blurred lines (default: 4)
+   * - **API ID Path**: blurred_blob.default.primary.line_count
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  line_count: prismic.NumberField;
+
+  /**
+   * Render frame field in *BlurredBlob → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: blurred_blob.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
+}
+
+/**
+ * Default variation for BlurredBlob Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type BlurredBlobSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<BlurredBlobSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *BlurredBlob*
+ */
+type BlurredBlobSliceVariation = BlurredBlobSliceDefault;
+
+/**
+ * BlurredBlob Shared Slice
+ *
+ * - **API ID**: `blurred_blob`
+ * - **Description**: Animated blurred text placeholder
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type BlurredBlobSlice = prismic.SharedSlice<
+  "blurred_blob",
+  BlurredBlobSliceVariation
+>;
+
+/**
  * Item in *CollabPromo → Default → Primary → Products (2-3)*
  */
 export interface CollabPromoSliceDefaultPrimaryProductsItem {
@@ -2479,6 +2586,17 @@ export interface CollabPromoSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
   color_theme: prismic.SelectField<"Dark" | "Muted" | "Vibrant", "filled">;
+
+  /**
+   * Render frame field in *CollabPromo → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: collab_promo.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
 }
 
 /**
@@ -3031,6 +3149,36 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<"hero", HeroSliceVariation>;
 
 /**
+ * Default variation for HorizontalRule Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HorizontalRuleSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Record<string, never>,
+  never
+>;
+
+/**
+ * Slice variation for *HorizontalRule*
+ */
+type HorizontalRuleSliceVariation = HorizontalRuleSliceDefault;
+
+/**
+ * HorizontalRule Shared Slice
+ *
+ * - **API ID**: `horizontal_rule`
+ * - **Description**: Horizontal divider line
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HorizontalRuleSlice = prismic.SharedSlice<
+  "horizontal_rule",
+  HorizontalRuleSliceVariation
+>;
+
+/**
  * Primary content in *ImageGallery → Default → Primary*
  */
 export interface ImageGallerySliceDefaultPrimary {
@@ -3471,6 +3619,17 @@ export interface ProductListSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   render_frame: prismic.BooleanField;
+
+  /**
+   * Quick add to cart field in *ProductList → Category → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: product_list.default.primary.quick_add_to_cart
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  quick_add_to_cart: prismic.BooleanField;
 }
 
 /**
@@ -3520,6 +3679,17 @@ export interface ProductListSliceFeaturedPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   render_frame: prismic.BooleanField;
+
+  /**
+   * Quick add to cart field in *ProductList → Featured → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: product_list.featured.primary.quick_add_to_cart
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  quick_add_to_cart: prismic.BooleanField;
 }
 
 /**
@@ -3591,6 +3761,17 @@ export interface ProductListSliceManualPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
   grid_size_type: prismic.SelectField<"small" | "large">;
+
+  /**
+   * Quick add to cart field in *ProductList → Manual selection → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: product_list.manual.primary.quick_add_to_cart
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  quick_add_to_cart: prismic.BooleanField;
 }
 
 /**
@@ -3871,36 +4052,6 @@ type SpacerSliceVariation = SpacerSliceDefault;
 export type SpacerSlice = prismic.SharedSlice<"spacer", SpacerSliceVariation>;
 
 /**
- * Default variation for HorizontalRule Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type HorizontalRuleSliceDefault = prismic.SharedSliceVariation<
-  "default",
-  Record<string, never>,
-  never
->;
-
-/**
- * Slice variation for *HorizontalRule*
- */
-type HorizontalRuleSliceVariation = HorizontalRuleSliceDefault;
-
-/**
- * HorizontalRule Shared Slice
- *
- * - **API ID**: `horizontal_rule`
- * - **Description**: Horizontal divider line
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type HorizontalRuleSlice = prismic.SharedSlice<
-  "horizontal_rule",
-  HorizontalRuleSliceVariation
->;
-
-/**
  * Primary content in *Tabs → Default → Primary*
  */
 export interface TabsSliceDefaultPrimary {
@@ -3964,9 +4115,72 @@ export type TabsSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Tabs → Inner Content → Primary*
+ */
+export interface TabsSliceInnerContentPrimary {
+  /**
+   * Heading field in *Tabs → Inner Content → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: tabs.innerContent.primary.heading
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  heading: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *Tabs → Items*
+ */
+export interface TabsSliceInnerContentItem {
+  /**
+   * Tab Label field in *Tabs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: tabs.items[].tabLabel
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  tabLabel: prismic.KeyTextField;
+
+  /**
+   * Tab ID (for URL hash) field in *Tabs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: tabs.items[].tabId
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  tabId: prismic.KeyTextField;
+
+  /**
+   * Inner Content field in *Tabs → Items*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: tabs.items[].inner_content
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  inner_content: prismic.ContentRelationshipField<"inner_content">;
+}
+
+/**
+ * Inner Content variation for Tabs Slice
+ *
+ * - **API ID**: `innerContent`
+ * - **Description**: Each tab displays content from a linked inner content page
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TabsSliceInnerContent = prismic.SharedSliceVariation<
+  "innerContent",
+  Simplify<TabsSliceInnerContentPrimary>,
+  Simplify<TabsSliceInnerContentItem>
+>;
+
+/**
  * Slice variation for *Tabs*
  */
-type TabsSliceVariation = TabsSliceDefault;
+type TabsSliceVariation = TabsSliceDefault | TabsSliceInnerContent;
 
 /**
  * Tabs Shared Slice
@@ -4154,6 +4368,127 @@ type TextColumnSliceVariation =
 export type TextColumnSlice = prismic.SharedSlice<
   "text_column",
   TextColumnSliceVariation
+>;
+
+/**
+ * Primary content in *TicketPriceProgress → Default → Primary*
+ */
+export interface TicketPriceProgressSliceDefaultPrimary {
+  /**
+   * Heading field in *TicketPriceProgress → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Ticket Prices
+   * - **API ID Path**: ticket_price_progress.default.primary.heading
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  heading: prismic.KeyTextField;
+
+  /**
+   * Subheading field in *TicketPriceProgress → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Get your tickets before the price increases
+   * - **API ID Path**: ticket_price_progress.default.primary.subheading
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  subheading: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *TicketPriceProgress → Items*
+ */
+export interface TicketPriceProgressSliceDefaultItem {
+  /**
+   * Step Title field in *TicketPriceProgress → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Early Bird
+   * - **API ID Path**: ticket_price_progress.items[].title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Step Description field in *TicketPriceProgress → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Limited availability
+   * - **API ID Path**: ticket_price_progress.items[].description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Price (in cents) field in *TicketPriceProgress → Items*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: 1500
+   * - **API ID Path**: ticket_price_progress.items[].price
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  price: prismic.NumberField;
+
+  /**
+   * Available From field in *TicketPriceProgress → Items*
+   *
+   * - **Field Type**: Timestamp
+   * - **Placeholder**: *None*
+   * - **API ID Path**: ticket_price_progress.items[].available_from
+   * - **Documentation**: https://prismic.io/docs/fields/timestamp
+   */
+  available_from: prismic.TimestampField;
+
+  /**
+   * Available Until field in *TicketPriceProgress → Items*
+   *
+   * - **Field Type**: Timestamp
+   * - **Placeholder**: *None*
+   * - **API ID Path**: ticket_price_progress.items[].available_until
+   * - **Documentation**: https://prismic.io/docs/fields/timestamp
+   */
+  available_until: prismic.TimestampField;
+
+  /**
+   * Is Visible (for future steps) field in *TicketPriceProgress → Items*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: ticket_price_progress.items[].is_visible
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  is_visible: prismic.BooleanField;
+}
+
+/**
+ * Default variation for TicketPriceProgress Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default variation
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TicketPriceProgressSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<TicketPriceProgressSliceDefaultPrimary>,
+  Simplify<TicketPriceProgressSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TicketPriceProgress*
+ */
+type TicketPriceProgressSliceVariation = TicketPriceProgressSliceDefault;
+
+/**
+ * TicketPriceProgress Shared Slice
+ *
+ * - **API ID**: `ticket_price_progress`
+ * - **Description**: Shows ticket price progression with steps that reveal based on date
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TicketPriceProgressSlice = prismic.SharedSlice<
+  "ticket_price_progress",
+  TicketPriceProgressSliceVariation
 >;
 
 /**
@@ -4351,6 +4686,10 @@ declare module "@prismicio/client" {
       BannerSliceDefaultPrimary,
       BannerSliceVariation,
       BannerSliceDefault,
+      BlurredBlobSlice,
+      BlurredBlobSliceDefaultPrimary,
+      BlurredBlobSliceVariation,
+      BlurredBlobSliceDefault,
       CollabPromoSlice,
       CollabPromoSliceDefaultPrimaryProductsItem,
       CollabPromoSliceDefaultPrimary,
@@ -4380,6 +4719,9 @@ declare module "@prismicio/client" {
       HeroSliceDefaultPrimary,
       HeroSliceVariation,
       HeroSliceDefault,
+      HorizontalRuleSlice,
+      HorizontalRuleSliceVariation,
+      HorizontalRuleSliceDefault,
       ImageGallerySlice,
       ImageGallerySliceDefaultPrimary,
       ImageGallerySliceDefaultItem,
@@ -4424,14 +4766,14 @@ declare module "@prismicio/client" {
       SpacerSliceDefaultPrimary,
       SpacerSliceVariation,
       SpacerSliceDefault,
-      HorizontalRuleSlice,
-      HorizontalRuleSliceVariation,
-      HorizontalRuleSliceDefault,
       TabsSlice,
       TabsSliceDefaultPrimary,
       TabsSliceDefaultItem,
+      TabsSliceInnerContentPrimary,
+      TabsSliceInnerContentItem,
       TabsSliceVariation,
       TabsSliceDefault,
+      TabsSliceInnerContent,
       TextColumnSlice,
       TextColumnSliceDefaultPrimaryColumnsItem,
       TextColumnSliceDefaultPrimary,
@@ -4440,6 +4782,11 @@ declare module "@prismicio/client" {
       TextColumnSliceVariation,
       TextColumnSliceDefault,
       TextColumnSliceColumnWithImage,
+      TicketPriceProgressSlice,
+      TicketPriceProgressSliceDefaultPrimary,
+      TicketPriceProgressSliceDefaultItem,
+      TicketPriceProgressSliceVariation,
+      TicketPriceProgressSliceDefault,
       VenueListSlice,
       VenueListSliceDefaultPrimary,
       VenueListSliceVariation,
