@@ -141,7 +141,7 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
           </ActionButton>
           <div
             className={clsx(
-              "bg-neutral-600  w-full h-full absolute left-0 transition-transform duration-300 ease-in-out p-4 text-neutral-200 flex flex-col",
+              "bg-neutral-800  w-full h-full absolute left-0 transition-transform duration-300 ease-in-out p-4 text-neutral-200 flex flex-col",
               !showCartStatus && "translate-y-full"
             )}
           >
