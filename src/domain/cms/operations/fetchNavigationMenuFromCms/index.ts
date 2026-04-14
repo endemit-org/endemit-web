@@ -16,12 +16,14 @@ const fetchNavigationMenuFromCmsUncached = async () => {
   return transformNavigationMenuObject(navigationMenu);
 };
 
-// Cache navigation menu - rarely changes, revalidated by Prismic webhook
+// Cache navigation menu per deployment - fresh on each deploy
+// Also responds to Prismic webhook revalidation
+const deploymentId = process.env.VERCEL_DEPLOYMENT_ID || "local";
+
 export const fetchNavigationMenuFromCms = unstable_cache(
   fetchNavigationMenuFromCmsUncached,
-  ["navigation-menu"],
+  ["navigation-menu", deploymentId],
   {
     tags: ["prismic", "navigation"],
-    // No revalidate - rely on webhook calling revalidateTag("prismic")
   }
 );
