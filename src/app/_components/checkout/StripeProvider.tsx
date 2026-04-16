@@ -8,15 +8,19 @@ const stripePromise = loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 interface StripeProviderProps {
   children: React.ReactNode;
-  clientSecret: string;
+  amount: number; // Amount in cents
+  currency?: string;
 }
 
 export default function StripeProvider({
   children,
-  clientSecret,
+  amount,
+  currency = "eur",
 }: StripeProviderProps) {
   const options: StripeElementsOptions = {
-    clientSecret,
+    mode: "payment",
+    amount,
+    currency,
     appearance: {
       labels: "above",
       inputs: "condensed",

@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { prisma } from "@/lib/services/prisma";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCheckoutRequest";
 import { createOrder } from "@/domain/order/operations/createOrder";
-import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";
 import { transformToProductInOrder } from "@/domain/product/transformers/transformToProductInOrder";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscribeEmailToGeneralList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
@@ -21,7 +19,6 @@ import { transformToCheckoutDescription } from "@/domain/checkout/transformers/t
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { paymentIntentId } = body;
     const products = await fetchProductsFromCms({});
     const currentUser = await getCurrentUser();
 
@@ -104,33 +101,73 @@ export async function POST(request: Request) {
     const totalInCents = Math.round(totals.total * 100);
     const amountToCharge = Math.max(0, totalInCents - validatedWalletCredit);
 
-    // Check if order already exists for this payment intent (idempotency)
-    let order;
-    if (paymentIntentId) {
-      const existingOrder = await getOrderByStripeSession(paymentIntentId);
-      if (existingOrder) {
-        order = existingOrder;
+    // Create PaymentIntent first (deferred pattern - only created when user submits)
+    // This ensures order and PaymentIntent are always in sync
+    let paymentIntentId: string | undefined;
+
+    if (amountToCharge > 0) {
+      // Get ticket holders from complementaryTicketData for metadata
+      const ticketHolders = complementaryTicketData
+        ? Object.values(complementaryTicketData).filter(Boolean)
+        : undefined;
+
+      // Build metadata for PaymentIntent
+      const metadata: Record<string, string> = {
+        requiresShipping: shippingAddress ? "true" : "false",
+        includesTickets: ticketHolders ? "true" : "false",
+        walletCreditAmount: validatedWalletCredit.toString(),
+      };
+
+      if (ticketHolders) {
+        metadata.ticketHolders = JSON.stringify(ticketHolders);
       }
+
+      if (shippingAddress) {
+        metadata.shippingName = shippingAddress.name;
+        metadata.shippingAddressLine1 = shippingAddress.address;
+        metadata.shippingCity = shippingAddress.city;
+        metadata.shippingPostalCode = shippingAddress.postalCode;
+        metadata.shippingCountry = shippingAddress.country;
+        metadata.shippingPhone = shippingAddress.phone;
+        metadata.shippingEmail = email;
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountToCharge,
+        currency: "eur",
+        receipt_email: email,
+        description: transformToCheckoutDescription(shippingAddress, email),
+        metadata,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      paymentIntentId = paymentIntent.id;
     }
 
-    // Create order if it doesn't exist
-    if (!order) {
-      const result = await createOrder({
-        stripeSessionId: paymentIntentId || `order_${Date.now()}`,
-        name: name ?? undefined,
-        email,
-        subtotal,
-        shippingCost,
-        discountAmount,
-        walletAmountUsed: validatedWalletCredit,
-        shippingRequired: shouldHaveShippingAddress,
-        shippingAddress,
-        orderItems: checkoutItems.map(checkoutItem =>
-          transformToProductInOrder(checkoutItem, complementaryTicketData)
-        ),
-        userId: currentUser?.id,
+    // Create order with the PaymentIntent ID
+    const { order } = await createOrder({
+      stripeSessionId: paymentIntentId || `wallet_${Date.now()}`,
+      name: name ?? undefined,
+      email,
+      subtotal,
+      shippingCost,
+      discountAmount,
+      walletAmountUsed: validatedWalletCredit,
+      shippingRequired: shouldHaveShippingAddress,
+      shippingAddress,
+      orderItems: checkoutItems.map(checkoutItem =>
+        transformToProductInOrder(checkoutItem, complementaryTicketData)
+      ),
+      userId: currentUser?.id,
+    });
+
+    // Update PaymentIntent with orderId in metadata
+    if (paymentIntentId) {
+      await stripe.paymentIntents.update(paymentIntentId, {
+        metadata: { orderId: order.id },
       });
-      order = result.order;
     }
 
     // Subscribe all customers to general email list
@@ -152,68 +189,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get ticket holders from complementaryTicketData
-    const ticketHolders = complementaryTicketData
-      ? Object.values(complementaryTicketData).filter(Boolean)
-      : undefined;
-
-    // Build metadata for PaymentIntent
-    const metadata: Record<string, string> = {
-      orderId: order.id,
-      requiresShipping: shippingAddress ? "true" : "false",
-      includesTickets: ticketHolders ? "true" : "false",
-      walletCreditAmount: validatedWalletCredit.toString(),
-    };
-
-    if (ticketHolders) {
-      metadata.ticketHolders = JSON.stringify(ticketHolders);
-    }
-
-    if (shippingAddress) {
-      metadata.shippingName = shippingAddress.name;
-      metadata.shippingAddressLine1 = shippingAddress.address;
-      metadata.shippingCity = shippingAddress.city;
-      metadata.shippingPostalCode = shippingAddress.postalCode;
-      metadata.shippingCountry = shippingAddress.country;
-      metadata.shippingPhone = shippingAddress.phone;
-      metadata.shippingEmail = email;
-    }
-
-    // Update existing PaymentIntent with order info
-    if (paymentIntentId) {
-      await stripe.paymentIntents.update(paymentIntentId, {
-        amount: amountToCharge,
-        receipt_email: email,
-        description: transformToCheckoutDescription(shippingAddress, email),
-        metadata,
-      });
-
-      return NextResponse.json(
-        {
-          paymentIntentId,
-          orderId: order.id,
-        },
-        { status: 200 }
-      );
-    }
-
-    // Fallback: create new PaymentIntent if none provided
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amountToCharge,
-      currency: "eur",
-      receipt_email: email,
-      description: transformToCheckoutDescription(shippingAddress, email),
-      metadata,
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-
-    // Update order with the actual payment intent ID so webhook can find it
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { stripeSession: paymentIntent.id },
-    });
+    // Get the PaymentIntent to return clientSecret
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId!);
 
     return NextResponse.json(
       {
