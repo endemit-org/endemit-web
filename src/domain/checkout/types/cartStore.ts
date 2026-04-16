@@ -6,20 +6,6 @@ export interface CheckoutOptions {
   formData: CheckoutFormData;
   walletCreditAmount?: number; // Amount in cents to use from wallet
   promoCode?: string;
-  paymentIntentId?: string; // Existing PaymentIntent to update
-}
-
-export interface InitPaymentOptions {
-  country?: string;
-  promoCode?: string;
-  walletCreditAmount?: number;
-}
-
-export interface InitPaymentResult {
-  clientSecret?: string;
-  paymentIntentId?: string;
-  amount: number;
-  fullWalletPayment: boolean;
 }
 
 export interface PaymentIntentResult {
@@ -58,7 +44,6 @@ export interface CartStore {
     url: string;
   }>;
 
-  // Payment Intent flow (inline payment)
-  initPayment: (options: InitPaymentOptions) => Promise<InitPaymentResult>;
+  // Payment Intent flow (inline payment with deferred intent creation)
   createPaymentIntent: (options: CheckoutOptions) => Promise<PaymentIntentResult>;
 }
