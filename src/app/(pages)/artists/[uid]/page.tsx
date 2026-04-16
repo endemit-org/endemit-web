@@ -79,7 +79,7 @@ export default async function ArtistPage({
   const relatedPodcasts = await fetchPodcastsForArtistFromCms(artist.id);
   const relatedArtistsQuery = await fetchArtistsFromCms({});
   const relatedArtists = relatedArtistsQuery
-    ?.filter(a => a.id !== artist.id)
+    ?.filter(a => a.id !== artist.id && a.showInArtistPage)
     .sort(() => Math.random() - 0.5)
     .slice(0, 4);
   const relatedEvents = relatedEventsQuery
