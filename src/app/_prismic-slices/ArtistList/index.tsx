@@ -19,7 +19,7 @@ const ArtistList: FC<ArtistListProps> = async ({ slice }) => {
     return null;
   }
 
-  let sortedArtists = artists;
+  let sortedArtists = artists.filter(artist => artist.showInArtistPage);
 
   if (slice.primary.show === "Guests") {
     sortedArtists = sortedArtists.filter(artist => !artist.isEndemitCrew);

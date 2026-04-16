@@ -25,6 +25,7 @@ export const transformArtistObject = async (artist: ArtistDocument) => {
       : [],
     updatedAt: new Date(artist.last_publication_date),
     isEndemitCrew: artist.data.is_endemit_crew,
+    showInArtistPage: artist.data.show_in_artist_page,
     isB2b: artist.data.is_b2b,
     b2bAttribution: artist.data.is_b2b
       ? artist.data.b2b_attributed_to_artist.map(artist => {
