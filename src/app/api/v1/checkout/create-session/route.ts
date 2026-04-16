@@ -10,7 +10,7 @@ import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscri
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
 import { getCurrentUser } from "@/lib/services/auth";
-import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { isValidWalletCreditAmount } from "@/domain/checkout/businessRules";
 
 export async function POST(request: Request) {
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     // Validate wallet credit if provided
     let validatedWalletCredit = 0;
     if (walletCreditAmount > 0 && currentUser) {
-      const wallet = await getWalletByUserId(currentUser.id);
+      const wallet = await getWalletByUserIdFresh(currentUser.id);
       if (!wallet) {
         throw new Error("Wallet not found");
       }

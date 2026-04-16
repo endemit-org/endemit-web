@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/lib/services/auth";
-import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { validatePromoCode } from "@/domain/checkout/operations/validatePromoCode";
 import { getCheckoutTotals } from "@/domain/checkout/actions/getCheckoutTotals";
 import { stripe } from "@/lib/services/stripe";
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
     // Validate wallet credit if provided
     let validatedWalletCredit = 0;
     if (walletCreditAmount > 0 && currentUser) {
-      const wallet = await getWalletByUserId(currentUser.id);
+      const wallet = await getWalletByUserIdFresh(currentUser.id);
       if (wallet) {
         const totalCents = Math.round(totals.total * 100);
         const maxCredit = Math.min(wallet.balance, totalCents);

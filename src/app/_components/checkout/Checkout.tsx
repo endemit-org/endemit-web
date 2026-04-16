@@ -432,7 +432,10 @@ export default function Checkout({
 
                 {/* Payment form */}
                 {payment.isReady && payment.clientSecret ? (
-                  <StripeProvider clientSecret={payment.clientSecret}>
+                  <StripeProvider
+                    key={payment.clientSecret}
+                    clientSecret={payment.clientSecret}
+                  >
                     <PaymentForm
                       totalAmount={totals.total}
                       isProcessing={isPaymentProcessing}
@@ -610,7 +613,10 @@ export default function Checkout({
               {hasItems && (
                 <>
                   {payment.isReady && payment.clientSecret ? (
-                    <StripeProvider clientSecret={payment.clientSecret}>
+                    <StripeProvider
+                      key={payment.clientSecret}
+                      clientSecret={payment.clientSecret}
+                    >
                       <PaymentForm
                         totalAmount={totals.total}
                         isProcessing={isPaymentProcessing}
