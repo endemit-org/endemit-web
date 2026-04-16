@@ -428,10 +428,7 @@ export default function Checkout({
                     </ActionButton>
                   </div>
                 ) : payment.amountToCharge > 0 ? (
-                  <StripeProvider
-                    key={payment.amountToCharge}
-                    amount={payment.amountToCharge}
-                  >
+                  <StripeProvider amount={payment.amountToCharge}>
                     <PaymentForm
                       totalAmount={totals.total}
                       isProcessing={isPaymentProcessing}
@@ -597,10 +594,7 @@ export default function Checkout({
                       </ActionButton>
                     </div>
                   ) : payment.amountToCharge > 0 ? (
-                    <StripeProvider
-                      key={payment.amountToCharge}
-                      amount={payment.amountToCharge}
-                    >
+                    <StripeProvider amount={payment.amountToCharge}>
                       <PaymentForm
                         totalAmount={totals.total}
                         isProcessing={isPaymentProcessing}
