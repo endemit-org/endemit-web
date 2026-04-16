@@ -2,7 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
 import { OrderStatus } from "@prisma/client";
-import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { createTransaction } from "@/domain/wallet/operations/createTransaction";
 import { queueNewOrderAutomation } from "@/domain/order/operations/queueNewOrderAutomation";
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
@@ -35,7 +35,7 @@ export const processFullWalletPayment = async (orderId: string) => {
   }
 
   // Get wallet and verify balance
-  const wallet = await getWalletByUserId(order.userId);
+  const wallet = await getWalletByUserIdFresh(order.userId);
   if (!wallet) {
     throw new Error("Wallet not found");
   }

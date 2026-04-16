@@ -42,7 +42,6 @@ export default function Checkout({
   const [donationDismissed, setDonationDismissed] = useState(false);
   const [paymentError, setPaymentError] = useState<string>("");
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
-  const [paymentInitialized, setPaymentInitialized] = useState(false);
   const { getProductByUid } = useProducts();
 
   // Track if user entered via quick checkout (for back navigation)
@@ -80,27 +79,6 @@ export default function Checkout({
         item.relatedEvent?.hasCashlessPayments === true
     );
   }, [items]);
-
-  // Auto-initialize payment when we have items (show card form immediately)
-  useEffect(() => {
-    if (
-      isClient &&
-      hasItems &&
-      !payment.isReady &&
-      !payment.isInitializing &&
-      !paymentInitialized
-    ) {
-      setPaymentInitialized(true);
-      actions.initPayment();
-    }
-  }, [
-    isClient,
-    hasItems,
-    payment.isReady,
-    payment.isInitializing,
-    paymentInitialized,
-    actions,
-  ]);
 
   useEffect(() => {
     setIsClient(true);
@@ -431,18 +409,7 @@ export default function Checkout({
                 )}
 
                 {/* Payment form */}
-                {payment.isReady && payment.clientSecret ? (
-                  <StripeProvider clientSecret={payment.clientSecret}>
-                    <PaymentForm
-                      totalAmount={totals.total}
-                      isProcessing={isPaymentProcessing}
-                      onProcessingChange={setIsPaymentProcessing}
-                      onError={setPaymentError}
-                      canProceed={canProceed}
-                      onConfirmPayment={actions.confirmPayment}
-                    />
-                  </StripeProvider>
-                ) : payment.isFullWalletPayment ? (
+                {payment.isFullWalletPayment ? (
                   <div className="mt-4">
                     <ActionButton
                       onClick={async () => {
@@ -460,19 +427,21 @@ export default function Checkout({
                         : "Complete Order (Wallet Payment)"}
                     </ActionButton>
                   </div>
-                ) : (
-                  <div className="mt-4 py-6 text-center">
-                    {payment.isInitializing ? (
-                      <div className="text-neutral-400 text-sm">
-                        Loading payment form...
-                      </div>
-                    ) : (
-                      <div className="text-neutral-400 text-sm">
-                        Preparing secure payment...
-                      </div>
-                    )}
-                  </div>
-                )}
+                ) : payment.amountToCharge > 0 ? (
+                  <StripeProvider
+                    key={payment.amountToCharge}
+                    amount={payment.amountToCharge}
+                  >
+                    <PaymentForm
+                      totalAmount={totals.total}
+                      isProcessing={isPaymentProcessing}
+                      onProcessingChange={setIsPaymentProcessing}
+                      onError={setPaymentError}
+                      canProceed={canProceed}
+                      onConfirmPayment={actions.confirmPayment}
+                    />
+                  </StripeProvider>
+                ) : null}
 
                 {/* Back link (only show when form is valid) */}
                 {isFormValid && <MobileBackLink />}
@@ -609,18 +578,7 @@ export default function Checkout({
               {/* Payment form */}
               {hasItems && (
                 <>
-                  {payment.isReady && payment.clientSecret ? (
-                    <StripeProvider clientSecret={payment.clientSecret}>
-                      <PaymentForm
-                        totalAmount={totals.total}
-                        isProcessing={isPaymentProcessing}
-                        onProcessingChange={setIsPaymentProcessing}
-                        onError={setPaymentError}
-                        canProceed={canProceed}
-                        onConfirmPayment={actions.confirmPayment}
-                      />
-                    </StripeProvider>
-                  ) : payment.isFullWalletPayment ? (
+                  {payment.isFullWalletPayment ? (
                     <div className="mt-4">
                       <ActionButton
                         onClick={async () => {
@@ -638,19 +596,21 @@ export default function Checkout({
                           : "Complete Order (Wallet Payment)"}
                       </ActionButton>
                     </div>
-                  ) : (
-                    <div className="mt-4 py-6 text-center">
-                      {payment.isInitializing ? (
-                        <div className="text-neutral-400 text-sm">
-                          Loading payment form...
-                        </div>
-                      ) : (
-                        <div className="text-neutral-400 text-sm">
-                          Preparing secure payment...
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  ) : payment.amountToCharge > 0 ? (
+                    <StripeProvider
+                      key={payment.amountToCharge}
+                      amount={payment.amountToCharge}
+                    >
+                      <PaymentForm
+                        totalAmount={totals.total}
+                        isProcessing={isPaymentProcessing}
+                        onProcessingChange={setIsPaymentProcessing}
+                        onError={setPaymentError}
+                        canProceed={canProceed}
+                        onConfirmPayment={actions.confirmPayment}
+                      />
+                    </StripeProvider>
+                  ) : null}
                 </>
               )}
             </>
