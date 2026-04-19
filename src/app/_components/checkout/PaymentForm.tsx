@@ -15,6 +15,7 @@ interface ConfirmPaymentResult {
   success: boolean;
   orderId?: string;
   paymentIntentId?: string;
+  clientSecret?: string;
   fullWalletPayment?: boolean;
 }
 
@@ -50,7 +51,22 @@ export default function PaymentForm({
     onProcessingChange(true);
     onError("");
 
-    // Step 1: Create order and validate form
+    // Step 1: Validate payment form with Stripe Elements
+    const { error: submitError } = await elements.submit();
+    if (submitError) {
+      if (
+        submitError.type === "card_error" ||
+        submitError.type === "validation_error"
+      ) {
+        onError(submitError.message || "Please check your payment details.");
+      } else {
+        onError("Please complete the payment form.");
+      }
+      onProcessingChange(false);
+      return;
+    }
+
+    // Step 2: Create order and PaymentIntent on server
     const result = await onConfirmPayment();
 
     if (!result.success) {
@@ -63,18 +79,18 @@ export default function PaymentForm({
       return;
     }
 
-    if (!result.orderId || !result.paymentIntentId) {
+    if (!result.orderId || !result.clientSecret) {
       onError("Failed to create order");
       onProcessingChange(false);
       return;
     }
 
-    // Step 2: Confirm payment with Stripe
-    // Use paymentIntentId in URL to avoid race condition with webhook
+    // Step 3: Confirm payment with Stripe using the clientSecret from server
     // redirect: 'if_required' allows client-side navigation for simple payments
     // while still supporting 3D Secure redirects when needed
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
+      clientSecret: result.clientSecret,
       confirmParams: {
         return_url: `${PUBLIC_BASE_WEB_URL}/store/checkout/success/${result.paymentIntentId}`,
       },

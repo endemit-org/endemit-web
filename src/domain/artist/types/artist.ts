@@ -17,6 +17,7 @@ export type Artist = {
   image: CmsImage | null;
   video: string | null;
   isEndemitCrew: boolean;
+  showInArtistPage: boolean;
   links: Array<{
     type: ArtistLinkType;
     url: string;

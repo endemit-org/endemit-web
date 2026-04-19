@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { CartStore, PaymentIntentResult, InitPaymentResult } from "@/domain/checkout/types/cartStore";
+import { CartStore, PaymentIntentResult } from "@/domain/checkout/types/cartStore";
 import { Product } from "@/domain/product/types/product";
 import { getApiPath } from "@/lib/util/api";
 import { canProductExistInCart } from "@/domain/product/businessLogic";
@@ -9,13 +9,6 @@ import { CartItem } from "@/domain/checkout/types/cartItem";
 interface CreateCheckoutSessionResponse {
   sessionId: string;
   url: string;
-}
-
-interface InitPaymentResponse {
-  clientSecret?: string;
-  paymentIntentId?: string;
-  amount: number;
-  fullWalletPayment?: boolean;
 }
 
 interface CreatePaymentIntentResponse {
@@ -130,52 +123,6 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
-      initPayment: async options => {
-        const items = get().items;
-
-        if (items.length === 0) {
-          throw new Error("Cart is empty");
-        }
-
-        set({ isLoading: true });
-
-        try {
-          const response = await fetch(getApiPath("checkout/init-payment"), {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              items,
-              country: options.country,
-              promoCode: options.promoCode,
-              walletCreditAmount: options.walletCreditAmount,
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData: CheckoutError = await response.json();
-            throw new Error(errorData.error || "Failed to initialize payment");
-          }
-
-          const data: InitPaymentResponse = await response.json();
-
-          const result: InitPaymentResult = {
-            clientSecret: data.clientSecret,
-            paymentIntentId: data.paymentIntentId,
-            amount: data.amount,
-            fullWalletPayment: data.fullWalletPayment ?? false,
-          };
-
-          return result;
-        } catch (error) {
-          console.error("Init payment error:", error);
-          throw error;
-        } finally {
-          set({ isLoading: false });
-        }
-      },
-
       checkout: async options => {
         const items = get().items;
 
@@ -248,7 +195,7 @@ export const useCartStore = create<CartStore>()(
         set({ isLoading: true });
 
         try {
-          const { formData, walletCreditAmount, promoCode, paymentIntentId } = options;
+          const { formData, walletCreditAmount, promoCode } = options;
           const {
             email,
             emailRepeat,
@@ -276,7 +223,6 @@ export const useCartStore = create<CartStore>()(
                 formData,
                 walletCreditAmount,
                 promoCode,
-                paymentIntentId,
               }),
             }
           );
@@ -356,7 +302,6 @@ export const useCartActions = () => {
   const clearCart = useCartStore(state => state.clearCart);
   const populateProducts = useCartStore(state => state.populateProducts);
   const checkout = useCartStore(state => state.checkout);
-  const initPayment = useCartStore(state => state.initPayment);
   const createPaymentIntent = useCartStore(state => state.createPaymentIntent);
 
   return {
@@ -369,7 +314,6 @@ export const useCartActions = () => {
     clearCart,
     populateProducts,
     checkout,
-    initPayment,
     createPaymentIntent,
   };
 };

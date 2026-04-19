@@ -1,7 +1,7 @@
 "use client";
 
 import { Product } from "@/domain/product/types/product";
-import { Event } from "@/domain/event/types/event";
+import { Event, EventType } from "@/domain/event/types/event";
 import {
   getTicketQuantityForProduct,
   isProductSellable,
@@ -131,6 +131,7 @@ export default function EventTicketDisplay({
       subtitle = "Tickets are not for sale yet";
     }
   } else if (!hasAvailableProducts) {
+    // Mark tickets as sold out in Prismic to achieve this state
     headline = "Tickets not available online";
     subtitle = "Online tickets SOLD OUT";
     content = (
@@ -140,6 +141,18 @@ export default function EventTicketDisplay({
         <strong>Cash only.</strong>
       </Banner>
     );
+
+    // Override headline for festival 2026 - TODO - remove
+    if (event.type === EventType.Festival) {
+      headline = "Ticket batch sold out";
+      subtitle = "Next ticket batch coming soon";
+      content = (
+        <Banner title={"Ticket batch sold out"}>
+          This ticket batch for Endemit 2026 is sold out. We will be releasing
+          the next ticket batch soon. Stay tuned!
+        </Banner>
+      );
+    }
   }
 
   // For free admission, past event, or no products - show simple message
