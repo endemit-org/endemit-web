@@ -93,7 +93,7 @@ function StepDot({ state }: { state: StepState }) {
     <div
       className={clsx(
         "w-4 h-4 rounded-full border-2 flex-shrink-0 transition-all",
-        state === "completed" && "bg-green-500 border-green-500",
+        state === "completed" && "bg-neutral-500 border-neutral-500",
         state === "current" && "bg-white border-green-500 ring-4 ring-green-500/20",
         state === "next" && "bg-yellow-500 border-yellow-500 ring-4 ring-yellow-500/20",
         state === "future" && "bg-neutral-700 border-neutral-600"
@@ -141,7 +141,7 @@ function StepCard({ step }: { step: ProcessedStep }) {
       <div
         className={clsx(
           "text-2xl md:text-3xl font-bold mb-1 transition-all",
-          step.state === "completed" && "text-neutral-400",
+          step.state === "completed" && "text-neutral-400 line-through",
           step.state === "current" && "text-green-400",
           isNext && !isHidden && "text-yellow-400",
           (isFuture || isHidden) && "text-neutral-500",
@@ -246,7 +246,7 @@ function VerticalStep({
         <div
           className={clsx(
             "text-2xl font-bold mb-1",
-            step.state === "completed" && "text-neutral-400",
+            step.state === "completed" && "text-neutral-400 line-through",
             step.state === "current" && "text-green-400",
             isNext && !isHidden && "text-yellow-400",
             (isFuture || isHidden) && "text-neutral-500",
@@ -333,7 +333,7 @@ function VerticalStep({
         <div
           className={clsx(
             "w-0.5 h-8",
-            step.state === "completed" ? "bg-green-500" : "bg-neutral-700"
+            step.state === "completed" ? "bg-neutral-500" : "bg-neutral-700"
           )}
         />
       )}
@@ -413,7 +413,7 @@ export default function TicketPriceProgressClient({
                 <div
                   className={clsx(
                     "h-0.5 flex-1 mx-2",
-                    step.state === "completed" ? "bg-green-500" : "bg-neutral-700"
+                    step.state === "completed" ? "bg-neutral-500" : "bg-neutral-700"
                   )}
                 />
               )}
