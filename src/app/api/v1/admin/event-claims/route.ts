@@ -63,13 +63,10 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { userIdentifier, eventId, eventName } = body ?? {};
+    const { userId, eventId, eventName } = body ?? {};
 
-    if (typeof userIdentifier !== "string" || !userIdentifier.trim()) {
-      return NextResponse.json(
-        { error: "userIdentifier (username or email) required" },
-        { status: 400 }
-      );
+    if (typeof userId !== "string" || !userId.trim()) {
+      return NextResponse.json({ error: "userId required" }, { status: 400 });
     }
     if (typeof eventId !== "string" || !eventId.trim()) {
       return NextResponse.json({ error: "eventId required" }, { status: 400 });
@@ -81,15 +78,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const identifier = userIdentifier.trim();
-    const targetUser = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: { equals: identifier, mode: "insensitive" } },
-          { username: { equals: identifier, mode: "insensitive" } },
-          { id: identifier },
-        ],
-      },
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
       select: { id: true, email: true },
     });
 

@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import clsx from "clsx";
+import UserAutocomplete from "./UserAutocomplete";
+import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
 
 interface ClaimRow {
   id: string;
@@ -330,7 +332,10 @@ function CreateClaimModal({
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const [userIdentifier, setUserIdentifier] = useState("");
+  const [userQuery, setUserQuery] = useState("");
+  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
+    null
+  );
   const [selectedEventId, setSelectedEventId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -338,7 +343,7 @@ function CreateClaimModal({
   const selectedEvent = pastEvents.find(e => e.id === selectedEventId);
 
   const handleSubmit = useCallback(async () => {
-    if (!userIdentifier.trim() || !selectedEvent) return;
+    if (!selectedUser || !selectedEvent) return;
     setIsSubmitting(true);
     setError(null);
     try {
@@ -346,7 +351,7 @@ function CreateClaimModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userIdentifier: userIdentifier.trim(),
+          userId: selectedUser.id,
           eventId: selectedEvent.id,
           eventName: selectedEvent.name,
         }),
@@ -361,7 +366,7 @@ function CreateClaimModal({
     } finally {
       setIsSubmitting(false);
     }
-  }, [userIdentifier, selectedEvent, onCreated]);
+  }, [selectedUser, selectedEvent, onCreated]);
 
   return (
     <div
@@ -397,15 +402,17 @@ function CreateClaimModal({
         <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              User (username or email)
+              User
             </label>
-            <input
-              type="text"
-              value={userIdentifier}
-              onChange={e => setUserIdentifier(e.target.value)}
+            <UserAutocomplete
+              value={userQuery}
+              onChange={value => {
+                setUserQuery(value);
+                if (!value) setSelectedUser(null);
+              }}
+              onUserSelect={user => setSelectedUser(user)}
               disabled={isSubmitting}
-              placeholder="alice@example.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              placeholder="Search by name, username, or email"
             />
           </div>
 
@@ -453,9 +460,7 @@ function CreateClaimModal({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={
-              isSubmitting || !userIdentifier.trim() || !selectedEventId
-            }
+            disabled={isSubmitting || !selectedUser || !selectedEventId}
             className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50"
           >
             {isSubmitting ? "Creating..." : "Create claim"}
