@@ -109,7 +109,7 @@ export default async function ContentPage({
       )}
 
       {!contentPage.renderFrame && contentPage.slices && (
-        <div className={"relative"}>
+        <div className={"relative mx-auto space-y-8"}>
           <SliceDisplay slices={contentPage.slices} />
         </div>
       )}
