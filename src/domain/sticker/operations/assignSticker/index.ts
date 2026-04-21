@@ -5,6 +5,10 @@ import {
   isValidStickerCode,
   normalizeStickerCode,
 } from "@/domain/sticker/util/validateStickerCode";
+import {
+  queueStickerLinkedEmail,
+  queueStickerReplacedEmail,
+} from "@/domain/sticker/operations/queueStickerEmail";
 
 export interface AssignStickerResult {
   code: string;
@@ -23,7 +27,7 @@ export async function assignSticker(
     throw new Error("Invalid sticker code format");
   }
 
-  return await prisma.$transaction(async tx => {
+  const result = await prisma.$transaction(async tx => {
     const user = await tx.user.findUnique({
       where: { id: userId },
       select: { id: true },
@@ -61,4 +65,16 @@ export async function assignSticker(
 
     return { code, userId, claimedAt, replacedCode };
   });
+
+  if (result.replacedCode && result.replacedCode !== result.code) {
+    queueStickerReplacedEmail({
+      userId,
+      oldCode: result.replacedCode,
+      newCode: result.code,
+    }).catch(() => {});
+  } else if (!result.replacedCode) {
+    queueStickerLinkedEmail({ userId, code: result.code }).catch(() => {});
+  }
+
+  return result;
 }

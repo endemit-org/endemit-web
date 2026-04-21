@@ -14,6 +14,11 @@ import { runEventReminderAutomation } from "@/domain/email/operations/runEventRe
 import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
 import { runOrderNewsletterAutomation } from "@/domain/newsletter/operations/runOrderNewsletterAutomation";
 import { runEventClaimAutomation } from "@/domain/claim/operations/runEventClaimAutomation";
+import {
+  runStickerLinkedEmailAutomation,
+  runStickerUnlinkedEmailAutomation,
+  runStickerReplacedEmailAutomation,
+} from "@/domain/sticker/operations/runStickerEmailAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -32,5 +37,8 @@ export const { GET, POST, PUT } = serve({
     runSingleEventReminderAutomation,
     runOrderNewsletterAutomation,
     runEventClaimAutomation,
+    runStickerLinkedEmailAutomation,
+    runStickerUnlinkedEmailAutomation,
+    runStickerReplacedEmailAutomation,
   ],
 });
