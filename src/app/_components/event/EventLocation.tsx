@@ -1,9 +1,21 @@
+import dynamic from "next/dynamic";
 import { VenueInEvent } from "@/domain/event/types/event";
-import GoogleMapLocation from "@/app/_components/content/GoogleMapLocation";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import Link from "next/link";
 import clsx from "clsx";
+
+// Dynamic import: Google Maps (~120KB) only loads when venue has coordinates
+const GoogleMapLocation = dynamic(
+  () => import("@/app/_components/content/GoogleMapLocation"),
+  {
+    loading: () => (
+      <div className="w-full h-[400px] bg-neutral-800 animate-pulse flex items-center justify-center text-neutral-500">
+        Loading map...
+      </div>
+    ),
+  }
+);
 
 type Props = {
   venue: VenueInEvent | null;

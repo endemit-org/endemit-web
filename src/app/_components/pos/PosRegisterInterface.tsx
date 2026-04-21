@@ -518,7 +518,6 @@ export function PosRegisterInterface({
         <PosOrderQrModal
           order={activeOrder}
           onClose={() => setActiveOrder(null)}
-          onCancel={() => cancelOrder(activeOrder.orderHash)}
           onCopyToCart={() => copyToCart(activeOrder)}
         />
       )}

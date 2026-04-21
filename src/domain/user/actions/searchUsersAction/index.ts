@@ -54,7 +54,10 @@ export async function searchUsersAction(
     return { success: false, error: "Not authenticated" };
   }
 
-  if (!user.permissions.includes(PERMISSIONS.TICKETS_CREATE)) {
+  if (
+    !user.permissions.includes(PERMISSIONS.TICKETS_CREATE) &&
+    !user.permissions.includes(PERMISSIONS.EVENT_CLAIMS_MANAGE)
+  ) {
     return { success: false, error: "Not authorized" };
   }
 

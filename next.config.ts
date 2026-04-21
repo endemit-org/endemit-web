@@ -49,6 +49,42 @@ const nextConfig: NextConfig = {
   async redirects() {
     return REDIRECTS;
   },
+  async headers() {
+    return [
+      {
+        // Service worker should not be cached and needs correct scope
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Service-Worker-Allowed",
+            value: "/",
+          },
+        ],
+      },
+      {
+        // Version endpoint must never be cached for deployment detection
+        source: "/api/v1/version",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate, max-age=0",
+          },
+          {
+            key: "Pragma",
+            value: "no-cache",
+          },
+          {
+            key: "Expires",
+            value: "0",
+          },
+        ],
+      },
+    ];
+  },
   outputFileTracingIncludes: {
     // Ticket image generation requires logo and font files
     "/api/**/*": ["./public/images/**/*", "./public/fonts/**/*"],

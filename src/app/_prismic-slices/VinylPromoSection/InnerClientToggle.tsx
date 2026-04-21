@@ -16,8 +16,7 @@ export default function InnerClientToggle({ placeholder }: Props) {
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const loadedTrack = usePlayerStore(state => state.currentTrack);
   const albumTrack = "https://soundcloud.com/ende-mit/sets/mmali-issun-boshi";
-  const coverImage =
-    "/images/issun-boshi-vinyl-release/album/issun-boshi-cover.webp";
+  const coverImage = "/images/album-promo/issun-boshi-cover.webp";
   const isAlbumLoaded = loadedTrack?.title && loadedTrack?.url === albumTrack;
 
   const trackList = [

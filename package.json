@@ -18,6 +18,7 @@
     "slicemachine": "start-slicemachine",
     "postinstall": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
+    "seed:stickers": "tsx prisma/seed-stickers.ts",
     "env-init": "vercel login && vercel link --project=prj_vS6KCdGiPdIALZpEF5ZOlnGXperd --scope=team_PkvMkqbUl2Dicg1v7EZCAVue --yes && pnpm env-dev",
     "env-dev": "vercel env pull .env --environment=development",
     "env-stage": "vercel env pull .env --environment=preview",

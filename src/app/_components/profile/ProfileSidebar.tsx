@@ -1,14 +1,20 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";
-import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
 import TopUpModal from "@/app/_components/profile/TopUpModal";
+
+// Dynamic import: QR Scanner (~120KB) only loads when Pay Scanner is opened
+const WalletPayScanner = dynamic(
+  () => import("@/app/_components/wallet/WalletPayScanner").then(mod => ({ default: mod.WalletPayScanner })),
+  { ssr: false }
+);
 import type { Product } from "@/domain/product/types/product";
 import { isEndemitPayEnabled } from "@/domain/wallet/businessRules";
 import ActionButton from "@/app/_components/form/ActionButton";
