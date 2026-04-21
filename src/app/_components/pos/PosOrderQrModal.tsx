@@ -39,7 +39,6 @@ interface PosOrderSummary {
 interface Props {
   order: PosOrderSummary;
   onClose: () => void;
-  onCancel: () => void;
   onCopyToCart: () => void;
 }
 
@@ -50,7 +49,6 @@ type SubView = "qr" | "sticker-scan" | "customer-confirm";
 export function PosOrderQrModal({
   order,
   onClose,
-  onCancel,
   onCopyToCart,
 }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -347,14 +345,6 @@ export function PosOrderQrModal({
                   </div>
                 ))}
               </div>
-
-              {/* Fallback sticker entry */}
-              <button
-                onClick={() => setSubView("sticker-scan")}
-                className="w-full mt-4 text-sm text-blue-600 hover:text-blue-800 py-2"
-              >
-                Customer phone dead? Scan backup sticker →
-              </button>
             </div>
           ) : subView === "sticker-scan" ? (
             <PosStickerScanView
@@ -405,10 +395,10 @@ export function PosOrderQrModal({
         {!isPaid && subView === "qr" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
             <button
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              onClick={() => setSubView("sticker-scan")}
+              className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
-              Cancel
+              Scan backup sticker
             </button>
             <button
               onClick={onCopyToCart}
