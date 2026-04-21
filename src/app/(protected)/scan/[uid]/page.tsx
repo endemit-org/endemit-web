@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
 import { notFound } from "next/navigation";
 import {
@@ -8,12 +9,16 @@ import {
 import { getTicketsForEvent } from "@/domain/ticket/operations/getTicketsForEvent";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
-import QRScanner from "@/app/_components/ticket/QrScanner";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import TicketsDisplay from "@/app/_components/ticket/TicketDisplay";
 import { serializeTicket } from "@/domain/ticket/util";
 import ScannerTabs from "@/app/_components/ticket/ScannerTabs";
 import DoorSaleForm from "@/app/_components/ticket/DoorSaleForm";
+
+// Dynamic import: QR Scanner (~120KB) only loads on scan pages
+const QRScanner = dynamic(
+  () => import("@/app/_components/ticket/QrScanner")
+);
 
 export const revalidate = 60;
 

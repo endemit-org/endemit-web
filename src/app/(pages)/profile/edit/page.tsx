@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
@@ -6,8 +7,12 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import ProfileEditForm from "@/app/_components/profile/ProfileEditForm";
-import BackupStickerCard from "@/app/_components/profile/BackupStickerCard";
 import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
+
+// Dynamic import: QR Scanner (~120KB) only loads when component mounts
+const BackupStickerCard = dynamic(
+  () => import("@/app/_components/profile/BackupStickerCard")
+);
 
 export const metadata: Metadata = {
   title: "Edit Profile",

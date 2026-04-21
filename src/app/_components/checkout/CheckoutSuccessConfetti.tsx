@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import confetti from "canvas-confetti";
 
 interface Props {
   targetElementId?: string;
@@ -21,10 +20,13 @@ export default function CheckoutSuccessConfetti({ targetElementId }: Props) {
       }
     }
 
-    confetti({
-      particleCount: 100,
-      spread: 360,
-      origin: { x: originX, y: originY },
+    // Dynamic import: canvas-confetti (~33KB) only loads on success page
+    import("canvas-confetti").then(({ default: confetti }) => {
+      confetti({
+        particleCount: 100,
+        spread: 360,
+        origin: { x: originX, y: originY },
+      });
     });
   }, [targetElementId]);
 

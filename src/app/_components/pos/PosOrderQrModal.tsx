@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import QRCode from "qrcode";
-import confetti from "canvas-confetti";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import Image from "next/image";
-import {
-  PosStickerScanView,
-  type StickerScanResult,
-} from "./PosStickerScanView";
+import { type StickerScanResult } from "./PosStickerScanView";
 import { PaymentConfirmView } from "@/app/_components/payment/PaymentConfirmView";
+
+// Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
+const PosStickerScanView = dynamic(
+  () => import("./PosStickerScanView").then(mod => ({ default: mod.PosStickerScanView })),
+  { ssr: false }
+);
 
 interface PosOrderSummary {
   id: string;
@@ -105,8 +108,9 @@ export function PosOrderQrModal({
   }, [autoCloseCountdown, onClose]);
 
   // Fire confetti when tip is received
-  const fireConfetti = useCallback(() => {
-    // Quick burst of confetti
+  const fireConfetti = useCallback(async () => {
+    // Dynamic import: canvas-confetti (~33KB) only loads when tip is received
+    const confetti = (await import("canvas-confetti")).default;
     confetti({
       particleCount: 80,
       spread: 70,
