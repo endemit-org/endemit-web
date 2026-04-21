@@ -6,6 +6,11 @@ import confetti from "canvas-confetti";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import Image from "next/image";
+import {
+  PosStickerScanView,
+  type StickerScanResult,
+} from "./PosStickerScanView";
+import { PaymentConfirmView } from "@/app/_components/payment/PaymentConfirmView";
 
 interface PosOrderSummary {
   id: string;
@@ -40,6 +45,8 @@ interface Props {
 
 const AUTO_CLOSE_SECONDS = 30;
 
+type SubView = "qr" | "sticker-scan" | "customer-confirm";
+
 export function PosOrderQrModal({
   order,
   onClose,
@@ -51,6 +58,13 @@ export function PosOrderQrModal({
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
     null
   );
+  const [subView, setSubView] = useState<SubView>("qr");
+  const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
+    null
+  );
+  const [isRotated, setIsRotated] = useState(true);
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
 
   useEffect(() => {
     QRCode.toDataURL(order.orderHash, {
@@ -109,6 +123,48 @@ export function PosOrderQrModal({
       fireConfetti();
     }
   }, [isPaid, hasTip, hasShownConfetti, fireConfetti]);
+
+  // Reset sub-view state when the order becomes paid
+  useEffect(() => {
+    if (isPaid) {
+      setSubView("qr");
+      setStickerScan(null);
+      setPayError(null);
+    }
+  }, [isPaid]);
+
+  const handleStickerScanned = useCallback((result: StickerScanResult) => {
+    setStickerScan(result);
+    setSubView("customer-confirm");
+    setPayError(null);
+  }, []);
+
+  const handlePay = useCallback(
+    async (tipAmount: number) => {
+      if (!stickerScan || isPaying) return;
+      setIsPaying(true);
+      setPayError(null);
+      try {
+        const response = await fetch(
+          `/api/v1/pos/orders/${stickerScan.order.orderHash}/pay`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tipAmount }),
+          }
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || "Payment failed");
+        }
+      } catch (err) {
+        setPayError(err instanceof Error ? err.message : "Payment failed");
+      } finally {
+        setIsPaying(false);
+      }
+    },
+    [stickerScan, isPaying]
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -180,8 +236,8 @@ export function PosOrderQrModal({
                 </div>
               )}
             </div>
-          ) : (
-            <>
+          ) : subView === "qr" ? (
+            <div>
               {/* Large Short Code */}
               <div className="text-center mb-4">
                 <p className="text-sm text-gray-500 mb-1">Order Code</p>
@@ -291,12 +347,62 @@ export function PosOrderQrModal({
                   </div>
                 ))}
               </div>
-            </>
-          )}
+
+              {/* Fallback sticker entry */}
+              <button
+                onClick={() => setSubView("sticker-scan")}
+                className="w-full mt-4 text-sm text-blue-600 hover:text-blue-800 py-2"
+              >
+                Customer phone dead? Scan backup sticker →
+              </button>
+            </div>
+          ) : subView === "sticker-scan" ? (
+            <PosStickerScanView
+              orderHash={order.orderHash}
+              onScanned={handleStickerScanned}
+              onBack={() => setSubView("qr")}
+            />
+          ) : subView === "customer-confirm" && stickerScan ? (
+            <div className="relative -mx-6 -my-6 px-6 py-6 bg-neutral-900 text-white rounded-b-2xl">
+              <button
+                onClick={() => setIsRotated(r => !r)}
+                title="Toggle rotation"
+                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h5M20 20v-5h-5M4 20a9 9 0 0015-6.7M20 4a9 9 0 00-15 6.7"
+                  />
+                </svg>
+              </button>
+              <PaymentConfirmView
+                order={stickerScan.order}
+                customer={stickerScan.customer}
+                isRotated={isRotated}
+                allowCustomTip={!isRotated}
+                isProcessing={isPaying}
+                error={payError}
+                onPay={handlePay}
+                onCancel={() => {
+                  setSubView("qr");
+                  setStickerScan(null);
+                  setPayError(null);
+                }}
+              />
+            </div>
+          ) : null}
         </div>
 
         {/* Actions */}
-        {!isPaid && (
+        {!isPaid && subView === "qr" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
             <button
               onClick={onCancel}

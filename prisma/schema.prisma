@@ -199,6 +199,7 @@ model User {
   posRegisterAssignments PosRegisterSeller[]
   posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
   posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
+  stickerCode            StickerCode?
 
   // Announcements
   announcementDismissals AnnouncementDismissal[]
@@ -443,6 +444,17 @@ model PosOrderItem {
 
   @@index([orderId])
   @@index([itemId])
+}
+
+model StickerCode {
+  code      String    @id
+  userId    String?   @unique
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  claimedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 // =============================================================================

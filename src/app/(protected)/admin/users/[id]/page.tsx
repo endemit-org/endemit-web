@@ -11,6 +11,8 @@ import UserEditForm from "@/app/_components/admin/UserEditForm";
 import UserPasswordForm from "@/app/_components/admin/UserPasswordForm";
 import UserRolesManager from "@/app/_components/admin/UserRolesManager";
 import UserSessionsTable from "@/app/_components/admin/UserSessionsTable";
+import UserStickerManager from "@/app/_components/admin/UserStickerManager";
+import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
 import clsx from "clsx";
 
 export async function generateMetadata({
@@ -64,10 +66,14 @@ export default async function AdminUserDetailPage({
     PERMISSIONS.USERS_MANAGE_ROLES
   );
   const canViewWallets = currentUser.permissions.includes(PERMISSIONS.WALLETS_READ);
+  const canManageStickers = currentUser.permissions.includes(
+    PERMISSIONS.POS_STICKERS_MANAGE
+  );
 
-  const [wallet, allRoles] = await Promise.all([
+  const [wallet, allRoles, sticker] = await Promise.all([
     canViewWallets ? getWalletByUserId(id) : null,
     canManageRoles ? getAllRoles() : [],
+    canManageStickers ? getUserSticker(id) : null,
   ]);
 
   return (
@@ -214,6 +220,22 @@ export default async function AdminUserDetailPage({
                     Manage Wallet
                   </Link>
                 </div>
+              </div>
+            </section>
+          )}
+
+          {/* Backup Sticker */}
+          {canManageStickers && (
+            <section>
+              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+                Backup Sticker
+              </h2>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <UserStickerManager
+                  userId={user.id}
+                  currentCode={sticker?.code ?? null}
+                  claimedAt={sticker?.claimedAt?.toISOString() ?? null}
+                />
               </div>
             </section>
           )}

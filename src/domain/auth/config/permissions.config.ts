@@ -76,6 +76,7 @@ export const PERMISSIONS = {
   POS_ORDERS_READ: "pos:orders:read",
   POS_ORDERS_REFUND: "pos:orders:refund",
   POS_TIPS_WITHDRAW: "pos:tips:withdraw",
+  POS_STICKERS_MANAGE: "pos:stickers:manage",
 
   // Announcements
   ANNOUNCEMENTS_READ: "announcements:read",
@@ -391,6 +392,13 @@ export const PERMISSION_METADATA: Record<
     description: "Withdraw tips from register tip pools",
     resource: "pos",
     action: "tips:withdraw",
+  },
+  [PERMISSIONS.POS_STICKERS_MANAGE]: {
+    name: "Manage POS Stickers",
+    description:
+      "Generate sticker codes and assign/unlink them from user accounts",
+    resource: "pos",
+    action: "stickers:manage",
   },
 
   // Announcements

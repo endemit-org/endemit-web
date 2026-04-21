@@ -6,6 +6,8 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import ProfileEditForm from "@/app/_components/profile/ProfileEditForm";
+import BackupStickerCard from "@/app/_components/profile/BackupStickerCard";
+import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
 
 export const metadata: Metadata = {
   title: "Edit Profile",
@@ -22,6 +24,8 @@ export default async function ProfileEditPage() {
   if (!user) {
     redirect("/signin");
   }
+
+  const sticker = await getUserSticker(user.id);
 
   return (
     <OuterPage>
@@ -61,6 +65,11 @@ export default async function ProfileEditPage() {
           <div className="bg-neutral-900 rounded-lg p-6">
             <ProfileEditForm name={user.name} image={user.image} />
           </div>
+
+          <BackupStickerCard
+            currentCode={sticker?.code ?? null}
+            claimedAt={sticker?.claimedAt?.toISOString() ?? null}
+          />
         </div>
       </InnerPage>
     </OuterPage>
