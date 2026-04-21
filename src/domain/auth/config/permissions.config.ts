@@ -78,6 +78,9 @@ export const PERMISSIONS = {
   POS_TIPS_WITHDRAW: "pos:tips:withdraw",
   POS_STICKERS_MANAGE: "pos:stickers:manage",
 
+  // Event Claims
+  EVENT_CLAIMS_MANAGE: "event-claims:manage",
+
   // Announcements
   ANNOUNCEMENTS_READ: "announcements:read",
   ANNOUNCEMENTS_WRITE: "announcements:write",
@@ -399,6 +402,13 @@ export const PERMISSION_METADATA: Record<
       "Generate sticker codes and assign/unlink them from user accounts",
     resource: "pos",
     action: "stickers:manage",
+  },
+  [PERMISSIONS.EVENT_CLAIMS_MANAGE]: {
+    name: "Manage Event Claims",
+    description:
+      "List, manually create, approve, and delete user event claims",
+    resource: "event-claims",
+    action: "manage",
   },
 
   // Announcements

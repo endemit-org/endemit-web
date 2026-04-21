@@ -86,6 +86,8 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
       PERMISSIONS.POS_ORDERS_REFUND,
       PERMISSIONS.POS_TIPS_WITHDRAW,
       PERMISSIONS.POS_STICKERS_MANAGE,
+      // Event Claims
+      PERMISSIONS.EVENT_CLAIMS_MANAGE,
     ],
   },
   [ROLE_SLUGS.MODERATOR]: {
