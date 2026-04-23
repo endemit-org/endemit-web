@@ -4,6 +4,9 @@ import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights as VercelSpeedInsights } from "@vercel/speed-insights/next";
 import { Teko, Space_Grotesk } from "next/font/google";
 import EnvironmentIndicator from "@/app/_components/development/EnvironmentIndicator";
+import OfflineToast from "@/app/_components/ui/OfflineToast";
+import VersionChecker from "@/app/_components/VersionChecker";
+import ServiceWorkerRegistration from "@/app/_components/ServiceWorkerRegistration";
 import { isProduction } from "@/lib/util/env";
 import { getDefaultOgImage } from "@/lib/util/seo";
 
@@ -111,6 +114,9 @@ export default function RootLayout({
         <VercelAnalytics />
         <VercelSpeedInsights />
         <EnvironmentIndicator />
+        <ServiceWorkerRegistration />
+        <OfflineToast />
+        <VersionChecker />
         {children}
       </body>
     </html>

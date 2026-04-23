@@ -47,7 +47,7 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({ slice }) => {
       >
         <div className="absolute bottom-0  right-0 scale-[200%]">
           <ImageWithFallback
-            src="/images/issun-boshi-vinyl-release/album/issun-boshi-cover.webp"
+            src="/images/album-promo/issun-boshi-cover.webp"
             alt="Issun-bōshi Vinyl release"
             width={400}
             height={400}
@@ -61,7 +61,7 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({ slice }) => {
           <InnerClientToggle placeholder={bluredCoverPlaceholder} />
           <div className="absolute top-0">
             <ImageWithFallback
-              src="/images/issun-boshi-vinyl-release/album/issun-boshi-record.webp"
+              src="/images/album-promo/issun-boshi-record.webp"
               alt="Issun-bōshi Vinyl release EP"
               width={600}
               height={600}

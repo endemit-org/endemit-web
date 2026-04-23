@@ -204,7 +204,7 @@ export default function TicketContent({
         {isUsable && (
           <div className="w-full h-full absolute object-fill overflow-hidden opacity-60 top-0 left-0 z-0 ">
             <video
-              src={"/images/dancing_bck.mp4"}
+              src={"/images/dancing_bck.webm"}
               loop={true}
               muted={true}
               autoPlay={true}

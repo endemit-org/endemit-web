@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useCheckoutState } from "@/app/_hooks/useCheckoutState";
 import { useProducts } from "@/app/_stores/ProductStore";
 import { isProductSellable } from "@/domain/product/businessLogic";
@@ -14,10 +15,14 @@ import CheckoutSummary from "@/app/_components/checkout/CheckoutSummary";
 import CheckoutWalletCredit from "@/app/_components/checkout/CheckoutWalletCredit";
 import CheckoutCartSummaryCollapsible from "@/app/_components/checkout/CheckoutCartSummaryCollapsible";
 import CheckoutStepIndicator from "@/app/_components/checkout/CheckoutStepIndicator";
-import StripeProvider from "@/app/_components/checkout/StripeProvider";
 import PaymentForm from "@/app/_components/checkout/PaymentForm";
-import confetti from "canvas-confetti";
 import Link from "next/link";
+
+// Dynamic import: Stripe (~80KB) only loads when payment form is rendered
+const StripeProvider = dynamic(
+  () => import("@/app/_components/checkout/StripeProvider"),
+  { ssr: false }
+);
 import { formatCurrency } from "@/lib/util/formatting";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 import ProductSection from "@/app/_components/product/ProductSection";
@@ -115,10 +120,12 @@ export default function Checkout({
     }
   }, [isClient, hasItems, userEmail, items, actions]);
 
-  const handleAddDonation = (e: React.MouseEvent) => {
+  const handleAddDonation = async (e: React.MouseEvent) => {
     const donationProduct = getProductByUid("donation-to-association");
     if (donationProduct && isProductSellable(donationProduct).isSellable) {
       actions.addItem(donationProduct, totals.donationAmount);
+      // Dynamic import: canvas-confetti (~33KB) only loads when donation is added
+      const confetti = (await import("canvas-confetti")).default;
       confetti({
         particleCount: 50,
         spread: 50,
