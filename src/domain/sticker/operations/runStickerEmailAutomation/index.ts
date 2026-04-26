@@ -22,8 +22,11 @@ async function fetchCustomerEmail(userId: string): Promise<string | null> {
 }
 
 export const runStickerLinkedEmailAutomation = inngest.createFunction(
-  { id: "sticker-linked-email-function", retries: 5 },
-  { event: StickerQueueEvent.NOTIFY_LINKED },
+  {
+    id: "sticker-linked-email-function",
+    retries: 5,
+    triggers: [{ event: StickerQueueEvent.NOTIFY_LINKED }],
+  },
   async ({ event, step }) => {
     const { userId, code } = event.data as StickerLinkedNotificationData;
 
@@ -50,8 +53,11 @@ export const runStickerLinkedEmailAutomation = inngest.createFunction(
 );
 
 export const runStickerUnlinkedEmailAutomation = inngest.createFunction(
-  { id: "sticker-unlinked-email-function", retries: 5 },
-  { event: StickerQueueEvent.NOTIFY_UNLINKED },
+  {
+    id: "sticker-unlinked-email-function",
+    retries: 5,
+    triggers: [{ event: StickerQueueEvent.NOTIFY_UNLINKED }],
+  },
   async ({ event, step }) => {
     const { userId, code } = event.data as StickerUnlinkedNotificationData;
 
@@ -78,8 +84,11 @@ export const runStickerUnlinkedEmailAutomation = inngest.createFunction(
 );
 
 export const runStickerReplacedEmailAutomation = inngest.createFunction(
-  { id: "sticker-replaced-email-function", retries: 5 },
-  { event: StickerQueueEvent.NOTIFY_REPLACED },
+  {
+    id: "sticker-replaced-email-function",
+    retries: 5,
+    triggers: [{ event: StickerQueueEvent.NOTIFY_REPLACED }],
+  },
   async ({ event, step }) => {
     const { userId, oldCode, newCode } =
       event.data as StickerReplacedNotificationData;

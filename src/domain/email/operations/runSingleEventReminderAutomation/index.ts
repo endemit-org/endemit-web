@@ -16,8 +16,11 @@ import { EmailQueueEvent, EventReminderData } from "@/domain/email/types/email";
  * Called by the dispatcher (runEventReminderAutomation) for each recipient.
  */
 export const runSingleEventReminderAutomation = inngest.createFunction(
-  { id: "send-single-event-reminder", retries: 3 },
-  { event: EmailQueueEvent.SEND_EVENT_REMINDER },
+  {
+    id: "send-single-event-reminder",
+    retries: 3,
+    triggers: [{ event: EmailQueueEvent.SEND_EVENT_REMINDER }],
+  },
   async ({ event, step }) => {
     const data = event.data as EventReminderData;
 

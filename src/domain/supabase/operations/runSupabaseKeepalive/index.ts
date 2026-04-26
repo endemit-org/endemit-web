@@ -11,8 +11,11 @@ import { supabaseServer } from "@/lib/services/supabase";
  * registers the project as active.
  */
 export const runSupabaseKeepalive = inngest.createFunction(
-  { id: "supabase-keepalive", retries: 3 },
-  { cron: "0 */2 * * *" },
+  {
+    id: "supabase-keepalive",
+    retries: 3,
+    triggers: [{ cron: "0 */2 * * *" }],
+  },
   async ({ step }) => {
     const timestamp = new Date().toISOString();
 
