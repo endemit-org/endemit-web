@@ -10,8 +10,11 @@ import { bustOnPosOrderCreated } from "@/lib/services/cache";
  * Runs once per day at 4am Ljubljana time.
  */
 export const runPosOrderExpiryAutomation = inngest.createFunction(
-  { id: "pos-order-expiry", retries: 3 },
-  { cron: "TZ=Europe/Ljubljana 0 4 * * *" }, // Daily at 4am Ljubljana
+  {
+    id: "pos-order-expiry",
+    retries: 3,
+    triggers: [{ cron: "TZ=Europe/Ljubljana 0 4 * * *" }], // Daily at 4am Ljubljana
+  },
   async ({ step }) => {
     const expiredOrders = await step.run("find-expired-orders", async () => {
       return await prisma.posOrder.findMany({

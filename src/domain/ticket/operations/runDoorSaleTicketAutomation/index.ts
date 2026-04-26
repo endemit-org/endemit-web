@@ -24,8 +24,11 @@ export interface DoorSaleTicketProcessData {
 }
 
 export const runDoorSaleTicketAutomation = inngest.createFunction(
-  { id: "process-door-sale-ticket-function", retries: 5 },
-  { event: TicketQueueEvent.PROCESS_DOOR_SALE_TICKET },
+  {
+    id: "process-door-sale-ticket-function",
+    retries: 5,
+    triggers: [{ event: TicketQueueEvent.PROCESS_DOOR_SALE_TICKET }],
+  },
   async ({ event, step }) => {
     const {
       ticketId,

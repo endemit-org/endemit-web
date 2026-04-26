@@ -15,8 +15,11 @@ import type { InvalidatedTicket } from "@/domain/email/templates/TicketInvalidat
  * Step 2: Send ticket invalidation email to ticket holders (if tickets were refunded)
  */
 export const runRefundEmailAutomation = inngest.createFunction(
-  { id: "refund-email-automation", retries: 5 },
-  { event: OrderQueueEvent.NOTIFY_ON_REFUND },
+  {
+    id: "refund-email-automation",
+    retries: 5,
+    triggers: [{ event: OrderQueueEvent.NOTIFY_ON_REFUND }],
+  },
   async ({ event, step }) => {
     const {
       orderId,
