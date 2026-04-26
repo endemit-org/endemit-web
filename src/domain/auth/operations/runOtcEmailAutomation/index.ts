@@ -5,8 +5,11 @@ import { OtcQueueEvent, OtcEmailQueueData } from "@/domain/auth/types";
 import { sendOtcEmail } from "@/domain/email/operations/sendOtcEmail";
 
 export const runOtcEmailAutomation = inngest.createFunction(
-  { id: "send-otc-email-function", retries: 3 },
-  { event: OtcQueueEvent.SEND_OTC_EMAIL },
+  {
+    id: "send-otc-email-function",
+    retries: 3,
+    triggers: [{ event: OtcQueueEvent.SEND_OTC_EMAIL }],
+  },
   async ({ event, step }) => {
     const { email, code, magicLink, expiresInMinutes } =
       event.data as OtcEmailQueueData;
