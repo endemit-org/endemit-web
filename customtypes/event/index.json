@@ -343,6 +343,9 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "artist_lineup": {
+              "type": "SharedSlice"
+            },
             "banner": {
               "type": "SharedSlice"
             },

@@ -1,0 +1,59 @@
+{
+  "id": "artist_lineup",
+  "type": "SharedSlice",
+  "name": "ArtistLineup",
+  "description": "Manually-ordered grid of artist cards. Empty entries render as blurred placeholders (e.g. for unannounced acts).",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "(optional)"
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": "(optional)"
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "No background",
+            "placeholder_true": "With background",
+            "default_value": false
+          }
+        },
+        "artists": {
+          "type": "Group",
+          "config": {
+            "label": "Artists",
+            "repeat": true,
+            "fields": {
+              "artist": {
+                "type": "Link",
+                "config": {
+                  "label": "Artist (leave empty for blurred placeholder)",
+                  "select": "document",
+                  "customtypes": ["artist"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
