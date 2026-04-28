@@ -28,7 +28,7 @@ const BlurredBlob = ({ slice }: BlurredBlobProps) => {
       )}
     >
       {(heading || description) && (
-        <div className="text-center mb-6">
+        <div className="text-center mb-24">
           {heading && (
             <h2 className="text-2xl md:text-3xl font-bold text-neutral-200">
               {heading}

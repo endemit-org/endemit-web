@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import QRCode from "qrcode";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
@@ -8,6 +8,9 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import Image from "next/image";
 import { type StickerScanResult } from "./PosStickerScanView";
 import { PaymentConfirmView } from "@/app/_components/payment/PaymentConfirmView";
+import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
+import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
+import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
@@ -67,6 +70,12 @@ export function PosOrderQrModal({
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
 
+  const totalRef = useRef<HTMLSpanElement>(null);
+  const tipRef = useRef<HTMLSpanElement>(null);
+  const totalAnim = useWalletAnimation();
+  const tipAnim = useWalletAnimation();
+  const hasTriggeredCoinsRef = useRef(false);
+
   useEffect(() => {
     QRCode.toDataURL(order.orderHash, {
       width: 256,
@@ -125,6 +134,27 @@ export function PosOrderQrModal({
       fireConfetti();
     }
   }, [isPaid, hasTip, hasShownConfetti, fireConfetti]);
+
+  useEffect(() => {
+    if (!isPaid || hasTriggeredCoinsRef.current) return;
+    hasTriggeredCoinsRef.current = true;
+
+    const totalTimer = setTimeout(() => {
+      totalAnim.triggerAnimation("in", totalRef.current);
+    }, 60);
+
+    let tipTimer: ReturnType<typeof setTimeout> | undefined;
+    if (hasTip) {
+      tipTimer = setTimeout(() => {
+        tipAnim.triggerAnimation("in", tipRef.current);
+      }, 280);
+    }
+
+    return () => {
+      clearTimeout(totalTimer);
+      if (tipTimer) clearTimeout(tipTimer);
+    };
+  }, [isPaid, hasTip, totalAnim, tipAnim]);
 
   // Reset sub-view state when the order becomes paid
   useEffect(() => {
@@ -219,23 +249,64 @@ export function PosOrderQrModal({
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-green-600 mb-2">
+              <h3 className="text-xl font-semibold text-green-600 mb-4">
                 Payment Received
               </h3>
-              <p className="text-2xl font-bold mb-1">
-                {formatTokensFromCents(order.total)}
-              </p>
-              {hasTip && (
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full text-amber-900 font-semibold shadow-lg animate-pulse">
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span>+{formatTokensFromCents(order.tipAmount!)} tip</span>
+              {hasTip ? (
+                <div className="flex items-end justify-center gap-4">
+                  <div className="text-center">
+                    <WalletAnimationRenderer
+                      animations={totalAnim.animations}
+                      showGlow={totalAnim.showGlow}
+                      glowDirection={totalAnim.glowDirection}
+                      onAnimationComplete={totalAnim.removeAnimation}
+                    >
+                      <span
+                        ref={totalRef}
+                        className="block text-3xl font-bold leading-none"
+                      >
+                        <AnimatedBalance value={order.total} countFromZero />
+                      </span>
+                    </WalletAnimationRenderer>
+                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mt-1">
+                      total
+                    </p>
+                  </div>
+                  <div className="text-2xl text-gray-300 pb-1 leading-none">·</div>
+                  <div className="text-center">
+                    <WalletAnimationRenderer
+                      animations={tipAnim.animations}
+                      showGlow={tipAnim.showGlow}
+                      glowDirection={tipAnim.glowDirection}
+                      onAnimationComplete={tipAnim.removeAnimation}
+                    >
+                      <span
+                        ref={tipRef}
+                        className="inline-flex items-baseline gap-1 text-xl font-semibold text-amber-600 leading-none"
+                      >
+                        <AnimatedBalance value={order.tipAmount!} countFromZero />
+                        <span aria-hidden>✨</span>
+                      </span>
+                    </WalletAnimationRenderer>
+                    <p className="text-[10px] uppercase tracking-widest text-amber-600/80 mt-1">
+                      tip
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                <WalletAnimationRenderer
+                  animations={totalAnim.animations}
+                  showGlow={totalAnim.showGlow}
+                  glowDirection={totalAnim.glowDirection}
+                  onAnimationComplete={totalAnim.removeAnimation}
+                >
+                  <span
+                    ref={totalRef}
+                    className="block text-3xl font-bold leading-none"
+                  >
+                    <AnimatedBalance value={order.total} countFromZero />
+                  </span>
+                </WalletAnimationRenderer>
               )}
             </div>
           ) : subView === "qr" ? (

@@ -41,6 +41,11 @@ const REDIRECTS = [
     destination: "/events/ius-primae-noctis/:path*",
     permanent: true,
   },
+  {
+    source: "/festival-2026",
+    destination: "/events/endemit-festival-2026",
+    permanent: true,
+  },
 ];
 
 const nextConfig: NextConfig = {

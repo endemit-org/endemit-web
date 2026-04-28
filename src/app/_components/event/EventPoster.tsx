@@ -1,13 +1,14 @@
 import Link from "next/link";
 import clsx from "clsx";
 import { formatEventDate } from "@/lib/util/formatting";
-import { Event } from "@/domain/event/types/event";
+import { Event, EventType } from "@/domain/event/types/event";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import EventTicketAvailableStatus from "@/app/_components/event/EventTicketAvailableStatus";
 import React from "react";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import EventPastEventStatus from "@/app/_components/event/EventPastEventStatus";
+import EventFestivalTag from "@/app/_components/event/EventFestivalTag";
 
 export interface EventProps {
   event: Event;
@@ -16,7 +17,9 @@ export interface EventProps {
 export default function EventPoster({ event }: EventProps) {
   const shouldShowLink =
     event.options.enabledLink || event.options.externalEventLink;
-  const shouldShowImage = !!event.coverImage?.src;
+  const shouldShowVideo =
+    event.type === EventType.Festival && !!event.video;
+  const shouldShowImage = !shouldShowVideo && !!event.coverImage?.src;
   const eventLink = event.options.externalEventLink ?? `/events/${event.uid}`;
   const isPastEvent = isEventCompleted(event);
 
@@ -56,6 +59,24 @@ export default function EventPoster({ event }: EventProps) {
                 />
               )}
 
+              {event.type === EventType.Festival && (
+                <EventFestivalTag
+                  className={
+                    "group-hover:-translate-x-4 group-hover:translate-y-4 transition-transform duration-500"
+                  }
+                />
+              )}
+
+              {shouldShowVideo && (
+                <video
+                  src={event.video!}
+                  loop
+                  muted
+                  autoPlay
+                  playsInline
+                  className="object-cover aspect-square w-full group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out relative"
+                />
+              )}
               {shouldShowImage && event.promoImage?.src && (
                 <ImageWithFallback
                   src={event.promoImage?.src}
@@ -67,7 +88,7 @@ export default function EventPoster({ event }: EventProps) {
                   className="object-cover aspect-square w-full group-hover:scale-125 group-hover:rotate-12 transition-all !duration-500 ease-out relative"
                 />
               )}
-              {!shouldShowImage && (
+              {!shouldShowVideo && !shouldShowImage && (
                 <div
                   className="w-full aspect-square  flex items-center justify-center bg-neutral-700 rounded-md  group-hover:scale-125 transition-all duration-500 ease-out"
                   style={{
