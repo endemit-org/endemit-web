@@ -1,5 +1,5 @@
 import { SliceZone, SliceZoneLike } from "@prismicio/react";
-import { components } from "@/app/_prismic-slices";
+import { components } from "@/app/_components/content/sliceComponents";
 
 interface Props {
   slices: SliceZoneLike;
