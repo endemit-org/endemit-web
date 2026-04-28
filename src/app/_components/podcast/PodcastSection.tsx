@@ -27,7 +27,9 @@ export default function PodcastSection({
   }
 
   const hasMore = podcasts.length > initialCount;
-  const visiblePodcasts = isExpanded ? podcasts : podcasts.slice(0, initialCount);
+  const visiblePodcasts = isExpanded
+    ? podcasts
+    : podcasts.slice(0, initialCount);
 
   return (
     <section
@@ -43,7 +45,7 @@ export default function PodcastSection({
 
       <div
         className={clsx(
-          "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2",
+          "grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2",
           title || description ? "mt-8" : "mt-0"
         )}
       >
@@ -78,9 +80,7 @@ export default function PodcastSection({
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-neutral-400 hover:text-neutral-200 text-sm transition-colors"
           >
-            {isExpanded
-              ? "Show less"
-              : `View all ${podcasts.length} episodes`}
+            {isExpanded ? "Show less" : `View all ${podcasts.length} episodes`}
           </button>
         </div>
       )}

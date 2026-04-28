@@ -86,6 +86,9 @@
             "artist_list": {
               "type": "SharedSlice"
             },
+            "artist_lineup": {
+              "type": "SharedSlice"
+            },
             "tabs": {
               "type": "SharedSlice"
             },
