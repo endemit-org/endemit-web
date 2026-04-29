@@ -5,12 +5,25 @@ import { prisma } from "@/lib/services/prisma";
 export const getSessionByToken = async (sessionToken: string) => {
   const session = await prisma.session.findUnique({
     where: { sessionToken },
-    include: {
+    select: {
+      expiresAt: true,
       user: {
-        include: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          name: true,
+          image: true,
+          status: true,
+          createdAt: true,
           userRoles: {
-            include: {
-              role: true,
+            select: {
+              role: {
+                select: {
+                  slug: true,
+                  permissions: true,
+                },
+              },
             },
           },
         },
