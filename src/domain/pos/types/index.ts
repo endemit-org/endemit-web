@@ -7,7 +7,6 @@ import type {
 } from "@prisma/client";
 
 export interface PosOrderPayload {
-  orderId: string;
   registerId: string;
   sellerId: string;
   subtotal: number;
