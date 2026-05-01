@@ -1,6 +1,6 @@
 export default function PosRegisterLoading() {
   return (
-    <div className="min-h-screen bg-gray-100 animate-pulse">
+    <div className="min-h-dvh bg-gray-100 animate-pulse">
       {/* Header */}
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">

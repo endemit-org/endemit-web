@@ -10,7 +10,7 @@ export default async function ProtectedLayout({
 
   return (
     <>
-      <div className="min-h-screen">{children}</div>
+      <div className="min-h-dvh">{children}</div>
       <SessionGuard hasUser={!!user} />
     </>
   );
