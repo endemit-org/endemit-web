@@ -524,7 +524,7 @@ export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
   );
 
   return (
-    <aside className="w-64 bg-gray-900 min-h-screen flex-col hidden lg:flex">
+    <aside className="w-64 bg-gray-900 min-h-dvh flex-col hidden lg:flex">
       <nav className="flex-1 px-4 py-6 space-y-1">
         {dashboard && renderNavItem(dashboard)}
         {dashboard && <Divider />}

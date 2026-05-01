@@ -23,6 +23,8 @@ const IMAGE_CONFIG = {
       hostname: "*.public.blob.vercel-storage.com",
     },
   ],
+  formats: ["image/avif", "image/webp"] as ("image/avif" | "image/webp")[],
+  minimumCacheTTL: 2_592_000,
 };
 
 const REDIRECTS = [

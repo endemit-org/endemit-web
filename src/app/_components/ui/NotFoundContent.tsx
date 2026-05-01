@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFoundContent() {
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-6">
+    <div className="min-h-dvh bg-neutral-950 text-neutral-100 flex items-center justify-center px-6">
       <div
         className="absolute  h-full opacity-20 inset w-full"
         style={{

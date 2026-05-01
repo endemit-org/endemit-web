@@ -87,7 +87,7 @@ export default function UsersTable({
       columns={columns}
       onRowClick={onRowClick}
       emptyMessage="No users found"
-      maxHeight="calc(100vh - 400px)"
+      maxHeight="calc(100dvh - 400px)"
     />
   );
 }
