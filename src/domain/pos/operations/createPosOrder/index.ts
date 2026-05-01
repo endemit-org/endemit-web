@@ -1,9 +1,10 @@
 import "server-only";
 
+import { after } from "next/server";
 import { prisma } from "@/lib/services/prisma";
 import { generatePosOrderHash } from "@/domain/pos/operations/generatePosOrderHash";
 import { generatePosShortCode } from "@/domain/pos/operations/generatePosShortCode";
-import type { CreatePosOrderInput, PosOrderPayload } from "@/domain/pos/types";
+import type { CreatePosOrderInput } from "@/domain/pos/types";
 import { bustOnPosOrderCreated } from "@/lib/services/cache";
 
 const ORDER_EXPIRY_MINUTES = 15;
@@ -11,29 +12,48 @@ const ORDER_EXPIRY_MINUTES = 15;
 export async function createPosOrder(input: CreatePosOrderInput) {
   const { registerId, sellerId, items } = input;
 
-  // Verify register exists and is active
-  const register = await prisma.posRegister.findUnique({
-    where: { id: registerId },
-    include: {
-      items: {
-        include: { item: true },
+  const itemIds = items.map(i => i.itemId);
+
+  // Validate register+seller, fetch only the items being ordered, and pick a
+  // short code — all in parallel on separate connections.
+  const [register, registerItems, shortCode] = await Promise.all([
+    prisma.posRegister.findUnique({
+      where: { id: registerId },
+      select: {
+        status: true,
+        sellers: {
+          where: { userId: sellerId },
+          select: { id: true },
+        },
       },
-      sellers: true,
-    },
-  });
+    }),
+    prisma.posRegisterItem.findMany({
+      where: { registerId, itemId: { in: itemIds } },
+      select: {
+        itemId: true,
+        item: {
+          select: {
+            id: true,
+            name: true,
+            cost: true,
+            status: true,
+          },
+        },
+      },
+    }),
+    generatePosShortCode(),
+  ]);
 
   if (!register || register.status !== "ACTIVE") {
     throw new Error("Register not found or inactive");
   }
 
-  // Verify seller is assigned to this register
-  const isSellerAssigned = register.sellers.some(s => s.userId === sellerId);
-  if (!isSellerAssigned) {
+  if (register.sellers.length === 0) {
     throw new Error("Seller not assigned to this register");
   }
 
-  // Fetch items and validate they're assigned to this register
-  const registerItemIds = new Set(register.items.map(ri => ri.itemId));
+  const itemByItemId = new Map(registerItems.map(ri => [ri.itemId, ri.item]));
+
   const itemsToAdd: Array<{
     itemId: string;
     name: string;
@@ -45,14 +65,13 @@ export async function createPosOrder(input: CreatePosOrderInput) {
   let subtotal = 0;
 
   for (const orderItem of items) {
-    if (!registerItemIds.has(orderItem.itemId)) {
+    const item = itemByItemId.get(orderItem.itemId);
+
+    if (!item) {
       throw new Error(`Item ${orderItem.itemId} not available at this register`);
     }
 
-    const registerItem = register.items.find(ri => ri.itemId === orderItem.itemId);
-    const item = registerItem?.item;
-
-    if (!item || item.status !== "ACTIVE") {
+    if (item.status !== "ACTIVE") {
       throw new Error(`Item ${orderItem.itemId} is not active`);
     }
 
@@ -68,20 +87,26 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     });
   }
 
-  // Generate short code and hash
-  const shortCode = await generatePosShortCode();
   const createdAt = new Date();
   const expiresAt = new Date(createdAt.getTime() + ORDER_EXPIRY_MINUTES * 60 * 1000);
 
-  // Create order first to get ID
+  // Hash entropy comes from the random salt inside generatePosOrderHash, so
+  // we can compute it before insert and create the order in a single write.
+  const orderHash = generatePosOrderHash({
+    registerId,
+    sellerId,
+    subtotal,
+    createdAt: createdAt.toISOString(),
+  });
+
   const order = await prisma.posOrder.create({
     data: {
       shortCode,
-      orderHash: "temp", // Will update after generating hash
+      orderHash,
       registerId,
       sellerId,
       subtotal,
-      total: subtotal, // Will be updated when tip is added
+      total: subtotal,
       expiresAt,
       items: {
         create: itemsToAdd,
@@ -95,30 +120,7 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     },
   });
 
-  // Generate hash with order ID
-  const payload: PosOrderPayload = {
-    orderId: order.id,
-    registerId,
-    sellerId,
-    subtotal,
-    createdAt: createdAt.toISOString(),
-  };
+  after(() => bustOnPosOrderCreated());
 
-  const orderHash = generatePosOrderHash(payload);
-
-  // Update order with hash
-  const updatedOrder = await prisma.posOrder.update({
-    where: { id: order.id },
-    data: { orderHash },
-    include: {
-      items: {
-        include: { item: true },
-      },
-      register: true,
-    },
-  });
-
-  await bustOnPosOrderCreated();
-
-  return updatedOrder;
+  return order;
 }

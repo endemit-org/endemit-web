@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { index } from "@/domain/auth/transformers/transformUserToAuthenticatedUser";
 import type { AuthenticatedUser } from "@/domain/auth/types";
@@ -41,31 +42,31 @@ export async function createUserSession(userId: string, request?: Request) {
   return session;
 }
 
-export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+export const getCurrentUser = cache(
+  async (): Promise<AuthenticatedUser | null> => {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
-  if (!sessionToken) {
-    return null;
+    if (!sessionToken) {
+      return null;
+    }
+
+    const session = await getSessionByToken(sessionToken);
+
+    if (!session) {
+      cookieStore.delete(SESSION_COOKIE_NAME);
+      return null;
+    }
+
+    if (session.expiresAt < new Date()) {
+      await deleteSession(sessionToken);
+      cookieStore.delete(SESSION_COOKIE_NAME);
+      return null;
+    }
+
+    return index(session.user);
   }
-
-  const session = await getSessionByToken(sessionToken);
-
-  // Session not found - clear the invalid cookie
-  if (!session) {
-    cookieStore.delete(SESSION_COOKIE_NAME);
-    return null;
-  }
-
-  // Check if session is expired - delete session and clear cookie
-  if (session.expiresAt < new Date()) {
-    await deleteSession(sessionToken);
-    cookieStore.delete(SESSION_COOKIE_NAME);
-    return null;
-  }
-
-  return index(session.user);
-}
+);
 
 export async function destroyUserSession() {
   const cookieStore = await cookies();
