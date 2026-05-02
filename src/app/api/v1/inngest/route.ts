@@ -19,6 +19,7 @@ import {
   runStickerUnlinkedEmailAutomation,
   runStickerReplacedEmailAutomation,
 } from "@/domain/sticker/operations/runStickerEmailAutomation";
+import { runP2PTransferEmailAutomation } from "@/domain/wallet/operations/runP2PTransferEmailAutomation";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -40,5 +41,6 @@ export const { GET, POST, PUT } = serve({
     runStickerLinkedEmailAutomation,
     runStickerUnlinkedEmailAutomation,
     runStickerReplacedEmailAutomation,
+    runP2PTransferEmailAutomation,
   ],
 });

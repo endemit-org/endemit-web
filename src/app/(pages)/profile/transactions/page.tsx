@@ -11,6 +11,7 @@ import WalletIcon from "@/app/_components/icon/WalletIcon";
 import ProfileTable, {
   ProfileTableRow,
 } from "@/app/_components/profile/ProfileTable";
+import TransferFundsTrigger from "@/app/_components/wallet/TransferFundsTrigger";
 import clsx from "clsx";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ const typeLabels: Record<string, string> = {
   PURCHASE: "Purchase",
   REFUND: "Refund",
   ADJUSTMENT: "Adjustment",
+  P2P_TRANSFER: "Transfer",
 };
 
 export default async function ProfileTransactionsPage() {
@@ -52,7 +54,7 @@ export default async function ProfileTransactionsPage() {
       />
 
       <InnerPage>
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between gap-3">
           <Link
             href="/profile"
             className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
@@ -72,6 +74,10 @@ export default async function ProfileTransactionsPage() {
             </svg>
             Back to Profile
           </Link>
+          <TransferFundsTrigger
+            userId={user.id}
+            initialBalance={wallet?.balance ?? 0}
+          />
         </div>
 
         <ProfileTable

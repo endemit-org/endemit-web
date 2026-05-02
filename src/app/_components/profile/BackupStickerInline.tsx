@@ -74,7 +74,6 @@ export default function BackupStickerInline({ currentCode }: Props) {
               <span className="font-mono tracking-[0.2em] text-neutral-200">
                 {currentCode}
               </span>
-              <span className="text-blue-400">Manage</span>
             </span>
           </Link>
         ) : (

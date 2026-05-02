@@ -37,6 +37,7 @@ enum TicketStatus {
   BANNED
   REFUND_REQUESTED
   REFUNDED
+  EXPIRED
 }
 
 enum SignInType {
@@ -54,6 +55,7 @@ enum WalletTransactionType {
   POS_TIP
   CARD_TOPUP
   CASH_TOPUP
+  P2P_TRANSFER
 }
 
 enum PosItemDirection {
@@ -311,18 +313,22 @@ model Wallet {
 }
 
 model WalletTransaction {
-  id           String                @id @default(cuid())
-  walletId     String
-  wallet       Wallet                @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  type         WalletTransactionType
-  amount       Int
-  balanceAfter Int
-  note         String?
-  createdById  String?
-  createdBy    User?                 @relation("TransactionCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  posOrderId   String?
-  posOrder     PosOrder?             @relation(fields: [posOrderId], references: [id], onDelete: SetNull)
-  createdAt    DateTime              @default(now())
+  id                   String                @id @default(cuid())
+  walletId             String
+  wallet               Wallet                @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type                 WalletTransactionType
+  amount               Int
+  balanceAfter         Int
+  note                 String?
+  createdById          String?
+  createdBy            User?                 @relation("TransactionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  posOrderId           String?
+  posOrder             PosOrder?             @relation(fields: [posOrderId], references: [id], onDelete: SetNull)
+  relatedTransactionId String?               @unique
+  relatedTransaction   WalletTransaction?    @relation("LinkedTransaction", fields: [relatedTransactionId], references: [id], onDelete: SetNull)
+  linkedFrom           WalletTransaction?    @relation("LinkedTransaction")
+  idempotencyKey       String?               @unique
+  createdAt            DateTime              @default(now())
 
   @@index([walletId])
   @@index([type])

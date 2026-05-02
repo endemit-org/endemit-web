@@ -52,9 +52,25 @@ export default async function ProfileTicketPage({
   // Fetch event details for date/venue
   const event = await fetchEventFromCmsById(ticket.eventId);
 
-  // Check if event has passed (use date_end, fallback to date_start)
-  const eventEndDate = event?.date_end ?? event?.date_start ?? null;
-  const isEventPassed = eventEndDate ? new Date(eventEndDate) < new Date() : false;
+  // Implied expiry: prevent scanning past-event tickets even if DB status is still PENDING.
+  //  - Missing event in CMS → treat as expired (we can't verify validity).
+  //  - date_end present → expire 8h after end (covers late-night closeout).
+  //  - only date_start → expire 24h after start (typical festival night length).
+  //  - no dates at all → don't expire.
+  const POST_END_BUFFER_MS = 8 * 60 * 60 * 1000;
+  const POST_START_FALLBACK_MS = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  let isEventPassed: boolean;
+  if (!event) {
+    isEventPassed = true;
+  } else if (event.date_end) {
+    isEventPassed = now > new Date(event.date_end).getTime() + POST_END_BUFFER_MS;
+  } else if (event.date_start) {
+    isEventPassed =
+      now > new Date(event.date_start).getTime() + POST_START_FALLBACK_MS;
+  } else {
+    isEventPassed = false;
+  }
 
   // Get initial scannedAt from ScanLog
   const initialScannedAt =

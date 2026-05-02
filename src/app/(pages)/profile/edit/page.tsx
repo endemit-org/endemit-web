@@ -8,6 +8,8 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import ProfileEditForm from "@/app/_components/profile/ProfileEditForm";
 import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
+import { signReceiveCode } from "@/domain/wallet/util/receiveCode";
+import ReceiveFundsCard from "@/app/_components/profile/ReceiveFundsCard";
 
 // Dynamic import: QR Scanner (~120KB) only loads when component mounts
 const BackupStickerCard = dynamic(
@@ -31,6 +33,7 @@ export default async function ProfileEditPage() {
   }
 
   const sticker = await getUserSticker(user.id);
+  const receiveCode = signReceiveCode(user.id);
 
   return (
     <OuterPage>
@@ -75,6 +78,8 @@ export default async function ProfileEditPage() {
             currentCode={sticker?.code ?? null}
             claimedAt={sticker?.claimedAt?.toISOString() ?? null}
           />
+
+          <ReceiveFundsCard receiveCode={receiveCode} />
         </div>
       </InnerPage>
     </OuterPage>
