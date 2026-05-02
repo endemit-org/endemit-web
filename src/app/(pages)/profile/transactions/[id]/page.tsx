@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTransactionById } from "@/domain/wallet/operations/getTransactionById";
@@ -33,6 +34,7 @@ const typeLabels: Record<string, string> = {
   PURCHASE: "Purchase",
   REFUND: "Refund",
   ADJUSTMENT: "Adjustment",
+  P2P_TRANSFER: "Transfer",
 };
 
 const typeColors: Record<string, string> = {
@@ -41,6 +43,7 @@ const typeColors: Record<string, string> = {
   REFUND: "bg-blue-500/20 text-blue-400",
   DEBIT: "bg-red-500/20 text-red-400",
   ADJUSTMENT: "bg-yellow-500/20 text-yellow-400",
+  P2P_TRANSFER: "bg-blue-500/20 text-blue-400",
 };
 
 export default async function ProfileTransactionDetailPage({
@@ -67,6 +70,11 @@ export default async function ProfileTransactionDetailPage({
   }
 
   const isPositive = transaction.amount > 0;
+  const isTransfer = transaction.type === "P2P_TRANSFER";
+  const counterparty = transaction.counterparty;
+  const counterpartyLabel = counterparty
+    ? counterparty.name || counterparty.username
+    : null;
 
   return (
     <OuterPage>
@@ -125,6 +133,42 @@ export default async function ProfileTransactionDetailPage({
                 {typeLabels[transaction.type] || transaction.type}
               </span>
             </div>
+
+            {isTransfer && counterparty && counterpartyLabel && (
+              <div className="flex items-center gap-3 bg-neutral-900 rounded-lg p-3 border border-neutral-800">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  {counterparty.image ? (
+                    <Image
+                      src={counterparty.image}
+                      alt={counterpartyLabel}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-lg font-bold text-white">
+                      {counterpartyLabel
+                        .split(" ")
+                        .map(n => n[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2)}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs uppercase tracking-widest text-neutral-500">
+                    {isPositive ? "From" : "To"}
+                  </p>
+                  <p className="text-neutral-200 font-medium truncate">
+                    {counterpartyLabel}
+                  </p>
+                  <p className="text-xs text-neutral-500 truncate">
+                    {counterparty.username}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Details */}
             <div className="space-y-4 pt-4 border-t border-neutral-800">
