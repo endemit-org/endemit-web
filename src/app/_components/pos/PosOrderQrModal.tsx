@@ -202,19 +202,31 @@ export function PosOrderQrModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+      <div
+        className={`rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transition-colors duration-300 ${
+          isPaid
+            ? "bg-gradient-to-br from-emerald-500 to-green-700 text-white"
+            : "bg-white"
+        }`}
+      >
         {/* Header */}
-        <div className="px-6 py-4 border-b flex items-center justify-between">
-          <div className="text-xl  text-center w-full">
+        <div
+          className={`px-6 py-4 border-b flex items-center justify-between ${
+            isPaid ? "border-white/20" : ""
+          }`}
+        >
+          <div className="text-xl text-center w-full">
             Your total is{" "}
-            <span className={"font-bold"}>
+            <span className="font-bold">
               {formatTokensFromCents(order.total)}
             </span>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className={`p-2 rounded-full ${
+              isPaid ? "hover:bg-white/10 text-white" : "hover:bg-gray-100"
+            }`}
           >
             <svg
               className="w-5 h-5"
@@ -236,9 +248,9 @@ export function PosOrderQrModal({
         <div className="p-6">
           {isPaid ? (
             <div className="text-center py-8">
-              <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 mx-auto rounded-full bg-white flex items-center justify-center mb-4 shadow-lg">
                 <svg
-                  className="w-10 h-10 text-green-600"
+                  className="w-10 h-10 text-emerald-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -246,12 +258,12 @@ export function PosOrderQrModal({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={3}
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-green-600 mb-4">
+              <h3 className="text-xl font-semibold text-white mb-4">
                 Payment Received
               </h3>
               {hasTip ? (
@@ -265,16 +277,16 @@ export function PosOrderQrModal({
                     >
                       <span
                         ref={totalRef}
-                        className="block text-3xl font-bold leading-none"
+                        className="block text-3xl font-bold leading-none text-white"
                       >
                         <AnimatedBalance value={order.total} countFromZero />
                       </span>
                     </WalletAnimationRenderer>
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mt-1">
+                    <p className="text-[10px] uppercase tracking-widest text-white/70 mt-1">
                       total
                     </p>
                   </div>
-                  <div className="text-2xl text-gray-400 pb-1 leading-none font-semibold">+</div>
+                  <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">+</div>
                   <div className="text-center">
                     <WalletAnimationRenderer
                       animations={tipAnim.animations}
@@ -284,13 +296,13 @@ export function PosOrderQrModal({
                     >
                       <span
                         ref={tipRef}
-                        className="inline-flex items-baseline gap-1 text-xl font-semibold text-amber-600 leading-none"
+                        className="inline-flex items-baseline gap-1 text-xl font-semibold text-yellow-200 leading-none"
                       >
                         <AnimatedBalance value={order.tipAmount!} countFromZero />
                         <span aria-hidden>✨</span>
                       </span>
                     </WalletAnimationRenderer>
-                    <p className="text-[10px] uppercase tracking-widest text-amber-600/80 mt-1">
+                    <p className="text-[10px] uppercase tracking-widest text-yellow-200/80 mt-1">
                       tip
                     </p>
                   </div>
@@ -304,7 +316,7 @@ export function PosOrderQrModal({
                 >
                   <span
                     ref={totalRef}
-                    className="block text-3xl font-bold leading-none"
+                    className="block text-3xl font-bold leading-none text-white"
                   >
                     <AnimatedBalance value={order.total} countFromZero />
                   </span>
@@ -487,15 +499,15 @@ export function PosOrderQrModal({
         )}
 
         {isPaid && (
-          <div className="px-6 py-4 border-t bg-gray-50">
+          <div className="px-6 py-4 border-t border-white/20">
             <button
               onClick={onClose}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="w-full px-4 py-2 bg-white text-emerald-700 font-semibold rounded-lg hover:bg-white/90"
             >
               Continue
             </button>
             {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
-              <p className="text-center text-sm text-gray-500 mt-2">
+              <p className="text-center text-sm text-white/70 mt-2">
                 Closing in {autoCloseCountdown}s
               </p>
             )}

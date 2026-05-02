@@ -177,16 +177,27 @@ export function PaymentConfirmView({
         <div className="text-neutral-500 text-sm mb-1">
           {hasTopUp ? "Top-up Amount" : "Total to Pay"}
         </div>
-        <div
-          className={`text-4xl font-bold ${hasTopUp ? "text-green-400" : "text-white"}`}
-        >
-          {hasTopUp
-            ? `+${formatTokensFromCents(creditTotal)}`
-            : formatTokensFromCents(totalToPay)}
-        </div>
-        {tipAmount > 0 && (
-          <div className="text-neutral-500 text-sm mt-1">
-            includes {formatTokensFromCents(tipAmount)} tip
+        {hasTopUp ? (
+          <div className="text-4xl font-bold text-green-400">
+            +{formatTokensFromCents(creditTotal)}
+          </div>
+        ) : tipAmount > 0 ? (
+          <div className="flex items-baseline justify-center gap-2">
+            <span className="text-4xl font-bold text-white">
+              {formatTokensFromCents(debitTotal)}
+            </span>
+            <span className="text-2xl font-semibold text-amber-400">
+              + {formatTokensFromCents(tipAmount)}
+            </span>
+          </div>
+        ) : (
+          <div className="text-4xl font-bold text-white">
+            {formatTokensFromCents(totalToPay)}
+          </div>
+        )}
+        {tipAmount > 0 && !hasTopUp && (
+          <div className="text-neutral-500 text-xs mt-1">
+            = {formatTokensFromCents(totalToPay)} total · tip included
           </div>
         )}
       </div>
