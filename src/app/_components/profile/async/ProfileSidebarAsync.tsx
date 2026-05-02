@@ -2,6 +2,7 @@ import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId"
 import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
 import { getVisibleProducts } from "@/domain/product/actions/getProducts";
 import { checkUserIsDonor } from "@/domain/order/operations/checkUserIsDonor";
+import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
 import { ProductCategory } from "@/domain/product/types/product";
 import ProfileSidebar from "@/app/_components/profile/ProfileSidebar";
 
@@ -18,12 +19,14 @@ export default async function ProfileSidebarAsync({
   email,
   image,
 }: ProfileSidebarAsyncProps) {
-  const [wallet, upcomingTickets, allProducts, isDonor] = await Promise.all([
-    getWalletByUserId(userId),
-    getTicketsByUserId(userId, { upcomingOnly: true }),
-    getVisibleProducts(),
-    checkUserIsDonor(userId),
-  ]);
+  const [wallet, upcomingTickets, allProducts, isDonor, sticker] =
+    await Promise.all([
+      getWalletByUserId(userId),
+      getTicketsByUserId(userId, { upcomingOnly: true }),
+      getVisibleProducts(),
+      checkUserIsDonor(userId),
+      getUserSticker(userId),
+    ]);
 
   const currencyProducts = allProducts.filter(
     p => p.category === ProductCategory.CURRENCIES
@@ -39,6 +42,7 @@ export default async function ProfileSidebarAsync({
       currencyProducts={currencyProducts}
       upcomingTickets={upcomingTickets.length}
       isDonor={isDonor}
+      backupStickerCode={sticker?.code ?? null}
     />
   );
 }

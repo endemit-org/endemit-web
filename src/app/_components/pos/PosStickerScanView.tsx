@@ -91,7 +91,7 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
         </p>
       </div>
 
-      <div className="rounded-lg overflow-hidden mb-4 bg-black">
+      <div className="relative rounded-lg overflow-hidden mb-2 bg-black">
         <Scanner
           onScan={handleQrScan}
           onError={err => console.error(err)}
@@ -105,43 +105,31 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
             },
           }}
         />
-      </div>
-
-      <div className="relative my-4">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-neutral-700" />
+        <div className="absolute bottom-0 left-0 right-0 px-3 pt-8 pb-3 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex justify-center pointer-events-none">
+          <input
+            type="text"
+            placeholder="AB12"
+            maxLength={4}
+            disabled={isSubmitting}
+            className="pointer-events-auto w-36 px-3 py-2 bg-black/70 backdrop-blur border border-white/30 rounded-lg text-white text-center text-xl font-mono uppercase disabled:opacity-50 placeholder-white/30 focus:outline-none focus:border-white/60"
+            style={{ letterSpacing: "0.3em" }}
+            onChange={e => {
+              const value = e.target.value.toUpperCase();
+              e.target.value = value;
+              if (value.length === 4 && /^[A-Z]{2}[0-9]{2}$/.test(value)) {
+                submitCode(value);
+              }
+            }}
+            onKeyDown={e => {
+              if (e.key === "Enter") {
+                submitCode((e.target as HTMLInputElement).value);
+              }
+            }}
+          />
         </div>
-        <div className="relative flex justify-center">
-          <span className="px-3 bg-neutral-900 text-neutral-500 text-sm">
-            or enter code
-          </span>
-        </div>
-      </div>
-
-      <div className="flex justify-center mb-2">
-        <input
-          type="text"
-          placeholder="AB12"
-          maxLength={4}
-          disabled={isSubmitting}
-          className="w-40 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-center text-2xl font-mono uppercase disabled:opacity-50 placeholder-neutral-700"
-          style={{ letterSpacing: "0.3em" }}
-          onChange={e => {
-            const value = e.target.value.toUpperCase();
-            e.target.value = value;
-            if (value.length === 4 && /^[A-Z]{2}[0-9]{2}$/.test(value)) {
-              submitCode(value);
-            }
-          }}
-          onKeyDown={e => {
-            if (e.key === "Enter") {
-              submitCode((e.target as HTMLInputElement).value);
-            }
-          }}
-        />
       </div>
       <p className="text-xs text-neutral-500 text-center mb-4">
-        4-character code from the customer&apos;s sticker
+        Scan QR or type the 4-character sticker code
       </p>
 
       {error && (
