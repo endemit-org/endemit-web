@@ -74,6 +74,8 @@ export function PosOrderQrModal({
   const tipRef = useRef<HTMLSpanElement>(null);
   const totalAnim = useWalletAnimation();
   const tipAnim = useWalletAnimation();
+  const triggerTotalAnimation = totalAnim.triggerAnimation;
+  const triggerTipAnimation = tipAnim.triggerAnimation;
   const hasTriggeredCoinsRef = useRef(false);
 
   useEffect(() => {
@@ -140,13 +142,13 @@ export function PosOrderQrModal({
     hasTriggeredCoinsRef.current = true;
 
     const totalTimer = setTimeout(() => {
-      totalAnim.triggerAnimation("in", totalRef.current);
+      triggerTotalAnimation("in", totalRef.current);
     }, 60);
 
     let tipTimer: ReturnType<typeof setTimeout> | undefined;
     if (hasTip) {
       tipTimer = setTimeout(() => {
-        tipAnim.triggerAnimation("in", tipRef.current);
+        triggerTipAnimation("in", tipRef.current);
       }, 280);
     }
 
@@ -154,7 +156,7 @@ export function PosOrderQrModal({
       clearTimeout(totalTimer);
       if (tipTimer) clearTimeout(tipTimer);
     };
-  }, [isPaid, hasTip, totalAnim, tipAnim]);
+  }, [isPaid, hasTip, triggerTotalAnimation, triggerTipAnimation]);
 
   // Reset sub-view state when the order becomes paid
   useEffect(() => {
@@ -272,7 +274,7 @@ export function PosOrderQrModal({
                       total
                     </p>
                   </div>
-                  <div className="text-2xl text-gray-300 pb-1 leading-none">·</div>
+                  <div className="text-2xl text-gray-400 pb-1 leading-none font-semibold">+</div>
                   <div className="text-center">
                     <WalletAnimationRenderer
                       animations={tipAnim.animations}
