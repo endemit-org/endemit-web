@@ -3,8 +3,13 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from "@/lib/services/env/public";
+import { shouldShowStripeDevtools } from "@/lib/util/env";
 
-const stripePromise = loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY, {
+  developerTools: {
+    assistant: { enabled: shouldShowStripeDevtools() },
+  },
+});
 
 interface StripeProviderProps {
   children: React.ReactNode;
