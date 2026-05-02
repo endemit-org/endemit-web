@@ -22,6 +22,7 @@ import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
 import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
+import BackupStickerInline from "@/app/_components/profile/BackupStickerInline";
 
 interface ProfileSidebarProps {
   userId: string;
@@ -32,6 +33,7 @@ interface ProfileSidebarProps {
   currencyProducts: Product[];
   upcomingTickets: number | null;
   isDonor?: boolean;
+  backupStickerCode?: string | null;
 }
 
 export default function ProfileSidebar({
@@ -43,6 +45,7 @@ export default function ProfileSidebar({
   upcomingTickets,
   currencyProducts,
   isDonor,
+  backupStickerCode = null,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
@@ -235,6 +238,10 @@ export default function ProfileSidebar({
             </div>
           </div>
         </WalletAnimationRenderer>
+      )}
+
+      {walletBalance !== null && (
+        <BackupStickerInline currentCode={backupStickerCode} />
       )}
 
       {/* Action Buttons */}
