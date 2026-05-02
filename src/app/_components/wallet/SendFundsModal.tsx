@@ -150,7 +150,7 @@ export default function SendFundsModal({
     } finally {
       setIsSending(false);
     }
-  }, [recipient, idempotencyKey, isSending, amountCents, note]);
+  }, [recipient, idempotencyKey, isSending, amountCents, note, router]);
 
   if (!isOpen) return null;
 

@@ -107,7 +107,7 @@ export default function CheckoutCashlessTopUp({
               />
             )}
             <div className="text-base font-bold text-neutral-200">
-              {formatTokens(product.price)}
+              {formatTokens(product.price, 0)}
             </div>
             <div className="text-xs text-blue-400 mt-0.5">+ Add</div>
           </button>
