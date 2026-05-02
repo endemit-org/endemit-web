@@ -3,23 +3,27 @@ import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ImageGalleryWithLightbox from "@/app/_components/content/ImageGalleryWithLightbox";
 import InnerPage from "@/app/_components/ui/InnerPage";
+import { getBlurDataURL } from "@/lib/util/util";
 
 export type ImageGalleryProps = SliceComponentProps<Content.ImageGallerySlice>;
 
-const ImageGallerySlice: FC<ImageGalleryProps> = ({ slice }) => {
+const ImageGallerySlice: FC<ImageGalleryProps> = async ({ slice }) => {
   const { primary, items } = slice;
 
   const heading = isFilled.richText(primary.heading)
     ? asText(primary.heading)
     : undefined;
 
-  const images = items
-    .filter(item => isFilled.image(item.image) && item.image.url)
-    .map(item => ({
-      src: item.image.url!,
-      alt: item.image.alt || "",
-      caption: isFilled.keyText(item.caption) ? item.caption : undefined,
-    }));
+  const images = await Promise.all(
+    items
+      .filter(item => isFilled.image(item.image) && item.image.url)
+      .map(async item => ({
+        src: item.image.url!,
+        alt: item.image.alt || "",
+        caption: isFilled.keyText(item.caption) ? item.caption : undefined,
+        placeholder: await getBlurDataURL(item.image.url!),
+      }))
+  );
 
   const gallery = (
     <ImageGalleryWithLightbox

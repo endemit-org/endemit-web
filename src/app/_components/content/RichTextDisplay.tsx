@@ -1,5 +1,5 @@
 import { JSXMapSerializer, PrismicRichText } from "@prismicio/react";
-import { RichTextField } from "@prismicio/client";
+import { RichTextField, asLink } from "@prismicio/client";
 import Link from "next/link";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 
@@ -25,13 +25,15 @@ const components: JSXMapSerializer = {
       />
     );
 
+    const linkUrl = node.linkTo ? asLink(node.linkTo) : null;
+
     return (
       <div className={"w-full"}>
-        {node.linkTo ? (
+        {linkUrl ? (
           <Link
-            href={node.linkTo.url!}
+            href={linkUrl}
             className="link"
-            target={node.linkTo.url?.startsWith("http") ? "_blank" : "_self"}
+            target={linkUrl.startsWith("http") ? "_blank" : "_self"}
           >
             {image}
           </Link>
@@ -43,10 +45,12 @@ const components: JSXMapSerializer = {
   },
   paragraph: ({ children }) => <p className="mb-4">{children}</p>,
   hyperlink: ({ node, children }) => {
+    const url = asLink(node.data);
+    if (!url) return <>{children}</>;
     const target = (node.data as { target?: string }).target;
     return (
       <Link
-        href={node.data.url!}
+        href={url}
         className="link"
         target={target || undefined}
         rel={target === "_blank" ? "noopener noreferrer" : undefined}

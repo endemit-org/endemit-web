@@ -1,5 +1,6 @@
 import "server-only";
 
+import { after } from "next/server";
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 import { bustOnPosOrderCreated } from "@/lib/services/cache";
@@ -36,27 +37,32 @@ export async function cancelPosOrder(
     },
   });
 
-  // Broadcast to customer if they've scanned
-  if (order.customerId) {
-    await broadcastToChannel(`pos:order:${order.id}`, "pos_order_cancelled", {
-      orderId: order.id,
-      shortCode: order.shortCode,
-      reason,
-    });
-  }
+  // Announce after the response is sent — broadcasts still fire.
+  after(async () => {
+    const customerBroadcast = order.customerId
+      ? broadcastToChannel(`pos:order:${order.id}`, "pos_order_cancelled", {
+          orderId: order.id,
+          shortCode: order.shortCode,
+          reason,
+        })
+      : Promise.resolve();
 
-  // Broadcast to register
-  await broadcastToChannel(
-    `pos:register:${order.registerId}`,
-    "pos_order_cancelled",
-    {
-      orderId: order.id,
-      shortCode: order.shortCode,
-      reason,
-    }
-  );
+    const registerBroadcast = broadcastToChannel(
+      `pos:register:${order.registerId}`,
+      "pos_order_cancelled",
+      {
+        orderId: order.id,
+        shortCode: order.shortCode,
+        reason,
+      }
+    );
 
-  await bustOnPosOrderCreated();
+    await Promise.all([
+      customerBroadcast,
+      registerBroadcast,
+      bustOnPosOrderCreated(),
+    ]);
+  });
 
   return updatedOrder;
 }

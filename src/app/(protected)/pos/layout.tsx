@@ -78,7 +78,7 @@ export default async function PosLayout({
           </div>
         </div>
       </nav>
-      <main className="min-h-[calc(100vh-4rem)] bg-gray-50">{children}</main>
+      <main className="min-h-[calc(100dvh-4rem)] bg-gray-50">{children}</main>
     </>
   );
 }

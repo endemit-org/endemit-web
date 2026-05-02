@@ -23,6 +23,8 @@ const IMAGE_CONFIG = {
       hostname: "*.public.blob.vercel-storage.com",
     },
   ],
+  formats: ["image/avif", "image/webp"] as ("image/avif" | "image/webp")[],
+  minimumCacheTTL: 2_592_000,
 };
 
 const REDIRECTS = [
@@ -39,6 +41,11 @@ const REDIRECTS = [
   {
     source: "/ius-primae-noctis/:path*",
     destination: "/events/ius-primae-noctis/:path*",
+    permanent: true,
+  },
+  {
+    source: "/festival-2026",
+    destination: "/events/endemit-festival-2026",
     permanent: true,
   },
 ];

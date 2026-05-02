@@ -69,3 +69,14 @@ button:focus {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Prevent iOS Safari from zooming the page when focusing inputs.
+   iOS triggers zoom whenever the focused field's font-size is < 16px. */
+@supports (-webkit-touch-callout: none) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+

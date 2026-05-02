@@ -311,6 +311,7 @@ type ContentPageDocumentDataSlicesSlice =
   | SpacerSlice
   | HorizontalRuleSlice
   | ArtistListSlice
+  | ArtistLineupSlice
   | TabsSlice
   | GridTileSlice
   | AccordionSlice
@@ -577,6 +578,7 @@ export interface EventDocumentDataArtistsItem {
 }
 
 type EventDocumentDataSlicesSlice =
+  | ArtistLineupSlice
   | BannerSlice
   | CollabPromoSlice
   | SnowfallSlice
@@ -1105,6 +1107,7 @@ type InnerContentDocumentDataSlicesSlice =
   | TicketPriceProgressSlice
   | BannerSlice
   | ArtistListSlice
+  | ArtistLineupSlice
   | BlurredBlobSlice
   | SnowfallSlice
   | CollabPromoSlice
@@ -2265,6 +2268,99 @@ type AccordionSliceVariation = AccordionSliceDefault;
 export type AccordionSlice = prismic.SharedSlice<
   "accordion",
   AccordionSliceVariation
+>;
+
+/**
+ * Item in *ArtistLineup → Default → Primary → Artists*
+ */
+export interface ArtistLineupSliceDefaultPrimaryArtistsItem {
+  /**
+   * Artist (leave empty for blurred placeholder) field in *ArtistLineup → Default → Primary → Artists*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_lineup.default.primary.artists[].artist
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  artist: prismic.ContentRelationshipField<"artist">;
+}
+
+/**
+ * Primary content in *ArtistLineup → Default → Primary*
+ */
+export interface ArtistLineupSliceDefaultPrimary {
+  /**
+   * Title field in *ArtistLineup → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (optional)
+   * - **API ID Path**: artist_lineup.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *ArtistLineup → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (optional)
+   * - **API ID Path**: artist_lineup.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Render frame field in *ArtistLineup → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: artist_lineup.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
+
+  /**
+   * Artists field in *ArtistLineup → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_lineup.default.primary.artists[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  artists: prismic.GroupField<
+    Simplify<ArtistLineupSliceDefaultPrimaryArtistsItem>
+  >;
+}
+
+/**
+ * Default variation for ArtistLineup Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ArtistLineupSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ArtistLineupSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *ArtistLineup*
+ */
+type ArtistLineupSliceVariation = ArtistLineupSliceDefault;
+
+/**
+ * ArtistLineup Shared Slice
+ *
+ * - **API ID**: `artist_lineup`
+ * - **Description**: Manually-ordered grid of artist cards. Empty entries render as blurred placeholders (e.g. for unannounced acts).
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ArtistLineupSlice = prismic.SharedSlice<
+  "artist_lineup",
+  ArtistLineupSliceVariation
 >;
 
 /**
@@ -4678,6 +4774,11 @@ declare module "@prismicio/client" {
       AccordionSliceDefaultItem,
       AccordionSliceVariation,
       AccordionSliceDefault,
+      ArtistLineupSlice,
+      ArtistLineupSliceDefaultPrimaryArtistsItem,
+      ArtistLineupSliceDefaultPrimary,
+      ArtistLineupSliceVariation,
+      ArtistLineupSliceDefault,
       ArtistListSlice,
       ArtistListSliceDefaultPrimary,
       ArtistListSliceVariation,

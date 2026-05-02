@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { ImageLoader } from "next/image";
 
 type Props = {
   src?: string;
@@ -12,6 +12,7 @@ type Props = {
   loading?: "lazy" | "eager";
   fill?: boolean;
   priority?: boolean;
+  loader?: ImageLoader;
   onClick?: () => void;
 };
 
@@ -27,6 +28,7 @@ export default function ImageWithFallback({
   loading,
   priority = false,
   fill = false,
+  loader,
   onClick,
 }: Props) {
   const imageSrc = src ?? "/images/noise.gif";
@@ -46,6 +48,7 @@ export default function ImageWithFallback({
         blurDataURL={placeholder ? placeholder : undefined}
         fill={fill}
         priority={priority}
+        loader={loader}
         onClick={onClick ?? undefined}
       />
     </>

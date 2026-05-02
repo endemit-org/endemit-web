@@ -177,7 +177,7 @@ export default async function ProductPage({
             </h3>
             <div
               className={clsx(
-                "grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2"
+                "grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2"
               )}
             >
               {relatedProducts.map((relatedProduct, index) => (

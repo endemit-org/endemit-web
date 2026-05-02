@@ -3,5 +3,5 @@ export default function StagingLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="min-h-screen text-neutral-200">{children}</div>;
+  return <div className="min-h-dvh text-neutral-200">{children}</div>;
 }

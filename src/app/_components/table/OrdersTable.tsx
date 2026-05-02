@@ -97,7 +97,7 @@ export default function OrdersTable({
       columns={columns}
       onRowClick={onRowClick}
       emptyMessage="No orders found"
-      maxHeight="calc(100vh - 400px)"
+      maxHeight="calc(100dvh - 400px)"
     />
   );
 }

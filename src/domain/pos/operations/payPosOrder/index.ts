@@ -1,5 +1,6 @@
 import "server-only";
 
+import { after } from "next/server";
 import { prisma } from "@/lib/services/prisma";
 import {
   broadcastToChannel,
@@ -18,18 +19,24 @@ export async function payPosOrder(
 
   // Use transaction for atomicity
   const result = await prisma.$transaction(async tx => {
-    // Find and lock the order with item details
-    const order = await tx.posOrder.findUnique({
-      where: { orderHash },
-      include: {
-        register: true,
-        items: {
-          include: {
-            item: true,
+    // Independent reads — issued together so Prisma can pipeline them
+    const [order, wallet] = await Promise.all([
+      tx.posOrder.findUnique({
+        where: { orderHash },
+        include: {
+          register: true,
+          items: {
+            include: {
+              item: true,
+            },
           },
         },
-      },
-    });
+      }),
+      tx.wallet.findUnique({
+        where: { userId: customerId },
+        include: { user: { select: { name: true, email: true } } },
+      }),
+    ]);
 
     if (!order) {
       throw new Error("Order not found");
@@ -46,12 +53,6 @@ export async function payPosOrder(
     if (order.customerId && order.customerId !== customerId) {
       throw new Error("Order belongs to another customer");
     }
-
-    // Get customer wallet with user info
-    const wallet = await tx.wallet.findUnique({
-      where: { userId: customerId },
-      include: { user: { select: { name: true, email: true } } },
-    });
 
     if (!wallet) {
       throw new Error("Wallet not found");
@@ -156,56 +157,74 @@ export async function payPosOrder(
     };
   });
 
-  // Broadcast to seller (outside transaction)
-  await broadcastToChannel(
-    `pos:register:${result.order.registerId}`,
-    "pos_order_paid",
-    {
+  // Run announcements + side-effects after the response is sent.
+  // Broadcasts still fire (seller/customer realtime UIs still update); the
+  // seller's HTTP response no longer waits on Supabase/Discord/Inngest.
+  after(async () => {
+    const sellerBroadcast = broadcastToChannel(
+      `pos:register:${result.order.registerId}`,
+      "pos_order_paid",
+      {
+        orderId: result.order.id,
+        shortCode: result.order.shortCode,
+        total: result.order.total,
+        tipAmount: result.order.tipAmount,
+        paidAt: result.paidAt.toISOString(),
+      }
+    );
+
+    const customerBroadcast = broadcastToChannel(
+      `pos:order:${result.order.id}`,
+      "pos_order_paid",
+      {
+        orderId: result.order.id,
+        shortCode: result.order.shortCode,
+        total: result.order.total,
+        tipAmount: result.order.tipAmount,
+        paidAt: result.paidAt.toISOString(),
+      }
+    );
+
+    const walletBroadcast = broadcastToUser(
+      customerId,
+      "wallet_transaction_created",
+      {
+        transactionId: result.transaction.id,
+        walletId: result.wallet.id,
+        type: result.transaction.type,
+        amount: result.transaction.amount,
+        balanceAfter: result.transaction.balanceAfter,
+        note: result.transaction.note,
+        createdAt: result.transaction.createdAt.toISOString(),
+      }
+    );
+
+    const discord =
+      result.debitTotal > 0
+        ? notifyOnPosTransaction({
+            type: "DEBIT",
+            amount: result.debitTotal,
+            balanceAfter: result.transaction.balanceAfter,
+            note: result.transaction.note,
+            userName: result.userName,
+            userEmail: result.userEmail,
+            registerName: result.registerName,
+          }).catch(() => {})
+        : Promise.resolve();
+
+    const email = queuePosTransactionEmail({
       orderId: result.order.id,
-      shortCode: result.order.shortCode,
-      total: result.order.total,
-      tipAmount: result.order.tipAmount,
-      paidAt: result.paidAt.toISOString(),
-    }
-  );
+    }).catch(() => {});
 
-  // Broadcast to customer (for confirmation)
-  await broadcastToChannel(`pos:order:${result.order.id}`, "pos_order_paid", {
-    orderId: result.order.id,
-    shortCode: result.order.shortCode,
-    total: result.order.total,
-    tipAmount: result.order.tipAmount,
-    paidAt: result.paidAt.toISOString(),
+    await Promise.all([
+      sellerBroadcast,
+      customerBroadcast,
+      walletBroadcast,
+      discord,
+      email,
+      bustOnPosOrderPaid(customerId),
+    ]);
   });
-
-  // Broadcast wallet transaction to customer's profile for real-time updates
-  await broadcastToUser(customerId, "wallet_transaction_created", {
-    transactionId: result.transaction.id,
-    walletId: result.wallet.id,
-    type: result.transaction.type,
-    amount: result.transaction.amount,
-    balanceAfter: result.transaction.balanceAfter,
-    note: result.transaction.note,
-    createdAt: result.transaction.createdAt.toISOString(),
-  });
-
-  // Notify Discord for DEBIT transactions only (not top-ups)
-  if (result.debitTotal > 0) {
-    notifyOnPosTransaction({
-      type: "DEBIT",
-      amount: result.debitTotal,
-      balanceAfter: result.transaction.balanceAfter,
-      note: result.transaction.note,
-      userName: result.userName,
-      userEmail: result.userEmail,
-      registerName: result.registerName,
-    }).catch(() => {}); // Fire and forget
-  }
-
-  // Queue email notification (handled by Inngest for reliability)
-  queuePosTransactionEmail({ orderId: result.order.id }).catch(() => {}); // Fire and forget
-
-  await bustOnPosOrderPaid(customerId);
 
   return {
     success: true,

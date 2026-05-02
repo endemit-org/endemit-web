@@ -19,7 +19,9 @@ export default function ExpandablePodcastGrid({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasMore = podcasts.length > initialCount;
-  const visiblePodcasts = isExpanded ? podcasts : podcasts.slice(0, initialCount);
+  const visiblePodcasts = isExpanded
+    ? podcasts
+    : podcasts.slice(0, initialCount);
 
   return (
     <>
@@ -27,8 +29,8 @@ export default function ExpandablePodcastGrid({
         className={clsx(
           "grid gap-2 w-full",
           gridCols === "2"
-            ? "grid-cols-1 sm:grid-cols-2"
-            : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            ? "grid-cols-2"
+            : "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
         )}
       >
         {visiblePodcasts.map(podcast => (
@@ -51,9 +53,7 @@ export default function ExpandablePodcastGrid({
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-neutral-400 hover:text-neutral-200 text-sm transition-colors"
           >
-            {isExpanded
-              ? "Show less"
-              : `View all ${podcasts.length} episodes`}
+            {isExpanded ? "Show less" : `View all ${podcasts.length} episodes`}
           </button>
         </div>
       )}

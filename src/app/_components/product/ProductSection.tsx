@@ -39,8 +39,8 @@ export default function ProductSection({
         className={clsx(
           "grid w-full gap-2",
           gridType === "small"
-            ? "sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
-            : "sm:grid-cols-1 xl:grid-cols-2",
+            ? "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            : "grid-cols-1 xl:grid-cols-2",
           title || description ? "mt-8" : "mt-0"
         )}
       >

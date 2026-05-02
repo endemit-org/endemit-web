@@ -623,6 +623,8 @@ export default function Checkout({
         <ProductSection
           products={products}
           title={"Official items"}
+          gridType={"small"}
+          quickAddToCart={true}
           description={
             "These are official endemit items you can add to your checkout. Explore and add to your cart."
           }

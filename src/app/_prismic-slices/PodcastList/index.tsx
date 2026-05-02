@@ -53,7 +53,11 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
         )}
 
         {isAll ? (
-          <div className={(slice.primary.title || slice.primary.description) ? "mt-8" : ""}>
+          <div
+            className={
+              slice.primary.title || slice.primary.description ? "mt-8" : ""
+            }
+          >
             <ExpandablePodcastGrid
               podcasts={limitedPodcasts}
               initialCount={8}
@@ -65,8 +69,8 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
             className={clsx(
               "grid gap-2 w-full",
               episodeCountValue === "2"
-                ? "grid-cols-1 sm:grid-cols-2"
-                : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
+                ? "grid-cols-2"
+                : "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
               (slice.primary.title || slice.primary.description) && "mt-8"
             )}
           >
