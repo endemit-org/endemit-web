@@ -346,6 +346,9 @@
             "artist_lineup": {
               "type": "SharedSlice"
             },
+            "artist_profile_list": {
+              "type": "SharedSlice"
+            },
             "banner": {
               "type": "SharedSlice"
             },
