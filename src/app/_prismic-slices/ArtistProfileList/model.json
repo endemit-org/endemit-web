@@ -1,8 +1,8 @@
 {
-  "id": "artist_lineup",
+  "id": "artist_profile_list",
   "type": "SharedSlice",
-  "name": "ArtistLineup",
-  "description": "Manually-ordered grid of artist cards. Empty entries render as blurred placeholders (e.g. for unannounced acts).",
+  "name": "ArtistProfileList",
+  "description": "List of full artist profiles, each rendered like the artist page header.",
   "variations": [
     {
       "id": "default",
@@ -35,6 +35,15 @@
             "default_value": false
           }
         },
+        "show_link_to_page": {
+          "type": "Boolean",
+          "config": {
+            "label": "Show link to artist page",
+            "placeholder_false": "Hide link",
+            "placeholder_true": "Show link",
+            "default_value": true
+          }
+        },
         "artists": {
           "type": "Group",
           "config": {
@@ -44,17 +53,9 @@
               "artist": {
                 "type": "Link",
                 "config": {
-                  "label": "Artist (leave empty for blurred placeholder)",
+                  "label": "Artist",
                   "select": "document",
                   "customtypes": ["artist"]
-                }
-              },
-              "image": {
-                "type": "Image",
-                "config": {
-                  "label": "Override image (optional)",
-                  "constraint": {},
-                  "thumbnails": []
                 }
               }
             }
