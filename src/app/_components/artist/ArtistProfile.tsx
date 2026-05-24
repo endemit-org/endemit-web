@@ -3,6 +3,7 @@ import { isFilled, RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import ArtistPreviewSetButton from "@/app/_components/artist/ArtistPreviewSetButton";
 import { CmsImage } from "@/domain/cms/types/common";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import Image from "next/image";
@@ -30,6 +31,7 @@ interface PodcastArtistSectionProps {
   nameOverride?: string | null;
   descriptionOverride?: RichTextField | null;
   videoOverride?: string | null;
+  soundcloudUrl?: string | null;
 }
 
 export default function ArtistProfile({
@@ -40,6 +42,7 @@ export default function ArtistProfile({
   nameOverride,
   descriptionOverride,
   videoOverride,
+  soundcloudUrl,
 }: PodcastArtistSectionProps) {
   const image = imageOverride ?? artist.image;
   const cover = imageOverride?.src ?? coverSrc;
@@ -120,6 +123,15 @@ export default function ArtistProfile({
             {description && (
               <div className={"mt-6"}>
                 <RichTextDisplay richText={description} />
+              </div>
+            )}
+            {soundcloudUrl && (
+              <div className={"mt-6"}>
+                <ArtistPreviewSetButton
+                  soundcloudUrl={soundcloudUrl}
+                  artistName={name}
+                  artistImage={image?.src}
+                />
               </div>
             )}
           </div>
