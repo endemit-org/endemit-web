@@ -11,10 +11,15 @@ type Props = {
   showArtistTimes?: boolean;
 };
 
+type SortOption = "default" | "timestamp" | "alphabetical";
+
 export default function EventLineUp({ artists, showArtistTimes = true }: Props) {
   const [sortBy, setSortBy] = useState<SortOption>("default");
 
-  type SortOption = "default" | "timestamp" | "alphabetical";
+  const hasAnyTimes = useMemo(
+    () => artists.some(a => a.start_time != null),
+    [artists]
+  );
 
   const sortedArtists = useMemo(() => {
     if (sortBy === "timestamp") {
@@ -36,6 +41,8 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
         Date.now() - convertMonthsToMs(3)
       : false;
 
+  const showSorter = hasAnyTimes && !isMoreThanThreeMonthsAgo;
+
   return (
     <div className={"flex flex-col gap-y-6"}>
       <div className="flex gap-x-6 w-full items-center justify-between max-lg:flex-col">
@@ -52,7 +59,7 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
         ) : (
           <div>{/* Right align spacer */}</div>
         )}
-        {!isMoreThanThreeMonthsAgo && (
+        {showSorter && (
           <div className="flex gap-x-6 items-center justify-end">
             <span className="text-sm font-medium">Sort by:</span>
             <select
