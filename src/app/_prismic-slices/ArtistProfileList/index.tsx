@@ -21,6 +21,7 @@ interface ArtistProfileListItem {
     alt?: string | null;
   } | null;
   video_override?: LinkField | null;
+  soundcloud_url?: string | null;
 }
 
 interface ArtistProfileListSlice {
@@ -68,6 +69,7 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
         nameOverride: item.name_override ?? null,
         descriptionOverride: item.description_override ?? null,
         videoOverride: item.video_override ? asLink(item.video_override) : null,
+        soundcloudUrl: item.soundcloud_url || null,
       };
     })
   );
@@ -91,6 +93,7 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
           nameOverride,
           descriptionOverride,
           videoOverride,
+          soundcloudUrl,
         }) =>
           artist ? (
             <ArtistProfile
@@ -101,6 +104,7 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
               nameOverride={nameOverride}
               descriptionOverride={descriptionOverride}
               videoOverride={videoOverride}
+              soundcloudUrl={soundcloudUrl}
               showLinkToPage={showLink}
             />
           ) : null

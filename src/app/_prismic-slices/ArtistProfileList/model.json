@@ -90,6 +90,13 @@
                   "select": "media",
                   "allowText": true
                 }
+              },
+              "soundcloud_url": {
+                "type": "Text",
+                "config": {
+                  "label": "SoundCloud URL (optional)",
+                  "placeholder": "URL to SoundCloud track/set for preview"
+                }
               }
             }
           }
