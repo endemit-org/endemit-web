@@ -1,6 +1,7 @@
 import Accordion from "@/app/_prismic-slices/Accordion";
 import ArtistLineup from "@/app/_prismic-slices/ArtistLineup";
 import ArtistList from "@/app/_prismic-slices/ArtistList";
+import ArtistProfileList from "@/app/_prismic-slices/ArtistProfileList";
 import Banner from "@/app/_prismic-slices/Banner";
 import BlurredBlob from "@/app/_prismic-slices/BlurredBlob";
 import CollabPromo from "@/app/_prismic-slices/CollabPromo";
@@ -29,6 +30,7 @@ export const components = {
   accordion: Accordion,
   artist_lineup: ArtistLineup,
   artist_list: ArtistList,
+  artist_profile_list: ArtistProfileList,
   banner: Banner,
   blurred_blob: BlurredBlob,
   collab_promo: CollabPromo,

@@ -29,6 +29,9 @@
             "artist_list": {
               "type": "SharedSlice"
             },
+            "artist_profile_list": {
+              "type": "SharedSlice"
+            },
             "vinyl_promo_section": {
               "type": "SharedSlice"
             },

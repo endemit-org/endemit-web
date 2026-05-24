@@ -21,6 +21,7 @@ const typeLabels: Record<string, string> = {
   PURCHASE: "Purchase",
   REFUND: "Refund",
   ADJUSTMENT: "Adjustment",
+  P2P_TRANSFER: "Transfer",
 };
 
 export default function ProfileTransactionsPreview({
@@ -83,43 +84,43 @@ export default function ProfileTransactionsPreview({
       emptyMessage="No transactions yet"
     >
       {transactions.map((tx, index) => (
-          <ProfileTableRow
-            key={tx.id}
-            href={`/profile/transactions/${tx.id}`}
-            index={index}
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className={clsx(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                  tx.amount > 0
-                    ? "bg-green-500/20 text-green-400"
-                    : "bg-red-500/20 text-red-400"
-                )}
-              >
-                {tx.amount > 0 ? "+" : "-"}
-              </div>
-              <div>
-                <div className="text-neutral-200 text-sm">
-                  {typeLabels[tx.type] || tx.type}
-                </div>
-                <ClientDate
-                  date={tx.createdAt}
-                  format="date"
-                  className="text-xs text-neutral-500"
-                />
-              </div>
-            </div>
+        <ProfileTableRow
+          key={tx.id}
+          href={`/profile/transactions/${tx.id}`}
+          index={index}
+        >
+          <div className="flex items-center gap-3">
             <div
               className={clsx(
-                "font-semibold",
-                tx.amount > 0 ? "text-green-400" : "text-red-400"
+                "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
+                tx.amount > 0
+                  ? "bg-green-500/20 text-green-400"
+                  : "bg-red-500/20 text-red-400"
               )}
             >
-              {tx.amount > 0 ? "+" : ""}
-              {formatTokensFromCents(tx.amount)}
+              {tx.amount > 0 ? "+" : "-"}
             </div>
-          </ProfileTableRow>
+            <div>
+              <div className="text-neutral-200 text-sm">
+                {typeLabels[tx.type] || tx.type}
+              </div>
+              <ClientDate
+                date={tx.createdAt}
+                format="date"
+                className="text-xs text-neutral-500"
+              />
+            </div>
+          </div>
+          <div
+            className={clsx(
+              "font-semibold",
+              tx.amount > 0 ? "text-green-400" : "text-red-400"
+            )}
+          >
+            {tx.amount > 0 ? "+" : ""}
+            {formatTokensFromCents(tx.amount)}
+          </div>
+        </ProfileTableRow>
       ))}
     </ProfileTable>
   );

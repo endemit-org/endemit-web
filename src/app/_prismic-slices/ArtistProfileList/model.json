@@ -1,0 +1,108 @@
+{
+  "id": "artist_profile_list",
+  "type": "SharedSlice",
+  "name": "ArtistProfileList",
+  "description": "List of full artist profiles, each rendered like the artist page header.",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "(optional)"
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description",
+            "placeholder": "(optional)"
+          }
+        },
+        "render_frame": {
+          "type": "Boolean",
+          "config": {
+            "label": "Render frame",
+            "placeholder_false": "No background",
+            "placeholder_true": "With background",
+            "default_value": false
+          }
+        },
+        "show_link_to_page": {
+          "type": "Boolean",
+          "config": {
+            "label": "Show link to artist page",
+            "placeholder_false": "Hide link",
+            "placeholder_true": "Show link",
+            "default_value": true
+          }
+        },
+        "artists": {
+          "type": "Group",
+          "config": {
+            "label": "Artists",
+            "repeat": true,
+            "fields": {
+              "artist": {
+                "type": "Link",
+                "config": {
+                  "label": "Artist",
+                  "select": "document",
+                  "customtypes": ["artist"]
+                }
+              },
+              "name_override": {
+                "type": "Text",
+                "config": {
+                  "label": "Name override (optional)",
+                  "placeholder": ""
+                }
+              },
+              "description_override": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Description override (optional)",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,strong,em,hyperlink"
+                }
+              },
+              "image_override": {
+                "type": "Image",
+                "config": {
+                  "label": "Image override (optional)",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              },
+              "video_override": {
+                "type": "Link",
+                "config": {
+                  "label": "Video override (optional)",
+                  "placeholder": "",
+                  "select": "media",
+                  "allowText": true
+                }
+              },
+              "soundcloud_url": {
+                "type": "Text",
+                "config": {
+                  "label": "SoundCloud URL (optional)",
+                  "placeholder": "URL to SoundCloud track/set for preview"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

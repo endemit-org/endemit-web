@@ -1,9 +1,15 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import clsx from "clsx";
+
+const AssignStickerToUserModal = dynamic(
+  () => import("@/app/_components/admin/AssignStickerToUserModal"),
+  { ssr: false }
+);
 
 interface StickerRow {
   code: string;
@@ -37,6 +43,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState("1000");
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [assignCode, setAssignCode] = useState<string | null>(null);
 
   const updateParam = useCallback(
     (updates: Record<string, string | null>) => {
@@ -229,13 +236,20 @@ export default function StickerPoolDisplay({ initial }: Props) {
                       : "—"}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {item.userId && (
+                    {item.userId ? (
                       <Link
                         href={`/admin/users/${item.userId}`}
                         className="text-sm text-blue-600 hover:text-blue-800"
                       >
                         View user →
                       </Link>
+                    ) : (
+                      <button
+                        onClick={() => setAssignCode(item.code)}
+                        className="text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        Assign →
+                      </button>
                     )}
                   </td>
                 </tr>
@@ -244,6 +258,12 @@ export default function StickerPoolDisplay({ initial }: Props) {
           </tbody>
         </table>
       </div>
+
+      <AssignStickerToUserModal
+        isOpen={assignCode !== null}
+        code={assignCode}
+        onClose={() => setAssignCode(null)}
+      />
 
       {totalPages > 1 && (
         <div className="p-4 border-t border-gray-200 flex items-center justify-between">

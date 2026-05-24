@@ -80,6 +80,9 @@
             "artist_lineup": {
               "type": "SharedSlice"
             },
+            "artist_profile_list": {
+              "type": "SharedSlice"
+            },
             "blurred_blob": {
               "type": "SharedSlice"
             },

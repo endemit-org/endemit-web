@@ -117,6 +117,9 @@
             "artist_list": {
               "type": "SharedSlice"
             },
+            "artist_profile_list": {
+              "type": "SharedSlice"
+            },
             "tabs": {
               "type": "SharedSlice"
             },

@@ -48,6 +48,21 @@
                   "select": "document",
                   "customtypes": ["artist"]
                 }
+              },
+              "name_override": {
+                "type": "Text",
+                "config": {
+                  "label": "Name override (optional)",
+                  "placeholder": ""
+                }
+              },
+              "image_override": {
+                "type": "Image",
+                "config": {
+                  "label": "Image override (optional)",
+                  "constraint": {},
+                  "thumbnails": []
+                }
               }
             }
           }

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 export const components = {
   accordion: dynamic(() => import("./Accordion")),
   artist_list: dynamic(() => import("./ArtistList")),
+  artist_profile_list: dynamic(() => import("./ArtistProfileList")),
   banner: dynamic(() => import("./Banner")),
   blurred_blob: dynamic(() => import("./BlurredBlob")),
   collab_promo: dynamic(() => import("./CollabPromo")),
