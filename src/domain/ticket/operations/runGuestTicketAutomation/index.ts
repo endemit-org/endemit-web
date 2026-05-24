@@ -26,8 +26,11 @@ export interface GuestTicketProcessData {
 }
 
 export const runGuestTicketAutomation = inngest.createFunction(
-  { id: "process-guest-ticket-function", retries: 5 },
-  { event: TicketQueueEvent.PROCESS_GUEST_TICKET },
+  {
+    id: "process-guest-ticket-function",
+    retries: 5,
+    triggers: [{ event: TicketQueueEvent.PROCESS_GUEST_TICKET }],
+  },
   async ({ event, step }) => {
     const {
       ticketId,

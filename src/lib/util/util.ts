@@ -59,9 +59,22 @@ export const getResizedPrismicImage = (
 };
 
 export const getBlurDataURL = async (imageUrl: string) => {
-  const base64str = await fetch(
-    getResizedPrismicImage(imageUrl, { width: 40, quality: 20, dpr: 0 })
-  ).then(async res => Buffer.from(await res.arrayBuffer()).toString("base64"));
+  const resizedUrl = getResizedPrismicImage(imageUrl, {
+    width: 40,
+    quality: 20,
+    dpr: 0,
+  });
+
+  let base64str: string;
+  try {
+    const res = await fetch(resizedUrl, { signal: AbortSignal.timeout(5000) });
+    base64str = Buffer.from(await res.arrayBuffer()).toString("base64");
+  } catch (err) {
+    console.warn(
+      `[getBlurDataURL] failed to fetch ${resizedUrl}: ${err instanceof Error ? err.message : String(err)}`
+    );
+    return "";
+  }
 
   const blurSvg = `
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'>

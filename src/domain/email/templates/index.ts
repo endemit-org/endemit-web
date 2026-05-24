@@ -6,4 +6,8 @@ export * from "./OrderShippedToCustomer";
 export * from "./OtcSignIn";
 export * from "./PosTransactionToCustomer";
 export * from "./RefundConfirmation";
+export * from "./StickerLinked";
+export * from "./StickerReplaced";
+export * from "./StickerUnlinked";
 export * from "./TicketInvalidation";
+export * from "./WalletTransfer";

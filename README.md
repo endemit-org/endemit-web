@@ -173,3 +173,8 @@ To-do, amend the readme:
 
 // pnpm env-init
 // pnpm env-dev env-stage env-prod
+
+To enable on staging, set the cookie in the browser console:        
+  document.cookie = "stripe_devtools=1; path=/; max-age=2592000"
+  …then reload. Removing the cookie (or setting it to anything other  
+  than 1) hides the assistant again.                         

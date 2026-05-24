@@ -7,7 +7,7 @@ interface Props {
 
 export default function PageHeadline({ title, segments }: Props) {
   return (
-    <div className="flex ">
+    <div className="flex relative z-10">
       <div>
         <h1 className="text-3xl font-bold text-neutral-200 mb-0 pb-0">
           {title}

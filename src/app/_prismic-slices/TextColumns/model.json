@@ -42,7 +42,7 @@
                   "label": "Heading",
                   "placeholder": "",
                   "allowTargetBlank": false,
-                  "single": "heading3,heading4,heading5,heading6"
+                  "single": "heading1,heading2,heading3,heading4,heading5,heading6"
                 }
               },
               "content": {
@@ -106,7 +106,7 @@
                   "label": "Heading",
                   "placeholder": "",
                   "allowTargetBlank": false,
-                  "single": "heading3,heading4,heading5,heading6"
+                  "single": "heading1,heading2,heading3,heading4,heading5,heading6"
                 }
               },
               "content": {

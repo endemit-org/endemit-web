@@ -67,3 +67,12 @@ export interface PaginatedTransactions {
   pageSize: number;
   totalPages: number;
 }
+
+export enum WalletQueueEvent {
+  NOTIFY_P2P_TRANSFER = "wallet/notify.p2p_transfer",
+}
+
+export interface P2PTransferNotificationData {
+  debitTransactionId: string;
+  creditTransactionId: string;
+}

@@ -1,13 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import Lightbox from "@/app/_components/content/Lightbox";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { prismicImageLoader } from "@/lib/util/prismicImageLoader";
 
 export interface GalleryImage {
   src: string;
   alt: string;
   caption?: string;
+  placeholder?: string;
 }
 
 export interface ImageGalleryProps {
@@ -37,6 +39,14 @@ export default function ImageGalleryWithLightbox({
     "4": "md:columns-2 lg:columns-4",
   };
 
+  // Per-tile width budget: 100vw on mobile, then split by column count.
+  const sizesByColumns: Record<"2" | "3" | "4", string> = {
+    "2": "(min-width: 768px) 50vw, 100vw",
+    "3": "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw",
+    "4": "(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw",
+  };
+  const tileSizes = sizesByColumns[columns];
+
   const closeLightbox = () => setLightboxIndex(null);
   const nextImage = () =>
     setLightboxIndex(prev =>
@@ -61,10 +71,13 @@ export default function ImageGalleryWithLightbox({
               className="relative aspect-[4/3] overflow-hidden rounded-lg cursor-pointer group"
               onClick={() => setLightboxIndex(index)}
             >
-              <Image
+              <ImageWithFallback
                 src={image.src}
                 alt={image.alt}
                 fill
+                sizes={tileSizes}
+                placeholder={image.placeholder}
+                loader={prismicImageLoader}
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
               {image.caption && (
@@ -85,11 +98,14 @@ export default function ImageGalleryWithLightbox({
               className="relative break-inside-avoid mb-4 overflow-hidden rounded-lg cursor-pointer group"
               onClick={() => setLightboxIndex(index)}
             >
-              <Image
+              <ImageWithFallback
                 src={image.src}
                 alt={image.alt}
                 width={800}
                 height={600}
+                sizes={tileSizes}
+                placeholder={image.placeholder}
+                loader={prismicImageLoader}
                 className="w-full transition-transform duration-300 group-hover:scale-105"
               />
               {image.caption && (

@@ -1,11 +1,22 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import dynamic from "next/dynamic";
 import QRCode from "qrcode";
-import confetti from "canvas-confetti";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import Image from "next/image";
+import { type StickerScanResult } from "./PosStickerScanView";
+import { PaymentConfirmView } from "@/app/_components/payment/PaymentConfirmView";
+import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
+import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
+import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
+
+// Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
+const PosStickerScanView = dynamic(
+  () => import("./PosStickerScanView").then(mod => ({ default: mod.PosStickerScanView })),
+  { ssr: false }
+);
 
 interface PosOrderSummary {
   id: string;
@@ -34,16 +45,16 @@ interface PosOrderSummary {
 interface Props {
   order: PosOrderSummary;
   onClose: () => void;
-  onCancel: () => void;
   onCopyToCart: () => void;
 }
 
 const AUTO_CLOSE_SECONDS = 30;
 
+type SubView = "qr" | "sticker-scan" | "customer-confirm";
+
 export function PosOrderQrModal({
   order,
   onClose,
-  onCancel,
   onCopyToCart,
 }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -51,6 +62,21 @@ export function PosOrderQrModal({
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
     null
   );
+  const [subView, setSubView] = useState<SubView>("qr");
+  const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
+    null
+  );
+  const [isRotated, setIsRotated] = useState(true);
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
+
+  const totalRef = useRef<HTMLSpanElement>(null);
+  const tipRef = useRef<HTMLSpanElement>(null);
+  const totalAnim = useWalletAnimation();
+  const tipAnim = useWalletAnimation();
+  const triggerTotalAnimation = totalAnim.triggerAnimation;
+  const triggerTipAnimation = tipAnim.triggerAnimation;
+  const hasTriggeredCoinsRef = useRef(false);
 
   useEffect(() => {
     QRCode.toDataURL(order.orderHash, {
@@ -93,8 +119,9 @@ export function PosOrderQrModal({
   }, [autoCloseCountdown, onClose]);
 
   // Fire confetti when tip is received
-  const fireConfetti = useCallback(() => {
-    // Quick burst of confetti
+  const fireConfetti = useCallback(async () => {
+    // Dynamic import: canvas-confetti (~33KB) only loads when tip is received
+    const confetti = (await import("canvas-confetti")).default;
     confetti({
       particleCount: 80,
       spread: 70,
@@ -110,21 +137,96 @@ export function PosOrderQrModal({
     }
   }, [isPaid, hasTip, hasShownConfetti, fireConfetti]);
 
+  useEffect(() => {
+    if (!isPaid || hasTriggeredCoinsRef.current) return;
+    hasTriggeredCoinsRef.current = true;
+
+    const totalTimer = setTimeout(() => {
+      triggerTotalAnimation("in", totalRef.current);
+    }, 60);
+
+    let tipTimer: ReturnType<typeof setTimeout> | undefined;
+    if (hasTip) {
+      tipTimer = setTimeout(() => {
+        triggerTipAnimation("in", tipRef.current);
+      }, 280);
+    }
+
+    return () => {
+      clearTimeout(totalTimer);
+      if (tipTimer) clearTimeout(tipTimer);
+    };
+  }, [isPaid, hasTip, triggerTotalAnimation, triggerTipAnimation]);
+
+  // Reset sub-view state when the order becomes paid
+  useEffect(() => {
+    if (isPaid) {
+      setSubView("qr");
+      setStickerScan(null);
+      setPayError(null);
+    }
+  }, [isPaid]);
+
+  const handleStickerScanned = useCallback((result: StickerScanResult) => {
+    setStickerScan(result);
+    setSubView("customer-confirm");
+    setPayError(null);
+  }, []);
+
+  const handlePay = useCallback(
+    async (tipAmount: number) => {
+      if (!stickerScan || isPaying) return;
+      setIsPaying(true);
+      setPayError(null);
+      try {
+        const response = await fetch(
+          `/api/v1/pos/orders/${stickerScan.order.orderHash}/pay`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tipAmount }),
+          }
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || "Payment failed");
+        }
+      } catch (err) {
+        setPayError(err instanceof Error ? err.message : "Payment failed");
+      } finally {
+        setIsPaying(false);
+      }
+    },
+    [stickerScan, isPaying]
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+      <div
+        className={`rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transition-colors duration-300 ${
+          isPaid
+            ? "bg-gradient-to-br from-emerald-500 to-green-700 text-white"
+            : "bg-white"
+        }`}
+      >
         {/* Header */}
-        <div className="px-6 py-4 border-b flex items-center justify-between">
-          <div className="text-xl  text-center w-full">
+        <div
+          className={`px-6 py-4 border-b flex items-center justify-between ${
+            isPaid ? "border-white/20" : ""
+          }`}
+        >
+          <div className="text-xl text-center w-full">
             Your total is{" "}
-            <span className={"font-bold"}>
+            <span className="font-bold">
               {formatTokensFromCents(order.total)}
             </span>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className={`p-2 rounded-full ${
+              isPaid ? "hover:bg-white/10 text-white" : "hover:bg-gray-100"
+            }`}
           >
             <svg
               className="w-5 h-5"
@@ -146,9 +248,9 @@ export function PosOrderQrModal({
         <div className="p-6">
           {isPaid ? (
             <div className="text-center py-8">
-              <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 mx-auto rounded-full bg-white flex items-center justify-center mb-4 shadow-lg">
                 <svg
-                  className="w-10 h-10 text-green-600"
+                  className="w-10 h-10 text-emerald-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -156,32 +258,73 @@ export function PosOrderQrModal({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={3}
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-green-600 mb-2">
+              <h3 className="text-xl font-semibold text-white mb-4">
                 Payment Received
               </h3>
-              <p className="text-2xl font-bold mb-1">
-                {formatTokensFromCents(order.total)}
-              </p>
-              {hasTip && (
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full text-amber-900 font-semibold shadow-lg animate-pulse">
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span>+{formatTokensFromCents(order.tipAmount!)} tip</span>
+              {hasTip ? (
+                <div className="flex items-end justify-center gap-4">
+                  <div className="text-center">
+                    <WalletAnimationRenderer
+                      animations={totalAnim.animations}
+                      showGlow={totalAnim.showGlow}
+                      glowDirection={totalAnim.glowDirection}
+                      onAnimationComplete={totalAnim.removeAnimation}
+                    >
+                      <span
+                        ref={totalRef}
+                        className="block text-3xl font-bold leading-none text-white"
+                      >
+                        <AnimatedBalance value={order.total} countFromZero />
+                      </span>
+                    </WalletAnimationRenderer>
+                    <p className="text-[10px] uppercase tracking-widest text-white/70 mt-1">
+                      total
+                    </p>
+                  </div>
+                  <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">+</div>
+                  <div className="text-center">
+                    <WalletAnimationRenderer
+                      animations={tipAnim.animations}
+                      showGlow={tipAnim.showGlow}
+                      glowDirection={tipAnim.glowDirection}
+                      onAnimationComplete={tipAnim.removeAnimation}
+                    >
+                      <span
+                        ref={tipRef}
+                        className="inline-flex items-baseline gap-1 text-xl font-semibold text-yellow-200 leading-none"
+                      >
+                        <AnimatedBalance value={order.tipAmount!} countFromZero />
+                        <span aria-hidden>✨</span>
+                      </span>
+                    </WalletAnimationRenderer>
+                    <p className="text-[10px] uppercase tracking-widest text-yellow-200/80 mt-1">
+                      tip
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                <WalletAnimationRenderer
+                  animations={totalAnim.animations}
+                  showGlow={totalAnim.showGlow}
+                  glowDirection={totalAnim.glowDirection}
+                  onAnimationComplete={totalAnim.removeAnimation}
+                >
+                  <span
+                    ref={totalRef}
+                    className="block text-3xl font-bold leading-none text-white"
+                  >
+                    <AnimatedBalance value={order.total} countFromZero />
+                  </span>
+                </WalletAnimationRenderer>
               )}
             </div>
-          ) : (
-            <>
+          ) : subView === "qr" ? (
+            <div>
               {/* Large Short Code */}
               <div className="text-center mb-4">
                 <p className="text-sm text-gray-500 mb-1">Order Code</p>
@@ -291,18 +434,60 @@ export function PosOrderQrModal({
                   </div>
                 ))}
               </div>
-            </>
-          )}
+            </div>
+          ) : subView === "sticker-scan" ? (
+            <PosStickerScanView
+              orderHash={order.orderHash}
+              onScanned={handleStickerScanned}
+              onBack={() => setSubView("qr")}
+            />
+          ) : subView === "customer-confirm" && stickerScan ? (
+            <div className="relative -mx-6 -my-6 px-6 py-6 bg-neutral-900 text-white rounded-b-2xl">
+              <button
+                onClick={() => setIsRotated(r => !r)}
+                title="Toggle rotation"
+                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h5M20 20v-5h-5M4 20a9 9 0 0015-6.7M20 4a9 9 0 00-15 6.7"
+                  />
+                </svg>
+              </button>
+              <PaymentConfirmView
+                order={stickerScan.order}
+                customer={stickerScan.customer}
+                isRotated={isRotated}
+                allowCustomTip={!isRotated}
+                isProcessing={isPaying}
+                error={payError}
+                onPay={handlePay}
+                onCancel={() => {
+                  setSubView("qr");
+                  setStickerScan(null);
+                  setPayError(null);
+                }}
+              />
+            </div>
+          ) : null}
         </div>
 
         {/* Actions */}
-        {!isPaid && (
+        {!isPaid && subView === "qr" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
             <button
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              onClick={() => setSubView("sticker-scan")}
+              className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
-              Cancel
+              Scan backup sticker
             </button>
             <button
               onClick={onCopyToCart}
@@ -314,15 +499,15 @@ export function PosOrderQrModal({
         )}
 
         {isPaid && (
-          <div className="px-6 py-4 border-t bg-gray-50">
+          <div className="px-6 py-4 border-t border-white/20">
             <button
               onClick={onClose}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="w-full px-4 py-2 bg-white text-emerald-700 font-semibold rounded-lg hover:bg-white/90"
             >
               Continue
             </button>
             {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
-              <p className="text-center text-sm text-gray-500 mt-2">
+              <p className="text-center text-sm text-white/70 mt-2">
                 Closing in {autoCloseCountdown}s
               </p>
             )}

@@ -23,6 +23,8 @@ const IMAGE_CONFIG = {
       hostname: "*.public.blob.vercel-storage.com",
     },
   ],
+  formats: ["image/avif", "image/webp"] as ("image/avif" | "image/webp")[],
+  minimumCacheTTL: 2_592_000,
 };
 
 const REDIRECTS = [
@@ -41,6 +43,11 @@ const REDIRECTS = [
     destination: "/events/ius-primae-noctis/:path*",
     permanent: true,
   },
+  {
+    source: "/festival-2026",
+    destination: "/events/endemit-festival-2026",
+    permanent: true,
+  },
 ];
 
 const nextConfig: NextConfig = {
@@ -48,6 +55,42 @@ const nextConfig: NextConfig = {
   images: IMAGE_CONFIG,
   async redirects() {
     return REDIRECTS;
+  },
+  async headers() {
+    return [
+      {
+        // Service worker should not be cached and needs correct scope
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Service-Worker-Allowed",
+            value: "/",
+          },
+        ],
+      },
+      {
+        // Version endpoint must never be cached for deployment detection
+        source: "/api/v1/version",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate, max-age=0",
+          },
+          {
+            key: "Pragma",
+            value: "no-cache",
+          },
+          {
+            key: "Expires",
+            value: "0",
+          },
+        ],
+      },
+    ];
   },
   outputFileTracingIncludes: {
     // Ticket image generation requires logo and font files

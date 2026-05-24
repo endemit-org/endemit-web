@@ -18,8 +18,11 @@ import { sendTicketEmail } from "@/domain/email/operations/sendTicketEmail";
 import { notifyOnNewTicketIssue } from "@/domain/notification/operations/notifyOnNewTicketIssue";
 
 export const runTicketIssueAutomation = inngest.createFunction(
-  { id: "create-ticket-function", retries: 5 },
-  { event: TicketQueueEvent.CREATE_TICKET },
+  {
+    id: "create-ticket-function",
+    retries: 5,
+    triggers: [{ event: TicketQueueEvent.CREATE_TICKET }],
+  },
   async ({ event, step }) => {
     const {
       eventId,

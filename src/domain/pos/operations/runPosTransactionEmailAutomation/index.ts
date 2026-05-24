@@ -11,8 +11,11 @@ import { prisma } from "@/lib/services/prisma";
 import { sendPosTransactionEmail } from "@/domain/email/operations/sendPosTransactionEmail";
 
 export const runPosTransactionEmailAutomation = inngest.createFunction(
-  { id: "pos-transaction-email-function", retries: 5 },
-  { event: PosQueueEvent.NOTIFY_ON_TRANSACTION },
+  {
+    id: "pos-transaction-email-function",
+    retries: 5,
+    triggers: [{ event: PosQueueEvent.NOTIFY_ON_TRANSACTION }],
+  },
   async ({ event, step }) => {
     const { orderId } = event.data as PosTransactionNotificationData;
 

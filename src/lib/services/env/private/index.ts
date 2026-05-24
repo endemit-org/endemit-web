@@ -57,6 +57,9 @@ export const POS_ORDER_HASH_SPLIT_CONFIG =
   process.env.POS_ORDER_HASH_SPLIT_CONFIG!;
 export const DISCORD_POS_WEBHOOK = process.env.DISCORD_POS_WEBHOOK;
 
+// Wallet
+export const WALLET_RECEIVE_SECRET = process.env.WALLET_RECEIVE_SECRET!;
+
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
 
@@ -74,3 +77,4 @@ export const FEAT_IGNORE_VISIBILITY =
 if (!DATABASE_URL) throw new Error("Missing DATABASE_URL");
 if (!STRIPE_SECRET_KEY) throw new Error("Missing STRIPE_SECRET_KEY");
 if (!STRIPE_WEBHOOK_SECRET) throw new Error("Missing STRIPE_WEBHOOK_SECRET");
+if (!WALLET_RECEIVE_SECRET) throw new Error("Missing WALLET_RECEIVE_SECRET");

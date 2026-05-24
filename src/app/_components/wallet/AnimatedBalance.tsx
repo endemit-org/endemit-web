@@ -7,12 +7,13 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 interface AnimatedBalanceProps {
   value: number;
   className?: string;
+  countFromZero?: boolean;
 }
 
-export default function AnimatedBalance({ value, className }: AnimatedBalanceProps) {
+export default function AnimatedBalance({ value, className, countFromZero = false }: AnimatedBalanceProps) {
   const prevValue = useRef(value);
 
-  const spring = useSpring(value, {
+  const spring = useSpring(countFromZero ? 0 : value, {
     stiffness: 100,
     damping: 20,
     mass: 1,

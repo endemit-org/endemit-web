@@ -139,9 +139,8 @@ const CollabPromo: FC<CollabPromoProps> = async ({ slice }) => {
           <div
             className={clsx(
               "grid gap-2",
-              products.length === 2 && "grid-cols-1 sm:grid-cols-2",
-              products.length >= 3 &&
-                "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              products.length === 2 && "grid-cols-2",
+              products.length >= 3 && "grid-cols-2 lg:grid-cols-3"
             )}
           >
             {products.map(product => (

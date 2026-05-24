@@ -21,8 +21,8 @@ export const runOrderNewsletterAutomation = inngest.createFunction(
   {
     id: "order-newsletter-subscription",
     retries: 5,
+    triggers: [{ event: NewsletterQueueEvent.SUBSCRIBE_ORDER }],
   },
-  { event: NewsletterQueueEvent.SUBSCRIBE_ORDER },
   async ({ event, step }) => {
     const { email, items, ticketEventIds, customerName } =
       event.data as OrderNewsletterSubscriptionData;

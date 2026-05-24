@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import ChevronPrevIcon from "@/app/_components/icon/ChevronPrevIcon";
 import ChevronNextIcon from "@/app/_components/icon/ChevronNextIcon";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { prismicImageLoader } from "@/lib/util/prismicImageLoader";
 
 interface LightboxProps {
   images: Array<{
@@ -145,29 +146,37 @@ export default function Lightbox({
         onClick={e => e.stopPropagation()}
         onScroll={handleScroll}
       >
-        {images.map((image, index) => (
-          <div
-            key={index}
-            className="flex-shrink-0 w-full snap-center flex flex-col items-center justify-center"
-          >
-            <div className="relative max-h-[calc(90vh-120px)]">
-              <ImageWithFallback
-                src={image.src}
-                alt={image.alt ?? ""}
-                width={1200}
-                height={900}
-                className="max-h-[calc(90vh-120px)] w-auto object-contain"
-                placeholder={image.placeholder}
-                quality={95}
-              />
-              {image.caption && (
-                <p className="text-neutral-200 text-center mt-4 text-lg">
-                  {image.caption}
-                </p>
-              )}
+        {images.map((image, index) => {
+          const distance = Math.abs(index - localIndex);
+          const isNeighbour = distance <= 1;
+          return (
+            <div
+              key={index}
+              className="flex-shrink-0 w-full snap-center flex flex-col items-center justify-center"
+            >
+              <div className="relative max-h-[calc(90vh-120px)]">
+                <ImageWithFallback
+                  src={image.src}
+                  alt={image.alt ?? ""}
+                  width={1200}
+                  height={900}
+                  className="max-h-[calc(90vh-120px)] w-auto object-contain"
+                  placeholder={image.placeholder}
+                  quality={82}
+                  sizes="(min-width: 1024px) 80vw, 100vw"
+                  loader={prismicImageLoader}
+                  loading={isNeighbour ? "eager" : "lazy"}
+                  priority={index === localIndex}
+                />
+                {image.caption && (
+                  <p className="text-neutral-200 text-center mt-4 text-lg">
+                    {image.caption}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {images.length > 1 && (

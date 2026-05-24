@@ -1,14 +1,23 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";
-import { WalletPayScanner } from "@/app/_components/wallet/WalletPayScanner";
 import TopUpModal from "@/app/_components/profile/TopUpModal";
+
+// Dynamic import: QR Scanner (~120KB) only loads when Pay Scanner is opened
+const WalletPayScanner = dynamic(
+  () =>
+    import("@/app/_components/wallet/WalletPayScanner").then(mod => ({
+      default: mod.WalletPayScanner,
+    })),
+  { ssr: false }
+);
 import type { Product } from "@/domain/product/types/product";
 import { isEndemitPayEnabled } from "@/domain/wallet/businessRules";
 import ActionButton from "@/app/_components/form/ActionButton";
@@ -16,6 +25,7 @@ import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
 import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
+import BackupStickerInline from "@/app/_components/profile/BackupStickerInline";
 
 interface ProfileSidebarProps {
   userId: string;
@@ -26,6 +36,7 @@ interface ProfileSidebarProps {
   currencyProducts: Product[];
   upcomingTickets: number | null;
   isDonor?: boolean;
+  backupStickerCode?: string | null;
 }
 
 export default function ProfileSidebar({
@@ -37,6 +48,7 @@ export default function ProfileSidebar({
   upcomingTickets,
   currencyProducts,
   isDonor,
+  backupStickerCode = null,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
@@ -44,11 +56,19 @@ export default function ProfileSidebar({
   const [walletBalance, setWalletBalance] = useState(initialWalletBalance);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const walletRef = useRef<HTMLDivElement>(null);
+  const walletRef = useRef<HTMLAnchorElement>(null);
   const prevBalanceRef = useRef(initialWalletBalance);
-  const pendingUpdateRef = useRef<{ direction: "in" | "out"; balance: number } | null>(null);
-  const { animations, showGlow, glowDirection, triggerAnimation, removeAnimation } =
-    useWalletAnimation();
+  const pendingUpdateRef = useRef<{
+    direction: "in" | "out";
+    balance: number;
+  } | null>(null);
+  const {
+    animations,
+    showGlow,
+    glowDirection,
+    triggerAnimation,
+    removeAnimation,
+  } = useWalletAnimation();
 
   // Check if any modal is open
   const isModalOpen = isPayScannerOpen || isTopUpOpen || showLogoutConfirm;
@@ -92,7 +112,12 @@ export default function ProfileSidebar({
       prevBalanceRef.current = newBalance;
 
       // Determine animation direction
-      const direction = newBalance > prevBalance ? "in" : newBalance < prevBalance ? "out" : null;
+      const direction =
+        newBalance > prevBalance
+          ? "in"
+          : newBalance < prevBalance
+            ? "out"
+            : null;
 
       if (direction) {
         if (isModalOpen) {
@@ -142,27 +167,25 @@ export default function ProfileSidebar({
               {initials}
             </div>
           )}
+          {isDonor && (
+            <div className="z-10 absolute left-1/2 -translate-x-1/2 bottom-0 inline-flex items-center gap-1.5 px-3 py-0.5 bg-gradient-to-r from-yellow-900/50 to-amber-800/30 border border-yellow-600/50 rounded-full whitespace-nowrap">
+              <svg
+                className="w-4 h-4 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path d="M3 16 L4 7 L7 10 L10 5 L13 10 L16 7 L17 16 H3 Z" />
+              </svg>
+              <span className="text-xs font-medium text-yellow-300">Donor</span>
+            </div>
+          )}
         </div>
         <h2 className="text-xl font-semibold text-neutral-200 mb-1">
           {displayName}
         </h2>
         <p className="text-sm text-neutral-400">{email}</p>
-        {isDonor && (
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-yellow-900/50 to-amber-800/30 border border-yellow-600/50 rounded-full">
-            <svg
-              className="w-4 h-4 text-yellow-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.477V16h2a1 1 0 110 2H8a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="text-xs font-medium text-yellow-300">Donor</span>
-          </div>
-        )}
+
         <div className="mt-3 flex items-center justify-center gap-4">
           <Link
             href="/profile/edit"
@@ -202,9 +225,10 @@ export default function ProfileSidebar({
           glowDirection={glowDirection}
           onAnimationComplete={removeAnimation}
         >
-          <div
+          <Link
             ref={walletRef}
-            className="mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg text-center relative overflow-hidden"
+            href="/profile/transactions"
+            className="block mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 hover:border-blue-500/70 rounded-lg text-center relative overflow-hidden transition-colors"
           >
             <div
               className="absolute h-full opacity-10 inset w-full top-0 left-0"
@@ -227,8 +251,12 @@ export default function ProfileSidebar({
                 }`}
               />
             </div>
-          </div>
+          </Link>
         </WalletAnimationRenderer>
+      )}
+
+      {walletBalance !== null && (
+        <BackupStickerInline currentCode={backupStickerCode} />
       )}
 
       {/* Action Buttons */}

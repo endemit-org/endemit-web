@@ -288,7 +288,7 @@ export function PosRegisterInterface({
   const disabledDirection = cartDirection === "CREDIT" ? "DEBIT" : cartDirection === "DEBIT" ? "CREDIT" : null;
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] relative">
+    <div className="flex h-[calc(100dvh-4rem)] relative">
       {/* Main: Items + Cart */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Desktop Header */}
@@ -518,7 +518,6 @@ export function PosRegisterInterface({
         <PosOrderQrModal
           order={activeOrder}
           onClose={() => setActiveOrder(null)}
-          onCancel={() => cancelOrder(activeOrder.orderHash)}
           onCopyToCart={() => copyToCart(activeOrder)}
         />
       )}

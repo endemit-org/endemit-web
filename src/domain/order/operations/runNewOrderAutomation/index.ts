@@ -15,8 +15,11 @@ import { sendOrderEmailToMerchant } from "@/domain/email/operations/sendOrderEma
 import { sendOrderEmailToDispatcher } from "@/domain/email/operations/sendOrderEmailToDispatcher";
 
 export const runNewOrderAutomation = inngest.createFunction(
-  { id: "notify-order-function", retries: 5 },
-  { event: OrderQueueEvent.NOTIFY_ON_ORDER },
+  {
+    id: "notify-order-function",
+    retries: 5,
+    triggers: [{ event: OrderQueueEvent.NOTIFY_ON_ORDER }],
+  },
   async ({ event, step }) => {
     const { orderId } = event.data as OrderNotificationData;
 

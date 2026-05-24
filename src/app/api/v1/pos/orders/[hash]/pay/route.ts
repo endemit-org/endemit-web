@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { payPosOrder } from "@/domain/pos/operations/payPosOrder";
+import { prisma } from "@/lib/services/prisma";
 
 export async function POST(
   request: Request,
@@ -21,9 +22,28 @@ export async function POST(
       return NextResponse.json({ error: "Invalid tip amount" }, { status: 400 });
     }
 
+    // When the seller triggers /pay (sticker-fallback flow), the order already
+    // has a customerId set by scanPosOrder. Use that as the customer for the
+    // payment rather than the seller's own id.
+    const existingOrder = await prisma.posOrder.findUnique({
+      where: { orderHash: hash },
+      select: { sellerId: true, customerId: true },
+    });
+
+    let customerId = user.id;
+    if (existingOrder && existingOrder.sellerId === user.id) {
+      if (!existingOrder.customerId) {
+        return NextResponse.json(
+          { error: "Order has not been scanned yet" },
+          { status: 400 }
+        );
+      }
+      customerId = existingOrder.customerId;
+    }
+
     const result = await payPosOrder({
       orderHash: hash,
-      customerId: user.id,
+      customerId,
       tipAmount,
     });
 

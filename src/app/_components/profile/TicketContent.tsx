@@ -204,7 +204,7 @@ export default function TicketContent({
         {isUsable && (
           <div className="w-full h-full absolute object-fill overflow-hidden opacity-60 top-0 left-0 z-0 ">
             <video
-              src={"/images/dancing_bck.mp4"}
+              src={"/images/dancing_bck.webm"}
               loop={true}
               muted={true}
               autoPlay={true}
@@ -214,14 +214,17 @@ export default function TicketContent({
           </div>
         )}
         <div className="text-center mb-6 relative z-10">
+          <h1 className="text-2xl font-bold text-neutral-100 mb-2">
+            {event?.name || ticket.eventName}
+          </h1>
           <h2 className="text-4xl font-semibold text-neutral-200 mb-1 tracking-widest">
             {ticket.shortId}
           </h2>
-          {formattedEventDate && (
+          {(formattedEventDate || event?.venue) && (
             <p className="text-sm text-neutral-400">
-              {" "}
-              {ticket.eventName} · {formattedEventDate}
-              {event && event.venue && ` · ${event.venue.name}`}
+              {formattedEventDate}
+              {formattedEventDate && event?.venue && " · "}
+              {event?.venue?.name}
             </p>
           )}
         </div>

@@ -65,3 +65,4 @@ next-env.d.ts
 # dev notes etc
 *.md
 !README.md
+/.claude/worktrees/

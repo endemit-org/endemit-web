@@ -25,8 +25,11 @@ interface TicketData {
  * duplicate emails if the dispatcher runs multiple times.
  */
 export const runEventReminderAutomation = inngest.createFunction(
-  { id: "run-event-reminder-automation", retries: 3 },
-  { cron: "TZ=Europe/Ljubljana 30 17 * * *" }, // 5:30pm Ljubljana daily
+  {
+    id: "run-event-reminder-automation",
+    retries: 3,
+    triggers: [{ cron: "TZ=Europe/Ljubljana 30 17 * * *" }], // 5:30pm Ljubljana daily
+  },
   async ({ step }) => {
     // Get today's date for idempotency key
     const reminderDate = await step.run("get-reminder-date", async () => {

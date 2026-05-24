@@ -30,7 +30,7 @@ export default function EventSaveTheDateLister({
         ></div>
         <div className="w-full h-full absolute object-fill overflow-hidden opacity-40 top-0 ">
           <video
-            src={"/images/dancing_bck.mp4"}
+            src={"/images/dancing_bck.webm"}
             loop={true}
             muted={true}
             autoPlay={true}

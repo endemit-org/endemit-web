@@ -10,8 +10,11 @@ import { sendEventClaimApprovalEmail } from "@/domain/email/operations/sendEvent
 import { prisma } from "@/lib/services/prisma";
 
 export const runEventClaimAutomation = inngest.createFunction(
-  { id: "event-claim-process", retries: 3 },
-  { event: EventClaimQueueEvent.PROCESS_CLAIM },
+  {
+    id: "event-claim-process",
+    retries: 3,
+    triggers: [{ event: EventClaimQueueEvent.PROCESS_CLAIM }],
+  },
   async ({ event, step }) => {
     const { claimId, userEmail, eventName } = event.data as EventClaimQueueData;
 

@@ -16,6 +16,7 @@ interface ProfileTableProps {
     label: string;
     href: string;
   };
+  headerAction?: ReactNode;
   children: ReactNode;
   isEmpty?: boolean;
 }
@@ -29,6 +30,7 @@ export default function ProfileTable({
   emptyIcon,
   emptyMessage = "No items yet",
   emptyAction,
+  headerAction,
   children,
   isEmpty = false,
 }: ProfileTableProps) {
@@ -37,6 +39,7 @@ export default function ProfileTable({
       <div className="bg-neutral-900 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-neutral-200">{title}</h3>
+          {headerAction}
         </div>
         <div className="text-center py-8">
           {emptyIcon && (
@@ -60,20 +63,23 @@ export default function ProfileTable({
 
   return (
     <div className="bg-neutral-900 rounded-lg overflow-hidden p-2 max-sm:bg-neutral-800">
-      <div className="flex items-center justify-between p-4 border-b border-neutral-700">
+      <div className="flex items-center justify-between p-4 border-b border-neutral-700 gap-3">
         <h3 className="text-lg font-semibold text-neutral-200">{title}</h3>
-        {viewAllHref && count !== undefined && count > 5 ? (
-          <Link
-            href={viewAllHref}
-            className="text-sm text-blue-400 hover:text-blue-300"
-          >
-            {viewAllLabel || `View all (${count})`}
-          </Link>
-        ) : count !== undefined ? (
-          <span className="text-sm text-neutral-500">
-            {count} {countLabel || (count === 1 ? "item" : "items")}
-          </span>
-        ) : null}
+        <div className="flex items-center gap-3">
+          {headerAction}
+          {viewAllHref && count !== undefined && count > 5 ? (
+            <Link
+              href={viewAllHref}
+              className="text-sm text-blue-400 hover:text-blue-300"
+            >
+              {viewAllLabel || `View all (${count})`}
+            </Link>
+          ) : count !== undefined ? (
+            <span className="text-sm text-neutral-500">
+              {count} {countLabel || (count === 1 ? "item" : "items")}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <div>{children}</div>
