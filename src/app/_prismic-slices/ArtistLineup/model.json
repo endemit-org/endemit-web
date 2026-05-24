@@ -49,10 +49,17 @@
                   "customtypes": ["artist"]
                 }
               },
-              "image": {
+              "name_override": {
+                "type": "Text",
+                "config": {
+                  "label": "Name override (optional)",
+                  "placeholder": ""
+                }
+              },
+              "image_override": {
                 "type": "Image",
                 "config": {
-                  "label": "Override image (optional)",
+                  "label": "Image override (optional)",
                   "constraint": {},
                   "thumbnails": []
                 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RichTextField } from "@prismicio/client";
+import { isFilled, RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -17,6 +17,7 @@ interface Artist {
   name: string;
   description?: RichTextField | null;
   image: CmsImage | null;
+  video?: string | null;
   links: ArtistLink[] | null;
   isEndemitCrew?: boolean;
 }
@@ -25,27 +26,55 @@ interface PodcastArtistSectionProps {
   artist: Artist;
   coverSrc?: string;
   showLinkToPage?: boolean;
+  imageOverride?: CmsImage | null;
+  nameOverride?: string | null;
+  descriptionOverride?: RichTextField | null;
+  videoOverride?: string | null;
 }
 
 export default function ArtistProfile({
   artist,
   coverSrc,
   showLinkToPage = false,
+  imageOverride,
+  nameOverride,
+  descriptionOverride,
+  videoOverride,
 }: PodcastArtistSectionProps) {
+  const image = imageOverride ?? artist.image;
+  const cover = imageOverride?.src ?? coverSrc;
+  const name = nameOverride || artist.name;
+  const description = isFilled.richText(descriptionOverride ?? [])
+    ? descriptionOverride
+    : artist.description;
+  const video = videoOverride ?? artist.video ?? null;
+
   return (
     <div className="relative overflow-hidden mb-40 z-10">
       <div className="flex gap-x-12 max-lg:flex-col max-lg:gap-y-16 max-lg:items-center">
-        {artist.image && (
-          <div>
-            <ImageWithFallback
-              src={artist.image.src}
-              alt={artist.image.alt ?? artist.name}
-              placeholder={artist.image.placeholder}
-              width={300}
-              height={300}
-              quality={90}
-              className="rounded-md object-cover max-sm:w-full"
-            />
+        {(image || video) && (
+          <div className="flex flex-col gap-y-4">
+            {image && (
+              <ImageWithFallback
+                src={image.src}
+                alt={image.alt ?? name}
+                placeholder={image.placeholder}
+                width={300}
+                height={300}
+                quality={90}
+                className="rounded-md object-cover max-sm:w-full"
+              />
+            )}
+            {video && (
+              <video
+                src={video}
+                loop
+                muted
+                autoPlay
+                playsInline
+                className="rounded-md w-[300px] max-sm:w-full aspect-square object-cover"
+              />
+            )}
           </div>
         )}
         <div className="flex-1">
@@ -53,19 +82,19 @@ export default function ArtistProfile({
             <h1
               className="text-5xl lg:text-7xl 2xl:text-8xl font-bold text-transparent bg-clip-text blur-[5px] top-0 absolute scale-110 uppercase"
               style={
-                coverSrc
+                cover
                   ? {
-                      backgroundImage: `url('${getResizedPrismicImage(coverSrc, { width: 400, quality: 50 })}')`,
+                      backgroundImage: `url('${getResizedPrismicImage(cover, { width: 400, quality: 50 })}')`,
                       backgroundSize: "1000px",
                       backgroundRepeat: "repeat",
                     }
                   : {}
               }
             >
-              {artist.name}
+              {name}
             </h1>
             <h2 className="text-5xl lg:text-7xl 2xl:text-8xl  text-neutral-300 relative uppercase">
-              {artist.name}
+              {name}
             </h2>
             {artist.isEndemitCrew && (
               <div
@@ -80,7 +109,7 @@ export default function ArtistProfile({
                 <div className={"px-2 text-neutral-500"}>·</div>
                 <div>
                   <Link
-                    href={`mailto:endemit@endemit.org?subject=Booking endemit artist: ${artist.name}`}
+                    href={`mailto:endemit@endemit.org?subject=Booking endemit artist: ${name}`}
                     className={"link text-[#d31c18] hover:text-[#87100e]"}
                   >
                     Inquire about booking
@@ -88,9 +117,9 @@ export default function ArtistProfile({
                 </div>
               </div>
             )}
-            {artist.description && (
+            {description && (
               <div className={"mt-6"}>
-                <RichTextDisplay richText={artist.description} />
+                <RichTextDisplay richText={description} />
               </div>
             )}
           </div>
@@ -100,14 +129,14 @@ export default function ArtistProfile({
                 href={`/artists/${artist.uid}`}
                 className={"link text-[#d31c18] hover:text-[#87100e]"}
               >
-                View {artist.name}&#39;s full profile
+                View {name}&#39;s full profile
               </Link>
             </div>
           )}
           {artist.links && artist.links.length > 0 && (
             <div className="gap-y-2 gap-x-6 flex mt-6 max-xl:flex-col">
               <div className="text-neutral-300 text-sm">
-                Find {artist.name} on:
+                Find {name} on:
               </div>
               {artist.links.map((link, index) => (
                 <div key={`artist-link-${index}`}>
@@ -118,7 +147,7 @@ export default function ArtistProfile({
                   >
                     <Image
                       src={`/images/${link.type.toLowerCase().replace(" ", "")}.png`}
-                      alt={`${artist.name} ${link.type}`}
+                      alt={`${name} ${link.type}`}
                       width={28}
                       height={28}
                     />
