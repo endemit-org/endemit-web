@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { asLink, isFilled, LinkField, RichTextField } from "@prismicio/client";
-import ArtistProfile from "@/app/_components/artist/ArtistProfile";
+import EventLineUp from "@/app/_components/event/EventLineUp";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { fetchArtistFromCms } from "@/domain/cms/operations/fetchArtistFromCms";
-import { CmsImage } from "@/domain/cms/types/common";
+import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import { getBlurDataURL } from "@/lib/util/util";
 
 interface ArtistProfileListItem {
@@ -46,35 +46,55 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
   }
 
   const resolved = await Promise.all(
-    items.map(async item => {
-      const artist =
-        isFilled.contentRelationship(
+    items.map(async (item): Promise<ArtistAtEvent | null> => {
+      if (
+        !isFilled.contentRelationship(
           item.artist as Parameters<typeof isFilled.contentRelationship>[0]
-        ) && item.artist.uid
-          ? await fetchArtistFromCms(item.artist.uid)
-          : null;
-
-      let imageOverride: CmsImage | null = null;
-      if (item.image_override?.url) {
-        imageOverride = {
-          src: item.image_override.url,
-          alt: item.image_override.alt ?? null,
-          placeholder: await getBlurDataURL(item.image_override.url),
-        };
+        ) ||
+        !item.artist.uid
+      ) {
+        return null;
       }
 
+      const artist = await fetchArtistFromCms(item.artist.uid);
+      if (!artist) return null;
+
+      const image = item.image_override?.url
+        ? {
+            src: item.image_override.url,
+            alt: item.image_override.alt ?? null,
+            placeholder: await getBlurDataURL(item.image_override.url),
+          }
+        : artist.image;
+
+      const description = isFilled.richText(item.description_override ?? [])
+        ? item.description_override
+        : artist.description;
+
+      const video = item.video_override
+        ? (asLink(item.video_override) ?? artist.video)
+        : artist.video;
+
       return {
-        artist,
-        imageOverride,
-        nameOverride: item.name_override ?? null,
-        descriptionOverride: item.description_override ?? null,
-        videoOverride: item.video_override ? asLink(item.video_override) : null,
+        ...artist,
+        name: item.name_override || artist.name,
+        image,
+        description,
+        video,
+        start_time: null,
+        end_time: null,
+        duration: 0,
+        stage: null,
         soundcloudUrl: item.soundcloud_url || null,
       };
     })
   );
 
-  const showLink = slice.primary.show_link_to_page ?? true;
+  const artists = resolved.filter((a): a is ArtistAtEvent => a !== null);
+
+  if (artists.length === 0) {
+    return null;
+  }
 
   const content = (
     <>
@@ -86,29 +106,7 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
           {slice.primary.description}
         </p>
       )}
-      {resolved.map(
-        ({
-          artist,
-          imageOverride,
-          nameOverride,
-          descriptionOverride,
-          videoOverride,
-          soundcloudUrl,
-        }) =>
-          artist ? (
-            <ArtistProfile
-              key={artist.id}
-              artist={artist}
-              coverSrc={artist.image?.src}
-              imageOverride={imageOverride}
-              nameOverride={nameOverride}
-              descriptionOverride={descriptionOverride}
-              videoOverride={videoOverride}
-              soundcloudUrl={soundcloudUrl}
-              showLinkToPage={showLink}
-            />
-          ) : null
-      )}
+      <EventLineUp artists={artists} />
     </>
   );
 
