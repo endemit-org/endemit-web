@@ -57,6 +57,39 @@
                   "select": "document",
                   "customtypes": ["artist"]
                 }
+              },
+              "name_override": {
+                "type": "Text",
+                "config": {
+                  "label": "Name override (optional)",
+                  "placeholder": ""
+                }
+              },
+              "description_override": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Description override (optional)",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,strong,em,hyperlink"
+                }
+              },
+              "image_override": {
+                "type": "Image",
+                "config": {
+                  "label": "Image override (optional)",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              },
+              "video_override": {
+                "type": "Link",
+                "config": {
+                  "label": "Video override (optional)",
+                  "placeholder": "",
+                  "select": "media",
+                  "allowText": true
+                }
               }
             }
           }

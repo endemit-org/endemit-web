@@ -9,15 +9,18 @@ import React from "react";
 type Props = {
   artist: Artist;
   imageOverride?: CmsImage | null;
+  nameOverride?: string | null;
   grayscale?: boolean;
 };
 
 export default function ArtistCard({
   artist,
   imageOverride,
+  nameOverride,
   grayscale = true,
 }: Props) {
   const image = imageOverride ?? artist.image;
+  const name = nameOverride || artist.name;
 
   return (
     <Link
@@ -31,7 +34,7 @@ export default function ArtistCard({
         {image?.src && (
           <ImageWithFallback
             src={image.src}
-            alt={image.alt || artist.name}
+            alt={image.alt || name}
             placeholder={image.placeholder}
             fill
             className={clsx(
@@ -45,10 +48,10 @@ export default function ArtistCard({
 
       <div className="relative p-4 flex  flex-col items-center justify-center">
         <div className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
-          {artist.name}
+          {name}
         </div>
         <div className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
-          {artist.name}
+          {name}
         </div>
       </div>
       {artist.isEndemitCrew && (

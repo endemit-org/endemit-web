@@ -17,7 +17,8 @@ interface ArtistLineupItem {
     type?: string;
     isBroken?: boolean;
   };
-  image?: {
+  name_override?: string | null;
+  image_override?: {
     url?: string | null;
     alt?: string | null;
   } | null;
@@ -51,15 +52,19 @@ const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
           : null;
 
       let imageOverride: CmsImage | null = null;
-      if (item.image?.url) {
+      if (item.image_override?.url) {
         imageOverride = {
-          src: item.image.url,
-          alt: item.image.alt ?? null,
-          placeholder: await getBlurDataURL(item.image.url),
+          src: item.image_override.url,
+          alt: item.image_override.alt ?? null,
+          placeholder: await getBlurDataURL(item.image_override.url),
         };
       }
 
-      return { artist, imageOverride };
+      return {
+        artist,
+        imageOverride,
+        nameOverride: item.name_override ?? null,
+      };
     })
   );
 
@@ -78,12 +83,13 @@ const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
           slice.primary.title || slice.primary.description ? "mt-8" : "mt-0"
         )}
       >
-        {resolved.map(({ artist, imageOverride }, index) =>
+        {resolved.map(({ artist, imageOverride, nameOverride }, index) =>
           artist ? (
             <ArtistCard
               key={artist.id}
               artist={artist}
               imageOverride={imageOverride}
+              nameOverride={nameOverride}
               grayscale={false}
             />
           ) : (
