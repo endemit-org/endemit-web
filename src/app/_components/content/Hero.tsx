@@ -10,6 +10,7 @@ export interface HeroProps {
   link?: string;
   backgroundImage?: CmsImage;
   backgroundVideo?: string;
+  vimeoVideoId?: string;
   overlayOpacity?: number;
   specialMarker?: "None" | "Tickets available";
 }
@@ -20,9 +21,11 @@ export default function Hero({
   link,
   backgroundImage,
   backgroundVideo,
+  vimeoVideoId,
   overlayOpacity = 50,
   specialMarker,
 }: HeroProps) {
+  const hasVideo = Boolean(vimeoVideoId || backgroundVideo);
   return (
     <Link
       href={link ?? "#"}
@@ -36,7 +39,7 @@ export default function Hero({
         <EventTicketAvailableStatus className=" lg:left-auto right-6 lg:top-auto lg:bottom-6 z-20" />
       )}
 
-      {backgroundImage && !backgroundVideo && (
+      {backgroundImage && !hasVideo && (
         <>
           <ImageWithFallback
             src={backgroundImage.src}
@@ -53,7 +56,18 @@ export default function Hero({
         </>
       )}
 
-      {backgroundVideo && (
+      {vimeoVideoId && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out [container-type:size]">
+          <iframe
+            src={`https://player.vimeo.com/video/${vimeoVideoId}?background=1&autoplay=1&muted=1&loop=1&playsinline=1`}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100cqw,calc(100cqh*16/9))] h-[max(100cqh,calc(100cqw*9/16))]"
+            style={{ border: 0 }}
+            allow="autoplay; fullscreen; picture-in-picture"
+          />
+        </div>
+      )}
+
+      {!vimeoVideoId && backgroundVideo && (
         <video
           src={backgroundVideo}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out"

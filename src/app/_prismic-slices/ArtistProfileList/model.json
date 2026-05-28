@@ -95,7 +95,7 @@
                 "type": "Text",
                 "config": {
                   "label": "SoundCloud URL (optional)",
-                  "placeholder": "URL to SoundCloud track/set for preview"
+                  "placeholder": "URL to SoundCloud track/set. For B2B: comma-separated URLs in B2B artist order."
                 }
               }
             }
