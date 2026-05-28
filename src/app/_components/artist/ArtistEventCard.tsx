@@ -30,6 +30,18 @@ export default function ArtistEventCard({
     ? new Date(artist.start_time).getTime() < Date.now() - convertMonthsToMs(3)
     : false;
 
+  const soundcloudUrls = artist.soundcloudUrl
+    ? artist.soundcloudUrl
+        .split(",")
+        .map(u => u.trim())
+        .filter(Boolean)
+    : [];
+
+  const showPerArtistSoundcloud =
+    artist.isB2b &&
+    Boolean(artist.b2bAttribution?.length) &&
+    soundcloudUrls.length > 1;
+
   return (
     <div className={clsx("", cardClassName)}>
       <div className="flex flex-col lg:flex-row gap-6 p-4">
@@ -113,13 +125,30 @@ export default function ArtistEventCard({
             </div>
           )}
 
-          {artist.soundcloudUrl && (
+          {soundcloudUrls.length > 0 && !showPerArtistSoundcloud && (
             <div className="mt-6">
               <ArtistPreviewSetButton
-                soundcloudUrl={artist.soundcloudUrl}
+                soundcloudUrl={soundcloudUrls[0]}
                 artistName={artist.name}
                 artistImage={artist.image?.src}
               />
+            </div>
+          )}
+
+          {showPerArtistSoundcloud && (
+            <div className="mt-6 flex flex-col gap-y-3">
+              {artist.b2bAttribution!.map((subArtist, i) => {
+                const url = soundcloudUrls[i];
+                if (!url || !subArtist) return null;
+                return (
+                  <ArtistPreviewSetButton
+                    key={subArtist.uid ?? `b2b-${i}`}
+                    soundcloudUrl={url}
+                    artistName={subArtist.name ?? artist.name}
+                    artistImage={artist.image?.src}
+                  />
+                );
+              })}
             </div>
           )}
 

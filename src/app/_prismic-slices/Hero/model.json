@@ -49,6 +49,13 @@
             "allowText": false
           }
         },
+        "vimeo_video_id": {
+          "type": "Text",
+          "config": {
+            "label": "Vimeo video ID",
+            "placeholder": "e.g. 76979871"
+          }
+        },
         "overlayOpacity": {
           "type": "Number",
           "config": {

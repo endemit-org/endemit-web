@@ -39,6 +39,10 @@ const HeroSlice: FC<HeroProps> = async ({ slice }) => {
     ? primary.background_video.url
     : undefined;
 
+  const vimeoVideoId = isFilled.keyText(primary.vimeo_video_id)
+    ? primary.vimeo_video_id
+    : undefined;
+
   return (
     <section
       data-slice-type={slice.slice_type}
@@ -50,6 +54,7 @@ const HeroSlice: FC<HeroProps> = async ({ slice }) => {
         link={link}
         backgroundImage={backgroundImage}
         backgroundVideo={backgroundVideo}
+        vimeoVideoId={vimeoVideoId}
         overlayOpacity={primary.overlayOpacity || 50}
         specialMarker={primary.special_marker as "None" | "Tickets available"}
       />
