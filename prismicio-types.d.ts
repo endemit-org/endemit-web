@@ -3197,6 +3197,16 @@ export interface HeroSliceDefaultPrimary {
   background_video: prismic.LinkToMediaField<prismic.FieldState, never>;
 
   /**
+   * Vimeo video ID field in *Hero → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 76979871
+   * - **API ID Path**: hero.default.primary.vimeo_video_id
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  vimeo_video_id: prismic.KeyTextField;
+
+  /**
    * Overlay Opacity (0-100) field in *Hero → Default → Primary*
    *
    * - **Field Type**: Number
