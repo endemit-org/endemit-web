@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import HeroVimeoBackground from "@/app/_components/content/HeroVimeoBackground";
 import { CmsImage } from "@/domain/cms/types/common";
 import EventTicketAvailableStatus from "@/app/_components/event/EventTicketAvailableStatus";
 
@@ -39,7 +40,7 @@ export default function Hero({
         <EventTicketAvailableStatus className=" lg:left-auto right-6 lg:top-auto lg:bottom-6 z-20" />
       )}
 
-      {backgroundImage && !hasVideo && (
+      {backgroundImage && (
         <>
           <ImageWithFallback
             src={backgroundImage.src}
@@ -49,21 +50,18 @@ export default function Hero({
             className="object-cover group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out"
             priority
           />
-          <div
-            className="absolute inset-0 bg-neutral-950"
-            style={{ opacity: overlayOpacity / 100 }}
-          />
+          {!hasVideo && (
+            <div
+              className="absolute inset-0 bg-neutral-950"
+              style={{ opacity: overlayOpacity / 100 }}
+            />
+          )}
         </>
       )}
 
       {vimeoVideoId && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out [container-type:size]">
-          <iframe
-            src={`https://player.vimeo.com/video/${vimeoVideoId}?background=1&autoplay=1&muted=1&loop=1&playsinline=1`}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100cqw,calc(100cqh*16/9))] h-[max(100cqh,calc(100cqw*9/16))]"
-            style={{ border: 0 }}
-            allow="autoplay; fullscreen; picture-in-picture"
-          />
+          <HeroVimeoBackground vimeoVideoId={vimeoVideoId} />
         </div>
       )}
 
