@@ -16,11 +16,17 @@ export default function HeroVimeoBackground({
     const iframe = iframeRef.current;
     if (!iframe) return;
 
-    const sendCommand = (method: string) => {
+    const sendCommand = (method: string, value?: string) => {
       iframe.contentWindow?.postMessage(
-        JSON.stringify({ method }),
+        JSON.stringify(value !== undefined ? { method, value } : { method }),
         "https://player.vimeo.com",
       );
+    };
+
+    const subscribe = () => {
+      sendCommand("addEventListener", "play");
+      sendCommand("addEventListener", "playing");
+      sendCommand("addEventListener", "timeupdate");
     };
 
     const handleMessage = (event: MessageEvent) => {
@@ -35,15 +41,26 @@ export default function HeroVimeoBackground({
       }
 
       if (data.event === "ready") {
-        sendCommand("addEventListener:play");
-        sendCommand("addEventListener:playing");
-      } else if (data.event === "play" || data.event === "playing") {
+        subscribe();
+      } else if (
+        data.event === "play" ||
+        data.event === "playing" ||
+        data.event === "timeupdate"
+      ) {
         setIsPlaying(true);
       }
     };
 
+    // Re-subscribe on iframe load in case `ready` fired before this listener attached.
+    const handleLoad = () => subscribe();
+
     window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
+    iframe.addEventListener("load", handleLoad);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      iframe.removeEventListener("load", handleLoad);
+    };
   }, []);
 
   return (
