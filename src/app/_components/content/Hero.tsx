@@ -59,11 +59,7 @@ export default function Hero({
         </>
       )}
 
-      {vimeoVideoId && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none group-hover:scale-125 group-hover:rotate-12 group-hover:blur-sm transition-all !duration-500 ease-out [container-type:size]">
-          <HeroVimeoBackground vimeoVideoId={vimeoVideoId} />
-        </div>
-      )}
+      {vimeoVideoId && <HeroVimeoBackground vimeoVideoId={vimeoVideoId} />}
 
       {!vimeoVideoId && backgroundVideo && (
         <video
