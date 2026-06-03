@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { prisma } from "@/lib/services/prisma";
 import { scanPosOrder } from "@/domain/pos/operations/scanPosOrder";
-import { resolveSticker } from "@/domain/sticker/operations/resolveSticker";
+import { resolveScanTarget } from "@/domain/wallet/util/resolveScanTarget";
 
 export async function POST(
   request: Request,
@@ -35,13 +35,13 @@ export async function POST(
       });
       if (!assignment) {
         return NextResponse.json(
-          { error: "Not authorized to scan backup stickers on this order" },
+          { error: "Not authorized to scan wristbands on this order" },
           { status: 403 }
         );
       }
     }
 
-    const { userId: customerId } = await resolveSticker(stickerCode);
+    const { userId: customerId } = await resolveScanTarget(stickerCode);
 
     const result = await scanPosOrder(hash, customerId);
 

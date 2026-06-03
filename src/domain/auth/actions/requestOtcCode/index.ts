@@ -13,10 +13,12 @@ const OTC_EXPIRATION_MINUTES = 10;
 
 interface RequestOtcCodeParams {
   email: string;
+  callbackUrl?: string;
 }
 
 export const requestOtcCode = async ({
   email,
+  callbackUrl,
 }: RequestOtcCodeParams): Promise<OtcRequestResult> => {
   const normalizedEmail = email.toLowerCase().trim();
 
@@ -88,6 +90,7 @@ export const requestOtcCode = async ({
     code,
     magicLink,
     expiresInMinutes: OTC_EXPIRATION_MINUTES,
+    callbackUrl,
   });
 
   return {

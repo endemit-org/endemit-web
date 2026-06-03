@@ -25,12 +25,11 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
 
   const submitCode = useCallback(
     async (rawCode: string) => {
-      const code = rawCode.trim().toUpperCase();
+      // Send the raw scanned value — server resolves either a wristband
+      // URL/code or a signed receive code. Don't uppercase here: receive
+      // codes are case-sensitive HMACs.
+      const code = rawCode.trim();
       if (!code || isSubmitting) return;
-      if (!/^[A-Z]{2}[0-9]{2}$/.test(code)) {
-        setError("Code must be 2 letters followed by 2 numbers (e.g. AB12)");
-        return;
-      }
 
       setIsSubmitting(true);
       setError(null);
@@ -56,7 +55,9 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
           hasEnoughBalance: data.hasEnoughBalance,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to resolve sticker");
+        setError(
+          err instanceof Error ? err.message : "Failed to resolve sticker"
+        );
       } finally {
         setIsSubmitting(false);
       }
@@ -79,14 +80,14 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
       {isSubmitting && (
         <div className="absolute inset-0 z-10 bg-neutral-900/95 flex flex-col items-center justify-center rounded-b-2xl">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="font-medium">Resolving sticker...</p>
+          <p className="font-medium">Resolving wristband...</p>
         </div>
       )}
 
       <div className="text-center mb-4">
-        <h3 className="text-lg font-semibold">Scan Backup Sticker</h3>
+        <h3 className="text-lg font-semibold">Scan wristband</h3>
         <p className="text-sm text-neutral-400 mt-1">
-          Point the camera at the customer&apos;s sticker, or type the 4-char
+          Point the camera at the customer&apos;s wristband, or type the 4-char
           code.
         </p>
       </div>
@@ -129,7 +130,7 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
         </div>
       </div>
       <p className="text-xs text-neutral-500 text-center mb-4">
-        Scan QR or type the 4-character sticker code
+        Scan QR or type the 4-character wristband code
       </p>
 
       {error && (

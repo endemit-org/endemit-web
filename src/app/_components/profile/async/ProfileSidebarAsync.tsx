@@ -3,6 +3,7 @@ import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserI
 import { getVisibleProducts } from "@/domain/product/actions/getProducts";
 import { checkUserIsDonor } from "@/domain/order/operations/checkUserIsDonor";
 import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
+import { signReceiveCode } from "@/domain/wallet/util/receiveCode";
 import { ProductCategory } from "@/domain/product/types/product";
 import ProfileSidebar from "@/app/_components/profile/ProfileSidebar";
 
@@ -43,6 +44,7 @@ export default async function ProfileSidebarAsync({
       upcomingTickets={upcomingTickets.length}
       isDonor={isDonor}
       backupStickerCode={sticker?.code ?? null}
+      receiveCode={signReceiveCode(userId)}
     />
   );
 }

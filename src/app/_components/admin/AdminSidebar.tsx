@@ -275,7 +275,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "POS Stickers",
+    label: "POS offline QRs",
     href: "/admin/pos/stickers",
     permission: PERMISSIONS.POS_STICKERS_MANAGE,
     icon: (

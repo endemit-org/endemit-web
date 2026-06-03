@@ -133,12 +133,12 @@ export default async function ProfileAccessButtonsAsync({
   }
 
   return (
-    <div className="flex mb-6 bg-neutral-950 rounded-lg overflow-hidden border border-neutral-800">
+    <div className="flex mb-6 bg-neutral-950 rounded-lg overflow-hidden border border-neutral-800 ">
       {/* Vertical CREW label */}
       <div className="flex items-center justify-center px-2 bg-neutral-900 border-r border-neutral-800">
         <span
-          className="text-white/80 text-xs font-bold tracking-widest"
-          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+          className="text-white/80 text-xs font-bold tracking-widest rotate-180"
+          style={{ writingMode: "vertical-rl" }}
         >
           CREW
         </span>

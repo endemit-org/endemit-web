@@ -14,7 +14,10 @@ import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
-  () => import("./PosStickerScanView").then(mod => ({ default: mod.PosStickerScanView })),
+  () =>
+    import("./PosStickerScanView").then(mod => ({
+      default: mod.PosStickerScanView,
+    })),
   { ssr: false }
 );
 
@@ -52,17 +55,13 @@ const AUTO_CLOSE_SECONDS = 30;
 
 type SubView = "qr" | "sticker-scan" | "customer-confirm";
 
-export function PosOrderQrModal({
-  order,
-  onClose,
-  onCopyToCart,
-}: Props) {
+export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
     null
   );
-  const [subView, setSubView] = useState<SubView>("qr");
+  const [subView, setSubView] = useState<SubView>("sticker-scan");
   const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
     null
   );
@@ -161,7 +160,7 @@ export function PosOrderQrModal({
   // Reset sub-view state when the order becomes paid
   useEffect(() => {
     if (isPaid) {
-      setSubView("qr");
+      setSubView("sticker-scan");
       setStickerScan(null);
       setPayError(null);
     }
@@ -286,7 +285,9 @@ export function PosOrderQrModal({
                       total
                     </p>
                   </div>
-                  <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">+</div>
+                  <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">
+                    +
+                  </div>
                   <div className="text-center">
                     <WalletAnimationRenderer
                       animations={tipAnim.animations}
@@ -298,7 +299,10 @@ export function PosOrderQrModal({
                         ref={tipRef}
                         className="inline-flex items-baseline gap-1 text-xl font-semibold text-yellow-200 leading-none"
                       >
-                        <AnimatedBalance value={order.tipAmount!} countFromZero />
+                        <AnimatedBalance
+                          value={order.tipAmount!}
+                          countFromZero
+                        />
                         <span aria-hidden>✨</span>
                       </span>
                     </WalletAnimationRenderer>
@@ -471,7 +475,7 @@ export function PosOrderQrModal({
                 error={payError}
                 onPay={handlePay}
                 onCancel={() => {
-                  setSubView("qr");
+                  setSubView("sticker-scan");
                   setStickerScan(null);
                   setPayError(null);
                 }}
@@ -481,13 +485,30 @@ export function PosOrderQrModal({
         </div>
 
         {/* Actions */}
+        {!isPaid && subView === "sticker-scan" && (
+          <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
+            <button
+              onClick={() => setSubView("qr")}
+              className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
+            >
+              Show QR instead
+            </button>
+            <button
+              onClick={onCopyToCart}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+            >
+              Cancel & Edit
+            </button>
+          </div>
+        )}
+
         {!isPaid && subView === "qr" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
             <button
               onClick={() => setSubView("sticker-scan")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
-              Scan backup sticker
+              Scan wristband
             </button>
             <button
               onClick={onCopyToCart}
