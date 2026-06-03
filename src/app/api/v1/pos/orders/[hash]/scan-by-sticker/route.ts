@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { prisma } from "@/lib/services/prisma";
 import { scanPosOrder } from "@/domain/pos/operations/scanPosOrder";
-import { resolveSticker } from "@/domain/sticker/operations/resolveSticker";
+import { resolveScanTarget } from "@/domain/wallet/util/resolveScanTarget";
 
 export async function POST(
   request: Request,
@@ -41,7 +41,7 @@ export async function POST(
       }
     }
 
-    const { userId: customerId } = await resolveSticker(stickerCode);
+    const { userId: customerId } = await resolveScanTarget(stickerCode);
 
     const result = await scanPosOrder(hash, customerId);
 

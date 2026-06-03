@@ -25,12 +25,11 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
 
   const submitCode = useCallback(
     async (rawCode: string) => {
-      const code = rawCode.trim().toUpperCase();
+      // Send the raw scanned value — server resolves either a wristband
+      // URL/code or a signed receive code. Don't uppercase here: receive
+      // codes are case-sensitive HMACs.
+      const code = rawCode.trim();
       if (!code || isSubmitting) return;
-      if (!/^[A-Z]{2}[0-9]{2}$/.test(code)) {
-        setError("Code must be 2 letters followed by 2 numbers (e.g. AB12)");
-        return;
-      }
 
       setIsSubmitting(true);
       setError(null);

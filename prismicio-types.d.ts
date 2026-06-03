@@ -108,6 +108,7 @@ type ArtistDocumentDataSlicesSlice =
   | SpacerSlice
   | HorizontalRuleSlice
   | ArtistListSlice
+  | ArtistProfileListSlice
   | TabsSlice
   | GridTileSlice
   | AccordionSlice
@@ -312,6 +313,7 @@ type ContentPageDocumentDataSlicesSlice =
   | HorizontalRuleSlice
   | ArtistListSlice
   | ArtistLineupSlice
+  | ArtistProfileListSlice
   | TabsSlice
   | GridTileSlice
   | AccordionSlice
@@ -570,7 +572,7 @@ export interface EventDocumentDataArtistsItem {
    * SoundCloud URL field in *Event → Artists*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: URL to SoundCloud track/set for preview
+   * - **Placeholder**: URL to SoundCloud track/set. For B2B: comma-separated URLs in B2B artist order.
    * - **API ID Path**: event.artists[].soundcloud_url
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
@@ -579,6 +581,7 @@ export interface EventDocumentDataArtistsItem {
 
 type EventDocumentDataSlicesSlice =
   | ArtistLineupSlice
+  | ArtistProfileListSlice
   | BannerSlice
   | CollabPromoSlice
   | SnowfallSlice
@@ -1015,12 +1018,15 @@ export type FooterContentDocument<Lang extends string = string> =
   >;
 
 type HomePageDocumentDataSlicesSlice =
+  | TicketPriceProgressSlice
+  | ArtistLineupSlice
   | BannerSlice
   | CollabPromoSlice
   | SnowfallSlice
   | SaveTheDateSlice
   | EventListSlice
   | ArtistListSlice
+  | ArtistProfileListSlice
   | VinylPromoSectionSlice
   | SpacerSlice
   | HorizontalRuleSlice
@@ -1108,6 +1114,7 @@ type InnerContentDocumentDataSlicesSlice =
   | BannerSlice
   | ArtistListSlice
   | ArtistLineupSlice
+  | ArtistProfileListSlice
   | BlurredBlobSlice
   | SnowfallSlice
   | CollabPromoSlice
@@ -1586,6 +1593,7 @@ type ProductDocumentDataSlicesSlice =
   | SaveTheDateSlice
   | EventListSlice
   | ArtistListSlice
+  | ArtistProfileListSlice
   | AccordionSlice
   | BlurredBlobSlice
   | BannerSlice
@@ -2283,6 +2291,26 @@ export interface ArtistLineupSliceDefaultPrimaryArtistsItem {
    * - **Documentation**: https://prismic.io/docs/fields/content-relationship
    */
   artist: prismic.ContentRelationshipField<"artist">;
+
+  /**
+   * Name override (optional) field in *ArtistLineup → Default → Primary → Artists*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_lineup.default.primary.artists[].name_override
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  name_override: prismic.KeyTextField;
+
+  /**
+   * Image override (optional) field in *ArtistLineup → Default → Primary → Artists*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_lineup.default.primary.artists[].image_override
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image_override: prismic.ImageField<never>;
 }
 
 /**
@@ -2437,6 +2465,160 @@ type ArtistListSliceVariation = ArtistListSliceDefault;
 export type ArtistListSlice = prismic.SharedSlice<
   "artist_list",
   ArtistListSliceVariation
+>;
+
+/**
+ * Item in *ArtistProfileList → Default → Primary → Artists*
+ */
+export interface ArtistProfileListSliceDefaultPrimaryArtistsItem {
+  /**
+   * Artist field in *ArtistProfileList → Default → Primary → Artists*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_profile_list.default.primary.artists[].artist
+   * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+   */
+  artist: prismic.ContentRelationshipField<"artist">;
+
+  /**
+   * Name override (optional) field in *ArtistProfileList → Default → Primary → Artists*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_profile_list.default.primary.artists[].name_override
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  name_override: prismic.KeyTextField;
+
+  /**
+   * Description override (optional) field in *ArtistProfileList → Default → Primary → Artists*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_profile_list.default.primary.artists[].description_override
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_override: prismic.RichTextField;
+
+  /**
+   * Image override (optional) field in *ArtistProfileList → Default → Primary → Artists*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_profile_list.default.primary.artists[].image_override
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image_override: prismic.ImageField<never>;
+
+  /**
+   * Video override (optional) field in *ArtistProfileList → Default → Primary → Artists*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_profile_list.default.primary.artists[].video_override
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  video_override: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * SoundCloud URL (optional) field in *ArtistProfileList → Default → Primary → Artists*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: URL to SoundCloud track/set. For B2B: comma-separated URLs in B2B artist order.
+   * - **API ID Path**: artist_profile_list.default.primary.artists[].soundcloud_url
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  soundcloud_url: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *ArtistProfileList → Default → Primary*
+ */
+export interface ArtistProfileListSliceDefaultPrimary {
+  /**
+   * Title field in *ArtistProfileList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (optional)
+   * - **API ID Path**: artist_profile_list.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *ArtistProfileList → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: (optional)
+   * - **API ID Path**: artist_profile_list.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Render frame field in *ArtistProfileList → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: artist_profile_list.default.primary.render_frame
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  render_frame: prismic.BooleanField;
+
+  /**
+   * Show link to artist page field in *ArtistProfileList → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: artist_profile_list.default.primary.show_link_to_page
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  show_link_to_page: prismic.BooleanField;
+
+  /**
+   * Artists field in *ArtistProfileList → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: artist_profile_list.default.primary.artists[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  artists: prismic.GroupField<
+    Simplify<ArtistProfileListSliceDefaultPrimaryArtistsItem>
+  >;
+}
+
+/**
+ * Default variation for ArtistProfileList Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ArtistProfileListSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ArtistProfileListSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *ArtistProfileList*
+ */
+type ArtistProfileListSliceVariation = ArtistProfileListSliceDefault;
+
+/**
+ * ArtistProfileList Shared Slice
+ *
+ * - **API ID**: `artist_profile_list`
+ * - **Description**: List of full artist profiles, each rendered like the artist page header.
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ArtistProfileListSlice = prismic.SharedSlice<
+  "artist_profile_list",
+  ArtistProfileListSliceVariation
 >;
 
 /**
@@ -4793,6 +4975,11 @@ declare module "@prismicio/client" {
       ArtistListSliceDefaultPrimary,
       ArtistListSliceVariation,
       ArtistListSliceDefault,
+      ArtistProfileListSlice,
+      ArtistProfileListSliceDefaultPrimaryArtistsItem,
+      ArtistProfileListSliceDefaultPrimary,
+      ArtistProfileListSliceVariation,
+      ArtistProfileListSliceDefault,
       BannerSlice,
       BannerSliceDefaultPrimary,
       BannerSliceVariation,

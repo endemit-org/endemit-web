@@ -37,6 +37,7 @@ interface ProfileSidebarProps {
   upcomingTickets: number | null;
   isDonor?: boolean;
   backupStickerCode?: string | null;
+  receiveCode: string;
 }
 
 export default function ProfileSidebar({
@@ -49,6 +50,7 @@ export default function ProfileSidebar({
   currencyProducts,
   isDonor,
   backupStickerCode = null,
+  receiveCode,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
@@ -256,35 +258,19 @@ export default function ProfileSidebar({
       )}
 
       {walletBalance !== null && (
-        <BackupStickerInline currentCode={backupStickerCode} />
+        <BackupStickerInline
+          currentCode={backupStickerCode}
+          walletBalance={walletBalance}
+          receiveCode={receiveCode}
+        />
       )}
 
       {/* Action Buttons */}
       <div className="space-y-3">
         <>
           <ActionButton
-            onClick={() => setIsPayScannerOpen(true)}
-            disabled={!isEndemitPayEnabled()}
-          >
-            <svg
-              className="w-5 h-5 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
-              />
-            </svg>
-            Scan EndePay
-          </ActionButton>
-
-          <ActionButton
             onClick={() => setIsTopUpOpen(true)}
-            variant={"secondary"}
+            variant="secondary"
           >
             <svg
               className="w-5 h-5"
@@ -301,6 +287,16 @@ export default function ProfileSidebar({
             </svg>
             Top Up Wallet
           </ActionButton>
+
+          {isEndemitPayEnabled() && (
+            <button
+              type="button"
+              onClick={() => setIsPayScannerOpen(true)}
+              className="w-full text-center text-xs text-neutral-500 hover:text-neutral-300 py-1 transition-colors"
+            >
+              Scan a POS order instead
+            </button>
+          )}
         </>
         {!!upcomingTickets && (
           <Link

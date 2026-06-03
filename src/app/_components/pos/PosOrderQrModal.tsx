@@ -61,7 +61,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
     null
   );
-  const [subView, setSubView] = useState<SubView>("qr");
+  const [subView, setSubView] = useState<SubView>("sticker-scan");
   const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
     null
   );
@@ -160,7 +160,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   // Reset sub-view state when the order becomes paid
   useEffect(() => {
     if (isPaid) {
-      setSubView("qr");
+      setSubView("sticker-scan");
       setStickerScan(null);
       setPayError(null);
     }
@@ -475,7 +475,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 error={payError}
                 onPay={handlePay}
                 onCancel={() => {
-                  setSubView("qr");
+                  setSubView("sticker-scan");
                   setStickerScan(null);
                   setPayError(null);
                 }}
@@ -485,6 +485,23 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         </div>
 
         {/* Actions */}
+        {!isPaid && subView === "sticker-scan" && (
+          <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
+            <button
+              onClick={() => setSubView("qr")}
+              className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
+            >
+              Show QR instead
+            </button>
+            <button
+              onClick={onCopyToCart}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+            >
+              Cancel & Edit
+            </button>
+          </div>
+        )}
+
         {!isPaid && subView === "qr" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
             <button
