@@ -11,6 +11,8 @@ type Props = {
   imageOverride?: CmsImage | null;
   nameOverride?: string | null;
   grayscale?: boolean;
+  showName?: boolean;
+  linkOverride?: string | null;
 };
 
 export default function ArtistCard({
@@ -18,14 +20,20 @@ export default function ArtistCard({
   imageOverride,
   nameOverride,
   grayscale = true,
+  showName = true,
+  linkOverride = null,
 }: Props) {
   const image = imageOverride ?? artist.image;
   const name = nameOverride || artist.name;
+  const href = linkOverride ?? `/artists/${artist.uid}`;
+  const isExternal = /^https?:\/\//i.test(href);
 
   return (
     <Link
       key={artist.id}
-      href={`/artists/${artist.uid}`}
+      href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
       className="group bg-neutral-950 p-2 hover:bg-neutral-900 rounded-sm text-left w-full relative  "
     >
       <div className={"aspect-square overflow-hidden relative "}>
@@ -46,14 +54,16 @@ export default function ArtistCard({
         )}
       </div>
 
-      <div className="relative p-4 flex  flex-col items-center justify-center">
-        <div className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
-          {name}
+      {showName && (
+        <div className="relative p-4 flex  flex-col items-center justify-center">
+          <div className="relative text-2xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase">
+            {name}
+          </div>
+          <div className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
+            {name}
+          </div>
         </div>
-        <div className="text-4xl font-bold text-neutral-200  text-center leading-tight font-heading uppercase absolute -scale-x-100 opacity-20 ">
-          {name}
-        </div>
-      </div>
+      )}
       {artist.isEndemitCrew && (
         <div
           className={

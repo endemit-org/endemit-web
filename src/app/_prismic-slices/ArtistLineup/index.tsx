@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { isFilled } from "@prismicio/client";
+import { asLink, isFilled, LinkField } from "@prismicio/client";
 import clsx from "clsx";
 import ArtistCard from "@/app/_components/artist/ArtistCard";
 import BlurredArtistCard from "@/app/_components/artist/BlurredArtistCard";
@@ -31,6 +31,8 @@ interface ArtistLineupSlice {
     title?: string | null;
     description?: string | null;
     render_frame?: boolean;
+    show_names?: boolean;
+    link_override?: LinkField;
     artists?: ArtistLineupItem[];
   };
 }
@@ -41,6 +43,11 @@ const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
   if (items.length === 0) {
     return null;
   }
+
+  const showNames = slice.primary.show_names ?? true;
+  const linkOverride = slice.primary.link_override
+    ? (asLink(slice.primary.link_override) ?? null)
+    : null;
 
   const resolved = await Promise.all(
     items.map(async item => {
@@ -91,6 +98,8 @@ const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
               imageOverride={imageOverride}
               nameOverride={nameOverride}
               grayscale={false}
+              showName={showNames}
+              linkOverride={linkOverride}
             />
           ) : (
             <BlurredArtistCard key={`blurred-${index}`} seed={index} />
