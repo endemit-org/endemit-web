@@ -35,6 +35,22 @@
             "default_value": false
           }
         },
+        "show_names": {
+          "type": "Boolean",
+          "config": {
+            "label": "Show artist names",
+            "placeholder_false": "Hide names",
+            "placeholder_true": "Show names",
+            "default_value": true
+          }
+        },
+        "link_override": {
+          "type": "Link",
+          "config": {
+            "label": "Link override (applied to all cards in this slice)",
+            "allowTargetBlank": true
+          }
+        },
         "artists": {
           "type": "Group",
           "config": {
