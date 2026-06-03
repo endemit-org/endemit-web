@@ -84,7 +84,10 @@ export default function OtcEmailForm() {
           return;
         }
 
-        const result = await registerOtcUser({ email: trimmedIdentifier });
+        const result = await registerOtcUser({
+          email: trimmedIdentifier,
+          callbackUrl: callbackUrl || undefined,
+        });
 
         if (result.success) {
           const verifyParams = new URLSearchParams({
@@ -142,7 +145,10 @@ export default function OtcEmailForm() {
 
         // OTC auth - send code
         const email = authModeResult.email || trimmedIdentifier;
-        const result = await requestOtcCode({ email });
+        const result = await requestOtcCode({
+          email,
+          callbackUrl: callbackUrl || undefined,
+        });
 
         if (result.success) {
           const verifyParams = new URLSearchParams({ email });

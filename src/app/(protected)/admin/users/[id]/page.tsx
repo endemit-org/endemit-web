@@ -65,7 +65,9 @@ export default async function AdminUserDetailPage({
   const canManageRoles = currentUser.permissions.includes(
     PERMISSIONS.USERS_MANAGE_ROLES
   );
-  const canViewWallets = currentUser.permissions.includes(PERMISSIONS.WALLETS_READ);
+  const canViewWallets = currentUser.permissions.includes(
+    PERMISSIONS.WALLETS_READ
+  );
   const canManageStickers = currentUser.permissions.includes(
     PERMISSIONS.POS_STICKERS_MANAGE
   );
@@ -228,7 +230,7 @@ export default async function AdminUserDetailPage({
           {canManageStickers && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Backup Sticker
+                Payment wristband
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <UserStickerManager

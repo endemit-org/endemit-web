@@ -35,7 +35,7 @@ export async function POST(
       });
       if (!assignment) {
         return NextResponse.json(
-          { error: "Not authorized to scan backup stickers on this order" },
+          { error: "Not authorized to scan wristbands on this order" },
           { status: 403 }
         );
       }

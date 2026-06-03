@@ -10,11 +10,12 @@ function StickerLinkedTemplate({ code }: Props) {
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Your backup sticker is active</h1>
+        <h1 className="text-2xl font-bold mb-4">Your wristband is active</h1>
 
         <Text className="text-gray-600 mb-6">
-          A backup sticker is now linked to your Endemit wallet. Keep it
-          somewhere safe — a wallet, keychain, or phone case works well.
+          A wristband is now linked to your Endemit wallet. Keep it with you and
+          use it at bars or shops within the area to make payments using your
+          online balance.
         </Text>
 
         <div
@@ -26,7 +27,9 @@ function StickerLinkedTemplate({ code }: Props) {
             marginBottom: "24px",
           }}
         >
-          <Text className="text-gray-500 text-sm mb-1">Your sticker code</Text>
+          <Text className="text-gray-500 text-sm mb-1">
+            Your wristband code
+          </Text>
           <Text
             style={{
               fontFamily: "monospace",
@@ -42,7 +45,7 @@ function StickerLinkedTemplate({ code }: Props) {
 
         <h2 className="text-lg font-semibold mb-2">How to use it</h2>
         <Text className="text-gray-600 mb-6">
-          If your phone is dead or missing at a POS register, hand the sticker
+          If your phone is dead or missing at a POS register, show the wristband
           to the cashier. They can scan it (or type the code) and the payment
           screen will appear on their device for you to confirm.
         </Text>

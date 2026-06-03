@@ -397,16 +397,15 @@ export const PERMISSION_METADATA: Record<
     action: "tips:withdraw",
   },
   [PERMISSIONS.POS_STICKERS_MANAGE]: {
-    name: "Manage POS Stickers",
+    name: "Manage POS offline QRs",
     description:
-      "Generate sticker codes and assign/unlink them from user accounts",
+      "Generate offline QR codes and assign/unlink them from user accounts",
     resource: "pos",
     action: "stickers:manage",
   },
   [PERMISSIONS.EVENT_CLAIMS_MANAGE]: {
     name: "Manage Event Claims",
-    description:
-      "List, manually create, approve, and delete user event claims",
+    description: "List, manually create, approve, and delete user event claims",
     resource: "event-claims",
     action: "manage",
   },
