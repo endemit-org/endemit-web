@@ -11,11 +11,11 @@ function StickerReplacedTemplate({ oldCode, newCode }: Props) {
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Your backup sticker was updated</h1>
+        <h1 className="text-2xl font-bold mb-4">Your wristband was updated</h1>
 
         <Text className="text-gray-600 mb-6">
-          Your previous backup sticker has been replaced. The old code will no
-          longer work at POS registers — only the new one below.
+          Your previous wristband has been replaced. The old code will no longer
+          work at POS registers — only the new one below.
         </Text>
 
         <table style={{ width: "100%", marginBottom: "24px" }}>
@@ -57,7 +57,9 @@ function StickerReplacedTemplate({ oldCode, newCode }: Props) {
                     textAlign: "center",
                   }}
                 >
-                  <Text className="text-green-700 text-xs mb-1">New (active)</Text>
+                  <Text className="text-green-700 text-xs mb-1">
+                    New (active)
+                  </Text>
                   <Text
                     style={{
                       fontFamily: "monospace",
@@ -78,9 +80,9 @@ function StickerReplacedTemplate({ oldCode, newCode }: Props) {
 
         <h2 className="text-lg font-semibold mb-2">How to use it</h2>
         <Text className="text-gray-600 mb-6">
-          If your phone is dead or missing at a POS register, hand the new
-          sticker to the cashier. They can scan it (or type the code) and the
-          payment screen will appear on their device for you to confirm.
+          If your phone is dead or missing at a POS register, show the wristband
+          to the cashier. They can scan it (or type the code) and the payment
+          screen will appear on their device for you to confirm.
         </Text>
       </div>
     </MasterTemplate>

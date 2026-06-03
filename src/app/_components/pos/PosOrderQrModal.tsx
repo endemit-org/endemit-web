@@ -14,7 +14,10 @@ import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
-  () => import("./PosStickerScanView").then(mod => ({ default: mod.PosStickerScanView })),
+  () =>
+    import("./PosStickerScanView").then(mod => ({
+      default: mod.PosStickerScanView,
+    })),
   { ssr: false }
 );
 
@@ -52,11 +55,7 @@ const AUTO_CLOSE_SECONDS = 30;
 
 type SubView = "qr" | "sticker-scan" | "customer-confirm";
 
-export function PosOrderQrModal({
-  order,
-  onClose,
-  onCopyToCart,
-}: Props) {
+export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
@@ -286,7 +285,9 @@ export function PosOrderQrModal({
                       total
                     </p>
                   </div>
-                  <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">+</div>
+                  <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">
+                    +
+                  </div>
                   <div className="text-center">
                     <WalletAnimationRenderer
                       animations={tipAnim.animations}
@@ -298,7 +299,10 @@ export function PosOrderQrModal({
                         ref={tipRef}
                         className="inline-flex items-baseline gap-1 text-xl font-semibold text-yellow-200 leading-none"
                       >
-                        <AnimatedBalance value={order.tipAmount!} countFromZero />
+                        <AnimatedBalance
+                          value={order.tipAmount!}
+                          countFromZero
+                        />
                         <span aria-hidden>✨</span>
                       </span>
                     </WalletAnimationRenderer>
@@ -487,7 +491,7 @@ export function PosOrderQrModal({
               onClick={() => setSubView("sticker-scan")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
-              Scan backup sticker
+              Scan wristband
             </button>
             <button
               onClick={onCopyToCart}

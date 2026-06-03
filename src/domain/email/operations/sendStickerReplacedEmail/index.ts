@@ -23,7 +23,7 @@ export const sendStickerReplacedEmail = async (
   return await resend.emails.send({
     from: resendFromEmail,
     to: customerEmail,
-    subject: "Your backup sticker was updated",
+    subject: "Your wristband was updated",
     react: StickerReplacedTemplate(templateProps),
   });
 };

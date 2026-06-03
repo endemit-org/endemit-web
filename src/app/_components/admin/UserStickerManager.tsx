@@ -43,22 +43,21 @@ export default function UserStickerManager({
       setIsBusy(true);
       setError(null);
       try {
-        const response = await fetch(
-          `/api/v1/admin/users/${userId}/sticker`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
-          }
-        );
+        const response = await fetch(`/api/v1/admin/users/${userId}/sticker`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error || "Failed to assign sticker");
+          throw new Error(data.error || "Failed to assign QR code");
         }
         setIsModalOpen(false);
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to assign sticker");
+        setError(
+          err instanceof Error ? err.message : "Failed to assign QR code"
+        );
       } finally {
         setIsBusy(false);
       }
@@ -67,7 +66,7 @@ export default function UserStickerManager({
   );
 
   const handleUnlink = useCallback(async () => {
-    if (!confirm("Unlink this sticker from the user?")) return;
+    if (!confirm("Unlink this QR code from the user?")) return;
     setIsBusy(true);
     setError(null);
     try {
@@ -76,11 +75,11 @@ export default function UserStickerManager({
       });
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to unlink sticker");
+        throw new Error(data.error || "Failed to unlink QR code");
       }
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to unlink sticker");
+      setError(err instanceof Error ? err.message : "Failed to unlink QR code");
     } finally {
       setIsBusy(false);
     }
@@ -119,13 +118,13 @@ export default function UserStickerManager({
         </div>
       ) : (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-gray-500">No sticker linked</p>
+          <p className="text-sm text-gray-500">No QR code linked</p>
           <button
             onClick={openModal}
             disabled={isBusy}
             className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50"
           >
-            Assign sticker
+            Assign QR code
           </button>
         </div>
       )}
@@ -171,7 +170,7 @@ export default function UserStickerManager({
             </div>
             <div className="p-6">
               <p className="text-sm text-gray-600 mb-4">
-                Enter the 4-character code from the sticker.
+                Enter the 4-character code from the QR code.
               </p>
               <input
                 type="text"

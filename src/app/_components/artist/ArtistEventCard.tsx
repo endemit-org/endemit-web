@@ -55,6 +55,17 @@ export default function ArtistEventCard({
               className="object-cover"
               placeholder={artist.image?.placeholder}
             />
+            {artist.video && (
+              <video
+                src={artist.video}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
           </div>
           {/* Stage and Time Info */}
           {showTimes &&
