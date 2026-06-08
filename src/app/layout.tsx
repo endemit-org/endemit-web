@@ -103,6 +103,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${headlineFont.variable} ${bodyFont.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://player.vimeo.com" />
+        <link rel="preconnect" href="https://f.vimeocdn.com" crossOrigin="" />
+        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://player.vimeo.com" />
+      </head>
       <body
         className="m-auto overflow-y-scroll"
         style={{

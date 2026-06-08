@@ -9,6 +9,7 @@ interface SendOtcEmailParams {
   code: string;
   magicLink: string;
   expiresInMinutes: number;
+  callbackUrl?: string;
 }
 
 export const sendOtcEmail = async ({
@@ -16,8 +17,16 @@ export const sendOtcEmail = async ({
   code,
   magicLink,
   expiresInMinutes,
+  callbackUrl,
 }: SendOtcEmailParams) => {
-  const magicLinkUrl = `${PUBLIC_BASE_WEB_URL}/api/v1/auth/magic-link?token=${magicLink}&email=${encodeURIComponent(email)}`;
+  const params = new URLSearchParams({
+    token: magicLink,
+    email,
+  });
+  if (callbackUrl) {
+    params.set("callbackUrl", callbackUrl);
+  }
+  const magicLinkUrl = `${PUBLIC_BASE_WEB_URL}/api/v1/auth/magic-link?${params.toString()}`;
 
   return await resend.emails.send({
     from: resendFromEmail,

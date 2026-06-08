@@ -11,6 +11,12 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "ticket_price_progress": {
+              "type": "SharedSlice"
+            },
+            "artist_lineup": {
+              "type": "SharedSlice"
+            },
             "banner": {
               "type": "SharedSlice"
             },

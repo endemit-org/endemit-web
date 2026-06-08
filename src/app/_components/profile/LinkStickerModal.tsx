@@ -23,12 +23,7 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
 
   const submitCode = useCallback(
     async (raw: string) => {
-      const code = raw.trim().toUpperCase();
-      if (!code || isSubmitting) return;
-      if (!/^[A-Z]{2}[0-9]{2}$/.test(code)) {
-        setError("Code must be 2 letters followed by 2 numbers (e.g. AB12)");
-        return;
-      }
+      if (!raw || isSubmitting) return;
 
       setIsSubmitting(true);
       setError(null);
@@ -36,15 +31,29 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
         const response = await fetch("/api/v1/wallet/sticker/link", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code: raw }),
         });
         const data = await response.json();
         if (!response.ok) {
           throw new Error(data.error || "Failed to link sticker");
         }
-        onLinked?.();
-        router.refresh();
-        onClose();
+        if (data.status === "linked" || data.status === "already_yours") {
+          onLinked?.();
+          router.refresh();
+          onClose();
+          return;
+        }
+        if (data.status === "conflict_other") {
+          setError("This sticker is linked to another account.");
+          return;
+        }
+        if (data.status === "swap_required") {
+          setError(
+            `You already have sticker ${data.existingCode} linked. Unlink it first.`
+          );
+          return;
+        }
+        setError("Unexpected response.");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to link sticker");
       } finally {
@@ -76,9 +85,7 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
         onClick={e => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">
-            Link Backup Sticker
-          </h2>
+          <h2 className="text-lg font-semibold text-white">Scan wristband</h2>
           <button
             onClick={handleClose}
             className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
@@ -101,38 +108,16 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
 
         <div className="p-6">
           <p className="text-sm text-neutral-400 mb-4 text-center">
-            Scan the QR code on your sticker, or type the 4-char code.
+            Point your camera at the QR on your wristband.
           </p>
 
-          <div className="relative rounded-lg overflow-hidden mb-2 bg-black">
+          <div className="relative rounded-lg overflow-hidden bg-black">
             <Scanner
               onScan={handleQrScan}
               onError={err => console.error(err)}
               components={{ finder: true, torch: true }}
               styles={{ container: { width: "100%" } }}
             />
-            <div className="absolute bottom-0 left-0 right-0 px-3 pt-8 pb-3 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex justify-center pointer-events-none">
-              <input
-                type="text"
-                placeholder="AB12"
-                maxLength={4}
-                disabled={isSubmitting}
-                className="pointer-events-auto w-36 px-3 py-2 bg-black/70 backdrop-blur border border-white/30 rounded-lg text-white text-center text-xl font-mono uppercase disabled:opacity-50 placeholder-white/30 focus:outline-none focus:border-white/60"
-                style={{ letterSpacing: "0.3em" }}
-                onChange={e => {
-                  const value = e.target.value.toUpperCase();
-                  e.target.value = value;
-                  if (value.length === 4 && /^[A-Z]{2}[0-9]{2}$/.test(value)) {
-                    submitCode(value);
-                  }
-                }}
-                onKeyDown={e => {
-                  if (e.key === "Enter") {
-                    submitCode((e.target as HTMLInputElement).value);
-                  }
-                }}
-              />
-            </div>
           </div>
 
           {error && (

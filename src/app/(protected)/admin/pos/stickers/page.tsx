@@ -9,7 +9,7 @@ import {
 import StickerPoolDisplay from "@/app/_components/admin/StickerPoolDisplay";
 
 export const metadata: Metadata = {
-  title: "POS Stickers  •  Admin",
+  title: "POS Offline Qrs  •  Admin",
   robots: {
     index: false,
     follow: false,
@@ -24,7 +24,9 @@ interface PageProps {
   }>;
 }
 
-export default async function AdminPosStickersPage({ searchParams }: PageProps) {
+export default async function AdminPosStickersPage({
+  searchParams,
+}: PageProps) {
   const currentUser = await getCurrentUser();
   if (!currentUser?.permissions.includes(PERMISSIONS.POS_STICKERS_MANAGE)) {
     redirect("/admin");
@@ -47,9 +49,9 @@ export default async function AdminPosStickersPage({ searchParams }: PageProps) 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">POS Stickers</h1>
+        <h1 className="text-2xl font-bold text-gray-900">POS offline QRs</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Manage the pool of pre-printed backup sticker codes.
+          Manage the pool of pre-printed offline QR codes.
         </p>
       </div>
 

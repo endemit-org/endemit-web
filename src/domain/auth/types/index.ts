@@ -88,4 +88,5 @@ export interface OtcEmailQueueData {
   code: string;
   magicLink: string;
   expiresInMinutes: number;
+  callbackUrl?: string;
 }

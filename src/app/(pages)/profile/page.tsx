@@ -19,6 +19,7 @@ import ProfileEventsAttendedAsync from "@/app/_components/profile/async/ProfileE
 import ProfileUpcomingEventsAsync from "@/app/_components/profile/async/ProfileUpcomingEventsAsync";
 import ProfileAnnouncementsAsync from "@/app/_components/profile/async/ProfileAnnouncementsAsync";
 import ProfileAccessButtonsAsync from "@/app/_components/profile/async/ProfileAccessButtonsAsync";
+import StickerLinkPrompt from "@/app/_components/profile/StickerLinkPrompt";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -29,11 +30,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ paymentCode?: string }>;
+}) {
   const user = await getCurrentUser();
+  const { paymentCode } = await searchParams;
 
   if (!user) {
-    redirect("/signin");
+    const callback = paymentCode
+      ? `/profile?paymentCode=${encodeURIComponent(paymentCode)}`
+      : "/profile";
+    redirect(`/signin?callbackUrl=${encodeURIComponent(callback)}`);
   }
 
   return (
@@ -67,6 +76,8 @@ export default async function ProfilePage() {
 
           {/* Main content - streams progressively */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
+            {paymentCode && <StickerLinkPrompt paymentCode={paymentCode} />}
+
             {/* Access buttons for staff (admin, POS, scanner) */}
             <Suspense fallback={null}>
               <ProfileAccessButtonsAsync userId={user.id} />

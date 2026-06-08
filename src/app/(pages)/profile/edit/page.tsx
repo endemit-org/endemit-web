@@ -74,12 +74,12 @@ export default async function ProfileEditPage() {
             <ProfileEditForm name={user.name} image={user.image} />
           </div>
 
+          <ReceiveFundsCard receiveCode={receiveCode} />
+
           <BackupStickerCard
             currentCode={sticker?.code ?? null}
             claimedAt={sticker?.claimedAt?.toISOString() ?? null}
           />
-
-          <ReceiveFundsCard receiveCode={receiveCode} />
         </div>
       </InnerPage>
     </OuterPage>

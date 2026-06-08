@@ -7,10 +7,11 @@ import {
 } from "@/domain/sticker/util/validateStickerCode";
 import { queueStickerLinkedEmail } from "@/domain/sticker/operations/queueStickerEmail";
 
-export interface LinkStickerResult {
-  code: string;
-  claimedAt: Date;
-}
+export type LinkStickerResult =
+  | { status: "linked"; code: string; claimedAt: Date }
+  | { status: "already_yours"; code: string }
+  | { status: "conflict_other"; code: string; otherUserId: string }
+  | { status: "swap_required"; code: string; existingCode: string };
 
 export async function linkSticker(
   rawCode: string,
@@ -22,25 +23,35 @@ export async function linkSticker(
     throw new Error("Invalid sticker code format");
   }
 
-  const result = await prisma.$transaction(async tx => {
-    const existingUserSticker = await tx.stickerCode.findUnique({
-      where: { userId },
-    });
-
-    if (existingUserSticker) {
-      throw new Error(
-        "You already have a sticker linked. Unlink it first to link a different one."
-      );
-    }
-
+  const result = await prisma.$transaction<LinkStickerResult>(async tx => {
     const sticker = await tx.stickerCode.findUnique({ where: { code } });
 
     if (!sticker) {
       throw new Error("Sticker code not found");
     }
 
+    if (sticker.userId === userId) {
+      return { status: "already_yours", code };
+    }
+
     if (sticker.userId) {
-      throw new Error("Sticker is already linked to another account");
+      return {
+        status: "conflict_other",
+        code,
+        otherUserId: sticker.userId,
+      };
+    }
+
+    const existingUserSticker = await tx.stickerCode.findUnique({
+      where: { userId },
+    });
+
+    if (existingUserSticker) {
+      return {
+        status: "swap_required",
+        code,
+        existingCode: existingUserSticker.code,
+      };
     }
 
     const claimedAt = new Date();
@@ -49,10 +60,12 @@ export async function linkSticker(
       data: { userId, claimedAt },
     });
 
-    return { code, claimedAt };
+    return { status: "linked", code, claimedAt };
   });
 
-  queueStickerLinkedEmail({ userId, code: result.code }).catch(() => {});
+  if (result.status === "linked") {
+    queueStickerLinkedEmail({ userId, code: result.code }).catch(() => {});
+  }
 
   return result;
 }
