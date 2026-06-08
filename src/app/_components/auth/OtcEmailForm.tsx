@@ -49,6 +49,28 @@ const validateIdentifier = (
   return { valid: true };
 };
 
+const fetchAuthMode = async (identifier: string) => {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch("/api/v1/auth/check-mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier }),
+      });
+      const result = await response.json();
+      if (response.ok && typeof result.exists === "boolean") {
+        return result;
+      }
+    } catch {
+      // Swallow fetch/JSON errors so the retry can run.
+    }
+    if (attempt === 0) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+  return null;
+};
+
 export default function OtcEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -103,14 +125,13 @@ export default function OtcEmailForm() {
           setIsLoading(false);
         }
       } else {
-        // Check auth mode first
-        const response = await fetch("/api/v1/auth/check-mode", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ identifier: trimmedIdentifier }),
-        });
+        const authModeResult = await fetchAuthMode(trimmedIdentifier);
 
-        const authModeResult = await response.json();
+        if (!authModeResult) {
+          setError("Something went wrong. Please try again.");
+          setIsLoading(false);
+          return;
+        }
 
         if (!authModeResult.exists) {
           // No account found
