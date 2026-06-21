@@ -13,15 +13,23 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const [featuredProducts, currencyProducts, user] = await Promise.all([
-    fetchProductsFromCms({
-      filters: [prismic.filter.at("my.product.featured_product", true)],
-    }),
-    fetchProductsFromCms({
-      filters: [prismic.filter.at("my.product.product_category", "Currencies")],
-    }),
-    getCurrentUser(),
-  ]);
+  const [featuredProducts, currencyProducts, donationProducts, user] =
+    await Promise.all([
+      fetchProductsFromCms({
+        filters: [prismic.filter.at("my.product.featured_product", true)],
+      }),
+      fetchProductsFromCms({
+        filters: [
+          prismic.filter.at("my.product.product_category", "Currencies"),
+        ],
+      }),
+      fetchProductsFromCms({
+        filters: [prismic.filter.at("my.product.uid", "donation-to-association")],
+      }),
+      getCurrentUser(),
+    ]);
+
+  const donationProduct = donationProducts?.[0] ?? null;
 
   return (
     <OuterPage>
@@ -36,6 +44,7 @@ export default async function CheckoutPage() {
       <Checkout
         products={featuredProducts}
         currencyProducts={currencyProducts ?? []}
+        donationProduct={donationProduct}
         userEmail={user?.email || undefined}
       />
     </OuterPage>

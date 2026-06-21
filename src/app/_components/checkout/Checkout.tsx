@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useCheckoutState } from "@/app/_hooks/useCheckoutState";
-import { useProducts } from "@/app/_stores/ProductStore";
 import { isProductSellable } from "@/domain/product/businessLogic";
 import { isOnlyCurrencyProducts } from "@/domain/checkout/businessRules";
 import CheckoutCustomerForm from "@/app/_components/checkout/CheckoutCustomerForm";
@@ -34,12 +33,14 @@ import ActionButton from "@/app/_components/form/ActionButton";
 type Props = {
   products: Product[] | null;
   currencyProducts?: Product[];
+  donationProduct?: Product | null;
   userEmail?: string;
 };
 
 export default function Checkout({
   products,
   currencyProducts = [],
+  donationProduct = null,
   userEmail,
 }: Props) {
   const [isClient, setIsClient] = useState(false);
@@ -47,7 +48,6 @@ export default function Checkout({
   const [donationDismissed, setDonationDismissed] = useState(false);
   const [paymentError, setPaymentError] = useState<string>("");
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
-  const { getProductByUid } = useProducts();
 
   // Track if user entered via quick checkout (for back navigation)
   const isQuickCheckoutRef = useRef(false);
@@ -121,7 +121,6 @@ export default function Checkout({
   }, [isClient, hasItems, userEmail, items, actions]);
 
   const handleAddDonation = async (e: React.MouseEvent) => {
-    const donationProduct = getProductByUid("donation-to-association");
     if (donationProduct && isProductSellable(donationProduct).isSellable) {
       actions.addItem(donationProduct, totals.donationAmount);
       // Dynamic import: canvas-confetti (~33KB) only loads when donation is added
