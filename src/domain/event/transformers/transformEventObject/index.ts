@@ -89,7 +89,7 @@ export const transformEventObject = async (
   return {
     id: event.id,
     uid: event.uid,
-    name: pickLocalized(event.data, "title", locale),
+    name: event.data.title,
     description: (() => {
       const d = pickLocalized(event.data, "description", locale);
       return d ? asText(d) : null;

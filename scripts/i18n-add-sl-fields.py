@@ -30,6 +30,8 @@ SKIP_SUBSTR = [
 # Full paths of text fields that should stay UNIVERSAL (no _sl twin) — proper
 # nouns, addresses, internal notes, etc.
 EXCLUDE_PATHS = {
+    # Event names are always Slovenian proper nouns — kept universal (not translated).
+    "event::About.title",
     "podcast::Main.footnote",
     "podcast::Main.tracklist.artist",
     "podcast::Main.tracklist.title",
