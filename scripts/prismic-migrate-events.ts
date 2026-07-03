@@ -110,6 +110,53 @@ const EVENTS: Record<string, DocTranslations> = {
       },
     };
   })(),
+  "atomski-vek": {
+    // Poem slice (haiku) is already Slovenian — left to fall back.
+    type: "event",
+    internalName: "Atomski vek",
+    base: {
+      description:
+        "Vsak jutro se zbudimo v svet skonstruiranih (dez)informacij. Orožarski posli tuki, carine tam. Vsak dan iste grde face, sam profil je vsakič drgač zgeneriran. Denar se kuje pa preusmerja v industrijo smeti, sam Adamu s šestimi prsti ni treba plačat davkov. Zahod proti vzhodu, mi pa smo nekje vmes. Ko ko smo bli mejhni, ko si bil ali vzhodna ali zahodna stran, Biggie proti Tupacu.\n" +
+        "Takrat sta bla vsaj glasba pa ljudje na takem nivoju, da si lahk povsod do konca prižgo MTV pa je cela dolina skakala v zrak. Dons si vsak v ušesa naštima svoj algoritem ali pa ga melje skoz telefon na TikTokTeknu. Skorej nobeden več ne dela na tem, da bi bombe lekcije letele iz zvočnikov ali s košarkarskga igrišča, namest iz zraka. Skorej nobeden si več ne vzame časa, da bi iz sebe pa svojih analognih misli neki ustvaru. Ljudje sam obljublajo, realizacija je kurba.\n" +
+        "Nikol ne veš, ka nas bo jutri zadelo. Ampak veš, da 25. aprila poči, bl ko vsa ta sranja v atomskem veku. Da bo endemitsko pleme zmerm delal na tem, da cementira opeke nazaj skupej, kar se kr naprej kruši v deželi zahajajočga sonca. Ne odlašaj, predn tut naš signal neha vlečt skoz vse gore brez vrhov.",
+    },
+    bios: {
+      "wata-igarashi":
+        "Wata Igarashi je eden najbol prepoznavnih pa spretnih producentov v svetu techna, pa vseeno se pri njem še zmerm močno pozna spoštovanje do pristnih prizorišč pa iskrenga občinstva. Z vrsto EP-jev na založbah, ko so Semantica, Midgar ali The Bunker NY, Watovo ustvarjanje izstopa po tem, da žanru doda poseben okus – združuje energične pa sanjske kristalne strukture z globoko intenzivnostjo in se potaplja v psihedelične sfere techna.\n" +
+        "Japonci majo svoj lasten sound – prepoznaven, globok pa nemogoče ga je ignorirat. Ko nam je prvič padu v uho, smo vedli. To je to. Od tistga trenutka naprej smo vedli, da moramo ta sound prpelat v Slovenijo, kadarkoli je mogoče, sam zato, da ostanemo na pravi poti.",
+      vermisst:
+        "Vermisst je senčna uganka slovenskga elektronskga sveta, znan po svojih globokih, atmosferskih produkcijah, ki razskujejo meje ambienta pa techna. Njegove izdaje pri spoštovanih založbah, ko je Hypnus, kažejo prefinjen pristop k oblikovanju zvoka in spajajo hipnotične ritme z vsrkljivimi teksturami. S subtilnim pa introspektivnim pristopom Vermisst vnaša red v kaos nepredstavljivih zvokov in se postavlja ko edinstven glas underground elektronske scene. Njegovi live nastopi nosijo isto zadržano intenzivnost in občinstvu ponujajo meditativno, a močno izkušnjo.",
+      obscur:
+        "Obscur, naš predan podpornik pa izjemen producent, znan po svojih globokih, brezčasnih techno stvaritvah, bo končno posvetu endemitski DJ pult. Z neprekosljivim ušesom za detajle pa kreativno vztrajnostjo je umetnik svoje vrste, ki se izogiba minljivim trendom, da ostane zvest čistemu bistvu žanra. Njegovo delo z uglednimi založbami, ko so Modularz, Paralelo pa Newrhythmic, dovol pove o njegovi predanosti mojstrenju produkcije.\n" +
+        "Ko DJ svoje sete sestavla z natančnim namenom, da ujame pravi momentum. Naj bo v studiu ali za mešalko, njegova želja, da dostavi prefinjen pa inovativen sound, je tko neusmiljena ko njegova strast do glasbe.",
+    },
+  },
+  "srecno-kekci": {
+    // Poem slice is already Slovenian — left to fall back.
+    type: "event",
+    internalName: "Srečno Kekci",
+    base: {
+      description:
+        "V vrtco si še hoto bit Kekec, paglavc s kahlo na buči, ki prevrača pastirje v blato, rogovili po gozdu pa nastavla zanke učiteljem, ki so nasedli nedolžnemu otroškemu nasmehu.\n" +
+        "Ko froc si se še upo pogledat Mojci pod krilo pa ji rečt, da se ne bojiš Volka. Če je kolega skočo v grabn, si skočo za njim. Ko si pado z drevesa, si požro solze, ker je blo cmeravcem prepovedano splezat nazaj gor.\n" +
+        "A še zmerm hočeš bit Kekec?\n" +
+        "Si se prvezo na drevo s kreditom? Si prodal kožo kapitalu, se skril v lukno javne uprave? Si upaš strgat korenček šefu, ki ti jemlje pravico do odklopa? Ukrast siroto Bedancu, ker z njim ni srečen, kapljice teti Pehti, da spregledaš? Si upaš it do gore, predn se ti ona postavi na pot?\n" +
+        "Hotli so nam prepovedat drva, bojlerje, gavde. Iz endemitskga naroda so naprajli nomade. Ko so nam nastavlali ovire, bi lahk vložli Rožleta. Lahk bi obstali nad samotnim breznom, pa smo rajš šli po volčji sledi na novo pot do Kadra.\n" +
+        "Prvo leto preizkušenj je za nami, mi pa še zmerm povsod sejemo voljo do lajfa. Kreativa ostaja.",
+    },
+    bios: {
+      pvtr:
+        "PVTR, mlajši pa nežnejši od dveh bratov, bo prebil led na plesišču in nam topu srca postopoma z vse debelejšimi beati, dokler ne bomo prpravlen, da nas zažge ogenj najstarejšga. Njegov pomirjujoč začetek nas bo popelo skoz spomine na pretekle napake – vsak boleč spomin ko groba iver, ki jo nahrani plahim plamenom, da naredi prostor svetlejši prihodnosti. Patrik je naša luč na koncu tunela, zaradi katere bomo pozabli, da tema nima konca.",
+      vinter:
+        "Vinter je veliki brat, ki nam nikol ne olajša življenja, ker ve, da je lekcija, naučena po težji poti, tista, ki obstane za zmerm pa nas prpravi na trdo pot pred nami. To zimo se vrača, da naše tavajoče duše zažge v svojem kresu trdih beatov pa čudežnga drevja, dokler ne vstanemo iz pepela ko pravo Svobodno ljudstvo, prpravlen pisat zgodbe prihodnjih grehov, ki prežijo na tiste, ki si dajejo novoletne zaobljube.",
+      mmali:
+        "MMali se končno prebuja po mesecih hibernacije, da zaklučimo našo Kekčevo trilogijo. Če smo iskreni, je naš vodja klana zver, ki v resnici nikol ne hibernira pa ne spi. Medtem ko je njegov nežnejši alter ego ogreval odre ex-yu prestolnic, je MMali produciral svoje globoke komade pa uspel prenapolnit svoj ključek s Trance, dance pa trap temami, da bojo dekleta vrtele boke, fantje pa se skrivaj cerili med njegovo glavno techno karto. Sam najbolše bo prišlo skoz neusmiljeno selekcijo njegovga izostrenga ušesa, da postane trending hit leta 2025.",
+      "mima-and-zazi":
+        "Mima & Zazi, neverjeten dvojec čudnih barv, glavni zvezdi našga funky odra nad zemljo, bosta prestrašenim obrazom vrnili nasmeh, ko si bojo vzeli odmor od Vinterjevih techno rjovov spodej. Prpravi se na disco, house pa funk gibe, da v novo leto vstopiš brez poškodb kolkov.",
+      spati:
+        "Špäti, mati kadrovskih otrok, pol pometalka floora pol umetnica, bo zaprla plesišče tete Pehte s house napoji pa drugimi skrivnimi sestavinami. Opisana ko absolutno ekstatična, morda ima to, kar je treba, da preživi dlje ko MMalijev underground nastop.",
+    },
+  },
   "krizev-pot": {
     type: "event",
     internalName: "Križev pot",
