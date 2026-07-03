@@ -378,6 +378,58 @@ const EVENTS: Record<string, DocTranslations> = {
       },
     },
   },
+  x: {
+    type: "event",
+    internalName: "[X]",
+    base: {
+      description:
+        "10. Endemit festival, skrbno kuriran festival elektronske glasbe, obdan z reko, gozdom pa gorami.\n" +
+        "Deset spektakularnih let. Let, polnih migetajočih luči med drevjem, nežnih meglic nad toplo poletno travo pa občutka zemlje pod nogami.\n" +
+        "Ob slovesnosti praznovanja so na obzorju nepozabni dnevi, ki so spomenik neštetim potem pa skupnim izkušnjam našga popotovanja.",
+    },
+    bios: {
+      sim:
+        "SIM se vrača iz tretje izmene, kjer je izpiljil novo gimnastiko zvokov, ki utelešajo vse, česar povprečen človek leta 2390 še zmerm ne dojame. Da je lahk življenje tut lepo. Mišični spomin bo iz podzavesti prinesu gibe iz časov, ko so njegovi prvi zvoki strigli zeleno travo libeliških polj.",
+      "kundi-institut":
+        "Nekatere stvari enostavno niso iste. Naše praznovanje zagotovo ne bi blo isto brez Kundi Instituta. Človek, globoko zaznamovan z močjo našga domačga koroškga okolja, ti bo pod noge vrgu 2390 brezhibnih ritmičnih ognjemetov.",
+      dvidevat:
+        "Nekatere enačbe je težko rešit, druge so preproste. Združit dvidevat pa njene energične talente čez širok spekter elektronske glasbe z endemitskim občinstvom je lahka enačba. Zgodu se bo match, ustvarjen v nebesih.",
+      inland:
+        "Britanec, ki je našo dom v Berlinu, je odkril svoj naslednji dom v Sloveniji. Potem ko je nabu energijo na Izviru, je pusto svoj naslednji pečat na našem ljublanskem občinstvu. Ed se med nami počuti ravno tko doma ko naše občinstvo v jedru njegovih odličnih ritmov iz samga srca berlinske pa svetovne elektronske scene.",
+      rotte:
+        "Obalno-koroška povezava je vsak dan močnejša in spaja mediteransko svežino z vrhovi koroških gora. Rotte je glasnik novga primorskga vala drznih kuratorjev plesišča, ki v svoje stvaritve redno pakira neosvinčene atome underground zvokov.",
+      meelo:
+        "Frontman zasedbe re_lined je garancija za dozo dodelane glasbe. Njegova vera v glasbo odpira vrata natančnosti pa popolnosti njegovih kompozicij. Njegov nastop te bo držal v zelo visoki energiji.",
+      vinter:
+        "Hišno ime nikol ne razočara. Matija Vinter je legenda endemitskga plesišča, ki smo ga zaradi njegovih bomb morali neštetokrat krpat. Matija je nepogrešljiv duh naše 10-letne tradicije.",
+      psyk:
+        "psyk je ime svoje generacije pa eno največjih imen v naši kulturi. Svoj pečat je pusto na vseh najpomembnejših dogodkih pa v klubih, ključnih stebrih techno kulture po svetu. Španska tradicija odličnosti se nadaljuje.",
+      rhaegal:
+        "Nekatere stvari so usojene. Še gora med Šoštanjem pa Koroško nam ni mogla preprečit, da bi našli svojga sorodnga duha – Rhaegala. Zlitje kultur med njegovo glasbo pa koroško tradicijo je temelj za prelomne zvoke, ki jih boš doživel.",
+      mmali:
+        "Srce pa duša Endemita, ki je zraso iz Formavive pa postal eno najbol pričakovanih imen med predanimi ljubitelji hipnotične avantgardne techno glasbe v Sloveniji. Njegov vpliv presega njegovo ime in lahk sam ugibamo, ka bo tokrat prinesla nevihta z njim.",
+      mokilok:
+        "MOKILOK je veteran plesišča, ki je po prihodu iz daljne Avstralije našo dom v Berlinu, od takrat pa je neštetokrat odkril svojo dušo pa svoje ljudi v majhni vasici Libeliče. Človek iz ljudstva, bo ko zmerm poskrbu za vse plešoče duše na segretem endemitskem terenu.",
+      madalba:
+        "V čudoviti Madalbi se združijo kulture sveta. Ker je v svojem življenju prepotovala svet, je čist naravno, da bo tokrat z nami v skritem biseru, skritem očem celga vesolja. S sabo prinaša nepogrešljiv del berlinske kulture, ki se brezhibno prilega našim podvigom.",
+    },
+    slices: {
+      0: {
+        primary: {
+          heading: "10. INTIMNO SNIDENJE",
+          description:
+            "Skrbno kuriran festival elektronske glasbe, obdan z reko, gozdom pa gorami.",
+        },
+      },
+      1: {
+        primary: {
+          content:
+            "Deset spektakularnih let. Let, polnih migetajočih luči med drevjem, nežnih meglic nad toplo poletno travo pa občutka zemlje pod nogami.\n" +
+            "Ob slovesnosti praznovanja so na obzorju nepozabni dnevi, ki so spomenik neštetim potem pa skupnim izkušnjam našga popotovanja.",
+        },
+      },
+    },
+  },
   // NOTE: road-x-endemit-2025 is intentionally not here. Its cover_image points
   // to an orphaned Prismic asset which makes updateDocument re-validation fail
   // ("Assets not found"). It was localized separately by re-registering the
