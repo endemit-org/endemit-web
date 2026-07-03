@@ -37,11 +37,13 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }): Promise<Metadata> {
-  const { uid } = await params;
-  const venue = await fetchVenueFromCms(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const venue = await fetchVenueFromCms(uid, loc);
 
   if (!venue) {
     notFound();
@@ -54,14 +56,14 @@ export async function generateMetadata({
     metaImage: venue.meta.image,
     fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
   });
-  const url = `https://endemit.org/venues/${uid}`;
 
   return buildOpenGraphObject({
     title,
     description,
     images,
-    url,
     type: "profile",
+    locale: loc,
+    path: `/venues/${uid}`,
   });
 }
 
@@ -69,11 +71,13 @@ export default async function VenuePage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }) {
-  const { uid } = await params;
-  const venue = await fetchVenueFromCms(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const venue = await fetchVenueFromCms(uid, loc);
 
   if (!venue || !venue.showOnVenuePage) {
     notFound();

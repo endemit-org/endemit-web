@@ -39,11 +39,13 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }): Promise<Metadata> {
-  const { uid } = await params;
-  const artist = await fetchArtistFromCms(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const artist = await fetchArtistFromCms(uid, loc);
 
   if (!artist) {
     notFound();
@@ -56,20 +58,28 @@ export async function generateMetadata({
     metaImage: artist.meta.image,
     fallbackImages: artist.image?.src ? [artist.image.src] : undefined,
   });
-  const url = `https://endemit.org/artists/${uid}`;
 
-  return buildOpenGraphObject({ title, description, images, url, type: "profile" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    type: "profile",
+    locale: loc,
+    path: `/artists/${uid}`,
+  });
 }
 
 export default async function ArtistPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }) {
-  const { uid } = await params;
-  const artist = await fetchArtistFromCms(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const artist = await fetchArtistFromCms(uid, loc);
 
   if (!artist || artist.isB2b) {
     notFound();
@@ -120,7 +130,7 @@ export default async function ArtistPage({
         {artist.slices && artist.slices.length > 0 && (
           <>
             <Spacer size={"large"} />
-            <SliceDisplay slices={artist.slices} />
+            <SliceDisplay slices={artist.slices} locale={loc} />
           </>
         )}
         <Spacer size={"xlarge"} />
