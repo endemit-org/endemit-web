@@ -8,17 +8,25 @@ import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
 import InnerClientToggle from "@/app/_prismic-slices/VinylPromoSection/InnerClientToggle";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `VinylPromoSection`.
  */
-export type VinylPromoSectionProps =
-  SliceComponentProps<Content.VinylPromoSectionSlice>;
+export type VinylPromoSectionProps = SliceComponentProps<
+  Content.VinylPromoSectionSlice,
+  SliceContext
+>;
 
 /**
  * Component for "VinylPromoSection" Slices.
  */
-const VinylPromoSection: FC<VinylPromoSectionProps> = async ({ slice }) => {
+const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
+  slice,
+  context,
+}) => {
+  const locale = context?.locale ?? "sl";
   if (!slice.primary.product) {
     return;
   }
@@ -78,12 +86,12 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({ slice }) => {
                 href={"/store/albums/issun-boshi-vinyl-ep"}
                 className={"link text-neutral-200 hover:text-neutral-300"}
               >
-                {slice.primary.headline}
+                {pickLocalized(slice.primary, "headline", locale)}
               </Link>
             </h2>
             <div className={"font-light pt-0 text-lg"}>MMali • Issun-bōshi</div>
             <div className={"text-xl my-6 font-thin"}>
-              {slice.primary.description}
+              {pickLocalized(slice.primary, "description", locale)}
             </div>
             <ProductAddToCart product={product} />
             <div className={"mt-3 gap-y-3 flex flex-col  items-center"}>

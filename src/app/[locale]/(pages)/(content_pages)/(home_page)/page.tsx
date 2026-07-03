@@ -19,7 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildOpenGraphObject({ title, description, images, url, type: "website" });
 }
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const loc = locale === "en" ? "en" : "sl";
   const homePage = await fetchHomePageFromCms();
 
   if (!homePage) {
@@ -28,7 +34,7 @@ export default async function Home() {
 
   return (
     <>
-      <SliceDisplay slices={homePage.data.slices} />
+      <SliceDisplay slices={homePage.data.slices} locale={loc} />
     </>
   );
 }

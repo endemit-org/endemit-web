@@ -59,10 +59,12 @@ export default async function ContentPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }) {
-  const { uid } = await params;
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
   const contentPage = await fetchContentPageFromCms(uid);
 
   if (!contentPage) {
@@ -104,13 +106,15 @@ export default async function ContentPage({
 
       {contentPage.renderFrame && (
         <InnerPage>
-          {contentPage.slices && <SliceDisplay slices={contentPage.slices} />}
+          {contentPage.slices && (
+            <SliceDisplay slices={contentPage.slices} locale={loc} />
+          )}
         </InnerPage>
       )}
 
       {!contentPage.renderFrame && contentPage.slices && (
         <div className={"relative mx-auto space-y-8"}>
-          <SliceDisplay slices={contentPage.slices} />
+          <SliceDisplay slices={contentPage.slices} locale={loc} />
         </div>
       )}
     </OuterPage>

@@ -20,13 +20,13 @@ function isFilledValue(value: unknown): boolean {
  *
  * Works for KeyText (string), RichText (array) and other field kinds.
  */
-export function pickLocalized<D extends Record<string, unknown>, K extends string & keyof D>(
+export function pickLocalized<D extends object, K extends string & keyof D>(
   data: D,
   field: K,
   locale: AppLocale
 ): D[K] {
   if (locale === "sl") {
-    const slValue = (data as Record<string, unknown>)[`${field}_sl`];
+    const slValue = (data as Record<string, unknown>)[`${String(field)}_sl`];
     if (isFilledValue(slValue)) {
       return slValue as D[K];
     }

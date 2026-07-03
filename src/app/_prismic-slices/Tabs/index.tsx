@@ -2,12 +2,15 @@ import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps, PrismicRichText } from "@prismicio/react";
 import Tabs, { TabItem } from "@/app/_components/content/Tabs";
 import { fetchInnerContentFromCms } from "@/domain/cms/operations/fetchInnerContentFromCms";
-import SliceDisplay from "@/app/_components/content/SliceDisplay";
+import SliceDisplay, {
+  type SliceContext,
+} from "@/app/_components/content/SliceDisplay";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
 
 /**
  * Props for `Tabs`.
  */
-export type TabsProps = SliceComponentProps<Content.TabsSlice>;
+export type TabsProps = SliceComponentProps<Content.TabsSlice, SliceContext>;
 
 // Temporary type for innerContent variation items until slicemachine regenerates types
 interface InnerContentItem {
@@ -24,11 +27,13 @@ interface InnerContentItem {
 /**
  * Component for "Tabs" Slices.
  */
-const TabsSlice = async ({ slice }: TabsProps) => {
+const TabsSlice = async ({ slice, context }: TabsProps) => {
   const { primary, items } = slice;
+  const locale = context?.locale ?? "sl";
 
-  const heading = isFilled.richText(primary.heading)
-    ? asText(primary.heading)
+  const localizedHeading = pickLocalized(primary, "heading", locale);
+  const heading = isFilled.richText(localizedHeading)
+    ? asText(localizedHeading)
     : undefined;
 
   let tabItems: TabItem[] = [];
@@ -56,9 +61,11 @@ const TabsSlice = async ({ slice }: TabsProps) => {
         }
 
         return {
-          label: item.tabLabel!,
+          label: pickLocalized(item, "tabLabel", locale)!,
           id: item.tabId!,
-          content: <SliceDisplay slices={innerContent.slices} />,
+          content: (
+            <SliceDisplay slices={innerContent.slices} locale={locale} />
+          ),
         } as TabItem;
       });
 
@@ -72,15 +79,18 @@ const TabsSlice = async ({ slice }: TabsProps) => {
       .filter(
         (item) => isFilled.keyText(item.tabLabel) && isFilled.keyText(item.tabId)
       )
-      .map((item) => ({
-        label: item.tabLabel,
-        id: item.tabId,
-        content: isFilled.richText(item.content) ? (
-          <PrismicRichText field={item.content} />
-        ) : (
-          <p>No content</p>
-        ),
-      })) as TabItem[];
+      .map((item) => {
+        const content = pickLocalized(item, "content", locale);
+        return {
+          label: pickLocalized(item, "tabLabel", locale),
+          id: item.tabId,
+          content: isFilled.richText(content) ? (
+            <PrismicRichText field={content} />
+          ) : (
+            <p>No content</p>
+          ),
+        };
+      }) as TabItem[];
   }
 
   return (

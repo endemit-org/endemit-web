@@ -68,10 +68,12 @@ export default async function ProductPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     productUid: string;
   }>;
 }) {
-  const { productUid } = await params;
+  const { locale, productUid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
 
   const product = await fetchProductFromCmsByUid(productUid);
 
@@ -137,7 +139,7 @@ export default async function ProductPage({
 
               {product.slices &&
                 product.displaySlicePosition === "Above description" && (
-                  <SliceDisplay slices={product.slices} />
+                  <SliceDisplay slices={product.slices} locale={loc} />
                 )}
 
               <div className={`space-y-6 ${style.inset}`}>
@@ -146,7 +148,7 @@ export default async function ProductPage({
 
               {product.slices &&
                 product.displaySlicePosition === "Below description" && (
-                  <SliceDisplay slices={product.slices} />
+                  <SliceDisplay slices={product.slices} locale={loc} />
                 )}
             </div>
             <div
