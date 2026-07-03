@@ -7,13 +7,15 @@ import ToteBagIcon from "@/app/_components/icon/TotebagIcon";
 import { useCartItemCount, useCartTotal } from "@/app/_stores/CartStore";
 import { formatPrice } from "@/lib/util/formatting";
 import ActionButton from "@/app/_components/form/ActionButton";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface Props {
   variant?: "compact" | "detailed";
 }
 
 export default function Cart({ variant = "detailed" }: Props) {
+  const t = useTranslations("cart");
   const itemCount = useCartItemCount();
   const totalPrice = useCartTotal();
   const router = useRouter();
@@ -89,11 +91,13 @@ export default function Cart({ variant = "detailed" }: Props) {
       {variant === "detailed" && displayItemCount > 0 && isClient && (
         <>
           <div className="items-center space-x-3 text-neutral-200 inline-flex">
-            <div className="text-sm">{displayItemCount} items in your cart</div>
+            <div className="text-sm">
+              {t("itemsInCart", { count: displayItemCount })}
+            </div>
           </div>
           <div className="mt-3 animate-rave-125bmp-delay hover:[animation:none]">
             <ActionButton onClick={handleGoToCart} size={"sm"}>
-              Checkout
+              {t("checkout")}
             </ActionButton>
           </div>
         </>

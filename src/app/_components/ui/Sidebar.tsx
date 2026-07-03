@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import Image from "next/image";
 import clsx from "clsx";
@@ -58,6 +59,7 @@ export default function Sidebar({
 }: FlexibleSidebarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   const defaultSocialLinks: SocialLink[] = [
     {
@@ -170,7 +172,7 @@ export default function Sidebar({
             className="font-medium font-heading text-xl"
             style={{ paddingTop: "4px" }}
           >
-            MENU
+            {t("menu")}
           </div>
 
           {isMenuOpen ? <MenuOpenIcon /> : <MenuClosedIcon />}

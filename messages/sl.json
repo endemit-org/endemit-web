@@ -4,7 +4,13 @@
     "back": "Nazaj",
     "close": "Zapri"
   },
-  "nav": {},
+  "nav": {
+    "menu": "MENI"
+  },
+  "cart": {
+    "checkout": "Zaključek nakupa",
+    "itemsInCart": "{count} izdelkov v košarici"
+  },
   "footer": {},
   "home": {},
   "events": {},

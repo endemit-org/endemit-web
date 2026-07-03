@@ -4,7 +4,13 @@
     "back": "Back",
     "close": "Close"
   },
-  "nav": {},
+  "nav": {
+    "menu": "MENU"
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "itemsInCart": "{count} items in your cart"
+  },
   "footer": {},
   "home": {},
   "events": {},
