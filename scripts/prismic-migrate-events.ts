@@ -176,6 +176,213 @@ const EVENTS: Record<string, DocTranslations> = {
     },
     slices: { 0: { primary: { content: KRIZEV_POEM } } },
   },
+  "cvetke-v-jeseni": {
+    // Long Slovenian satire poem already in base — left to fall back.
+    type: "event",
+    internalName: "Cvetke v Jeseni",
+    base: {
+      description:
+        "Poletje nam krade jesen, jesen ne uspe dočakat zime, mi pa plešemo pod svobodo pa se navajamo nove plime. Za digitalni prehod brez garancije se prerivamo v vrsti, E-milja z lučkami vsakmo dostavi na dom po pošti. Miljardo smo našli za flete, Finančič drugo leto plača progresijo, kupujemo obveznice, Brodnjak nam dnar prepoceni obrača. Z Goričkga v Piran pičimo v šesti, Alenka z brati riše nov pas, asfalt špura do Koroške, Slovencem z rovt se dobro piše.\n" +
+        "Ni več bedaka za junaka, ki bi še delo za minimalca, vrednost dodajamo vsem, ki se izognejo inflaciji davka. Vrečko za kolege zrihta šiht, kult'ni projekti so postali dragi, Cankarja bi po porazu rajš poslali na olimpijske po zmagi. Za biznis se nafta najde brez trošarine, subvencije za limuzine, za socialce mamo eko fasade, pozimi TEŠ, da nam greje doline.",
+    },
+    bios: {
+      "amanda-mussi":
+        "Brazilska DJ-ka pa producentka Amanda Mussi je znana po svoji edinstveni fuziji techna, acida pa housa, kjer spaja zvoke, navdihnjene z živahnih ulic južne pa severne poloble. Ko ne oblikuje underground scene v São Paulu ko del kolektiva Mamba Negra, navdušuje občinstva na alternativnih odrih v mestih ko so New York, Stockholm, Amsterdam pa Berlin. Poleg mešalke ustvarja pa izdaja glasbo prek paragvajske založbe Massa Records, s srcem pa podpira male, lokalne underground scene in prek svoje booking platforme povezuje pa dviguje južnoameriške umetnike.",
+      mmali:
+        "Issun-bōshi predstavla mehkejšo, bol introspektivno plat MMalija, ki razskuje melodične komade s čistimi ritmi, ki presegajo običajne meje techna pa housa. Njegovi closing seti pogosto vsebujejo trance klasike, prepletene z rap pa pop elementi, njegovi opening seti pa zavzamejo bol čustven ton pa se potapljajo v globoke pa ambientalne pokrajine. Njegove skrbno izbrane selekcije se lahk podajo tut v post-rock pa synth-pop in poti dodajo globino. Čeprav je MMali stalnica slovenske underground elektronske scene, so nastopi pod njegovim nežnejšim alter egom redki – kar jih naredi še bol vplivne pa nepozabne.",
+      rhaegal:
+        "Šoštanjčan Rhaegal je eden redkih lokalnih DJ-jev, ki ne obvlada sam umetnosti brezhibnga miksanja vinilov, ampak se lahk pohvali tut z močnim produkcijskim ozadjem in izdaja komade prek svoje založbe Hands of the Creator. Čeprav se zdi, da koplje sam po najtemnejših pa najbol skritih kotičkih neodvisne elektronske scene, se ravno ob pravem trenutku prikaže žarek melodije – predn te neusmiljen ritem potisne v globine še neodkritih odtenkov techna. Njegov sound je popotovanje, ki uravnoteža intenzivnost z momenti nepričakovane lepote.",
+    },
+  },
+  "ende-mit-25": {
+    type: "event",
+    internalName: "Ende mit 25",
+    base: {
+      description:
+        "2025 je bil za nas produktivno leto. Endemit festival smo nadgradli z dnevnim odrom, klubski program pa s poletnimi spin-offi. Ustanovili smo tut kulturno društvo, na naši novi založbi izdali MMalijev prvi vinil Issun-bōshi, rekrutirali Obscurja pa zagnali Emit podcast, ki ga kurira še en ključni endemitski umetnik, Rhaegal.\n" +
+        "Ker smo pričakovanja postavli više ko novoletno smreko, smo se odločli to plodno leto zaklučit s posebno endemitsko novoletno edicijo – rekrutirali smo najbol prominentne lokalne umetnike, da nastopijo na dveh odrih, pa držali vrata odprta do bruncha.\n" +
+        "Ne daj si novoletnih zaoblub, ki jih ne moreš držat. Daj si pravo pa se pridruži plemenu za letni reset.",
+    },
+    bios: {
+      rhaegal:
+        "Boter closingov, služabnik globokih zvokov pa razskovalec temnih ulic je sprejel izziv, drznejši od katerekoli novoletne zaobljube. Rhaegal stopa v čevle, ki jih še nikol ni nosu, in je ko zmerm prpravlen ogret glavni floor v Kadru.\n" +
+        "Sam Bog odpušča grehe leta 2025 in sam Bog ve, ka nam je Bobi tokrat prpravu. Ampak ena stvar je že trdno vklesana v kamen – naslednja endemitska release fešta bo v rokah Stvarnika (Hands of the Creator).",
+      tonske:
+        "Iz libeliških gozdov še zmerm odmeva hvalnica, kjer je Tonske dostavu tko dodelan pa pretresljiv set, da je pleme zahtevalo revanš pri višjih obratih. Nismo mel druge izbire, ko da za našga posebnga častnga gosta rezerviramo glavni slot na tradicionalnem endemitskem novoletnem – tut lokalni patriot, ki v Velenju jaše s svojo ekipo Cogo. Antonio je izkušen umetnik, znan po tem, da ustvari popoln flow groovastga, minimalnga techna pa v glavnih urah pritiska z ritmom.",
+      mmali:
+        "MMali se ubada z odtegnitvenim sindromom, odkar je moral svojo Issun-bōshi vinilno release fešto zaprt tko, da je prevzeu še glavne ure in pokru svojga na letališču obtičalga brata Eda/Inlanda.\n" +
+        "Zahvala bogovom Kadra, ki so se odločli držat vrata odprta do brunch časa, je Matej dobu priložnost, da se spet prekosi z novim neskončnim closingom – tistim, ki ga zmerm nesemo domov s ponosnim nasmehom, še zmerm potopljeni v plemenski trans.",
+      meelo:
+        "Ker sta bila dva floora z dvema zasedbama za napolnit, smo razmišljali izven svoje ekipe pa rekrutirali še enga lokalnga podpornika, frontmana benda re|lined. Meelovi seti so znani po natančnosti, groovastih ritmih s temnimi temelji, hipnotičnem ponavljanju pa subtilnih prehodih.\n" +
+        "Jan se nam je pridružu na prvem Endemit festivalu in od takrat prpravu intenziven nastop na drugih odrih, tko da je bil očitna izbira za ogrevanje floora pred Obscurjem.",
+      obscur:
+        "Ker se je Obscur pridružu endemitski ekipi, smo za to novoletno edicijo morali potegnt težke topove pa dobit drugi floor, da našo novo vzhajajočo zvezdo damo na zasedbo.\n" +
+        "Tim je vsak nastop pa produkcijo prestal s hipnotičnimi barvami, dobival vabila na odre ko Kino Šiška, svoj čist industrijski sound pa izdajal na založbah ko Moving Pressure, Modularz pa Newrhythmic. Čist naravno je, da Obscurju podelimo dar še enga closinga pa mu pustimo, da narekuje tempo za 2026.",
+    },
+    slices: {
+      1: {
+        primary: {
+          content:
+            "2025 je bil za nas produktivno leto. Endemit festival smo nadgradli z dnevnim odrom, klubski program pa s poletnimi spin-offi. Ustanovili smo tut kulturno društvo, na naši novi založbi izdali MMalijev prvi vinil Issun-bōshi, rekrutirali Obscurja pa zagnali Emit podcast, ki ga kurira še en ključni endemitski umetnik, Rhaegal.\n" +
+            "Ker smo pričakovanja postavli više ko novoletno smreko, smo se odločli to plodno leto zaklučit s posebno endemitsko novoletno edicijo – rekrutirali smo najbol prominentne lokalne umetnike, da nastopijo na dveh odrih, pa držali vrata odprta do bruncha.\n" +
+            "Ne daj si novoletnih zaoblub, ki jih ne moreš držat. Daj si pravo pa se pridruži plemenu za letni reset.",
+        },
+      },
+    },
+  },
+  "odprava-zelenega-zmaja": {
+    // Poem already Slovenian — fall back.
+    type: "event",
+    internalName: "Odprava zelenega zmaja",
+    base: {
+      description:
+        "V mestu, kjer uspeva sam mladina ko cvetlice s trate, na kraju, ki ni zapisan na naši koži, obdan z balkanwave mladino v maturantskih majcah. Včasih, ko te avantgardna nadrealnost endemitske izkušnje izpusti in ko stvari postaviš v perspektivo, se zdi nemogoče, da si bil včeraj res tuki. V Ljubljani, zravn Uniona.\n" +
+        "Tko kot voda vreže pot skoz dolino, je endemitska familija vrezala pot za občutke, za katere smo se bali, da jih je odnesu Zokijev bager. Seme odprave zelenga zmaja je blo pravzaprav tko močno, da še gentrificirana ljublanska prst ni mogla preprečit, da bi se klasika ponovila na nivoju starih časov.\n" +
+        "Da kljub obupu ljublanskih klubov pa influencerskih dogodkov še zmerm obstaja odporniško gibanje, kjer lahk slišiš set stoletja pa se skriješ pred budnim očesom egocentričnih posameznikov, ki v slepoti strahu pred inflacijo vrednosti svojga življenja iščejo dodatnga followerja, da si zagotovijo svojo new-age bazo za preživetje.\n" +
+        "Narava endemitskih mojstrov, divja ko cvetlice s trate, ti je spet narisala luči, zvoke, besede pa občutke, ki jih boš v življenju na žalost doživu premalokrat. V ponedelk, ko gremo vsak na svoj šiht, se lahk sam rahlo nasmehneš pa si rečeš, da bo za nekaj časa zdržalo.",
+    },
+    bios: {
+      tamorra:
+        "Človek vsrka okolje ali pa okolje vsrka človeka. Naslednji vodja je produkt slovenske Istre pa endemitskih bojnih vrst, ki je svoje talente osebno pa intenzivno vložu v obe pokrajini. Z obalnimi fanatiki jim je v samo nekaj letih uspelo iz suhe, zapuščene planjave sestavit par ducatov puščavskih krožnikov novga obalnga techno ekosistema.\n" +
+        "Tamorra je s študijem terenov na prejšnjih endemitskih snidenjih v sebi prebudu prvinske instinkte usodne privlačnosti. Med njim pa nami, med glasbo pa umom, med intimnim ritualom pa osvoboditvijo od okovov zgodnje odraslosti. Če bi ta film snemali dons, bi bil Matija eden glavnih razlogov za disco. Čas je, da svoj kos položi na našo mizo.",
+      inland:
+        "Ljubljana se je zgubila v času. Zlata doba je konc, ostali so sam ostanki tega, kar je nekoč blo. Kljub našim trudom nas včasih vse odnese, zato se moramo podat v svet, kjer ostajajo zvesti svoji poti.\n" +
+        "Prijateljstva, ki so se spletla pred mnogimi polnimi lunami, se krepijo ne glede na razdaljo. Čeprav je Nemčija baje v energetski krizi pa Berlin v čustveni, še zmerm najdeš kakšen reaktor, ki ga niso zadeli virusi človeškga intelekta. Še zmerm je mogoče najt closing, ki ti odpre nove dimenzije, čeprav si mislu, da si svojo že doživu. Še bolše, ko pride od tistih, ki premorejo vrlino, ki je večina v sebi ne zmore več najt pa udejanit. Lahko je govorit, ampak bit prisoten pa vztrajat na svoji poti več ko desetletje – to uspe sam peščici ogroženih samotarjev.\n" +
+        "Ed Davenport / Inland je eden tistih, endemit, ki te vrline pa človeške kvalitete več ko uteleša. S koreninami v predbrexitovski Angliji je na sceno prišo v zlatih analognih dneh, ko so tablete še vsebovale pravo mešanico sladkorja, svet pa je vse stavu na kvaliteto v white labelu. Skoz leta je ta produkcijski guru zgradu močan repertoar – ni templja, ki ne bi blagoslovu njegovih spomenikov. S svojima domačima založbama Counterchange pa BRETT nenehno melje naprej pa načrtuje nove zvočno-arhitekturne projekte, da stabilizira temelje za naslednje XYZ generacije.\n" +
+        "V zaspanem mestu so priložnosti za renesanso duše redke. Če se hočeš zbudit iz hibernacije pa ne verjameš, da sončni žarki pa Instagram vse pozdravijo, te prava terapija čaka kar za vogalom kampusa.",
+      mmali:
+        "Leta 1976, ko so snemali tisti film, je zamudu na casting, zato je svojo vlogo odigral na koroških poljanah mladinskih revolucij. Takoj ko je skalibriral koroške avtohtone gozdove ob Dravi, se je njegov prepoznavni sound preselu v Ljubljano, kjer še dons trem generacijam trznejo noge, ko omeniš, da pride za mešalko.\n" +
+        "MMali / Issun-bōshi izpušča zmaje, medtem ko jih drugi lovijo, pa gradi čustvene mostove, za katere smo že zdavnaj mislu, da bojo ostali nekje na hodnikih spominov iz mlajših let – ko je bas še odmeval iz Roga. V časih, ko lažni guruji na podcastih svetujejo, da moraš vsak dan delat na sebi, boš zase naredu največ, če boš ob pravem času – v prvi vrsti.",
+    },
+  },
+  "ius-primae-noctis": {
+    // Poem already Slovenian — fall back.
+    type: "event",
+    internalName: "Ius Primae Noctis",
+    base: {
+      description:
+        "Ne tko dolgo nazaj, ne tko daleč nazaj, si še lahk stakno frajlo brez Tinderja. Takrat nisi rabu kredita, da si jo poroču, pa še enga, da si jo odplačo.\n" +
+        "V časih inceljev, kjer je inflacija vzela 40 % za nov avto pa so frustrirani, ker se morjo vozit po Sloveniji, ker ne dobijo punce, je čas, da se vrnemo h koreninam – ko si Marijo še vprašo, če jo lahk poližeš, pa nato vljudno počakal, da ti da privolitev.\n" +
+        "Ius primae noctis, pravica underground fevdalcev, da razširijo obzorja nezadovoljnih devic, bo uveljavlena pred nočnim vrhuncem že na terasi pod kodeljevskim soncem.\n" +
+        "Papež Leon XIV. je odredu, da za zakrament svete endemitske zveze ne bo potrošniškga kredita. Pravi podložniki so že prpravli kresniški davek za prvi seks ob poletnem sončnem obratu.\n" +
+        "P.S.: Na Koroškem tega zgodovinsko netočnga fevdalnga zakona nismo priznavali, ampak zmerm smo vedli, da mora Ajda pošteno dozoret, predn jo prvič na prvi fešti.",
+    },
+    bios: {
+      mokilok:
+        "Mokilok, naš prilubljen festivalski rezident, se vrača – tokrat za svoj dolgo pričakovan debi v grajski kleti. Do zdej so njegovi seti zmerm odmevali pod odprtim nebom, zdej pa njegov sound prinašamo v zaprte prostore, kjer bojo kamnite stene ujele pritisk. Pričakuj čas ukrivljajoč spopad: klasičen '90s techno pa surov hard house proti temnejšemu, sodobnemu robu. Nazaj v prihodnost – pod obokanimi stropi.",
+      "unknown-texture":
+        "Unknown Texture je še eno slovensko vzhajajoče techno upanje – vseprisoten obraz na naših dogodkih, ki zdej končno stopa za pult. Znan po globoki predanosti obrti, svoj sound oblikuje skoz analogne pa modularne hipnotične ritme, globoke frekvence pa abstraktne teksture. Pravi digger pa razskovalec zvoka, ki igra sam vinil – da ga surovost voska vodi skoz popotovanje. Miha je prpravlen svojo strast prevest v set, ki odmeva daleč čez stene kleti.",
+      rhaegal:
+        "Rhaegal gre v natrpan junij, z nastopi vsak konec tedna, in je za to več ko prpravlen. Na ta trenutek se je prpravljal in obljublja, da bo na vsaki postaji dostavu neki svežga pa izven običajnga. Tut z več nastopi ne pričakuj ponavljanja – sam čisto, razvijajočo se energijo. Eden naših pa eden najbolših; Bobi nas bo spet spomnu, kje točno kick udari najbol.",
+      mmali:
+        "MMali tokrat pristaja na grajski terasi in prevzema popoldansko izmeno na najdaljši dan v letu. Znan po tem, da sprejme vsak slot – od openingov do closingov – vsak trenutek izkoristi, da deli točno tisto glasbo, ki se mu zdi najbol pomembna. Tokrat pričakuj pozablene bisere pa spregledane zaklade, obujene v življenje, da spet zazvenijo pod s soncem obsijanim kamnom.",
+    },
+  },
+  "pohujsanje-v-kotlini-sentlublanski": {
+    // Poem already Slovenian — fall back.
+    type: "event",
+    internalName: "Pohujšanje v kotlini Šentlublanski",
+    base: {
+      description:
+        "V času drugga vala pustošenja SARS-CoV-2 se je v podalpsko deželo prikradu sam Zlodej, ker je prisluškoval Krekovim dušam, zgubljenim v domovih za ostarele. Ko vsak prebrisan popotnik v svežem okolju se je najprej ustavu na zasebnem kraju, kjer ga je iz zasede napadu razbojnik Peter, s kerim sta ob sončnem vzhodu sklenila peklenski dogovor – da svete cepljene duše premešata čez rob malomarnga škandala.\n" +
+        "Rhaegal pa MMali sta že vse od tiste davne pogodbe, za katero nihče ne ve, kdo je bil hudič pa kdo je vse skupej plačo, ko rit pa srajca. Ampak ker njune umetniške duše verjamejo, da je hudič v detajlih, tko redko stojita drug ob drugem za mešalko, da se zmerm najde kakšen endemit, ki bi rajš jokal nad zamujeno priložnostjo. Na srečo nesrečnih pa pravijo, da v tretje gre rado.\n" +
+        "Zlodej pa razbojnik bosta tokrat ogrevala za duše, kerih čednost bo preizkušena z zvočno podobo lepe Mirelle. Poči bo tolk, kolk bo nedolžnih ostalo.",
+    },
+    bios: {
+      "mirella-kroes":
+        "Mirella Kroes je skriti biser elektronske scene, ki se prikaže sam, da deli posebne momente intimnosti – kvaliteto, ki jo globoko ceni pa z njo resonira. Strastna, a prizemljena duša, polna ljubezni do narave, Mirella uteleša izrazito dvojnost, ki se odseva v njenih DJ setih. Ker daje prednost globlji, sodobni plati techna, njena selekcija komadov balansira med tem, da draži um pa začara dušo. Njeni seti se potapljajo v trippy, bol skrivnostne sfere elektronske glasbe in iz zvokov tkejo organske builde, da poudarijo vsak detajl. Vsak nastop je vsrkljiva izkušnja, tko sanjska ko prizemljena, ki na pozornga poslušalca pusti trajen vtis in ga vabi, da se poda na to transcendentalno popotovanje.",
+      rahul:
+        "Rahul, najmlajši član endemitske ekipe, je neutruden zgled predanosti naši skupni stvari. Znan po skrbni naravi pa močni delovni etiki, je zmerm prvi, ki priskoči, pa zadnji, ki odide, in poskrbi, da je vsaka naloga opravlena do popolnosti. Rahulova druga vizionarska družina je RÆHAT, ekipa z obale, ki pridno razskuje razburljivo novo underground prizorišče v koprskem pristanišču. Ko predstavnik Endemita v Kadru bo Rahul tokrat pokazal še eno svojo plat – svoje glasbene talente. Njegov warm-up set bo iskreno srečanje z njegovim kreativnim umom, ki te vabi, da deliš globino pa strast, ki opredeljujeta vse, kar počne.",
+      "mmali-b2b-rhaegal":
+        "Bil je trenutek v preteklosti, ki ga nihče ni pričakoval – trenutek, ko sta Bobi pa MMali stala hrbet ob hrbtu, en trmast igralec proti drugmo, in z enim intenzivnim komadom za drugim končevala nočne zadeve. Čeprav si nihče ni upu napovedat, ali se bo zgodovina ponovila, jima ni vzelo dolgo, da sta spoznala, da je čas, da se spet združita zavolo pravih Endemit fanov. Njuna glasba udari globoko – ne bo sam spremenila tvojga stanja duha na bolše, ampak za zmerm spremenila občutek grajske kleti.",
+    },
+  },
+  "ende-meet-26": (() => {
+    const intro =
+      "To ni običajen Endemit dogodek. Ni after hours pa ni underground.\n" +
+      "Čas je za Ende Meet v trgovini s ploščami Big Nose – še en sproščen petkov popoldan v družbi prijateljev, z vinili, ki se vrtijo v ozadju.\n" +
+      "To je tvoja najbolša priložnost, da spoznaš ekipo. Naš prvi artist-in-focus je MMali – mož v ozadju naše prve vinilne izdaje Issun-bōshi.\n" +
+      "Začnemo ob 17h. Pijača bo na volo v trgovini, zravn pa naš merch pa tvoja lastna kopija Issun-bōshija.\n" +
+      "Ne zamudi. To ni parti, to je družinsko snidenje.";
+    return {
+      type: "event",
+      internalName: "Ende Meet",
+      base: { description: intro },
+      slices: {
+        0: { primary: { content: intro } },
+        2: {
+          primary: {
+            headline: "Na volo na dogodku",
+            description: "Poberi album",
+          },
+        },
+        3: {
+          primary: {
+            title: "Merch na dogodku",
+            description: "Odličen način, da podpreš našo stvar",
+          },
+        },
+      },
+    };
+  })(),
+  "endemit-festival-2025": {
+    type: "event",
+    internalName: "Endemit festival '25",
+    base: {
+      annotation: "Zaprt dogodek",
+      description:
+        "Nazaj k izviru.\n" +
+        "Tisti čas leta nas kliče domov – v gozd, ki nas pozna, k zemlji, ki nas drži, pa drug k drugmo.\n" +
+        "Tokrat se premikamo tiho. Brez velikih objav, brez glasnih vabil. Sam mi – pa tisti, ki jim zaupamo, da čutijo isto. Beseda potuje od prijatelja do prijatelja. Od srca do srca. Od tistih, ki slišijo tišino med basi. Skriti, a globoko povezani.",
+    },
+    bios: {
+      "rene-wise":
+        "Rene Wise dostavla močan, perkusiven techno, da razgiba gibanje. Njegov prepoznavni sound je prizemljen pa gnan – surov, a sodoben ritem, pognan v gibanje, da ustvari atmosferske zvočne pokrajine, kjer se telo pa zvok stakneta. Nikol vsiljiv, zmerm natančen pa pod kontrolo. Kurira založbo Moving Pressure, ki odseva njegovo zvočno estetiko: gol, groovast techno s perkusivnim ozadjem. Obscurjeva nedavna izdaja na tej založbi povezuje našo sceno z Renejevo skoz skupen zvočni etos – tesen, surov pa globoko občuten.",
+      "beste-hira":
+        "Beste Hira prinaša neustrašen pristop k dvigovanju plesišča in ponuja mirovne darove goste perkusije, abstraktnih melodij pa prepričljivih ritmov, da izvede zvočni ritual visoke energije. Pričakuj intenziven, obliko spreminjajoč set, ki nikol ne neha slediti svoji lastni pripovedi.",
+      vinter:
+        "Vinterjev sound zaznamuje raba kontrasta – balansira med zadržanostjo pa sprostitvijo, pri čemer zadržanost v njegovem (mind)setu nikol ni prava opcija. Njegov glasbeni okus je oster, pa nekako čustven, njegove selekcije pa z natančnostjo pa slogom v kamen postavljajo meje techna. Je zaupanja vredna prisotnost, da atmosfero potisne do meja tik pred glavnim aktom.",
+      rhaegal:
+        "Rhaegal je stopnjeval svoje nastope in na vsaki postaji svoje nenehno razvijajoče se umetniške poti dostavu temne mojstrovine. Njegovi closing seti so underground izkušnja obsežnega čustvenga terena, zasnovana za razskovanje notranje sfere neskončnga. Vodi tut založbo Hands of the Creator, s katero poslušalcu deli karte nezemeljskih zvokov.",
+      "dj-labrana":
+        "Labrana je tista redka, zvok zbirajoča zver, ki razume, da mora glasba nagovarjat um brez predsodkov. Pričakuj vzdigujočo dnevno selekcijo housa, disca pa leftfield čudakov. Igriva, a globoka, s pravo mero nepredvidljivosti v vzorcu.",
+      "omnia-vox":
+        "Omnia Vox je kipar zvočnih pokrajin, ki dihajo pa z lahkoto pa naravnim tokom preusmerijo pozornost k naslednji postaji neraziskanga. Z rabo ambienta, drona pa organskih posnetkov so njegovi seti nujno potrebna dekompresija – platforma za refleksijo pa reset.",
+      "material-object":
+        "Material Object je mojster zvočne arhitekture, ki gradi večdimenzionalno atmosfero iz abstraktnga techna, ambienta pa psihedeličnih komponent. Producent pa izvajalec, ki so ga vzeli za svojga občinstva pa založbe po vsem svetu, je svoj slog razvil skoz sodelovanja s sensejem elektronske glasbe Petetom Namlookom in svoj prepoznavni sound prinesu v prizorišča ko Berghain ali festival Labyrinth. Doma iz Avstralije, zdej postavla svoj novi hub v Sloveniji in debitira na Endemitu sred koroškga gozda.",
+      beko:
+        "Beko spaja hipnotične groove s surovimi teksturami pa natančno uglašenim progresivnim pridihom. Njegovi seti, igrani izključno na vinilu, so sestavlenji s potrpljenjem pa čisto zbranostjo in poslušalca vodijo skoz vzporedna stanja uma, ne da bi kdaj zgubu nit. Pravi mojster natančnga momentuma.",
+      pvtr:
+        "Pvtr je zarisu načrt za prepletanje ambientalnga techna z dub vplivi pa meditativnimi ritmi in spodbuja globoko interakcijo med prostornimi, a subtilnimi zvočnimi strukturami. Njegovo postopno potapljanje v prostranstvo neznanga vabi k mirovanju pa fokusu in z veliko marljivostjo pa namenom razskuje prostor med zvokom. Pričakuj premišljeno popotovanje v globine techna.",
+      tonske:
+        "Tonske je selektor iz Velenja, znan po natančnih, groovastih konstrukcijah, zgrajenih na minimalnih temeljih. Njegov fokus je na flowu, tesnih prehodih pa goli kontroli. Je tut um za Cogom, še eno slovensko napredno mislečo založbo, posvečeno razskovalni elektronski glasbi.",
+      mmali:
+        "MMali našo letno endemitsko popotovanje zaklučuje z zmerm čustvenim nastopom, oblikovanim iz najredkejših ambientalnih, trance, post-rock pa eksperimentalnih techno biserov. Njegovi seti presegajo žanre, da odsevajo njegov igriv, razskovalen pa nežno okaljen značaj, ki ve točno, kdaj plesišče razburka surovo ali pa ga nežno ziblje, in pleme potopi v občutke pripadnosti, globoke hvaležnosti pa hrepenenja po naslednjem snidenju.",
+      obscur:
+        "Obscur usmerja energijo v plesišče s soundom, ki je surov, industrijski pa hipnotičen. Njegovo delo z založbami Modularz, Paralelo pa Newrhythmic dovol pove o njegovih glasbenih sposobnostih, njegova strast do techno žanra pa presega njegovo producentsko osebo, da dostavi zagnane nastope. Njegovi seti so gosti pa fizični in poslušalca vlečejo proti razpoki temnga frekvenčnga območja, ne da bi zgubil zagon naprej.",
+    },
+    slices: {
+      0: {
+        primary: {
+          heading: "Nazaj k izviru.",
+          description:
+            "Skrbno kuriran festival elektronske glasbe, obdan z reko, gozdom pa gorami.",
+        },
+      },
+      1: {
+        primary: {
+          content:
+            "Tisti čas leta nas kliče domov – v gozd, ki nas pozna, k zemlji, ki nas drži, pa drug k drugmo.\n" +
+            "Tokrat se premikamo tiho. Brez velikih objav, brez glasnih vabil. Sam mi – pa tisti, ki jim zaupamo, da čutijo isto. Beseda potuje od prijatelja do prijatelja. Od srca do srca. Od tistih, ki slišijo tišino med basi. Skriti, a globoko povezani.",
+        },
+      },
+    },
+  },
+  // NOTE: road-x-endemit-2025 is intentionally not here. Its cover_image points
+  // to an orphaned Prismic asset which makes updateDocument re-validation fail
+  // ("Assets not found"). It was localized separately by re-registering the
+  // image via migration.createAsset() from its still-live CDN URL
+  // (annotation_sl = "Gostujoč nastop", description_sl = "Gostujoč dogodek ...").
 };
 
 async function main() {
@@ -188,5 +395,6 @@ async function main() {
 
 main().catch(err => {
   console.error("Events migration failed:", err?.message || err);
+  if (err?.response?.details) console.error(JSON.stringify(err.response.details));
   process.exit(1);
 });
