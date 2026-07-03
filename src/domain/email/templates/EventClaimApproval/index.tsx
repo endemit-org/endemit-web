@@ -2,22 +2,24 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   eventName: string;
+  locale?: string;
 }
 
-function EventClaimApprovalTemplate({ eventName }: Props) {
+function EventClaimApprovalTemplate({ eventName, locale = "sl" }: Props) {
+  const t = getEmailTranslator(locale, "emails.eventClaim");
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">
-          Event Added to Your Profile!
-        </h1>
+        <h1 className="text-2xl font-bold mb-2">{t("heading")}</h1>
         <Text className="text-gray-600 mb-6">
-          Great news! <strong>{eventName}</strong> has been added to your
-          &quot;Events Attended&quot; list. Thanks for being part of our
-          community!
+          {t.rich("body", {
+            eventName,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </Text>
 
         <div
@@ -40,15 +42,18 @@ function EventClaimApprovalTemplate({ eventName }: Props) {
               fontSize: "14px",
             }}
           >
-            View Your Profile
+            {t("viewProfile")}
           </Link>
         </div>
 
         <Text className="text-gray-600 my-6">
-          Questions? Contact us at{" "}
-          <Link href="mailto:endemit@endemit.org" className="link">
-            endemit@endemit.org
-          </Link>
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href="mailto:endemit@endemit.org" className="link">
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

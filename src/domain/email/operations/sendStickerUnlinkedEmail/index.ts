@@ -5,6 +5,8 @@ import {
   StickerUnlinkedTemplate,
   type StickerUnlinkedEmailProps,
 } from "@/domain/email/templates";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
+import { getUserLocaleByEmail } from "@/domain/user/operations/getUserLocaleByEmail";
 
 interface SendStickerUnlinkedEmailInput extends StickerUnlinkedEmailProps {
   customerEmail: string;
@@ -20,10 +22,13 @@ export const sendStickerUnlinkedEmail = async (
     return null;
   }
 
+  const locale = await getUserLocaleByEmail(customerEmail);
+  const t = getEmailTranslator(locale, "emails.sticker");
+
   return await resend.emails.send({
     from: resendFromEmail,
     to: customerEmail,
-    subject: "Your backup sticker was removed",
-    react: StickerUnlinkedTemplate(templateProps),
+    subject: t("unlinked.subject"),
+    react: StickerUnlinkedTemplate({ ...templateProps, locale }),
   });
 };

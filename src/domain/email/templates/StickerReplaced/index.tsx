@@ -1,22 +1,22 @@
 import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text } from "@react-email/components";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   oldCode: string;
   newCode: string;
+  locale?: string;
 }
 
-function StickerReplacedTemplate({ oldCode, newCode }: Props) {
+function StickerReplacedTemplate({ oldCode, newCode, locale = "sl" }: Props) {
+  const t = getEmailTranslator(locale, "emails.sticker");
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Your wristband was updated</h1>
+        <h1 className="text-2xl font-bold mb-4">{t("replaced.heading")}</h1>
 
-        <Text className="text-gray-600 mb-6">
-          Your previous wristband has been replaced. The old code will no longer
-          work at POS registers — only the new one below.
-        </Text>
+        <Text className="text-gray-600 mb-6">{t("replaced.intro")}</Text>
 
         <table style={{ width: "100%", marginBottom: "24px" }}>
           <tbody>
@@ -31,7 +31,7 @@ function StickerReplacedTemplate({ oldCode, newCode }: Props) {
                   }}
                 >
                   <Text className="text-gray-500 text-xs mb-1">
-                    Old (removed)
+                    {t("replaced.oldLabel")}
                   </Text>
                   <Text
                     style={{
@@ -58,7 +58,7 @@ function StickerReplacedTemplate({ oldCode, newCode }: Props) {
                   }}
                 >
                   <Text className="text-green-700 text-xs mb-1">
-                    New (active)
+                    {t("replaced.newLabel")}
                   </Text>
                   <Text
                     style={{
@@ -78,12 +78,10 @@ function StickerReplacedTemplate({ oldCode, newCode }: Props) {
           </tbody>
         </table>
 
-        <h2 className="text-lg font-semibold mb-2">How to use it</h2>
-        <Text className="text-gray-600 mb-6">
-          If your phone is dead or missing at a POS register, show the wristband
-          to the cashier. They can scan it (or type the code) and the payment
-          screen will appear on their device for you to confirm.
-        </Text>
+        <h2 className="text-lg font-semibold mb-2">
+          {t("howToUseHeading")}
+        </h2>
+        <Text className="text-gray-600 mb-6">{t("howToUseBody")}</Text>
       </div>
     </MasterTemplate>
   );

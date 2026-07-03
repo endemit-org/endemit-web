@@ -139,6 +139,64 @@
       "reminderOnePerson": "Each ticket is valid for one person",
       "reminderCodeOfConduct": "<link>Code of conduct</link> applies at all our events",
       "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "eventClaim": {
+      "subject": "{eventName} has been added to your profile",
+      "heading": "Event Added to Your Profile!",
+      "body": "Great news! <strong>{eventName}</strong> has been added to your \"Events Attended\" list. Thanks for being part of our community!",
+      "viewProfile": "View Your Profile",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "sticker": {
+      "howToUseHeading": "How to use it",
+      "howToUseBody": "If your phone is dead or missing at a POS register, show the wristband to the cashier. They can scan it (or type the code) and the payment screen will appear on their device for you to confirm.",
+      "linked": {
+        "subject": "Your backup sticker is active",
+        "heading": "Your wristband is active",
+        "intro": "A wristband is now linked to your Endemit wallet. Keep it with you and use it at bars or shops within the area to make payments using your online balance.",
+        "codeLabel": "Your wristband code"
+      },
+      "replaced": {
+        "subject": "Your wristband was updated",
+        "heading": "Your wristband was updated",
+        "intro": "Your previous wristband has been replaced. The old code will no longer work at POS registers — only the new one below.",
+        "oldLabel": "Old (removed)",
+        "newLabel": "New (active)"
+      },
+      "unlinked": {
+        "subject": "Your wristband sticker was removed",
+        "heading": "Your wristband sticker was removed",
+        "intro": "The wristband below is no longer linked to your Endemit wallet and can't be used to pay at POS registers anymore.",
+        "removedLabel": "Removed wristband",
+        "outro": "You can link a new wristband any time from your profile settings."
+      }
+    },
+    "walletTransfer": {
+      "subjectSent": "Funds sent",
+      "subjectReceived": "Funds received",
+      "descSent": "You sent <strong>{amount}</strong> to <strong>{name}</strong>.",
+      "descReceived": "<strong>{name}</strong> sent you <strong>{amount}</strong>.",
+      "amountSent": "Amount sent",
+      "amountReceived": "Amount received",
+      "note": "Note",
+      "walletBalance": "Wallet Balance",
+      "viewTransaction": "View transaction",
+      "questions": "If you have any questions, please contact us at <link>endemit@endemit.org</link>."
+    },
+    "posTransaction": {
+      "subject": "Transaction Receipt #{code} @ endemit",
+      "heading": "Transaction Confirmed",
+      "transactionNumber": "Transaction #{code}",
+      "items": "Items",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total",
+      "subtotal": "Subtotal:",
+      "tip": "Tip:",
+      "totalLabel": "Total:",
+      "walletBalance": "Wallet Balance",
+      "viewWallet": "View Your Wallet",
+      "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>"
     }
   }
 }
