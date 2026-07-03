@@ -44,11 +44,13 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }): Promise<Metadata> {
-  const { uid } = await params;
-  const event = await fetchEventFromCmsByUid(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const event = await fetchEventFromCmsByUid(uid, loc);
 
   if (!event) {
     notFound();
@@ -60,14 +62,14 @@ export async function generateMetadata({
     metaImage: event.meta.image,
     fallbackImages: event.promoImage?.src ? [event.promoImage.src] : undefined,
   });
-  const url = `https://endemit.org/events/${uid}`;
 
   return buildOpenGraphObject({
     title,
     description,
     images,
-    url,
     type: "website",
+    locale: loc,
+    path: `/events/${uid}`,
   });
 }
 
@@ -75,11 +77,13 @@ export default async function EventPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }) {
-  const { uid } = await params;
-  const event = await fetchEventFromCmsByUid(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const event = await fetchEventFromCmsByUid(uid, loc);
   let products: Product[] = [];
 
   if (event?.tickets.productIds && event.tickets.productIds.length > 0) {
@@ -145,7 +149,7 @@ export default async function EventPage({
         label: page.title,
         content: (
           <div className={"max-lg:text-xs w-full"}>
-            <SliceDisplay slices={page.slices} />
+            <SliceDisplay slices={page.slices} locale={loc} />
           </div>
         ),
         id: page.uid,
@@ -159,7 +163,7 @@ export default async function EventPage({
       label: "About",
       content: (
         <div>
-          <SliceDisplay slices={event.slices} />
+          <SliceDisplay slices={event.slices} locale={loc} />
         </div>
       ),
       id: "overview",
