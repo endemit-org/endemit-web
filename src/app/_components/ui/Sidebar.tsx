@@ -239,10 +239,6 @@ export default function Sidebar({
             </div>
           )}
 
-          <div className="flex justify-end pr-6 pb-3">
-            <LanguageSwitcher className="text-sm" />
-          </div>
-
           {mergedSocialLinks.length > 0 && (
             <div className="social-icons flex justify-end pr-6 pb-4">
               {mergedSocialLinks.map(social => (
@@ -264,6 +260,10 @@ export default function Sidebar({
               ))}
             </div>
           )}
+
+          <div className="flex justify-end pr-6 pb-3">
+            <LanguageSwitcher className="text-sm" />
+          </div>
         </div>
 
         {/* Footer */}

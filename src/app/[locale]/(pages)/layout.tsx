@@ -7,10 +7,14 @@ import PlayerContentWrapper from "@/app/_components/player/PlayerContentWrapper"
 
 export default async function ContentPageLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
-  const menuItems = await fetchNavigationMenuFromCms();
+  const { locale } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const menuItems = await fetchNavigationMenuFromCms(loc);
 
   return (
     <PlayerContentWrapper>
@@ -40,7 +44,7 @@ export default async function ContentPageLayout({
           <div className={"overflow-hidden relative p-4 lg:p-12 max-lg:py-12"}>
             <div className={"relative"}>{children}</div>
           </div>
-          <SiteFooter />
+          <SiteFooter locale={loc} />
         </div>
       </div>
       <BackToTopButton />

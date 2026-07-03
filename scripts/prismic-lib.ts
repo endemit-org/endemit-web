@@ -83,9 +83,31 @@ export function createClient() {
   });
 }
 
+/** Formats a StructuredText field's translated string into blocks using the
+ * slice/custom-type model config. Exposed for bespoke singleton migrations. */
+export function formatSliceField(sliceType: string, zone: "primary" | "items", field: string, text: string) {
+  const cfg = sliceFields(sliceType)[zone][field];
+  return formatField(cfg, text);
+}
+
 export async function migrateDoc(uid: string, t: DocTranslations) {
   const client = createClient();
   const doc = await client.getByUID(t.type as never, uid);
+  return applyAndMigrate(client, doc, t);
+}
+
+/** Same as migrateDoc but for singleton documents (getSingle). */
+export async function migrateSingle(t: DocTranslations) {
+  const client = createClient();
+  const doc = await client.getSingle(t.type as never);
+  return applyAndMigrate(client, doc, t);
+}
+
+async function applyAndMigrate(
+  client: ReturnType<typeof createClient>,
+  doc: { data: unknown; uid?: string | null },
+  t: DocTranslations
+) {
   const data = doc.data as Record<string, unknown>;
   const ctFields = customTypeFields(t.type);
 
@@ -137,5 +159,5 @@ export async function migrateDoc(uid: string, t: DocTranslations) {
   const migration = prismic.createMigration();
   migration.updateDocument(doc as never, t.internalName);
   await client.migrate(migration, { reporter: () => {} });
-  console.log(`  ✓ migrated ${t.type}/${uid} (planned version)`);
+  console.log(`  ✓ migrated ${t.type}/${doc.uid ?? "single"} (planned version)`);
 }

@@ -94,7 +94,7 @@ export default function LanguageSwitcher({
         <ul
           role="listbox"
           aria-label={t("label")}
-          className="absolute bottom-full right-0 z-50 mb-2 min-w-[10rem] overflow-hidden rounded-md border border-neutral-800 bg-neutral-900/95 py-1 shadow-xl backdrop-blur-sm"
+          className="absolute bottom-full right-0 z-50 mb-2 min-w-[13rem] overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900/95 py-1.5 shadow-2xl backdrop-blur-sm"
         >
           {LOCALES.map(loc => {
             const Flag = FLAGS[loc];
@@ -105,13 +105,13 @@ export default function LanguageSwitcher({
                   type="button"
                   onClick={() => switchTo(loc)}
                   className={clsx(
-                    "flex w-full items-center gap-x-3 px-3 py-2 text-left font-heading tracking-widest uppercase transition-colors",
+                    "flex w-full items-center gap-x-3 px-4 py-3 text-left text-base font-heading tracking-widest uppercase transition-colors",
                     isCurrent
                       ? "text-white bg-white/5 cursor-default"
                       : "text-neutral-300 hover:bg-white/10 hover:text-white"
                   )}
                 >
-                  <Flag className="h-4 w-6 flex-shrink-0 rounded-[3px] shadow-sm ring-1 ring-black/20" />
+                  <Flag className="h-5 w-8 flex-shrink-0 rounded-[3px] shadow-sm ring-1 ring-black/20" />
                   <span className="flex-1">{t(loc)}</span>
                   {isCurrent && (
                     <svg
