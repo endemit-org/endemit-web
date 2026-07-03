@@ -51,6 +51,101 @@ const FAQ: { title: string; content: string }[] = [
   },
 ];
 
+// related_products[].call_to_action_sl, keyed by uid, index-aligned with the
+// document's related_products group.
+const CTAS: Record<string, string[]> = {
+  "festival-2026-single-ticket": [
+    "Za pare pa neustavljive dvojce",
+    "Pripeli prijatle",
+    "Napolni denarnico za festival",
+    "Napolni denarnico za festival",
+  ],
+  "festival-2026-duo-ticket": [
+    "Za samostojne obiskovalce",
+    "Pripeli prijatle",
+    "Napolni denarnico za festival",
+    "Napolni denarnico za festival",
+  ],
+  "festival-2026-group-ticket": [
+    "Za samostojne festivalske obiskovalce",
+    "Za pare pa neustavljive dvojce",
+    "Napolni denarnico za festival",
+    "Napolni denarnico za festival",
+  ],
+  "donation-to-association": [
+    "Podpreš nas lahk tut z nakupom te odlične majice",
+    "Podpri z nakupom bež torbe",
+    "ali črne torbe",
+    "Ta umetniški tisk omejene izdaje izgleda odlično",
+  ],
+  "wallet-top-up-20-tokens": [
+    "Napolni za par pijač",
+    "Napolni za pijačo pa hrano",
+    "Razvajaj sebe pa svojo druščino",
+    "Dobi zdej ali na dogodku",
+  ],
+  "wallet-top-up-50-tokens": [
+    "Napolni za pijačo pa obrok",
+    "Napolni za pijačo pa hrano",
+    "Razvajaj sebe pa svojo druščino",
+    "Dobi zdej ali na dogodku",
+  ],
+  "wallet-top-up-100-tokens": [
+    "Napolni za pijačo pa obrok",
+    "Napolni za par pijač",
+    "Razvajaj sebe pa svojo druščino",
+    "Dobi zdej ali na dogodku",
+  ],
+  "wallet-top-up-200-tokens": [
+    "Napolni za pijačo pa obrok",
+    "Napolni za par pijač",
+    "Napolni za pijačo pa hrano",
+    "Dobi zdej ali na dogodku",
+  ],
+  "issun-boshi-vinyl-ep": [
+    "Ko nalašč za album",
+    "Za nošenje albumov ali laptopa",
+    "Odlično se poda k Endemit signature majici",
+    "Stilski umetniški tisk naše omejene izdaje 2025",
+  ],
+  "darkest-and-oddest-shades-lp": [
+    "Odlično se poda k LP-ju",
+    "Ko nalašč za album",
+    "Za nošenje albumov ali laptopa",
+    "Stilski umetniški tisk naše omejene izdaje 2025",
+  ],
+  "hotc-official-t-shirt-black": [
+    "Kombo z uradno Hands Of The Creator majico",
+    "Dnevna torba za tvoje osnovne stvari",
+    "Inkognito torba za tvojo naslednjo zabavo",
+    "Vroče iz tiskarne, prva izdaja",
+  ],
+  "endemit-limited-tote-violet": [
+    "Se odlično poda k",
+    "Album se ko ulit prilega notr",
+    "Ti je za temneje? Vzem črno",
+    "Popolno se ujema s tiskom",
+  ],
+  "endemit-core-tote-black": [
+    "Uskladi s tiskom na uradni majici",
+    "Odličen kombo za to torbo",
+    "Album se ko ulit prilega notr",
+    "Ti ni za črno? Probaj to",
+  ],
+  "endemit-graphic-print-t-shirt-black": [
+    "Če iščeš bolj preprost stil",
+    "MMali je pravkar izdal ta EP, količine omejene",
+    "Uskladi majico pa tisk",
+    "Na volo tut ko torba",
+  ],
+  "endemit-embroidered-t-shirt-black": [
+    "Alternativa z zapelivim tiskom",
+    "Dnevna torba za tvoje osnovne stvari",
+    "Inkognito torba za tvojo naslednjo zabavo",
+    "Vroče iz tiskarne, prva izdaja",
+  ],
+};
+
 const TICKET_DESC: (string | null)[] = [
   "Letno snidenje plemena je bilo vklesano v kamen že pred več ko desetletjem. Odraščali smo z njim, tok ko je on odraščal z nami, in flow, ki smo ga ustvarli po poti, ostaja močan ko zmerm.",
   "Letos se gibljemo s polno odločnostjo. Noben cilj ni previsok, noben zvok premočan. Beseda bo potovala daleč, da prikliče pretekle pa prihodnje prijatle nazaj v tisto ukročeno divjino, kjer se glasba popolnoma poravna z okoljem pa stanjem našga uma.",
@@ -260,6 +355,16 @@ async function migrateProduct(client: ReturnType<typeof createClient>, p: Produc
     data.description_sl = source.map((b, i) =>
       p.description![i] != null ? { type: b.type, text: p.description![i], spans: [] } : b
     );
+  }
+
+  const ctas = CTAS[p.uid];
+  if (ctas) {
+    const rp = (data.related_products as Record<string, unknown>[]) ?? [];
+    if (rp.length !== ctas.length)
+      console.warn(`  ⚠ ${p.uid}: ${ctas.length} CTAs vs ${rp.length} related_products`);
+    ctas.forEach((text, i) => {
+      if (rp[i]) rp[i].call_to_action_sl = text;
+    });
   }
 
   if (p.walletFaq) {
