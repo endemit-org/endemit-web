@@ -69,6 +69,15 @@
       "totalLabel": "Skupaj:",
       "viewOrder": "Poglej naročilo na spletu",
       "invoiceNote": "To e-poštno sporočilo velja kot račun. Če imaš vprašanja ali potrebuješ pomoč, nam piši na <link>endemit@endemit.org</link>."
+    },
+    "otcSignIn": {
+      "subject": "Tvoja koda za prijavo: {code}",
+      "heading": "Tvoja koda za prijavo",
+      "intro": "Za prijavo v svoj račun uporabi spodnjo kodo. Koda bo potekla čez {minutes} minut.",
+      "orClick": "Ali klikni spodnji gumb:",
+      "signInInstantly": "Prijavi se takoj",
+      "ignoreNote": "Če te kode nisi zahteval, lahko to sporočilo mirno prezreš. Nekdo je morda pomotoma vnesel tvoj e-naslov.",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     }
   }
 }

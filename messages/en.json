@@ -69,6 +69,15 @@
       "totalLabel": "Total:",
       "viewOrder": "View Your Order online",
       "invoiceNote": "This email message serves as an invoice. Please feel free to reach out to our support team at <link>endemit@endemit.org</link> if you have any questions or need further assistance."
+    },
+    "otcSignIn": {
+      "subject": "Your sign-in code: {code}",
+      "heading": "Your Sign-in Code",
+      "intro": "Use the code below to sign in to your account. This code will expire in {minutes} minutes.",
+      "orClick": "Or click the button below:",
+      "signInInstantly": "Sign In Instantly",
+      "ignoreNote": "If you did not request this code, you can safely ignore this email. Someone may have entered your email address by mistake.",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
     }
   }
 }

@@ -11,7 +11,7 @@ export const runOtcEmailAutomation = inngest.createFunction(
     triggers: [{ event: OtcQueueEvent.SEND_OTC_EMAIL }],
   },
   async ({ event, step }) => {
-    const { email, code, magicLink, expiresInMinutes, callbackUrl } =
+    const { email, code, magicLink, expiresInMinutes, callbackUrl, locale } =
       event.data as OtcEmailQueueData;
 
     await step.run("send-otc-email", async () => {
@@ -21,6 +21,7 @@ export const runOtcEmailAutomation = inngest.createFunction(
         magicLink,
         expiresInMinutes,
         callbackUrl,
+        locale,
       });
     });
 
