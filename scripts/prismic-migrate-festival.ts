@@ -65,24 +65,24 @@ const SLICE_SL: Record<number, { primary?: Record<string, unknown>; items?: Reco
   0: {
     primary: {
       heading_sl: h1("Druga runda kart"),
-      description_sl: rt("Zadnja runda kart s popustom, pohiti. Od 14. do 16. avgusta."),
+      description_sl: rt("Zadnja runda kart po znižani ceni, pohiti. Od 14. do 16. avgusta."),
     },
   },
   1: { primary: { content_sl: INTRO } },
   4: {
     primary: {
       content_sl: rt(
-        "NA VOLJO DRUGA RUNDA KART – OMEJEN ČAS\n" +
-          "Early bird in prva runda sta razprodana, pohiti po zadnjo rundo s popustom za naše snidenje 2026 v Libeličah. Letos smo prpravli par nadgradenj, da bo tvoja izkušnja še bolša. Uredi svojo digitalno denarnico za brezgotovinska plačila – pijačo, hrano in merch na prizorišču plačaš kar z zapestnico.\n" +
-          "Vse karte vključujejo dovoljenje za šotorjenje na območju festivala 🏕"
+        "ZUNA JE DRUGA RUNDA KART – ČAS TEČE\n" +
+          "Early bird in prva runda sta razprodana, pohiti po zadnjo rundo po znižani ceni za naše snidenje 2026 v Libeličah. Letos smo nagruntali par nadgradenj, da ti bo lažje. Uredi svojo digitalno denarnico za brezgotovinska plačila – pijačo, hrano pa merch na prizorišču plačaš kar z zapestnico.\n" +
+          "Vse karte vključujejo šotorjenje na območju festivala za đabe 🏕"
       ),
     },
   },
   8: {
     primary: {
-      heading_sl: "Runde kart",
+      heading_sl: "Rundi kart",
       subheading_sl:
-        "Posebne ponudbe v omejenih rundah; early bird in prva runda sta razprodana, druga runda pa je še zmerm na volo po omejenih cenah.",
+        "Posebne ponudbe v omejenih rundah; early bird in prva runda sta razprodana, druga runda pa je še zmerm zuna po omejenih cenah.",
     },
     items: [
       { title_sl: "Early bird (razprodano)", description_sl: "Prvih 50 kart" },
@@ -94,21 +94,22 @@ const SLICE_SL: Record<number, { primary?: Record<string, unknown>; items?: Reco
   10: {
     primary: {
       title_sl: "Napoln svojo digitalno denarnico",
-      description_sl: "Prpravi svojo digitalno denarnico za pijačo, hrano, merch in druge drobnarije.",
+      description_sl:
+        "Prpravi denarnico za pijačo, hrano, merch pa druge drobnarije. Konc izletov na bankomat, ko zmanka gotovine.",
     },
   },
   11: {
     primary: {
       content_sl: rt(
-        "Da bo hitro in fajn, mamo letos svoj brezgotovinski plačilni sistem, ki poganja vsa plačila na festivalu. Preberi več o denarnici."
+        "Da bo hitro pa fajn, mamo letos svoj brezgotovinski EndePay sistem, ki poganja vsa plačila na festivalu. Preber več o denarnici."
       ),
     },
   },
   15: {
     primary: {
-      override_title_sl: "Bodi obveščen o naslednji rundi",
+      override_title_sl: "Bodi na tekočem o naslednji rundi",
       override_description_sl:
-        "Naroči se in bodi med prvimi, ki jih zbudimo, ko pade naslednja runda kart.",
+        "Naroč se pa bodi med prvimi, ki jih zbudimo, ko pade naslednja runda kart.",
     },
   },
 };
