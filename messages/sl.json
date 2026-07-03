@@ -122,6 +122,23 @@
       "point2": "QR kode ali digitalne vstopnice, povezane s {count, plural, one {to vstopnico} other {temi vstopnicami}}, se ne bodo prebrale.",
       "point3": "Če meniš, da gre za napako, se nemudoma obrni na našo podporo.",
       "questions": "Če imaš vprašanja, piši naši podpori na <link>endemit@endemit.org</link>"
+    },
+    "eventReminder": {
+      "subject": "Jutri: {eventName} - {count, plural, one {Tvoja vstopnica je pripravljena!} other {Tvoje vstopnice ({count}) so pripravljene!}}",
+      "heading": "{eventName} je jutri!",
+      "intro": "{count, plural, one {Tvoja vstopnica za {eventName} je priložena in pripravljena za jutri. Ob vhodu jo pokaži za potrditev. Uporabiš lahko tudi povezavo do digitalne vstopnice ali jo dodaš v Apple Wallet. Se vidimo na plesišču!} other {Tvoje vstopnice ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih vstopnic ali jih dodaš v Apple Wallet. Se vidimo na plesišču!}}",
+      "date": "Datum:",
+      "location": "Lokacija:",
+      "lineup": "Zasedba",
+      "yourTickets": "{count, plural, one {Tvoja vstopnica} other {Tvoje vstopnice ({count})}}",
+      "view": "Poglej",
+      "appleWallet": "Apple Wallet",
+      "viewAll": "Poglej vse vstopnice",
+      "reminder": "Opomnik",
+      "reminderShowQr": "Ob vhodu pokaži svojo QR kodo",
+      "reminderOnePerson": "Vsaka vstopnica velja za eno osebo",
+      "reminderCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših dogodkih",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     }
   }
 }

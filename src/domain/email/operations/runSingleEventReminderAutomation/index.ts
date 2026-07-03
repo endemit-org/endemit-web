@@ -33,10 +33,12 @@ export const runSingleEventReminderAutomation = inngest.createFunction(
       venue,
       artists,
       tickets,
+      locale: rawLocale = "sl",
     } = data;
 
+    const locale: "sl" | "en" = rawLocale === "en" ? "en" : "sl";
     const parsedEventDate = new Date(eventDate);
-    const formattedDate = formatEventDateAndTime(parsedEventDate);
+    const formattedDate = formatEventDateAndTime(parsedEventDate, locale);
     const artistNames = artists.map(a => a.name);
     const artistLines = splitArtistsIntoLines(artistNames);
 
@@ -62,6 +64,7 @@ export const runSingleEventReminderAutomation = inngest.createFunction(
             price: formatPrice(ticket.price),
             coverImageUrl: eventPromoImageUrl,
             template: templateId,
+            locale,
           });
 
           const sanitizedName = sanitizeForFilename(ticket.ticketHolderName);
@@ -82,6 +85,7 @@ export const runSingleEventReminderAutomation = inngest.createFunction(
         artists,
         tickets,
         attachments,
+        locale,
       });
     });
 

@@ -122,6 +122,23 @@
       "point2": "Any QR codes or digital passes associated with {count, plural, one {this ticket} other {these tickets}} will not scan.",
       "point3": "If you believe this is an error, please contact our support team immediately.",
       "questions": "If you have any questions, please contact our support team at <link>endemit@endemit.org</link>"
+    },
+    "eventReminder": {
+      "subject": "Tomorrow: {eventName} - {count, plural, one {Your ticket is ready!} other {Your {count} tickets are ready!}}",
+      "heading": "{eventName} is Tomorrow!",
+      "intro": "{count, plural, one {Your ticket for {eventName} is attached and ready for tomorrow. Just show it at the door to get validated. You can also use the digital ticket link or add it to your Apple Wallet. See you on the floor!} other {Your {count} tickets for {eventName} are attached and ready for tomorrow. Just show them at the door to get validated. You can also use the digital ticket links or add them to your Apple Wallet. See you on the floor!}}",
+      "date": "Date:",
+      "location": "Location:",
+      "lineup": "Lineup",
+      "yourTickets": "{count, plural, one {Your Ticket} other {Your {count} Tickets}}",
+      "view": "View",
+      "appleWallet": "Apple Wallet",
+      "viewAll": "View All Tickets",
+      "reminder": "Reminder",
+      "reminderShowQr": "Show your QR code at the entrance",
+      "reminderOnePerson": "Each ticket is valid for one person",
+      "reminderCodeOfConduct": "<link>Code of conduct</link> applies at all our events",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
     }
   }
 }
