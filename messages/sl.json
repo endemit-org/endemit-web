@@ -78,6 +78,14 @@
       "signInInstantly": "Prijavi se takoj",
       "ignoreNote": "Če te kode nisi zahteval, lahko to sporočilo mirno prezreš. Nekdo je morda pomotoma vnesel tvoj e-naslov.",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "orderShipped": {
+      "subject": "Tvoje naročilo je odposlano!",
+      "heading": "Tvoje naročilo je odposlano!",
+      "orderNumber": "Naročilo #{id}",
+      "body": "Odlična novica! Tvoje naročilo je na poti do tebe. Dostavo lahko pričakuješ v naslednjih nekaj delovnih dneh.",
+      "viewOrder": "Poglej naročilo",
+      "questions": "Vprašanja o dostavi? Piši nam na <link>endemit@endemit.org</link>"
     }
   }
 }

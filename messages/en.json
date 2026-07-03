@@ -78,6 +78,14 @@
       "signInInstantly": "Sign In Instantly",
       "ignoreNote": "If you did not request this code, you can safely ignore this email. Someone may have entered your email address by mistake.",
       "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "orderShipped": {
+      "subject": "Your order has been shipped!",
+      "heading": "Your order has been shipped!",
+      "orderNumber": "Order #{id}",
+      "body": "Great news! Your order is now on its way to you. You can expect delivery within the next couple of work days.",
+      "viewOrder": "View Your Order",
+      "questions": "Questions about your delivery? Contact us at <link>endemit@endemit.org</link>"
     }
   }
 }
