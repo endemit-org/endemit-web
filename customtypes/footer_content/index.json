@@ -31,6 +31,17 @@
           "repeat": true
         }
       },
+      "links_sl": {
+        "type": "Link",
+        "config": {
+          "label": "Links (SL)",
+          "placeholder": "Links in the footer",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": true
+        }
+      },
       "link_divider_symbol": {
         "type": "Text",
         "config": {

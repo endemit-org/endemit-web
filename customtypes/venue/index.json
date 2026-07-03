@@ -59,13 +59,6 @@
           "placeholder": "Full address, with street, zip, city"
         }
       },
-      "address_sl": {
-        "type": "Text",
-        "config": {
-          "label": "Address (SL)",
-          "placeholder": "Full address, with street, zip, city"
-        }
-      },
       "venue_logo": {
         "type": "Image",
         "config": {

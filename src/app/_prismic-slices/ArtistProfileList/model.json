@@ -81,13 +81,6 @@
                   "placeholder": ""
                 }
               },
-              "name_override_sl": {
-                "type": "Text",
-                "config": {
-                  "label": "Name override (optional) (SL)",
-                  "placeholder": ""
-                }
-              },
               "description_override": {
                 "type": "StructuredText",
                 "config": {

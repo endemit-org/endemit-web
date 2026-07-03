@@ -126,13 +126,6 @@
           "placeholder": ""
         }
       },
-      "footnote_sl": {
-        "type": "Text",
-        "config": {
-          "label": "Footnote (SL)",
-          "placeholder": ""
-        }
-      },
       "tracklist": {
         "type": "Group",
         "config": {
@@ -146,24 +139,10 @@
                 "placeholder": ""
               }
             },
-            "artist_sl": {
-              "type": "Text",
-              "config": {
-                "label": "Artist (SL)",
-                "placeholder": ""
-              }
-            },
             "title": {
               "type": "Text",
               "config": {
                 "label": "Title",
-                "placeholder": ""
-              }
-            },
-            "title_sl": {
-              "type": "Text",
-              "config": {
-                "label": "Title (SL)",
                 "placeholder": ""
               }
             },

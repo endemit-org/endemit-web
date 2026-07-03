@@ -28,6 +28,22 @@
                 ]
               }
             },
+            "link_sl": {
+              "type": "Link",
+              "config": {
+                "label": "Link (SL)",
+                "placeholder": "",
+                "select": null,
+                "allowTargetBlank": false,
+                "allowText": true,
+                "repeat": false,
+                "variants": [
+                  "Primary",
+                  "Secondary",
+                  "CTA"
+                ]
+              }
+            },
             "cta_text": {
               "type": "Text",
               "config": {

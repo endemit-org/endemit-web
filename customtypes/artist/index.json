@@ -19,13 +19,6 @@
           "placeholder": "(Required) Name of the artist"
         }
       },
-      "name_sl": {
-        "type": "Text",
-        "config": {
-          "label": "Name * (SL)",
-          "placeholder": "(Required) Name of the artist"
-        }
-      },
       "description": {
         "type": "StructuredText",
         "config": {

@@ -40,9 +40,7 @@ export const transformEventObject = async (
       artists.push({
         id: artist.id,
         uid: artist.uid,
-        name:
-          pickLocalized(item, "name_override", locale) ??
-          pickLocalized(artist.data, "name", locale),
+        name: item.name_override ?? artist.data.name,
         description:
           pickLocalized(item, "description_override", locale).length > 0
             ? pickLocalized(item, "description_override", locale)
@@ -125,7 +123,7 @@ export const transformEventObject = async (
             id: venueDoc.id,
             uid: venueDoc.uid,
             name: pickLocalized(venueDoc.data, "name", locale),
-            address: pickLocalized(venueDoc.data, "address", locale),
+            address: venueDoc.data.address,
             description: pickLocalized(venueDoc.data, "description", locale),
             coordinates: venueDoc.data.coordinates,
             image: venueDoc.data.image
