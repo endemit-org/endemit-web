@@ -58,7 +58,8 @@ function formatField(cfg: FieldConfig | undefined, text: string): unknown {
   if (!cfg) return text;
   if (cfg.type !== "StructuredText") return text; // KeyText etc. -> string
   const c = (cfg.config ?? {}) as { single?: string; multi?: string };
-  const allowed = c.single ? [c.single] : (c.multi ?? "paragraph").split(",");
+  // `single` and `multi` can both be comma-separated lists of allowed blocks.
+  const allowed = (c.single ?? c.multi ?? "paragraph").split(",");
   if (allowed.includes("paragraph")) {
     return text.split("\n").map(t => ({ type: "paragraph", text: t, spans: [] }));
   }

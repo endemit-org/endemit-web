@@ -26,8 +26,10 @@
     "backHome": "Back home"
   },
   "languageSwitcher": {
-    "sl": "Koroščina",
-    "en": "English"
+    "sl": "Po Korošk",
+    "en": "In english",
+    "label": "Language",
+    "current": "Current language"
   },
   "emails": {
     "newTicket": {

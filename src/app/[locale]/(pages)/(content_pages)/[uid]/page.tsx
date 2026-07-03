@@ -29,11 +29,13 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }): Promise<Metadata> {
-  const { uid } = await params;
-  const contentPage = await fetchContentPageFromCms(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const contentPage = await fetchContentPageFromCms(uid, loc);
 
   if (!contentPage) {
     notFound();
@@ -44,14 +46,14 @@ export async function generateMetadata({
   const images = buildOpenGraphImages({
     metaImage: contentPage.meta.image,
   });
-  const url = `https://endemit.org/${uid}`;
 
   return buildOpenGraphObject({
     title,
     description,
     images,
-    url,
     type: "article",
+    locale: loc,
+    path: `/${uid}`,
   });
 }
 
@@ -65,7 +67,7 @@ export default async function ContentPage({
 }) {
   const { locale, uid } = await params;
   const loc = locale === "en" ? "en" : "sl";
-  const contentPage = await fetchContentPageFromCms(uid);
+  const contentPage = await fetchContentPageFromCms(uid, loc);
 
   if (!contentPage) {
     notFound();
