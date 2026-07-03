@@ -1,0 +1,26 @@
+{
+  "common": {
+    "loading": "Nalaganje...",
+    "back": "Nazaj",
+    "close": "Zapri"
+  },
+  "nav": {},
+  "footer": {},
+  "home": {},
+  "events": {},
+  "artists": {},
+  "venues": {},
+  "store": {},
+  "checkout": {},
+  "profile": {},
+  "signin": {},
+  "notFound": {
+    "title": "Stran ne obstaja",
+    "description": "Stran, ki jo iščeš, ne obstaja.",
+    "backHome": "Nazaj domov"
+  },
+  "languageSwitcher": {
+    "sl": "Koroščina",
+    "en": "English"
+  }
+}

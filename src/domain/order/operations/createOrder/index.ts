@@ -19,6 +19,7 @@ interface CreateOrderParams {
   orderItems: ProductInOrder[];
   metadata?: Prisma.InputJsonValue;
   userId?: string;
+  locale?: string;
 }
 
 interface CreateOrderResult {
@@ -40,6 +41,7 @@ export const createOrder = async ({
   orderItems,
   metadata,
   userId,
+  locale = "sl",
 }: CreateOrderParams): Promise<CreateOrderResult> => {
   // Find or create user by email if userId not provided
   let resolvedUserId = userId;
@@ -66,6 +68,7 @@ export const createOrder = async ({
       shippingAddress,
       items: JSON.parse(JSON.stringify(orderItems)),
       metadata,
+      locale: locale === "en" ? "en" : "sl",
     },
   });
 

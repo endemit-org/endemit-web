@@ -1,0 +1,26 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "close": "Close"
+  },
+  "nav": {},
+  "footer": {},
+  "home": {},
+  "events": {},
+  "artists": {},
+  "venues": {},
+  "store": {},
+  "checkout": {},
+  "profile": {},
+  "signin": {},
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "backHome": "Back home"
+  },
+  "languageSwitcher": {
+    "sl": "Koroščina",
+    "en": "English"
+  }
+}

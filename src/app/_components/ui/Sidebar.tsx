@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link, usePathname } from "@/i18n/navigation";
 import Image from "next/image";
 import clsx from "clsx";
-import { usePathname } from "next/navigation";
+import LanguageSwitcher from "@/app/_components/ui/LanguageSwitcher";
 import Cart from "@/app/_components/cart/Cart";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
@@ -236,6 +236,10 @@ export default function Sidebar({
               <Cart variant={"detailed"} />
             </div>
           )}
+
+          <div className="flex justify-end pr-6 pb-3">
+            <LanguageSwitcher className="text-sm" />
+          </div>
 
           {mergedSocialLinks.length > 0 && (
             <div className="social-icons flex justify-end pr-6 pb-4">

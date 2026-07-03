@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import EndemitSymbol from "@/app/_components/icon/EndemitSymbol";
 import packageJson from "@/package.json";
 import { fetchFooterFromCms } from "@/domain/cms/operations/fetchFooterFromCms";

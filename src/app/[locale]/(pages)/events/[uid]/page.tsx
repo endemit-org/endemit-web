@@ -1,0 +1,445 @@
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import { notFound } from "next/navigation";
+import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
+import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
+import Tabs, { TabItem } from "@/app/_components/content/Tabs";
+import { fetchInnerContentPagesForEvent } from "@/domain/cms/operations/fetchInnerContentPagesFromCms";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
+import { formatEventDate, formatEventDateAndTime } from "@/lib/util/formatting";
+import EventLineUp from "@/app/_components/event/EventLineUp";
+import EventLocation from "@/app/_components/event/EventLocation";
+import { Link } from "@/i18n/navigation";
+import { Product } from "@/domain/product/types/product";
+import { fetchProductsFromCmsByIds } from "@/domain/cms/operations/fetchProductFromCms";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import clsx from "clsx";
+import { Metadata } from "next";
+import EventSeoMicrodata from "@/app/_components/seo/EventSeoMicrodata";
+import { getResizedPrismicImage } from "@/lib/util/util";
+import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
+import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
+import ActionButton from "@/app/_components/form/ActionButton";
+import TicketIcon from "@/app/_components/icon/TicketIcon";
+import EventMiniCard from "@/app/_components/event/EventMiniCard";
+
+// Static until next deploy - no ISR
+export const revalidate = false;
+
+export async function generateStaticParams() {
+  const events = await fetchEventsFromCms({});
+
+  if (!events || events.length === 0) {
+    return [];
+  }
+
+  return events.map(event => ({
+    uid: event.uid,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    uid: string;
+  }>;
+}): Promise<Metadata> {
+  const { uid } = await params;
+  const event = await fetchEventFromCmsByUid(uid);
+
+  if (!event) {
+    notFound();
+  }
+
+  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end) : ""}`}`} • Events`;
+  const description = event?.meta.description ?? event.description ?? undefined;
+  const images = buildOpenGraphImages({
+    metaImage: event.meta.image,
+    fallbackImages: event.promoImage?.src ? [event.promoImage.src] : undefined,
+  });
+  const url = `https://endemit.org/events/${uid}`;
+
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    url,
+    type: "website",
+  });
+}
+
+export default async function EventPage({
+  params,
+}: {
+  params: Promise<{
+    uid: string;
+  }>;
+}) {
+  const { uid } = await params;
+  const event = await fetchEventFromCmsByUid(uid);
+  let products: Product[] = [];
+
+  if (event?.tickets.productIds && event.tickets.productIds.length > 0) {
+    products = await fetchProductsFromCmsByIds(event.tickets.productIds);
+    // Sort by price (low to high)
+    products.sort((a, b) => a.price - b.price);
+  }
+
+  if (!event || !isEventVisible(event) || event.options.externalEventLink) {
+    notFound();
+  }
+
+  const innerContentPages = await fetchInnerContentPagesForEvent(event.id);
+  const isPastEvent = isEventCompleted(event);
+
+  // Fetch other events to explore for past events
+  let otherEvents: (typeof event)[] = [];
+  if (isPastEvent) {
+    const allEvents = await fetchEventsFromCms({});
+    const filteredEvents = (allEvents ?? []).filter(
+      e =>
+        e.uid !== event.uid && isEventVisible(e) && !e.options.externalEventLink
+    );
+
+    // Shuffle array using Fisher-Yates algorithm for random selection
+    for (let i = filteredEvents.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredEvents[i], filteredEvents[j]] = [
+        filteredEvents[j],
+        filteredEvents[i],
+      ];
+    }
+
+    otherEvents = filteredEvents.slice(0, 4);
+  }
+
+  const defaultContent = [] as TabItem[];
+
+  if (event.options.showEventLineup && !event.options.hideLineupSection) {
+    defaultContent.push({
+      label: "Lineup",
+      content: (
+        <EventLineUp
+          artists={event.artists}
+          showArtistTimes={event.options.showArtistTimes}
+        />
+      ),
+      id: "lineup",
+      sortingWeight: 300,
+    });
+  }
+
+  defaultContent.push({
+    label: "Location",
+    id: "location",
+    content: <EventLocation venue={event.venue} />,
+    sortingWeight: 400,
+  });
+
+  if (innerContentPages && innerContentPages?.length > 0) {
+    innerContentPages.forEach(page => {
+      defaultContent.push({
+        label: page.title,
+        content: (
+          <div className={"max-lg:text-xs w-full"}>
+            <SliceDisplay slices={page.slices} />
+          </div>
+        ),
+        id: page.uid,
+        sortingWeight: page.sortingWeight,
+      });
+    });
+  }
+
+  if (event.slices.length > 0) {
+    defaultContent.push({
+      label: "About",
+      content: (
+        <div>
+          <SliceDisplay slices={event.slices} />
+        </div>
+      ),
+      id: "overview",
+      sortingWeight: 0,
+      hideTitle: true,
+    });
+  }
+
+  if (!isPastEvent && event.tickets.shouldSellTickets) {
+    defaultContent.push({
+      label: "Tickets",
+      content: <EventTicketDisplay products={products} event={event} />,
+      id: "tickets",
+      sortingWeight: 200,
+      mobileOnly: true,
+    });
+  }
+
+  return (
+    <>
+      <EventSeoMicrodata products={products} event={event} />
+      <OuterPage className={"max-lg:pt-10"}>
+        <PageHeadline
+          title={event.name}
+          segments={[
+            { label: "Endemit", path: "" },
+            { label: "Events", path: "events" },
+            { label: event.name, path: event.uid },
+          ]}
+        />
+        <div
+          className={
+            "absolute top-80 h-[600px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
+          }
+          style={
+            event.coverImage
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
+        ></div>
+        <div
+          className={
+            "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
+          }
+          style={
+            event.coverImage
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
+        ></div>
+        <div
+          style={{
+            backgroundImage: "url('/images/worms.png')",
+            backgroundRepeat: "repeat",
+            backgroundBlendMode: "soft-light",
+            backgroundSize: "150px",
+
+            // backgroundColor: event.colour,
+          }}
+          className={
+            "bg-neutral-950 relative shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
+          }
+        >
+          <div
+            className={
+              "flex justify-center relative max-lg:flex-col lg:items-stretch"
+            }
+          >
+            <div className={"relative aspect-video lg:w-2/3 w-full"}>
+              {event.artAuthor && (
+                <Link
+                  href={event.artAuthor.link}
+                  target={"_blank"}
+                  className={
+                    "absolute left-0 bottom-0 hover:bg-neutral-900 bg-neutral-900/60 py-1 px-1 text-xs text-neutral-600 backdrop-blur-sm"
+                  }
+                >
+                  Author: {event.artAuthor.text}
+                </Link>
+              )}
+              {event.coverImage?.src && (
+                <ImageWithFallback
+                  src={event.coverImage?.src}
+                  alt={event.coverImage?.alt ?? ""}
+                  height={455}
+                  width={809}
+                  quality="100"
+                  className="aspect-video w-full h-full object-cover"
+                  placeholder={event.coverImage?.placeholder}
+                />
+              )}
+            </div>
+            <div
+              className={
+                "lg:w-1/3 text-neutral-200 p-4 lg:p-4 xl:p-8 lg:border-l-2 border-l-neutral-200 flex flex-col max-lg:gap-y-6 max-lg:items-center max-lg:py-12 gap-y-3"
+              }
+            >
+              {event.date_start && event.date_end && (
+                <div
+                  className={
+                    "uppercase max-lg:text-2xl lg:text-[clamp(0.7rem,2cqi,2rem)] flex-shrink-0"
+                  }
+                >
+                  {formatEventDate(event.date_start, event.date_end)}
+                  {isPastEvent && (
+                    <div className={"text-neutral-400 text-sm"}>
+                      This event has concluded
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {event.options.showEventLineup && event.artists.length > 0 && (
+                <div className="flex-1 flex flex-col lg:@container lg:justify-center ">
+                  <div
+                    className={clsx(
+                      event.artists.length > 4 &&
+                        "lg:overflow-y-auto  lg:max-h-56 scrollbar-thin scrollbar-track-neutral-800 scrollbar-thumb-neutral-600 hover:scrollbar-thumb-neutral-500"
+                    )}
+                  >
+                    {event.artists.map(artist => (
+                      <h3
+                        className={
+                          "max-lg:text-3xl lg:text-[clamp(1.7rem,20cqi,5rem)] lg:leading-[clamp(1.9rem,20.2cqi,5.2rem)] max-lg:text-center max-lg:w-full"
+                        }
+                        key={`artist-marquee-${artist.id}`}
+                      >
+                        {artist.name}
+                      </h3>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div
+                className={"flex gap-x-2 text-sm lg:text-md flex-shrink-0"}
+                id={"overview"}
+              >
+                {event.venue?.logo && event.venue?.logo.src && (
+                  <ImageWithFallback
+                    src={event.venue?.logo.src}
+                    alt={event.venue?.logo.src}
+                    width={100}
+                    height={32}
+                    quality={85}
+                    className="w-auto h-4"
+                    placeholder={event.venue?.logo?.placeholder}
+                  />
+                )}
+                {event.venue?.name}
+              </div>
+            </div>
+          </div>
+        </div>
+        {!isPastEvent && event.tickets.shouldSellTickets ? (
+          <div className={"lg:hidden mb-16 z-10 relative"}>
+            <ActionButton
+              href={"#tickets"}
+              variant="primary"
+              className={"flex gap-x-2"}
+            >
+              <TicketIcon />
+              Get tickets
+            </ActionButton>
+          </div>
+        ) : (
+          ""
+        )}
+        <div
+          className={
+            "-left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
+          }
+        >
+          <div className={"animate-marquee-move"}>
+            {(() => {
+              const artistNames = event.options.showEventLineup
+                ? (event.artists?.map(a => a.name) ?? [])
+                : [];
+              const pattern =
+                artistNames.length > 0
+                  ? artistNames
+                      .map(name => `${event.name} · ${name}`)
+                      .join(" · ")
+                  : event.name;
+              const repeatCount = Math.ceil(200 / pattern.length);
+              return Array(repeatCount).fill(pattern).join(" · ");
+            })()}
+          </div>
+        </div>
+
+        <div className={"relative flex"}>
+          <div className={"lg:w-2/3 w-full"}>
+            {!isPastEvent &&
+              event.options.showEventLineup &&
+              !event.options.hideLineupSection &&
+              event.options.showArtistTimes && (
+                <ArtistCarousel
+                  artists={event.artists}
+                  headline={"Set times"}
+                />
+              )}
+            <Tabs items={defaultContent} sortByWeight={true} />
+          </div>
+
+          <section className={"max-lg:hidden flex-1"}>
+            <div
+              className={
+                "p-8 flex-1 bg-neutral-800 rounded-md h-fit rounded-bl-none shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
+              }
+              style={{
+                backgroundImage: "url('/images/worms.png')",
+                backgroundRepeat: "repeat",
+                backgroundBlendMode: "multiply",
+                backgroundSize: "150px",
+
+                // backgroundColor: event.colour,
+              }}
+            >
+              <EventTicketDisplay products={products} event={event} />
+            </div>
+
+            <div className={"p4 text-center mt-10 "}>
+              {event.video && (
+                <div className=" w-full  object-cover rounded-lg overflow-hidden px-8 mb-8">
+                  <video
+                    src={event.video}
+                    loop={true}
+                    muted={true}
+                    autoPlay={true}
+                    playsInline={true}
+                    className={"aspect-square"}
+                  />
+                </div>
+              )}
+              {event.date_start && (
+                <div
+                  className={
+                    "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
+                  }
+                >
+                  {formatEventDateAndTime(event.date_start)}
+                </div>
+              )}
+              <div className={"text-neutral-400 text-md font-thin "}>
+                {event.venue?.name}
+                <div>{event.venue?.address}</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {isPastEvent && otherEvents.length > 0 && (
+          <div className="mb-10 text-center relative z-10 mt-20 max-md:pb-32">
+            <h3 className="text-neutral-200 text-2xl py-6 max-md:pt-32">
+              More events to explore
+            </h3>
+            <div
+              className={clsx(
+                "grid sm:grid-cols-2 xl:grid-cols-4 w-full gap-2"
+              )}
+            >
+              {otherEvents.map(otherEvent => (
+                <EventMiniCard
+                  key={otherEvent.id}
+                  name={otherEvent.name}
+                  image={otherEvent.coverImage}
+                  dateStart={otherEvent.date_start}
+                  dateEnd={otherEvent.date_end}
+                  location={otherEvent.venue?.name}
+                  link={`/events/${otherEvent.uid}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </OuterPage>
+    </>
+  );
+}

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { CmsImage } from "@/domain/cms/types/common";
 import React from "react";

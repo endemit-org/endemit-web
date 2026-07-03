@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { requestOtcCode } from "@/domain/auth/actions/requestOtcCode";

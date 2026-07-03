@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import clsx from "clsx";
 import ToteBagIcon from "@/app/_components/icon/TotebagIcon";
 import { useCartItemCount, useCartTotal } from "@/app/_stores/CartStore";

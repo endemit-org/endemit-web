@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { formatDay, formatTime } from "@/lib/util/formatting";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { convertMonthsToMs } from "@/lib/util/converters";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
