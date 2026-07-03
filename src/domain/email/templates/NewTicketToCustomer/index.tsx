@@ -5,37 +5,47 @@ import { Img, Text, Link } from "@react-email/components";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   ticket: TicketEmailData;
+  locale?: string;
 }
 
-function NewTicketToCustomerTemplate({ ticket }: Props) {
+function NewTicketToCustomerTemplate({ ticket, locale = "sl" }: Props) {
+  const t = getEmailTranslator(locale, "emails.newTicket");
+  const loc: "sl" | "en" = locale === "en" ? "en" : "sl";
+
   return (
     <MasterTemplate>
       <div>
         <h1 className="text-2xl font-bold mb-2">
-          {ticket.ticketHolderName}, your Ticket is Ready!
+          {t("heading", { name: ticket.ticketHolderName })}
         </h1>
         <Text className="text-gray-600 mb-6">
-          Hi {ticket.ticketHolderName}, your secure ticket for{" "}
-          {ticket.eventName} was generated. Please save this email and present
-          the attached ticket at the entrance of the event.
+          {t("intro", {
+            name: ticket.ticketHolderName,
+            eventName: ticket.eventName,
+          })}
         </Text>
         <Text className="text-gray-600 mb-6">
-          You may use the attached ticket file, the{" "}
-          <Link
-            href={`${PUBLIC_BASE_WEB_URL}/profile/tickets/${ticket.shortId}`}
-          >
-            ticket in your profile
-          </Link>{" "}
-          or your{" "}
-          <Link
-            href={`${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticket.ticketHash}`}
-          >
-            Apple Wallet Ticket
-          </Link>{" "}
-          <span className={"italic"}>(iOS only)</span> to enter the event.
+          {t.rich("useOptions", {
+            profile: chunks => (
+              <Link
+                href={`${PUBLIC_BASE_WEB_URL}/profile/tickets/${ticket.shortId}`}
+              >
+                {chunks}
+              </Link>
+            ),
+            wallet: chunks => (
+              <Link
+                href={`${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticket.ticketHash}`}
+              >
+                {chunks}
+              </Link>
+            ),
+            ios: chunks => <span className={"italic"}>{chunks}</span>,
+          })}
         </Text>
 
         <div
@@ -95,12 +105,12 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
                           }}
                         >
                           <Text className="text-neutral-600 text-sm my-0">
-                            Date:
+                            {t("date")}
                           </Text>
                         </td>
                         <td style={{ padding: "4px 0" }}>
                           <Text className="font-semibold text-sm my-0">
-                            {formatEventDateAndTime(ticket.eventDate)}
+                            {formatEventDateAndTime(ticket.eventDate, loc)}
                           </Text>
                         </td>
                       </tr>
@@ -108,7 +118,7 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
                       <tr>
                         <td style={{ padding: "4px 0", verticalAlign: "top" }}>
                           <Text className="text-neutral-600 text-sm my-0">
-                            Location:
+                            {t("location")}
                           </Text>
                         </td>
                         <td style={{ padding: "4px 0" }}>
@@ -136,7 +146,7 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
             <tr>
               <td style={{ padding: "4px 0", width: "120px" }}>
                 <Text className="text-neutral-600 text-sm my-1">
-                  Ticket holder:
+                  {t("ticketHolder")}
                 </Text>
               </td>
               <td style={{ padding: "4px 0" }}>
@@ -147,7 +157,9 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
             </tr>
             <tr>
               <td style={{ padding: "4px 0" }}>
-                <Text className="text-neutral-600 text-sm my-1">Email:</Text>
+                <Text className="text-neutral-600 text-sm my-1">
+                  {t("email")}
+                </Text>
               </td>
               <td style={{ padding: "4px 0" }}>
                 <Text className="font-semibold text-sm my-1">
@@ -178,7 +190,7 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
               fontSize: "14px",
             }}
           >
-            View Your Ticket online
+            {t("viewOnline")}
           </Link>
         </div>
 
@@ -210,7 +222,7 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
                 marginRight: "6px",
               }}
             />
-            Add to Apple Wallet
+            {t("addToWallet")}
           </Link>
         </div>
 
@@ -223,31 +235,35 @@ function NewTicketToCustomerTemplate({ ticket }: Props) {
           }}
         >
           <Text className="text-sm font-semibold mb-1 text-neutral-200 mt-0">
-            Important Information
+            {t("importantInfo")}
           </Text>
           <Text className="text-sm text-neutral-400 my-1">
-            • This ticket is valid for one person
-            <br />
-            • Ticket is non-refundable, but you can transfer it to someone else
+            • {t("infoValidOne")}
+            <br />• {t("infoNonRefundable")}
             <br />•{" "}
-            <Link
-              href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
-              className="link"
-            >
-              Code of conduct
-            </Link>{" "}
-            applies at all our events
-            <br />
-            • Event entry is subject to venue&#39;s terms and conditions
-            <br />• Show this QR code at the entrance
+            {t.rich("infoCodeOfConduct", {
+              link: chunks => (
+                <Link
+                  href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
+                  className="link"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+            <br />• {t("infoVenueTerms")}
+            <br />• {t("infoShowQr")}
           </Text>
         </div>
 
         <Text className="text-gray-600 my-6">
-          Questions? Contact us at{" "}
-          <Link href="mailto:endemit@endemit.org" className="link">
-            endemit@endemit.org
-          </Link>
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href="mailto:endemit@endemit.org" className="link">
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

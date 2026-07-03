@@ -58,8 +58,8 @@ export const formatDayOfMonth = (date: Date) => {
   });
 };
 
-export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("en-GB", {
+export const formatDate = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     day: "2-digit",
     month: "long",
     year: "2-digit",
@@ -97,8 +97,11 @@ export const formatEventDate = (dateFrom: Date, dateTo: Date) => {
   return formatDate(dateFrom);
 };
 
-export const formatEventDateAndTime = (date: Date) => {
-  return `${formatDate(date)} @ ${formatTime(date)}`;
+export const formatEventDateAndTime = (
+  date: Date,
+  locale: "sl" | "en" = "en"
+) => {
+  return `${formatDate(date, locale)} @ ${formatTime(date)}`;
 };
 
 export const formatWeight = (number: number) => {

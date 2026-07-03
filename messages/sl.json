@@ -22,5 +22,26 @@
   "languageSwitcher": {
     "sl": "Koroščina",
     "en": "English"
+  },
+  "emails": {
+    "newTicket": {
+      "subject": "🎟️ Vstopnica za {eventName} ({name})",
+      "heading": "{name}, tvoja vstopnica je pripravljena!",
+      "intro": "Živjo {name}, tvoja varna vstopnica za dogodek {eventName} je bila ustvarjena. Shrani to sporočilo in ob vstopu na dogodek pokaži priloženo vstopnico.",
+      "useOptions": "Za vstop na dogodek lahko uporabiš priloženo datoteko z vstopnico, <profile>vstopnico v svojem profilu</profile> ali svojo <wallet>vstopnico Apple Wallet</wallet> <ios>(samo iOS)</ios>.",
+      "date": "Datum:",
+      "location": "Lokacija:",
+      "ticketHolder": "Imetnik vstopnice:",
+      "email": "E-pošta:",
+      "viewOnline": "Poglej vstopnico na spletu",
+      "addToWallet": "Dodaj v Apple Wallet",
+      "importantInfo": "Pomembne informacije",
+      "infoValidOne": "Ta vstopnica velja za eno osebo",
+      "infoNonRefundable": "Vstopnica je nepovratna, lahko pa jo preneseš na drugo osebo",
+      "infoCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših dogodkih",
+      "infoVenueTerms": "Vstop na dogodek je pogojen s pogoji prizorišča",
+      "infoShowQr": "Ob vstopu pokaži to QR kodo",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    }
   }
 }

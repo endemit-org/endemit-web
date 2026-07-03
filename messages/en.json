@@ -22,5 +22,26 @@
   "languageSwitcher": {
     "sl": "Koroščina",
     "en": "English"
+  },
+  "emails": {
+    "newTicket": {
+      "subject": "🎟️ Ticket for {eventName} ({name})",
+      "heading": "{name}, your Ticket is Ready!",
+      "intro": "Hi {name}, your secure ticket for {eventName} was generated. Please save this email and present the attached ticket at the entrance of the event.",
+      "useOptions": "You may use the attached ticket file, the <profile>ticket in your profile</profile> or your <wallet>Apple Wallet Ticket</wallet> <ios>(iOS only)</ios> to enter the event.",
+      "date": "Date:",
+      "location": "Location:",
+      "ticketHolder": "Ticket holder:",
+      "email": "Email:",
+      "viewOnline": "View Your Ticket online",
+      "addToWallet": "Add to Apple Wallet",
+      "importantInfo": "Important Information",
+      "infoValidOne": "This ticket is valid for one person",
+      "infoNonRefundable": "Ticket is non-refundable, but you can transfer it to someone else",
+      "infoCodeOfConduct": "<link>Code of conduct</link> applies at all our events",
+      "infoVenueTerms": "Event entry is subject to venue's terms and conditions",
+      "infoShowQr": "Show this QR code at the entrance",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    }
   }
 }
