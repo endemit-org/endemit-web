@@ -13,6 +13,13 @@
           "placeholder": ""
         }
       },
+      "footer_text_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Footer text (SL)",
+          "placeholder": ""
+        }
+      },
       "links": {
         "type": "Link",
         "config": {

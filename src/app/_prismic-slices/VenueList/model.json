@@ -18,6 +18,13 @@
             "label": "Title",
             "placeholder": ""
           }
+        },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": ""
+          }
         }
       },
       "items": {}

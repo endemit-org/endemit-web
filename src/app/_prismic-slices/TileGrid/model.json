@@ -36,10 +36,24 @@
                   "placeholder": "(optional)"
                 }
               },
+              "headline_sl": {
+                "type": "Text",
+                "config": {
+                  "label": "Headline (SL)",
+                  "placeholder": "(optional)"
+                }
+              },
               "content": {
                 "type": "Text",
                 "config": {
                   "label": "Content",
+                  "placeholder": "(optional)"
+                }
+              },
+              "content_sl": {
+                "type": "Text",
+                "config": {
+                  "label": "Content (SL)",
                   "placeholder": "(optional)"
                 }
               },

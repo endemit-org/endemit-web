@@ -19,10 +19,24 @@
             "placeholder": "Section title (optional)"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "Section title (optional)"
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": "Section description (optional)"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "Section description (optional)"
           }
         },
@@ -31,7 +45,12 @@
           "config": {
             "label": "Number of episodes",
             "placeholder": "Select episode count",
-            "options": ["2", "4", "8", "all"],
+            "options": [
+              "2",
+              "4",
+              "8",
+              "all"
+            ],
             "default_value": "4"
           }
         },
@@ -62,10 +81,24 @@
             "placeholder": "Section title (optional)"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "Section title (optional)"
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": "Section description (optional)"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "Section description (optional)"
           }
         },
@@ -84,7 +117,9 @@
             "label": "Selected episode",
             "placeholder": "Choose a specific episode (when not using latest)",
             "select": "document",
-            "customtypes": ["podcast"]
+            "customtypes": [
+              "podcast"
+            ]
           }
         },
         "render_frame": {

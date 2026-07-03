@@ -19,10 +19,26 @@
             "placeholder": "Collaboration title"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "Collaboration title"
+          }
+        },
         "description": {
           "type": "StructuredText",
           "config": {
             "label": "Description",
+            "placeholder": "Describe the collaboration",
+            "allowTargetBlank": true,
+            "multi": "paragraph,strong,em,hyperlink"
+          }
+        },
+        "description_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "Describe the collaboration",
             "allowTargetBlank": true,
             "multi": "paragraph,strong,em,hyperlink"
@@ -70,7 +86,9 @@
                   "customtypes": [
                     {
                       "id": "product",
-                      "fields": ["title"]
+                      "fields": [
+                        "title"
+                      ]
                     }
                   ]
                 }
@@ -83,7 +101,10 @@
           "config": {
             "label": "Info Panel Position",
             "placeholder": "",
-            "options": ["Info Left", "Info Right"],
+            "options": [
+              "Info Left",
+              "Info Right"
+            ],
             "default_value": "Info Left"
           }
         },
@@ -92,7 +113,11 @@
           "config": {
             "label": "Color Theme",
             "placeholder": "",
-            "options": ["Dark", "Muted", "Vibrant"],
+            "options": [
+              "Dark",
+              "Muted",
+              "Vibrant"
+            ],
             "default_value": "Dark"
           }
         },

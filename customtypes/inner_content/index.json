@@ -19,10 +19,24 @@
           "placeholder": ""
         }
       },
+      "title_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Title (SL)",
+          "placeholder": ""
+        }
+      },
       "internal_description": {
         "type": "Text",
         "config": {
           "label": "(Internal) Description",
+          "placeholder": "Internal only, for self organisation"
+        }
+      },
+      "internal_description_sl": {
+        "type": "Text",
+        "config": {
+          "label": "(Internal) Description (SL)",
           "placeholder": "Internal only, for self organisation"
         }
       },
@@ -32,7 +46,9 @@
           "label": "Connected to event",
           "select": "document",
           "repeat": false,
-          "customtypes": ["event"]
+          "customtypes": [
+            "event"
+          ]
         }
       },
       "related_to_product": {
@@ -41,7 +57,9 @@
           "label": "Related to product",
           "select": "document",
           "repeat": false,
-          "customtypes": ["product"]
+          "customtypes": [
+            "product"
+          ]
         }
       },
       "sorting_weight": {

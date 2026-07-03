@@ -47,6 +47,13 @@
           "placeholder": ""
         }
       },
+      "episode_name_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Episode name (SL)",
+          "placeholder": ""
+        }
+      },
       "episode_number": {
         "type": "Text",
         "config": {
@@ -58,6 +65,15 @@
         "type": "StructuredText",
         "config": {
           "label": "Episode description",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,heading3,strong,em,hyperlink"
+        }
+      },
+      "episode_description_sl": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Episode description (SL)",
           "placeholder": "",
           "allowTargetBlank": true,
           "multi": "paragraph,heading3,strong,em,hyperlink"
@@ -79,7 +95,10 @@
                 "video",
                 {
                   "id": "links",
-                  "fields": ["type", "link"]
+                  "fields": [
+                    "type",
+                    "link"
+                  ]
                 }
               ]
             }
@@ -107,6 +126,13 @@
           "placeholder": ""
         }
       },
+      "footnote_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Footnote (SL)",
+          "placeholder": ""
+        }
+      },
       "tracklist": {
         "type": "Group",
         "config": {
@@ -120,10 +146,24 @@
                 "placeholder": ""
               }
             },
+            "artist_sl": {
+              "type": "Text",
+              "config": {
+                "label": "Artist (SL)",
+                "placeholder": ""
+              }
+            },
             "title": {
               "type": "Text",
               "config": {
                 "label": "Title",
+                "placeholder": ""
+              }
+            },
+            "title_sl": {
+              "type": "Text",
+              "config": {
+                "label": "Title (SL)",
                 "placeholder": ""
               }
             },
@@ -164,9 +204,23 @@
         },
         "type": "Text"
       },
+      "meta_title_sl": {
+        "config": {
+          "label": "Meta Title (SL)",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
       "meta_description": {
         "config": {
           "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_description_sl": {
+        "config": {
+          "label": "Meta Description (SL)",
           "placeholder": "A brief summary of the page"
         },
         "type": "Text"
