@@ -42,6 +42,27 @@
       "infoVenueTerms": "Event entry is subject to venue's terms and conditions",
       "infoShowQr": "Show this QR code at the entrance",
       "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "orderCustomer": {
+      "subject": "Your order @ endemit",
+      "thankYou": "Thank you for your order!",
+      "orderNumber": "Order #{id}",
+      "confirmation": "This is a confirmation of your order placed with us. Below are the details of your purchase.",
+      "willShip": "We will ship your order to the address provided shortly, usually within 3 - 5 days.",
+      "ticketsInfo": "Your tickets will be sent to your email within the next 10 minutes. Please check your inbox <i>(and spam folder)</i> for the ticket email. <strong>Each ticket will be sent separately</strong> with a QR code that you can present at the event for entry.",
+      "shippingAddress": "Shipping Address",
+      "phone": "Phone: {phone}",
+      "orderItems": "Your order items",
+      "product": "Product",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total",
+      "subtotal": "Subtotal:",
+      "shippingTo": "Shipping to {country}:",
+      "discount": "Discount:",
+      "totalLabel": "Total:",
+      "viewOrder": "View Your Order online",
+      "invoiceNote": "This email message serves as an invoice. Please feel free to reach out to our support team at <link>endemit@endemit.org</link> if you have any questions or need further assistance."
     }
   }
 }

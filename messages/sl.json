@@ -42,6 +42,27 @@
       "infoVenueTerms": "Vstop na dogodek je pogojen s pogoji prizorišča",
       "infoShowQr": "Ob vstopu pokaži to QR kodo",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "orderCustomer": {
+      "subject": "Tvoje naročilo @ endemit",
+      "thankYou": "Hvala za tvoje naročilo!",
+      "orderNumber": "Naročilo #{id}",
+      "confirmation": "To je potrditev tvojega naročila pri nas. Spodaj so podrobnosti tvojega nakupa.",
+      "willShip": "Naročilo bomo na navedeni naslov odpremili v kratkem, običajno v 3–5 dneh.",
+      "ticketsInfo": "Tvoje vstopnice bodo poslane na tvoj e-naslov v naslednjih 10 minutah. Preveri svoj nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka vstopnica bo poslana posebej</strong> s QR kodo, ki jo ob vstopu pokažeš na dogodku.",
+      "shippingAddress": "Naslov za dostavo",
+      "phone": "Telefon: {phone}",
+      "orderItems": "Izdelki v naročilu",
+      "product": "Izdelek",
+      "qty": "Kol.",
+      "price": "Cena",
+      "total": "Skupaj",
+      "subtotal": "Vmesni seštevek:",
+      "shippingTo": "Dostava v {country}:",
+      "discount": "Popust:",
+      "totalLabel": "Skupaj:",
+      "viewOrder": "Poglej naročilo na spletu",
+      "invoiceNote": "To e-poštno sporočilo velja kot račun. Če imaš vprašanja ali potrebuješ pomoč, nam piši na <link>endemit@endemit.org</link>."
     }
   }
 }
