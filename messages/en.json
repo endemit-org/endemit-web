@@ -86,6 +86,42 @@
       "body": "Great news! Your order is now on its way to you. You can expect delivery within the next couple of work days.",
       "viewOrder": "View Your Order",
       "questions": "Questions about your delivery? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "refund": {
+      "subject": "Refund processed for your order",
+      "heading": "Refund Processed",
+      "intro": "Your refund has been successfully processed. The funds will be returned to your original payment method within 5-10 business days.",
+      "refundAmount": "Refund Amount",
+      "refundedTo": "Refunded to: {method}",
+      "orderDetails": "Order Details",
+      "orderIdLabel": "Order ID: #{id}",
+      "orderDateLabel": "Order Date: {date}",
+      "refundedItems": "Refunded Items",
+      "item": "Item",
+      "qty": "Qty",
+      "refundCol": "Refund",
+      "shipping": "Shipping",
+      "totalRefunded": "Total Refunded:",
+      "viewOrder": "View Your Order",
+      "questions": "If you have any questions about your refund, please contact our support team at <link>endemit@endemit.org</link>"
+    },
+    "ticketInvalidation": {
+      "subjectOne": "Your ticket has been invalidated",
+      "subjectMany": "Your tickets have been invalidated",
+      "heading": "{count, plural, one {Ticket Invalidated} other {Tickets Invalidated}}",
+      "importantNotice": "Important Notice",
+      "warning": "The following {count, plural, one {ticket is} other {tickets are}} no longer valid and cannot be used for event entry. This is due to a refund being processed for the associated order.",
+      "listHeading": "Invalidated {count, plural, one {Ticket} other {Tickets}}",
+      "eventCol": "Event",
+      "holderCol": "Ticket Holder",
+      "ticketIdCol": "Ticket ID",
+      "statusCol": "Status",
+      "invalidBadge": "INVALID",
+      "whatDoesThisMean": "What does this mean?",
+      "point1": "{count, plural, one {This ticket} other {These tickets}} cannot be used for entry at the event.",
+      "point2": "Any QR codes or digital passes associated with {count, plural, one {this ticket} other {these tickets}} will not scan.",
+      "point3": "If you believe this is an error, please contact our support team immediately.",
+      "questions": "If you have any questions, please contact our support team at <link>endemit@endemit.org</link>"
     }
   }
 }

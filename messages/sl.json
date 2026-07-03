@@ -86,6 +86,42 @@
       "body": "Odlična novica! Tvoje naročilo je na poti do tebe. Dostavo lahko pričakuješ v naslednjih nekaj delovnih dneh.",
       "viewOrder": "Poglej naročilo",
       "questions": "Vprašanja o dostavi? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "refund": {
+      "subject": "Vračilo za tvoje naročilo je obdelano",
+      "heading": "Vračilo obdelano",
+      "intro": "Tvoje vračilo je bilo uspešno obdelano. Sredstva bodo vrnjena na izvorni način plačila v 5–10 delovnih dneh.",
+      "refundAmount": "Znesek vračila",
+      "refundedTo": "Vrnjeno na: {method}",
+      "orderDetails": "Podrobnosti naročila",
+      "orderIdLabel": "Št. naročila: #{id}",
+      "orderDateLabel": "Datum naročila: {date}",
+      "refundedItems": "Vrnjeni izdelki",
+      "item": "Izdelek",
+      "qty": "Kol.",
+      "refundCol": "Vračilo",
+      "shipping": "Dostava",
+      "totalRefunded": "Skupaj vrnjeno:",
+      "viewOrder": "Poglej naročilo",
+      "questions": "Če imaš vprašanja o vračilu, piši naši podpori na <link>endemit@endemit.org</link>"
+    },
+    "ticketInvalidation": {
+      "subjectOne": "Tvoja vstopnica je bila razveljavljena",
+      "subjectMany": "Tvoje vstopnice so bile razveljavljene",
+      "heading": "{count, plural, one {Vstopnica razveljavljena} other {Vstopnice razveljavljene}}",
+      "importantNotice": "Pomembno obvestilo",
+      "warning": "{count, plural, one {Naslednja vstopnica ni več veljavna} other {Naslednje vstopnice niso več veljavne}} in je ni mogoče uporabiti za vstop na dogodek. Razlog je obdelano vračilo za povezano naročilo.",
+      "listHeading": "{count, plural, one {Razveljavljena vstopnica} other {Razveljavljene vstopnice}}",
+      "eventCol": "Dogodek",
+      "holderCol": "Imetnik vstopnice",
+      "ticketIdCol": "Št. vstopnice",
+      "statusCol": "Status",
+      "invalidBadge": "NEVELJAVNO",
+      "whatDoesThisMean": "Kaj to pomeni?",
+      "point1": "{count, plural, one {Te vstopnice} other {Teh vstopnic}} ni mogoče uporabiti za vstop na dogodek.",
+      "point2": "QR kode ali digitalne vstopnice, povezane s {count, plural, one {to vstopnico} other {temi vstopnicami}}, se ne bodo prebrale.",
+      "point3": "Če meniš, da gre za napako, se nemudoma obrni na našo podporo.",
+      "questions": "Če imaš vprašanja, piši naši podpori na <link>endemit@endemit.org</link>"
     }
   }
 }

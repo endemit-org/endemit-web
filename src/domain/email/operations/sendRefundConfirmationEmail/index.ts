@@ -5,6 +5,7 @@ import {
   RefundConfirmationTemplate,
   type RefundedItem,
 } from "@/domain/email/templates/RefundConfirmation";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface SendRefundConfirmationEmailInput {
   orderId: string;
@@ -14,6 +15,7 @@ interface SendRefundConfirmationEmailInput {
   orderDate: Date | string;
   paymentMethodHint?: string;
   shippingRefunded?: number;
+  locale?: string;
 }
 
 export const sendRefundConfirmationEmail = async (
@@ -24,10 +26,12 @@ export const sendRefundConfirmationEmail = async (
     return null;
   }
 
+  const t = getEmailTranslator(input.locale ?? "sl", "emails.refund");
+
   return await resend.emails.send({
     from: resendFromEmail,
     to: input.orderEmail,
-    subject: `Refund processed for your order`,
+    subject: t("subject"),
     react: RefundConfirmationTemplate({
       orderId: input.orderId,
       orderEmail: input.orderEmail,
@@ -36,6 +40,7 @@ export const sendRefundConfirmationEmail = async (
       orderDate: input.orderDate,
       paymentMethodHint: input.paymentMethodHint,
       shippingRefunded: input.shippingRefunded,
+      locale: input.locale,
     }),
   });
 };
