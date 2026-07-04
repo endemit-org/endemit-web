@@ -8,6 +8,7 @@ import { generateMagicLink } from "@/domain/auth/operations/generateMagicLink";
 import { createOtcToken } from "@/domain/auth/operations/createOtcToken";
 import { queueOtcEmail } from "@/domain/auth/operations/queueOtcEmail";
 import type { OtcRequestResult } from "@/domain/auth/types";
+import { getLocale } from "next-intl/server";
 
 const OTC_EXPIRATION_MINUTES = 10;
 
@@ -84,13 +85,15 @@ export const requestOtcCode = async ({
   // Record the request for rate limiting
   await recordOtcRequest(normalizedEmail);
 
-  // Queue email
+  // Queue email in the visitor's current locale
+  const locale = await getLocale();
   await queueOtcEmail({
     email: normalizedEmail,
     code,
     magicLink,
     expiresInMinutes: OTC_EXPIRATION_MINUTES,
     callbackUrl,
+    locale,
   });
 
   return {

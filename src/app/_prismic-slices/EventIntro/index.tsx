@@ -4,17 +4,20 @@ import React, { FC, useRef, useEffect, useState } from "react";
 import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 import s from "@/app/_prismic-slices/TextBlock/TextBlock.module.css";
 
 /**
  * Props for `Poem`.
  */
-export type PoemProps = SliceComponentProps<Content.PoemSlice>;
+export type PoemProps = SliceComponentProps<Content.PoemSlice, SliceContext>;
 
 /**
  * Component for "Poem" Slices.
  */
-const Poem: FC<PoemProps> = ({ slice }) => {
+const Poem: FC<PoemProps> = ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
   const ref = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
 
@@ -46,7 +49,9 @@ const Poem: FC<PoemProps> = ({ slice }) => {
       <div
         className={`text-center font-light flex flex-col gap-4 text-mg md:text-lg bg-gradient-to-b items-center from-neutral-600 to-neutral-100 bg-clip-text text-transparent px-12 lg:px-20 xl:px-36 py-6 lg:py-20 xl:py-36  ${isInView ? "animate-unblur-text" : "opacity-0 blur-sm"}`}
       >
-        <RichTextDisplay richText={slice.primary.content} />
+        <RichTextDisplay
+          richText={pickLocalized(slice.primary, "content", locale)}
+        />
       </div>
     </section>
   );

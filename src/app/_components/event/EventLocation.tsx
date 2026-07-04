@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { VenueInEvent } from "@/domain/event/types/event";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import clsx from "clsx";
 
 // Dynamic import: Google Maps (~120KB) only loads when venue has coordinates

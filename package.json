@@ -53,6 +53,7 @@
     "inngest": "^4.2.4",
     "nanoid": "^5.1.6",
     "next": "15.4.8",
+    "next-intl": "^4.13.1",
     "node-forge": "^1.4.0",
     "passkit-generator": "^3.5.7",
     "prisma": "^6.17.1",

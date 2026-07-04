@@ -19,10 +19,24 @@
             "placeholder": "(optional)"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "(optional)"
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": "(optional)"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "(optional)"
           }
         },
@@ -55,7 +69,9 @@
                 "config": {
                   "label": "Artist",
                   "select": "document",
-                  "customtypes": ["artist"]
+                  "customtypes": [
+                    "artist"
+                  ]
                 }
               },
               "name_override": {
@@ -69,6 +85,15 @@
                 "type": "StructuredText",
                 "config": {
                   "label": "Description override (optional)",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,strong,em,hyperlink"
+                }
+              },
+              "description_override_sl": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Description override (optional) (SL)",
                   "placeholder": "",
                   "allowTargetBlank": true,
                   "multi": "paragraph,strong,em,hyperlink"

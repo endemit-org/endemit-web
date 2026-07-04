@@ -31,10 +31,24 @@
             "placeholder": "(Optional) Replace title in widget"
           }
         },
+        "override_title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Override title (SL)",
+            "placeholder": "(Optional) Replace title in widget"
+          }
+        },
         "override_description": {
           "type": "Text",
           "config": {
             "label": "Override description",
+            "placeholder": "(Optional) Replace dsecription in widget"
+          }
+        },
+        "override_description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Override description (SL)",
             "placeholder": "(Optional) Replace dsecription in widget"
           }
         },

@@ -159,6 +159,7 @@ export const useCartStore = create<CartStore>()(
               discountCodeId,
               formData,
               walletCreditAmount,
+              locale: document.documentElement.lang || "sl",
             }),
           });
 
@@ -223,6 +224,7 @@ export const useCartStore = create<CartStore>()(
                 formData,
                 walletCreditAmount,
                 promoCode,
+                locale: document.documentElement.lang || "sl",
               }),
             }
           );

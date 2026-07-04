@@ -3,6 +3,7 @@ import "server-only";
 import { resend, resendFromEmail, isBlockedEmail } from "@/lib/services/resend";
 import { Order } from "@prisma/client";
 import { NewOrderToCustomerTemplate } from "@/domain/email/templates";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 export const sendOrderEmailToCustomer = async (
   order: Order,
@@ -16,11 +17,13 @@ export const sendOrderEmailToCustomer = async (
     return null;
   }
 
+  const t = getEmailTranslator(order.locale, "emails.orderCustomer");
+
   return await resend.emails.send({
     from: resendFromEmail,
     to: order.email,
-    subject: `Your order @ endemit`,
-    react: NewOrderToCustomerTemplate({ order }),
+    subject: t("subject"),
+    react: NewOrderToCustomerTemplate({ order, locale: order.locale }),
     attachments: invoiceAttachment
       ? [
           {

@@ -16,7 +16,12 @@
           "type": "Select",
           "config": {
             "label": "Size",
-            "options": ["small", "medium", "large", "xlarge"],
+            "options": [
+              "small",
+              "medium",
+              "large",
+              "xlarge"
+            ],
             "default_value": "medium"
           }
         },
@@ -24,7 +29,12 @@
           "type": "Select",
           "config": {
             "label": "Mobile Size",
-            "options": ["small", "medium", "large", "xlarge"],
+            "options": [
+              "small",
+              "medium",
+              "large",
+              "xlarge"
+            ],
             "default_value": "small"
           }
         }

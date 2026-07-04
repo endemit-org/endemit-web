@@ -1,11 +1,16 @@
 import { asLink, Content } from "@prismicio/client";
 import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
 import Image from "next/image";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `TextColumn`.
  */
-export type TextColumnProps = SliceComponentProps<Content.TextColumnSlice>;
+export type TextColumnProps = SliceComponentProps<
+  Content.TextColumnSlice,
+  SliceContext
+>;
 
 /**
  * Type guard to check if a column has an image.
@@ -24,15 +29,16 @@ const hasImage = (
 /**
  * Component for "TextColumn" Slices.
  */
-const TextColumn = ({ slice }: TextColumnProps) => {
+const TextColumn = ({ slice, context }: TextColumnProps) => {
+  const locale = context?.locale ?? "sl";
   return (
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      <PrismicRichText field={slice.primary.heading} />
+      <PrismicRichText field={pickLocalized(slice.primary, "heading", locale)} />
       <PrismicRichText
-        field={slice.primary.content}
+        field={pickLocalized(slice.primary, "content", locale)}
         components={{
           paragraph: ({ children }) => <p className="text-lg">{children}</p>,
         }}
@@ -51,9 +57,9 @@ const TextColumn = ({ slice }: TextColumnProps) => {
                 />
               </div>
             )}
-            <PrismicRichText field={column.heading} />
+            <PrismicRichText field={pickLocalized(column, "heading", locale)} />
             <PrismicRichText
-              field={column.content}
+              field={pickLocalized(column, "content", locale)}
               components={{
                 hyperlink: ({ children, node }) => {
                   const link = asLink(node.data);

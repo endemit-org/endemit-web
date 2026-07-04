@@ -4,13 +4,22 @@ import { SliceComponentProps } from "@prismicio/react";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import s from "./TextBlock.module.css";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
-export type ContentSectionProps =
-  SliceComponentProps<Content.ContentSectionSlice>;
+export type ContentSectionProps = SliceComponentProps<
+  Content.ContentSectionSlice,
+  SliceContext
+>;
 
-const ContentSection: FC<ContentSectionProps> = ({ slice }) => {
-  const content = slice.primary.content ? (
-    <RichTextDisplay richText={slice.primary.content} />
+const ContentSection: FC<ContentSectionProps> = ({ slice, context }) => {
+  const localizedContent = pickLocalized(
+    slice.primary,
+    "content",
+    context?.locale ?? "sl"
+  );
+  const content = localizedContent ? (
+    <RichTextDisplay richText={localizedContent} />
   ) : null;
 
   return (

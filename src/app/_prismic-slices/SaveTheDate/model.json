@@ -32,6 +32,13 @@
                   "placeholder": ""
                 }
               },
+              "description_sl": {
+                "type": "Text",
+                "config": {
+                  "label": "Description (SL)",
+                  "placeholder": ""
+                }
+              },
               "date": {
                 "type": "Timestamp",
                 "config": {
@@ -43,6 +50,13 @@
                 "type": "Text",
                 "config": {
                   "label": "Note",
+                  "placeholder": ""
+                }
+              },
+              "note_sl": {
+                "type": "Text",
+                "config": {
+                  "label": "Note (SL)",
                   "placeholder": ""
                 }
               }

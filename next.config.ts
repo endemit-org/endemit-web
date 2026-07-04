@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const ALLOWED_DEV_ORIGINS = [
   "127.0.0.1",
@@ -96,10 +99,11 @@ const nextConfig: NextConfig = {
     // Ticket image generation requires logo and font files
     "/api/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
     "/admin/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
-    "/profile/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
+    // Profile routes now live under the [locale] segment.
+    "/[locale]/profile/**/*": ["./public/images/**/*", "./public/fonts/**/*"],
   },
   // Prevent bundling heavy Node.js packages - load them at runtime instead
   serverExternalPackages: ["passkit-generator", "node-forge"],
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

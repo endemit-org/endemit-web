@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { formatPrice } from "@/lib/util/formatting";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
 
 const EMOJIS = ["🙏", "⭐️", "💙"];

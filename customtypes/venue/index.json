@@ -19,10 +19,26 @@
           "placeholder": ""
         }
       },
+      "name_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Name (SL)",
+          "placeholder": ""
+        }
+      },
       "description": {
         "type": "StructuredText",
         "config": {
           "label": "Description",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,heading2,strong,em,hyperlink"
+        }
+      },
+      "description_sl": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description (SL)",
           "placeholder": "",
           "allowTargetBlank": true,
           "multi": "paragraph,heading2,strong,em,hyperlink"
@@ -93,9 +109,23 @@
         },
         "type": "Text"
       },
+      "meta_title_sl": {
+        "config": {
+          "label": "Meta Title (SL)",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
       "meta_description": {
         "config": {
           "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_description_sl": {
+        "config": {
+          "label": "Meta Description (SL)",
           "placeholder": "A brief summary of the page"
         },
         "type": "Text"

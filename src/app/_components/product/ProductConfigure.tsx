@@ -10,7 +10,7 @@ import {
   isProductConfigurable,
   isProductSellable,
 } from "@/domain/product/businessLogic";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { getProductsQtyInCart } from "@/domain/checkout/actions/getProductsQtyInCart";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";

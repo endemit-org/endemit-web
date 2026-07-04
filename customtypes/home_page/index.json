@@ -92,9 +92,23 @@
         },
         "type": "Text"
       },
+      "meta_title_sl": {
+        "config": {
+          "label": "Meta Title (SL)",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
       "meta_description": {
         "config": {
           "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_description_sl": {
+        "config": {
+          "label": "Meta Description (SL)",
           "placeholder": "A brief summary of the page"
         },
         "type": "Text"

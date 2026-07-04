@@ -1,7 +1,7 @@
 import Input from "@/app/_components/form/Input";
 import CountrySelect from "@/app/_components/form/CountrySelect";
 import CheckboxInput from "@/app/_components/form/CheckboxInput";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import CheckoutTicketForm from "@/app/_components/checkout/CheckoutTicketForm";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";

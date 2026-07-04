@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { isFilled, RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";

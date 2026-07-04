@@ -40,10 +40,24 @@
             "placeholder": ""
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": ""
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": ""
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": ""
           }
         }

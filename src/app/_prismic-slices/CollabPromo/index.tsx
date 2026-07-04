@@ -6,6 +6,8 @@ import ProductCard from "@/app/_components/product/ProductCard";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 import clsx from "clsx";
 
 /**
@@ -24,8 +26,9 @@ const COLOR_THEMES = {
 /**
  * Component for "CollabPromo" Slices.
  */
-const CollabPromo: FC<CollabPromoProps> = async ({ slice }) => {
+const CollabPromo: FC<CollabPromoProps> = async ({ slice, context }) => {
   const { primary } = slice;
+  const locale = (context as SliceContext | undefined)?.locale ?? "sl";
 
   // Fetch products
   const productIds = primary.products
@@ -59,7 +62,7 @@ const CollabPromo: FC<CollabPromoProps> = async ({ slice }) => {
   const renderFrame = primary.render_frame !== false;
 
   // Title
-  const title = primary.title || "";
+  const title = pickLocalized(primary, "title", locale) || "";
 
   return (
     <section
@@ -102,9 +105,11 @@ const CollabPromo: FC<CollabPromoProps> = async ({ slice }) => {
           </div>
 
           {/* Description */}
-          {isFilled.richText(primary.description) && (
+          {isFilled.richText(pickLocalized(primary, "description", locale)) && (
             <div className="text-neutral-300 mb-6">
-              <RichTextDisplay richText={primary.description} />
+              <RichTextDisplay
+                richText={pickLocalized(primary, "description", locale)}
+              />
             </div>
           )}
 

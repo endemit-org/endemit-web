@@ -133,6 +133,7 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
           ticketPayerEmail: order.email,
           price: pricePerTicket,
           orderId: order.id,
+          locale: order.locale,
           metadata: {
             productName: ticketItem.name ?? "Default",
             eventUid: eventData.uid,

@@ -1,0 +1,204 @@
+{
+  "common": {
+    "loading": "Nalaganje...",
+    "back": "Nazaj",
+    "close": "Zapri"
+  },
+  "nav": {
+    "menu": "MENI"
+  },
+  "cart": {
+    "checkout": "Zaključek nakupa",
+    "itemsInCart": "{count} izdelkov v košarici"
+  },
+  "footer": {},
+  "home": {},
+  "events": {},
+  "artists": {},
+  "venues": {},
+  "store": {},
+  "checkout": {},
+  "profile": {},
+  "signin": {},
+  "notFound": {
+    "title": "Stran ne obstaja",
+    "description": "Stran, ki jo iščeš, ne obstaja.",
+    "backHome": "Nazaj domov"
+  },
+  "languageSwitcher": {
+    "sl": "Po Koroško",
+    "en": "In english",
+    "label": "Jezik",
+    "current": "Trenutni jezik"
+  },
+  "emails": {
+    "newTicket": {
+      "subject": "🎟️ Vstopnica za {eventName} ({name})",
+      "heading": "{name}, tvoja vstopnica je pripravljena!",
+      "intro": "Živjo {name}, tvoja varna vstopnica za dogodek {eventName} je bila ustvarjena. Shrani to sporočilo in ob vstopu na dogodek pokaži priloženo vstopnico.",
+      "useOptions": "Za vstop na dogodek lahko uporabiš priloženo datoteko z vstopnico, <profile>vstopnico v svojem profilu</profile> ali svojo <wallet>vstopnico Apple Wallet</wallet> <ios>(samo iOS)</ios>.",
+      "date": "Datum:",
+      "location": "Lokacija:",
+      "ticketHolder": "Imetnik vstopnice:",
+      "email": "E-pošta:",
+      "viewOnline": "Poglej vstopnico na spletu",
+      "addToWallet": "Dodaj v Apple Wallet",
+      "importantInfo": "Pomembne informacije",
+      "infoValidOne": "Ta vstopnica velja za eno osebo",
+      "infoNonRefundable": "Vstopnica je nepovratna, lahko pa jo preneseš na drugo osebo",
+      "infoCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših dogodkih",
+      "infoVenueTerms": "Vstop na dogodek je pogojen s pogoji prizorišča",
+      "infoShowQr": "Ob vstopu pokaži to QR kodo",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "orderCustomer": {
+      "subject": "Tvoje naročilo @ endemit",
+      "thankYou": "Hvala za tvoje naročilo!",
+      "orderNumber": "Naročilo #{id}",
+      "confirmation": "To je potrditev tvojega naročila pri nas. Spodaj so podrobnosti tvojega nakupa.",
+      "willShip": "Naročilo bomo na navedeni naslov odpremili v kratkem, običajno v 3–5 dneh.",
+      "ticketsInfo": "Tvoje vstopnice bodo poslane na tvoj e-naslov v naslednjih 10 minutah. Preveri svoj nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka vstopnica bo poslana posebej</strong> s QR kodo, ki jo ob vstopu pokažeš na dogodku.",
+      "shippingAddress": "Naslov za dostavo",
+      "phone": "Telefon: {phone}",
+      "orderItems": "Izdelki v naročilu",
+      "product": "Izdelek",
+      "qty": "Kol.",
+      "price": "Cena",
+      "total": "Skupaj",
+      "subtotal": "Vmesni seštevek:",
+      "shippingTo": "Dostava v {country}:",
+      "discount": "Popust:",
+      "totalLabel": "Skupaj:",
+      "viewOrder": "Poglej naročilo na spletu",
+      "invoiceNote": "To e-poštno sporočilo velja kot račun. Če imaš vprašanja ali potrebuješ pomoč, nam piši na <link>endemit@endemit.org</link>."
+    },
+    "otcSignIn": {
+      "subject": "Tvoja koda za prijavo: {code}",
+      "heading": "Tvoja koda za prijavo",
+      "intro": "Za prijavo v svoj račun uporabi spodnjo kodo. Koda bo potekla čez {minutes} minut.",
+      "orClick": "Ali klikni spodnji gumb:",
+      "signInInstantly": "Prijavi se takoj",
+      "ignoreNote": "Če te kode nisi zahteval, lahko to sporočilo mirno prezreš. Nekdo je morda pomotoma vnesel tvoj e-naslov.",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "orderShipped": {
+      "subject": "Tvoje naročilo je odposlano!",
+      "heading": "Tvoje naročilo je odposlano!",
+      "orderNumber": "Naročilo #{id}",
+      "body": "Odlična novica! Tvoje naročilo je na poti do tebe. Dostavo lahko pričakuješ v naslednjih nekaj delovnih dneh.",
+      "viewOrder": "Poglej naročilo",
+      "questions": "Vprašanja o dostavi? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "refund": {
+      "subject": "Vračilo za tvoje naročilo je obdelano",
+      "heading": "Vračilo obdelano",
+      "intro": "Tvoje vračilo je bilo uspešno obdelano. Sredstva bodo vrnjena na izvorni način plačila v 5–10 delovnih dneh.",
+      "refundAmount": "Znesek vračila",
+      "refundedTo": "Vrnjeno na: {method}",
+      "orderDetails": "Podrobnosti naročila",
+      "orderIdLabel": "Št. naročila: #{id}",
+      "orderDateLabel": "Datum naročila: {date}",
+      "refundedItems": "Vrnjeni izdelki",
+      "item": "Izdelek",
+      "qty": "Kol.",
+      "refundCol": "Vračilo",
+      "shipping": "Dostava",
+      "totalRefunded": "Skupaj vrnjeno:",
+      "viewOrder": "Poglej naročilo",
+      "questions": "Če imaš vprašanja o vračilu, piši naši podpori na <link>endemit@endemit.org</link>"
+    },
+    "ticketInvalidation": {
+      "subjectOne": "Tvoja vstopnica je bila razveljavljena",
+      "subjectMany": "Tvoje vstopnice so bile razveljavljene",
+      "heading": "{count, plural, one {Vstopnica razveljavljena} other {Vstopnice razveljavljene}}",
+      "importantNotice": "Pomembno obvestilo",
+      "warning": "{count, plural, one {Naslednja vstopnica ni več veljavna} other {Naslednje vstopnice niso več veljavne}} in je ni mogoče uporabiti za vstop na dogodek. Razlog je obdelano vračilo za povezano naročilo.",
+      "listHeading": "{count, plural, one {Razveljavljena vstopnica} other {Razveljavljene vstopnice}}",
+      "eventCol": "Dogodek",
+      "holderCol": "Imetnik vstopnice",
+      "ticketIdCol": "Št. vstopnice",
+      "statusCol": "Status",
+      "invalidBadge": "NEVELJAVNO",
+      "whatDoesThisMean": "Kaj to pomeni?",
+      "point1": "{count, plural, one {Te vstopnice} other {Teh vstopnic}} ni mogoče uporabiti za vstop na dogodek.",
+      "point2": "QR kode ali digitalne vstopnice, povezane s {count, plural, one {to vstopnico} other {temi vstopnicami}}, se ne bodo prebrale.",
+      "point3": "Če meniš, da gre za napako, se nemudoma obrni na našo podporo.",
+      "questions": "Če imaš vprašanja, piši naši podpori na <link>endemit@endemit.org</link>"
+    },
+    "eventReminder": {
+      "subject": "Jutri: {eventName} - {count, plural, one {Tvoja vstopnica je pripravljena!} other {Tvoje vstopnice ({count}) so pripravljene!}}",
+      "heading": "{eventName} je jutri!",
+      "intro": "{count, plural, one {Tvoja vstopnica za {eventName} je priložena in pripravljena za jutri. Ob vhodu jo pokaži za potrditev. Uporabiš lahko tudi povezavo do digitalne vstopnice ali jo dodaš v Apple Wallet. Se vidimo na plesišču!} other {Tvoje vstopnice ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih vstopnic ali jih dodaš v Apple Wallet. Se vidimo na plesišču!}}",
+      "date": "Datum:",
+      "location": "Lokacija:",
+      "lineup": "Zasedba",
+      "yourTickets": "{count, plural, one {Tvoja vstopnica} other {Tvoje vstopnice ({count})}}",
+      "view": "Poglej",
+      "appleWallet": "Apple Wallet",
+      "viewAll": "Poglej vse vstopnice",
+      "reminder": "Opomnik",
+      "reminderShowQr": "Ob vhodu pokaži svojo QR kodo",
+      "reminderOnePerson": "Vsaka vstopnica velja za eno osebo",
+      "reminderCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših dogodkih",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "eventClaim": {
+      "subject": "{eventName} je bil dodan v tvoj profil",
+      "heading": "Dogodek dodan v tvoj profil!",
+      "body": "Odlična novica! <strong>{eventName}</strong> je bil dodan na tvoj seznam »Obiskani dogodki«. Hvala, ker si del naše skupnosti!",
+      "viewProfile": "Poglej svoj profil",
+      "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
+    },
+    "sticker": {
+      "howToUseHeading": "Kako jo uporabljaš",
+      "howToUseBody": "Če je tvoj telefon prazen ali ga nimaš pri sebi na POS blagajni, pokaži zapestnico blagajniku. Skenira jo (ali vnese kodo) in na njegovi napravi se prikaže zaslon za plačilo, ki ga potrdiš.",
+      "linked": {
+        "subject": "Tvoja rezervna zapestnica je aktivna",
+        "heading": "Tvoja zapestnica je aktivna",
+        "intro": "Zapestnica je zdaj povezana s tvojo denarnico Endemit. Nosi jo s seboj in jo uporabljaj na barih ali v trgovinah znotraj območja za plačila s tvojim spletnim dobroimetjem.",
+        "codeLabel": "Koda tvoje zapestnice"
+      },
+      "replaced": {
+        "subject": "Tvoja zapestnica je bila posodobljena",
+        "heading": "Tvoja zapestnica je bila posodobljena",
+        "intro": "Tvoja prejšnja zapestnica je bila zamenjana. Stara koda ne bo več delovala na POS blagajnah — samo nova spodaj.",
+        "oldLabel": "Stara (odstranjena)",
+        "newLabel": "Nova (aktivna)"
+      },
+      "unlinked": {
+        "subject": "Tvoja nalepka zapestnice je bila odstranjena",
+        "heading": "Tvoja nalepka zapestnice je bila odstranjena",
+        "intro": "Spodnja zapestnica ni več povezana s tvojo denarnico Endemit in je ni več mogoče uporabljati za plačila na POS blagajnah.",
+        "removedLabel": "Odstranjena zapestnica",
+        "outro": "Novo zapestnico lahko kadar koli povežeš v nastavitvah svojega profila."
+      }
+    },
+    "walletTransfer": {
+      "subjectSent": "Sredstva poslana",
+      "subjectReceived": "Sredstva prejeta",
+      "descSent": "Poslal si <strong>{amount}</strong> uporabniku <strong>{name}</strong>.",
+      "descReceived": "<strong>{name}</strong> ti je poslal <strong>{amount}</strong>.",
+      "amountSent": "Poslani znesek",
+      "amountReceived": "Prejeti znesek",
+      "note": "Opomba",
+      "walletBalance": "Stanje denarnice",
+      "viewTransaction": "Poglej transakcijo",
+      "questions": "Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>."
+    },
+    "posTransaction": {
+      "subject": "Potrdilo o transakciji #{code} @ endemit",
+      "heading": "Transakcija potrjena",
+      "transactionNumber": "Transakcija #{code}",
+      "items": "Izdelki",
+      "qty": "Kol.",
+      "price": "Cena",
+      "total": "Skupaj",
+      "subtotal": "Vmesni seštevek:",
+      "tip": "Napitnina:",
+      "totalLabel": "Skupaj:",
+      "walletBalance": "Stanje denarnice",
+      "viewWallet": "Poglej svojo denarnico",
+      "receiptNote": "To sporočilo velja kot potrdilo o tvoji transakciji. Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>"
+    }
+  }
+}

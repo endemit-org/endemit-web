@@ -19,10 +19,24 @@
             "placeholder": "(optional)"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "(optional)"
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": "(optional)"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "(optional)"
           }
         },
@@ -62,7 +76,9 @@
                 "config": {
                   "label": "Artist (leave empty for blurred placeholder)",
                   "select": "document",
-                  "customtypes": ["artist"]
+                  "customtypes": [
+                    "artist"
+                  ]
                 }
               },
               "name_override": {

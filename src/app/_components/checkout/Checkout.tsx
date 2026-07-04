@@ -15,7 +15,7 @@ import CheckoutWalletCredit from "@/app/_components/checkout/CheckoutWalletCredi
 import CheckoutCartSummaryCollapsible from "@/app/_components/checkout/CheckoutCartSummaryCollapsible";
 import CheckoutStepIndicator from "@/app/_components/checkout/CheckoutStepIndicator";
 import PaymentForm from "@/app/_components/checkout/PaymentForm";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 // Dynamic import: Stripe (~80KB) only loads when payment form is rendered
 const StripeProvider = dynamic(

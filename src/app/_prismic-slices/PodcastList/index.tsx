@@ -9,16 +9,24 @@ import PodcastSeriesSeoMicrodata from "@/app/_components/seo/PodcastSeriesSeoMic
 import PlayablePodcastCard from "@/app/_components/podcast/PlayablePodcastCard";
 import FeaturedPodcastCard from "@/app/_components/podcast/FeaturedPodcastCard";
 import ExpandablePodcastGrid from "@/app/_components/podcast/ExpandablePodcastGrid";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `PodcastList`.
  */
-export type PodcastListProps = SliceComponentProps<Content.PodcastListSlice>;
+export type PodcastListProps = SliceComponentProps<
+  Content.PodcastListSlice,
+  SliceContext
+>;
 
 /**
  * Component for "PodcastList" Slices.
  */
-const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
+const PodcastList: FC<PodcastListProps> = async ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
+  const sliceTitle = pickLocalized(slice.primary, "title", locale);
+  const sliceDescription = pickLocalized(slice.primary, "description", locale);
   // Grid variation - show 2, 4, or all episodes
   if (slice.variation === "default") {
     const episodeCountValue = slice.primary.episode_count ?? "4";
@@ -43,19 +51,19 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
       >
         <PodcastSeriesSeoMicrodata />
 
-        {slice.primary.title && (
-          <h2 className="text-3xl text-neutral-200">{slice.primary.title}</h2>
+        {sliceTitle && (
+          <h2 className="text-3xl text-neutral-200">{sliceTitle}</h2>
         )}
-        {slice.primary.description && (
+        {sliceDescription && (
           <p className="text-md text-neutral-400">
-            {slice.primary.description}
+            {sliceDescription}
           </p>
         )}
 
         {isAll ? (
           <div
             className={
-              slice.primary.title || slice.primary.description ? "mt-8" : ""
+              sliceTitle || sliceDescription ? "mt-8" : ""
             }
           >
             <ExpandablePodcastGrid
@@ -71,7 +79,7 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
               episodeCountValue === "2"
                 ? "grid-cols-2"
                 : "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
-              (slice.primary.title || slice.primary.description) && "mt-8"
+              (sliceTitle || sliceDescription) && "mt-8"
             )}
           >
             {limitedPodcasts.map(podcast => (
@@ -121,14 +129,14 @@ const PodcastList: FC<PodcastListProps> = async ({ slice }) => {
             "p-4 lg:p-10 max-lg:py-8 bg-neutral-800 rounded-md"
         )}
       >
-        {slice.primary.title && (
+        {sliceTitle && (
           <h2 className="text-3xl text-neutral-200 mb-2">
-            {slice.primary.title}
+            {sliceTitle}
           </h2>
         )}
-        {slice.primary.description && (
+        {sliceDescription && (
           <p className="text-md text-neutral-400 mb-6">
-            {slice.primary.description}
+            {sliceDescription}
           </p>
         )}
 

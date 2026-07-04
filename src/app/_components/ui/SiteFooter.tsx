@@ -1,11 +1,16 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import EndemitSymbol from "@/app/_components/icon/EndemitSymbol";
 import packageJson from "@/package.json";
 import { fetchFooterFromCms } from "@/domain/cms/operations/fetchFooterFromCms";
 import { getBuildInfo } from "@/lib/build";
+import type { AppLocale } from "@/i18n/routing";
 
-export default async function SiteFooter() {
-  const footerContent = await fetchFooterFromCms();
+export default async function SiteFooter({
+  locale = "sl",
+}: {
+  locale?: AppLocale;
+}) {
+  const footerContent = await fetchFooterFromCms(locale);
 
   if (!footerContent) {
     return;

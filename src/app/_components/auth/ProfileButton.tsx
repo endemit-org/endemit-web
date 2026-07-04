@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCurrentUser } from "@/app/_hooks/useCurrentUser";
 
 interface ProfileButtonProps {

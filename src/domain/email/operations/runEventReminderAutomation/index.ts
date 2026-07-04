@@ -14,6 +14,7 @@ interface TicketData {
   price: Prisma.Decimal;
   qrContent: Prisma.JsonValue;
   metadata: Prisma.JsonValue;
+  locale: string;
 }
 
 /**
@@ -120,6 +121,7 @@ export const runEventReminderAutomation = inngest.createFunction(
               price: true,
               qrContent: true,
               metadata: true,
+              locale: true,
             },
           });
 
@@ -160,6 +162,7 @@ export const runEventReminderAutomation = inngest.createFunction(
                   mapUrl: "",
                 },
                 artists: event.artists,
+                locale: recipientTickets[0]?.locale ?? "sl",
                 tickets: recipientTickets.map(t => ({
                   shortId: t.shortId,
                   ticketHash: t.ticketHash,

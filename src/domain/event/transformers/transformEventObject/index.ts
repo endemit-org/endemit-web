@@ -4,10 +4,13 @@ import { asLink, asText, isFilled } from "@prismicio/client";
 import { EventDocument } from "@/prismicio-types";
 import { convertMinutesToMs } from "@/lib/util/converters";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { AppLocale } from "@/i18n/routing";
 
 export const transformEventObject = async (
   event: EventDocument,
-  ticketProductIds: string[]
+  ticketProductIds: string[],
+  locale: AppLocale = "sl"
 ) => {
   const venueDoc = isFilled.contentRelationship(event.data.venue)
     ? event.data.venue
@@ -39,10 +42,10 @@ export const transformEventObject = async (
         uid: artist.uid,
         name: item.name_override ?? artist.data.name,
         description:
-          item.description_override.length > 0
-            ? item.description_override
-            : artist.data.description
-              ? artist.data.description
+          pickLocalized(item, "description_override", locale).length > 0
+            ? pickLocalized(item, "description_override", locale)
+            : pickLocalized(artist.data, "description", locale)
+              ? pickLocalized(artist.data, "description", locale)
               : null,
         image: {
           src: imageUrl,
@@ -59,7 +62,7 @@ export const transformEventObject = async (
               )
             : null,
         duration: item.duration,
-        stage: item.stage,
+        stage: pickLocalized(item, "stage", locale),
         isB2b: artist.data.is_b2b,
         b2bAttribution: artist.data.is_b2b
           ? artist.data.b2b_attributed_to_artist.map(artist => {
@@ -87,7 +90,10 @@ export const transformEventObject = async (
     id: event.id,
     uid: event.uid,
     name: event.data.title,
-    description: event.data.description ? asText(event.data.description) : null,
+    description: (() => {
+      const d = pickLocalized(event.data, "description", locale);
+      return d ? asText(d) : null;
+    })(),
     coverImage: event.data.cover_image
       ? {
           src: event.data.cover_image.url,
@@ -116,9 +122,9 @@ export const transformEventObject = async (
         ? {
             id: venueDoc.id,
             uid: venueDoc.uid,
-            name: venueDoc.data.name,
+            name: pickLocalized(venueDoc.data, "name", locale),
             address: venueDoc.data.address,
-            description: venueDoc.data.description,
+            description: pickLocalized(venueDoc.data, "description", locale),
             coordinates: venueDoc.data.coordinates,
             image: venueDoc.data.image
               ? {

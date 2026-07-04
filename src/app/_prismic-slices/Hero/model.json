@@ -19,10 +19,24 @@
             "single": "heading1"
           }
         },
+        "heading_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Heading (SL)",
+            "single": "heading1"
+          }
+        },
         "description": {
           "type": "StructuredText",
           "config": {
             "label": "Description",
+            "single": "paragraph"
+          }
+        },
+        "description_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description (SL)",
             "single": "paragraph"
           }
         },

@@ -1,5 +1,5 @@
 import { TileConfig } from "@/app/_components/grid/TileConfig";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import React from "react";
 import clsx from "clsx";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
