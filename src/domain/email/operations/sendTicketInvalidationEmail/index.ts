@@ -5,11 +5,13 @@ import {
   TicketInvalidationTemplate,
   type InvalidatedTicket,
 } from "@/domain/email/templates/TicketInvalidation";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface SendTicketInvalidationEmailInput {
   email: string;
   tickets: InvalidatedTicket[];
   orderId: string;
+  locale?: string;
 }
 
 export const sendTicketInvalidationEmail = async (
@@ -21,10 +23,8 @@ export const sendTicketInvalidationEmail = async (
   }
 
   const ticketCount = input.tickets.length;
-  const subject =
-    ticketCount === 1
-      ? `Your ticket has been invalidated`
-      : `Your tickets have been invalidated`;
+  const t = getEmailTranslator(input.locale ?? "sl", "emails.ticketInvalidation");
+  const subject = ticketCount === 1 ? t("subjectOne") : t("subjectMany");
 
   return await resend.emails.send({
     from: resendFromEmail,
@@ -33,6 +33,7 @@ export const sendTicketInvalidationEmail = async (
     react: TicketInvalidationTemplate({
       tickets: input.tickets,
       orderId: input.orderId,
+      locale: input.locale,
     }),
   });
 };

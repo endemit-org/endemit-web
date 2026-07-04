@@ -21,13 +21,40 @@
                 "allowTargetBlank": false,
                 "allowText": true,
                 "repeat": false,
-                "variants": ["Primary", "Secondary", "CTA"]
+                "variants": [
+                  "Primary",
+                  "Secondary",
+                  "CTA"
+                ]
+              }
+            },
+            "link_sl": {
+              "type": "Link",
+              "config": {
+                "label": "Link (SL)",
+                "placeholder": "",
+                "select": null,
+                "allowTargetBlank": false,
+                "allowText": true,
+                "repeat": false,
+                "variants": [
+                  "Primary",
+                  "Secondary",
+                  "CTA"
+                ]
               }
             },
             "cta_text": {
               "type": "Text",
               "config": {
                 "label": "Cta text",
+                "placeholder": "(Optional) - only shows when type CTA"
+              }
+            },
+            "cta_text_sl": {
+              "type": "Text",
+              "config": {
+                "label": "Cta text (SL)",
                 "placeholder": "(Optional) - only shows when type CTA"
               }
             }

@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import BlurredTextPlaceholder from "@/app/_components/content/BlurredTextPlaceholder";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 // Type will be available after running Slice Machine to regenerate types
 interface BlurredBlobProps {
@@ -8,15 +10,21 @@ interface BlurredBlobProps {
     variation: string;
     primary: {
       heading?: string | null;
+      heading_sl?: string | null;
       description?: string | null;
+      description_sl?: string | null;
       line_count?: number | null;
       render_frame?: boolean | null;
     };
   };
+  context?: SliceContext;
 }
 
-const BlurredBlob = ({ slice }: BlurredBlobProps) => {
-  const { heading, description, line_count, render_frame } = slice.primary;
+const BlurredBlob = ({ slice, context }: BlurredBlobProps) => {
+  const locale = context?.locale ?? "sl";
+  const { line_count, render_frame } = slice.primary;
+  const heading = pickLocalized(slice.primary, "heading", locale);
+  const description = pickLocalized(slice.primary, "description", locale);
   const lineCount = line_count ?? 4;
 
   return (

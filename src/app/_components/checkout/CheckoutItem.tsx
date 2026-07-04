@@ -4,7 +4,7 @@ import {
   isCutoffWithin48Hours,
 } from "@/domain/product/businessLogic";
 import { ensureTypeIsDate } from "@/lib/util/util";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { formatDecimalPrice } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import CartQtyControl from "@/app/_components/cart/CartQtyControl";

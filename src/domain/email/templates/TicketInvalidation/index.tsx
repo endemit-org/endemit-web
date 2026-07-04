@@ -1,6 +1,7 @@
 import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface InvalidatedTicket {
   shortId: string;
@@ -11,17 +12,18 @@ interface InvalidatedTicket {
 interface Props {
   tickets: InvalidatedTicket[];
   orderId: string;
+  locale?: string;
 }
 
-function TicketInvalidationTemplate({ tickets }: Props) {
+function TicketInvalidationTemplate({ tickets, locale = "sl" }: Props) {
   const ticketCount = tickets.length;
-  const ticketText = ticketCount === 1 ? "ticket" : "tickets";
+  const t = getEmailTranslator(locale, "emails.ticketInvalidation");
 
   return (
     <MasterTemplate>
       <div>
         <h1 className="text-2xl font-bold mb-2">
-          {ticketCount === 1 ? "Ticket Invalidated" : "Tickets Invalidated"}
+          {t("heading", { count: ticketCount })}
         </h1>
 
         {/* Warning Banner */}
@@ -42,18 +44,16 @@ function TicketInvalidationTemplate({ tickets }: Props) {
               marginBottom: "8px",
             }}
           >
-            Important Notice
+            {t("importantNotice")}
           </Text>
           <Text className="text-gray-700">
-            The following {ticketText} {ticketCount === 1 ? "is" : "are"} no
-            longer valid and cannot be used for event entry. This is due to a
-            refund being processed for the associated order.
+            {t("warning", { count: ticketCount })}
           </Text>
         </div>
 
         {/* Invalidated Tickets List */}
         <h2 className="text-xl font-bold mb-4 mt-6">
-          Invalidated {ticketCount === 1 ? "Ticket" : "Tickets"}
+          {t("listHeading", { count: ticketCount })}
         </h2>
 
         <table style={{ width: "100%", marginBottom: "24px" }}>
@@ -67,18 +67,8 @@ function TicketInvalidationTemplate({ tickets }: Props) {
                   color: "#6b7280",
                 }}
               >
-                <Text className="font-semibold text-neutral-800">Event</Text>
-              </th>
-              <th
-                align="left"
-                style={{
-                  borderBottom: "1px solid #e5e7eb",
-                  padding: "12px 8px",
-                  color: "#6b7280",
-                }}
-              >
                 <Text className="font-semibold text-neutral-800">
-                  Ticket Holder
+                  {t("eventCol")}
                 </Text>
               </th>
               <th
@@ -90,7 +80,19 @@ function TicketInvalidationTemplate({ tickets }: Props) {
                 }}
               >
                 <Text className="font-semibold text-neutral-800">
-                  Ticket ID
+                  {t("holderCol")}
+                </Text>
+              </th>
+              <th
+                align="left"
+                style={{
+                  borderBottom: "1px solid #e5e7eb",
+                  padding: "12px 8px",
+                  color: "#6b7280",
+                }}
+              >
+                <Text className="font-semibold text-neutral-800">
+                  {t("ticketIdCol")}
                 </Text>
               </th>
               <th
@@ -101,7 +103,9 @@ function TicketInvalidationTemplate({ tickets }: Props) {
                   color: "#6b7280",
                 }}
               >
-                <Text className="font-semibold text-neutral-800">Status</Text>
+                <Text className="font-semibold text-neutral-800">
+                  {t("statusCol")}
+                </Text>
               </th>
             </tr>
           </thead>
@@ -153,7 +157,7 @@ function TicketInvalidationTemplate({ tickets }: Props) {
                       fontWeight: 600,
                     }}
                   >
-                    INVALID
+                    {t("invalidBadge")}
                   </span>
                 </td>
               </tr>
@@ -170,35 +174,28 @@ function TicketInvalidationTemplate({ tickets }: Props) {
             borderRadius: "8px",
           }}
         >
-          <Text className="font-semibold mb-2">What does this mean?</Text>
+          <Text className="font-semibold mb-2">{t("whatDoesThisMean")}</Text>
           <ul style={{ margin: "0", paddingLeft: "20px", color: "#4b5563" }}>
             <li style={{ marginBottom: "8px" }}>
-              <Text>
-                {ticketCount === 1 ? "This ticket" : "These tickets"} cannot be
-                used for entry at the event.
-              </Text>
+              <Text>{t("point1", { count: ticketCount })}</Text>
             </li>
             <li style={{ marginBottom: "8px" }}>
-              <Text>
-                Any QR codes or digital passes associated with{" "}
-                {ticketCount === 1 ? "this ticket" : "these tickets"} will not
-                scan.
-              </Text>
+              <Text>{t("point2", { count: ticketCount })}</Text>
             </li>
             <li>
-              <Text>
-                If you believe this is an error, please contact our support team
-                immediately.
-              </Text>
+              <Text>{t("point3")}</Text>
             </li>
           </ul>
         </div>
 
         <Text className="text-gray-600 my-6 mt-8">
-          If you have any questions, please contact our support team at{" "}
-          <Link href={"mailto:endemit@endemit.org"} className={"link"}>
-            endemit@endemit.org
-          </Link>
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href={"mailto:endemit@endemit.org"} className={"link"}>
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

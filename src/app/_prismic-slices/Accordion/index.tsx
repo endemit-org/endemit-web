@@ -2,23 +2,34 @@ import { FC } from "react";
 import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps, PrismicRichText } from "@prismicio/react";
 import Accordion, { AccordionItem } from "@/app/_components/content/Accordion";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `Accordion`.
  */
-export type AccordionProps = SliceComponentProps<Content.AccordionSlice>;
+export type AccordionProps = SliceComponentProps<
+  Content.AccordionSlice,
+  SliceContext
+>;
 
 /**
  * Component for "Accordion" Slices.
  */
-const AccordionSlice: FC<AccordionProps> = ({ slice }) => {
+const AccordionSlice: FC<AccordionProps> = ({ slice, context }) => {
   const { primary, items } = slice;
+  const locale = context?.locale ?? "sl";
 
-  const heading = isFilled.richText(primary.heading)
-    ? asText(primary.heading)
+  const localizedHeading = pickLocalized(primary, "heading", locale);
+  const heading = isFilled.richText(localizedHeading)
+    ? asText(localizedHeading)
     : undefined;
 
   const accordionItems: AccordionItem[] = items
+    .map(item => ({
+      title: pickLocalized(item, "title", locale),
+      content: pickLocalized(item, "content", locale),
+    }))
     .filter(
       item => isFilled.keyText(item.title) && isFilled.richText(item.content)
     )

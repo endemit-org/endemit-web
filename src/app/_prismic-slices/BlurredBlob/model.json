@@ -19,10 +19,24 @@
             "placeholder": "Optional heading above the blob"
           }
         },
+        "heading_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Heading (SL)",
+            "placeholder": "Optional heading above the blob"
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": "Optional description below the heading"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "Optional description below the heading"
           }
         },

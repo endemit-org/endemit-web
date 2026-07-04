@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";

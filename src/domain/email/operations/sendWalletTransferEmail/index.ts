@@ -5,6 +5,8 @@ import {
   WalletTransferTemplate,
   type WalletTransferEmailProps,
 } from "@/domain/email/templates";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
+import { getUserLocaleByEmail } from "@/domain/user/operations/getUserLocaleByEmail";
 
 interface SendWalletTransferEmailInput extends WalletTransferEmailProps {
   customerEmail: string;
@@ -20,15 +22,17 @@ export const sendWalletTransferEmail = async (
     return null;
   }
 
+  const locale = await getUserLocaleByEmail(customerEmail);
+  const t = getEmailTranslator(locale, "emails.walletTransfer");
   const subject =
     templateProps.direction === "sent"
-      ? "Funds sent"
-      : "Funds received";
+      ? t("subjectSent")
+      : t("subjectReceived");
 
   return await resend.emails.send({
     from: resendFromEmail,
     to: customerEmail,
     subject,
-    react: WalletTransferTemplate(templateProps),
+    react: WalletTransferTemplate({ ...templateProps, locale }),
   });
 };

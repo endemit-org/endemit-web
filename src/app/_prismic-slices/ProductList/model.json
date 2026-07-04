@@ -19,6 +19,13 @@
             "placeholder": "Title of the section"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "Title of the section"
+          }
+        },
         "category": {
           "type": "Select",
           "config": {
@@ -40,6 +47,13 @@
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": "Description of the section"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": "Description of the section"
           }
         },
@@ -79,10 +93,24 @@
             "placeholder": ""
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": ""
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": ""
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": ""
           }
         },
@@ -122,10 +150,24 @@
             "placeholder": ""
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": ""
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Description",
+            "placeholder": ""
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL)",
             "placeholder": ""
           }
         },

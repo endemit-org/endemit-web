@@ -1,23 +1,21 @@
 import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text } from "@react-email/components";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   code: string;
+  locale?: string;
 }
 
-function StickerUnlinkedTemplate({ code }: Props) {
+function StickerUnlinkedTemplate({ code, locale = "sl" }: Props) {
+  const t = getEmailTranslator(locale, "emails.sticker");
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-4">
-          Your wristband sticker was removed
-        </h1>
+        <h1 className="text-2xl font-bold mb-4">{t("unlinked.heading")}</h1>
 
-        <Text className="text-gray-600 mb-6">
-          The wristband below is no longer linked to your Endemit wallet and
-          can&apos;t be used to pay at POS registers anymore.
-        </Text>
+        <Text className="text-gray-600 mb-6">{t("unlinked.intro")}</Text>
 
         <div
           style={{
@@ -28,7 +26,9 @@ function StickerUnlinkedTemplate({ code }: Props) {
             marginBottom: "24px",
           }}
         >
-          <Text className="text-gray-500 text-sm mb-1">Removed wristband</Text>
+          <Text className="text-gray-500 text-sm mb-1">
+            {t("unlinked.removedLabel")}
+          </Text>
           <Text
             style={{
               fontFamily: "monospace",
@@ -44,9 +44,7 @@ function StickerUnlinkedTemplate({ code }: Props) {
           </Text>
         </div>
 
-        <Text className="text-gray-600 mb-6">
-          You can link a new wristband any time from your profile settings.
-        </Text>
+        <Text className="text-gray-600 mb-6">{t("unlinked.outro")}</Text>
       </div>
     </MasterTemplate>
   );

@@ -19,10 +19,24 @@
             "placeholder": "Ticket Prices"
           }
         },
+        "heading_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Heading (SL)",
+            "placeholder": "Ticket Prices"
+          }
+        },
         "subheading": {
           "type": "Text",
           "config": {
             "label": "Subheading",
+            "placeholder": "Get your tickets before the price increases"
+          }
+        },
+        "subheading_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Subheading (SL)",
             "placeholder": "Get your tickets before the price increases"
           }
         }
@@ -35,10 +49,24 @@
             "placeholder": "Early Bird"
           }
         },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Step Title (SL)",
+            "placeholder": "Early Bird"
+          }
+        },
         "description": {
           "type": "Text",
           "config": {
             "label": "Step Description",
+            "placeholder": "Limited availability"
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Step Description (SL)",
             "placeholder": "Limited availability"
           }
         },

@@ -161,6 +161,7 @@ export async function POST(request: Request) {
         transformToProductInOrder(checkoutItem, complementaryTicketData)
       ),
       userId: currentUser?.id,
+      locale: body.locale === "en" ? "en" : "sl",
     });
 
     // Update PaymentIntent with orderId in metadata

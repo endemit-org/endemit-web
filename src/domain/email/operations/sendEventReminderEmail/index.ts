@@ -5,6 +5,7 @@ import {
   EventReminderTemplate,
   type EventReminderProps,
 } from "@/domain/email/templates";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface TicketAttachment {
   filename: string;
@@ -25,6 +26,7 @@ export const sendEventReminderEmail = async ({
   artists,
   tickets,
   attachments,
+  locale = "sl",
 }: SendEventReminderEmailParams) => {
   if (isBlockedEmail(recipientEmail)) {
     console.log(
@@ -34,10 +36,8 @@ export const sendEventReminderEmail = async ({
   }
 
   const ticketCount = tickets.length;
-  const subject =
-    ticketCount > 1
-      ? `Tomorrow: ${eventName} - Your ${ticketCount} tickets are ready!`
-      : `Tomorrow: ${eventName} - Your ticket is ready!`;
+  const t = getEmailTranslator(locale, "emails.eventReminder");
+  const subject = t("subject", { eventName, count: ticketCount });
 
   return await resend.emails.send({
     from: resendFromEmail,
@@ -50,6 +50,7 @@ export const sendEventReminderEmail = async ({
       venue,
       artists,
       tickets,
+      locale,
     }),
     attachments,
   });

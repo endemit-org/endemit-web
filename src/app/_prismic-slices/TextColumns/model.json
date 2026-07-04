@@ -21,10 +21,28 @@
             "single": "heading1,heading2,heading3,heading4,heading5,heading6"
           }
         },
+        "heading_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Heading (SL)",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "heading1,heading2,heading3,heading4,heading5,heading6"
+          }
+        },
         "content": {
           "type": "StructuredText",
           "config": {
             "label": "Content",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,strong,em"
+          }
+        },
+        "content_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content (SL)",
             "placeholder": "",
             "allowTargetBlank": true,
             "multi": "paragraph,strong,em"
@@ -45,10 +63,28 @@
                   "single": "heading1,heading2,heading3,heading4,heading5,heading6"
                 }
               },
+              "heading_sl": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Heading (SL)",
+                  "placeholder": "",
+                  "allowTargetBlank": false,
+                  "single": "heading1,heading2,heading3,heading4,heading5,heading6"
+                }
+              },
               "content": {
                 "type": "StructuredText",
                 "config": {
                   "label": "Content",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,strong,em,hyperlink"
+                }
+              },
+              "content_sl": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Content (SL)",
                   "placeholder": "",
                   "allowTargetBlank": true,
                   "multi": "paragraph,strong,em,hyperlink"
@@ -77,10 +113,28 @@
             "single": "heading1,heading2,heading3,heading4,heading5,heading6"
           }
         },
+        "heading_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Heading (SL)",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "heading1,heading2,heading3,heading4,heading5,heading6"
+          }
+        },
         "content": {
           "type": "StructuredText",
           "config": {
             "label": "Content",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item"
+          }
+        },
+        "content_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content (SL)",
             "placeholder": "",
             "allowTargetBlank": true,
             "multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item"
@@ -109,10 +163,28 @@
                   "single": "heading1,heading2,heading3,heading4,heading5,heading6"
                 }
               },
+              "heading_sl": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Heading (SL)",
+                  "placeholder": "",
+                  "allowTargetBlank": false,
+                  "single": "heading1,heading2,heading3,heading4,heading5,heading6"
+                }
+              },
               "content": {
                 "type": "StructuredText",
                 "config": {
                   "label": "Content",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,strong,em,hyperlink"
+                }
+              },
+              "content_sl": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Content (SL)",
                   "placeholder": "",
                   "allowTargetBlank": true,
                   "multi": "paragraph,strong,em,hyperlink"

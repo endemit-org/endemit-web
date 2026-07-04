@@ -6,16 +6,22 @@ import { prismic } from "@/lib/services/prismic";
 import ProductSection from "@/app/_components/product/ProductSection";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { isProductVisible } from "@/domain/product/businessLogic";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `ProductList`.
  */
-export type ProductListProps = SliceComponentProps<Content.ProductListSlice>;
+export type ProductListProps = SliceComponentProps<
+  Content.ProductListSlice,
+  SliceContext
+>;
 
 /**
  * Component for "ProductList" Slices.
  */
-const ProductList: FC<ProductListProps> = async ({ slice }) => {
+const ProductList: FC<ProductListProps> = async ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
   let products = null;
   let gridSizeType: "small" | "large" = "small";
   // Type will be available after running Slice Machine to regenerate types
@@ -70,8 +76,10 @@ const ProductList: FC<ProductListProps> = async ({ slice }) => {
       {sortedProductsBySortingWeight.length > 0 && (
         <ProductSection
           products={sortedProductsBySortingWeight}
-          title={slice.primary.title ?? undefined}
-          description={slice.primary.description ?? undefined}
+          title={pickLocalized(slice.primary, "title", locale) ?? undefined}
+          description={
+            pickLocalized(slice.primary, "description", locale) ?? undefined
+          }
           renderFrame={slice.primary.render_frame ?? false}
           gridType={gridSizeType}
           quickAddToCart={quickAddToCart}

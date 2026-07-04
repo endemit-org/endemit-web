@@ -1,6 +1,6 @@
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import clsx from "clsx";
 import { Artist } from "@/domain/artist/types/artist";
 import { CmsImage } from "@/domain/cms/types/common";

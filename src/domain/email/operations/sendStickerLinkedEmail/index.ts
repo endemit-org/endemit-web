@@ -5,6 +5,8 @@ import {
   StickerLinkedTemplate,
   type StickerLinkedEmailProps,
 } from "@/domain/email/templates";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
+import { getUserLocaleByEmail } from "@/domain/user/operations/getUserLocaleByEmail";
 
 interface SendStickerLinkedEmailInput extends StickerLinkedEmailProps {
   customerEmail: string;
@@ -20,10 +22,13 @@ export const sendStickerLinkedEmail = async (
     return null;
   }
 
+  const locale = await getUserLocaleByEmail(customerEmail);
+  const t = getEmailTranslator(locale, "emails.sticker");
+
   return await resend.emails.send({
     from: resendFromEmail,
     to: customerEmail,
-    subject: "Your backup sticker is active",
-    react: StickerLinkedTemplate(templateProps),
+    subject: t("linked.subject"),
+    react: StickerLinkedTemplate({ ...templateProps, locale }),
   });
 };

@@ -22,7 +22,14 @@ interface TicketData {
   price: string;
   coverImageUrl: string;
   template?: string; // Template name - resolved by getTemplateById, defaults to "default"
+  locale?: "sl" | "en";
 }
+
+// Header label shown before the ticket short id (e.g. "TICKET 1A2B" / "VSTOPNICA 1A2B").
+const TICKET_LABEL: Record<"sl" | "en", string> = {
+  sl: "VSTOPNICA",
+  en: "TICKET",
+};
 
 interface TicketConfig {
   canvasWidth: number;
@@ -365,7 +372,7 @@ async function createTextOverlay(
               color: scheme.text,
               whiteSpace: "nowrap",
             },
-            children: `TICKET ${data.shortId}`,
+            children: `${TICKET_LABEL[data.locale ?? "sl"]} ${data.shortId}`,
           },
         },
         // Left side event info (rotated)

@@ -28,10 +28,10 @@ export const createTicketTransaction = async ({
   metadata?: Prisma.InputJsonValue;
 }) => {
   const result = await prisma.$transaction(async tx => {
-    // Get order to find userId
+    // Get order to find userId and snapshot the locale onto the ticket
     const order = await tx.order.findUnique({
       where: { id: orderId },
-      select: { userId: true },
+      select: { userId: true, locale: true },
     });
 
     const ticket = await tx.ticket.create({
@@ -46,6 +46,7 @@ export const createTicketTransaction = async ({
         orderId,
         price,
         metadata,
+        locale: order?.locale ?? "sl",
       },
     });
 

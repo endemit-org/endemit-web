@@ -2,6 +2,7 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface RefundedItem {
   itemName: string;
@@ -17,14 +18,15 @@ interface Props {
   orderDate: Date | string;
   paymentMethodHint?: string; // e.g., "Visa ending in 4242"
   shippingRefunded?: number; // In cents
+  locale?: string;
 }
 
 function formatCents(cents: number): string {
   return `€${(cents / 100).toFixed(2)}`;
 }
 
-function formatDate(date: Date | string): string {
-  return new Date(date).toLocaleDateString("en-GB", {
+function formatDate(date: Date | string, locale: "sl" | "en"): string {
+  return new Date(date).toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -38,15 +40,15 @@ function RefundConfirmationTemplate({
   orderDate,
   paymentMethodHint,
   shippingRefunded,
+  locale = "sl",
 }: Props) {
+  const t = getEmailTranslator(locale, "emails.refund");
+  const loc: "sl" | "en" = locale === "en" ? "en" : "sl";
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">Refund Processed</h1>
-        <Text className="text-gray-600 mb-6">
-          Your refund has been successfully processed. The funds will be
-          returned to your original payment method within 5-10 business days.
-        </Text>
+        <h1 className="text-2xl font-bold mb-2">{t("heading")}</h1>
+        <Text className="text-gray-600 mb-6">{t("intro")}</Text>
 
         {/* Refund Amount */}
         <div
@@ -59,7 +61,7 @@ function RefundConfirmationTemplate({
             textAlign: "center",
           }}
         >
-          <Text className="text-gray-600 mb-1">Refund Amount</Text>
+          <Text className="text-gray-600 mb-1">{t("refundAmount")}</Text>
           <Text
             style={{
               fontSize: "32px",
@@ -72,7 +74,7 @@ function RefundConfirmationTemplate({
           </Text>
           {paymentMethodHint && (
             <Text className="text-gray-500 text-sm mt-2">
-              Refunded to: {paymentMethodHint}
+              {t("refundedTo", { method: paymentMethodHint })}
             </Text>
           )}
         </div>
@@ -86,17 +88,17 @@ function RefundConfirmationTemplate({
             borderRadius: "8px",
           }}
         >
-          <Text className="font-semibold mb-2">Order Details</Text>
+          <Text className="font-semibold mb-2">{t("orderDetails")}</Text>
           <Text className="text-neutral-700 my-1">
-            Order ID: #{orderId.slice(-8).toUpperCase()}
+            {t("orderIdLabel", { id: orderId.slice(-8).toUpperCase() })}
           </Text>
           <Text className="text-neutral-700 my-1">
-            Order Date: {formatDate(orderDate)}
+            {t("orderDateLabel", { date: formatDate(orderDate, loc) })}
           </Text>
         </div>
 
         {/* Refunded Items */}
-        <h2 className="text-xl font-bold mb-2 mt-6">Refunded Items</h2>
+        <h2 className="text-xl font-bold mb-2 mt-6">{t("refundedItems")}</h2>
 
         <table style={{ width: "100%", marginBottom: "16px" }}>
           <thead>
@@ -109,7 +111,9 @@ function RefundConfirmationTemplate({
                   color: "#6b7280",
                 }}
               >
-                <Text className="font-semibold mb-1 text-neutral-800">Item</Text>
+                <Text className="font-semibold mb-1 text-neutral-800">
+                  {t("item")}
+                </Text>
               </th>
               <th
                 align="center"
@@ -118,7 +122,9 @@ function RefundConfirmationTemplate({
                   padding: "8px",
                 }}
               >
-                <Text className="font-semibold mb-1 text-neutral-800">Qty</Text>
+                <Text className="font-semibold mb-1 text-neutral-800">
+                  {t("qty")}
+                </Text>
               </th>
               <th
                 align="right"
@@ -128,7 +134,7 @@ function RefundConfirmationTemplate({
                 }}
               >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Refund
+                  {t("refundCol")}
                 </Text>
               </th>
             </tr>
@@ -174,7 +180,7 @@ function RefundConfirmationTemplate({
                     padding: "8px",
                   }}
                 >
-                  <Text>Shipping</Text>
+                  <Text>{t("shipping")}</Text>
                 </td>
                 <td
                   align="center"
@@ -215,7 +221,7 @@ function RefundConfirmationTemplate({
                           borderTop: "2px solid #000",
                         }}
                       >
-                        <Text className="font-bold">Total Refunded:</Text>
+                        <Text className="font-bold">{t("totalRefunded")}</Text>
                       </td>
                       <td
                         align="right"
@@ -260,16 +266,18 @@ function RefundConfirmationTemplate({
               fontSize: "14px",
             }}
           >
-            View Your Order
+            {t("viewOrder")}
           </Link>
         </div>
 
         <Text className="text-gray-600 my-6">
-          If you have any questions about your refund, please contact our
-          support team at{" "}
-          <Link href={"mailto:endemit@endemit.org"} className={"link"}>
-            endemit@endemit.org
-          </Link>
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href={"mailto:endemit@endemit.org"} className={"link"}>
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

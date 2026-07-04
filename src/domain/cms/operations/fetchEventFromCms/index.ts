@@ -3,6 +3,7 @@ import "server-only";
 import { prismicClient } from "@/lib/services/prismic";
 import { transformEventObject } from "@/domain/event/transformers/transformEventObject";
 import { EventDocument } from "@/prismicio-types";
+import type { AppLocale } from "@/i18n/routing";
 import { fetchTicketsForEventFromCms } from "../fetchTicketsForEventFromCms";
 import {
   isProductSellable,
@@ -30,7 +31,12 @@ const getTicketProductIdsForEvent = async (eventId: string): Promise<string[]> =
   return ticketProducts?.map(ticket => ticket.id) ?? [];
 };
 
-export const fetchEventFromCmsByUid = async (eventUid: string) => {
+export const fetchEventFromCmsByUid = async (
+  eventUid: string,
+  locale: AppLocale = "sl"
+) => {
+  // Note: no `lang` param — the query is identical for both locales, so the
+  // Next.js fetch cache is shared. Localization happens in the transformer.
   const prismicEvent = await prismicClient
     .getByUID("event", eventUid)
     .catch(() => null);
@@ -40,10 +46,13 @@ export const fetchEventFromCmsByUid = async (eventUid: string) => {
   }
   const ticketProductIds = await getTicketProductIdsForEvent(prismicEvent.id);
 
-  return await transformEventObject(prismicEvent, ticketProductIds);
+  return await transformEventObject(prismicEvent, ticketProductIds, locale);
 };
 
-export const fetchEventFromCmsById = async (eventId: string) => {
+export const fetchEventFromCmsById = async (
+  eventId: string,
+  locale: AppLocale = "sl"
+) => {
   const prismicEvent = (await prismicClient
     .getByID(eventId)
     .catch(() => null)) as EventDocument;
@@ -53,5 +62,5 @@ export const fetchEventFromCmsById = async (eventId: string) => {
   }
   const ticketProductIds = await getTicketProductIdsForEvent(prismicEvent.id);
 
-  return await transformEventObject(prismicEvent, ticketProductIds);
+  return await transformEventObject(prismicEvent, ticketProductIds, locale);
 };

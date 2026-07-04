@@ -3,24 +3,29 @@ import { Content, isFilled, asText } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import Hero from "@/app/_components/content/Hero";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `Hero`.
  */
-export type HeroProps = SliceComponentProps<Content.HeroSlice>;
+export type HeroProps = SliceComponentProps<Content.HeroSlice, SliceContext>;
 
 /**
  * Component for "Hero" Slices.
  */
-const HeroSlice: FC<HeroProps> = async ({ slice }) => {
+const HeroSlice: FC<HeroProps> = async ({ slice, context }) => {
   const { primary } = slice;
+  const locale = context?.locale ?? "sl";
 
-  const heading = isFilled.richText(primary.heading)
-    ? asText(primary.heading)
+  const localizedHeading = pickLocalized(primary, "heading", locale);
+  const heading = isFilled.richText(localizedHeading)
+    ? asText(localizedHeading)
     : "";
 
-  const description = isFilled.richText(primary.description)
-    ? asText(primary.description)
+  const localizedDescription = pickLocalized(primary, "description", locale);
+  const description = isFilled.richText(localizedDescription)
+    ? asText(localizedDescription)
     : "";
 
   const link = isFilled.link(primary.primaryCtaLink)

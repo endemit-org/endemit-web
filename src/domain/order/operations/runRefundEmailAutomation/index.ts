@@ -94,6 +94,7 @@ export const runRefundEmailAutomation = inngest.createFunction(
         orderDate: order.createdAt,
         paymentMethodHint: paymentMethodHint ?? undefined,
         shippingRefunded,
+        locale: order.locale,
       });
 
       if (result?.error) {
@@ -129,6 +130,7 @@ export const runRefundEmailAutomation = inngest.createFunction(
             email,
             tickets,
             orderId: order.id,
+            locale: order.locale,
           });
 
           results.push({

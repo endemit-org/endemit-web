@@ -2,13 +2,18 @@ import { Venue } from "@/domain/venue/types/venue";
 import { VenueDocument } from "@/prismicio-types";
 import { asLink } from "@prismicio/client";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { AppLocale } from "@/i18n/routing";
 
-export const transformVenueObject = async (venue: VenueDocument) => {
+export const transformVenueObject = async (
+  venue: VenueDocument,
+  locale: AppLocale = "sl"
+) => {
   return {
     id: venue.id,
     uid: venue.uid,
-    name: venue.data.name,
-    description: venue.data.description,
+    name: pickLocalized(venue.data, "name", locale),
+    description: pickLocalized(venue.data, "description", locale),
     logo: venue.data.venue_logo
       ? {
           src: venue.data.venue_logo.url,
@@ -33,8 +38,8 @@ export const transformVenueObject = async (venue: VenueDocument) => {
     updatedAt: new Date(venue.last_publication_date),
     showOnVenuePage: venue.data.show_in_venues,
     meta: {
-      title: venue.data.meta_title,
-      description: venue.data.meta_description,
+      title: pickLocalized(venue.data, "meta_title", locale),
+      description: pickLocalized(venue.data, "meta_description", locale),
       image: venue.data.meta_image?.url || null,
     },
   } as Venue;

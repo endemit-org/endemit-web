@@ -1,0 +1,204 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "close": "Close"
+  },
+  "nav": {
+    "menu": "MENU"
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "itemsInCart": "{count} items in your cart"
+  },
+  "footer": {},
+  "home": {},
+  "events": {},
+  "artists": {},
+  "venues": {},
+  "store": {},
+  "checkout": {},
+  "profile": {},
+  "signin": {},
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "backHome": "Back home"
+  },
+  "languageSwitcher": {
+    "sl": "Po Koroško",
+    "en": "In english",
+    "label": "Language",
+    "current": "Current language"
+  },
+  "emails": {
+    "newTicket": {
+      "subject": "🎟️ Ticket for {eventName} ({name})",
+      "heading": "{name}, your Ticket is Ready!",
+      "intro": "Hi {name}, your secure ticket for {eventName} was generated. Please save this email and present the attached ticket at the entrance of the event.",
+      "useOptions": "You may use the attached ticket file, the <profile>ticket in your profile</profile> or your <wallet>Apple Wallet Ticket</wallet> <ios>(iOS only)</ios> to enter the event.",
+      "date": "Date:",
+      "location": "Location:",
+      "ticketHolder": "Ticket holder:",
+      "email": "Email:",
+      "viewOnline": "View Your Ticket online",
+      "addToWallet": "Add to Apple Wallet",
+      "importantInfo": "Important Information",
+      "infoValidOne": "This ticket is valid for one person",
+      "infoNonRefundable": "Ticket is non-refundable, but you can transfer it to someone else",
+      "infoCodeOfConduct": "<link>Code of conduct</link> applies at all our events",
+      "infoVenueTerms": "Event entry is subject to venue's terms and conditions",
+      "infoShowQr": "Show this QR code at the entrance",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "orderCustomer": {
+      "subject": "Your order @ endemit",
+      "thankYou": "Thank you for your order!",
+      "orderNumber": "Order #{id}",
+      "confirmation": "This is a confirmation of your order placed with us. Below are the details of your purchase.",
+      "willShip": "We will ship your order to the address provided shortly, usually within 3 - 5 days.",
+      "ticketsInfo": "Your tickets will be sent to your email within the next 10 minutes. Please check your inbox <i>(and spam folder)</i> for the ticket email. <strong>Each ticket will be sent separately</strong> with a QR code that you can present at the event for entry.",
+      "shippingAddress": "Shipping Address",
+      "phone": "Phone: {phone}",
+      "orderItems": "Your order items",
+      "product": "Product",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total",
+      "subtotal": "Subtotal:",
+      "shippingTo": "Shipping to {country}:",
+      "discount": "Discount:",
+      "totalLabel": "Total:",
+      "viewOrder": "View Your Order online",
+      "invoiceNote": "This email message serves as an invoice. Please feel free to reach out to our support team at <link>endemit@endemit.org</link> if you have any questions or need further assistance."
+    },
+    "otcSignIn": {
+      "subject": "Your sign-in code: {code}",
+      "heading": "Your Sign-in Code",
+      "intro": "Use the code below to sign in to your account. This code will expire in {minutes} minutes.",
+      "orClick": "Or click the button below:",
+      "signInInstantly": "Sign In Instantly",
+      "ignoreNote": "If you did not request this code, you can safely ignore this email. Someone may have entered your email address by mistake.",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "orderShipped": {
+      "subject": "Your order has been shipped!",
+      "heading": "Your order has been shipped!",
+      "orderNumber": "Order #{id}",
+      "body": "Great news! Your order is now on its way to you. You can expect delivery within the next couple of work days.",
+      "viewOrder": "View Your Order",
+      "questions": "Questions about your delivery? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "refund": {
+      "subject": "Refund processed for your order",
+      "heading": "Refund Processed",
+      "intro": "Your refund has been successfully processed. The funds will be returned to your original payment method within 5-10 business days.",
+      "refundAmount": "Refund Amount",
+      "refundedTo": "Refunded to: {method}",
+      "orderDetails": "Order Details",
+      "orderIdLabel": "Order ID: #{id}",
+      "orderDateLabel": "Order Date: {date}",
+      "refundedItems": "Refunded Items",
+      "item": "Item",
+      "qty": "Qty",
+      "refundCol": "Refund",
+      "shipping": "Shipping",
+      "totalRefunded": "Total Refunded:",
+      "viewOrder": "View Your Order",
+      "questions": "If you have any questions about your refund, please contact our support team at <link>endemit@endemit.org</link>"
+    },
+    "ticketInvalidation": {
+      "subjectOne": "Your ticket has been invalidated",
+      "subjectMany": "Your tickets have been invalidated",
+      "heading": "{count, plural, one {Ticket Invalidated} other {Tickets Invalidated}}",
+      "importantNotice": "Important Notice",
+      "warning": "The following {count, plural, one {ticket is} other {tickets are}} no longer valid and cannot be used for event entry. This is due to a refund being processed for the associated order.",
+      "listHeading": "Invalidated {count, plural, one {Ticket} other {Tickets}}",
+      "eventCol": "Event",
+      "holderCol": "Ticket Holder",
+      "ticketIdCol": "Ticket ID",
+      "statusCol": "Status",
+      "invalidBadge": "INVALID",
+      "whatDoesThisMean": "What does this mean?",
+      "point1": "{count, plural, one {This ticket} other {These tickets}} cannot be used for entry at the event.",
+      "point2": "Any QR codes or digital passes associated with {count, plural, one {this ticket} other {these tickets}} will not scan.",
+      "point3": "If you believe this is an error, please contact our support team immediately.",
+      "questions": "If you have any questions, please contact our support team at <link>endemit@endemit.org</link>"
+    },
+    "eventReminder": {
+      "subject": "Tomorrow: {eventName} - {count, plural, one {Your ticket is ready!} other {Your {count} tickets are ready!}}",
+      "heading": "{eventName} is Tomorrow!",
+      "intro": "{count, plural, one {Your ticket for {eventName} is attached and ready for tomorrow. Just show it at the door to get validated. You can also use the digital ticket link or add it to your Apple Wallet. See you on the floor!} other {Your {count} tickets for {eventName} are attached and ready for tomorrow. Just show them at the door to get validated. You can also use the digital ticket links or add them to your Apple Wallet. See you on the floor!}}",
+      "date": "Date:",
+      "location": "Location:",
+      "lineup": "Lineup",
+      "yourTickets": "{count, plural, one {Your Ticket} other {Your {count} Tickets}}",
+      "view": "View",
+      "appleWallet": "Apple Wallet",
+      "viewAll": "View All Tickets",
+      "reminder": "Reminder",
+      "reminderShowQr": "Show your QR code at the entrance",
+      "reminderOnePerson": "Each ticket is valid for one person",
+      "reminderCodeOfConduct": "<link>Code of conduct</link> applies at all our events",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "eventClaim": {
+      "subject": "{eventName} has been added to your profile",
+      "heading": "Event Added to Your Profile!",
+      "body": "Great news! <strong>{eventName}</strong> has been added to your \"Events Attended\" list. Thanks for being part of our community!",
+      "viewProfile": "View Your Profile",
+      "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
+    },
+    "sticker": {
+      "howToUseHeading": "How to use it",
+      "howToUseBody": "If your phone is dead or missing at a POS register, show the wristband to the cashier. They can scan it (or type the code) and the payment screen will appear on their device for you to confirm.",
+      "linked": {
+        "subject": "Your backup sticker is active",
+        "heading": "Your wristband is active",
+        "intro": "A wristband is now linked to your Endemit wallet. Keep it with you and use it at bars or shops within the area to make payments using your online balance.",
+        "codeLabel": "Your wristband code"
+      },
+      "replaced": {
+        "subject": "Your wristband was updated",
+        "heading": "Your wristband was updated",
+        "intro": "Your previous wristband has been replaced. The old code will no longer work at POS registers — only the new one below.",
+        "oldLabel": "Old (removed)",
+        "newLabel": "New (active)"
+      },
+      "unlinked": {
+        "subject": "Your wristband sticker was removed",
+        "heading": "Your wristband sticker was removed",
+        "intro": "The wristband below is no longer linked to your Endemit wallet and can't be used to pay at POS registers anymore.",
+        "removedLabel": "Removed wristband",
+        "outro": "You can link a new wristband any time from your profile settings."
+      }
+    },
+    "walletTransfer": {
+      "subjectSent": "Funds sent",
+      "subjectReceived": "Funds received",
+      "descSent": "You sent <strong>{amount}</strong> to <strong>{name}</strong>.",
+      "descReceived": "<strong>{name}</strong> sent you <strong>{amount}</strong>.",
+      "amountSent": "Amount sent",
+      "amountReceived": "Amount received",
+      "note": "Note",
+      "walletBalance": "Wallet Balance",
+      "viewTransaction": "View transaction",
+      "questions": "If you have any questions, please contact us at <link>endemit@endemit.org</link>."
+    },
+    "posTransaction": {
+      "subject": "Transaction Receipt #{code} @ endemit",
+      "heading": "Transaction Confirmed",
+      "transactionNumber": "Transaction #{code}",
+      "items": "Items",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total",
+      "subtotal": "Subtotal:",
+      "tip": "Tip:",
+      "totalLabel": "Total:",
+      "walletBalance": "Wallet Balance",
+      "viewWallet": "View Your Wallet",
+      "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>"
+    }
+  }
+}

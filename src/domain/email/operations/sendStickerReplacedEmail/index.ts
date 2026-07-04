@@ -5,6 +5,8 @@ import {
   StickerReplacedTemplate,
   type StickerReplacedEmailProps,
 } from "@/domain/email/templates";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
+import { getUserLocaleByEmail } from "@/domain/user/operations/getUserLocaleByEmail";
 
 interface SendStickerReplacedEmailInput extends StickerReplacedEmailProps {
   customerEmail: string;
@@ -20,10 +22,13 @@ export const sendStickerReplacedEmail = async (
     return null;
   }
 
+  const locale = await getUserLocaleByEmail(customerEmail);
+  const t = getEmailTranslator(locale, "emails.sticker");
+
   return await resend.emails.send({
     from: resendFromEmail,
     to: customerEmail,
-    subject: "Your wristband was updated",
-    react: StickerReplacedTemplate(templateProps),
+    subject: t("replaced.subject"),
+    react: StickerReplacedTemplate({ ...templateProps, locale }),
   });
 };

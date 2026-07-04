@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import { getLocale } from "next-intl/server";
 import type { OtcVerifyResult } from "@/domain/auth/types";
 
 interface VerifyOtcCodeParams {
@@ -49,13 +50,16 @@ export const verifyOtcCode = async ({
     data: { usedAt: new Date() },
   });
 
-  // Build update data
+  // Build update data (also record the locale the user signed in with)
+  const locale = await getLocale();
   const updateData: {
     lastLoginAt: Date;
     emailVerified?: Date;
     status?: "ACTIVE";
+    locale?: string;
   } = {
     lastLoginAt: new Date(),
+    locale: locale === "en" ? "en" : "sl",
   };
 
   // If this is the first successful verification, set emailVerified and activate the account

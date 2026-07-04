@@ -94,6 +94,7 @@ export async function POST(request: Request) {
         transformToProductInOrder(checkoutItem, complementaryTicketData)
       ),
       userId: currentUser?.id,
+      locale: body.locale === "en" ? "en" : "sl",
     });
 
     // Subscribe all customers to general email list

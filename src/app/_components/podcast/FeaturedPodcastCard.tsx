@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import PlayIcon from "@/app/_components/icon/PlayIcon";
 import { CmsImage } from "@/domain/cms/types/common";

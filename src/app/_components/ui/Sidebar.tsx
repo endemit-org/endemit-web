@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import Image from "next/image";
 import clsx from "clsx";
-import { usePathname } from "next/navigation";
+import LanguageSwitcher from "@/app/_components/ui/LanguageSwitcher";
 import Cart from "@/app/_components/cart/Cart";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
@@ -58,6 +59,7 @@ export default function Sidebar({
 }: FlexibleSidebarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   const defaultSocialLinks: SocialLink[] = [
     {
@@ -170,7 +172,7 @@ export default function Sidebar({
             className="font-medium font-heading text-xl"
             style={{ paddingTop: "4px" }}
           >
-            MENU
+            {t("menu")}
           </div>
 
           {isMenuOpen ? <MenuOpenIcon /> : <MenuClosedIcon />}
@@ -258,6 +260,10 @@ export default function Sidebar({
               ))}
             </div>
           )}
+
+          <div className="flex justify-end pr-6 pb-3">
+            <LanguageSwitcher className="text-sm" />
+          </div>
         </div>
 
         {/* Footer */}

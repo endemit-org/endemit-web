@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export interface TabItem {
   label: string;

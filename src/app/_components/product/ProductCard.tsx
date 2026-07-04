@@ -7,7 +7,7 @@ import {
   ProductImage,
   ProductStatus,
 } from "@/domain/product/types/product";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
 import { formatPrice } from "@/lib/util/formatting";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
