@@ -85,7 +85,7 @@
       "availableNow": "Karte so na voljo",
       "personCount": "{count, plural, one {# oseba} two {# osebi} few {# osebe} other {# oseb}}",
       "includesTickets": "Vključuje karte za {count, plural, one {# osebo} two {# osebi} few {# osebe} other {# oseb}}",
-      "soldOutBanner": "Spletne karte so razprodane, ampak karte zase pa za kolege še zmerm dobiš, k prideš na event. <strong>Sam keš.</strong>",
+      "soldOutBanner": "Spletne karte so razprodane, ampak karte zase in za kolege še zmerm dobiš, k prideš na event. <strong>Sam keš.</strong>",
       "batchSoldOutBanner": "Ta runda kart za Endemit 2026 je razprodana. Naslednjo rundo spustimo kmalo. Ostan na preži!"
     },
     "lineup": {
@@ -113,7 +113,7 @@
     "appearsOn": "{name} igra na",
     "exploreOther": "Zbrskaj še druge",
     "dontMissNextTime": "Ne zamud {name}, k pride spet",
-    "subscribePrompt": "Prijav se pa ti sporočimo za evente pa lineupe",
+    "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
     "setTimes": "Kdaj kdo igra",
     "profile": {
       "partOf": "Del",
@@ -133,7 +133,7 @@
     "eventsHostedAt": "Eventi v {name}",
     "artistsPerformedAt": "Kdo je igral v {name}",
     "dontMissNextEvent": "Ne zamud naslednjga eventa v {name}",
-    "subscribePrompt": "Prijav se pa ti sporočimo za evente pa lineupe",
+    "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
     "breadcrumb": "Lokacije"
   },
   "store": {
@@ -183,7 +183,7 @@
       "title": "Plačilo se je prekinilo!",
       "breadcrumb": "Prekinjeno plačilo",
       "heading": "Plačilo ni šlo do konca",
-      "body": "Vrnil si se s plačilne strani, pa naročila nis dokončal. Brez skrbi, košara je še zmerm shranjena.",
+      "body": "Naročilo ni šlo do konca, ampak brez skrbi — tvoja košara je še zmerm shranjena.",
       "orderTotal": "Za plačat",
       "completePayment": "Dokončaj plačilo",
       "returnToCart": "Nazaj v košaro",
@@ -203,22 +203,22 @@
     },
     "itemCount": "{count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}}",
     "continueToCheckout": "Naprej na blagajno",
-    "continueToReview": "Naprej na pregled pa plačilo",
-    "updateInfoWarning": "Pojd nazaj pa poprav svoje podatke.",
+    "continueToReview": "Naprej na pregled in plačilo",
+    "updateInfoWarning": "Pojd nazaj in poprav svoje podatke.",
     "backToInformation": "← Nazaj na podatke",
     "failedToProcessPayment": "Plačilo ni ratalo",
     "processing": "Se procesira…",
     "completeWalletOrder": "Zaključi naročilo (plačaj z denarnco)",
     "officialItems": {
       "title": "Endemit izdelki",
-      "description": "Uradni endemit izdelki, k jih lahko dodaš k naročilu. Preglej pa vrž v košaro."
+      "description": "Uradni endemit izdelki, k jih lahko dodaš k naročilu. Preglej in vrž v košaro."
     },
     "customer": {
       "contactInfo": {
         "title": "Tvoji kontaktni podatki",
         "signedIn": "Prijava uspešna. Za to naročilo uporabimo tvoj email.",
         "description": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila.",
-        "descriptionWithTickets": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila pa digitalne karte."
+        "descriptionWithTickets": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila in digitalne karte."
       },
       "email": "Email",
       "emailRepeat": "Ponov email",
@@ -235,7 +235,7 @@
         "title": "Podatki za dostavo",
         "description": "Vpiš naslov, kamor ti pošljemo naročilo."
       },
-      "fullName": "Ime pa priimek",
+      "fullName": "Ime in priimek",
       "fullNamePlaceholder": "Jani Demit",
       "address": "Naslov",
       "addressPlaceholder": "Cesta v večnost 42",
@@ -249,7 +249,7 @@
       "countryNotListed": "Tvoje države ni na seznamu? <contact>Piš nam</contact>.",
       "reachYou": "Dobimo te na {code} {phone}",
       "consent": {
-        "terms": "Potrjujem naročilo in se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> pa <withdrawal>pravico do odstopa</withdrawal>.",
+        "terms": "Potrjujem naročilo in se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> in <withdrawal>pravico do odstopa</withdrawal>.",
         "nonRefundable": "Razumem in sprejemam, da naročilo vsebuje izdelke, k se ne vračajo, tk kot piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
         "codeOfConduct": "Razumem, sprejemam in spoštujem <code>kodeks obnašanja</code> na Endemit eventu."
       }
@@ -282,8 +282,8 @@
     "donation": {
       "dismiss": "Zapri",
       "title": "Donacije nas držijo pokonc",
-      "prompt": "Dodaš <strong>{amount} donacije</strong> k seštevku<br></br>pa <strong>zaokrožiš na {rounded}</strong>?",
-      "description": "Smo prostovoljci, predani neprofitni zadevi. Donacije podprejo naše delo pa pomagajo držat cene kart nizke.",
+      "prompt": "Dodaš <strong>{amount} donacije</strong> k seštevku<br></br>in <strong>zaokrožiš na {rounded}</strong>?",
+      "description": "Smo prostovoljci, predani neprofitni zadevi. Donacije podprejo naše delo in pomagajo držat cene kart nizke.",
       "addButton": "Dodaj {amount} donacije",
       "moreAbout": "Več o naši neprofitni zgodbi"
     },
@@ -303,7 +303,7 @@
     "steps": {
       "cart": "Košara",
       "information": "Podatki",
-      "reviewPay": "Pregled pa plačilo"
+      "reviewPay": "Pregled in plačilo"
     },
     "return": {
       "toProfile": "Nazaj na profil",
@@ -312,7 +312,7 @@
     },
     "cashless": {
       "title": "Event brez keša",
-      "description": "Ta event uporablja plačila brez keša. Nafilaj digitalno denarnco že zdej pa uživaj v hitrejši postrežbi na baru pa pri hrani.",
+      "description": "Ta event uporablja plačila brez keša. Nafilaj digitalno denarnco že zdej in uživaj v hitrejši postrežbi na baru in pri hrani.",
       "popular": "Popularno",
       "add": "+ Dodaj",
       "cashNote": "Denarnco lahko nafilaš tut s kešem na eventu"
@@ -393,14 +393,14 @@
       "receiveFunds": "Prejmi denar",
       "receiveFundsDesc": "Pokaž ta QR drugmu — lahko ga skenira iz svoje denarnce da ti pošle žetone.",
       "receiveQrAlt": "QR za prejem",
-      "orShareCode": "Al pa deli kodo",
+      "orShareCode": "Al deli kodo",
       "copied": "Kopirano!",
       "copyCode": "Kopiraj kodo",
       "payQrAlt": "QR denarnce"
     },
     "wristband": {
       "title": "Zapestnca",
-      "desc": "Poveži zapestnco z računom, da lahko plačuješ na POS blagajnah, tut če ti crkne telefon al pa se odločiš romat brez njega.",
+      "desc": "Poveži zapestnco z računom, da lahko plačuješ na POS blagajnah, tut če ti crkne telefon al se odločiš romat brez njega.",
       "qrAlt": "QR zapestnce {code}",
       "linkedOn": "Povezano {date}",
       "unlinking": "Odjavljam…",
@@ -421,12 +421,12 @@
       "linkedTitle": "Zapestnca {code} je povezana s tvojo denarnco.",
       "linkedDesc": "Nafilaj denarnco da lahko začneš plačevat z njo.",
       "wouldLinkTitle": "Povežem zapestnco {code} s tvojo denarnco?",
-      "wouldLinkDesc": "K jo enkrat povežeš, je zapestnca vezana na tvojo denarnco. Na POS blagajni jo skenirajo pa z njo plačaš.",
+      "wouldLinkDesc": "K jo enkrat povežeš, je zapestnca vezana na tvojo denarnco. Na POS blagajni jo skenirajo in z njo plačaš.",
       "linkButton": "Poveži zapestnco",
       "conflictTitle": "Zapestnca {code} je povezana z drugim računom.",
       "conflictDesc": "Če misliš, da je to pomota, se obrn na člana ekipe.",
       "swapTitle": "Že maš povezano zapestnco {existingCode}.",
-      "swapDesc": "Če češ povezat {code}, najprej odjavi trenutno zapestnco v <editLink>Uredi profil</editLink> pa skeniraj spet.",
+      "swapDesc": "Če češ povezat {code}, najprej odjavi trenutno zapestnco v <editLink>Uredi profil</editLink> in skeniraj spet.",
       "whatIsThis": "Kaj je to?",
       "showQr": "Pokaži QR",
       "linkForOffline": "Poveži zapestnco za plačilo brez telefona",
@@ -439,7 +439,7 @@
       "donor": "Donator",
       "walletBalance": "Stanje denarnce",
       "topUpWallet": "Nafilaj denarnco",
-      "scanPosOrder": "Al pa skeniraj POS naročilo",
+      "scanPosOrder": "Al skeniraj POS naročilo",
       "viewTickets": "Poglej karte",
       "endePayNotice": "Denarnca poganja naše plačevanje brez keša, spet jo prižgemo pred festivalom v avgustu.",
       "signOut": "Odjava",
@@ -549,13 +549,13 @@
       "pay": "Plačaj",
       "balance": "Stanje",
       "handPhoneHint": "Pokaž telefon prodajalcu, da ti skenira to kodo.",
-      "scanTitle": "Skeniraj pa plačaj",
+      "scanTitle": "Skeniraj in plačaj",
       "confirmTitle": "Potrdi plačilo",
       "successTitle": "Plačilo uspešno",
       "errorTitle": "Napaka",
       "loadingOrder": "Nalagam naročilo…",
       "pointCamera": "Usmeri kamero v QR kodo",
-      "scanCodeHint": "Skeniraj QR al pa vpiš kodo s 4 znaki z blagajne",
+      "scanCodeHint": "Skeniraj QR al vpiš kodo s 4 znaki z blagajne",
       "orderCancelledBySeller": "Prodajalec je preklical naročilo",
       "orderCancelledTitle": "Naročilo preklicano",
       "scanFailed": "Naročila ni ratalo skenirat",
@@ -672,10 +672,10 @@
   },
   "notFound": {
     "title": "Te strani ni",
-    "description": "Strani, k jo iščeš, ni — al pa se je kam zgubila.",
+    "description": "Strani, k jo iščeš, ni — mogoče se je kam zgubila.",
     "backHome": "Nazaj",
     "metaTitle": "Strani ni",
-    "metaDescription": "Strani, ki jo iščeš, ni več ali pa je bila premaknjena. Vrni se na endemit.org."
+    "metaDescription": "Strani, ki jo iščeš, ni več ali je bila premaknjena. Vrni se na endemit.org."
   },
   "languageSwitcher": {
     "sl": "Po Koroško",
@@ -697,7 +697,7 @@
       "addToWallet": "Dodaj v Apple Wallet",
       "importantInfo": "Pomembne informacije",
       "infoValidOne": "Ta karta velja za eno osebo",
-      "infoNonRefundable": "Karta je nepovratna, lahko pa jo preneseš na drugo osebo",
+      "infoNonRefundable": "Karta je nepovratna, ampak jo lahko preneseš na drugo osebo",
       "infoCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših eventih",
       "infoVenueTerms": "Vstop na event je pogojen s pogoji prizorišča",
       "infoShowQr": "Ob vstopu pokaži to QR kodo",
@@ -856,7 +856,7 @@
   "music": {
     "latestEpisodes": "Predvaji naše frišne epizode",
     "dontMissNextEpisode": "Ne zamud naslednje epizode",
-    "subscribeNewEpisode": "Prijav se pa ti sporočimo, k pride nova emit epizoda",
+    "subscribeNewEpisode": "Prijav se in ti sporočimo, k pride nova emit epizoda",
     "comingSoon": "Kmalo pride",
     "showLess": "Manj",
     "viewAll": "Poglej vse epizode ({count})",
@@ -884,10 +884,10 @@
   "newsletter": {
     "defaultTitle": "PRIJAV SE",
     "endemit": {
-      "defaultDescription": "Zvej za naše evente, muziko pa vse ostalo"
+      "defaultDescription": "Zvej za naše evente, muziko in vse ostalo"
     },
     "festival": {
-      "defaultDescription": "Endemit Festival je zaprto srečanje plemena, sam na povabilo. Če češ postat član, se prijav pa ti pošljemo več info."
+      "defaultDescription": "Endemit Festival je zaprto srečanje plemena, sam na povabilo. Če češ postat član, se prijav in ti pošljemo več info."
     },
     "subscribe": {
       "invalidEmail": "Vpiš pravi email",
@@ -1343,7 +1343,7 @@
       "create": {
         "title": "Ustvari uporabnika",
         "usernamePlaceholder": "Če je prazno, se vzame kar email",
-        "usernameHint": "Pusti prazno, pa bo uporabniško ime kar email",
+        "usernameHint": "Pusti prazno in uporabniško ime bo kar email",
         "namePlaceholder": "Neobvezno prikazno ime",
         "signInType": "Način prijave",
         "signInOtc": "Čarobna povezava (koda na email)",
@@ -1691,7 +1691,7 @@
       "customer": "Kupec",
       "waitingForScan": "Čakam, da kupec skenira…",
       "showQr": "Pokaži QR namesto tega",
-      "cancelEdit": "Prekliči pa uredi",
+      "cancelEdit": "Prekliči in uredi",
       "continue": "Naprej",
       "closingIn": "Zapiram čez {count}s",
       "toggleRotation": "Obrni",
