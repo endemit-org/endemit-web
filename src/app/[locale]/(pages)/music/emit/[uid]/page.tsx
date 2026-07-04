@@ -93,7 +93,7 @@ export default async function PodcastPage({
           title={podcast.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Music", path: "music" },
+            { label: t("breadcrumb"), path: "music" },
             { label: podcast.name, path: `emit/${uid}` },
           ]}
         />

@@ -193,7 +193,7 @@ export default async function EventPage({
           title={event.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Events", path: "events" },
+            { label: t("breadcrumb"), path: "events" },
             { label: event.name, path: event.uid },
           ]}
         />

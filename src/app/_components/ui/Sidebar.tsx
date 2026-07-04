@@ -239,30 +239,32 @@ export default function Sidebar({
             </div>
           )}
 
-          {mergedSocialLinks.length > 0 && (
-            <div className="social-icons flex justify-end pr-6 pb-4">
-              {mergedSocialLinks.map(social => (
-                <a
-                  key={social.id}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:opacity-70"
-                >
-                  <Image
-                    src={social.iconSrc}
-                    alt={social.alt}
-                    width={social.width || 28}
-                    height={social.height || 28}
-                    className="mx-2"
-                  />
-                </a>
-              ))}
-            </div>
-          )}
-
-          <div className="flex justify-end pr-6 pb-3">
-            <LanguageSwitcher className="text-sm" />
+          {/* On mobile: switcher inline to the LEFT of the social icons (one
+              row). On desktop (lg): stacked with social above switcher — order
+              preserved via lg:order. */}
+          <div className="flex items-center justify-end gap-x-4 pr-6 pb-4 lg:flex-col lg:items-end lg:gap-x-0 lg:gap-y-2 lg:pb-3">
+            <LanguageSwitcher className="text-sm lg:order-2" />
+            {mergedSocialLinks.length > 0 && (
+              <div className="social-icons flex lg:order-1">
+                {mergedSocialLinks.map(social => (
+                  <a
+                    key={social.id}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-70"
+                  >
+                    <Image
+                      src={social.iconSrc}
+                      alt={social.alt}
+                      width={social.width || 28}
+                      height={social.height || 28}
+                      className="mx-2"
+                    />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

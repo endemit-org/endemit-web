@@ -113,7 +113,7 @@ export default async function ArtistPage({
           title={artist.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Artists", path: "artists" },
+            { label: t("breadcrumb"), path: "artists" },
             { label: artist.name, path: artist.uid },
           ]}
         />
