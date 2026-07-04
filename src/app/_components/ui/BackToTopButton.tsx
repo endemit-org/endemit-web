@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import clsx from "clsx";
 
 export default function BackToTopButton() {
+  const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function BackToTopButton() {
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-4 pointer-events-none"
       )}
-      aria-label="Back to top"
+      aria-label={t("a11y.backToTop")}
     >
       <svg
         className="w-5 h-5 text-neutral-300"

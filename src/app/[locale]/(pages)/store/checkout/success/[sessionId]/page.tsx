@@ -17,15 +17,22 @@ import { OrderStatus } from "@prisma/client";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
-export const metadata: Metadata = {
-  title: "✅ Order Confirmed",
-  description:
-    "Your order on endemit.org was successfully confirmed. Please continue or close this page.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; sessionId: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "store" });
+  return {
+    title: t("success.metaTitle"),
+    description: t("success.metaDescription"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 async function getOrderForSession(sessionId: string) {
   // Check if it's a checkout session ID (starts with cs_)

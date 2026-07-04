@@ -10,6 +10,7 @@ type UserForAuth = {
   name: string | null;
   image: string | null;
   status: UserStatus;
+  locale: string;
   createdAt: Date;
   userRoles: { role: { slug: string; permissions: string[] } }[];
 };
@@ -30,6 +31,7 @@ export function index(user: UserForAuth): AuthenticatedUser {
     name: user.name,
     image: user.image,
     status: user.status,
+    locale: user.locale,
     roles: roleSlugs,
     permissions,
     createdAt: user.createdAt,

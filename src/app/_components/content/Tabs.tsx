@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { Link } from "@/i18n/navigation";
 
@@ -26,6 +27,7 @@ export default function Tabs({
   sortByWeight = false,
   backgroundColor,
 }: TabsProps) {
+  const t = useTranslations("common");
   const hashFromUrl =
     typeof window !== "undefined" ? window.location.hash.slice(1) : "";
 
@@ -236,7 +238,7 @@ export default function Tabs({
           <nav
             ref={desktopNavRef}
             className="flex space-x-8 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
-            aria-label="Tabs"
+            aria-label={t("a11y.tabs")}
             onPointerDown={handleDesktopPointerDown}
           >
             {desktopTabs.map(item => (

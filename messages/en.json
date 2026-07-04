@@ -2,7 +2,35 @@
   "common": {
     "loading": "Loading...",
     "back": "Back",
-    "close": "Close"
+    "close": "Close",
+    "table": {
+      "noResults": "No results found",
+      "noOrders": "No orders found",
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "lastPage": "Last page",
+      "pageOf": "Page {current} of {total}"
+    },
+    "a11y": {
+      "backToTop": "Back to top",
+      "muteVideo": "Mute video",
+      "unmuteVideo": "Unmute video",
+      "tabs": "Tabs",
+      "closeLightbox": "Close lightbox",
+      "previousImage": "Previous image",
+      "nextImage": "Next image",
+      "viewImage": "View image {number}",
+      "noContent": "No content"
+    }
+  },
+  "walletPass": {
+    "addToWallet": "Add to Apple Wallet",
+    "adding": "Adding to Wallet...",
+    "warningTitle": "Apple Wallet Required",
+    "warningBody": "Apple Wallet passes work best on iPhone, iPad, or Mac. You can still download the pass file, but you may not be able to open it on this device.",
+    "cancel": "Cancel",
+    "downloadAnyway": "Download Anyway"
   },
   "nav": {
     "menu": "MENU"
@@ -131,14 +159,18 @@
     },
     "checkout": {
       "title": "Checkout",
-      "breadcrumb": "Checkout"
+      "breadcrumb": "Checkout",
+      "metaTitle": "Secure checkout",
+      "metaDescription": "Secure checkout for Endemit store. Review your order, enter shipping details, and complete your purchase safely with SSL encryption."
     },
     "success": {
       "title": "Order Confirmed!",
       "thankYou": "Thank you for your order. A confirmation email has been sent to",
       "emailLabel": "Email",
       "ticketsNote": "Your tickets for <strong>{names}</strong> will also be sent to your email shortly, within the next 30 minutes.",
-      "orderId": "Order ID"
+      "orderId": "Order ID",
+      "metaTitle": "Order Confirmed",
+      "metaDescription": "Your order on endemit.org was successfully confirmed. Please continue or close this page."
     },
     "interrupted": {
       "title": "Your payment was interrupted!",
@@ -148,7 +180,9 @@
       "orderTotal": "Order Total",
       "completePayment": "Complete Payment",
       "returnToCart": "Return to Cart",
-      "needHelp": "Need help? <contact>Contact us</contact>"
+      "needHelp": "Need help? <contact>Contact us</contact>",
+      "metaTitle": "Payment interrupted",
+      "metaDescription": "Your payment was interrupted and has not completed your order."
     }
   },
   "checkout": {
@@ -542,6 +576,32 @@
       "title": "Upcoming Events",
       "subtitle": "Don't miss out - get your tickets!",
       "ticketsAvailable": "Tickets Available"
+    },
+    "meta": {
+      "profile": {
+        "title": "Profile",
+        "description": "View and manage your Endemit account"
+      },
+      "tickets": {
+        "title": "Tickets",
+        "description": "View your event tickets"
+      },
+      "ticket": {
+        "title": "Ticket",
+        "description": "View your ticket"
+      },
+      "edit": {
+        "title": "Edit Profile",
+        "description": "Edit your profile information"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "description": "View your cashless transaction history"
+      },
+      "orders": {
+        "title": "Orders",
+        "description": "View your order history"
+      }
     }
   },
   "signin": {
@@ -593,16 +653,22 @@
       "resend": "Resend code",
       "differentEmail": "Use a different email",
       "invalidCode": "Invalid code. Please try again.",
-      "resendFailed": "Failed to resend code."
+      "resendFailed": "Failed to resend code.",
+      "metaTitle": "Verify Code",
+      "metaDescription": "Enter your verification code"
     },
     "profileButton": {
       "profile": "Profile"
-    }
+    },
+    "metaTitle": "Sign In",
+    "metaDescription": "Sign in to your account"
   },
   "notFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist.",
-    "backHome": "Back home"
+    "backHome": "Back home",
+    "metaTitle": "Page not found",
+    "metaDescription": "The page you are looking for no longer exists or was moved. Please return to endemit.org."
   },
   "languageSwitcher": {
     "sl": "Po Koroško",
@@ -824,5 +890,882 @@
       "successHeading": "subscribed successfully!",
       "emailPlaceholder": "you@gmail.com"
     }
+  },
+  "admin": {
+    "donations": {
+      "title": "Donations",
+      "subtitle": "Donations received through orders",
+      "totalDonated": "Total Donated",
+      "average": "Average",
+      "tabTransactions": "Transactions",
+      "tabDonors": "Donors ({count})",
+      "totalDonations": "Total donated:",
+      "count": "Count:",
+      "totalDonors": "Donors:",
+      "totalDonatedColon": "Total donated:",
+      "date": "Date",
+      "donor": "Donor",
+      "email": "Email",
+      "amount": "Amount",
+      "order": "Order",
+      "anonymous": "Anonymous",
+      "view": "View",
+      "noDonations": "No donations yet",
+      "first": "First",
+      "last": "Last",
+      "donationCount": "{count} donations",
+      "noDonors": "No donors yet"
+    },
+    "announcements": {
+      "title": "Announcements",
+      "subtitle": "Manage site-wide announcements",
+      "total": "Total",
+      "activeNow": "Active now",
+      "scheduled": "Scheduled",
+      "active": "Active",
+      "expired": "Expired",
+      "inactive": "Inactive",
+      "typeInfo": "Info",
+      "typeWarning": "Warning",
+      "totalLabel": "Total:",
+      "createButton": "New announcement",
+      "newTitle": "New announcement",
+      "editTitle": "Edit announcement",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Optional title",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Announcement message",
+      "typeLabel": "Type",
+      "startsAt": "Starts at",
+      "endsAt": "Ends at",
+      "saving": "Saving...",
+      "update": "Update",
+      "colMessage": "Message",
+      "colType": "Type",
+      "colStatus": "Status",
+      "colSchedule": "Schedule",
+      "colActions": "Actions",
+      "from": "From",
+      "until": "Until",
+      "always": "Always",
+      "deleteConfirm": "Delete?",
+      "yes": "Yes",
+      "no": "No",
+      "noAnnouncements": "No announcements yet"
+    },
+    "eventClaims": {
+      "title": "Event Claims",
+      "subtitle": "Manage user claims to past events",
+      "total": "Total",
+      "pending": "Pending",
+      "approved": "Approved",
+      "filterAll": "All",
+      "searchPlaceholder": "Search claims...",
+      "addClaim": "Add claim",
+      "colUser": "User",
+      "colEvent": "Event",
+      "colStatus": "Status",
+      "colCreated": "Created",
+      "colActions": "Actions",
+      "noClaims": "No claims match these filters.",
+      "approveNow": "Approve now",
+      "pageInfo": "Page {page} of {totalPages} — {total} total",
+      "previous": "Previous",
+      "next": "Next",
+      "userSearchPlaceholder": "Search by name, username, or email",
+      "selectEvent": "Select a past event...",
+      "autoApproveNote": "The claim will queue for automatic approval in 5 minutes, same as a user-submitted claim. Use \"Approve now\" in the list to skip the delay.",
+      "creating": "Creating...",
+      "createClaim": "Create claim",
+      "failedCreate": "Failed to create claim",
+      "approveConfirm": "Approve claim for \"{event}\" by {user}?",
+      "deleteConfirm": "Delete {status} claim for \"{event}\" by {user}?",
+      "failedApprove": "Failed to approve claim",
+      "failedDelete": "Failed to delete claim"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Welcome to the admin panel",
+      "username": "Username",
+      "name": "Name",
+      "email": "Email",
+      "roles": "Roles",
+      "permissions": "Permissions"
+    },
+    "events": {
+      "title": "Events",
+      "subtitle": "View and manage event tickets",
+      "totalRevenue": "Total revenue",
+      "totalEvents": "Total Events",
+      "ticketsSold": "Tickets Sold",
+      "upcoming": "Upcoming",
+      "pastEvent": "Past Event",
+      "empty": "No events found",
+      "backToEvents": "Back to Events",
+      "list": {
+        "events": "Events",
+        "active": "Active",
+        "completed": "Completed"
+      },
+      "statLabels": {
+        "sold": "sold",
+        "guest": "guest",
+        "scanned": "scanned",
+        "pending": "pending"
+      },
+      "metrics": {
+        "revenue": "Revenue",
+        "sold": "Sold",
+        "scanned": "Scanned",
+        "pending": "Pending",
+        "guest": "Guest"
+      },
+      "pendingTickets": "Pending Tickets ({count})",
+      "scannedTickets": "Scanned Tickets ({count})"
+    },
+    "tickets": {
+      "backToEvent": "Back to Event",
+      "ticketTitle": "Ticket {shortId}",
+      "guestList": "Guest List",
+      "close": "Close",
+      "viewEvent": "View Event",
+      "sections": {
+        "ticketInfo": "Ticket Information",
+        "orderInfo": "Order Information",
+        "actions": "Actions"
+      },
+      "fields": {
+        "status": "Status",
+        "shortId": "Short ID",
+        "ticketId": "Ticket ID",
+        "name": "Name",
+        "email": "Email",
+        "event": "Event",
+        "price": "Price",
+        "scanCount": "Scan Count",
+        "created": "Created",
+        "order": "Order",
+        "orderId": "Order ID",
+        "customer": "Customer",
+        "orderStatus": "Order Status"
+      },
+      "downloadTicket": "Download Ticket",
+      "generating": "Generating...",
+      "revert": {
+        "button": "Revert Scan",
+        "confirm": "Confirm Revert",
+        "reverting": "Reverting...",
+        "confirmText": "Are you sure you want to revert the scan? The ticket will be marked as pending again."
+      },
+      "table": {
+        "ticketId": "Ticket ID",
+        "guest": "Guest",
+        "customer": "Customer",
+        "email": "Email",
+        "status": "Status"
+      },
+      "guestForm": {
+        "addButton": "Add Guest Ticket",
+        "title": "Add Guest List Tickets",
+        "numberOfTickets": "Number of Tickets",
+        "holderNames": "Ticket Holder Names",
+        "guestNamePlaceholder": "Guest {number} name",
+        "sendViaEmail": "Send tickets via email",
+        "emailLabel": "Email (for all tickets)",
+        "emailPlaceholder": "Search existing user or enter new email",
+        "emailHint": "Type to search existing users or enter a new email address",
+        "creating": "Creating...",
+        "createButton": "{count, plural, one {Create # Guest Ticket} other {Create # Guest Tickets}}",
+        "successCreated": "{count, plural, one {# guest ticket created} other {# guest tickets created}}",
+        "successCreatedWithEmail": "{count, plural, one {# guest ticket created and email sent} other {# guest tickets created and email sent}}"
+      }
+    },
+    "orders": {
+      "page": {
+        "metaTitle": "Orders  •  Admin",
+        "title": "Orders",
+        "subtitle": "View and manage all orders in the system",
+        "stats": {
+          "totalRevenue": "Total Revenue",
+          "paidOrders": "Paid Orders",
+          "pending": "Pending"
+        }
+      },
+      "list": {
+        "paidNotComplete": "Paid, not complete:",
+        "ordersLabel": "Orders:",
+        "showingLabel": "Showing:"
+      },
+      "table": {
+        "orderId": "Order ID",
+        "email": "Email",
+        "status": "Status",
+        "total": "Total",
+        "tickets": "Tickets",
+        "date": "Date"
+      },
+      "detail": {
+        "metaTitle": "Order {id}  •  Orders  •  Admin",
+        "title": "Order Details",
+        "loading": "Loading order details...",
+        "notFound": "Order not found",
+        "customerInfo": "Customer Information",
+        "name": "Name:",
+        "email": "Email:",
+        "date": "Date:",
+        "orderSummary": "Order Summary",
+        "subtotal": "Subtotal:",
+        "discount": "Discount:",
+        "shipping": "Shipping:",
+        "total": "Total:",
+        "items": "Items ({count})",
+        "qty": "Qty: {count}",
+        "tickets": "Tickets ({count})",
+        "viewEventTickets": "View event tickets →",
+        "shippingAddress": "Shipping Address",
+        "close": "Close",
+        "backToOrders": "Back to Orders",
+        "guest": "Guest",
+        "address": "Address:",
+        "city": "City:",
+        "country": "Country:",
+        "phone": "Phone:",
+        "viewOnGoogleMaps": "View on Google Maps"
+      },
+      "ticketStatus": {
+        "VALIDATED": "Ready to scan",
+        "PENDING": "Ready to scan",
+        "SCANNED": "Used",
+        "CANCELLED": "Cancelled",
+        "BANNED": "Banned",
+        "REFUND_REQUESTED": "Refund Requested",
+        "REFUNDED": "Refunded",
+        "EXPIRED": "Expired"
+      },
+      "actions": {
+        "actionFailed": "Action failed",
+        "confirm": "Confirm",
+        "processing": "Processing..."
+      },
+      "refund": {
+        "title": "Process Refund",
+        "subtitle": "Select items to refund. Refunds are processed via Stripe.",
+        "selectItems": "Select Items",
+        "priceEach": "{price} each",
+        "alreadyRefundedCount": "{refunded} of {total} already refunded",
+        "shipping": "Shipping",
+        "deliveryFee": "Delivery fee",
+        "alreadyRefunded": "Already refunded",
+        "shippingRefund": "Shipping refund:",
+        "totalRefundAmount": "Total refund amount:",
+        "limitedByWallet": "Limited by remaining wallet balance ({balance})",
+        "previouslyRefunded": "Previously refunded: {amount}",
+        "reasonLabel": "Reason (optional)",
+        "reasonPlaceholder": "Reason for refund...",
+        "calcLimitFailed": "Failed to calculate refund limit",
+        "calcFailed": "Failed to calculate refund",
+        "failed": "Refund failed"
+      }
+    },
+    "pos": {
+      "items": {
+        "title": "POS Items",
+        "subtitle": "Manage items available for sale at POS registers",
+        "stats": {
+          "total": "Total Items",
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "addItem": "Add Item",
+        "newItem": "New Item",
+        "editItem": "Edit Item",
+        "fieldName": "Name",
+        "fieldPrice": "Price ({symbol})",
+        "fieldDirection": "Direction",
+        "directionDebit": "Debit (charge customer)",
+        "directionCredit": "Credit (top up customer)",
+        "fieldStatus": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "fieldDescription": "Description",
+        "saving": "Saving…",
+        "update": "Update",
+        "colName": "Name",
+        "colPrice": "Price",
+        "colDirection": "Direction",
+        "colStatus": "Status",
+        "colSold": "Sold (30d)",
+        "colActions": "Actions",
+        "soldCount": "{count} sold",
+        "emptyItems": "No items yet."
+      },
+      "orders": {
+        "title": "POS Orders",
+        "subtitle": "View and manage all POS orders",
+        "stats": {
+          "total": "Total Orders",
+          "paid": "Paid",
+          "revenue": "Revenue",
+          "tips": "Tips",
+          "cashToCollect": "Cash to Collect"
+        },
+        "filterStatus": "Status",
+        "allStatuses": "All statuses",
+        "statusPending": "Pending",
+        "statusPaid": "Paid",
+        "statusCancelled": "Cancelled",
+        "filterRegister": "Register",
+        "allRegisters": "All registers",
+        "ordersFound": "{count} orders found",
+        "colOrder": "Order",
+        "colRegister": "Register",
+        "colCustomer": "Customer",
+        "colTotal": "Total",
+        "colStatus": "Status",
+        "colCreated": "Created",
+        "colActions": "Actions",
+        "itemsCount": "{count} items",
+        "unnamed": "Unnamed",
+        "noCustomer": "No customer",
+        "tipSuffix": "+{amount} tip",
+        "details": "Details",
+        "emptyOrders": "No orders found.",
+        "previous": "Previous",
+        "next": "Next",
+        "modalOrder": "Order {code}",
+        "labelStatus": "Status",
+        "labelRegister": "Register",
+        "labelSeller": "Seller",
+        "unknown": "Unknown",
+        "labelCustomer": "Customer",
+        "none": "None",
+        "labelCreated": "Created",
+        "labelPaid": "Paid",
+        "labelCancelled": "Cancelled",
+        "itemsHeading": "Items",
+        "subtotal": "Subtotal",
+        "tip": "Tip",
+        "total": "Total"
+      },
+      "registers": {
+        "title": "POS Registers",
+        "subtitle": "Manage registers, assign items and sellers",
+        "stats": {
+          "registers": "Registers",
+          "sales": "Sales",
+          "revenue": "Revenue",
+          "tips": "Tips",
+          "cashToCollect": "Cash to Collect (Top-ups)"
+        },
+        "addRegister": "Add Register",
+        "newRegister": "New Register",
+        "editRegister": "Edit Register",
+        "fieldName": "Name",
+        "fieldStatus": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "fieldDescription": "Description",
+        "canTopUp": "Top-up enabled",
+        "saving": "Saving…",
+        "update": "Update",
+        "manageTitle": "Manage {name}",
+        "assignedItems": "Assigned Items",
+        "remove": "Remove",
+        "noItemsAssigned": "No items assigned.",
+        "selectItem": "Select an item…",
+        "add": "Add",
+        "assignedSellers": "Assigned Sellers",
+        "unnamed": "Unnamed",
+        "noSellersAssigned": "No sellers assigned.",
+        "selectUser": "Select a user…",
+        "cardItemsSellers": "Items / Sellers",
+        "cardSales": "Sales",
+        "cardTips": "Tips",
+        "cardCashToCollect": "Cash to collect",
+        "manage": "Manage",
+        "emptyRegisters": "No registers yet."
+      },
+      "stickers": {
+        "title": "POS offline QRs",
+        "subtitle": "Manage the pool of pre-printed offline QR codes.",
+        "stats": {
+          "total": "Total",
+          "claimed": "Claimed",
+          "unclaimed": "Unclaimed"
+        },
+        "filterAll": "All",
+        "filterUnclaimed": "Unclaimed",
+        "filterClaimed": "Claimed",
+        "searchPlaceholder": "Search code, username, email…",
+        "search": "Search",
+        "generateLabel": "Generate new codes:",
+        "generate": "Generate",
+        "generating": "Generating…",
+        "enterPositive": "Enter a positive number.",
+        "confirmGenerate": "Generate {count} new codes?",
+        "generateFailed": "Failed to generate codes.",
+        "createdCodes": "Created {created} codes. {total} total in pool.",
+        "colCode": "Code",
+        "colStatus": "Status",
+        "colAssignedTo": "Assigned to",
+        "colClaimedAt": "Claimed at",
+        "claimed": "Claimed",
+        "unclaimed": "Unclaimed",
+        "noStickers": "No stickers match these filters.",
+        "viewUser": "View user →",
+        "assign": "Assign →",
+        "pageInfo": "Page {page} of {total} — {count} total",
+        "previous": "Previous",
+        "next": "Next",
+        "modalTitle": "Assign Sticker",
+        "codeLabel": "Code:",
+        "assignToUser": "Assign to user",
+        "modalSearchPlaceholder": "Search by name, email, or username",
+        "assignFailed": "Failed to assign sticker",
+        "replacedWarning": "Sticker assigned. The user's previous sticker ({code}) was unlinked.",
+        "assigning": "Assigning…",
+        "assignAction": "Assign"
+      }
+    },
+    "users": {
+      "list": {
+        "total": "Total:",
+        "addUser": "Add User"
+      },
+      "create": {
+        "title": "Create User",
+        "usernamePlaceholder": "Auto-generated from email if empty",
+        "usernameHint": "Leave empty to use the email address as the username",
+        "namePlaceholder": "Optional display name",
+        "signInType": "Sign-in method",
+        "signInOtc": "Magic Link (email code)",
+        "signInPassword": "Password",
+        "signInHintOtc": "User signs in with a one-time code sent to their email",
+        "signInHintPassword": "User signs in with a password you set",
+        "passwordPlaceholder": "Minimum 8 characters",
+        "submitting": "Creating...",
+        "submit": "Create User"
+      },
+      "form": {
+        "email": "Email",
+        "username": "Username",
+        "name": "Name",
+        "password": "Password",
+        "status": "Status"
+      },
+      "edit": {
+        "success": "User updated successfully",
+        "submitting": "Saving...",
+        "submit": "Save Changes"
+      },
+      "password": {
+        "placeholder": "New password",
+        "submitting": "Setting...",
+        "submit": "Set Password",
+        "success": "Password updated successfully"
+      },
+      "roles": {
+        "removeTitle": "Remove role",
+        "none": "No roles assigned",
+        "addOption": "Add a role...",
+        "aggregatedPermissions": "Aggregated Permissions ({count})"
+      },
+      "sessions": {
+        "none": "No active sessions",
+        "terminatingAll": "Terminating...",
+        "terminateAll": "Terminate All",
+        "started": "Started",
+        "ipAddress": "IP Address",
+        "device": "Device",
+        "expires": "Expires",
+        "actions": "Actions",
+        "unknown": "Unknown",
+        "terminating": "Terminating...",
+        "terminate": "Terminate"
+      },
+      "sticker": {
+        "invalidCode": "Invalid code. Use format AB12.",
+        "unlinkConfirm": "Unlink this QR code from the user?",
+        "linkedOn": "Linked on {date}",
+        "replace": "Replace",
+        "unlink": "Unlink",
+        "none": "No wristband linked",
+        "assign": "Assign",
+        "replaceTitle": "Replace wristband code",
+        "assignTitle": "Assign wristband code",
+        "modalHint": "Enter the 4-character code printed on the wristband.",
+        "saving": "Saving..."
+      },
+      "autocomplete": {
+        "selected": "Selected: {name}",
+        "noUsers": "No users found. You can enter a new email."
+      },
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "name": "Name",
+        "roles": "Roles",
+        "noRoles": "No roles",
+        "lastLogin": "Last Login",
+        "never": "Never",
+        "empty": "No users found"
+      },
+      "page": {
+        "title": "Users",
+        "subtitle": "View and manage all users in the system",
+        "statTotal": "Total Users",
+        "statActive": "Active",
+        "statNewThisMonth": "New This Month"
+      },
+      "detail": {
+        "back": "Back to Users",
+        "avatarAlt": "{username}'s avatar",
+        "authPassword": "Password",
+        "authMagicLink": "Magic Link",
+        "userInfo": "User Information",
+        "userId": "User ID:",
+        "created": "Created:",
+        "lastLogin": "Last Login:",
+        "never": "Never",
+        "wallet": "Wallet",
+        "balance": "Balance",
+        "manageWallet": "Manage Wallet",
+        "wristband": "Payment wristband",
+        "editUser": "Edit User",
+        "setPassword": "Set New Password",
+        "roles": "Roles",
+        "sessionsTitle": "Active Sessions ({count})"
+      }
+    },
+    "roles": {
+      "page": {
+        "title": "Roles",
+        "subtitle": "Manage roles and their permissions",
+        "statTotal": "Total Roles",
+        "statSystem": "System Roles",
+        "statUsersWithRoles": "Users with Roles"
+      },
+      "list": {
+        "total": "Total Roles:",
+        "system": "System:",
+        "custom": "Custom:",
+        "create": "Create Role",
+        "empty": "No roles found"
+      },
+      "table": {
+        "name": "Name",
+        "slug": "Slug",
+        "description": "Description",
+        "permissions": "Permissions",
+        "users": "Users",
+        "type": "Type",
+        "system": "System",
+        "custom": "Custom"
+      },
+      "detail": {
+        "back": "Back to Roles",
+        "systemBadge": "System Role",
+        "usersAssigned": "{count, plural, one {# user} other {# users}} assigned to this role"
+      },
+      "new": {
+        "title": "Create New Role",
+        "subtitle": "Define a new role with specific permissions"
+      },
+      "form": {
+        "error": "An error occurred",
+        "infoTitle": "Role Information",
+        "name": "Name",
+        "namePlaceholder": "e.g., Content Editor",
+        "slug": "Slug",
+        "slugPlaceholder": "e.g., content-editor",
+        "slugSystemNote": "System role slugs cannot be changed",
+        "description": "Description",
+        "descriptionPlaceholder": "Brief description of this role's purpose",
+        "permissionsTitle": "Permissions ({count})",
+        "selectAll": "Select All",
+        "clearAll": "Clear All",
+        "deselectAll": "Deselect All",
+        "deleteConfirm": "Are you sure you want to delete the role \"{name}\"?",
+        "deleting": "Deleting...",
+        "delete": "Delete Role",
+        "saving": "Saving...",
+        "create": "Create Role",
+        "saveChanges": "Save Changes"
+      }
+    },
+    "wallets": {
+      "title": "Wallets",
+      "subtitle": "View and manage user wallet balances",
+      "stats": {
+        "totalBalance": "Total Balance",
+        "wallets": "Wallets",
+        "transactions": "Transactions"
+      },
+      "totalWallets": "Total Wallets:",
+      "searchPlaceholder": "Search by user...",
+      "noWallets": "No wallets found",
+      "unknown": "Unknown",
+      "unknownUser": "Unknown User",
+      "backToWallets": "Back to Wallets",
+      "viewUserProfile": "View User Profile",
+      "currentBalance": "Current Balance",
+      "walletInformation": "Wallet Information",
+      "walletId": "Wallet ID:",
+      "created": "Created:",
+      "lastUpdatedLabel": "Last Updated:",
+      "manageBalance": "Manage Balance",
+      "transactionHistory": "Transaction History ({count})",
+      "errorInvalidAmount": "Please enter a valid positive amount",
+      "errorDebitExceeds": "Cannot debit more than current balance ({balance})",
+      "successAdded": "Added {amount} to wallet",
+      "successRemoved": "Removed {amount} from wallet",
+      "errorGeneric": "An error occurred",
+      "amountLabel": "Amount ({symbol})",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "Reason for transaction",
+      "processing": "Processing...",
+      "addCredit": "+ Add Credit",
+      "removeFunds": "- Remove Funds",
+      "noTransactions": "No transactions yet",
+      "system": "System",
+      "col": {
+        "user": "User",
+        "email": "Email",
+        "balance": "Balance",
+        "lastUpdated": "Last Updated",
+        "date": "Date",
+        "type": "Type",
+        "amount": "Amount",
+        "balanceAfter": "Balance After",
+        "note": "Note",
+        "createdBy": "Created By"
+      }
+    },
+    "transactions": {
+      "title": "Transactions",
+      "subtitle": "View all wallet transactions across the system",
+      "stats": {
+        "totalCredits": "Total Credits",
+        "totalDebits": "Total Debits",
+        "transactions": "Transactions"
+      },
+      "total": "Total:",
+      "allTypes": "All Types",
+      "searchPlaceholder": "Search by user...",
+      "noTransactions": "No transactions found",
+      "system": "System",
+      "col": {
+        "date": "Date",
+        "user": "User",
+        "type": "Type",
+        "amount": "Amount",
+        "balanceAfter": "Balance After",
+        "note": "Note",
+        "createdBy": "Created By"
+      },
+      "type": {
+        "CREDIT": "Credit",
+        "DEBIT": "Debit",
+        "PURCHASE": "Purchase",
+        "REFUND": "Refund",
+        "ADJUSTMENT": "Adjustment",
+        "POS_PURCHASE": "POS purchase",
+        "POS_TIP": "POS tip",
+        "CARD_TOPUP": "Card top-up",
+        "CASH_TOPUP": "Cash top-up",
+        "P2P_TRANSFER": "Transfer"
+      }
+    },
+    "nav": {
+      "menuTitle": "Admin Menu",
+      "openMenu": "Open navigation menu",
+      "adminLabel": "Admin",
+      "dashboard": "Dashboard",
+      "orders": "Orders",
+      "events": "Events",
+      "donations": "Donations",
+      "users": "Users",
+      "roles": "Roles",
+      "wallets": "Wallets",
+      "announcements": "Announcements",
+      "transactions": "Transactions",
+      "scanner": "Scanner",
+      "posItems": "POS Items",
+      "posRegisters": "POS Registers",
+      "eventClaims": "Event Claims",
+      "posOfflineQrs": "POS offline QRs",
+      "posOrders": "POS Orders",
+      "posTerminal": "POS Terminal",
+      "myProfile": "My Profile"
+    },
+    "common": {
+      "loading": "Loading...",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "search": "Search",
+      "showing": "Showing:",
+      "na": "N/A",
+      "back": "Back",
+      "autoRefresh": "Auto-refresh:"
+    },
+    "status": {
+      "order": {
+        "CREATED": "Created",
+        "PROCESSING": "Processing",
+        "PAID": "Paid",
+        "PREPARING": "Preparing",
+        "IN_DELIVERY": "In delivery",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled",
+        "EXPIRED": "Expired",
+        "REFUND_REQUESTED": "Refund requested",
+        "PARTIALLY_REFUNDED": "Partially refunded",
+        "REFUNDED": "Refunded"
+      },
+      "ticket": {
+        "PENDING": "Ready to scan",
+        "CANCELLED": "Cancelled",
+        "SCANNED": "Used",
+        "VALIDATED": "Validated",
+        "BANNED": "Banned",
+        "REFUND_REQUESTED": "Refund requested",
+        "REFUNDED": "Refunded",
+        "EXPIRED": "Expired"
+      },
+      "user": {
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "BANNED": "Banned",
+        "PENDING_VERIFICATION": "Pending verification",
+        "DELETED": "Deleted"
+      }
+    }
+  },
+  "pos": {
+    "register": {
+      "metaTitle": "POS - Select Register",
+      "selectRegister": "Select Register",
+      "chooseToStart": "Choose a register to start selling",
+      "noRegistersAssigned": "No registers assigned",
+      "contactAdmin": "Contact an administrator to be assigned to a register.",
+      "noItems": "No items available at this register",
+      "searchPlaceholder": "Search items...",
+      "itemCount": "{count} items",
+      "topUpEnabled": "Top-up enabled",
+      "saleCount": "{count, plural, one {# sale} other {# sales}}",
+      "revenue": "{amount} revenue",
+      "tips": "+{amount} tips",
+      "toCollect": "{amount} to collect",
+      "pending": "{count} pending"
+    },
+    "cart": {
+      "empty": "Tap items above to add them to the order",
+      "each": "{amount} each",
+      "clear": "Clear",
+      "creating": "Creating...",
+      "createOrder": "Create Order"
+    },
+    "orders": {
+      "yourTotalIs": "Your total is <bold>{amount}</bold>",
+      "paymentReceived": "Payment Received",
+      "total": "total",
+      "tip": "tip",
+      "orderCode": "Order Code",
+      "qrAlt": "Order QR Code",
+      "customerScanned": "{name} scanned",
+      "balanceLabel": "Balance",
+      "insufficient": "(Insufficient)",
+      "customer": "Customer",
+      "waitingForScan": "Waiting for customer to scan...",
+      "showQr": "Show QR instead",
+      "cancelEdit": "Cancel & Edit",
+      "continue": "Continue",
+      "closingIn": "Closing in {count}s",
+      "toggleRotation": "Toggle rotation",
+      "expired": "Expired",
+      "pendingOrders": "Pending Orders",
+      "pendingOrdersCount": "Pending Orders ({count})",
+      "noPendingOrders": "No pending orders",
+      "moreItems": "+{count} more",
+      "lowBalance": "Low balance",
+      "scanned": "Scanned",
+      "waitingForScanShort": "Waiting for scan",
+      "cancel": "Cancel"
+    },
+    "sticker": {
+      "resolving": "Resolving wristband...",
+      "scanWristband": "Scan wristband",
+      "instructions": "Point the camera at the customer's wristband, or type the 4-char code.",
+      "hint": "Scan QR or type the 4-character wristband code",
+      "backToQr": "← Back to QR"
+    },
+    "header": {
+      "title": "Point of Sale"
+    }
+  },
+  "scan": {
+    "scanner": {
+      "title": "Ticket scanner",
+      "breadcrumb": "Scan",
+      "metaTitle": "{title} • Scanner",
+      "heading": "Ticket scanner for events",
+      "intro": "Welcome to the event ticket scanner. Select the event in the list below that you would like to scan the tickets for.",
+      "scanningEnabled": "✅ Scanning enabled",
+      "scanningDisabled": "❌ Scanning disabled",
+      "noEvents": "There are no events to scan right now",
+      "loading": "Loading...",
+      "scanningNotEnabled": "Scanning is not enabled",
+      "tabScanner": "Scanner",
+      "tabDoorSales": "Door Sales",
+      "scanTicket": "Scan ticket",
+      "closeScanner": "Close Scanner",
+      "modalTitle": "Scan QR Ticket",
+      "pointCamera": "Point your camera to scan a ticket",
+      "recordingScan": "Recording scan to server...",
+      "scanNext": "OK - Scan Next Ticket"
+    },
+    "result": {
+      "verified": "Verified",
+      "warning": "Warning",
+      "error": "Error",
+      "validTicket": "Valid ticket",
+      "scannedTimes": "Warning: Scanned {count} times",
+      "alreadyScanned": "This ticket has already been scanned.",
+      "wrongEvent": "Wrong event - This ticket is for a different event",
+      "scanCount": "Scan count: {count}",
+      "ticketHolderName": "Ticket holder name",
+      "paymentEmail": "Payment email",
+      "ticketPrice": "Ticket price"
+    },
+    "header": {
+      "title": "Ticket scanner"
+    }
+  },
+  "stagingLogin": {
+    "metaTitle": "🔑 Passcode required",
+    "metaDescription": "This environment is protected and requires a passcode to access this page.",
+    "heading": "Staging Environment",
+    "subheading": "Enter password to continue",
+    "passwordPlaceholder": "Password",
+    "invalidPassword": "Invalid password",
+    "somethingWrong": "Something went wrong",
+    "loading": "Loading...",
+    "continue": "Continue"
+  },
+  "ticketPricing": {
+    "comingSoon": "Coming Soon",
+    "upNext": "Up Next",
+    "detailsHidden": "Details hidden",
+    "dateHidden": "Date hidden",
+    "ended": "Ended",
+    "endedOn": "Ended {date}",
+    "untilDate": "Until {date}",
+    "availableNow": "Available now",
+    "startsOn": "Starts {date}"
   }
 }

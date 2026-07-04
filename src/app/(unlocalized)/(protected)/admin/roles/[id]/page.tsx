@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { fetchRoleById } from "@/domain/role/actions/fetchRoleByIdAction";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
@@ -43,6 +44,8 @@ export default async function AdminRoleDetailPage({
   const canUpdate = user.permissions.includes(PERMISSIONS.ROLES_UPDATE);
   const canDelete = user.permissions.includes(PERMISSIONS.ROLES_DELETE);
 
+  const t = await getTranslations("admin.roles");
+
   return (
     <div>
       <div className="mb-6">
@@ -63,18 +66,18 @@ export default async function AdminRoleDetailPage({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Roles
+          {t("detail.back")}
         </Link>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">{role.name}</h1>
           {role.isSystem && (
             <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-              System Role
+              {t("detail.systemBadge")}
             </span>
           )}
         </div>
         <p className="mt-1 text-sm text-gray-500">
-          {role.userCount} user{role.userCount !== 1 ? "s" : ""} assigned to this role
+          {t("detail.usersAssigned", { count: role.userCount })}
         </p>
       </div>
 

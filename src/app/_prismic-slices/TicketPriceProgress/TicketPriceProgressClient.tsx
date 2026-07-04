@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations, useFormatter } from "next-intl";
 import { formatPrice } from "@/lib/util/formatting";
 import clsx from "clsx";
 
@@ -23,23 +24,6 @@ interface Props {
   heading: string | null;
   subheading: string | null;
   steps: PriceStepData[];
-}
-
-function getOrdinalSuffix(day: number): string {
-  if (day > 3 && day < 21) return "th";
-  switch (day % 10) {
-    case 1: return "st";
-    case 2: return "nd";
-    case 3: return "rd";
-    default: return "th";
-  }
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  const month = date.toLocaleDateString("en-US", { month: "short" });
-  const day = date.getDate();
-  return `${month} ${day}${getOrdinalSuffix(day)}`;
 }
 
 function processSteps(steps: PriceStepData[], now: Date): ProcessedStep[] {
@@ -125,6 +109,14 @@ function StepDot({ state }: { state: StepState }) {
 }
 
 function StepCard({ step }: { step: ProcessedStep }) {
+  const t = useTranslations("ticketPricing");
+  const format = useFormatter();
+  const formatDate = (dateString: string) =>
+    format.dateTime(new Date(dateString), {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   const isFuture = step.state === "future";
   const isNext = step.state === "next";
   // Only hide content for future/next steps that are not visible
@@ -166,12 +158,14 @@ function StepCard({ step }: { step: ProcessedStep }) {
           isHidden && "blur-[2px] select-none"
         )}
       >
-        {isHidden ? "Coming Soon" : step.title}
+        {isHidden ? t("comingSoon") : step.title}
       </div>
 
       {/* Status badge for next */}
       {isNext && !isHidden && (
-        <div className="text-xs text-yellow-400 font-medium mb-1">Up Next</div>
+        <div className="text-xs text-yellow-400 font-medium mb-1">
+          {t("upNext")}
+        </div>
       )}
 
       {/* Description */}
@@ -186,7 +180,7 @@ function StepCard({ step }: { step: ProcessedStep }) {
             isHidden && "blur-[2px] select-none"
           )}
         >
-          {isHidden ? "Details hidden" : step.description}
+          {isHidden ? t("detailsHidden") : step.description}
         </div>
       )}
 
@@ -202,21 +196,21 @@ function StepCard({ step }: { step: ProcessedStep }) {
         )}
       >
         {isHidden ? (
-          "Date hidden"
+          t("dateHidden")
         ) : step.state === "completed" ? (
           step.availableUntil ? (
-            `Ended ${formatDate(step.availableUntil)}`
+            t("endedOn", { date: formatDate(step.availableUntil) })
           ) : (
-            "Ended"
+            t("ended")
           )
         ) : step.state === "current" ? (
           step.availableUntil ? (
-            `Until ${formatDate(step.availableUntil)}`
+            t("untilDate", { date: formatDate(step.availableUntil) })
           ) : (
-            "Available now"
+            t("availableNow")
           )
         ) : (isNext || isFuture) && step.availableFrom ? (
-          `Starts ${formatDate(step.availableFrom)}`
+          t("startsOn", { date: formatDate(step.availableFrom) })
         ) : null}
       </div>
     </div>
@@ -230,6 +224,14 @@ function VerticalStep({
   step: ProcessedStep;
   isLast: boolean;
 }) {
+  const t = useTranslations("ticketPricing");
+  const format = useFormatter();
+  const formatDate = (dateString: string) =>
+    format.dateTime(new Date(dateString), {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   const isFuture = step.state === "future";
   const isNext = step.state === "next";
   // Only hide content for future/next steps that are not visible
@@ -271,13 +273,13 @@ function VerticalStep({
             isHidden && "blur-[2px] select-none"
           )}
         >
-          {isHidden ? "Coming Soon" : step.title}
+          {isHidden ? t("comingSoon") : step.title}
         </div>
 
         {/* Status badge for next */}
         {isNext && !isHidden && (
           <div className="text-xs text-yellow-400 font-medium mb-1">
-            Up Next
+            {t("upNext")}
           </div>
         )}
 
@@ -293,7 +295,7 @@ function VerticalStep({
               isHidden && "blur-[2px] select-none"
             )}
           >
-            {isHidden ? "Details hidden" : step.description}
+            {isHidden ? t("detailsHidden") : step.description}
           </div>
         )}
 
@@ -309,21 +311,21 @@ function VerticalStep({
           )}
         >
           {isHidden ? (
-            "Date hidden"
+            t("dateHidden")
           ) : step.state === "completed" ? (
             step.availableUntil ? (
-              `Ended ${formatDate(step.availableUntil)}`
+              t("endedOn", { date: formatDate(step.availableUntil) })
             ) : (
-              "Ended"
+              t("ended")
             )
           ) : step.state === "current" ? (
             step.availableUntil ? (
-              `Until ${formatDate(step.availableUntil)}`
+              t("untilDate", { date: formatDate(step.availableUntil) })
             ) : (
-              "Available now"
+              t("availableNow")
             )
           ) : (isNext || isFuture) && step.availableFrom ? (
-            `Starts ${formatDate(step.availableFrom)}`
+            t("startsOn", { date: formatDate(step.availableFrom) })
           ) : null}
         </div>
       </div>

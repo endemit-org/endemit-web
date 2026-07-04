@@ -1,15 +1,17 @@
+import { getTranslations } from "next-intl/server";
 import {
   AdminPageHeaderSkeleton,
   AdminStatsSkeleton,
   AdminTableSkeleton,
 } from "@/app/_components/ui/Skeletons";
 
-export default function AdminUsersLoading() {
+export default async function AdminUsersLoading() {
+  const t = await getTranslations("admin.users");
   return (
     <div>
       <AdminPageHeaderSkeleton
-        title="Users"
-        subtitle="View and manage all users in the system"
+        title={t("page.title")}
+        subtitle={t("page.subtitle")}
       />
       <AdminStatsSkeleton count={3} />
       <AdminTableSkeleton rows={10} />

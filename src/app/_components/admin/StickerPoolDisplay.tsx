@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -37,6 +38,7 @@ interface Props {
 }
 
 export default function StickerPoolDisplay({ initial }: Props) {
+  const t = useTranslations("admin.pos.stickers");
   const router = useRouter();
   const currentSearchParams = useSearchParams();
   const [searchInput, setSearchInput] = useState(initial.search);
@@ -78,10 +80,10 @@ export default function StickerPoolDisplay({ initial }: Props) {
   const onBulkGenerate = useCallback(async () => {
     const count = Number(generateCount);
     if (!Number.isFinite(count) || count <= 0) {
-      setGenerateError("Enter a positive number");
+      setGenerateError(t("enterPositive"));
       return;
     }
-    if (!confirm(`Generate ${count} new sticker codes?`)) return;
+    if (!confirm(t("confirmGenerate", { count }))) return;
 
     setIsGenerating(true);
     setGenerateError(null);
@@ -93,18 +95,18 @@ export default function StickerPoolDisplay({ initial }: Props) {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || "Failed to generate");
+        throw new Error(data.error || t("generateFailed"));
       }
-      alert(`Created ${data.created} new sticker codes (pool: ${data.totalInPool}).`);
+      alert(t("createdCodes", { created: data.created, total: data.totalInPool }));
       router.refresh();
     } catch (err) {
       setGenerateError(
-        err instanceof Error ? err.message : "Failed to generate"
+        err instanceof Error ? err.message : t("generateFailed")
       );
     } finally {
       setIsGenerating(false);
     }
-  }, [generateCount, router]);
+  }, [generateCount, router, t]);
 
   const totalPages = Math.max(1, Math.ceil(initial.total / initial.pageSize));
 
@@ -123,7 +125,11 @@ export default function StickerPoolDisplay({ initial }: Props) {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               )}
             >
-              {f === "all" ? "All" : f === "unclaimed" ? "Unclaimed" : "Claimed"}
+              {f === "all"
+                ? t("filterAll")
+                : f === "unclaimed"
+                  ? t("filterUnclaimed")
+                  : t("filterClaimed")}
             </button>
           ))}
         </div>
@@ -133,21 +139,21 @@ export default function StickerPoolDisplay({ initial }: Props) {
             type="text"
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            placeholder="Search code, username, email..."
+            placeholder={t("searchPlaceholder")}
             className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
             className="px-3 py-1.5 text-sm text-white bg-gray-700 hover:bg-gray-800 rounded-md"
           >
-            Search
+            {t("search")}
           </button>
         </form>
       </div>
 
       <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row gap-3 sm:items-center">
         <span className="text-sm font-medium text-gray-700">
-          Generate new codes:
+          {t("generateLabel")}
         </span>
         <input
           type="number"
@@ -162,7 +168,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
           disabled={isGenerating}
           className="px-3 py-1.5 text-sm text-white bg-green-600 hover:bg-green-700 rounded-md disabled:opacity-50"
         >
-          {isGenerating ? "Generating..." : "Generate"}
+          {isGenerating ? t("generating") : t("generate")}
         </button>
         {generateError && (
           <span className="text-sm text-red-600">{generateError}</span>
@@ -174,16 +180,16 @@ export default function StickerPoolDisplay({ initial }: Props) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Code
+                {t("colCode")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                {t("colStatus")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Assigned to
+                {t("colAssignedTo")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Claimed at
+                {t("colClaimedAt")}
               </th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -195,7 +201,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
                   colSpan={5}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
-                  No stickers match these filters.
+                  {t("noStickers")}
                 </td>
               </tr>
             ) : (
@@ -213,7 +219,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
                           : "bg-gray-100 text-gray-700"
                       )}
                     >
-                      {item.userId ? "Claimed" : "Unclaimed"}
+                      {item.userId ? t("claimed") : t("unclaimed")}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-700">
@@ -241,14 +247,14 @@ export default function StickerPoolDisplay({ initial }: Props) {
                         href={`/admin/users/${item.userId}`}
                         className="text-sm text-blue-600 hover:text-blue-800"
                       >
-                        View user →
+                        {t("viewUser")}
                       </Link>
                     ) : (
                       <button
                         onClick={() => setAssignCode(item.code)}
                         className="text-sm text-blue-600 hover:text-blue-800"
                       >
-                        Assign →
+                        {t("assign")}
                       </button>
                     )}
                   </td>
@@ -268,7 +274,11 @@ export default function StickerPoolDisplay({ initial }: Props) {
       {totalPages > 1 && (
         <div className="p-4 border-t border-gray-200 flex items-center justify-between">
           <span className="text-sm text-gray-600">
-            Page {initial.page} of {totalPages} — {initial.total} total
+            {t("pageInfo", {
+              page: initial.page,
+              total: totalPages,
+              count: initial.total,
+            })}
           </span>
           <div className="flex gap-2">
             <button
@@ -278,7 +288,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
               disabled={initial.page <= 1}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
             >
-              Previous
+              {t("previous")}
             </button>
             <button
               onClick={() =>
@@ -289,7 +299,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
               disabled={initial.page >= totalPages}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
             >
-              Next
+              {t("next")}
             </button>
           </div>
         </div>

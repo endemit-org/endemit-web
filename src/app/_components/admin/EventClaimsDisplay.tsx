@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import UserAutocomplete from "./UserAutocomplete";
 import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
 
@@ -44,6 +45,8 @@ interface Props {
 
 export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
   const router = useRouter();
+  const t = useTranslations("admin.eventClaims");
+  const tc = useTranslations("admin.common");
   const currentSearchParams = useSearchParams();
   const [searchInput, setSearchInput] = useState(initial.search);
   const [busyClaimId, setBusyClaimId] = useState<string | null>(null);
@@ -82,7 +85,14 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
 
   const handleApprove = useCallback(
     async (claim: ClaimRow) => {
-      if (!confirm(`Approve "${claim.eventName}" for ${claim.user.username}?`))
+      if (
+        !confirm(
+          t("approveConfirm", {
+            event: claim.eventName,
+            user: claim.user.username,
+          })
+        )
+      )
         return;
       setBusyClaimId(claim.id);
       setError(null);
@@ -93,23 +103,27 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
         );
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.error || "Failed to approve");
+          throw new Error(data.error || t("failedApprove"));
         }
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to approve");
+        setError(err instanceof Error ? err.message : t("failedApprove"));
       } finally {
         setBusyClaimId(null);
       }
     },
-    [router]
+    [router, t]
   );
 
   const handleDelete = useCallback(
     async (claim: ClaimRow) => {
       if (
         !confirm(
-          `Delete ${claim.status} claim for "${claim.eventName}" by ${claim.user.username}? This cannot be undone.`
+          t("deleteConfirm", {
+            status: claim.status,
+            event: claim.eventName,
+            user: claim.user.username,
+          })
         )
       )
         return;
@@ -121,16 +135,16 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
         });
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.error || "Failed to delete");
+          throw new Error(data.error || t("failedDelete"));
         }
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to delete");
+        setError(err instanceof Error ? err.message : t("failedDelete"));
       } finally {
         setBusyClaimId(null);
       }
     },
-    [router]
+    [router, t]
   );
 
   const totalPages = Math.max(1, Math.ceil(initial.total / initial.pageSize));
@@ -150,7 +164,11 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               )}
             >
-              {f === "all" ? "All" : f === "PENDING" ? "Pending" : "Approved"}
+              {f === "all"
+                ? t("filterAll")
+                : f === "PENDING"
+                  ? t("pending")
+                  : t("approved")}
             </button>
           ))}
         </div>
@@ -161,14 +179,14 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
               type="text"
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
-              placeholder="Search user or event..."
+              placeholder={t("searchPlaceholder")}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="submit"
               className="px-3 py-1.5 text-sm text-white bg-gray-700 hover:bg-gray-800 rounded-md"
             >
-              Search
+              {tc("search")}
             </button>
           </form>
           <button
@@ -178,7 +196,7 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
             }}
             className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
           >
-            + Add claim
+            + {t("addClaim")}
           </button>
         </div>
       </div>
@@ -194,19 +212,19 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
+                {t("colUser")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Event
+                {t("colEvent")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                {t("colStatus")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
+                {t("colCreated")}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                {t("colActions")}
               </th>
             </tr>
           </thead>
@@ -217,7 +235,7 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
                   colSpan={5}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
-                  No claims match these filters.
+                  {t("noClaims")}
                 </td>
               </tr>
             ) : (
@@ -261,7 +279,7 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
                         disabled={busyClaimId === claim.id}
                         className="px-2 py-1 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded disabled:opacity-50"
                       >
-                        Approve now
+                        {t("approveNow")}
                       </button>
                     )}
                     <button
@@ -269,7 +287,7 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
                       disabled={busyClaimId === claim.id}
                       className="px-2 py-1 text-xs text-red-600 border border-red-300 hover:border-red-500 rounded disabled:opacity-50"
                     >
-                      Delete
+                      {tc("delete")}
                     </button>
                   </td>
                 </tr>
@@ -282,7 +300,11 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
       {totalPages > 1 && (
         <div className="p-4 border-t border-gray-200 flex items-center justify-between">
           <span className="text-sm text-gray-600">
-            Page {initial.page} of {totalPages} — {initial.total} total
+            {t("pageInfo", {
+              page: initial.page,
+              totalPages,
+              total: initial.total,
+            })}
           </span>
           <div className="flex gap-2">
             <button
@@ -292,7 +314,7 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
               disabled={initial.page <= 1}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
             >
-              Previous
+              {t("previous")}
             </button>
             <button
               onClick={() =>
@@ -303,7 +325,7 @@ export default function EventClaimsDisplay({ initial, pastEvents }: Props) {
               disabled={initial.page >= totalPages}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
             >
-              Next
+              {t("next")}
             </button>
           </div>
         </div>
@@ -332,6 +354,8 @@ function CreateClaimModal({
   onClose: () => void;
   onCreated: () => void;
 }) {
+  const t = useTranslations("admin.eventClaims");
+  const tc = useTranslations("admin.common");
   const [userQuery, setUserQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
     null
@@ -358,15 +382,15 @@ function CreateClaimModal({
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create claim");
+        throw new Error(data.error || t("failedCreate"));
       }
       onCreated();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create claim");
+      setError(err instanceof Error ? err.message : t("failedCreate"));
     } finally {
       setIsSubmitting(false);
     }
-  }, [selectedUser, selectedEvent, onCreated]);
+  }, [selectedUser, selectedEvent, onCreated, t]);
 
   return (
     <div
@@ -378,7 +402,9 @@ function CreateClaimModal({
         onClick={e => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b flex items-center justify-between">
-          <h3 className="text-base font-semibold text-gray-900">Add claim</h3>
+          <h3 className="text-base font-semibold text-gray-900">
+            {t("addClaim")}
+          </h3>
           <button
             onClick={onClose}
             disabled={isSubmitting}
@@ -402,7 +428,7 @@ function CreateClaimModal({
         <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              User
+              {t("colUser")}
             </label>
             <UserAutocomplete
               value={userQuery}
@@ -412,13 +438,13 @@ function CreateClaimModal({
               }}
               onUserSelect={user => setSelectedUser(user)}
               disabled={isSubmitting}
-              placeholder="Search by name, username, or email"
+              placeholder={t("userSearchPlaceholder")}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Event
+              {t("colEvent")}
             </label>
             <select
               value={selectedEventId}
@@ -426,7 +452,7 @@ function CreateClaimModal({
               disabled={isSubmitting}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              <option value="">Select a past event...</option>
+              <option value="">{t("selectEvent")}</option>
               {pastEvents.map(event => (
                 <option key={event.id} value={event.id}>
                   {event.name}
@@ -438,11 +464,7 @@ function CreateClaimModal({
             </select>
           </div>
 
-          <p className="text-xs text-gray-500">
-            The claim will queue for automatic approval in 5 minutes, same as
-            a user-submitted claim. Use &quot;Approve now&quot; in the list to
-            skip the delay.
-          </p>
+          <p className="text-xs text-gray-500">{t("autoApproveNote")}</p>
 
           {error && (
             <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm">
@@ -456,14 +478,14 @@ function CreateClaimModal({
             disabled={isSubmitting}
             className="flex-1 px-4 py-2 text-sm text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-md disabled:opacity-50"
           >
-            Cancel
+            {tc("cancel")}
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !selectedUser || !selectedEventId}
             className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50"
           >
-            {isSubmitting ? "Creating..." : "Create claim"}
+            {isSubmitting ? t("creating") : t("createClaim")}
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import clsx from "clsx";
 
 interface ClaimableEvent {
@@ -26,6 +26,7 @@ export default function EventClaimModal({
   onClaim,
 }: EventClaimModalProps) {
   const t = useTranslations("profile");
+  const format = useFormatter();
   const [selectedEvent, setSelectedEvent] = useState<ClaimableEvent | null>(
     null
   );
@@ -133,7 +134,7 @@ export default function EventClaimModal({
                   </div>
                   {event.dateStart && (
                     <div className="text-sm text-neutral-400 mt-1">
-                      {event.dateStart.toLocaleDateString("en-GB", {
+                      {format.dateTime(event.dateStart, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

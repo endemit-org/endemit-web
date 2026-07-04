@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import TicketsTable from "@/app/_components/table/TicketsTable";
 import { formatNumber, formatPrice } from "@/lib/util/formatting";
@@ -32,6 +33,8 @@ export default function EventTicketsDisplay({
   canCreateTickets = false,
 }: EventTicketsDisplayProps) {
   const router = useRouter();
+  const t = useTranslations("admin.events");
+  const tc = useTranslations("admin.common");
   const [tickets, setTickets] = useState(initialTickets);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -84,16 +87,16 @@ export default function EventTicketsDisplay({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Revenue:{" "}
+            {t("metrics.revenue")}:{" "}
             <strong className="text-green-600 text-lg">
               {formatPrice(totalRevenue)}
             </strong>
           </div>
           <div className="text-sm text-gray-600">
-            Sold: <strong className="text-gray-900">{ticketsSoldAmount}</strong>
+            {t("metrics.sold")}: <strong className="text-gray-900">{ticketsSoldAmount}</strong>
           </div>
           <div className="text-sm text-gray-600">
-            Scanned:{" "}
+            {t("metrics.scanned")}:{" "}
             <strong className="text-green-600">
               {ticketsScannedAmount}{" "}
               <span className="font-normal text-xs">
@@ -102,16 +105,16 @@ export default function EventTicketsDisplay({
             </strong>
           </div>
           <div className="text-sm text-gray-600">
-            Pending: <strong className="text-blue-600">{ticketsRemainingAmount}</strong>
+            {t("metrics.pending")}: <strong className="text-blue-600">{ticketsRemainingAmount}</strong>
           </div>
           <div className="text-sm text-gray-600">
-            Guest: <strong className="text-purple-600">{ticketsGuestAmount}</strong>
+            {t("metrics.guest")}: <strong className="text-purple-600">{ticketsGuestAmount}</strong>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {shouldAutoRefresh && (
             <span className="text-xs text-gray-400 hidden sm:inline">
-              Auto-refresh: {refreshInterval}s
+              {tc("autoRefresh")} {refreshInterval}s
             </span>
           )}
           <button
@@ -119,7 +122,7 @@ export default function EventTicketsDisplay({
             disabled={isRefreshing}
             className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
           >
-            {isRefreshing ? "Refreshing..." : "Refresh"}
+            {isRefreshing ? tc("refreshing") : tc("refresh")}
           </button>
         </div>
       </div>
@@ -138,7 +141,7 @@ export default function EventTicketsDisplay({
         <div className="bg-white rounded-lg shadow">
           <div className="p-4 border-b border-gray-200">
             <h2 className="font-semibold text-gray-900">
-              Pending Tickets ({ticketsRemainingAmount})
+              {t("pendingTickets", { count: ticketsRemainingAmount })}
             </h2>
           </div>
           <div className="overflow-x-auto">
@@ -151,7 +154,7 @@ export default function EventTicketsDisplay({
         <div className="bg-white rounded-lg shadow">
           <div className="p-4 border-b border-gray-200">
             <h2 className="font-semibold text-gray-900">
-              Scanned Tickets ({ticketsScannedAmount})
+              {t("scannedTickets", { count: ticketsScannedAmount })}
             </h2>
           </div>
           <div className="overflow-x-auto">

@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { getTicketById } from "@/domain/ticket/operations/getTicketById";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
@@ -9,7 +10,7 @@ import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
 import TicketDownloadButton from "@/app/_components/admin/TicketDownloadButton";
 import RevertTicketScanButton from "@/app/_components/admin/RevertTicketScanButton";
-import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
+import AdminAddToWalletButton from "@/app/_components/admin/AdminAddToWalletButton";
 
 export async function generateMetadata({
   params,
@@ -61,6 +62,11 @@ export default async function AdminTicketDetailPage({
   const isChecked =
     ticket.status === "SCANNED" || ticket.status === "VALIDATED";
 
+  const t = await getTranslations("admin.tickets");
+  const tc = await getTranslations("admin.common");
+  const ts = await getTranslations("admin.status.ticket");
+  const tos = await getTranslations("admin.status.order");
+
   return (
     <div>
       <div className="mb-6">
@@ -81,7 +87,7 @@ export default async function AdminTicketDetailPage({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Event
+          {t("backToEvent")}
         </Link>
       </div>
 
@@ -90,11 +96,11 @@ export default async function AdminTicketDetailPage({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-semibold text-gray-900">
-                Ticket {ticket.shortId}
+                {t("ticketTitle", { shortId: ticket.shortId })}
               </h1>
               {ticket.isGuestList && (
                 <span className="rounded-full px-3 py-1 text-sm bg-purple-100 text-purple-800 font-medium">
-                  Guest List
+                  {t("guestList")}
                 </span>
               )}
             </div>
@@ -106,7 +112,7 @@ export default async function AdminTicketDetailPage({
                 !isInvalid && !isChecked && "bg-blue-100 text-blue-800"
               )}
             >
-              {ticket.status}
+              {ts(ticket.status)}
             </span>
           </div>
         </div>
@@ -114,39 +120,39 @@ export default async function AdminTicketDetailPage({
         <div className="p-6 space-y-6">
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Ticket Information
+              {t("sections.ticketInfo")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Ticket ID</span>
+                <span className="text-gray-600">{t("fields.ticketId")}</span>
                 <span className="font-mono text-sm">{ticket.shortId}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Name</span>
+                <span className="text-gray-600">{t("fields.name")}</span>
                 <span className="font-medium">{ticket.ticketHolderName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Email</span>
+                <span className="text-gray-600">{t("fields.email")}</span>
                 <span>{formatEmailForDisplay(ticket.ticketPayerEmail)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Event</span>
+                <span className="text-gray-600">{t("fields.event")}</span>
                 <span>{ticket.eventName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Price</span>
+                <span className="text-gray-600">{t("fields.price")}</span>
                 <span className="font-medium">{formatPrice(Number(ticket.price))}</span>
               </div>
               {ticket.scanCount > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Scan Count</span>
+                  <span className="text-gray-600">{t("fields.scanCount")}</span>
                   <span className="font-medium text-green-600">
                     {ticket.scanCount}
                   </span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-gray-600">Created</span>
+                <span className="text-gray-600">{t("fields.created")}</span>
                 <span>{formatDateTime(ticket.createdAt)}</span>
               </div>
             </div>
@@ -154,11 +160,11 @@ export default async function AdminTicketDetailPage({
 
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Order Information
+              {t("sections.orderInfo")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Order ID</span>
+                <span className="text-gray-600">{t("fields.orderId")}</span>
                 <Link
                   href={`/admin/orders/${ticket.orderId}`}
                   className="font-mono text-sm text-blue-600 hover:text-blue-800"
@@ -169,15 +175,15 @@ export default async function AdminTicketDetailPage({
               {ticket.order && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Customer</span>
-                    <span>{ticket.order.name || "N/A"}</span>
+                    <span className="text-gray-600">{t("fields.customer")}</span>
+                    <span>{ticket.order.name || tc("na")}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Email</span>
+                    <span className="text-gray-600">{t("fields.email")}</span>
                     <span>{formatEmailForDisplay(ticket.order.email)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Order Status</span>
+                    <span className="text-gray-600">{t("fields.orderStatus")}</span>
                     <span
                       className={clsx(
                         "px-2 py-0.5 rounded-full text-xs font-medium",
@@ -186,7 +192,7 @@ export default async function AdminTicketDetailPage({
                           : "bg-gray-100 text-gray-800"
                       )}
                     >
-                      {ticket.order.status}
+                      {tos(ticket.order.status)}
                     </span>
                   </div>
                 </>
@@ -196,12 +202,12 @@ export default async function AdminTicketDetailPage({
 
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Actions
+              {t("sections.actions")}
             </h2>
             <div className="flex flex-wrap items-start gap-4">
               <TicketDownloadButton ticketId={ticket.id} shortId={ticket.shortId} holderName={ticket.ticketHolderName} />
               <div className="w-56">
-                <AddToWalletButton ticketHash={ticket.ticketHash} shortId={ticket.shortId} size="sm" />
+                <AdminAddToWalletButton ticketHash={ticket.ticketHash} shortId={ticket.shortId} size="sm" />
               </div>
               {canRevertScan && (
                 <RevertTicketScanButton ticketId={ticket.id} />
@@ -210,7 +216,7 @@ export default async function AdminTicketDetailPage({
                 href={`/admin/events/${ticket.eventId}`}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-colors"
               >
-                View Event
+                {t("viewEvent")}
               </Link>
             </div>
           </section>

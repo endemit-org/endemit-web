@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { addWalletCreditAction } from "@/domain/wallet/actions/addWalletCreditAction";
 import { debitWalletAction } from "@/domain/wallet/actions/debitWalletAction";
 import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
@@ -16,6 +17,7 @@ export default function WalletTransactionForm({
   currentBalance,
 }: WalletTransactionFormProps) {
   const router = useRouter();
+  const t = useTranslations("admin.wallets");
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,13 +28,15 @@ export default function WalletTransactionForm({
     const amountCents = Math.round(parseFloat(amount) * 100);
 
     if (isNaN(amountCents) || amountCents <= 0) {
-      setError("Please enter a valid positive amount");
+      setError(t("errorInvalidAmount"));
       return;
     }
 
     if (type === "debit" && amountCents > currentBalance) {
       setError(
-        `Cannot debit more than current balance (${formatTokensFromCents(currentBalance)})`
+        t("errorDebitExceeds", {
+          balance: formatTokensFromCents(currentBalance),
+        })
       );
       return;
     }
@@ -48,21 +52,25 @@ export default function WalletTransactionForm({
           amount: amountCents,
           note: note || undefined,
         });
-        setSuccess(`Added ${formatTokensFromCents(amountCents)} to wallet`);
+        setSuccess(
+          t("successAdded", { amount: formatTokensFromCents(amountCents) })
+        );
       } else {
         await debitWalletAction({
           walletId,
           amount: amountCents,
           note: note || undefined,
         });
-        setSuccess(`Removed ${formatTokensFromCents(amountCents)} from wallet`);
+        setSuccess(
+          t("successRemoved", { amount: formatTokensFromCents(amountCents) })
+        );
       }
 
       setAmount("");
       setNote("");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t("errorGeneric"));
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +96,7 @@ export default function WalletTransactionForm({
             htmlFor="amount"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Amount ({TOKEN_CONFIG.symbol})
+            {t("amountLabel", { symbol: TOKEN_CONFIG.symbol })}
           </label>
           <input
             type="number"
@@ -107,14 +115,14 @@ export default function WalletTransactionForm({
             htmlFor="note"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Note (optional)
+            {t("noteLabel")}
           </label>
           <input
             type="text"
             id="note"
             value={note}
             onChange={e => setNote(e.target.value)}
-            placeholder="Reason for transaction"
+            placeholder={t("notePlaceholder")}
             disabled={isSubmitting}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
           />
@@ -128,7 +136,7 @@ export default function WalletTransactionForm({
           disabled={isSubmitting || !amount}
           className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Processing..." : "+ Add Credit"}
+          {isSubmitting ? t("processing") : t("addCredit")}
         </button>
         <button
           type="button"
@@ -136,7 +144,7 @@ export default function WalletTransactionForm({
           disabled={isSubmitting || !amount || currentBalance === 0}
           className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Processing..." : "- Remove Funds"}
+          {isSubmitting ? t("processing") : t("removeFunds")}
         </button>
       </div>
     </div>

@@ -10,10 +10,13 @@ export interface TicketColorScheme {
   qrLight: string;
 }
 
+/** Locale-keyed string for text baked into the rendered ticket PNG (Satori, not next-intl). */
+export type LocalizedTicketText = Record<"sl" | "en", string>;
+
 export interface TicketTextContent {
-  priceLabel: string | null; // null = show actual price, string = custom label
-  tagline: string | null;    // Optional tagline below price label
-  legalText: string;
+  priceLabel: LocalizedTicketText | null; // null = show actual price, map = custom label
+  tagline: LocalizedTicketText | null; // Optional tagline below price label
+  legalText: LocalizedTicketText;
 }
 
 export interface TicketTemplate {

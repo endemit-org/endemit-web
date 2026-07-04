@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { fetchTransactionsAction } from "@/domain/wallet/actions/fetchTransactionsAction";
 import type { PaginatedTransactions } from "@/domain/wallet/types";
 import type { WalletTransactionType } from "@prisma/client";
@@ -13,14 +14,6 @@ import clsx from "clsx";
 interface TransactionsDisplayProps {
   initialData: PaginatedTransactions;
 }
-
-const typeLabels: Record<string, string> = {
-  CREDIT: "Credit",
-  DEBIT: "Debit",
-  PURCHASE: "Purchase",
-  REFUND: "Refund",
-  ADJUSTMENT: "Adjustment",
-};
 
 const typeColors: Record<string, string> = {
   CREDIT: "bg-green-100 text-green-800",
@@ -41,6 +34,9 @@ const transactionTypes: WalletTransactionType[] = [
 export default function TransactionsDisplay({
   initialData,
 }: TransactionsDisplayProps) {
+  const t = useTranslations("admin.transactions");
+  const tt = useTranslations("admin.transactions.type");
+  const tc = useTranslations("admin.common");
   const [transactions, setTransactions] = useState(initialData.transactions);
   const [currentPage, setCurrentPage] = useState(initialData.page);
   const [totalPages, setTotalPages] = useState(initialData.totalPages);
@@ -96,7 +92,7 @@ export default function TransactionsDisplay({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Total:{" "}
+            {t("total")}{" "}
             <strong className="text-gray-900">{totalCount}</strong>
           </div>
           <select
@@ -106,10 +102,10 @@ export default function TransactionsDisplay({
             }
             className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Types</option>
+            <option value="">{t("allTypes")}</option>
             {transactionTypes.map(type => (
               <option key={type} value={type}>
-                {typeLabels[type]}
+                {tt(type)}
               </option>
             ))}
           </select>
@@ -120,7 +116,7 @@ export default function TransactionsDisplay({
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search by user..."
+              placeholder={t("searchPlaceholder")}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -128,7 +124,7 @@ export default function TransactionsDisplay({
               disabled={isLoading}
               className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50"
             >
-              Search
+              {tc("search")}
             </button>
           </form>
           <button
@@ -136,7 +132,7 @@ export default function TransactionsDisplay({
             disabled={isLoading}
             className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
           >
-            {isLoading ? "Loading..." : "Refresh"}
+            {isLoading ? tc("loading") : tc("refresh")}
           </button>
         </div>
       </div>
@@ -144,32 +140,32 @@ export default function TransactionsDisplay({
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         {transactions.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
-            No transactions found
+            {t("noTransactions")}
           </div>
         ) : (
           <table className="min-w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  {t("col.date")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                  {t("col.user")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
+                  {t("col.type")}
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount
+                  {t("col.amount")}
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Balance After
+                  {t("col.balanceAfter")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Note
+                  {t("col.note")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created By
+                  {t("col.createdBy")}
                 </th>
               </tr>
             </thead>
@@ -196,7 +192,7 @@ export default function TransactionsDisplay({
                         typeColors[tx.type] || "bg-gray-100 text-gray-800"
                       )}
                     >
-                      {typeLabels[tx.type] || tx.type}
+                      {tt.has(tx.type) ? tt(tx.type) : tx.type}
                     </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-right">
@@ -217,7 +213,7 @@ export default function TransactionsDisplay({
                     {tx.note || "-"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                    {tx.createdBy?.name || tx.createdBy?.username || "System"}
+                    {tx.createdBy?.name || tx.createdBy?.username || t("system")}
                   </td>
                 </tr>
               ))}

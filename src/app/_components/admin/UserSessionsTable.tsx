@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { terminateSessionAction } from "@/domain/user/actions/terminateSessionAction";
 import { terminateAllSessionsAction } from "@/domain/user/actions/terminateAllSessionsAction";
@@ -13,9 +14,7 @@ interface UserSessionsTableProps {
   sessions: SerializedSession[];
 }
 
-function parseUserAgent(ua: string | null): string {
-  if (!ua) return "Unknown";
-
+function parseUserAgent(ua: string): string {
   // Simple user agent parsing
   if (ua.includes("Chrome")) return "Chrome";
   if (ua.includes("Firefox")) return "Firefox";
@@ -31,6 +30,7 @@ export default function UserSessionsTable({
   sessions,
 }: UserSessionsTableProps) {
   const router = useRouter();
+  const t = useTranslations("admin.users");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +69,7 @@ export default function UserSessionsTable({
 
   if (sessions.length === 0) {
     return (
-      <div className="text-sm text-gray-500 py-4">No active sessions</div>
+      <div className="text-sm text-gray-500 py-4">{t("sessions.none")}</div>
     );
   }
 
@@ -83,7 +83,7 @@ export default function UserSessionsTable({
           variant="danger"
           fullWidth={false}
         >
-          {isLoading ? "Terminating..." : "Terminate All"}
+          {isLoading ? t("sessions.terminatingAll") : t("sessions.terminateAll")}
         </ActionButton>
       </div>
 
@@ -92,19 +92,19 @@ export default function UserSessionsTable({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Started
+                {t("sessions.started")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                IP Address
+                {t("sessions.ipAddress")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Device
+                {t("sessions.device")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Expires
+                {t("sessions.expires")}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                {t("sessions.actions")}
               </th>
             </tr>
           </thead>
@@ -121,7 +121,9 @@ export default function UserSessionsTable({
                   className="px-4 py-3 whitespace-nowrap text-sm text-gray-600"
                   title={session.userAgent || undefined}
                 >
-                  {parseUserAgent(session.userAgent)}
+                  {session.userAgent
+                    ? parseUserAgent(session.userAgent)
+                    : t("sessions.unknown")}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                   <ClientDate date={session.expiresAt} />
@@ -133,8 +135,8 @@ export default function UserSessionsTable({
                     className="text-red-600 hover:text-red-800 text-sm font-medium disabled:opacity-50"
                   >
                     {loadingSessionId === session.id
-                      ? "Terminating..."
-                      : "Terminate"}
+                      ? t("sessions.terminating")
+                      : t("sessions.terminate")}
                   </button>
                 </td>
               </tr>

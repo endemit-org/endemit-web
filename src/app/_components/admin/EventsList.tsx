@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import Pagination from "@/app/_components/table/Pagination";
@@ -17,6 +18,8 @@ interface EventsListProps {
 }
 
 export default function EventsList({ initialData }: EventsListProps) {
+  const t = useTranslations("admin.events");
+  const tc = useTranslations("admin.common");
   const [events, setEvents] = useState<SerializedEventForAdmin[]>(initialData.events);
   const [ticketStats, setTicketStats] = useState<Record<string, TicketStats>>(initialData.ticketStats);
   const [currentPage, setCurrentPage] = useState(initialData.page);
@@ -55,13 +58,13 @@ export default function EventsList({ initialData }: EventsListProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Events: <strong className="text-gray-900">{totalCount}</strong>
+            {t("list.events")}: <strong className="text-gray-900">{totalCount}</strong>
           </div>
           <div className="text-sm text-gray-600">
-            Active: <strong className="text-green-600">{activeCount}</strong>
+            {t("list.active")}: <strong className="text-green-600">{activeCount}</strong>
           </div>
           <div className="text-sm text-gray-600">
-            Completed: <strong className="text-gray-500">{completedCount}</strong>
+            {t("list.completed")}: <strong className="text-gray-500">{completedCount}</strong>
           </div>
         </div>
         <button
@@ -69,7 +72,7 @@ export default function EventsList({ initialData }: EventsListProps) {
           disabled={isLoading}
           className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
         >
-          {isLoading ? "Loading..." : "Refresh"}
+          {isLoading ? tc("loading") : tc("refresh")}
         </button>
       </div>
 
@@ -115,11 +118,11 @@ export default function EventsList({ initialData }: EventsListProps) {
                         <div className="flex items-center gap-1 flex-shrink-0">
                           {event.isCompleted ? (
                             <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded">
-                              Past Event
+                              {t("pastEvent")}
                             </span>
                           ) : (
                             <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
-                              Upcoming
+                              {t("upcoming")}
                             </span>
                           )}
                           <svg
@@ -147,21 +150,21 @@ export default function EventsList({ initialData }: EventsListProps) {
                           </div>
                           <div>
                             <span className="font-bold text-gray-900">{stats.sold}</span>
-                            <span className="text-gray-500 ml-1">sold</span>
+                            <span className="text-gray-500 ml-1">{t("statLabels.sold")}</span>
                           </div>
                           {stats.guestList > 0 && (
                             <div>
                               <span className="font-bold text-purple-600">{stats.guestList}</span>
-                              <span className="text-gray-500 ml-1">guest</span>
+                              <span className="text-gray-500 ml-1">{t("statLabels.guest")}</span>
                             </div>
                           )}
                           <div>
                             <span className="font-bold text-green-600">{stats.scanned}</span>
-                            <span className="text-gray-500 ml-1">scanned</span>
+                            <span className="text-gray-500 ml-1">{t("statLabels.scanned")}</span>
                           </div>
                           <div>
                             <span className="font-bold text-blue-600">{stats.pending}</span>
-                            <span className="text-gray-500 ml-1">pending</span>
+                            <span className="text-gray-500 ml-1">{t("statLabels.pending")}</span>
                           </div>
                         </div>
                       )}
@@ -173,7 +176,7 @@ export default function EventsList({ initialData }: EventsListProps) {
           </div>
         ) : (
           <div className="p-8 text-center text-gray-500">
-            No events found
+            {t("empty")}
           </div>
         )}
       </div>

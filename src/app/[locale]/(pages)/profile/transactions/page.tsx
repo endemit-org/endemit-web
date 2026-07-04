@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import { formatDate } from "@/lib/util/formatting";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -15,14 +16,22 @@ import ProfileTable, {
 import TransferFundsTrigger from "@/app/_components/wallet/TransferFundsTrigger";
 import clsx from "clsx";
 
-export const metadata: Metadata = {
-  title: "Transactions",
-  description: "View your cashless transaction history",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.transactions.title"),
+    description: t("meta.transactions.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 const typeLabelKeys: Record<string, string> = {
   CREDIT: "transactions.type.credit",
@@ -99,9 +108,9 @@ export default async function ProfileTransactionsPage({
           emptyMessage={t("transactions.empty")}
         >
           {transactions.map((tx, index) => {
-            const formattedDate = new Date(tx.createdAt).toLocaleDateString(
-              "en-US",
-              { month: "short", day: "numeric", year: "numeric" }
+            const formattedDate = formatDate(
+              new Date(tx.createdAt),
+              locale as "sl" | "en"
             );
 
             return (

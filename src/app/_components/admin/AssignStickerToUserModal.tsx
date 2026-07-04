@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
 import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
@@ -16,6 +17,8 @@ export default function AssignStickerToUserModal({
   code,
   onClose,
 }: Props) {
+  const t = useTranslations("admin.pos.stickers");
+  const tc = useTranslations("admin.common");
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
@@ -56,22 +59,20 @@ export default function AssignStickerToUserModal({
       );
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || "Failed to assign sticker");
+        throw new Error(data.error || t("assignFailed"));
       }
       if (data.replacedCode) {
-        setWarning(
-          `Sticker assigned. The user's previous sticker (${data.replacedCode}) was unlinked.`
-        );
+        setWarning(t("replacedWarning", { code: data.replacedCode }));
       }
       router.refresh();
       reset();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to assign sticker");
+      setError(err instanceof Error ? err.message : t("assignFailed"));
     } finally {
       setIsSubmitting(false);
     }
-  }, [code, selectedUser, isSubmitting, router, reset, onClose]);
+  }, [code, selectedUser, isSubmitting, router, reset, onClose, t]);
 
   if (!isOpen || !code) return null;
 
@@ -87,10 +88,10 @@ export default function AssignStickerToUserModal({
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
-              Assign Sticker
+              {t("modalTitle")}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Code:{" "}
+              {t("codeLabel")}{" "}
               <span className="font-mono font-semibold tracking-[0.2em] text-gray-800">
                 {code}
               </span>
@@ -119,13 +120,13 @@ export default function AssignStickerToUserModal({
 
         <div className="p-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Assign to user
+            {t("assignToUser")}
           </label>
           <UserAutocomplete
             value={search}
             onChange={setSearch}
             onUserSelect={setSelectedUser}
-            placeholder="Search by name, email, or username"
+            placeholder={t("modalSearchPlaceholder")}
             disabled={isSubmitting}
           />
 
@@ -148,14 +149,14 @@ export default function AssignStickerToUserModal({
             disabled={isSubmitting}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {tc("cancel")}
           </button>
           <button
             onClick={handleAssign}
             disabled={!selectedUser || isSubmitting}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "Assigning..." : "Assign"}
+            {isSubmitting ? t("assigning") : t("assignAction")}
           </button>
         </div>
       </div>

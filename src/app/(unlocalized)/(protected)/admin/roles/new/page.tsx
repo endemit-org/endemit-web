@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import RoleEditForm from "@/app/_components/admin/RoleEditForm";
@@ -18,6 +19,8 @@ export default async function AdminNewRolePage() {
   if (!user?.permissions.includes(PERMISSIONS.ROLES_CREATE)) {
     redirect("/admin/roles");
   }
+
+  const t = await getTranslations("admin.roles");
 
   return (
     <div>
@@ -39,12 +42,10 @@ export default async function AdminNewRolePage() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Roles
+          {t("detail.back")}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Create New Role</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Define a new role with specific permissions
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("new.title")}</h1>
+        <p className="mt-1 text-sm text-gray-500">{t("new.subtitle")}</p>
       </div>
 
       <RoleEditForm canUpdate={true} canDelete={false} />

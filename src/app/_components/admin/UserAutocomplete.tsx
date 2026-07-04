@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   searchUsersAction,
   type UserSearchResult,
@@ -17,9 +18,10 @@ export default function UserAutocomplete({
   value,
   onChange,
   onUserSelect,
-  placeholder = "Search users or enter email",
+  placeholder,
   disabled = false,
 }: UserAutocompleteProps) {
+  const t = useTranslations("admin.users");
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState<UserSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -182,7 +184,11 @@ export default function UserAutocomplete({
               d="M5 13l4 4L19 7"
             />
           </svg>
-          <span>Selected: {selectedUser.name || selectedUser.username}</span>
+          <span>
+            {t("autocomplete.selected", {
+              name: selectedUser.name || selectedUser.username,
+            })}
+          </span>
         </div>
       )}
 
@@ -226,7 +232,7 @@ export default function UserAutocomplete({
         !selectedUser && (
           <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3">
             <p className="text-sm text-gray-500 text-center">
-              No users found. You can enter a new email.
+              {t("autocomplete.noUsers")}
             </p>
           </div>
         )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { SerializedTicket } from "@/domain/ticket/types/ticket";
 import {
   isTicketChecked,
@@ -22,6 +23,8 @@ export default function AdminTicketDetailsDialog({
   isOpen,
   onClose,
 }: AdminTicketDetailsDialogProps) {
+  const t = useTranslations("admin.tickets");
+  const ts = useTranslations("admin.status.ticket");
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
@@ -85,11 +88,11 @@ export default function AdminTicketDetailsDialog({
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-semibold text-gray-900">
-              Ticket {ticket.shortId}
+              {t("ticketTitle", { shortId: ticket.shortId })}
             </h2>
             {ticket.isGuestList && (
               <span className="rounded-full px-3 py-1 text-sm bg-purple-100 text-purple-800 font-medium">
-                Guest List
+                {t("guestList")}
               </span>
             )}
           </div>
@@ -97,7 +100,7 @@ export default function AdminTicketDetailsDialog({
 
         <div className="p-6 space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-gray-500">Status</span>
+            <span className="text-gray-500">{t("fields.status")}</span>
             <span
               className={clsx(
                 "px-3 py-1 rounded-full text-sm font-medium",
@@ -108,38 +111,38 @@ export default function AdminTicketDetailsDialog({
                   "bg-blue-100 text-blue-800"
               )}
             >
-              {ticket.status}
+              {ts(ticket.status)}
             </span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Short ID</span>
+            <span className="text-gray-500">{t("fields.shortId")}</span>
             <span className="font-mono">{ticket.shortId}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Name</span>
+            <span className="text-gray-500">{t("fields.name")}</span>
             <span className="font-medium">{ticket.ticketHolderName}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Email</span>
+            <span className="text-gray-500">{t("fields.email")}</span>
             <span>{ticket.ticketPayerEmail}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Event</span>
+            <span className="text-gray-500">{t("fields.event")}</span>
             <span>{ticket.eventName}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Price</span>
+            <span className="text-gray-500">{t("fields.price")}</span>
             <span className="font-medium">{formatPrice(ticket.price)}</span>
           </div>
 
           {ticket.scanCount > 0 && (
             <div className="flex justify-between">
-              <span className="text-gray-500">Scan Count</span>
+              <span className="text-gray-500">{t("fields.scanCount")}</span>
               <span className="font-medium text-green-600">
                 {ticket.scanCount}
               </span>
@@ -147,7 +150,7 @@ export default function AdminTicketDetailsDialog({
           )}
 
           <div className="flex justify-between">
-            <span className="text-gray-500">Order</span>
+            <span className="text-gray-500">{t("fields.order")}</span>
             <Link
               href={`/admin/orders`}
               className="text-blue-600 hover:text-blue-800 font-mono text-sm"
@@ -191,7 +194,7 @@ export default function AdminTicketDetailsDialog({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Generating...
+                {t("generating")}
               </>
             ) : (
               <>
@@ -208,7 +211,7 @@ export default function AdminTicketDetailsDialog({
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                Download Ticket
+                {t("downloadTicket")}
               </>
             )}
           </button>
@@ -216,7 +219,7 @@ export default function AdminTicketDetailsDialog({
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors"
             onClick={onClose}
           >
-            Close
+            {t("close")}
           </button>
         </div>
       </div>

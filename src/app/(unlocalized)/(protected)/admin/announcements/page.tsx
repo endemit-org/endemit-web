@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllAnnouncements } from "@/domain/announcement/operations/getAllAnnouncements";
 import AnnouncementsDisplay from "@/app/_components/admin/AnnouncementsDisplay";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Announcements  •  Admin",
@@ -30,30 +31,30 @@ export default async function AdminAnnouncementsPage() {
     (a) => a.status === "scheduled"
   ).length;
 
+  const t = await getTranslations("admin.announcements");
+
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Announcements</h1>
-        <p className="text-gray-500 mt-1">
-          Manage global announcements displayed to users
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="text-gray-500 mt-1">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Total</div>
+          <div className="text-sm font-medium text-gray-500">{t("total")}</div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {announcements.length}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Active Now</div>
+          <div className="text-sm font-medium text-gray-500">{t("activeNow")}</div>
           <div className="mt-1 text-2xl font-semibold text-green-600">
             {activeCount}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Scheduled</div>
+          <div className="text-sm font-medium text-gray-500">{t("scheduled")}</div>
           <div className="mt-1 text-2xl font-semibold text-blue-600">
             {scheduledCount}
           </div>

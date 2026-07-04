@@ -22,14 +22,22 @@ import ProfileAnnouncementsAsync from "@/app/_components/profile/async/ProfileAn
 import ProfileAccessButtonsAsync from "@/app/_components/profile/async/ProfileAccessButtonsAsync";
 import StickerLinkPrompt from "@/app/_components/profile/StickerLinkPrompt";
 
-export const metadata: Metadata = {
-  title: "Profile",
-  description: "View and manage your Endemit account",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.profile.title"),
+    description: t("meta.profile.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function ProfilePage({
   params,

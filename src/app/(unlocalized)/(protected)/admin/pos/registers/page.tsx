@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllPosRegisters } from "@/domain/pos/operations/getAllPosRegisters";
@@ -26,6 +27,8 @@ export default async function AdminPosRegistersPage() {
   if (!currentUser?.permissions.includes(PERMISSIONS.POS_REGISTERS_READ)) {
     redirect("/admin");
   }
+
+  const t = await getTranslations("admin.pos.registers");
 
   const [{ registers }, { items }, usersRaw] = await Promise.all([
     getAllPosRegisters(),
@@ -55,39 +58,47 @@ export default async function AdminPosRegistersPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">POS Registers</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Manage registers, assign items and sellers
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Registers</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.registers")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {registers.filter(r => r.status === "ACTIVE").length}/{registers.length}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Sales</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.sales")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {totalOrders}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Revenue</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.revenue")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {formatPrice(totalSales)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Tips</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.tips")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-amber-600">
             {formatPrice(totalTips)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4 col-span-2 sm:col-span-1 lg:col-span-2">
-          <div className="text-sm font-medium text-gray-500">Cash to Collect (Top-ups)</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.cashToCollect")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-red-600">
             {formatPrice(totalTopUps)}
           </div>

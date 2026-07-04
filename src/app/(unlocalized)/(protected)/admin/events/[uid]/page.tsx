@@ -12,6 +12,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { isEventCompleted } from "@/domain/event/businessLogic";
+import { getTranslations } from "next-intl/server";
 
 export const revalidate = 60;
 
@@ -71,6 +72,8 @@ export default async function AdminEventPage({
   const canCreateTickets =
     user.permissions.includes(PERMISSIONS.TICKETS_CREATE) && !isEventCompleted(event);
 
+  const t = await getTranslations("admin.events");
+
   return (
     <div>
       <div className="mb-6">
@@ -91,7 +94,7 @@ export default async function AdminEventPage({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Events
+          {t("backToEvents")}
         </Link>
       </div>
 
