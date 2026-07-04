@@ -28,7 +28,7 @@
     "addToWallet": "Dodej v Apple Wallet",
     "adding": "Dodajam...",
     "warningTitle": "Rabš Apple Wallet",
-    "warningBody": "Apple Wallet karte najbolš laufajo na iPhonu, iPadu al Macu. Fajl lahko vseeno potegneš dol, sam mogoče ga na tej napravi ne boš mogu odpret.",
+    "warningBody": "Apple Wallet karte najbolš laufajo na iPhonu, iPadu al Macu. Fajl lahko vseeno potegneš dol, sam mogoče ga na tej napravi ne bo dalo odpret.",
     "cancel": "Prekliči",
     "downloadAnyway": "Vseeno potegn dol"
   },
@@ -112,7 +112,7 @@
     "appearsOn": "{name} igra na",
     "exploreOther": "Zbrskaj še druge",
     "dontMissNextTime": "Ne zamud {name}, k pride spet",
-    "subscribePrompt": "Prijav se pa boš zvedo za evente pa lineupe",
+    "subscribePrompt": "Prijav se pa ti sporočimo za evente pa lineupe",
     "setTimes": "Kdaj kdo igra",
     "profile": {
       "partOf": "Del",
@@ -131,7 +131,7 @@
     "eventsHostedAt": "Eventi v {name}",
     "artistsPerformedAt": "Kdo je igral v {name}",
     "dontMissNextEvent": "Ne zamud naslednjga eventa v {name}",
-    "subscribePrompt": "Prijav se pa boš zvedo za evente pa lineupe"
+    "subscribePrompt": "Prijav se pa ti sporočimo za evente pa lineupe"
   },
   "store": {
     "breadcrumb": {
@@ -213,7 +213,7 @@
     "customer": {
       "contactInfo": {
         "title": "Tvoji kontaktni podatki",
-        "signedIn": "Prijavljen si. Za to naročilo bomo uporabil tvoj email.",
+        "signedIn": "Notr si. Za to naročilo uporabimo tvoj email.",
         "description": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila.",
         "descriptionWithTickets": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila pa digitalne karte."
       },
@@ -572,7 +572,7 @@
       "claimFailed": "Prijave ni ratalo oddat",
       "claimModalTitle": "Prijavi manjkajoč event",
       "noPastEvents": "Ni preteklih eventov za prijavo.",
-      "claimModalDesc": "Izberi event, k si ga obiskal/a, pa zanj nimaš karte. Prijave pregledamo in običajno potrdimo v nekaj minutah.",
+      "claimModalDesc": "Izberi enga od svojih preteklih eventov, za katerga nimaš karte. Prijave pregledamo in običajno potrdimo v nekaj minutah.",
       "submitting": "Oddajam…",
       "submitClaim": "Oddaj prijavo"
     },
@@ -727,7 +727,7 @@
       "intro": "Za prijavo v svoj račun uporabi spodnjo kodo. Koda bo potekla čez {minutes, plural, one {# minuto} two {# minuti} few {# minute} other {# minut}}.",
       "orClick": "Ali klikni spodnji gumb:",
       "signInInstantly": "Prijavi se takoj",
-      "ignoreNote": "Če te kode nisi zahteval, lahko to sporočilo mirno prezreš. Nekdo je morda pomotoma vnesel tvoj email.",
+      "ignoreNote": "Če ta koda ni tvoja, lahko to sporočilo mirno prezreš. Nekdo je morda pomotoma vnesel tvoj email.",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
     "orderShipped": {
@@ -826,7 +826,7 @@
       "subjectSent": "Sredstva poslana",
       "subjectReceived": "Sredstva prejeta",
       "descSent": "Poslal si <strong>{amount}</strong> uporabniku <strong>{name}</strong>.",
-      "descReceived": "<strong>{name}</strong> ti je poslal/-a {amount} v tvojo denarnco.",
+      "descReceived": "Na tvojo denarnco je prišlo {amount} od <strong>{name}</strong>.",
       "amountSent": "Poslani znesek",
       "amountReceived": "Prejeti znesek",
       "note": "Opomba",
@@ -853,7 +853,7 @@
   "music": {
     "latestEpisodes": "Predvaji naše frišne epizode",
     "dontMissNextEpisode": "Ne zamud naslednje epizode",
-    "subscribeNewEpisode": "Prijav se pa boš zvedo, k pride nova emit epizoda",
+    "subscribeNewEpisode": "Prijav se pa ti sporočimo, k pride nova emit epizoda",
     "comingSoon": "Kmalo pride",
     "showLess": "Manj",
     "viewAll": "Poglej vse epizode ({count})",
@@ -989,7 +989,7 @@
     },
     "dashboard": {
       "title": "Admin nadzorna plošča",
-      "subtitle": "Dobrodošel v admin panelu",
+      "subtitle": "Dobrodošli v admin panelu",
       "username": "Uporabniško ime",
       "name": "Ime",
       "email": "Email",
@@ -1059,7 +1059,7 @@
         "button": "Razveljavi skeniranje",
         "confirm": "Potrdi razveljavitev",
         "reverting": "Razveljavljam ...",
-        "confirmText": "Si prepričan/a, da želiš razveljaviti skeniranje? Karta bo spet označena kot v čakanju."
+        "confirmText": "Res želiš razveljaviti skeniranje? Karta bo spet označena kot v čakanju."
       },
       "table": {
         "ticketId": "ID karte",
@@ -1718,7 +1718,7 @@
       "breadcrumb": "Skeniranje",
       "metaTitle": "{title} • Skener",
       "heading": "Skener kart za event",
-      "intro": "Dobrodošel v skenerju kart. Spodej izberi event, za katerga želiš skenirat karte.",
+      "intro": "Dobrodošli v skenerju kart. Spodej izberi event, za katerga želiš skenirat karte.",
       "scanningEnabled": "✅ Skeniranje omogočeno",
       "scanningDisabled": "❌ Skeniranje onemogočeno",
       "noEvents": "Trenutno ni eventov za skeniranje",
