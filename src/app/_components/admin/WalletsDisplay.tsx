@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import WalletsTable from "@/app/_components/table/WalletsTable";
 import Pagination from "@/app/_components/table/Pagination";
 import { fetchWalletsAction } from "@/domain/wallet/actions/fetchWalletsAction";
@@ -13,6 +14,8 @@ interface WalletsDisplayProps {
 
 export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
   const router = useRouter();
+  const t = useTranslations("admin.wallets");
+  const tc = useTranslations("admin.common");
   const [wallets, setWallets] = useState(initialData.wallets);
   const [currentPage, setCurrentPage] = useState(initialData.page);
   const [totalPages, setTotalPages] = useState(initialData.totalPages);
@@ -55,7 +58,7 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Total Wallets:{" "}
+            {t("totalWallets")}{" "}
             <strong className="text-gray-900">{totalCount}</strong>
           </div>
         </div>
@@ -65,7 +68,7 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search by user..."
+              placeholder={t("searchPlaceholder")}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -73,7 +76,7 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
               disabled={isLoading}
               className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50"
             >
-              Search
+              {tc("search")}
             </button>
           </form>
           <button
@@ -81,7 +84,7 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
             disabled={isLoading}
             className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
           >
-            {isLoading ? "Loading..." : "Refresh"}
+            {isLoading ? tc("loading") : tc("refresh")}
           </button>
         </div>
       </div>

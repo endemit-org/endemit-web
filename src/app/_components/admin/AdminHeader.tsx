@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import {
   ContextMenu,
@@ -26,6 +27,7 @@ export default function AdminHeader({
   userPermissions = [],
 }: AdminHeaderProps) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const t = useTranslations("admin.nav");
 
   return (
     <>
@@ -40,7 +42,7 @@ export default function AdminHeader({
                 </h1>
               </Link>
               <span className="text-gray-400 text-sm font-medium hidden sm:inline">
-                Admin
+                {t("adminLabel")}
               </span>
             </div>
             <div className="flex items-center space-x-4">

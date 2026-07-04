@@ -8,16 +8,21 @@ import { formatEventDateAndTime } from "@/lib/util/formatting";
 import type { Metadata } from "next";
 import clsx from "clsx";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Ticket scanner",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("scan.scanner");
+  return {
+    title: t("title"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function ScanPage() {
+  const t = await getTranslations("scan.scanner");
   const eventsToScan = await fetchEventsFromCms({});
 
   const eventsToDisplay = eventsToScan?.filter(event => {
@@ -35,21 +40,20 @@ export default async function ScanPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title={"Ticket scanner"}
+        title={t("title")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Scan", path: "scan" },
+          { label: t("breadcrumb"), path: "scan" },
         ]}
       />
       <div className="px-4 py-6 sm:px-0">
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Ticket scanner for events
+              {t("heading")}
             </h3>
             <p className="mt-1 max-w-2xl text-sm text-gray-500">
-              Welcome to the event ticket scanner. Select the event in the list
-              below that you would like to scan the tickets for.
+              {t("intro")}
             </p>
           </div>
           <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
@@ -87,8 +91,8 @@ export default async function ScanPage() {
                       )}
                     >
                       {event.options.enabledTicketScanning
-                        ? `✅ Scanning enabled`
-                        : `❌ Scanning disabled`}
+                        ? t("scanningEnabled")
+                        : t("scanningDisabled")}
                     </span>
                   </Link>
                 </div>
@@ -101,7 +105,7 @@ export default async function ScanPage() {
                     "p-4 text-sm text-center min-h-40 flex flex-col justify-center items-center"
                   }
                 >
-                  <div>There are no events to scan right now</div>
+                  <div>{t("noEvents")}</div>
                 </div>
               ))}
           </div>

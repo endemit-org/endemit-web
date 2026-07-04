@@ -17,14 +17,22 @@ const BackupStickerCard = dynamic(
   () => import("@/app/_components/profile/BackupStickerCard")
 );
 
-export const metadata: Metadata = {
-  title: "Edit Profile",
-  description: "Edit your profile information",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.edit.title"),
+    description: t("meta.edit.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function ProfileEditPage({
   params,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface HeroVimeoBackgroundProps {
   vimeoVideoId: string;
@@ -9,6 +10,7 @@ interface HeroVimeoBackgroundProps {
 export default function HeroVimeoBackground({
   vimeoVideoId,
 }: HeroVimeoBackgroundProps) {
+  const t = useTranslations("common");
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -103,7 +105,7 @@ export default function HeroVimeoBackground({
             e.stopPropagation();
             setIsMuted((m) => !m);
           }}
-          aria-label={isMuted ? "Unmute video" : "Mute video"}
+          aria-label={isMuted ? t("a11y.unmuteVideo") : t("a11y.muteVideo")}
           className="absolute top-4 right-4 z-30 backdrop-blur-lg border border-neutral-700 p-2 text-neutral-300 hover:text-neutral-100 hover:bg-neutral-900/40 transition-colors"
         >
           {isMuted ? (

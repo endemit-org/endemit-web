@@ -20,6 +20,7 @@ export interface AuthenticatedUser {
   name: string | null;
   image: string | null;
   status: UserStatus;
+  locale: string;
   roles: RoleSlug[];
   permissions: Permission[];
   createdAt: Date;

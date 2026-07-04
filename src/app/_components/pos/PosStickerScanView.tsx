@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import type {
   PaymentConfirmOrder,
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
+  const t = useTranslations("pos");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -80,15 +82,14 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
       {isSubmitting && (
         <div className="absolute inset-0 z-10 bg-neutral-900/95 flex flex-col items-center justify-center rounded-b-2xl">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="font-medium">Resolving wristband...</p>
+          <p className="font-medium">{t("sticker.resolving")}</p>
         </div>
       )}
 
       <div className="text-center mb-4">
-        <h3 className="text-lg font-semibold">Scan wristband</h3>
+        <h3 className="text-lg font-semibold">{t("sticker.scanWristband")}</h3>
         <p className="text-sm text-neutral-400 mt-1">
-          Point the camera at the customer&apos;s wristband, or type the 4-char
-          code.
+          {t("sticker.instructions")}
         </p>
       </div>
 
@@ -130,7 +131,7 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
         </div>
       </div>
       <p className="text-xs text-neutral-500 text-center mb-4">
-        Scan QR or type the 4-character wristband code
+        {t("sticker.hint")}
       </p>
 
       {error && (
@@ -143,7 +144,7 @@ export function PosStickerScanView({ orderHash, onScanned, onBack }: Props) {
         onClick={onBack}
         className="w-full text-neutral-400 hover:text-neutral-200 text-sm py-2 transition-colors"
       >
-        ← Back to QR
+        {t("sticker.backToQr")}
       </button>
     </div>
   );

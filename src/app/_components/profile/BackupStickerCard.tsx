@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import QRCode from "qrcode";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
@@ -19,6 +19,7 @@ interface Props {
 
 export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
   const t = useTranslations("profile");
+  const format = useFormatter();
   const router = useRouter();
   const [isLinking, setIsLinking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,7 +89,11 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
             {claimedAt && (
               <p className="text-xs text-neutral-500 mt-1 mb-3">
                 {t("wristband.linkedOn", {
-                  date: new Date(claimedAt).toLocaleDateString(),
+                  date: format.dateTime(new Date(claimedAt), {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }),
                 })}
               </p>
             )}

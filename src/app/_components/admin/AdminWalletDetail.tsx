@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { SerializedWallet, SerializedWalletTransaction } from "@/domain/wallet/types";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { formatTokensFromCents } from "@/lib/util/currency";
@@ -18,6 +19,7 @@ export default function AdminWalletDetail({
   wallet: initialWallet,
   canManageBalance,
 }: AdminWalletDetailProps) {
+  const t = useTranslations("admin.wallets");
   const [balance, setBalance] = useState(initialWallet.balance);
   const [transactions, setTransactions] = useState(initialWallet.transactions);
 
@@ -77,7 +79,7 @@ export default function AdminWalletDetail({
             <h1 className="text-xl font-semibold text-gray-900">
               {initialWallet.user?.name ||
                 initialWallet.user?.username ||
-                "Unknown User"}
+                t("unknownUser")}
             </h1>
             {initialWallet.user?.email && (
               <p className="text-sm text-gray-500 mt-1">
@@ -88,11 +90,11 @@ export default function AdminWalletDetail({
               href={`/admin/users/${initialWallet.userId}`}
               className="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block"
             >
-              View User Profile
+              {t("viewUserProfile")}
             </Link>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500">Current Balance</div>
+            <div className="text-sm text-gray-500">{t("currentBalance")}</div>
             <div
               className={`text-3xl font-bold transition-colors ${
                 balance > 0
@@ -112,19 +114,19 @@ export default function AdminWalletDetail({
         {/* Wallet Info */}
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-            Wallet Information
+            {t("walletInformation")}
           </h2>
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600">Wallet ID:</span>
+              <span className="text-gray-600">{t("walletId")}</span>
               <span className="font-mono text-sm">{initialWallet.id}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Created:</span>
+              <span className="text-gray-600">{t("created")}</span>
               <ClientDate date={initialWallet.createdAt} />
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Last Updated:</span>
+              <span className="text-gray-600">{t("lastUpdatedLabel")}</span>
               <ClientDate date={initialWallet.updatedAt} />
             </div>
           </div>
@@ -134,7 +136,7 @@ export default function AdminWalletDetail({
         {canManageBalance && (
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Manage Balance
+              {t("manageBalance")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4">
               <WalletTransactionForm
@@ -148,7 +150,7 @@ export default function AdminWalletDetail({
         {/* Transaction History */}
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-            Transaction History ({transactions.length})
+            {t("transactionHistory", { count: transactions.length })}
           </h2>
           <WalletTransactionsTable transactions={transactions} />
         </section>

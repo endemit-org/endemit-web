@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { addGuestTicketsAction } from "@/domain/ticket/actions/addGuestTicketAction";
 import ActionButton from "@/app/_components/form/ActionButton";
 import UserAutocomplete from "./UserAutocomplete";
@@ -18,6 +19,8 @@ export default function AddGuestTicketForm({
   eventName,
   onTicketAdded,
 }: AddGuestTicketFormProps) {
+  const t = useTranslations("admin.tickets.guestForm");
+  const tc = useTranslations("admin.common");
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
@@ -72,9 +75,10 @@ export default function AddGuestTicketForm({
         return;
       }
 
-      const ticketText = result.ticketCount === 1 ? "ticket" : "tickets";
       setSuccess(
-        `${result.ticketCount} guest ${ticketText} created${sendEmail ? " and email sent" : ""}`
+        sendEmail
+          ? t("successCreatedWithEmail", { count: result.ticketCount ?? 0 })
+          : t("successCreated", { count: result.ticketCount ?? 0 })
       );
       setTicketCount(1);
       setNames([""]);
@@ -114,7 +118,7 @@ export default function AddGuestTicketForm({
             d="M12 4v16m8-8H4"
           />
         </svg>
-        Add Guest Ticket
+        {t("addButton")}
       </button>
     );
   }
@@ -122,7 +126,7 @@ export default function AddGuestTicketForm({
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Add Guest List Tickets</h3>
+        <h3 className="font-semibold text-gray-900">{t("title")}</h3>
         <button
           onClick={() => setIsOpen(false)}
           className="text-gray-400 hover:text-gray-600"
@@ -149,7 +153,7 @@ export default function AddGuestTicketForm({
             htmlFor="ticket-count"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Number of Tickets
+            {t("numberOfTickets")}
           </label>
           <div className="flex items-center gap-2">
             <button
@@ -184,7 +188,7 @@ export default function AddGuestTicketForm({
 
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">
-            Ticket Holder Names
+            {t("holderNames")}
           </label>
           {names.map((name, index) => (
             <div key={index} className="flex items-center gap-2">
@@ -195,7 +199,7 @@ export default function AddGuestTicketForm({
                 onChange={e => handleNameChange(index, e.target.value)}
                 required
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                placeholder={`Guest ${index + 1} name`}
+                placeholder={t("guestNamePlaceholder", { number: index + 1 })}
               />
             </div>
           ))}
@@ -210,7 +214,7 @@ export default function AddGuestTicketForm({
             className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
           />
           <label htmlFor="send-email" className="text-sm text-gray-700">
-            Send tickets via email
+            {t("sendViaEmail")}
           </label>
         </div>
 
@@ -220,16 +224,16 @@ export default function AddGuestTicketForm({
               htmlFor="guest-email"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email (for all tickets)
+              {t("emailLabel")}
             </label>
             <UserAutocomplete
               value={email}
               onChange={setEmail}
               onUserSelect={handleUserSelect}
-              placeholder="Search existing user or enter new email"
+              placeholder={t("emailPlaceholder")}
             />
             <p className="mt-1 text-xs text-gray-500">
-              Type to search existing users or enter a new email address
+              {t("emailHint")}
             </p>
           </div>
         )}
@@ -254,8 +258,8 @@ export default function AddGuestTicketForm({
             size="sm"
           >
             {isSubmitting
-              ? "Creating..."
-              : `Create ${ticketCount} Guest Ticket${ticketCount > 1 ? "s" : ""}`}
+              ? t("creating")
+              : t("createButton", { count: ticketCount })}
           </ActionButton>
           <ActionButton
             type="button"
@@ -263,7 +267,7 @@ export default function AddGuestTicketForm({
             variant="secondary"
             size="sm"
           >
-            Cancel
+            {tc("cancel")}
           </ActionButton>
         </div>
       </form>

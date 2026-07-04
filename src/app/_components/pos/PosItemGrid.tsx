@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface PosItem {
@@ -17,10 +18,12 @@ interface Props {
 }
 
 export function PosItemGrid({ items, onAddItem, disabledDirection }: Props) {
+  const t = useTranslations("pos");
+
   if (items.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        No items available at this register
+        {t("register.noItems")}
       </div>
     );
   }

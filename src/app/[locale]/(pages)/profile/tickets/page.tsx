@@ -12,14 +12,22 @@ import ProfileTable, {
   ProfileTableRow,
 } from "@/app/_components/profile/ProfileTable";
 
-export const metadata: Metadata = {
-  title: "Tickets",
-  description: "View your event tickets",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.tickets.title"),
+    description: t("meta.tickets.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 const statusColors: Record<string, string> = {
   VALIDATED: "bg-emerald-500/20 text-emerald-400",

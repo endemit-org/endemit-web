@@ -3,17 +3,22 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { prisma } from "@/lib/services/prisma";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { formatTokensFromCents } from "@/lib/util/currency";
 
-export const metadata: Metadata = {
-  title: "POS - Select Register",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pos");
+  return {
+    title: t("register.metaTitle"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function PosPage() {
+  const t = await getTranslations("pos");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -92,10 +97,10 @@ export default async function PosPage() {
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-200">
           <h1 className="text-xl font-semibold text-gray-900">
-            Select Register
+            {t("register.selectRegister")}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Choose a register to start selling
+            {t("register.chooseToStart")}
           </p>
         </div>
 
@@ -115,10 +120,10 @@ export default async function PosPage() {
               />
             </svg>
             <h3 className="mt-4 text-sm font-medium text-gray-900">
-              No registers assigned
+              {t("register.noRegistersAssigned")}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Contact an administrator to be assigned to a register.
+              {t("register.contactAdmin")}
             </p>
           </div>
         ) : (
@@ -141,31 +146,49 @@ export default async function PosPage() {
                           </p>
                         )}
                         <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
-                          <span>{register.items.length} items</span>
+                          <span>
+                            {t("register.itemCount", {
+                              count: register.items.length,
+                            })}
+                          </span>
                           {register.canTopUp && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                              Top-up enabled
+                              {t("register.topUpEnabled")}
                             </span>
                           )}
                         </div>
                         {register.stats.sales > 0 && (
                           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
                             <span className="text-gray-500">
-                              {register.stats.sales} {register.stats.sales === 1 ? "sale" : "sales"}
+                              {t("register.saleCount", {
+                                count: register.stats.sales,
+                              })}
                             </span>
                             {register.stats.salesRevenue > 0 && (
                               <span className="text-gray-900 font-medium">
-                                {formatTokensFromCents(register.stats.salesRevenue)} revenue
+                                {t("register.revenue", {
+                                  amount: formatTokensFromCents(
+                                    register.stats.salesRevenue
+                                  ),
+                                })}
                               </span>
                             )}
                             {register.stats.tips > 0 && (
                               <span className="text-amber-600 font-medium">
-                                +{formatTokensFromCents(register.stats.tips)} tips
+                                {t("register.tips", {
+                                  amount: formatTokensFromCents(
+                                    register.stats.tips
+                                  ),
+                                })}
                               </span>
                             )}
                             {register.stats.topUpsProcessed > 0 && (
                               <span className="text-red-600 font-medium">
-                                {formatTokensFromCents(register.stats.topUpsProcessed)} to collect
+                                {t("register.toCollect", {
+                                  amount: formatTokensFromCents(
+                                    register.stats.topUpsProcessed
+                                  ),
+                                })}
                               </span>
                             )}
                           </div>
@@ -174,7 +197,9 @@ export default async function PosPage() {
                       <div className="flex items-center gap-4">
                         {register._count.orders > 0 && (
                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            {register._count.orders} pending
+                            {t("register.pending", {
+                              count: register._count.orders,
+                            })}
                           </span>
                         )}
                         <svg

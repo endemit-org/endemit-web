@@ -5,6 +5,7 @@ import { SerializedOrder } from "@/domain/order/types/serialized";
 import { formatPrice, formatEmailForDisplay } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 const statusColors: Record<string, string> = {
   CREATED: "bg-gray-100 text-gray-800",
@@ -25,10 +26,13 @@ export default function OrdersTable({
   orders: SerializedOrder[];
   onRowClick?: (row: SerializedOrder) => void;
 }) {
+  const t = useTranslations("admin.orders");
+  const tt = useTranslations("common.table");
+  const ts = useTranslations("admin.status.order");
   const columns: Column<SerializedOrder>[] = [
     {
       key: "id",
-      header: "Order ID",
+      header: t("table.orderId"),
       sortable: true,
       render: order => (
         <span className="font-mono text-xs">{order.id.slice(0, 12)}...</span>
@@ -36,7 +40,7 @@ export default function OrdersTable({
     },
     {
       key: "email",
-      header: "Email",
+      header: t("table.email"),
       sortable: true,
       render: order => (
         <span className="text-sm">{formatEmailForDisplay(order.email)}</span>
@@ -44,7 +48,7 @@ export default function OrdersTable({
     },
     {
       key: "status",
-      header: "Status",
+      header: t("table.status"),
       sortable: true,
       render: order => (
         <span
@@ -53,13 +57,13 @@ export default function OrdersTable({
             statusColors[order.status] || "bg-gray-100 text-gray-800"
           )}
         >
-          {order.status}
+          {ts(order.status)}
         </span>
       ),
     },
     {
       key: "totalAmount",
-      header: "Total",
+      header: t("table.total"),
       sortable: true,
       render: order => (
         <span className="font-medium">{formatPrice(order.totalAmount)}</span>
@@ -67,7 +71,7 @@ export default function OrdersTable({
     },
     {
       key: "ticketCount",
-      header: "Tickets",
+      header: t("table.tickets"),
       sortable: true,
       render: order => (
         <span
@@ -82,7 +86,7 @@ export default function OrdersTable({
     },
     {
       key: "createdAt",
-      header: "Date",
+      header: t("table.date"),
       sortable: true,
       render: order => (
         <ClientDate date={order.createdAt} className="text-sm text-gray-600" />
@@ -96,7 +100,7 @@ export default function OrdersTable({
       data={orders}
       columns={columns}
       onRowClick={onRowClick}
-      emptyMessage="No orders found"
+      emptyMessage={tt("noOrders")}
       maxHeight="calc(100dvh - 400px)"
     />
   );

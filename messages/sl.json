@@ -2,7 +2,27 @@
   "common": {
     "loading": "Čakej, se nalaga…",
     "back": "Nazaj",
-    "close": "Zapri"
+    "close": "Zapri",
+    "table": {
+      "noResults": "Nič ni najdenga",
+      "noOrders": "Ni najdenih naročil",
+      "firstPage": "Prva stran",
+      "previousPage": "Prejšna stran",
+      "nextPage": "Naslednja stran",
+      "lastPage": "Zadnja stran",
+      "pageOf": "Stran {current} od {total}"
+    },
+    "a11y": {
+      "backToTop": "Nazaj na vrh",
+      "muteVideo": "Utišaj video",
+      "unmuteVideo": "Vklopi zvok",
+      "tabs": "Zavihki",
+      "closeLightbox": "Zapri",
+      "previousImage": "Prejšna slika",
+      "nextImage": "Naslednja slika",
+      "viewImage": "Poglej sliko {number}",
+      "noContent": "Ni vsebine"
+    }
   },
   "walletPass": {
     "addToWallet": "Dodej v Apple Wallet",
@@ -139,14 +159,18 @@
     },
     "checkout": {
       "title": "Blagajna",
-      "breadcrumb": "Blagajna"
+      "breadcrumb": "Blagajna",
+      "metaTitle": "Varna blagajna",
+      "metaDescription": "Varna blagajna trgovine Endemit. Preglej naročilo, vpiši podatke za dostavo in varno zaključi nakup s SSL šifriranjem."
     },
     "success": {
       "title": "Naročilo je noter!",
       "thankYou": "Hvala za naročilo. Mejl s potrditvijo je odletel na",
       "emailLabel": "Email",
       "ticketsNote": "Karte za <strong>{names}</strong> ti pridejo na mejl kmau, v naslednjih 30 minutah.",
-      "orderId": "Št. naročila"
+      "orderId": "Št. naročila",
+      "metaTitle": "Naročilo potrjeno",
+      "metaDescription": "Tvoje naročilo na endemit.org je blo uspešno potrjeno. Nadaljuj ali zapri to stran."
     },
     "interrupted": {
       "title": "Plačilo se je prekinilo!",
@@ -156,7 +180,9 @@
       "orderTotal": "Za plačat",
       "completePayment": "Dokončaj plačilo",
       "returnToCart": "Nazaj v košaro",
-      "needHelp": "Rabiš pomoč? <contact>Piš nam</contact>"
+      "needHelp": "Rabiš pomoč? <contact>Piš nam</contact>",
+      "metaTitle": "Plačilo prekinjeno",
+      "metaDescription": "Tvoje plačilo je blo prekinjeno in naročila ni zaključilo."
     }
   },
   "checkout": {
@@ -550,6 +576,32 @@
       "title": "Prihajajoči dogodki",
       "subtitle": "Ne zamud — zgrab karte!",
       "ticketsAvailable": "Karte na voljo"
+    },
+    "meta": {
+      "profile": {
+        "title": "Profil",
+        "description": "Poglej in uredi svoj Endemit račun"
+      },
+      "tickets": {
+        "title": "Karte",
+        "description": "Poglej svoje karte za dogodke"
+      },
+      "ticket": {
+        "title": "Karta",
+        "description": "Poglej svojo karto"
+      },
+      "edit": {
+        "title": "Uredi profil",
+        "description": "Uredi podatke svojega profila"
+      },
+      "transactions": {
+        "title": "Transakcije",
+        "description": "Poglej zgodovino svojih brezgotovinskih transakcij"
+      },
+      "orders": {
+        "title": "Naročila",
+        "description": "Poglej zgodovino svojih naročil"
+      }
     }
   },
   "signin": {
@@ -601,16 +653,22 @@
       "resend": "Pošlji kodo spet",
       "differentEmail": "Uporab drug email",
       "invalidCode": "Napačna koda. Probej še enkrat.",
-      "resendFailed": "Kode ni ratalo poslat spet."
+      "resendFailed": "Kode ni ratalo poslat spet.",
+      "metaTitle": "Preveri kodo",
+      "metaDescription": "Vnesi svojo potrditveno kodo"
     },
     "profileButton": {
       "profile": "Profil"
-    }
+    },
+    "metaTitle": "Prijava",
+    "metaDescription": "Prijavi se v svoj račun"
   },
   "notFound": {
     "title": "Te strani ni",
     "description": "Strani, k jo iščeš, ni — al pa se je kam zgubila.",
-    "backHome": "Nazaj damu"
+    "backHome": "Nazaj damu",
+    "metaTitle": "Strani ni",
+    "metaDescription": "Strani, ki jo iščeš, ni več ali pa je bila premaknjena. Vrni se na endemit.org, prosim."
   },
   "languageSwitcher": {
     "sl": "Po Koroško",
@@ -832,5 +890,882 @@
       "successHeading": "si zdej notr!",
       "emailPlaceholder": "ti@gmail.com"
     }
+  },
+  "admin": {
+    "donations": {
+      "title": "Donacije",
+      "subtitle": "Donacije, prejete prek naročil",
+      "totalDonated": "Skupaj donirano",
+      "average": "Povprečje",
+      "tabTransactions": "Transakcije",
+      "tabDonors": "Donatorji ({count})",
+      "totalDonations": "Skupaj donirano:",
+      "count": "Število:",
+      "totalDonors": "Donatorji:",
+      "totalDonatedColon": "Skupaj donirano:",
+      "date": "Datum",
+      "donor": "Donator",
+      "email": "E-pošta",
+      "amount": "Znesek",
+      "order": "Naročilo",
+      "anonymous": "Anonimno",
+      "view": "Poglej",
+      "noDonations": "Še ni donacij",
+      "first": "Prva",
+      "last": "Zadnja",
+      "donationCount": "{count} donacij",
+      "noDonors": "Še ni donatorjev"
+    },
+    "announcements": {
+      "title": "Obvestila",
+      "subtitle": "Upravljaj obvestila po celi strani",
+      "total": "Skupaj",
+      "activeNow": "Zdaj aktivno",
+      "scheduled": "Načrtovano",
+      "active": "Aktivno",
+      "expired": "Poteklo",
+      "inactive": "Neaktivno",
+      "typeInfo": "Info",
+      "typeWarning": "Opozorilo",
+      "totalLabel": "Skupaj:",
+      "createButton": "Novo obvestilo",
+      "newTitle": "Novo obvestilo",
+      "editTitle": "Uredi obvestilo",
+      "titleLabel": "Naslov",
+      "titlePlaceholder": "Neobvezen naslov",
+      "messageLabel": "Sporočilo",
+      "messagePlaceholder": "Besedilo obvestila",
+      "typeLabel": "Tip",
+      "startsAt": "Začne se",
+      "endsAt": "Konča se",
+      "saving": "Shranjujem...",
+      "update": "Posodobi",
+      "colMessage": "Sporočilo",
+      "colType": "Tip",
+      "colStatus": "Status",
+      "colSchedule": "Urnik",
+      "colActions": "Dejanja",
+      "from": "Od",
+      "until": "Do",
+      "always": "Vedno",
+      "deleteConfirm": "Zbrišem?",
+      "yes": "Ja",
+      "no": "Ne",
+      "noAnnouncements": "Še ni obvestil"
+    },
+    "eventClaims": {
+      "title": "Zahtevki za dogodke",
+      "subtitle": "Upravljaj uporabniške zahtevke za pretekle dogodke",
+      "total": "Skupaj",
+      "pending": "V čakanju",
+      "approved": "Odobreno",
+      "filterAll": "Vsi",
+      "searchPlaceholder": "Išči zahtevke...",
+      "addClaim": "Dodaj zahtevek",
+      "colUser": "Uporabnik",
+      "colEvent": "Dogodek",
+      "colStatus": "Status",
+      "colCreated": "Ustvarjeno",
+      "colActions": "Dejanja",
+      "noClaims": "Noben zahtevek se ne ujema s temi filtri.",
+      "approveNow": "Odobri zdaj",
+      "pageInfo": "Stran {page} od {totalPages} — {total} skupaj",
+      "previous": "Nazaj",
+      "next": "Naprej",
+      "userSearchPlaceholder": "Išči po imenu, uporabniškem imenu ali e-pošti",
+      "selectEvent": "Izberi pretekli dogodek...",
+      "autoApproveNote": "Zahtevek se bo uvrstil v vrsto za samodejno odobritev čez 5 minut, isto kot uporabnikov zahtevek. Uporabi »Odobri zdaj« v seznamu, če hočeš preskočiti čakanje.",
+      "creating": "Ustvarjam...",
+      "createClaim": "Ustvari zahtevek",
+      "failedCreate": "Zahtevka ni bilo mogoče ustvariti",
+      "approveConfirm": "Odobrim zahtevek za »{event}« od {user}?",
+      "deleteConfirm": "Zbrišem zahtevek {status} za »{event}« od {user}?",
+      "failedApprove": "Zahtevka ni bilo mogoče odobriti",
+      "failedDelete": "Zahtevka ni bilo mogoče zbrisati"
+    },
+    "dashboard": {
+      "title": "Admin nadzorna plošča",
+      "subtitle": "Dobrodošel v admin panelu",
+      "username": "Uporabniško ime",
+      "name": "Ime",
+      "email": "E-pošta",
+      "roles": "Vloge",
+      "permissions": "Dovoljenja"
+    },
+    "events": {
+      "title": "Dogodki",
+      "subtitle": "Poglej in uredi vstopnice za dogodke",
+      "totalRevenue": "Skupni prihodek",
+      "totalEvents": "Skupaj dogodkov",
+      "ticketsSold": "Prodane vstopnice",
+      "upcoming": "Prihajajoče",
+      "pastEvent": "Pretekli dogodek",
+      "empty": "Ni najdenih dogodkov",
+      "backToEvents": "Nazaj na dogodke",
+      "list": {
+        "events": "Dogodki",
+        "active": "Aktivni",
+        "completed": "Zaključeni"
+      },
+      "statLabels": {
+        "sold": "prodanih",
+        "guest": "gostov",
+        "scanned": "skeniranih",
+        "pending": "v čakanju"
+      },
+      "metrics": {
+        "revenue": "Prihodek",
+        "sold": "Prodano",
+        "scanned": "Skenirano",
+        "pending": "V čakanju",
+        "guest": "Gost"
+      },
+      "pendingTickets": "Vstopnice v čakanju ({count})",
+      "scannedTickets": "Skenirane vstopnice ({count})"
+    },
+    "tickets": {
+      "backToEvent": "Nazaj na dogodek",
+      "ticketTitle": "Vstopnica {shortId}",
+      "guestList": "Seznam gostov",
+      "close": "Zapri",
+      "viewEvent": "Poglej dogodek",
+      "sections": {
+        "ticketInfo": "Podatki o vstopnici",
+        "orderInfo": "Podatki o naročilu",
+        "actions": "Dejanja"
+      },
+      "fields": {
+        "status": "Status",
+        "shortId": "Kratki ID",
+        "ticketId": "ID vstopnice",
+        "name": "Ime",
+        "email": "E-pošta",
+        "event": "Dogodek",
+        "price": "Cena",
+        "scanCount": "Št. skeniranj",
+        "created": "Ustvarjeno",
+        "order": "Naročilo",
+        "orderId": "ID naročila",
+        "customer": "Stranka",
+        "orderStatus": "Status naročila"
+      },
+      "downloadTicket": "Prenesi vstopnico",
+      "generating": "Ustvarjam ...",
+      "revert": {
+        "button": "Razveljavi skeniranje",
+        "confirm": "Potrdi razveljavitev",
+        "reverting": "Razveljavljam ...",
+        "confirmText": "Si prepričan, da želiš razveljaviti skeniranje? Vstopnica bo spet označena kot v čakanju."
+      },
+      "table": {
+        "ticketId": "ID vstopnice",
+        "guest": "Gost",
+        "customer": "Stranka",
+        "email": "E-pošta",
+        "status": "Status"
+      },
+      "guestForm": {
+        "addButton": "Dodaj vstopnico za gosta",
+        "title": "Dodaj vstopnice s seznama gostov",
+        "numberOfTickets": "Število vstopnic",
+        "holderNames": "Imena imetnikov vstopnic",
+        "guestNamePlaceholder": "Ime gosta {number}",
+        "sendViaEmail": "Pošlji vstopnice po e-pošti",
+        "emailLabel": "E-pošta (za vse vstopnice)",
+        "emailPlaceholder": "Poišči obstoječega uporabnika ali vnesi novo e-pošto",
+        "emailHint": "Tipkaj za iskanje obstoječih uporabnikov ali vnesi nov e-poštni naslov",
+        "creating": "Ustvarjam ...",
+        "createButton": "{count, plural, one {Ustvari # vstopnico za gosta} two {Ustvari # vstopnici za gosta} few {Ustvari # vstopnice za gosta} other {Ustvari # vstopnic za gosta}}",
+        "successCreated": "{count, plural, one {# vstopnica za gosta ustvarjena} two {# vstopnici za gosta ustvarjeni} few {# vstopnice za gosta ustvarjene} other {# vstopnic za gosta ustvarjenih}}",
+        "successCreatedWithEmail": "{count, plural, one {# vstopnica za gosta ustvarjena in e-pošta poslana} two {# vstopnici za gosta ustvarjeni in e-pošta poslana} few {# vstopnice za gosta ustvarjene in e-pošta poslana} other {# vstopnic za gosta ustvarjenih in e-pošta poslana}}"
+      }
+    },
+    "orders": {
+      "page": {
+        "metaTitle": "Naročila  •  Admin",
+        "title": "Naročila",
+        "subtitle": "Poglej in upravljaj vsa naročila v sistemu",
+        "stats": {
+          "totalRevenue": "Skupni prihodek",
+          "paidOrders": "Plačana naročila",
+          "pending": "V čakanju"
+        }
+      },
+      "list": {
+        "paidNotComplete": "Plačano, ni zaključeno:",
+        "ordersLabel": "Naročila:",
+        "showingLabel": "Prikazano:"
+      },
+      "table": {
+        "orderId": "ID naročila",
+        "email": "E-pošta",
+        "status": "Status",
+        "total": "Skupaj",
+        "tickets": "Vstopnice",
+        "date": "Datum"
+      },
+      "detail": {
+        "metaTitle": "Naročilo {id}  •  Naročila  •  Admin",
+        "title": "Podrobnosti naročila",
+        "loading": "Se nalagajo podrobnosti naročila…",
+        "notFound": "Naročila ni bilo mogoče najti",
+        "customerInfo": "Podatki o kupcu",
+        "name": "Ime:",
+        "email": "E-pošta:",
+        "date": "Datum:",
+        "orderSummary": "Povzetek naročila",
+        "subtotal": "Vmesni seštevek:",
+        "discount": "Popust:",
+        "shipping": "Dostava:",
+        "total": "Skupaj:",
+        "items": "Artikli ({count})",
+        "qty": "Količina: {count}",
+        "tickets": "Vstopnice ({count})",
+        "viewEventTickets": "Poglej vstopnice dogodka →",
+        "shippingAddress": "Naslov za dostavo",
+        "close": "Zapri",
+        "backToOrders": "Nazaj na naročila",
+        "guest": "Gost",
+        "address": "Naslov:",
+        "city": "Kraj:",
+        "country": "Država:",
+        "phone": "Telefon:",
+        "viewOnGoogleMaps": "Poglej na Google Zemljevidih"
+      },
+      "ticketStatus": {
+        "VALIDATED": "Pripravljeno za skeniranje",
+        "PENDING": "Pripravljeno za skeniranje",
+        "SCANNED": "Uporabljeno",
+        "CANCELLED": "Preklicano",
+        "BANNED": "Blokirano",
+        "REFUND_REQUESTED": "Zahtevano vračilo",
+        "REFUNDED": "Vrnjeno",
+        "EXPIRED": "Poteklo"
+      },
+      "actions": {
+        "actionFailed": "Dejanje ni uspelo",
+        "confirm": "Potrdi",
+        "processing": "Se obdeluje…"
+      },
+      "refund": {
+        "title": "Izvedi vračilo",
+        "subtitle": "Izberi artikle za vračilo. Vračila se izvedejo prek Stripa.",
+        "selectItems": "Izberi artikle",
+        "priceEach": "{price} na kos",
+        "alreadyRefundedCount": "{refunded} od {total} že vrnjeno",
+        "shipping": "Dostava",
+        "deliveryFee": "Strošek dostave",
+        "alreadyRefunded": "Že vrnjeno",
+        "shippingRefund": "Vračilo dostave:",
+        "totalRefundAmount": "Skupni znesek vračila:",
+        "limitedByWallet": "Omejeno s preostalim stanjem denarnice ({balance})",
+        "previouslyRefunded": "Predhodno vrnjeno: {amount}",
+        "reasonLabel": "Razlog (neobvezno)",
+        "reasonPlaceholder": "Razlog za vračilo…",
+        "calcLimitFailed": "Ni bilo mogoče izračunati omejitve vračila",
+        "calcFailed": "Ni bilo mogoče izračunati vračila",
+        "failed": "Vračilo ni uspelo"
+      }
+    },
+    "pos": {
+      "items": {
+        "title": "POS artikli",
+        "subtitle": "Uredi artikle, ki so na voljo za prodajo na POS blagajnah",
+        "stats": {
+          "total": "Vsi artikli",
+          "active": "Aktivni",
+          "inactive": "Neaktivni"
+        },
+        "addItem": "Dodej artikel",
+        "newItem": "Nov artikel",
+        "editItem": "Uredi artikel",
+        "fieldName": "Ime",
+        "fieldPrice": "Cena ({symbol})",
+        "fieldDirection": "Smer",
+        "directionDebit": "V breme (zaračunaj kupcu)",
+        "directionCredit": "Dobro (napolni kupcu)",
+        "fieldStatus": "Status",
+        "statusActive": "Aktiven",
+        "statusInactive": "Neaktiven",
+        "fieldDescription": "Opis",
+        "saving": "Shranjujem…",
+        "update": "Posodobi",
+        "colName": "Ime",
+        "colPrice": "Cena",
+        "colDirection": "Smer",
+        "colStatus": "Status",
+        "colSold": "Prodano (30 dni)",
+        "colActions": "Dejanja",
+        "soldCount": "{count} prodano",
+        "emptyItems": "Še ni nobenga artikla."
+      },
+      "orders": {
+        "title": "POS naročila",
+        "subtitle": "Poglej in uredi vsa POS naročila",
+        "stats": {
+          "total": "Vsa naročila",
+          "paid": "Plačano",
+          "revenue": "Prihodek",
+          "tips": "Napitnine",
+          "cashToCollect": "Gotovina za pobrat"
+        },
+        "filterStatus": "Status",
+        "allStatuses": "Vsi statusi",
+        "statusPending": "V teku",
+        "statusPaid": "Plačano",
+        "statusCancelled": "Preklicano",
+        "filterRegister": "Blagajna",
+        "allRegisters": "Vse blagajne",
+        "ordersFound": "Najdenih naročil: {count}",
+        "colOrder": "Naročilo",
+        "colRegister": "Blagajna",
+        "colCustomer": "Kupec",
+        "colTotal": "Skupaj",
+        "colStatus": "Status",
+        "colCreated": "Ustvarjeno",
+        "colActions": "Dejanja",
+        "itemsCount": "{count} artiklov",
+        "unnamed": "Brez imena",
+        "noCustomer": "Brez kupca",
+        "tipSuffix": "+{amount} napitnine",
+        "details": "Podrobnosti",
+        "emptyOrders": "Ni najdenih naročil.",
+        "previous": "Nazaj",
+        "next": "Naprej",
+        "modalOrder": "Naročilo {code}",
+        "labelStatus": "Status",
+        "labelRegister": "Blagajna",
+        "labelSeller": "Prodajalec",
+        "unknown": "Neznano",
+        "labelCustomer": "Kupec",
+        "none": "Nič",
+        "labelCreated": "Ustvarjeno",
+        "labelPaid": "Plačano",
+        "labelCancelled": "Preklicano",
+        "itemsHeading": "Artikli",
+        "subtotal": "Vmesni seštevek",
+        "tip": "Napitnina",
+        "total": "Skupaj"
+      },
+      "registers": {
+        "title": "POS blagajne",
+        "subtitle": "Uredi blagajne, dodeli artikle in prodajalce",
+        "stats": {
+          "registers": "Blagajne",
+          "sales": "Prodaja",
+          "revenue": "Prihodek",
+          "tips": "Napitnine",
+          "cashToCollect": "Gotovina za pobrat (polnjenja)"
+        },
+        "addRegister": "Dodej blagajno",
+        "newRegister": "Nova blagajna",
+        "editRegister": "Uredi blagajno",
+        "fieldName": "Ime",
+        "fieldStatus": "Status",
+        "statusActive": "Aktivna",
+        "statusInactive": "Neaktivna",
+        "fieldDescription": "Opis",
+        "canTopUp": "Polnjenje omogočeno",
+        "saving": "Shranjujem…",
+        "update": "Posodobi",
+        "manageTitle": "Upravljaj {name}",
+        "assignedItems": "Dodeljeni artikli",
+        "remove": "Odstrani",
+        "noItemsAssigned": "Ni dodeljenih artiklov.",
+        "selectItem": "Izberi artikel…",
+        "add": "Dodej",
+        "assignedSellers": "Dodeljeni prodajalci",
+        "unnamed": "Brez imena",
+        "noSellersAssigned": "Ni dodeljenih prodajalcev.",
+        "selectUser": "Izberi uporabnika…",
+        "cardItemsSellers": "Artikli / Prodajalci",
+        "cardSales": "Prodaja",
+        "cardTips": "Napitnine",
+        "cardCashToCollect": "Gotovina za pobrat",
+        "manage": "Upravljaj",
+        "emptyRegisters": "Še ni nobene blagajne."
+      },
+      "stickers": {
+        "title": "POS offline QR-ji",
+        "subtitle": "Uredi zalogo vnaprej natisnjenih offline QR kod.",
+        "stats": {
+          "total": "Skupaj",
+          "claimed": "Prevzeto",
+          "unclaimed": "Neprevzeto"
+        },
+        "filterAll": "Vse",
+        "filterUnclaimed": "Neprevzeto",
+        "filterClaimed": "Prevzeto",
+        "searchPlaceholder": "Išči kodo, uporabniško ime, email…",
+        "search": "Išči",
+        "generateLabel": "Ustvari nove kode:",
+        "generate": "Ustvari",
+        "generating": "Ustvarjam…",
+        "enterPositive": "Vpiši pozitivno število.",
+        "confirmGenerate": "Ustvarim {count} novih kod?",
+        "generateFailed": "Kod ni uspelo ustvarit.",
+        "createdCodes": "Ustvarjenih {created} kod. Skupaj v zalogi: {total}.",
+        "colCode": "Koda",
+        "colStatus": "Status",
+        "colAssignedTo": "Dodeljeno",
+        "colClaimedAt": "Prevzeto ob",
+        "claimed": "Prevzeto",
+        "unclaimed": "Neprevzeto",
+        "noStickers": "Nobena nalepka ne ustreza tem filtrom.",
+        "viewUser": "Poglej uporabnika →",
+        "assign": "Dodeli →",
+        "pageInfo": "Stran {page} od {total} — skupaj {count}",
+        "previous": "Nazaj",
+        "next": "Naprej",
+        "modalTitle": "Dodeli nalepko",
+        "codeLabel": "Koda:",
+        "assignToUser": "Dodeli uporabniku",
+        "modalSearchPlaceholder": "Išči po imenu, emailu ali uporabniškem imenu",
+        "assignFailed": "Nalepke ni uspelo dodelit",
+        "replacedWarning": "Nalepka dodeljena. Prejšnja uporabnikova nalepka ({code}) je bla odvezana.",
+        "assigning": "Dodeljujem…",
+        "assignAction": "Dodeli"
+      }
+    },
+    "users": {
+      "list": {
+        "total": "Skupaj:",
+        "addUser": "Dodaj uporabnika"
+      },
+      "create": {
+        "title": "Ustvari uporabnika",
+        "usernamePlaceholder": "Če je prazno, se vzame kar e-pošta",
+        "usernameHint": "Pusti prazno, pa bo uporabniško ime kar e-poštni naslov",
+        "namePlaceholder": "Neobvezno prikazno ime",
+        "signInType": "Način prijave",
+        "signInOtc": "Čarobna povezava (koda na e-pošto)",
+        "signInPassword": "Geslo",
+        "signInHintOtc": "Uporabnik se prijavi z enkratno kodo, ki mu jo pošljemo na e-pošto",
+        "signInHintPassword": "Uporabnik se prijavi z geslom, ki mu ga nastaviš",
+        "passwordPlaceholder": "Najmanj 8 znakov",
+        "submitting": "Ustvarjam...",
+        "submit": "Ustvari uporabnika"
+      },
+      "form": {
+        "email": "E-pošta",
+        "username": "Uporabniško ime",
+        "name": "Ime",
+        "password": "Geslo",
+        "status": "Status"
+      },
+      "edit": {
+        "success": "Uporabnik je posodobljen",
+        "submitting": "Shranjujem...",
+        "submit": "Shrani spremembe"
+      },
+      "password": {
+        "placeholder": "Novo geslo",
+        "submitting": "Nastavljam...",
+        "submit": "Nastavi geslo",
+        "success": "Geslo je posodobljeno"
+      },
+      "roles": {
+        "removeTitle": "Odstrani vlogo",
+        "none": "Ni dodeljenih vlog",
+        "addOption": "Dodaj vlogo...",
+        "aggregatedPermissions": "Skupna dovoljenja ({count})"
+      },
+      "sessions": {
+        "none": "Ni aktivnih sej",
+        "terminatingAll": "Prekinjam...",
+        "terminateAll": "Prekini vse",
+        "started": "Začeto",
+        "ipAddress": "IP naslov",
+        "device": "Naprava",
+        "expires": "Poteče",
+        "actions": "Dejanja",
+        "unknown": "Neznano",
+        "terminating": "Prekinjam...",
+        "terminate": "Prekini"
+      },
+      "sticker": {
+        "invalidCode": "Napačna koda. Uporabi obliko AB12.",
+        "unlinkConfirm": "Res odvežeš to QR kodo od uporabnika?",
+        "linkedOn": "Povezano {date}",
+        "replace": "Zamenjaj",
+        "unlink": "Odveži",
+        "none": "Ni povezane zapestnice",
+        "assign": "Dodeli",
+        "replaceTitle": "Zamenjaj kodo zapestnice",
+        "assignTitle": "Dodeli kodo zapestnice",
+        "modalHint": "Vpiši 4-znakovno kodo, ki je natisnjena na zapestnici.",
+        "saving": "Shranjujem..."
+      },
+      "autocomplete": {
+        "selected": "Izbran: {name}",
+        "noUsers": "Ni najdenih uporabnikov. Lahko vpišeš novo e-pošto."
+      },
+      "table": {
+        "username": "Uporabniško ime",
+        "email": "E-pošta",
+        "name": "Ime",
+        "roles": "Vloge",
+        "noRoles": "Ni vlog",
+        "lastLogin": "Zadnja prijava",
+        "never": "Nikoli",
+        "empty": "Ni najdenih uporabnikov"
+      },
+      "page": {
+        "title": "Uporabniki",
+        "subtitle": "Poglej in upravljaj vse uporabnike v sistemu",
+        "statTotal": "Vsi uporabniki",
+        "statActive": "Aktivni",
+        "statNewThisMonth": "Novi ta mesec"
+      },
+      "detail": {
+        "back": "Nazaj na uporabnike",
+        "avatarAlt": "Avatar uporabnika {username}",
+        "authPassword": "Geslo",
+        "authMagicLink": "Čarobna povezava",
+        "userInfo": "Podatki o uporabniku",
+        "userId": "ID uporabnika:",
+        "created": "Ustvarjeno:",
+        "lastLogin": "Zadnja prijava:",
+        "never": "Nikoli",
+        "wallet": "Denarnica",
+        "balance": "Stanje",
+        "manageWallet": "Upravljaj denarnico",
+        "wristband": "Plačilna zapestnica",
+        "editUser": "Uredi uporabnika",
+        "setPassword": "Nastavi novo geslo",
+        "roles": "Vloge",
+        "sessionsTitle": "Aktivne seje ({count})"
+      }
+    },
+    "roles": {
+      "page": {
+        "title": "Vloge",
+        "subtitle": "Upravljaj vloge in njihova dovoljenja",
+        "statTotal": "Vse vloge",
+        "statSystem": "Sistemske vloge",
+        "statUsersWithRoles": "Uporabniki z vlogami"
+      },
+      "list": {
+        "total": "Vseh vlog:",
+        "system": "Sistemske:",
+        "custom": "Po meri:",
+        "create": "Ustvari vlogo",
+        "empty": "Ni najdenih vlog"
+      },
+      "table": {
+        "name": "Ime",
+        "slug": "Oznaka",
+        "description": "Opis",
+        "permissions": "Dovoljenja",
+        "users": "Uporabniki",
+        "type": "Tip",
+        "system": "Sistemska",
+        "custom": "Po meri"
+      },
+      "detail": {
+        "back": "Nazaj na vloge",
+        "systemBadge": "Sistemska vloga",
+        "usersAssigned": "{count, plural, one {# uporabnik ima} two {# uporabnika imata} few {# uporabniki majo} other {# uporabnikov ma}} to vlogo"
+      },
+      "new": {
+        "title": "Ustvari novo vlogo",
+        "subtitle": "Določi novo vlogo z izbranimi dovoljenji"
+      },
+      "form": {
+        "error": "Prišlo je do napake",
+        "infoTitle": "Podatki o vlogi",
+        "name": "Ime",
+        "namePlaceholder": "npr. Urejevalec vsebin",
+        "slug": "Oznaka",
+        "slugPlaceholder": "npr. urejevalec-vsebin",
+        "slugSystemNote": "Oznak sistemskih vlog se ne da spreminjati",
+        "description": "Opis",
+        "descriptionPlaceholder": "Kratek opis namena te vloge",
+        "permissionsTitle": "Dovoljenja ({count})",
+        "selectAll": "Izberi vse",
+        "clearAll": "Počisti vse",
+        "deselectAll": "Odizberi vse",
+        "deleteConfirm": "Res izbrišeš vlogo \"{name}\"?",
+        "deleting": "Brišem...",
+        "delete": "Izbriši vlogo",
+        "saving": "Shranjujem...",
+        "create": "Ustvari vlogo",
+        "saveChanges": "Shrani spremembe"
+      }
+    },
+    "wallets": {
+      "title": "Denarnice",
+      "subtitle": "Poglej in upravljaj stanja uporabniških denarnic",
+      "stats": {
+        "totalBalance": "Skupno stanje",
+        "wallets": "Denarnice",
+        "transactions": "Transakcije"
+      },
+      "totalWallets": "Skupaj denarnic:",
+      "searchPlaceholder": "Išči po uporabniku…",
+      "noWallets": "Ni najdenih denarnic",
+      "unknown": "Neznano",
+      "unknownUser": "Neznan uporabnik",
+      "backToWallets": "Nazaj na denarnice",
+      "viewUserProfile": "Poglej profil uporabnika",
+      "currentBalance": "Trenutno stanje",
+      "walletInformation": "Podatki o denarnici",
+      "walletId": "ID denarnice:",
+      "created": "Ustvarjeno:",
+      "lastUpdatedLabel": "Zadnjič posodobljeno:",
+      "manageBalance": "Upravljaj stanje",
+      "transactionHistory": "Zgodovina transakcij ({count})",
+      "errorInvalidAmount": "Vpiši veljaven pozitiven znesek",
+      "errorDebitExceeds": "Ne moreš vzet več, kokr je trenutno stanje ({balance})",
+      "successAdded": "V denarnico dodano {amount}",
+      "successRemoved": "Iz denarnice odvzeto {amount}",
+      "errorGeneric": "Pršlo je do napake",
+      "amountLabel": "Znesek ({symbol})",
+      "noteLabel": "Opomba (neobvezno)",
+      "notePlaceholder": "Razlog za transakcijo",
+      "processing": "Se obdeluje…",
+      "addCredit": "+ Dodaj dobroimetje",
+      "removeFunds": "- Odvzemi sredstva",
+      "noTransactions": "Še ni transakcij",
+      "system": "Sistem",
+      "col": {
+        "user": "Uporabnik",
+        "email": "E-pošta",
+        "balance": "Stanje",
+        "lastUpdated": "Zadnjič posodobljeno",
+        "date": "Datum",
+        "type": "Tip",
+        "amount": "Znesek",
+        "balanceAfter": "Stanje po",
+        "note": "Opomba",
+        "createdBy": "Ustvaril"
+      }
+    },
+    "transactions": {
+      "title": "Transakcije",
+      "subtitle": "Poglej vse transakcije denarnic po sistemu",
+      "stats": {
+        "totalCredits": "Skupaj dobroimetja",
+        "totalDebits": "Skupaj v breme",
+        "transactions": "Transakcije"
+      },
+      "total": "Skupaj:",
+      "allTypes": "Vsi tipi",
+      "searchPlaceholder": "Išči po uporabniku…",
+      "noTransactions": "Ni najdenih transakcij",
+      "system": "Sistem",
+      "col": {
+        "date": "Datum",
+        "user": "Uporabnik",
+        "type": "Tip",
+        "amount": "Znesek",
+        "balanceAfter": "Stanje po",
+        "note": "Opomba",
+        "createdBy": "Ustvaril"
+      },
+      "type": {
+        "CREDIT": "Dobroimetje",
+        "DEBIT": "V breme",
+        "PURCHASE": "Nakup",
+        "REFUND": "Vračilo",
+        "ADJUSTMENT": "Prilagoditev",
+        "POS_PURCHASE": "POS nakup",
+        "POS_TIP": "POS napitnina",
+        "CARD_TOPUP": "Polnjenje s kartico",
+        "CASH_TOPUP": "Polnjenje z gotovino",
+        "P2P_TRANSFER": "Prenos"
+      }
+    },
+    "nav": {
+      "menuTitle": "Admin meni",
+      "openMenu": "Odpri meni",
+      "adminLabel": "Admin",
+      "dashboard": "Nadzorna plošča",
+      "orders": "Naročila",
+      "events": "Dogodki",
+      "donations": "Donacije",
+      "users": "Uporabniki",
+      "roles": "Vloge",
+      "wallets": "Denarnice",
+      "announcements": "Obvestila",
+      "transactions": "Transakcije",
+      "scanner": "Skener",
+      "posItems": "POS artikli",
+      "posRegisters": "POS blagajne",
+      "eventClaims": "Zahtevki za dogodke",
+      "posOfflineQrs": "POS offline QR-ji",
+      "posOrders": "POS naročila",
+      "posTerminal": "POS terminal",
+      "myProfile": "Moj profil"
+    },
+    "common": {
+      "loading": "Se nalaga…",
+      "refresh": "Osveži",
+      "refreshing": "Se osvežuje…",
+      "save": "Shrani",
+      "cancel": "Prekliči",
+      "delete": "Zbriši",
+      "edit": "Uredi",
+      "create": "Ustvari",
+      "search": "Išči",
+      "showing": "Prikazano:",
+      "na": "N/A",
+      "back": "Nazaj",
+      "autoRefresh": "Samodejno osveževanje:"
+    },
+    "status": {
+      "order": {
+        "CREATED": "Ustvarjeno",
+        "PROCESSING": "V obdelavi",
+        "PAID": "Plačano",
+        "PREPARING": "V pripravi",
+        "IN_DELIVERY": "V dostavi",
+        "COMPLETED": "Zaključeno",
+        "CANCELLED": "Preklicano",
+        "EXPIRED": "Poteklo",
+        "REFUND_REQUESTED": "Zahtevano vračilo",
+        "PARTIALLY_REFUNDED": "Delno vrnjeno",
+        "REFUNDED": "Vrnjeno"
+      },
+      "ticket": {
+        "PENDING": "Za skenirat",
+        "CANCELLED": "Preklicano",
+        "SCANNED": "Uporabljeno",
+        "VALIDATED": "Potrjeno",
+        "BANNED": "Blokirano",
+        "REFUND_REQUESTED": "Zahtevano vračilo",
+        "REFUNDED": "Vrnjeno",
+        "EXPIRED": "Poteklo"
+      },
+      "user": {
+        "ACTIVE": "Aktiven",
+        "SUSPENDED": "Suspendiran",
+        "BANNED": "Blokiran",
+        "PENDING_VERIFICATION": "Čaka potrditev",
+        "DELETED": "Zbrisan"
+      }
+    }
+  },
+  "pos": {
+    "register": {
+      "metaTitle": "POS - Izberi blagajno",
+      "selectRegister": "Izberi blagajno",
+      "chooseToStart": "Izberi blagajno pa začni prodajat",
+      "noRegistersAssigned": "Nobena blagajna ti ni dodeljena",
+      "contactAdmin": "Za dodelitev blagajne se obrni na administratorja.",
+      "noItems": "Na tej blagajni ni nobenih artiklov",
+      "searchPlaceholder": "Išči artikle…",
+      "itemCount": "{count} artiklov",
+      "topUpEnabled": "Polnjenje omogočeno",
+      "saleCount": "{count, plural, one {# prodaja} two {# prodaji} few {# prodaje} other {# prodaj}}",
+      "revenue": "{amount} prihodka",
+      "tips": "+{amount} napitnin",
+      "toCollect": "{amount} za pobrat",
+      "pending": "{count} v čakanju"
+    },
+    "cart": {
+      "empty": "Tapni artikle zgoraj, da jih dodaš v naročilo",
+      "each": "{amount} vsak",
+      "clear": "Počisti",
+      "creating": "Ustvarjam…",
+      "createOrder": "Ustvari naročilo"
+    },
+    "orders": {
+      "yourTotalIs": "Skupaj je <bold>{amount}</bold>",
+      "paymentReceived": "Plačilo prejeto",
+      "total": "skupaj",
+      "tip": "napitnina",
+      "orderCode": "Koda naročila",
+      "qrAlt": "QR koda naročila",
+      "customerScanned": "{name} je skeniral",
+      "balanceLabel": "Stanje",
+      "insufficient": "(Premalo)",
+      "customer": "Kupec",
+      "waitingForScan": "Čakam, da kupec skenira…",
+      "showQr": "Pokaži QR namesto tega",
+      "cancelEdit": "Prekliči pa uredi",
+      "continue": "Naprej",
+      "closingIn": "Zapiram čez {count}s",
+      "toggleRotation": "Obrni",
+      "expired": "Poteklo",
+      "pendingOrders": "Naročila v čakanju",
+      "pendingOrdersCount": "Naročila v čakanju ({count})",
+      "noPendingOrders": "Ni naročil v čakanju",
+      "moreItems": "+{count} več",
+      "lowBalance": "Premalo stanja",
+      "scanned": "Skenirano",
+      "waitingForScanShort": "Čakam na skeniranje",
+      "cancel": "Prekliči"
+    },
+    "sticker": {
+      "resolving": "Razrešujem zapestnico…",
+      "scanWristband": "Skeniraj zapestnico",
+      "instructions": "Usmeri kamero na kupčevo zapestnico ali vtipkaj 4-mestno kodo.",
+      "hint": "Skeniraj QR ali vtipkaj 4-mestno kodo zapestnice",
+      "backToQr": "← Nazaj na QR"
+    },
+    "header": {
+      "title": "Prodajno mesto"
+    }
+  },
+  "scan": {
+    "scanner": {
+      "title": "Skener vstopnic",
+      "breadcrumb": "Skeniranje",
+      "metaTitle": "{title} • Skener",
+      "heading": "Skener vstopnic za dogodke",
+      "intro": "Dobrodošel v skenerju vstopnic. Spodej izberi dogodek, za katerga želiš skenirat vstopnice.",
+      "scanningEnabled": "✅ Skeniranje omogočeno",
+      "scanningDisabled": "❌ Skeniranje onemogočeno",
+      "noEvents": "Trenutno ni dogodkov za skeniranje",
+      "loading": "Nalaganje...",
+      "scanningNotEnabled": "Skeniranje ni omogočeno",
+      "tabScanner": "Skener",
+      "tabDoorSales": "Prodaja na vratih",
+      "scanTicket": "Skeniraj vstopnico",
+      "closeScanner": "Zapri skener",
+      "modalTitle": "Skeniraj QR vstopnico",
+      "pointCamera": "Usmeri kamero v QR kodo, da skeniraš vstopnico",
+      "recordingScan": "Beležim skeniranje na strežnik...",
+      "scanNext": "V redu – skeniraj naslednjo vstopnico"
+    },
+    "result": {
+      "verified": "Preverjeno",
+      "warning": "Opozorilo",
+      "error": "Napaka",
+      "validTicket": "Veljavna vstopnica",
+      "scannedTimes": "Opozorilo: Skenirano {count}-krat",
+      "alreadyScanned": "Ta vstopnica je bla že skenirana.",
+      "wrongEvent": "Napačen dogodek – ta vstopnica je za drug dogodek",
+      "scanCount": "Število skeniranj: {count}",
+      "ticketHolderName": "Ime imetnika vstopnice",
+      "paymentEmail": "E-pošta plačila",
+      "ticketPrice": "Cena vstopnice"
+    },
+    "header": {
+      "title": "Skener vstopnic"
+    }
+  },
+  "stagingLogin": {
+    "metaTitle": "🔑 Potrebno geslo",
+    "metaDescription": "To okolje je zaščiteno pa za dostop zahteva geslo.",
+    "heading": "Staging okolje",
+    "subheading": "Vnesi geslo za nadaljevanje",
+    "passwordPlaceholder": "Geslo",
+    "invalidPassword": "Napačno geslo",
+    "somethingWrong": "Nekaj je šlo narobe",
+    "loading": "Nalaganje...",
+    "continue": "Nadaljuj"
+  },
+  "ticketPricing": {
+    "comingSoon": "Kmau",
+    "upNext": "Sledi",
+    "detailsHidden": "Podrobnosti skrite",
+    "dateHidden": "Datum skrit",
+    "ended": "Končano",
+    "endedOn": "Končano {date}",
+    "untilDate": "Do {date}",
+    "availableNow": "Na voljo zdej",
+    "startsOn": "Začne se {date}"
   }
 }

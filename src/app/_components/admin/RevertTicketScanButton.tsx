@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { revertTicketScanAction } from "@/domain/ticket/actions/revertTicketScanAction";
 
@@ -12,6 +13,8 @@ export default function RevertTicketScanButton({
   ticketId,
 }: RevertTicketScanButtonProps) {
   const router = useRouter();
+  const t = useTranslations("admin.tickets.revert");
+  const tc = useTranslations("admin.common");
   const [isReverting, setIsReverting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -47,8 +50,7 @@ export default function RevertTicketScanButton({
     return (
       <div className="flex flex-col gap-2">
         <p className="text-sm text-gray-600">
-          Are you sure you want to revert the scan? The ticket will be marked as
-          pending again.
+          {t("confirmText")}
         </p>
         <div className="flex gap-2">
           <button
@@ -77,10 +79,10 @@ export default function RevertTicketScanButton({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Reverting...
+                {t("reverting")}
               </>
             ) : (
-              "Confirm Revert"
+              t("confirm")
             )}
           </button>
           <button
@@ -88,7 +90,7 @@ export default function RevertTicketScanButton({
             onClick={() => setShowConfirm(false)}
             disabled={isReverting}
           >
-            Cancel
+            {tc("cancel")}
           </button>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -115,7 +117,7 @@ export default function RevertTicketScanButton({
             d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
           />
         </svg>
-        Revert Scan
+        {t("button")}
       </button>
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>

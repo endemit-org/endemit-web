@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Column, Table } from "@/app/_components/table/Table";
 import type { SerializedUser } from "@/domain/user/types";
 import ClientDate from "@/app/_components/ui/ClientDate";
@@ -19,10 +20,11 @@ export default function UsersTable({
   users: SerializedUser[];
   onRowClick?: (row: SerializedUser) => void;
 }) {
+  const t = useTranslations("admin.users");
   const columns: Column<SerializedUser>[] = [
     {
       key: "username",
-      header: "Username",
+      header: t("table.username"),
       sortable: true,
       render: user => (
         <span className="font-medium text-gray-900">{user.username}</span>
@@ -30,7 +32,7 @@ export default function UsersTable({
     },
     {
       key: "email",
-      header: "Email",
+      header: t("table.email"),
       sortable: true,
       render: user => (
         <span className="text-sm text-gray-600">{user.email || "-"}</span>
@@ -38,13 +40,13 @@ export default function UsersTable({
     },
     {
       key: "name",
-      header: "Name",
+      header: t("table.name"),
       sortable: true,
       render: user => <span className="text-sm">{user.name || "-"}</span>,
     },
     {
       key: "roles",
-      header: "Roles",
+      header: t("table.roles"),
       render: user => (
         <div className="flex flex-wrap gap-1">
           {user.roles.length > 0 ? (
@@ -60,20 +62,20 @@ export default function UsersTable({
               </span>
             ))
           ) : (
-            <span className="text-xs text-gray-400">No roles</span>
+            <span className="text-xs text-gray-400">{t("table.noRoles")}</span>
           )}
         </div>
       ),
     },
     {
       key: "lastLoginAt",
-      header: "Last Login",
+      header: t("table.lastLogin"),
       sortable: true,
       render: user => (
         user.lastLoginAt ? (
           <ClientDate date={user.lastLoginAt} className="text-sm text-gray-600" />
         ) : (
-          <span className="text-sm text-gray-600">Never</span>
+          <span className="text-sm text-gray-600">{t("table.never")}</span>
         )
       ),
       accessor: user =>
@@ -86,7 +88,7 @@ export default function UsersTable({
       data={users}
       columns={columns}
       onRowClick={onRowClick}
-      emptyMessage="No users found"
+      emptyMessage={t("table.empty")}
       maxHeight="calc(100dvh - 400px)"
     />
   );

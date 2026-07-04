@@ -14,6 +14,7 @@ import TicketsDisplay from "@/app/_components/ticket/TicketDisplay";
 import { serializeTicket } from "@/domain/ticket/util";
 import ScannerTabs from "@/app/_components/ticket/ScannerTabs";
 import DoorSaleForm from "@/app/_components/ticket/DoorSaleForm";
+import { getTranslations } from "next-intl/server";
 
 // Dynamic import: QR Scanner (~120KB) only loads on scan pages
 const QRScanner = dynamic(
@@ -36,7 +37,8 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = `${event.meta.title ?? event.name} • Scanner`;
+  const t = await getTranslations("scan.scanner");
+  const title = t("metaTitle", { title: event.meta.title ?? event.name });
 
   return {
     title,
@@ -57,6 +59,8 @@ export default async function EventScanPage({
     notFound();
   }
 
+  const t = await getTranslations("scan.scanner");
+
   const isInFuture = !isEventCompleted(event);
   const isScanningEnabled = isEventScanningEnabled(event);
   const showScanner = isScanningEnabled && isInFuture;
@@ -73,7 +77,7 @@ export default async function EventScanPage({
         title={event.name}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Scan", path: "scan" },
+          { label: t("breadcrumb"), path: "scan" },
           { label: event.name, path: event.uid },
         ]}
       />
@@ -106,7 +110,7 @@ export default async function EventScanPage({
                     showScanner ? (
                       <QRScanner eventId={event.id} />
                     ) : (
-                      <div>Scanning is not enabled</div>
+                      <div>{t("scanningNotEnabled")}</div>
                     )
                   }
                   doorSaleContent={
@@ -129,7 +133,7 @@ export default async function EventScanPage({
                 showScanner ? (
                   <QRScanner eventId={event.id} />
                 ) : (
-                  <div>Scanning is not enabled</div>
+                  <div>{t("scanningNotEnabled")}</div>
                 )
               }
               doorSaleContent={

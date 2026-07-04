@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import Image from "next/image";
 
@@ -29,6 +30,7 @@ interface Props {
 }
 
 function TimeRemaining({ expiresAt }: { expiresAt: string }) {
+  const t = useTranslations("pos");
   const [remaining, setRemaining] = useState("");
 
   useEffect(() => {
@@ -38,7 +40,7 @@ function TimeRemaining({ expiresAt }: { expiresAt: string }) {
       const diff = expires - now;
 
       if (diff <= 0) {
-        setRemaining("Expired");
+        setRemaining(t("orders.expired"));
         return;
       }
 
@@ -50,16 +52,15 @@ function TimeRemaining({ expiresAt }: { expiresAt: string }) {
     update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
-  }, [expiresAt]);
+  }, [expiresAt, t]);
 
-  const isLow =
-    remaining !== "Expired" &&
-    parseInt(remaining.split(":")[0]) < 3;
+  const isExpired = remaining === t("orders.expired");
+  const isLow = !isExpired && parseInt(remaining.split(":")[0]) < 3;
 
   return (
     <span
       className={`text-xs font-mono ${
-        remaining === "Expired"
+        isExpired
           ? "text-red-600"
           : isLow
           ? "text-orange-600"
@@ -77,14 +78,16 @@ export function PosOrderQueue({
   onCancelOrder,
   selectedOrderId,
 }: Props) {
+  const t = useTranslations("pos");
+
   if (orders.length === 0) {
     return (
       <div className="p-4">
         <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-          Pending Orders
+          {t("orders.pendingOrders")}
         </h2>
         <p className="text-sm text-gray-400 text-center py-8">
-          No pending orders
+          {t("orders.noPendingOrders")}
         </p>
       </div>
     );
@@ -93,7 +96,7 @@ export function PosOrderQueue({
   return (
     <div className="p-4">
       <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-        Pending Orders ({orders.length})
+        {t("orders.pendingOrdersCount", { count: orders.length })}
       </h2>
       <div className="space-y-2">
         {orders.map(order => (
@@ -122,7 +125,7 @@ export function PosOrderQueue({
                 ))}
                 {order.items.length > 2 && (
                   <div className="text-gray-400">
-                    +{order.items.length - 2} more
+                    {t("orders.moreItems", { count: order.items.length - 2 })}
                   </div>
                 )}
               </div>
@@ -160,13 +163,15 @@ export function PosOrderQueue({
                       }`}
                     >
                       {order.hasEnoughBalance === false
-                        ? "Low balance"
-                        : order.customerFirstName || order.customerName || "Scanned"}
+                        ? t("orders.lowBalance")
+                        : order.customerFirstName ||
+                          order.customerName ||
+                          t("orders.scanned")}
                     </span>
                   </div>
                 ) : (
                   <span className="text-xs text-gray-400">
-                    Waiting for scan
+                    {t("orders.waitingForScanShort")}
                   </span>
                 )}
               </div>
@@ -180,7 +185,7 @@ export function PosOrderQueue({
                 }}
                 className="text-xs text-red-600 hover:text-red-800"
               >
-                Cancel
+                {t("orders.cancel")}
               </button>
             </div>
           </div>

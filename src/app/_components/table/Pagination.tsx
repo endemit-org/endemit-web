@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface PaginationProps {
   currentPage: number;
@@ -19,6 +20,7 @@ export default function Pagination({
   showPageNumbers = true,
   maxVisiblePages = 5,
 }: PaginationProps) {
+  const t = useTranslations("common.table");
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < totalPages;
 
@@ -89,7 +91,7 @@ export default function Pagination({
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 bg-white p-4 rounded-lg shadow">
       <div className="text-sm text-gray-600">
-        Page {currentPage} of {totalPages || 1}
+        {t("pageOf", { current: currentPage, total: totalPages || 1 })}
       </div>
 
       <div className="flex items-center gap-1.5">
@@ -98,7 +100,7 @@ export default function Pagination({
           onClick={() => onPageChange(1)}
           disabled={isLoading || !canGoPrev}
           className={navButtonClass}
-          title="First page"
+          title={t("firstPage")}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -110,7 +112,7 @@ export default function Pagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={isLoading || !canGoPrev}
           className={navButtonClass}
-          title="Previous page"
+          title={t("previousPage")}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -144,7 +146,7 @@ export default function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={isLoading || !canGoNext}
           className={navButtonClass}
-          title="Next page"
+          title={t("nextPage")}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -156,7 +158,7 @@ export default function Pagination({
           onClick={() => onPageChange(totalPages)}
           disabled={isLoading || !canGoNext}
           className={navButtonClass}
-          title="Last page"
+          title={t("lastPage")}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />

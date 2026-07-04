@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useFormatter } from "next-intl";
 
 interface LiveTicketIndicatorProps {
   ticketHash: string;
@@ -9,6 +10,7 @@ interface LiveTicketIndicatorProps {
 export default function LiveTicketIndicator({
   ticketHash,
 }: LiveTicketIndicatorProps) {
+  const format = useFormatter();
   const [currentTime, setCurrentTime] = useState<string>("");
   const [hashFragment, setHashFragment] = useState<string>("");
 
@@ -17,10 +19,11 @@ export default function LiveTicketIndicator({
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(
-        now.toLocaleTimeString("en-GB", {
+        format.dateTime(now, {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
+          hour12: false,
         })
       );
     };
@@ -29,7 +32,7 @@ export default function LiveTicketIndicator({
     const timeInterval = setInterval(updateTime, 1000);
 
     return () => clearInterval(timeInterval);
-  }, []);
+  }, [format]);
 
   useEffect(() => {
     // Generate random hash fragment every 3 seconds

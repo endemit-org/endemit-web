@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ScannerTabsProps {
   scannerContent: React.ReactNode;
@@ -14,6 +15,7 @@ export default function ScannerTabs({
   showDoorSale,
 }: ScannerTabsProps) {
   const [activeTab, setActiveTab] = useState<"scanner" | "doorsale">("scanner");
+  const t = useTranslations("scan.scanner");
 
   if (!showDoorSale) {
     return <>{scannerContent}</>;
@@ -31,7 +33,7 @@ export default function ScannerTabs({
               : "border-transparent text-neutral-400 hover:text-neutral-200"
           }`}
         >
-          Scanner
+          {t("tabScanner")}
         </button>
         <button
           onClick={() => setActiveTab("doorsale")}
@@ -41,7 +43,7 @@ export default function ScannerTabs({
               : "border-transparent text-neutral-400 hover:text-neutral-200"
           }`}
         >
-          Door Sales
+          {t("tabDoorSales")}
         </button>
       </div>
 

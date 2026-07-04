@@ -1,4 +1,7 @@
+import { useTranslations } from "next-intl";
+
 export default function Spinner({ text }: { text?: string }) {
+  const t = useTranslations("common");
   return (
     <span className={"text-neutral-400 gap-x-2 font-sm flex text-sm"}>
       <span role="status">
@@ -18,7 +21,7 @@ export default function Spinner({ text }: { text?: string }) {
             fill="currentFill"
           />
         </svg>
-        <span className="sr-only">{text ?? "Loading ..."}</span>
+        <span className="sr-only">{text ?? t("loading")}</span>
       </span>
       {text && <span>{text}</span>}
     </span>

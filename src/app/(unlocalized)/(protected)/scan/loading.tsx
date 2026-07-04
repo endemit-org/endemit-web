@@ -1,14 +1,16 @@
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import OuterPage from "@/app/_components/ui/OuterPage";
+import { getTranslations } from "next-intl/server";
 
-export default function ScanLoading() {
+export default async function ScanLoading() {
+  const t = await getTranslations("scan.scanner");
   return (
     <OuterPage>
       <PageHeadline
-        title="Ticket scanner"
+        title={t("title")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Scan", path: "scan" },
+          { label: t("breadcrumb"), path: "scan" },
         ]}
       />
       <div className="px-4 py-6 sm:px-0">

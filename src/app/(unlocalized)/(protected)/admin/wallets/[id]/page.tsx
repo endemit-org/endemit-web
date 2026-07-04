@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getWalletById } from "@/domain/wallet/operations/getWalletById";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
@@ -46,6 +47,8 @@ export default async function AdminWalletDetailPage({
     PERMISSIONS.WALLETS_MANAGE_BALANCE
   );
 
+  const t = await getTranslations("admin.wallets");
+
   return (
     <div>
       <div className="mb-6">
@@ -66,7 +69,7 @@ export default async function AdminWalletDetailPage({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Wallets
+          {t("backToWallets")}
         </Link>
       </div>
 

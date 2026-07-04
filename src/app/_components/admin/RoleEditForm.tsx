@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createRoleAction } from "@/domain/role/actions/createRoleAction";
 import { updateRoleAction } from "@/domain/role/actions/updateRoleAction";
 import { deleteRoleAction } from "@/domain/role/actions/deleteRoleAction";
@@ -36,6 +37,8 @@ function groupPermissionsByResource(permissions: Permission[]) {
 
 export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFormProps) {
   const router = useRouter();
+  const t = useTranslations("admin.roles");
+  const tc = useTranslations("admin.common");
   const isNew = !role;
 
   const [name, setName] = useState(role?.name ?? "");
@@ -99,7 +102,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
       router.push("/admin/roles");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t("form.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -108,7 +111,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
   const handleDelete = async () => {
     if (!role || role.isSystem) return;
 
-    if (!confirm(`Are you sure you want to delete the role "${role.name}"?`)) {
+    if (!confirm(t("form.deleteConfirm", { name: role.name }))) {
       return;
     }
 
@@ -120,7 +123,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
       router.push("/admin/roles");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t("form.error"));
     } finally {
       setIsDeleting(false);
     }
@@ -138,12 +141,12 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
 
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
-          Role Information
+          {t("form.infoTitle")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+              {t("form.name")}
             </label>
             <input
               type="text"
@@ -153,12 +156,12 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
               disabled={!canModify}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
-              placeholder="e.g., Content Editor"
+              placeholder={t("form.namePlaceholder")}
             />
           </div>
           <div>
             <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">
-              Slug
+              {t("form.slug")}
             </label>
             <input
               type="text"
@@ -168,17 +171,17 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
               disabled={!canModify || (role?.isSystem ?? false)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 font-mono"
-              placeholder="e.g., content-editor"
+              placeholder={t("form.slugPlaceholder")}
             />
             {role?.isSystem && (
               <p className="mt-1 text-xs text-gray-500">
-                System role slugs cannot be changed
+                {t("form.slugSystemNote")}
               </p>
             )}
           </div>
           <div className="md:col-span-2">
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              {t("form.description")}
             </label>
             <textarea
               id="description"
@@ -187,7 +190,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
               disabled={!canModify}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
-              placeholder="Brief description of this role's purpose"
+              placeholder={t("form.descriptionPlaceholder")}
             />
           </div>
         </div>
@@ -196,7 +199,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-            Permissions ({selectedPermissions.length})
+            {t("form.permissionsTitle", { count: selectedPermissions.length })}
           </h2>
           {canModify && (
             <div className="flex gap-2">
@@ -205,7 +208,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
                 onClick={() => setSelectedPermissions(allPermissions)}
                 className="text-xs text-blue-600 hover:text-blue-800"
               >
-                Select All
+                {t("form.selectAll")}
               </button>
               <span className="text-gray-300">|</span>
               <button
@@ -213,7 +216,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
                 onClick={() => setSelectedPermissions([])}
                 className="text-xs text-blue-600 hover:text-blue-800"
               >
-                Clear All
+                {t("form.clearAll")}
               </button>
             </div>
           )}
@@ -237,7 +240,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
                       onClick={() => handleSelectAllInGroup(resource)}
                       className="text-xs text-blue-600 hover:text-blue-800"
                     >
-                      {allSelected ? "Deselect All" : "Select All"}
+                      {allSelected ? t("form.deselectAll") : t("form.selectAll")}
                     </button>
                   )}
                 </div>
@@ -284,7 +287,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
               disabled={isDeleting || isSubmitting}
               className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50"
             >
-              {isDeleting ? "Deleting..." : "Delete Role"}
+              {isDeleting ? t("form.deleting") : t("form.delete")}
             </button>
           )}
         </div>
@@ -294,7 +297,7 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
             onClick={() => router.push("/admin/roles")}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
           >
-            Cancel
+            {tc("cancel")}
           </button>
           {canModify && (
             <button
@@ -302,7 +305,11 @@ export default function RoleEditForm({ role, canUpdate, canDelete }: RoleEditFor
               disabled={isSubmitting || !name || !slug}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50"
             >
-              {isSubmitting ? "Saving..." : isNew ? "Create Role" : "Save Changes"}
+              {isSubmitting
+                ? t("form.saving")
+                : isNew
+                  ? t("form.create")
+                  : t("form.saveChanges")}
             </button>
           )}
         </div>

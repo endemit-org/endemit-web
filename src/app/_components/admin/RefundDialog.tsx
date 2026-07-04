@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { formatPrice } from "@/lib/util/formatting";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface RefundLimitResult {
   maxRefundAmount: number;
@@ -46,6 +47,8 @@ export default function RefundDialog({
   onRefundComplete,
 }: RefundDialogProps) {
   const router = useRouter();
+  const t = useTranslations("admin.orders");
+  const tc = useTranslations("admin.common");
   const [selectedItems, setSelectedItems] = useState<Map<number, number>>(new Map());
   const [includeShipping, setIncludeShipping] = useState(false);
   const [reason, setReason] = useState("");
@@ -80,17 +83,17 @@ export default function RefundDialog({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to calculate refund limit");
+        throw new Error(data.error || t("refund.calcLimitFailed"));
       }
 
       const data = await response.json();
       setRefundLimit(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to calculate refund");
+      setError(err instanceof Error ? err.message : t("refund.calcFailed"));
     } finally {
       setIsLoadingLimit(false);
     }
-  }, [orderId, selectedItems, includeShipping]);
+  }, [orderId, selectedItems, includeShipping, t]);
 
   useEffect(() => {
     const debounce = setTimeout(fetchRefundLimit, 300);
@@ -170,14 +173,14 @@ export default function RefundDialog({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Refund failed");
+        throw new Error(data.error || t("refund.failed"));
       }
 
       onRefundComplete?.();
       router.refresh();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Refund failed");
+      setError(err instanceof Error ? err.message : t("refund.failed"));
     } finally {
       setIsProcessing(false);
     }
@@ -205,9 +208,9 @@ export default function RefundDialog({
         onClick={e => e.stopPropagation()}
       >
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Process Refund</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t("refund.title")}</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Select items to refund. Refunds are processed via Stripe.
+            {t("refund.subtitle")}
           </p>
         </div>
 
@@ -220,7 +223,7 @@ export default function RefundDialog({
 
           {/* Item selection */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-gray-700">Select Items</h3>
+            <h3 className="text-sm font-medium text-gray-700">{t("refund.selectItems")}</h3>
             {items.map((item, index) => {
               const isSelected = selectedItems.has(index);
               const selectedQty = selectedItems.get(index) ?? 0;
@@ -251,11 +254,14 @@ export default function RefundDialog({
                       <div>
                         <p className="font-medium text-gray-900">{item.name}</p>
                         <p className="text-sm text-gray-500">
-                          {item.category} • {formatPrice(item.price)} each
+                          {item.category} • {t("refund.priceEach", { price: formatPrice(item.price) })}
                         </p>
                         {breakdown && breakdown.alreadyRefunded > 0 && (
                           <p className="text-xs text-amber-600 mt-1">
-                            {breakdown.alreadyRefunded} of {item.quantity} already refunded
+                            {t("refund.alreadyRefundedCount", {
+                              refunded: breakdown.alreadyRefunded,
+                              total: item.quantity,
+                            })}
                           </p>
                         )}
                         {breakdown?.limitReason && isSelected && (
@@ -325,13 +331,13 @@ export default function RefundDialog({
                         onClick={e => e.stopPropagation()}
                       />
                       <div>
-                        <p className="font-medium text-gray-900">Shipping</p>
+                        <p className="font-medium text-gray-900">{t("refund.shipping")}</p>
                         <p className="text-sm text-gray-500">
-                          Delivery fee
+                          {t("refund.deliveryFee")}
                         </p>
                         {alreadyRefunded && (
                           <p className="text-xs text-amber-600 mt-1">
-                            Already refunded
+                            {t("refund.alreadyRefunded")}
                           </p>
                         )}
                       </div>
@@ -352,26 +358,30 @@ export default function RefundDialog({
             <div className="p-4 bg-gray-50 rounded-lg space-y-2">
               {refundLimit.shippingRefundable > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Shipping refund:</span>
+                  <span className="text-gray-600">{t("refund.shippingRefund")}</span>
                   <span className="font-medium">
                     {formatPrice(refundLimit.shippingRefundable / 100)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total refund amount:</span>
+                <span className="text-gray-600">{t("refund.totalRefundAmount")}</span>
                 <span className="font-medium">
                   {isLoadingLimit ? "..." : formatPrice(refundLimit.maxRefundAmount / 100)}
                 </span>
               </div>
               {refundLimit.limitedBy === "wallet_balance" && (
                 <p className="text-xs text-amber-600">
-                  Limited by remaining wallet balance ({formatPrice((refundLimit.walletBalance ?? 0) / 100)})
+                  {t("refund.limitedByWallet", {
+                    balance: formatPrice((refundLimit.walletBalance ?? 0) / 100),
+                  })}
                 </p>
               )}
               {refundLimit.totalAlreadyRefunded > 0 && (
                 <p className="text-xs text-gray-500">
-                  Previously refunded: {formatPrice(refundLimit.totalAlreadyRefunded / 100)}
+                  {t("refund.previouslyRefunded", {
+                    amount: formatPrice(refundLimit.totalAlreadyRefunded / 100),
+                  })}
                 </p>
               )}
             </div>
@@ -380,14 +390,14 @@ export default function RefundDialog({
           {/* Reason */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Reason (optional)
+              {t("refund.reasonLabel")}
             </label>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="w-full p-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={2}
-              placeholder="Reason for refund..."
+              placeholder={t("refund.reasonPlaceholder")}
             />
           </div>
         </div>
@@ -398,7 +408,7 @@ export default function RefundDialog({
             className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium"
             disabled={isProcessing}
           >
-            Cancel
+            {tc("cancel")}
           </button>
           <button
             onClick={handleProcessRefund}
@@ -414,7 +424,7 @@ export default function RefundDialog({
               refundLimit.maxRefundAmount <= 0
             }
           >
-            {isProcessing ? "Processing..." : "Process Refund"}
+            {isProcessing ? t("actions.processing") : t("refund.title")}
           </button>
         </div>
       </div>

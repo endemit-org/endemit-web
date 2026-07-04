@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { createUserAction } from "@/domain/user/actions/createUserAction";
 import { UserStatus } from "@prisma/client";
@@ -26,6 +27,9 @@ export default function UserCreateForm({
   onSuccess,
 }: UserCreateFormProps) {
   const router = useRouter();
+  const t = useTranslations("admin.users");
+  const tc = useTranslations("admin.common");
+  const ts = useTranslations("admin.status.user");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,7 +93,7 @@ export default function UserCreateForm({
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
-              Create New User
+              {t("create.title")}
             </h2>
             <button
               onClick={handleClose}
@@ -118,7 +122,7 @@ export default function UserCreateForm({
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email <span className="text-red-500">*</span>
+              {t("form.email")} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -136,7 +140,7 @@ export default function UserCreateForm({
               htmlFor="username"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Username
+              {t("form.username")}
             </label>
             <input
               type="text"
@@ -144,10 +148,10 @@ export default function UserCreateForm({
               value={username}
               onChange={e => setUsername(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Leave empty to use email"
+              placeholder={t("create.usernamePlaceholder")}
             />
             <p className="mt-1 text-xs text-gray-500">
-              If left empty, the email will be used as username
+              {t("create.usernameHint")}
             </p>
           </div>
 
@@ -156,7 +160,7 @@ export default function UserCreateForm({
               htmlFor="name"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Name
+              {t("form.name")}
             </label>
             <input
               type="text"
@@ -164,7 +168,7 @@ export default function UserCreateForm({
               value={name}
               onChange={e => setName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="John Doe"
+              placeholder={t("create.namePlaceholder")}
             />
           </div>
 
@@ -173,7 +177,7 @@ export default function UserCreateForm({
               htmlFor="signInType"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Sign-in Type <span className="text-red-500">*</span>
+              {t("create.signInType")} <span className="text-red-500">*</span>
             </label>
             <select
               id="signInType"
@@ -181,13 +185,13 @@ export default function UserCreateForm({
               onChange={e => setSignInType(e.target.value as SignInType)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="OTC">OTC (One-Time Code)</option>
-              <option value="PASSWORD">Password</option>
+              <option value="OTC">{t("create.signInOtc")}</option>
+              <option value="PASSWORD">{t("create.signInPassword")}</option>
             </select>
             <p className="mt-1 text-xs text-gray-500">
               {signInType === "OTC"
-                ? "User will sign in via email code"
-                : "User will sign in with a password"}
+                ? t("create.signInHintOtc")
+                : t("create.signInHintPassword")}
             </p>
           </div>
 
@@ -197,7 +201,7 @@ export default function UserCreateForm({
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Password <span className="text-red-500">*</span>
+                {t("form.password")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="password"
@@ -207,7 +211,7 @@ export default function UserCreateForm({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required={signInType === "PASSWORD"}
                 minLength={8}
-                placeholder="Minimum 8 characters"
+                placeholder={t("create.passwordPlaceholder")}
               />
             </div>
           )}
@@ -217,7 +221,7 @@ export default function UserCreateForm({
               htmlFor="status"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Status
+              {t("form.status")}
             </label>
             <select
               id="status"
@@ -227,7 +231,7 @@ export default function UserCreateForm({
             >
               {userStatuses.map(s => (
                 <option key={s} value={s}>
-                  {s.replace(/_/g, " ")}
+                  {ts(s)}
                 </option>
               ))}
             </select>
@@ -245,7 +249,7 @@ export default function UserCreateForm({
               onClick={handleClose}
               className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
             >
-              Cancel
+              {tc("cancel")}
             </button>
             <ActionButton
               type="submit"
@@ -253,7 +257,7 @@ export default function UserCreateForm({
               size="sm"
               className="flex-1"
             >
-              {isLoading ? "Creating..." : "Create User"}
+              {isLoading ? t("create.submitting") : t("create.submit")}
             </ActionButton>
           </div>
         </form>

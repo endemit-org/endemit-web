@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import QRCode from "qrcode";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
@@ -56,6 +57,7 @@ const AUTO_CLOSE_SECONDS = 30;
 type SubView = "qr" | "sticker-scan" | "customer-confirm";
 
 export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
+  const t = useTranslations("pos");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
@@ -215,10 +217,10 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
           }`}
         >
           <div className="text-xl text-center w-full">
-            Your total is{" "}
-            <span className="font-bold">
-              {formatTokensFromCents(order.total)}
-            </span>
+            {t.rich("orders.yourTotalIs", {
+              amount: formatTokensFromCents(order.total),
+              bold: chunks => <span className="font-bold">{chunks}</span>,
+            })}
           </div>
 
           <button
@@ -263,7 +265,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">
-                Payment Received
+                {t("orders.paymentReceived")}
               </h3>
               {hasTip ? (
                 <div className="flex items-end justify-center gap-4">
@@ -282,7 +284,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                       </span>
                     </WalletAnimationRenderer>
                     <p className="text-[10px] uppercase tracking-widest text-white/70 mt-1">
-                      total
+                      {t("orders.total")}
                     </p>
                   </div>
                   <div className="text-2xl text-white/50 pb-1 leading-none font-semibold">
@@ -307,7 +309,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                       </span>
                     </WalletAnimationRenderer>
                     <p className="text-[10px] uppercase tracking-widest text-yellow-200/80 mt-1">
-                      tip
+                      {t("orders.tip")}
                     </p>
                   </div>
                 </div>
@@ -331,7 +333,9 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
             <div>
               {/* Large Short Code */}
               <div className="text-center mb-4">
-                <p className="text-sm text-gray-500 mb-1">Order Code</p>
+                <p className="text-sm text-gray-500 mb-1">
+                  {t("orders.orderCode")}
+                </p>
                 <p className="text-5xl font-mono font-bold tracking-[0.3em] text-gray-900">
                   {order.shortCode}
                 </p>
@@ -342,7 +346,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 {qrDataUrl ? (
                   <Image
                     src={qrDataUrl}
-                    alt="Order QR Code"
+                    alt={t("orders.qrAlt")}
                     className="w-48 h-48 rounded-lg"
                     unoptimized
                     width={256}
@@ -379,7 +383,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                           alt={
                             order.customerFirstName ||
                             order.customerName ||
-                            "Customer"
+                            t("orders.customer")
                           }
                           width={48}
                           height={48}
@@ -402,17 +406,19 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                     </div>
                     <div>
                       <p className="font-medium">
-                        {order.customerFirstName ||
-                          order.customerName ||
-                          "Customer"}{" "}
-                        scanned
+                        {t("orders.customerScanned", {
+                          name:
+                            order.customerFirstName ||
+                            order.customerName ||
+                            t("orders.customer"),
+                        })}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Balance:{" "}
+                        {t("orders.balanceLabel")}:{" "}
                         {formatTokensFromCents(order.customerBalance || 0)}
                         {order.hasEnoughBalance === false && (
                           <span className="text-red-600 ml-1">
-                            (Insufficient)
+                            {t("orders.insufficient")}
                           </span>
                         )}
                       </p>
@@ -421,7 +427,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 </div>
               ) : (
                 <p className="text-center text-gray-500 mb-4">
-                  Waiting for customer to scan...
+                  {t("orders.waitingForScan")}
                 </p>
               )}
 
@@ -449,7 +455,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
             <div className="relative -mx-6 -my-6 px-6 py-6 bg-neutral-900 text-white rounded-b-2xl">
               <button
                 onClick={() => setIsRotated(r => !r)}
-                title="Toggle rotation"
+                title={t("orders.toggleRotation")}
                 className="absolute top-3 right-3 z-20 p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
               >
                 <svg
@@ -491,13 +497,13 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
               onClick={() => setSubView("qr")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
-              Show QR instead
+              {t("orders.showQr")}
             </button>
             <button
               onClick={onCopyToCart}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
             >
-              Cancel & Edit
+              {t("orders.cancelEdit")}
             </button>
           </div>
         )}
@@ -508,13 +514,13 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
               onClick={() => setSubView("sticker-scan")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
-              Scan wristband
+              {t("sticker.scanWristband")}
             </button>
             <button
               onClick={onCopyToCart}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
             >
-              Cancel & Edit
+              {t("orders.cancelEdit")}
             </button>
           </div>
         )}
@@ -525,11 +531,11 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
               onClick={onClose}
               className="w-full px-4 py-2 bg-white text-emerald-700 font-semibold rounded-lg hover:bg-white/90"
             >
-              Continue
+              {t("orders.continue")}
             </button>
             {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
               <p className="text-center text-sm text-white/70 mt-2">
-                Closing in {autoCloseCountdown}s
+                {t("orders.closingIn", { count: autoCloseCountdown })}
               </p>
             )}
           </div>

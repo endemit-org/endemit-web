@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import type { PosItem, PosItemDirection, PosItemStatus } from "@prisma/client";
 import type { PosItemWithSalesCount } from "@/domain/pos/operations/getAllPosItems";
 import { createPosItemAction } from "@/domain/pos/actions/createPosItemAction";
@@ -17,6 +18,8 @@ function formatPrice(cents: number | undefined | null): string {
 }
 
 export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
+  const t = useTranslations("admin.pos.items");
+  const tc = useTranslations("admin.common");
   const [items, setItems] = useState<PosItemWithSalesCount[]>(initialItems);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<PosItem | null>(null);
@@ -77,13 +80,13 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       className="bg-white rounded-lg shadow p-6 space-y-4"
     >
       <h3 className="text-lg font-medium">
-        {item ? "Edit Item" : "New Item"}
+        {item ? t("editItem") : t("newItem")}
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Name
+            {t("fieldName")}
           </label>
           <input
             name="name"
@@ -96,7 +99,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Price ({TOKEN_CONFIG.symbol})
+            {t("fieldPrice", { symbol: TOKEN_CONFIG.symbol })}
           </label>
           <input
             name="cost"
@@ -110,35 +113,35 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Direction
+            {t("fieldDirection")}
           </label>
           <select
             name="direction"
             defaultValue={item?.direction ?? "DEBIT"}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="DEBIT">Debit (charge customer)</option>
-            <option value="CREDIT">Credit (refund/payout)</option>
+            <option value="DEBIT">{t("directionDebit")}</option>
+            <option value="CREDIT">{t("directionCredit")}</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Status
+            {t("fieldStatus")}
           </label>
           <select
             name="status"
             defaultValue={item?.status ?? "ACTIVE"}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="ACTIVE">Active</option>
-            <option value="INACTIVE">Inactive</option>
+            <option value="ACTIVE">{t("statusActive")}</option>
+            <option value="INACTIVE">{t("statusInactive")}</option>
           </select>
         </div>
 
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700">
-            Description
+            {t("fieldDescription")}
           </label>
           <input
             name="description"
@@ -155,14 +158,14 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
         >
-          Cancel
+          {tc("cancel")}
         </button>
         <button
           type="submit"
           disabled={isPending}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
         >
-          {isPending ? "Saving..." : item ? "Update" : "Create"}
+          {isPending ? t("saving") : item ? t("update") : tc("create")}
         </button>
       </div>
     </form>
@@ -175,7 +178,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
           onClick={() => setShowForm(true)}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
         >
-          Add Item
+          {t("addItem")}
         </button>
       )}
 
@@ -196,23 +199,23 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
+                {t("colName")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Price
+                {t("colPrice")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Direction
+                {t("colDirection")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                {t("colStatus")}
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Sold (30d)
+                {t("colSold")}
               </th>
               {canWrite && (
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  {t("colActions")}
                 </th>
               )}
             </tr>
@@ -256,7 +259,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <div className="text-gray-900">{item.soldLast30Days ?? 0} sold</div>
+                  <div className="text-gray-900">{t("soldCount", { count: item.soldLast30Days ?? 0 })}</div>
                   <div className="text-gray-500">{formatPrice(item.revenueLast30Days ?? 0)}</div>
                 </td>
                 {canWrite && (
@@ -265,7 +268,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                       onClick={() => setEditingItem(item)}
                       className="text-blue-600 hover:text-blue-900"
                     >
-                      Edit
+                      {tc("edit")}
                     </button>
                   </td>
                 )}
@@ -277,7 +280,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                   colSpan={canWrite ? 6 : 5}
                   className="px-6 py-8 text-center text-gray-500"
                 >
-                  No items found. Add your first item to get started.
+                  {t("emptyItems")}
                 </td>
               </tr>
             )}

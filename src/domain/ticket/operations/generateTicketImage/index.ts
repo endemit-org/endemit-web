@@ -279,6 +279,14 @@ async function createTextOverlay(
   const scheme = template.colorScheme;
   const textContent = template.textContent;
 
+  // Resolve locale-keyed ticket text (Satori-rendered, not next-intl).
+  const locale = data.locale ?? "sl";
+  const priceLabel = textContent.priceLabel
+    ? textContent.priceLabel[locale]
+    : null;
+  const tagline = textContent.tagline ? textContent.tagline[locale] : null;
+  const legalText = textContent.legalText[locale];
+
   const eventInfo =
     `${data.eventName} · ${data.eventDate} · ${data.eventDetails}`.toUpperCase();
   const firstPart = data.hashId.slice(0, 64).toUpperCase();
@@ -287,7 +295,7 @@ async function createTextOverlay(
   // Build price/label section based on template
   const priceSectionChildren: ReactElement[] = [];
 
-  if (textContent.priceLabel) {
+  if (priceLabel) {
     // Custom label (e.g., "VIP PASS")
     priceSectionChildren.push({
       type: "div",
@@ -302,12 +310,12 @@ async function createTextOverlay(
           color: scheme.accent,
           whiteSpace: "nowrap",
         },
-        children: textContent.priceLabel,
+        children: priceLabel,
       },
     } as ReactElement);
 
     // Optional tagline (e.g., "NOT FOR SALE")
-    if (textContent.tagline) {
+    if (tagline) {
       priceSectionChildren.push({
         type: "div",
         props: {
@@ -320,7 +328,7 @@ async function createTextOverlay(
             color: scheme.textSecondary,
             whiteSpace: "nowrap",
           },
-          children: textContent.tagline,
+          children: tagline,
         },
       } as ReactElement);
     }
@@ -462,7 +470,7 @@ async function createTextOverlay(
               color: infoTextColor,
               whiteSpace: "nowrap",
             },
-            children: textContent.legalText,
+            children: legalText,
           },
         },
         // Attendee name
