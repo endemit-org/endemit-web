@@ -42,15 +42,18 @@ export const formatTime = (date: Date) => {
   });
 };
 
-export const formatDay = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+export const formatDay = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     weekday: "long",
     timeZone: "Europe/Ljubljana",
   });
 };
 
-export const formatMonthNameShort = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+export const formatMonthNameShort = (
+  date: Date,
+  locale: "sl" | "en" = "en"
+) => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-US", {
     month: "short",
     timeZone: "Europe/Ljubljana",
   });
@@ -120,8 +123,8 @@ export const formatWeight = (number: number) => {
   return `${formatNumber(number, 3)} kg`;
 };
 
-export const formatDayName = (date: Date) => {
-  return date.toLocaleDateString("en-GB", {
+export const formatDayName = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     weekday: "long",
     timeZone: "Europe/Ljubljana",
   });

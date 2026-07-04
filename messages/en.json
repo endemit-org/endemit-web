@@ -127,7 +127,8 @@
     },
     "liveNow": "LIVE NOW",
     "timeUntilPrefix": "in",
-    "breadcrumb": "Artists"
+    "breadcrumb": "Artists",
+    "moreAbout": "More about {name}"
   },
   "venues": {
     "eventsHostedAt": "Events hosted at {name}",

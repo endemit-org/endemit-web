@@ -5,7 +5,7 @@ import ArtistSnippet from "@/app/_components/artist/ArtistSnippet";
 import clsx from "clsx";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import { formatDayName } from "@/lib/util/formatting";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ArtistCarouselProps {
   artists: ArtistAtEvent[];
@@ -34,6 +34,7 @@ export default function ArtistCarousel({
   dayDividerClassName = "bg-gray-900 text-black bg-opacity-25 text-opacity-80",
 }: ArtistCarouselProps) {
   const t = useTranslations("artists");
+  const locale = useLocale() as "sl" | "en";
   const resolvedHeadline = headline ?? t("setTimes");
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -63,7 +64,7 @@ export default function ArtistCarousel({
   let currentDay = "";
 
   upcomingArtists.forEach((artist, i) => {
-    const day = formatDayName(artist.start_time!);
+    const day = formatDayName(artist.start_time!, locale);
 
     if (day && day !== currentDay) {
       timelineItems.push({

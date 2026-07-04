@@ -172,7 +172,7 @@ export const transformEventObject = async (
     hasCashlessPayments:
       (event.data as { has_cashless_payments?: boolean }).has_cashless_payments ??
       false,
-    annotation: event.data.annotation,
+    annotation: pickLocalized(event.data, "annotation", locale),
     type: event.data.event_type,
     date_start: event.data.date_start ? new Date(event.data.date_start) : null,
     date_end: event.data.date_end ? new Date(event.data.date_end) : null,
