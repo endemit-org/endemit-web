@@ -4,6 +4,14 @@
     "back": "Nazaj",
     "close": "Zapri"
   },
+  "walletPass": {
+    "addToWallet": "Dodej v Apple Wallet",
+    "adding": "Čakej, se dodaja…",
+    "warningTitle": "Rabš Apple Wallet",
+    "warningBody": "Apple Wallet karte najbolš laufajo na iPhonu, iPadu al Macu. Fajl lahko vseeno potegneš dol, sam mogoče ga na tej napravi ne boš mogu odpret.",
+    "cancel": "Prekliči",
+    "downloadAnyway": "Vseeno potegn dol"
+  },
   "nav": {
     "menu": "MENI"
   },

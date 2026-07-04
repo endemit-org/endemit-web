@@ -9,7 +9,7 @@ import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import clsx from "clsx";
 import TicketDownloadButton from "@/app/_components/admin/TicketDownloadButton";
 import RevertTicketScanButton from "@/app/_components/admin/RevertTicketScanButton";
-import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
+import AdminAddToWalletButton from "@/app/_components/admin/AdminAddToWalletButton";
 
 export async function generateMetadata({
   params,
@@ -201,7 +201,7 @@ export default async function AdminTicketDetailPage({
             <div className="flex flex-wrap items-start gap-4">
               <TicketDownloadButton ticketId={ticket.id} shortId={ticket.shortId} holderName={ticket.ticketHolderName} />
               <div className="w-56">
-                <AddToWalletButton ticketHash={ticket.ticketHash} shortId={ticket.shortId} size="sm" />
+                <AdminAddToWalletButton ticketHash={ticket.ticketHash} shortId={ticket.shortId} size="sm" />
               </div>
               {canRevertScan && (
                 <RevertTicketScanButton ticketId={ticket.id} />

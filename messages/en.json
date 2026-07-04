@@ -4,6 +4,14 @@
     "back": "Back",
     "close": "Close"
   },
+  "walletPass": {
+    "addToWallet": "Add to Apple Wallet",
+    "adding": "Adding to Wallet...",
+    "warningTitle": "Apple Wallet Required",
+    "warningBody": "Apple Wallet passes work best on iPhone, iPad, or Mac. You can still download the pass file, but you may not be able to open it on this device.",
+    "cancel": "Cancel",
+    "downloadAnyway": "Download Anyway"
+  },
   "nav": {
     "menu": "MENU"
   },

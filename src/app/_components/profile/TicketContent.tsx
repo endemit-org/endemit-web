@@ -9,6 +9,9 @@ import ProfileTicketQrCode from "./ProfileTicketQrCode";
 import ProfileTicketDownloadButton from "./ProfileTicketDownloadButton";
 import LiveTicketIndicator from "./LiveTicketIndicator";
 import AddToWalletButton from "@/app/_components/ticket/AddToWalletButton";
+import { useWalletPassLabels } from "@/app/_hooks/useWalletPassLabels";
+import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { logTicketDownloadAction } from "@/domain/ticket/actions/logTicketDownloadAction";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import { formatPrice } from "@/lib/util/formatting";
@@ -68,6 +71,7 @@ export default function TicketContent({
   isEventPassed = false,
 }: TicketContentProps) {
   const t = useTranslations("profile");
+  const walletPassLabels = useWalletPassLabels();
   const [status, setStatus] = useState(ticket.status);
   const [scannedAt, setScannedAt] = useState<string | null>(initialScannedAt);
   const [justScanned, setJustScanned] = useState(false);
@@ -316,8 +320,14 @@ export default function TicketContent({
             holderName={holderName}
           />
           <AddToWalletButton
-            ticketHash={ticket.ticketHash}
-            shortId={ticket.shortId}
+            passUrl={`${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticket.ticketHash}`}
+            onDownload={() =>
+              logTicketDownloadAction({
+                ticketShortId: ticket.shortId,
+                downloadType: "apple_wallet",
+              })
+            }
+            labels={walletPassLabels}
           />
         </div>
       )}
