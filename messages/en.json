@@ -211,6 +211,14 @@
       "Licenses": "Licenses",
       "Currencies": "Currencies",
       "Other": "Other"
+    },
+    "variantTypes": {
+      "Size": "Size",
+      "Colour": "Colour"
+    },
+    "variantValues": {
+      "Black": "Black",
+      "White": "White"
     }
   },
   "checkout": {
@@ -932,7 +940,10 @@
     "breadcrumb": "Music",
     "vinylPromo": {
       "or": "or",
-      "buyDigital": "Buy digital album"
+      "buyDigital": "Buy digital album",
+      "clickToListen": "Click here to listen",
+      "playAlbum": "Play album",
+      "playingAlbum": "Playing album"
     }
   },
   "newsletter": {

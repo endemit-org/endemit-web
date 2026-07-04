@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import clsx from "clsx";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import PlayIcon from "@/app/_components/icon/PlayIcon";
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export default function InnerClientToggle({ placeholder }: Props) {
+  const t = useTranslations("music.vinylPromo");
   const [isClicked, setIsClicked] = useState(false);
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const loadedTrack = usePlayerStore(state => state.currentTrack);
@@ -72,7 +74,7 @@ export default function InnerClientToggle({ placeholder }: Props) {
           onClick={() => setIsClicked(true)}
         >
           <span className={"animate-pulse tracking-wider"}>
-            Click here to listen
+            {t("clickToListen")}
           </span>
         </div>
         <div className={"relative"}>
@@ -155,7 +157,7 @@ export default function InnerClientToggle({ placeholder }: Props) {
                   fill
                   className={`text-white size-5 mr-2 ${isAlbumLoaded ? "animate-pulse" : ""}`}
                 />
-                {isAlbumLoaded ? "Playing album" : "Play album"}
+                {isAlbumLoaded ? t("playingAlbum") : t("playAlbum")}
               </ActionButton>
             </div>
           </div>

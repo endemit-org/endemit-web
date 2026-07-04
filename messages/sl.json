@@ -211,6 +211,14 @@
       "Licenses": "Licence",
       "Currencies": "Žetoni",
       "Other": "Ostalo"
+    },
+    "variantTypes": {
+      "Size": "velikost",
+      "Colour": "barvo"
+    },
+    "variantValues": {
+      "Black": "Črna",
+      "White": "Bela"
     }
   },
   "checkout": {
@@ -932,7 +940,10 @@
     "breadcrumb": "Muzika",
     "vinylPromo": {
       "or": "al",
-      "buyDigital": "Kupi digitalni album"
+      "buyDigital": "Kupi digitalni album",
+      "clickToListen": "Klikni za poslušanje",
+      "playAlbum": "Zavrti album",
+      "playingAlbum": "Album se vrti"
     }
   },
   "newsletter": {

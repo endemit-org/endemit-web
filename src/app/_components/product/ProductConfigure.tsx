@@ -25,6 +25,17 @@ interface Props {
 
 export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
   const t = useTranslations("store");
+
+  const VARIANT_TYPES = ["Size", "Colour"] as const;
+  const VARIANT_VALUES = ["Black", "White"] as const;
+  const translateVariantType = (v: string) =>
+    (VARIANT_TYPES as readonly string[]).includes(v)
+      ? t(`variantTypes.${v as (typeof VARIANT_TYPES)[number]}`)
+      : v;
+  const translateVariantValue = (v: string) =>
+    (VARIANT_VALUES as readonly string[]).includes(v)
+      ? t(`variantValues.${v as (typeof VARIANT_VALUES)[number]}`)
+      : v;
   const { addItem } = useCartActions();
   const cartItems = useCartItems();
   const [productEntity, setProductEntity] = useState<Product | undefined>(
@@ -80,7 +91,9 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
         <div className="flex flex-col items-center mb-6">
           <div>
             {t("product.selectVariant", {
-              variantType: product.variants[0].variant_type,
+              variantType: translateVariantType(
+                product.variants[0].variant_type
+              ),
             })}
           </div>
           <div className="flex gap-x-3 mt-2">
@@ -99,7 +112,9 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
               return (
                 <div
                   key={variantProduct.uid}
-                  aria-label={variantProduct.variants[0].variant_value}
+                  aria-label={translateVariantValue(
+                    variantProduct.variants[0].variant_value
+                  )}
                   onClick={() => handleVariantSelection(variantProduct)}
                   className={clsx(
                     "group relative flex items-center justify-center rounded-md border border-gray-300 p-3 cursor-pointer",
@@ -114,7 +129,9 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
                       !isSelected && "text-gray-900 group-hover:text-gray-800"
                     )}
                   >
-                    {variantProduct.variants[0].variant_value}
+                    {translateVariantValue(
+                      variantProduct.variants[0].variant_value
+                    )}
                   </span>
                 </div>
               );
