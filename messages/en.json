@@ -283,7 +283,7 @@
       "dismiss": "Dismiss",
       "title": "Donations keep us running",
       "prompt": "Add <strong>{amount} donation</strong> to your total<br></br>and <strong>round up to {rounded}</strong>?",
-      "description": "We are volunteers dedicated to a non-profit. Donations support our work and help us keep ticket prices low.",
+      "description": "We do all of this as volunteers. Donations keep the work going and ticket prices low.",
       "addButton": "Add {amount} donation",
       "moreAbout": "More about our non-profit"
     },
@@ -312,7 +312,7 @@
     },
     "cashless": {
       "title": "Go Cashless at the Event",
-      "description": "This event uses cashless payments with EndePay. Preload your wallet now and enjoy faster service at the bar and food stands.",
+      "description": "This event runs on cashless payments with EndePay. Top up your wallet ahead and skip the line at the bar.",
       "popular": "Popular",
       "add": "+ Add",
       "cashNote": "You can also top up with cash at the event"
@@ -737,7 +737,7 @@
       "subject": "Your order has been shipped!",
       "heading": "Your order has been shipped!",
       "orderNumber": "Order #{id}",
-      "body": "Great news! Your order is now on its way to you. You can expect delivery within the next couple of work days.",
+      "body": "Your order is on its way. Expect delivery within the next couple of working days.",
       "viewOrder": "View Your Order",
       "questions": "Questions about your delivery? Contact us at <link>endemit@endemit.org</link>"
     },
@@ -797,7 +797,7 @@
     "eventClaim": {
       "subject": "{eventName} has been added to your profile",
       "heading": "Event Added to Your Profile!",
-      "body": "Great news! <strong>{eventName}</strong> has been added to your \"Events Attended\" list. Thanks for being part of our community!",
+      "body": "<strong>{eventName}</strong> is now on your \"Events Attended\" list. Good to have you there.",
       "viewProfile": "View Your Profile",
       "questions": "Questions? Contact us at <link>endemit@endemit.org</link>"
     },

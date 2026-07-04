@@ -177,7 +177,7 @@
       "ticketsNote": "Karte za <strong>{names}</strong> ti pridejo na mejl kmalo, v naslednjih 30 minutah.",
       "orderId": "Št. naročila",
       "metaTitle": "Naročilo potrjeno",
-      "metaDescription": "Tvoje naročilo na endemit.org je blo uspešno potrjeno. Nadaljuj ali zapri to stran."
+      "metaDescription": "Naročilo na endemit.org je uspešno potrjeno. Nadaljuj ali zapri to stran."
     },
     "interrupted": {
       "title": "Plačilo se je prekinilo!",
@@ -189,14 +189,14 @@
       "returnToCart": "Nazaj v košaro",
       "needHelp": "Rabiš pomoč? <contact>Piš nam</contact>",
       "metaTitle": "Plačilo prekinjeno",
-      "metaDescription": "Tvoje plačilo je blo prekinjeno in naročila ni zaključilo."
+      "metaDescription": "Plačilo je bilo prekinjeno in naročilo ni zaključeno."
     }
   },
   "checkout": {
     "back": "← Nazaj",
     "emptyCart": {
       "title": "Košara je prazna.",
-      "body": "Skoč v <link>Štacuno</link> in zberi izdelke da podpreš naše neprofitno delo."
+      "body": "Skoč v <link>Štacuno</link>, zberi kej zase in s tem podpreš naše neprofitno delo."
     },
     "cart": {
       "heading": "Košara ({count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}})"
@@ -283,7 +283,7 @@
       "dismiss": "Zapri",
       "title": "Donacije nas držijo pokonc",
       "prompt": "Dodaš <strong>{amount} donacije</strong> k seštevku<br></br>in <strong>zaokrožiš na {rounded}</strong>?",
-      "description": "Smo prostovoljci, predani neprofitni zadevi. Donacije podprejo naše delo in pomagajo držat cene kart nizke.",
+      "description": "Vse to delamo prostovoljno. Z donacijo podpreš naše delo in pomagaš držat cene kart nizke.",
       "addButton": "Dodaj {amount} donacije",
       "moreAbout": "Več o naši neprofitni zgodbi"
     },
@@ -312,7 +312,7 @@
     },
     "cashless": {
       "title": "Event brez keša",
-      "description": "Ta event uporablja plačila brez keša. Nafilaj digitalno denarnco že zdej in uživaj v hitrejši postrežbi na baru in pri hrani.",
+      "description": "Ta event laufa brez keša. Nafilaj denarnco že zdej, da na šanku ne čakaš v vrsti.",
       "popular": "Popularno",
       "add": "+ Dodaj",
       "cashNote": "Denarnco lahko nafilaš tut s kešem na eventu"
@@ -707,9 +707,9 @@
       "subject": "Tvoje naročilo @ endemit",
       "thankYou": "Hvala za tvoje naročilo!",
       "orderNumber": "Naročilo #{id}",
-      "confirmation": "To je potrditev tvojega naročila pri nas. Spodaj so podrobnosti tvojega nakupa.",
+      "confirmation": "Potrjujemo tvoje naročilo. Spodaj so podrobnosti nakupa.",
       "willShip": "Naročilo bomo na navedeni naslov odpremili v kratkem, običajno v 3–5 dneh.",
-      "ticketsInfo": "Tvoje karte bodo poslane na tvoj email v naslednjih 10 minutah. Preveri svoj nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka karta bo poslana posebej</strong> s QR kodo, ki jo ob vstopu pokažeš na event.",
+      "ticketsInfo": "Karte ti pošljemo na email v naslednjih 10 minutah. Preveri nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka karta pride posebej</strong> s QR kodo, ki jo pokažeš ob vstopu na event.",
       "shippingAddress": "Naslov za dostavo",
       "phone": "Telefon: {phone}",
       "orderItems": "Izdelki v naročilu",
@@ -734,17 +734,17 @@
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
     "orderShipped": {
-      "subject": "Tvoje naročilo je odposlano!",
-      "heading": "Tvoje naročilo je odposlano!",
+      "subject": "Naročilo je na poti",
+      "heading": "Naročilo je na poti",
       "orderNumber": "Naročilo #{id}",
-      "body": "Odlična novica! Tvoje naročilo je na poti do tebe. Dostavo lahko pričakuješ v naslednjih nekaj delovnih dneh.",
+      "body": "Paket je na poti. Računaj na dostavo v nekaj delovnih dneh.",
       "viewOrder": "Poglej naročilo",
       "questions": "Vprašanja o dostavi? Piši nam na <link>endemit@endemit.org</link>"
     },
     "refund": {
       "subject": "Refund za tvoje naročilo je obdelan",
       "heading": "Refund obdelan",
-      "intro": "Tvoj refund je bil uspešno obdelan. Sredstva bodo vrnjena na izvorni način plačila v 5–10 delovnih dneh.",
+      "intro": "Refund je urejen. Denar se vrne na isti način plačila v 5–10 delovnih dneh.",
       "refundAmount": "Znesek refunda",
       "refundedTo": "Vrnjeno na: {method}",
       "orderDetails": "Podrobnosti naročila",
@@ -760,8 +760,8 @@
       "questions": "Če imaš vprašanja o refundu, piši naši podpori na <link>endemit@endemit.org</link>"
     },
     "ticketInvalidation": {
-      "subjectOne": "Tvoja karta je bila razveljavljena",
-      "subjectMany": "Tvoje karte so bile razveljavljene",
+      "subjectOne": "Karta ni več veljavna",
+      "subjectMany": "Karte niso več veljavne",
       "heading": "{count, plural, one {karta razveljavljena} two {karti razveljavljeni} few {karte razveljavljene} other {karte razveljavljene}}",
       "importantNotice": "Pomembno obvestilo",
       "warning": "{count, plural, one {Naslednja karta ni več veljavna in je ni mogoče uporabiti za vstop na event.} two {Naslednji karti nista več veljavni in ju ni mogoče uporabiti za vstop na event.} few {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.} other {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.}} Razlog je obdelan refund za povezano naročilo.",
@@ -778,9 +778,9 @@
       "questions": "Če imaš vprašanja, piši naši podpori na <link>endemit@endemit.org</link>"
     },
     "eventReminder": {
-      "subject": "Jutri: {eventName} - {count, plural, one {Tvoja karta je pripravljena!} two {Tvoji karti ({count}) sta pripravljeni!} few {Tvoje karte ({count}) so pripravljene!} other {Tvoje karte ({count}) so pripravljene!}}",
+      "subject": "Jutri: {eventName} - {count, plural, one {karta te čaka!} two {karti ({count}) te čakata!} few {karte ({count}) te čakajo!} other {karte ({count}) te čakajo!}}",
       "heading": "Event {eventName} je jutri!",
-      "intro": "{count, plural, one {Tvoja karta za {eventName} je priložena in pripravljena za jutri. Ob vhodu jo pokaži za potrditev. Uporabiš lahko tudi povezavo do digitalne karte ali jo dodaš v Apple Wallet. Se vidimo na floru!} two {Tvoji karti ({count}) za {eventName} sta priloženi in pripravljeni za jutri. Ob vhodu ju pokaži za potrditev. Uporabiš lahko tudi povezavi do digitalnih kart ali ju dodaš v Apple Wallet. Se vidimo na floru!} few {Tvoje karte ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih kart ali jih dodaš v Apple Wallet. Se vidimo na floru!} other {Tvoje karte ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih kart ali jih dodaš v Apple Wallet. Se vidimo na floru!}}",
+      "intro": "{count, plural, one {Karta za {eventName} je priložena in pripravljena za jutri. Ob vhodu jo pokaži za potrditev. Uporabiš lahko tudi povezavo do digitalne karte ali jo dodaš v Apple Wallet. Se vidimo na floru!} two {Karti ({count}) za {eventName} sta priloženi in pripravljeni za jutri. Ob vhodu ju pokaži za potrditev. Uporabiš lahko tudi povezavi do digitalnih kart ali ju dodaš v Apple Wallet. Se vidimo na floru!} few {Karte ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih kart ali jih dodaš v Apple Wallet. Se vidimo na floru!} other {Karte ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih kart ali jih dodaš v Apple Wallet. Se vidimo na floru!}}",
       "date": "Datum:",
       "location": "Lokacija:",
       "lineup": "Zasedba",
@@ -796,8 +796,8 @@
     },
     "eventClaim": {
       "subject": "{eventName} je bil dodan v tvoj profil",
-      "heading": "Event dodan v tvoj profil!",
-      "body": "Odlična novica! <strong>{eventName}</strong> je bil dodan na tvoj seznam »Obiskani eventi«. Hvala, ker si del naše skupnosti!",
+      "heading": "Event je v tvojem profilu",
+      "body": "<strong>{eventName}</strong> je zdej na tvojem seznamu »Obiskani eventi«. Lepo, da si zravn.",
       "viewProfile": "Poglej svoj profil",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
@@ -811,15 +811,15 @@
         "codeLabel": "Koda tvoje zapestnce"
       },
       "replaced": {
-        "subject": "Tvoja zapestnca je bila posodobljena",
-        "heading": "Tvoja zapestnca je bila posodobljena",
-        "intro": "Tvoja prejšnja zapestnca je bila zamenjana. Stara koda ne bo več delovala na POS blagajnah — samo nova spodaj.",
+        "subject": "Zapestnca je zamenjana",
+        "heading": "Zapestnca je zamenjana",
+        "intro": "Stara zapestnca je zamenjana in njena koda na POS blagajnah ne dela več — velja samo nova spodaj.",
         "oldLabel": "Stara (odstranjena)",
         "newLabel": "Nova (aktivna)"
       },
       "unlinked": {
-        "subject": "Tvoja nalepka zapestnce je bila odstranjena",
-        "heading": "Tvoja nalepka zapestnce je bila odstranjena",
+        "subject": "Zapestnca je odstranjena",
+        "heading": "Zapestnca je odstranjena",
         "intro": "Spodnja zapestnca ni več povezana s tvojo denarnco Endemit in je ni več mogoče uporabljati za plačila na POS blagajnah.",
         "removedLabel": "Odstranjena zapestnca",
         "outro": "Novo zapestnco lahko kadar koli povežeš v nastavitvah svojega profila."
@@ -893,7 +893,7 @@
       "invalidEmail": "Vpiš pravi email",
       "failed": "Ni ratalo, probej spet",
       "subscribing": "Prijavljam…",
-      "subscribed": "Uspešno!",
+      "subscribed": "Notr si!",
       "signUp": "Prijava",
       "successHeading": "si zdej notr!",
       "emailPlaceholder": "ime.priimek@gmail.com"
@@ -982,7 +982,7 @@
       "next": "Naprej",
       "userSearchPlaceholder": "Išči po imenu, uporabniškem imenu ali emailu",
       "selectEvent": "Izberi pretekli event...",
-      "autoApproveNote": "Zahtevek se bo uvrstil v vrsto za samodejno odobritev čez 5 minut, isto kot uporabnikov zahtevek. Uporabi »Odobri zdaj« v seznamu, če hočeš preskočiti čakanje.",
+      "autoApproveNote": "Zahtevek gre čez 5 minut v samodejno odobritev (enako kot zahtevki uporabnikov). Če nočeš čakat, klikni »Odobri zdaj«.",
       "creating": "Ustvarjam...",
       "createClaim": "Ustvari zahtevek",
       "failedCreate": "Zahtevka ni bilo mogoče ustvariti",
