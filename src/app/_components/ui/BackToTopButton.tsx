@@ -39,7 +39,9 @@ export default function BackToTopButton() {
     <button
       onClick={scrollToTop}
       className={clsx(
-        "lg:hidden fixed bottom-20 right-4 z-40",
+        // z-30 keeps it below the mobile nav menu (z-40) so it doesn't overlay
+        // the expanded menu, while still floating above page content.
+        "lg:hidden fixed bottom-20 right-4 z-30",
         "w-12 h-12 rounded-full",
         "bg-neutral-800 border border-neutral-700",
         "flex items-center justify-center",
