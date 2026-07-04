@@ -75,8 +75,8 @@ export const formatDate = (date: Date, locale: "sl" | "en" = "en") => {
   });
 };
 
-export const formatDateTime = (date: Date) => {
-  return date.toLocaleDateString("en-GB", {
+export const formatDateTime = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     day: "2-digit",
     month: "long",
     year: "2-digit",

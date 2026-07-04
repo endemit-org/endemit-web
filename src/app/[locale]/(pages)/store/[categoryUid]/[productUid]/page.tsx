@@ -20,6 +20,7 @@ import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCm
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductVisible } from "@/domain/product/businessLogic";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { translateCategory } from "@/lib/util/translateCategory";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -53,7 +54,11 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = `${product.meta.title ?? product.name} • ${product.category}`;
+  const tCat = await getTranslations({
+    locale: loc,
+    namespace: "store.categoryNames",
+  });
+  const title = `${product.meta.title ?? product.name} • ${translateCategory(tCat, product.category)}`;
   const description =
     product?.meta.description ?? prismic.asText(product.description);
   const images = buildOpenGraphImages({
@@ -79,6 +84,7 @@ export default async function ProductPage({
   setRequestLocale(locale as "sl" | "en");
   const t = await getTranslations("store");
   const loc = locale === "en" ? "en" : "sl";
+  const tCat = await getTranslations("store.categoryNames");
 
   const product = await fetchProductFromCmsByUid(productUid, loc);
 
@@ -102,7 +108,7 @@ export default async function ProductPage({
             { label: "Endemit", path: "" },
             { label: t("breadcrumb.store"), path: "store" },
             {
-              label: product.category,
+              label: translateCategory(tCat, product.category),
               path: getSlugFromText(product.category),
             },
             { label: product.name, path: product.uid },

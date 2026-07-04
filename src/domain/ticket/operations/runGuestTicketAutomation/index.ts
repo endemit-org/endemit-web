@@ -80,7 +80,9 @@ export const runGuestTicketAutomation = inngest.createFunction(
       const ticketImageWithEvent = await step.run(
         "create-ticket-image",
         async () => {
-          const eventData = await fetchEventFromCmsById(eventId);
+          const ticketLocale =
+            ticket.locale === "en" ? ("en" as const) : ("sl" as const);
+          const eventData = await fetchEventFromCmsById(eventId, ticketLocale);
 
           if (
             !eventData?.promoImage?.src ||
@@ -101,12 +103,13 @@ export const runGuestTicketAutomation = inngest.createFunction(
             qrData: JSON.stringify(ticket.qrContent),
             eventName: ticket.eventName,
             eventDetails: eventData.venue.name ?? "",
-            eventDate: formatEventDateAndTime(eventData.date_start),
+            eventDate: formatEventDateAndTime(eventData.date_start, ticketLocale),
             attendeeName: ticket.ticketHolderName,
             attendeeEmail: ticket.ticketPayerEmail,
             artists: artistNames,
             price: formatPrice(Number(ticket.price)),
             coverImageUrl: eventData.promoImage.src,
+            locale: ticketLocale,
             template: "guest",
           });
 
@@ -139,7 +142,8 @@ export const runGuestTicketAutomation = inngest.createFunction(
             mapUrl: ticketImageWithEvent.event.venue?.mapLocationUrl || "",
             address: ticketImageWithEvent.event.venue?.address || "",
           },
-          ticketImageWithEvent.image
+          ticketImageWithEvent.image,
+          ticket.locale === "en" ? "en" : "sl"
         );
 
         if (!result || result.error) {

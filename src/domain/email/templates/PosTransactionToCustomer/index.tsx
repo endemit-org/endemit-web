@@ -57,8 +57,10 @@ function PosTransactionToCustomerTemplate({
         <Text className="text-gray-500 mb-6">{formattedDate}</Text>
 
         <Text className="text-gray-600 mb-6">
-          Your purchase at <strong>{registerName}</strong> has been completed
-          successfully. Below are the details of your transaction.
+          {t.rich("intro", {
+            registerName,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </Text>
 
         <h2 className="text-xl font-bold mb-2 mt-8">{t("items")}</h2>
@@ -74,7 +76,7 @@ function PosTransactionToCustomerTemplate({
                 }}
               >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Item
+                  {t("item")}
                 </Text>
               </th>
               <th

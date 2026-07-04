@@ -37,7 +37,10 @@ export async function GET(
     }
 
     // Fetch event details from CMS to get venue info
-    const event = await fetchEventFromCmsById(ticket.eventId);
+    const event = await fetchEventFromCmsById(
+      ticket.eventId,
+      ticket.locale === "en" ? "en" : "sl"
+    );
 
     // Generate the Apple Wallet pass
     const passBuffer = await generateApplePass({
@@ -54,6 +57,7 @@ export async function GET(
       orderId: ticket.orderId,
       price: Number(ticket.price),
       qrContent: JSON.stringify(ticket.qrContent),
+      locale: ticket.locale === "en" ? "en" : "sl",
     });
 
     // Create a safe filename

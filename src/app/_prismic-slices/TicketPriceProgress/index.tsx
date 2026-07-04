@@ -3,6 +3,7 @@ import TicketPriceProgressClient, {
   type PriceStepData,
 } from "./TicketPriceProgressClient";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
+import { useTranslations } from "next-intl";
 import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 interface PriceStepItem {
@@ -44,6 +45,7 @@ const TicketPriceProgress: FC<TicketPriceProgressProps> = ({
 }) => {
   const { primary, items } = slice;
   const locale = context?.locale ?? "sl";
+  const t = useTranslations("ticketPricing");
 
   const heading = pickLocalized(primary, "heading", locale) || null;
   const subheading = pickLocalized(primary, "subheading", locale) || null;
@@ -62,7 +64,9 @@ const TicketPriceProgress: FC<TicketPriceProgressProps> = ({
     const showPrice = hasStarted || isVisible;
 
     return {
-      title: pickLocalized(item, "title", locale) || `Step ${index + 1}`,
+      title:
+        pickLocalized(item, "title", locale) ||
+        t("step", { number: index + 1 }),
       description: pickLocalized(item, "description", locale) || null,
       price: showPrice ? (item.price ?? null) : null,
       availableFrom: item.available_from || null,
