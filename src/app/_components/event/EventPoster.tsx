@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import clsx from "clsx";
 import { formatEventDate } from "@/lib/util/formatting";
+import { useLocale } from "next-intl";
 import { Event, EventType } from "@/domain/event/types/event";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
@@ -17,6 +18,7 @@ export interface EventProps {
 
 export default function EventPoster({ event }: EventProps) {
   const t = useTranslations("events");
+  const locale = useLocale() as "sl" | "en";
   const shouldShowLink =
     event.options.enabledLink || event.options.externalEventLink;
   const shouldShowVideo =
@@ -130,10 +132,10 @@ export default function EventPoster({ event }: EventProps) {
                     isPastEvent && "text-neutral-600"
                   )}
                 >
-                  {isPastEvent ? `Happened on ` : `Upcoming on `}
+                  {isPastEvent ? t("poster.happenedOn") : t("poster.upcomingOn")}{" "}
                   {event.date_start &&
                     event.date_end &&
-                    formatEventDate(event.date_start, event.date_end)}
+                    formatEventDate(event.date_start, event.date_end, locale)}
                   <br />
                   {event.venue?.name}
                 </p>

@@ -6,7 +6,7 @@ import React from "react";
 import clsx from "clsx";
 import { isDateInPast } from "@/lib/util/util";
 import EventPastEventStatus from "@/app/_components/event/EventPastEventStatus";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   image?: CmsImage | null;
@@ -26,9 +26,12 @@ export default function EventMiniCard({
   image,
 }: Props) {
   const t = useTranslations("events");
+  const locale = useLocale() as "sl" | "en";
   const isPastEvent = dateEnd && isDateInPast(dateEnd);
   const dateOrLocation =
-    dateStart && dateEnd ? formatEventDate(dateStart, dateEnd) : location;
+    dateStart && dateEnd
+      ? formatEventDate(dateStart, dateEnd, locale)
+      : location;
 
   return (
     <div
