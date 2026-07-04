@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTicketByShortId } from "@/domain/ticket/operations/getTicketByShortId";
@@ -20,13 +21,15 @@ export const metadata: Metadata = {
 };
 
 interface ProfileTicketPageProps {
-  params: Promise<{ shortId: string }>;
+  params: Promise<{ shortId: string; locale: string }>;
 }
 
 export default async function ProfileTicketPage({
   params,
 }: ProfileTicketPageProps) {
-  const { shortId } = await params;
+  const { shortId, locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -81,11 +84,11 @@ export default async function ProfileTicketPage({
   return (
     <OuterPage>
       <PageHeadline
-        title={`Ticket ${shortId}`}
+        title={t("tickets.detailTitle", { shortId })}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Tickets", path: "tickets" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.tickets"), path: "tickets" },
           { label: shortId, path: shortId },
         ]}
       />
@@ -109,7 +112,7 @@ export default async function ProfileTicketPage({
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Tickets
+            {t("nav.backToTickets")}
           </Link>
         </div>
 

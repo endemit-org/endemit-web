@@ -24,6 +24,7 @@ import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -82,12 +83,14 @@ export default async function EventPage({
   }>;
 }) {
   const { locale, uid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("events");
   const loc = locale === "en" ? "en" : "sl";
   const event = await fetchEventFromCmsByUid(uid, loc);
   let products: Product[] = [];
 
   if (event?.tickets.productIds && event.tickets.productIds.length > 0) {
-    products = await fetchProductsFromCmsByIds(event.tickets.productIds);
+    products = await fetchProductsFromCmsByIds(event.tickets.productIds, loc);
     // Sort by price (low to high)
     products.sort((a, b) => a.price - b.price);
   }
@@ -96,7 +99,7 @@ export default async function EventPage({
     notFound();
   }
 
-  const innerContentPages = await fetchInnerContentPagesForEvent(event.id);
+  const innerContentPages = await fetchInnerContentPagesForEvent(event.id, loc);
   const isPastEvent = isEventCompleted(event);
 
   // Fetch other events to explore for past events
@@ -124,7 +127,7 @@ export default async function EventPage({
 
   if (event.options.showEventLineup && !event.options.hideLineupSection) {
     defaultContent.push({
-      label: "Lineup",
+      label: t("tabs.lineup"),
       content: (
         <EventLineUp
           artists={event.artists}
@@ -137,7 +140,7 @@ export default async function EventPage({
   }
 
   defaultContent.push({
-    label: "Location",
+    label: t("tabs.location"),
     id: "location",
     content: <EventLocation venue={event.venue} />,
     sortingWeight: 400,
@@ -160,7 +163,7 @@ export default async function EventPage({
 
   if (event.slices.length > 0) {
     defaultContent.push({
-      label: "About",
+      label: t("tabs.about"),
       content: (
         <div>
           <SliceDisplay slices={event.slices} locale={loc} />
@@ -174,7 +177,7 @@ export default async function EventPage({
 
   if (!isPastEvent && event.tickets.shouldSellTickets) {
     defaultContent.push({
-      label: "Tickets",
+      label: t("tabs.tickets"),
       content: <EventTicketDisplay products={products} event={event} />,
       id: "tickets",
       sortingWeight: 200,
@@ -274,7 +277,7 @@ export default async function EventPage({
                   {formatEventDate(event.date_start, event.date_end)}
                   {isPastEvent && (
                     <div className={"text-neutral-400 text-sm"}>
-                      This event has concluded
+                      {t("concluded")}
                     </div>
                   )}
                 </div>
@@ -330,7 +333,7 @@ export default async function EventPage({
               className={"flex gap-x-2"}
             >
               <TicketIcon />
-              Get tickets
+              {t("getTickets")}
             </ActionButton>
           </div>
         ) : (
@@ -344,14 +347,15 @@ export default async function EventPage({
           <div className={"animate-marquee-move"}>
             {(() => {
               const artistNames = event.options.showEventLineup
-                ? (event.artists?.map(a => a.name) ?? [])
+                ? (event.artists?.map(a => a.name).filter(Boolean) ?? [])
                 : [];
               const pattern =
                 artistNames.length > 0
                   ? artistNames
                       .map(name => `${event.name} · ${name}`)
                       .join(" · ")
-                  : event.name;
+                  : (event.name ?? "");
+              if (!pattern) return null;
               const repeatCount = Math.ceil(200 / pattern.length);
               return Array(repeatCount).fill(pattern).join(" · ");
             })()}
@@ -366,7 +370,7 @@ export default async function EventPage({
               event.options.showArtistTimes && (
                 <ArtistCarousel
                   artists={event.artists}
-                  headline={"Set times"}
+                  headline={t("setTimes")}
                 />
               )}
             <Tabs items={defaultContent} sortByWeight={true} />
@@ -422,7 +426,7 @@ export default async function EventPage({
         {isPastEvent && otherEvents.length > 0 && (
           <div className="mb-10 text-center relative z-10 mt-20 max-md:pb-32">
             <h3 className="text-neutral-200 text-2xl py-6 max-md:pt-32">
-              More events to explore
+              {t("moreEventsToExplore")}
             </h3>
             <div
               className={clsx(

@@ -22,10 +22,9 @@ export const transformEventObject = async (
       if (!isFilled.contentRelationship(item.artist)) continue;
 
       const artist = item.artist;
-      if (!artist || !artist.data) {
-        artists.push(null);
-        continue;
-      }
+      // Broken relationship (unpublished/deleted artist doc) — skip instead of
+      // emitting a null entry that crashes every consumer that maps artists.
+      if (!artist || !artist.data) continue;
 
       const imageUrl =
         item.image_override && item.image_override.url
@@ -65,21 +64,27 @@ export const transformEventObject = async (
         stage: pickLocalized(item, "stage", locale),
         isB2b: artist.data.is_b2b,
         b2bAttribution: artist.data.is_b2b
-          ? artist.data.b2b_attributed_to_artist.map(artist => {
-              if (!isFilled.contentRelationship(artist.artist)) return;
+          ? artist.data.b2b_attributed_to_artist
+              .map(artist => {
+                if (!isFilled.contentRelationship(artist.artist)) return;
 
-              return {
-                name: artist.artist.data?.name,
-                id: artist.artist.id,
-                uid: artist.artist.uid,
-              };
-            })
+                return {
+                  name: artist.artist.data?.name,
+                  id: artist.artist.id,
+                  uid: artist.artist.uid,
+                };
+              })
+              // Empty repeatable rows map to undefined — drop them.
+              .filter(Boolean)
           : null,
         links: artist.data.links
-          ? artist.data.links.map(link => ({
-              type: link.type,
-              url: asLink(link.link),
-            }))
+          ? artist.data.links
+              .map(link => ({
+                type: link.type,
+                url: asLink(link.link),
+              }))
+              // Empty repeatable entries in Prismic come through as null type/url.
+              .filter(link => link.type && link.url)
           : [],
         soundcloudUrl: (item as { soundcloud_url?: string }).soundcloud_url || null,
       });

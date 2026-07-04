@@ -1,6 +1,7 @@
 import React from "react";
 import { formatDayOfMonth, formatMonthNameShort } from "@/lib/util/formatting";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 export interface SaveTheDateProps {
   saveTheDateItem: {
@@ -14,6 +15,7 @@ export interface SaveTheDateProps {
 export default function EventSaveTheDate({
   saveTheDateItem,
 }: SaveTheDateProps) {
+  const t = useTranslations("events");
   const date = new Date(saveTheDateItem.date);
   const monthNameShort = formatMonthNameShort(date);
   const dayOfMonth = formatDayOfMonth(date);
@@ -34,7 +36,7 @@ export default function EventSaveTheDate({
             !saveTheDateItem.title && "blur-md select-none scale-y-75"
           )}
         >
-          {saveTheDateItem.title ?? "Nice try, it's a secret!"}
+          {saveTheDateItem.title ?? t("saveTheDate.secret")}
         </div>
         {saveTheDateItem.description && (
           <div className="text-neutral-300">{saveTheDateItem.description}</div>

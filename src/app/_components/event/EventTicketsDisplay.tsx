@@ -15,15 +15,23 @@ import { formatPrice } from "@/lib/util/formatting";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import Image from "next/image";
 import EventUrgencyBar from "./EventUrgencyBar";
+import { useTranslations } from "next-intl";
 
 interface EventTicketDisplayProps {
   products: Product[];
   event: Event;
 }
 
-export function formatTicketTitle(product: Product, isHot?: boolean) {
+export function formatTicketTitle(
+  product: Product,
+  isHot?: boolean,
+  hotAlt: string = "Hot",
+  personCountLabel?: string
+) {
   const ticketQuantity = getTicketQuantityForProduct(product);
-  const quantitySuffix = `${ticketQuantity} ${ticketQuantity === 1 ? "person" : "people"}`;
+  const quantitySuffix =
+    personCountLabel ??
+    `${ticketQuantity} ${ticketQuantity === 1 ? "person" : "people"}`;
   return (
     <div>
       <div className={"font-semibold flex gap-x-1.5 items-center"}>
@@ -31,7 +39,7 @@ export function formatTicketTitle(product: Product, isHot?: boolean) {
         {isHot && (
           <Image
             src="/images/flame.gif"
-            alt="Hot"
+            alt={hotAlt}
             className="w-5 h-5 h"
             width={40}
             height={40}
@@ -58,11 +66,13 @@ function TicketPurchaseDisplay({
   product,
   content,
   showTicketQuantities = false,
+  includesTicketsLabel,
 }: {
   productAvailable: boolean | null;
   product: Product;
   content: React.ReactNode | null;
   showTicketQuantities: boolean;
+  includesTicketsLabel?: string;
 }) {
   const ticketQuantity = getTicketQuantityForProduct(product);
 
@@ -85,8 +95,8 @@ function TicketPurchaseDisplay({
         <h2 className={"text-2xl"}>{product.name}</h2>
         {showTicketQuantities && (
           <p className="text-neutral-600 text-sm">
-            Includes tickets for {ticketQuantity}{" "}
-            {ticketQuantity === 1 ? "person" : "people"}
+            {includesTicketsLabel ??
+              `Includes tickets for ${ticketQuantity} ${ticketQuantity === 1 ? "person" : "people"}`}
           </p>
         )}
       </div>
@@ -99,6 +109,7 @@ export default function EventTicketDisplay({
   products,
   event,
 }: EventTicketDisplayProps) {
+  const t = useTranslations("events");
   const isPastEvent = isEventCompleted(event);
   const hasProducts = products.length > 0;
   const hasMultipleProducts = products.length > 1;
@@ -120,36 +131,35 @@ export default function EventTicketDisplay({
   let content: React.ReactNode = null;
 
   if (!event.tickets.shouldSellTickets) {
-    headline = "FREE admission";
-    subtitle = "No tickets required";
+    headline = t("ticketsDisplay.freeAdmission");
+    subtitle = t("ticketsDisplay.noTicketsRequired");
   } else if (!hasProducts) {
     if (isPastEvent) {
-      headline = "Tickets no longer available";
-      subtitle = "This event has concluded.";
+      headline = t("ticketsDisplay.noLongerAvailable");
+      subtitle = t("ticketsDisplay.eventConcluded");
     } else {
-      headline = "Tickets coming soon";
-      subtitle = "Tickets are not for sale yet";
+      headline = t("ticketsDisplay.comingSoon");
+      subtitle = t("ticketsDisplay.notForSaleYet");
     }
   } else if (!hasAvailableProducts) {
     // Mark tickets as sold out in Prismic to achieve this state
-    headline = "Tickets not available online";
-    subtitle = "Online tickets SOLD OUT";
+    headline = t("ticketsDisplay.notAvailableOnline");
+    subtitle = t("ticketsDisplay.onlineSoldOut");
     content = (
-      <Banner title={"Tickets are available at entrance"}>
-        Online tickets are sold out, but you can still get the tickets for you
-        and your friends when you arrive at the event.{" "}
-        <strong>Cash only.</strong>
+      <Banner title={t("ticketsDisplay.availableAtEntrance")}>
+        {t.rich("ticketsDisplay.soldOutBanner", {
+          strong: chunks => <strong>{chunks}</strong>,
+        })}
       </Banner>
     );
 
     // Override headline for festival 2026 - TODO - remove
     if (event.type === EventType.Festival) {
-      headline = "Ticket batch sold out";
-      subtitle = "Next ticket batch coming soon";
+      headline = t("ticketsDisplay.batchSoldOut");
+      subtitle = t("ticketsDisplay.batchComingSoon");
       content = (
-        <Banner title={"Ticket batch sold out"}>
-          This ticket batch for Endemit 2026 is sold out. We will be releasing
-          the next ticket batch soon. Stay tuned!
+        <Banner title={t("ticketsDisplay.batchSoldOut")}>
+          {t("ticketsDisplay.batchSoldOutBanner")}
         </Banner>
       );
     }
@@ -189,8 +199,8 @@ export default function EventTicketDisplay({
           className={"font-heading uppercase text-3xl text-neutral-400 mb-4"}
         >
           {singleProductAvailable
-            ? "Tickets available now"
-            : "Tickets not available online"}
+            ? t("ticketsDisplay.availableNow")
+            : t("ticketsDisplay.notAvailableOnline")}
         </div>
         {TicketPurchaseDisplay({
           product: singleProduct,
@@ -210,12 +220,22 @@ export default function EventTicketDisplay({
   // For multiple products - use accordion
   const middleIndex = Math.floor(products.length / 2);
   const accordionItems = products.map((product, index) => ({
-    title: formatTicketTitle(product, index === middleIndex),
+    title: formatTicketTitle(
+      product,
+      index === middleIndex,
+      t("ticketsDisplay.hot"),
+      t("ticketsDisplay.personCount", {
+        count: getTicketQuantityForProduct(product),
+      })
+    ),
     content: TicketPurchaseDisplay({
       product,
       productAvailable: product && isProductSellable(product).isSellable,
       content,
       showTicketQuantities: true,
+      includesTicketsLabel: t("ticketsDisplay.includesTickets", {
+        count: getTicketQuantityForProduct(product),
+      }),
     }),
   }));
 
@@ -227,8 +247,8 @@ export default function EventTicketDisplay({
         }
       >
         {hasAvailableProducts
-          ? "Tickets available now"
-          : "Tickets not available online"}
+          ? t("ticketsDisplay.availableNow")
+          : t("ticketsDisplay.notAvailableOnline")}
       </div>
 
       {!hasAvailableProducts && content}

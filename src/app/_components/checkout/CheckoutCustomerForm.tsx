@@ -11,6 +11,7 @@ import {
 } from "@/domain/product/businessLogic";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { CartItem } from "@/domain/checkout/types/cartItem";
+import { useTranslations } from "next-intl";
 
 interface CheckoutFormProps {
   formData: CheckoutFormData;
@@ -74,6 +75,7 @@ export default function CheckoutCustomerForm({
   submitForm,
   userEmail,
 }: CheckoutFormProps) {
+  const t = useTranslations("checkout.customer");
   const destinationCountry = getCountry(formData.country);
   const includesTickets = includesTicketProducts(items);
   const ticketItems = items.filter(item => isProductTicket(item));
@@ -89,19 +91,20 @@ export default function CheckoutCustomerForm({
   return (
     <div className="gap-y-8 flex flex-col">
       <CheckoutFormSection
-        title={"Your contact information"}
+        title={t("contactInfo.title")}
         description={
           userEmail
-            ? "You are signed in. Your email will be used for this order."
-            : `Ensure your email is correct as this is where you will receive your order
-          confirmation${includesTickets ? " and digital tickets" : ""}.`
+            ? t("contactInfo.signedIn")
+            : includesTickets
+              ? t("contactInfo.descriptionWithTickets")
+              : t("contactInfo.description")
         }
       >
         <Input
           name="email"
-          label="E-mail"
+          label={t("email")}
           type="email"
-          placeholder="jane@endemit.org"
+          placeholder={t("emailPlaceholder")}
           value={userEmail || formData.email}
           onChangeAction={onFormChangeAction}
           onEnter={handleOnEnter}
@@ -113,9 +116,9 @@ export default function CheckoutCustomerForm({
         {!userEmail && (
           <Input
             name="emailRepeat"
-            label="Repeat e-mail"
+            label={t("emailRepeat")}
             type="email"
-            placeholder="jane@endemit.org"
+            placeholder={t("emailPlaceholder")}
             value={formData.emailRepeat}
             onChangeAction={onFormChangeAction}
             onEnter={handleOnEnter}
@@ -128,8 +131,8 @@ export default function CheckoutCustomerForm({
 
       {includesTickets && ticketItems.length > 0 && (
         <CheckoutFormSection
-          title={"Ticket holder information"}
-          description={`As a backup for lost tickets or inability to scan at the event, please provide the name of each ticket holder:`}
+          title={t("ticketHolder.title")}
+          description={t("ticketHolder.description")}
         >
           {ticketItems.map(item => {
             const ticketQuantity = getTicketQuantityForProduct(item);
@@ -143,7 +146,7 @@ export default function CheckoutCustomerForm({
                       type="button"
                       onClick={() => onDecrementItem(item.id)}
                       className="w-7 h-7 flex items-center justify-center rounded bg-blue-900 hover:bg-blue-800 text-neutral-200 transition-colors"
-                      aria-label="Decrease quantity"
+                      aria-label={t("decreaseQuantity")}
                     >
                       −
                     </button>
@@ -154,7 +157,7 @@ export default function CheckoutCustomerForm({
                       type="button"
                       onClick={() => onIncrementItem(item.id)}
                       className="w-7 h-7 flex items-center justify-center rounded bg-blue-900 hover:bg-blue-800 text-neutral-200 transition-colors"
-                      aria-label="Increase quantity"
+                      aria-label={t("increaseQuantity")}
                     >
                       +
                     </button>
@@ -162,9 +165,9 @@ export default function CheckoutCustomerForm({
                       type="button"
                       onClick={() => onRemoveItem(item.id)}
                       className="ml-2 text-neutral-500 hover:text-red-400 text-sm transition-colors"
-                      aria-label="Remove ticket"
+                      aria-label={t("removeTicket")}
                     >
-                      Remove
+                      {t("remove")}
                     </button>
                   </div>
                 </div>
@@ -188,49 +191,49 @@ export default function CheckoutCustomerForm({
 
       {requiresShippingAddress && (
         <CheckoutFormSection
-          title={"Shipping information"}
-          description={`Please provide your shipping address where we will send your order.`}
+          title={t("shipping.title")}
+          description={t("shipping.description")}
         >
           <Input
             name="name"
-            label="Full Name"
+            label={t("fullName")}
             type="text"
             value={formData.name}
             onChangeAction={onFormChangeAction}
             onEnter={handleOnEnter}
             errorMessage={errorMessages.name as string}
             required={true}
-            placeholder="Jane Demit"
+            placeholder={t("fullNamePlaceholder")}
             validationTriggered={validationTriggered}
           />
           <Input
             name="address"
-            label="Address"
+            label={t("address")}
             type="text"
             value={formData.address}
             onChangeAction={onFormChangeAction}
             onEnter={handleOnEnter}
             errorMessage={errorMessages.address as string}
             required={true}
-            placeholder="Road to forever 42"
+            placeholder={t("addressPlaceholder")}
             validationTriggered={validationTriggered}
           />
           <div className={"flex gap-x-4"}>
             <Input
               name="postalCode"
-              label="Postal Code"
+              label={t("postalCode")}
               type="text"
               value={formData.postalCode}
               onChangeAction={onFormChangeAction}
               onEnter={handleOnEnter}
               errorMessage={errorMessages.postalCode as string}
               required={true}
-              placeholder="2390"
+              placeholder={t("postalCodePlaceholder")}
               validationTriggered={validationTriggered}
             />
             <Input
               name="city"
-              label="City"
+              label={t("city")}
               type="text"
               value={formData.city}
               onChangeAction={onFormChangeAction}
@@ -243,26 +246,28 @@ export default function CheckoutCustomerForm({
           </div>
           <CountrySelect
             name="country"
-            label="Country"
+            label={t("country")}
             onChangeAction={onFormChangeAction}
             value={formData.country}
             errorMessage={errorMessages.country as string}
             required={true}
           />
           <div className="text-neutral-400 text-sm">
-            Is your country not listed? Please{" "}
-            <Link href="mailto:endemit@endemit.org" className={"link"}>
-              contact us
-            </Link>
-            .
+            {t.rich("countryNotListed", {
+              contact: chunks => (
+                <Link href="mailto:endemit@endemit.org" className={"link"}>
+                  {chunks}
+                </Link>
+              ),
+            })}
           </div>
 
           <Input
             name="phone"
-            label="Phone"
+            label={t("phone")}
             type="text"
             autoComplete="off"
-            placeholder="30 111 222"
+            placeholder={t("phonePlaceholder")}
             value={formData.phone}
             onChangeAction={onFormChangeAction}
             onEnter={handleOnEnter}
@@ -273,8 +278,10 @@ export default function CheckoutCustomerForm({
           />
           {formData.phone && !errorMessages.phone && (
             <div className="text-neutral-400 text-sm">
-              We will reach you at {destinationCountry.callingCode}{" "}
-              {formData.phone}
+              {t("reachYou", {
+                code: destinationCountry.callingCode,
+                phone: formData.phone,
+              })}
             </div>
           )}
         </CheckoutFormSection>
@@ -290,49 +297,60 @@ export default function CheckoutCustomerForm({
       >
         <div className={"flex flex-col gap-y-4 flex-1"}>
           <div>
-            I confirm the order, accept and agree to the{" "}
-            <Link
-              target="_blank"
-              className="link"
-              href={"/terms-and-conditions"}
-            >
-              Terms and conditions
-            </Link>
-            ,{" "}
-            <Link target="_blank" className="link" href={"/privacy-policy"}>
-              Privacy policy
-            </Link>
-            , and{" "}
-            <Link
-              target="_blank"
-              className="link"
-              href={"/right-to-withdrawal"}
-            >
-              Right to withdrawal
-            </Link>
-            .
+            {t.rich("consent.terms", {
+              terms: chunks => (
+                <Link
+                  target="_blank"
+                  className="link"
+                  href={"/terms-and-conditions"}
+                >
+                  {chunks}
+                </Link>
+              ),
+              privacy: chunks => (
+                <Link target="_blank" className="link" href={"/privacy-policy"}>
+                  {chunks}
+                </Link>
+              ),
+              withdrawal: chunks => (
+                <Link
+                  target="_blank"
+                  className="link"
+                  href={"/right-to-withdrawal"}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </div>
           {includesNonRefundable && (
             <div>
-              I understand and accept that my order contains non refundable
-              items as stated in{" "}
-              <Link
-                target="_blank"
-                className="link"
-                href={"/notice-on-purchase-of-digital-products"}
-              >
-                Notice on purchase of digital products
-              </Link>
-              .
+              {t.rich("consent.nonRefundable", {
+                notice: chunks => (
+                  <Link
+                    target="_blank"
+                    className="link"
+                    href={"/notice-on-purchase-of-digital-products"}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </div>
           )}
           {includesTickets && (
             <div>
-              I understand, accept and will respect the applicable{" "}
-              <Link target="_blank" className="link" href={"/code-of-conduct"}>
-                Code of conduct
-              </Link>{" "}
-              at Endemit events.
+              {t.rich("consent.codeOfConduct", {
+                code: chunks => (
+                  <Link
+                    target="_blank"
+                    className="link"
+                    href={"/code-of-conduct"}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </div>
           )}
         </div>

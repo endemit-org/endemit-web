@@ -1,6 +1,7 @@
 import ActionButton from "@/app/_components/form/ActionButton";
 import clsx from "clsx";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface CheckoutActionsProps {
   onCheckout: () => void;
@@ -22,6 +23,7 @@ export default function CheckoutActions({
   isProcessing,
   errorMessages,
 }: CheckoutActionsProps) {
+  const t = useTranslations("checkout.actions");
   const remainingFields = Object.keys(errorMessages).length;
 
   return (
@@ -35,20 +37,21 @@ export default function CheckoutActions({
         )}
       >
         {isProcessing && canProceed
-          ? "Redirecting you to payment..."
-          : "Pay securely with Stripe"}
+          ? t("redirecting")
+          : t("payWithStripe")}
       </ActionButton>
       {!canProceed && (
         <div className={"text-neutral-400 text-sm text-center"}>
-          Please fill in all required fields to proceed to credit card payment.{" "}
-          Fill in the remaining <strong>{remainingFields}</strong> required
-          fields.
+          {t.rich("fillRequired", {
+            count: remainingFields,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </div>
       )}
       <div className="text-center w-full pt-4">
         <Image
           src="/images/powered-by-stripe.png"
-          alt="Powered by Stripe"
+          alt={t("poweredByStripe")}
           className="inline"
           width={180}
           height={44}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { Podcast } from "@/domain/podcast/types/podcast";
 import PodcastCard from "@/app/_components/podcast/PodcastCard";
+import { useTranslations } from "next-intl";
 
 interface Props {
   podcasts: Podcast[];
@@ -20,6 +21,7 @@ export default function PodcastSection({
   renderFrame = true,
   initialCount = 8,
 }: Props) {
+  const t = useTranslations("music");
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (podcasts.length === 0) {
@@ -68,7 +70,7 @@ export default function PodcastSection({
               <div
                 className={"text-neutral-700 font-heading uppercase text-lg "}
               >
-                Coming soon
+                {t("comingSoon")}
               </div>
             </div>
           ))}
@@ -80,7 +82,9 @@ export default function PodcastSection({
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-neutral-400 hover:text-neutral-200 text-sm transition-colors"
           >
-            {isExpanded ? "Show less" : `View all ${podcasts.length} episodes`}
+            {isExpanded
+              ? t("showLess")
+              : t("viewAll", { count: podcasts.length })}
           </button>
         </div>
       )}

@@ -12,6 +12,7 @@ import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
 import PodcastEpisodeSeoMicrodata from "@/app/_components/seo/PodcastEpisodeSeoMicrodata";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -32,11 +33,13 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }): Promise<Metadata> {
-  const { uid } = await params;
-  const podcast = await fetchPodcastFromCms(uid);
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const podcast = await fetchPodcastFromCms(uid, { locale: loc });
 
   if (!podcast) {
     notFound();
@@ -60,17 +63,21 @@ export default async function PodcastPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     uid: string;
   }>;
 }) {
-  const { uid } = await params;
-  const podcast = await fetchPodcastFromCms(uid);
+  const { locale, uid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const loc = locale === "en" ? "en" : "sl";
+  const t = await getTranslations("music");
+  const podcast = await fetchPodcastFromCms(uid, { locale: loc });
 
   if (!podcast) {
     notFound();
   }
 
-  const otherPodcasts = await fetchPodcastsFromCms({});
+  const otherPodcasts = await fetchPodcastsFromCms({ locale: loc });
   const filteredPodcast =
     otherPodcasts &&
     otherPodcasts.length > 0 &&
@@ -113,17 +120,15 @@ export default async function PodcastPage({
 
         {filteredPodcast && (
           <PodcastSection
-            title={"Enjoy our latest episodes"}
+            title={t("latestEpisodes")}
             podcasts={filteredPodcast}
           />
         )}
 
         <Spacer size={"small"} />
         <EndemitSubscribe
-          title={"Dont miss out our next episode"}
-          description={
-            "Subscribe and be notified when we release a new emit episode"
-          }
+          title={t("dontMissNextEpisode")}
+          description={t("subscribeNewEpisode")}
         />
       </OuterPage>{" "}
     </>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTransactionById } from "@/domain/wallet/operations/getTransactionById";
@@ -28,13 +29,13 @@ export async function generateMetadata({
   };
 }
 
-const typeLabels: Record<string, string> = {
-  CREDIT: "Credit Added",
-  DEBIT: "Debit",
-  PURCHASE: "Purchase",
-  REFUND: "Refund",
-  ADJUSTMENT: "Adjustment",
-  P2P_TRANSFER: "Transfer",
+const typeLabelKeys: Record<string, string> = {
+  CREDIT: "transactions.typeLong.credit",
+  DEBIT: "transactions.typeLong.debit",
+  PURCHASE: "transactions.typeLong.purchase",
+  REFUND: "transactions.typeLong.refund",
+  ADJUSTMENT: "transactions.typeLong.adjustment",
+  P2P_TRANSFER: "transactions.typeLong.transfer",
 };
 
 const typeColors: Record<string, string> = {
@@ -49,15 +50,17 @@ const typeColors: Record<string, string> = {
 export default async function ProfileTransactionDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }) {
+  const { id, locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
     redirect("/signin");
   }
 
-  const { id } = await params;
   const transaction = await getTransactionById(id);
 
   if (!transaction) {
@@ -79,11 +82,11 @@ export default async function ProfileTransactionDetailPage({
   return (
     <OuterPage>
       <PageHeadline
-        title="Transaction Details"
+        title={t("transactions.detailTitle")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Transactions", path: "transactions" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.transactions"), path: "transactions" },
           { label: `#${id.slice(-8)}`, path: id },
         ]}
       />
@@ -107,7 +110,7 @@ export default async function ProfileTransactionDetailPage({
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Transactions
+            {t("nav.backToTransactions")}
           </Link>
         </div>
 
@@ -130,7 +133,13 @@ export default async function ProfileTransactionDetailPage({
                   typeColors[transaction.type] || "bg-gray-500/20 text-gray-400"
                 )}
               >
-                {typeLabels[transaction.type] || transaction.type}
+                {typeLabelKeys[transaction.type]
+                  ? t(
+                      typeLabelKeys[
+                        transaction.type
+                      ] as Parameters<typeof t>[0]
+                    )
+                  : transaction.type}
               </span>
             </div>
 
@@ -158,7 +167,7 @@ export default async function ProfileTransactionDetailPage({
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs uppercase tracking-widest text-neutral-500">
-                    {isPositive ? "From" : "To"}
+                    {isPositive ? t("transactions.from") : t("transactions.to")}
                   </p>
                   <p className="text-neutral-200 font-medium truncate">
                     {counterpartyLabel}
@@ -173,14 +182,14 @@ export default async function ProfileTransactionDetailPage({
             {/* Details */}
             <div className="space-y-4 pt-4 border-t border-neutral-800">
               <div className="flex justify-between">
-                <span className="text-neutral-400">Date</span>
+                <span className="text-neutral-400">{t("transactions.date")}</span>
                 <span className="text-neutral-200">
                   {formatDateTime(new Date(transaction.createdAt))}
                 </span>
               </div>
 
               <div className="flex justify-between">
-                <span className="text-neutral-400">Balance After</span>
+                <span className="text-neutral-400">{t("transactions.balanceAfter")}</span>
                 <span className="text-neutral-200">
                   {formatTokensFromCents(transaction.balanceAfter)}
                 </span>
@@ -188,7 +197,7 @@ export default async function ProfileTransactionDetailPage({
 
               {transaction.note && (
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">Note</span>
+                  <span className="text-neutral-400">{t("transactions.note")}</span>
                   <span className="text-neutral-200 text-right max-w-[200px] break-words">
                     {transaction.note}
                   </span>
@@ -196,7 +205,7 @@ export default async function ProfileTransactionDetailPage({
               )}
 
               <div className="flex justify-between">
-                <span className="text-neutral-400">Transaction ID</span>
+                <span className="text-neutral-400">{t("transactions.transactionId")}</span>
                 <span className="text-neutral-500 font-mono text-xs">
                   {transaction.id}
                 </span>

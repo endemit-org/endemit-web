@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Scanner } from "@yudiel/react-qr-scanner";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
+  const t = useTranslations("profile");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
         });
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error || "Failed to link sticker");
+          throw new Error(data.error || t("wristband.linkFailed"));
         }
         if (data.status === "linked" || data.status === "already_yours") {
           onLinked?.();
@@ -44,23 +46,25 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
           return;
         }
         if (data.status === "conflict_other") {
-          setError("This sticker is linked to another account.");
+          setError(t("wristband.stickerConflictOther"));
           return;
         }
         if (data.status === "swap_required") {
           setError(
-            `You already have sticker ${data.existingCode} linked. Unlink it first.`
+            t("wristband.stickerSwapRequired", { code: data.existingCode })
           );
           return;
         }
-        setError("Unexpected response.");
+        setError(t("wristband.unexpectedResponse"));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to link sticker");
+        setError(
+          err instanceof Error ? err.message : t("wristband.linkFailed")
+        );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [isSubmitting, onClose, onLinked, router]
+    [isSubmitting, onClose, onLinked, router, t]
   );
 
   const handleQrScan = useCallback(
@@ -85,7 +89,9 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
         onClick={e => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Scan wristband</h2>
+          <h2 className="text-lg font-semibold text-white">
+            {t("wristband.scan")}
+          </h2>
           <button
             onClick={handleClose}
             className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
@@ -108,7 +114,7 @@ export default function LinkStickerModal({ isOpen, onClose, onLinked }: Props) {
 
         <div className="p-6">
           <p className="text-sm text-neutral-400 mb-4 text-center">
-            Point your camera at the QR on your wristband.
+            {t("wristband.scanHint")}
           </p>
 
           <div className="relative rounded-lg overflow-hidden bg-black">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function ReceiveFundsCard({ receiveCode }: Props) {
+  const t = useTranslations("profile");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -34,11 +36,10 @@ export default function ReceiveFundsCard({ receiveCode }: Props) {
   return (
     <div className="bg-neutral-900 rounded-lg p-6 mt-6">
       <h3 className="text-lg font-semibold text-neutral-200 mb-1">
-        Receive funds
+        {t("wallet.receiveFunds")}
       </h3>
       <p className="text-sm text-neutral-400 mb-4">
-        Show this QR to another user — they can scan it from their wallet to
-        send you tokens.
+        {t("wallet.receiveFundsDesc")}
       </p>
 
       <div className="flex items-center gap-4">
@@ -47,7 +48,7 @@ export default function ReceiveFundsCard({ receiveCode }: Props) {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={qrDataUrl}
-              alt="Receive QR"
+              alt={t("wallet.receiveQrAlt")}
               className="w-full h-full rounded-lg"
             />
           ) : (
@@ -56,7 +57,7 @@ export default function ReceiveFundsCard({ receiveCode }: Props) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-widest text-neutral-500 mb-1">
-            Or share code
+            {t("wallet.orShareCode")}
           </p>
           <p className="text-xs font-mono text-neutral-400 break-all mb-2">
             {receiveCode}
@@ -65,7 +66,7 @@ export default function ReceiveFundsCard({ receiveCode }: Props) {
             onClick={handleCopy}
             className="text-sm text-blue-400 hover:text-blue-300"
           >
-            {copied ? "Copied!" : "Copy code"}
+            {copied ? t("wallet.copied") : t("wallet.copyCode")}
           </button>
         </div>
       </div>

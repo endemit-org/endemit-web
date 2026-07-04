@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { requestOtcCode } from "@/domain/auth/actions/requestOtcCode";
@@ -23,11 +24,17 @@ const isUsernameFormat = (value: string): boolean => {
 
 const validateIdentifier = (
   value: string
-): { valid: boolean; error?: string } => {
+): {
+  valid: boolean;
+  errorKey?:
+    | "emailForm.errors.identifierRequired"
+    | "emailForm.errors.usernameInvalid"
+    | "emailForm.errors.emailInvalid";
+} => {
   const trimmed = value.trim();
 
   if (!trimmed) {
-    return { valid: false, error: "Please enter your @username or email" };
+    return { valid: false, errorKey: "emailForm.errors.identifierRequired" };
   }
 
   if (isUsernameFormat(trimmed)) {
@@ -35,15 +42,14 @@ const validateIdentifier = (
     if (!isValidUsername(username)) {
       return {
         valid: false,
-        error:
-          "Username must be 2-30 characters (letters, numbers, underscore)",
+        errorKey: "emailForm.errors.usernameInvalid",
       };
     }
     return { valid: true };
   }
 
   if (!isValidEmail(trimmed)) {
-    return { valid: false, error: "Please enter a valid email address" };
+    return { valid: false, errorKey: "emailForm.errors.emailInvalid" };
   }
 
   return { valid: true };
@@ -72,6 +78,7 @@ const fetchAuthMode = async (identifier: string) => {
 };
 
 export default function OtcEmailForm() {
+  const t = useTranslations("signin");
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialIdentifier = searchParams.get("email") || "";
@@ -88,7 +95,7 @@ export default function OtcEmailForm() {
     // Validate input
     const validation = validateIdentifier(identifier);
     if (!validation.valid) {
-      setError(validation.error || "Invalid input");
+      setError(t(validation.errorKey ?? "emailForm.errors.identifierRequired"));
       return;
     }
 
@@ -101,7 +108,7 @@ export default function OtcEmailForm() {
       if (isNewAccount) {
         // Register new account with email (registration only works with email)
         if (isUsername) {
-          setError("Please use an email address to create a new account");
+          setError(t("emailForm.errors.usernameCantRegister"));
           setIsLoading(false);
           return;
         }
@@ -118,9 +125,7 @@ export default function OtcEmailForm() {
           if (callbackUrl) verifyParams.set("callbackUrl", callbackUrl);
           router.push(`/signin/verify?${verifyParams.toString()}`);
         } else {
-          setError(
-            result.error || "Failed to create account. Please try again."
-          );
+          setError(result.error || t("emailForm.errors.createFailed"));
           setIsNewAccount(false);
           setIsLoading(false);
         }
@@ -128,7 +133,7 @@ export default function OtcEmailForm() {
         const authModeResult = await fetchAuthMode(trimmedIdentifier);
 
         if (!authModeResult) {
-          setError("Something went wrong. Please try again.");
+          setError(t("errors.somethingWrong"));
           setIsLoading(false);
           return;
         }
@@ -136,7 +141,7 @@ export default function OtcEmailForm() {
         if (!authModeResult.exists) {
           // No account found
           if (isUsername) {
-            setError("No account found with this username");
+            setError(t("emailForm.errors.noAccountUsername"));
           } else {
             // Allow registration for email
             setIsNewAccount(true);
@@ -147,7 +152,7 @@ export default function OtcEmailForm() {
 
         if (!authModeResult.authMode) {
           // Account exists but inactive
-          setError("Account is not active");
+          setError(t("emailForm.errors.inactive"));
           setIsLoading(false);
           return;
         }
@@ -176,12 +181,12 @@ export default function OtcEmailForm() {
           if (callbackUrl) verifyParams.set("callbackUrl", callbackUrl);
           router.push(`/signin/verify?${verifyParams.toString()}`);
         } else {
-          setError(result.error || "Failed to send code. Please try again.");
+          setError(result.error || t("emailForm.errors.sendFailed"));
           setIsLoading(false);
         }
       }
     } catch {
-      setError("An error occurred. Please try again.");
+      setError(t("errors.generic"));
       setIsLoading(false);
     }
   };
@@ -210,20 +215,19 @@ export default function OtcEmailForm() {
 
         <div className="text-center">
           <h2 className="text-xl font-semibold text-white">
-            {isNewAccount ? "Create Account" : "Sign In"}
+            {isNewAccount ? t("emailForm.createTitle") : t("signIn")}
           </h2>
           <p className="mt-2 text-sm text-neutral-400">
             {isNewAccount
-              ? "No account found. Click below to create one."
-              : `Enter your email and we'll send you a code to sign in.\n
-              No passwords, no registrations, it just works!`}
+              ? t("emailForm.createSubtitle")
+              : t("emailForm.subtitle")}
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="identifier" className="sr-only">
-              Username or Email
+              {t("emailForm.label")}
             </label>
             <input
               id="identifier"
@@ -236,7 +240,7 @@ export default function OtcEmailForm() {
                   ? "border-neutral-700 text-neutral-400 bg-neutral-800 cursor-not-allowed"
                   : "border-neutral-600 text-white bg-neutral-700"
               }`}
-              placeholder="Enter your email"
+              placeholder={t("emailForm.placeholder")}
               value={identifier}
               onChange={handleIdentifierChange}
               disabled={isLoading || isNewAccount}
@@ -246,9 +250,7 @@ export default function OtcEmailForm() {
           {isNewAccount && !error && (
             <div className="rounded-lg bg-blue-900/50 border border-blue-800 p-4">
               <p className="text-sm text-blue-200">
-                We&apos;ll create an account for{" "}
-                <span className="font-medium">{identifier}</span> and send you a
-                sign-in code.
+                {t("emailForm.createConfirm", { identifier })}
               </p>
             </div>
           )}
@@ -262,7 +264,7 @@ export default function OtcEmailForm() {
                     href="/signin/password"
                     className="text-sm text-blue-400 hover:text-blue-300 underline"
                   >
-                    Sign in with password
+                    {t("emailForm.signInWithPassword")}
                   </Link>
                 </div>
               )}
@@ -280,7 +282,7 @@ export default function OtcEmailForm() {
                 disabled={isLoading}
                 className="flex-shrink-0 py-3 px-4 border border-neutral-600 text-sm font-medium rounded-lg text-neutral-300 bg-neutral-700 hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Back
+                {t("back")}
               </button>
             )}
             <button
@@ -294,13 +296,13 @@ export default function OtcEmailForm() {
             >
               {isLoading
                 ? isNewAccount
-                  ? "Creating account..."
+                  ? t("emailForm.creatingAccount")
                   : isUsername
-                    ? "Checking..."
-                    : "Sending code..."
+                    ? t("emailForm.checking")
+                    : t("emailForm.sendingCode")
                 : isNewAccount
-                  ? "Register this email"
-                  : "Continue"}
+                  ? t("emailForm.registerEmail")
+                  : t("emailForm.continue")}
             </button>
           </div>
         </form>

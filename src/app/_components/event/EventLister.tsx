@@ -5,6 +5,7 @@ import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
 import clsx from "clsx";
 import EventSaveTheDateLister from "@/app/_components/event/EventSaveTheDateLister";
 import { Event } from "@/domain/event/types/event";
+import { getTranslations } from "next-intl/server";
 
 type SaveTheDateItem = {
   title?: string;
@@ -65,6 +66,7 @@ async function EventListContent({
   type,
   saveTheDateItems,
 }: EventListProps) {
+  const t = await getTranslations("events");
   const events = await fetchEventsFromCms({});
 
   if (!events) return null;
@@ -151,7 +153,7 @@ async function EventListContent({
                   "text-neutral-400 font-heading text-2xl px-16 xl:px-36 text-center"
                 }
               >
-                More events will be announced soon
+                {t("moreAnnouncedSoon")}
               </div>
             </div>
           </div>

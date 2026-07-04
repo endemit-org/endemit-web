@@ -5,6 +5,7 @@ import { CartItem } from "@/domain/checkout/types/cartItem";
 import { formatDecimalPrice } from "@/lib/util/formatting";
 import CheckoutItemList from "@/app/_components/checkout/CheckoutItemList";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface Props {
   items: CartItem[];
@@ -19,6 +20,7 @@ export default function CheckoutCartSummaryCollapsible({
   subTotal,
   defaultExpanded = false,
 }: Props) {
+  const t = useTranslations("checkout");
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
@@ -46,7 +48,7 @@ export default function CheckoutCartSummaryCollapsible({
             />
           </svg>
           <span className="text-neutral-200">
-            {totalItems} {totalItems === 1 ? "item" : "items"}
+            {t("itemCount", { count: totalItems })}
           </span>
         </div>
         <span className="text-neutral-200 font-medium">

@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -8,14 +9,15 @@ import {
   ProfileEventsAttendedSkeleton,
 } from "@/app/_components/ui/Skeletons";
 
-export default function ProfileLoading() {
+export default async function ProfileLoading() {
+  const t = await getTranslations("profile");
   return (
     <OuterPage>
       <PageHeadline
-        title="My Profile"
+        title={t("breadcrumb.myProfile")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
         ]}
       />
 
@@ -29,9 +31,9 @@ export default function ProfileLoading() {
           {/* Main content */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
             <EventsPromoSkeleton />
-            <ProfileTableSkeleton title="Cashless Transactions" />
-            <ProfileTableSkeleton title="Upcoming Tickets" />
-            <ProfileTableSkeleton title="Orders" />
+            <ProfileTableSkeleton title={t("cashlessTransactions")} />
+            <ProfileTableSkeleton title={t("tickets.upcomingTitle")} />
+            <ProfileTableSkeleton title={t("breadcrumb.orders")} />
             <ProfileEventsAttendedSkeleton />
           </div>
         </div>

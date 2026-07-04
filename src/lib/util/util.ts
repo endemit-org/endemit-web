@@ -1,6 +1,10 @@
 import { ProductCategory } from "@/domain/product/types/product";
 
-export const getTimeUntil = (currentTime: Date, date: Date) => {
+export const getTimeUntil = (
+  currentTime: Date,
+  date: Date,
+  prefix = "in"
+) => {
   const diff = date.getTime() - currentTime.getTime();
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -8,9 +12,9 @@ export const getTimeUntil = (currentTime: Date, date: Date) => {
   if (hours > 10) {
     return null;
   } else if (hours > 0) {
-    return `in ${hours}h ${minutes}m`;
+    return `${prefix} ${hours}h ${minutes}m`;
   } else {
-    return `in ${minutes}m`;
+    return `${prefix} ${minutes}m`;
   }
 };
 
@@ -47,7 +51,7 @@ export const getStatusText = (status: string) => {
 };
 
 export const getResizedPrismicImage = (
-  url: string,
+  url: string | null | undefined,
   options?: {
     width?: number;
     quality?: number;
@@ -55,6 +59,8 @@ export const getResizedPrismicImage = (
     dpr?: 1 | 0;
   }
 ) => {
+  // Unfilled CMS image fields would otherwise produce "undefined&w=..." URLs.
+  if (!url) return "";
   return `${url}&w=${options?.width ?? 500}&q=${options?.quality ?? 85}&fm=${options?.format ?? "webp"}&dpr=${options?.dpr ?? 1}`;
 };
 

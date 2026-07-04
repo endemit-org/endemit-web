@@ -9,12 +9,14 @@ import React from "react";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import EventPastEventStatus from "@/app/_components/event/EventPastEventStatus";
 import EventFestivalTag from "@/app/_components/event/EventFestivalTag";
+import { useTranslations } from "next-intl";
 
 export interface EventProps {
   event: Event;
 }
 
 export default function EventPoster({ event }: EventProps) {
+  const t = useTranslations("events");
   const shouldShowLink =
     event.options.enabledLink || event.options.externalEventLink;
   const shouldShowVideo =
@@ -103,7 +105,7 @@ export default function EventPoster({ event }: EventProps) {
                       <EndemitLogo />
                     </div>
                     <div className="text-stone-400 font-medium">
-                      Details coming soon
+                      {t("detailsComingSoon")}
                     </div>
                   </div>
                 </div>

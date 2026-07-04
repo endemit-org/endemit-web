@@ -1,5 +1,6 @@
 import EventSaveTheDate from "@/app/_components/event/EventSaveTheDate";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 type SaveTheDateItem = {
   title?: string;
@@ -13,6 +14,7 @@ export default function EventSaveTheDateLister({
 }: {
   saveTheDateItems?: SaveTheDateItem[];
 }) {
+  const t = useTranslations("events");
   return (
     <div
       className={
@@ -46,8 +48,7 @@ export default function EventSaveTheDateLister({
               "font-heading text-5xl font-black text-neutral-200 uppercase text-center @md:text-left @2xl:text-center"
             }
           >
-            Save the date
-            {saveTheDateItems && saveTheDateItems?.length > 1 && "s"}
+            {t("saveTheDate.heading", { count: saveTheDateItems?.length ?? 1 })}
           </div>
           <div
             className={

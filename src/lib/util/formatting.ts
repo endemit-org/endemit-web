@@ -1,4 +1,9 @@
-export const formatPrice = (price: number, decimals: number = 0) => {
+export const formatPrice = (
+  price: number | null | undefined,
+  decimals: number = 0
+) => {
+  // CMS price fields can be unfilled — render nothing instead of crashing.
+  if (price == null) return "";
   return price.toLocaleString("sl-SI", {
     style: "currency",
     currency: "EUR",

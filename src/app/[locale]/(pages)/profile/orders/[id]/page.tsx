@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getOrderWithTickets } from "@/domain/order/operations/getOrderWithTickets";
@@ -46,22 +47,34 @@ const ticketStatusColors: Record<string, string> = {
   REFUNDED: "bg-gray-500/20 text-gray-400",
 };
 
-const ticketStatusLabels: Record<string, string> = {
-  VALIDATED: "Ready to scan",
-  PENDING: "Ready to scan",
-  SCANNED: "Used",
-  CANCELLED: "Cancelled",
-  BANNED: "Banned",
-  REFUND_REQUESTED: "Refund Requested",
-  REFUNDED: "Refunded",
+const statusLabelKeys: Record<string, string> = {
+  PAID: "status.order.paid",
+  CREATED: "status.order.created",
+  CANCELLED: "status.order.cancelled",
+  REFUNDED: "status.order.refunded",
+  EXPIRED: "status.order.expired",
+  SHIPPED: "status.order.shipped",
+  DELIVERED: "status.order.delivered",
+};
+
+const ticketStatusLabelKeys: Record<string, string> = {
+  VALIDATED: "status.ticket.readyToScan",
+  PENDING: "status.ticket.readyToScan",
+  SCANNED: "status.ticket.used",
+  CANCELLED: "status.ticket.cancelled",
+  BANNED: "status.ticket.banned",
+  REFUND_REQUESTED: "status.ticket.refundRequested",
+  REFUNDED: "status.ticket.refunded",
 };
 
 export default async function ProfileOrderDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }) {
-  const { id } = await params;
+  const { id, locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -89,11 +102,11 @@ export default async function ProfileOrderDetailPage({
   return (
     <OuterPage>
       <PageHeadline
-        title="Order Details"
+        title={t("orders.detailTitle")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Orders", path: "orders" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.orders"), path: "orders" },
           { label: `#${id.slice(-8)}`, path: id },
         ]}
       />
@@ -117,7 +130,7 @@ export default async function ProfileOrderDetailPage({
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Orders
+            {t("nav.backToOrders")}
           </Link>
         </div>
 
@@ -137,7 +150,9 @@ export default async function ProfileOrderDetailPage({
                   statusColors[order.status] || "bg-gray-500/20 text-gray-400"
                 )}
               >
-                {order.status}
+                {statusLabelKeys[order.status]
+                  ? t(statusLabelKeys[order.status] as Parameters<typeof t>[0])
+                  : order.status}
               </span>
             </div>
           </div>
@@ -157,7 +172,7 @@ export default async function ProfileOrderDetailPage({
               return (
                 <div className="rounded-lg p-4">
                   <h2 className="text-lg font-semibold text-neutral-200 mb-4">
-                    Shipping Address
+                    {t("orders.shippingAddress")}
                   </h2>
                   <div className="space-y-2 text-neutral-300">
                     {addr.name && <p>{addr.name}</p>}
@@ -180,7 +195,7 @@ export default async function ProfileOrderDetailPage({
           <div className="bg-neutral-800 rounded-lg overflow-hidden">
             <div className="p-4 border-b border-neutral-700">
               <h2 className="text-lg font-semibold text-neutral-200">
-                Items ({order.items.length})
+                {t("orders.itemsCount", { count: order.items.length })}
               </h2>
             </div>
             <div className="divide-y divide-neutral-700">
@@ -192,7 +207,7 @@ export default async function ProfileOrderDetailPage({
                   <div>
                     <p className="text-neutral-200 font-medium">{item.name}</p>
                     <p className="text-sm text-neutral-500">
-                      Qty: {item.quantity}
+                      {t("orders.qty", { count: item.quantity })}
                     </p>
                   </div>
                   <span className="text-neutral-200 font-medium">
@@ -206,26 +221,26 @@ export default async function ProfileOrderDetailPage({
           {/* Order Summary */}
           <div className="bg-neutral-950 rounded-lg p-6 space-y-3">
             <h2 className="text-lg font-semibold text-neutral-200 mb-4">
-              Summary
+              {t("orders.summary")}
             </h2>
             <div className="flex justify-between text-neutral-400">
-              <span>Subtotal</span>
+              <span>{t("orders.subtotal")}</span>
               <span>{formatCurrency(order.subtotal)}</span>
             </div>
             {order.discountAmount != null && order.discountAmount < 0 && (
               <div className="flex justify-between text-green-400">
-                <span>Discount</span>
+                <span>{t("orders.discount")}</span>
                 <span>{formatCurrency(order.discountAmount)}</span>
               </div>
             )}
             {order.shippingAmount != null && order.shippingAmount > 0 && (
               <div className="flex justify-between text-neutral-400">
-                <span>Shipping</span>
+                <span>{t("orders.shipping")}</span>
                 <span>{formatCurrency(order.shippingAmount)}</span>
               </div>
             )}
             <div className="flex justify-between text-xl font-bold text-neutral-200 pt-3 border-t border-neutral-700">
-              <span>Total</span>
+              <span>{t("orders.total")}</span>
               <span>{formatCurrency(order.totalAmount)}</span>
             </div>
           </div>
@@ -235,7 +250,7 @@ export default async function ProfileOrderDetailPage({
             <div className="bg-neutral-800 rounded-lg overflow-hidden">
               <div className="p-4 border-b border-neutral-700">
                 <h2 className="text-lg font-semibold text-neutral-200">
-                  Tickets ({order.tickets.length})
+                  {t("orders.ticketsCount", { count: order.tickets.length })}
                 </h2>
               </div>
               <div className="divide-y divide-neutral-700">
@@ -261,7 +276,13 @@ export default async function ProfileOrderDetailPage({
                             "bg-gray-500/20 text-gray-400"
                         )}
                       >
-                        {ticketStatusLabels[ticket.status] || ticket.status}
+                        {ticketStatusLabelKeys[ticket.status]
+                          ? t(
+                              ticketStatusLabelKeys[
+                                ticket.status
+                              ] as Parameters<typeof t>[0]
+                            )
+                          : ticket.status}
                       </span>
                       <svg
                         className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300"

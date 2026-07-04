@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 
 const SendFundsModal = dynamic(
@@ -18,6 +19,7 @@ export default function TransferFundsTrigger({
   userId,
   initialBalance,
 }: Props) {
+  const t = useTranslations("profile");
   const [isOpen, setIsOpen] = useState(false);
   const [balance, setBalance] = useState(initialBalance);
 
@@ -40,7 +42,7 @@ export default function TransferFundsTrigger({
         onClick={() => setIsOpen(true)}
         className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
       >
-        Transfer funds
+        {t("wallet.transferFunds")}
       </button>
       <SendFundsModal
         isOpen={isOpen}

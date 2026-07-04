@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { updateMyProfileAction } from "@/domain/user/actions/updateMyProfileAction";
 
 const MAX_IMAGE_SIZE = 512;
@@ -66,6 +67,7 @@ export default function ProfileEditForm({
   name: initialName,
   image: initialImage,
 }: ProfileEditFormProps) {
+  const t = useTranslations("profile");
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -88,7 +90,7 @@ export default function ProfileEditForm({
 
     // Validate file type
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Invalid file type. Allowed: JPEG, PNG, WebP");
+      setError(t("editForm.invalidFileType"));
       return;
     }
 
@@ -115,7 +117,7 @@ export default function ProfileEditForm({
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to upload");
+        throw new Error(result.error || t("editForm.uploadFailed"));
       }
 
       setImage(result.url);
@@ -129,7 +131,9 @@ export default function ProfileEditForm({
       setSuccess(true);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to upload image");
+      setError(
+        err instanceof Error ? err.message : t("editForm.uploadImageFailed")
+      );
       setPreviewUrl(null);
     } finally {
       setIsUploading(false);
@@ -150,7 +154,9 @@ export default function ProfileEditForm({
       setSuccess(true);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update profile");
+      setError(
+        err instanceof Error ? err.message : t("editForm.updateFailed")
+      );
     } finally {
       setIsLoading(false);
     }
@@ -173,7 +179,7 @@ export default function ProfileEditForm({
               {displayImage ? (
                 <Image
                   src={displayImage}
-                  alt="Profile avatar"
+                  alt={t("editForm.avatarAlt")}
                   fill
                   className="object-cover"
                   sizes="256px"
@@ -231,7 +237,7 @@ export default function ProfileEditForm({
             className="hidden"
           />
           <p className="text-xs text-neutral-500 mt-2 text-center">
-            Click to change
+            {t("editForm.clickToChange")}
           </p>
         </div>
 
@@ -245,21 +251,21 @@ export default function ProfileEditForm({
 
           {success && (
             <div className="p-3 bg-green-900/50 border border-green-800 text-green-200 rounded-lg text-sm mb-8">
-              Profile updated successfully
+              {t("editForm.success")}
             </div>
           )}
           <label
             htmlFor="name"
             className="block text-sm font-medium text-neutral-300 mb-2"
           >
-            Display Name
+            {t("editForm.displayName")}
           </label>
           <input
             type="text"
             id="name"
             value={name}
             onChange={e => setName(e.target.value)}
-            placeholder="Enter your name"
+            placeholder={t("editForm.namePlaceholder")}
             className="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <button
@@ -267,7 +273,7 @@ export default function ProfileEditForm({
             disabled={isLoading || isUploading}
             className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-6"
           >
-            {isLoading ? "Saving..." : "Save Changes"}
+            {isLoading ? t("editForm.saving") : t("editForm.save")}
           </button>
         </div>
       </div>

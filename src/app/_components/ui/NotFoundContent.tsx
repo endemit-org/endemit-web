@@ -1,6 +1,8 @@
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
-export default function NotFoundContent() {
+export default async function NotFoundContent() {
+  const t = await getTranslations("notFound");
   return (
     <div className="min-h-dvh bg-neutral-950 text-neutral-100 flex items-center justify-center px-6">
       <div
@@ -14,15 +16,13 @@ export default function NotFoundContent() {
       <div className="relative">
         <div className="text-center space-y-6">
           <h1 className="text-6xl font-bold text-red-500">404</h1>
-          <h2 className="text-2xl font-bold">Page Not Found</h2>
-          <p className="text-neutral-400 max-w-md">
-            {`The page you're looking for doesn't exist or has been moved.`}
-          </p>
+          <h2 className="text-2xl font-bold">{t("title")}</h2>
+          <p className="text-neutral-400 max-w-md">{t("description")}</p>
           <Link
             href="/"
             className="inline-block px-6 py-3 bg-red-500 hover:bg-red-600 transition-colors font-bold"
           >
-            Back to HomeI
+            {t("backHome")}
           </Link>
         </div>
       </div>

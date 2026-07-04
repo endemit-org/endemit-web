@@ -5,6 +5,7 @@ import ArtistSnippet from "@/app/_components/artist/ArtistSnippet";
 import clsx from "clsx";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import { formatDayName } from "@/lib/util/formatting";
+import { useTranslations } from "next-intl";
 
 interface ArtistCarouselProps {
   artists: ArtistAtEvent[];
@@ -25,13 +26,15 @@ type TimelineItem = {
 
 export default function ArtistCarousel({
   artists,
-  headline = "Set times",
+  headline,
   cardClassName,
   liveCardClassName,
   nameClassName,
   descriptionClassName,
   dayDividerClassName = "bg-gray-900 text-black bg-opacity-25 text-opacity-80",
 }: ArtistCarouselProps) {
+  const t = useTranslations("artists");
+  const resolvedHeadline = headline ?? t("setTimes");
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -108,7 +111,7 @@ export default function ArtistCarousel({
 
   return (
     <div className="w-full space-y-4 max-lg:mb-6">
-      <h3 className="text-2xl font-bold uppercase">{headline}</h3>
+      <h3 className="text-2xl font-bold uppercase">{resolvedHeadline}</h3>
       <div
         ref={scrollRef}
         className={clsx(

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { usePlayerStore, getStoredPlayState } from "@/app/_stores/PlayerStore";
 import CloseIcon from "@/app/_components/icon/CloseIcon";
 import ChevronDownIcon from "@/app/_components/icon/ChevronDownIcon";
@@ -35,6 +36,7 @@ const COLLAPSED_HEIGHT = 48;
 const EXPANDED_HEIGHT = 120;
 
 export function PersistentPlayer() {
+  const t = useTranslations("music");
   const {
     currentTrack,
     isVisible,
@@ -205,7 +207,7 @@ export function PersistentPlayer() {
                       <path d="M8 5v14l11-7z" />
                     </svg>
                     <span className="text-white text-sm font-medium">
-                      Allow play
+                      {t("player.allowPlay")}
                     </span>
                   </div>
                 </div>
@@ -227,7 +229,7 @@ export function PersistentPlayer() {
               <button
                 onClick={toggleExpanded}
                 className="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm"
-                aria-label="Collapse player"
+                aria-label={t("player.collapse")}
               >
                 <ChevronDownIcon
                   className={`w-4 h-4 text-white/60 hover:text-white transition-transform duration-200  ${isExpanded ? "rotate-0" : "rotate-180"}`}
@@ -249,7 +251,7 @@ export function PersistentPlayer() {
                   close();
                 }}
                 className="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm"
-                aria-label="Close player"
+                aria-label={t("player.close")}
               >
                 <CloseIcon className="w-4 h-4 text-white/60 hover:text-white" />
               </button>

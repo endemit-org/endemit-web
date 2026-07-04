@@ -2,6 +2,7 @@
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
+import { useLocale } from "next-intl";
 import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from "@/lib/services/env/public";
 import { shouldShowStripeDevtools } from "@/lib/util/env";
 
@@ -22,10 +23,14 @@ export default function StripeProvider({
   amount,
   currency = "eur",
 }: StripeProviderProps) {
+  // Render the Stripe card form in the active site locale (Koroščina site → sl).
+  const locale = useLocale() as StripeElementsOptions["locale"];
+
   const options: StripeElementsOptions = {
     mode: "payment",
     amount,
     currency,
+    locale,
     appearance: {
       labels: "above",
       inputs: "condensed",

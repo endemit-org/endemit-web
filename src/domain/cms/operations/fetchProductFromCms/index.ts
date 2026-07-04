@@ -3,8 +3,12 @@ import "server-only";
 import { prismicClient } from "@/lib/services/prismic";
 import { transformProductObject } from "@/domain/product/transformers/transformProductObject";
 import { ProductDocument } from "@/prismicio-types";
+import type { AppLocale } from "@/i18n/routing";
 
-export const fetchProductFromCmsByUid = async (productUid: string) => {
+export const fetchProductFromCmsByUid = async (
+  productUid: string,
+  locale: AppLocale = "sl"
+) => {
   const prismicProduct = await prismicClient
     .getByUID("product", productUid)
     .catch(() => null);
@@ -13,10 +17,13 @@ export const fetchProductFromCmsByUid = async (productUid: string) => {
     return null;
   }
 
-  return await transformProductObject(prismicProduct);
+  return await transformProductObject(prismicProduct, locale);
 };
 
-export const fetchProductFromCmsById = async (productId: string) => {
+export const fetchProductFromCmsById = async (
+  productId: string,
+  locale: AppLocale = "sl"
+) => {
   const prismicProduct = (await prismicClient
     .getByID(productId)
     .catch(() => null)) as ProductDocument;
@@ -25,10 +32,13 @@ export const fetchProductFromCmsById = async (productId: string) => {
     return null;
   }
 
-  return await transformProductObject(prismicProduct);
+  return await transformProductObject(prismicProduct, locale);
 };
 
-export const fetchProductsFromCmsByIds = async (productIds: string[]) => {
+export const fetchProductsFromCmsByIds = async (
+  productIds: string[],
+  locale: AppLocale = "sl"
+) => {
   if (productIds.length === 0) {
     return [];
   }
@@ -42,7 +52,9 @@ export const fetchProductsFromCmsByIds = async (productIds: string[]) => {
   }
 
   const products = await Promise.all(
-    prismicProducts.results.map(product => transformProductObject(product))
+    prismicProducts.results.map(product =>
+      transformProductObject(product, locale)
+    )
   );
 
   return products;
