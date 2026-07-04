@@ -989,7 +989,7 @@
     },
     "dashboard": {
       "title": "Admin nadzorna plošča",
-      "subtitle": "Dobrodošli v admin panelu",
+      "subtitle": "Lepo, da si tu v admin panelu.",
       "username": "Uporabniško ime",
       "name": "Ime",
       "email": "Email",
@@ -1718,7 +1718,7 @@
       "breadcrumb": "Skeniranje",
       "metaTitle": "{title} • Skener",
       "heading": "Skener kart za event",
-      "intro": "Dobrodošli v skenerju kart. Spodej izberi event, za katerga želiš skenirat karte.",
+      "intro": "Lepo, da si tu. Spodej izberi event, za katerga želiš skenirat karte.",
       "scanningEnabled": "✅ Skeniranje omogočeno",
       "scanningDisabled": "❌ Skeniranje onemogočeno",
       "noEvents": "Trenutno ni eventov za skeniranje",
