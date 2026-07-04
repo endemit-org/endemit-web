@@ -213,7 +213,7 @@
     "customer": {
       "contactInfo": {
         "title": "Tvoji kontaktni podatki",
-        "signedIn": "Notr si. Za to naročilo uporabimo tvoj email.",
+        "signedIn": "Prijava uspešna. Za to naročilo uporabimo tvoj email.",
         "description": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila.",
         "descriptionWithTickets": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila pa digitalne karte."
       },
@@ -246,9 +246,9 @@
       "countryNotListed": "Tvoje države ni na seznamu? <contact>Piš nam</contact>.",
       "reachYou": "Dobimo te na {code} {phone}",
       "consent": {
-        "terms": "Potrjujem naročilo pa se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> pa <withdrawal>pravico do odstopa</withdrawal>.",
-        "nonRefundable": "Razumem pa sprejemam, da naročilo vsebuje izdelke, k se ne vračajo, tk kot piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
-        "codeOfConduct": "Razumem, sprejemam pa bom spoštval <code>kodeks obnašanja</code> na Endemit eventu."
+        "terms": "Potrjujem naročilo in se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> pa <withdrawal>pravico do odstopa</withdrawal>.",
+        "nonRefundable": "Razumem in sprejemam, da naročilo vsebuje izdelke, k se ne vračajo, tk kot piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
+        "codeOfConduct": "Razumem, sprejemam in spoštujem <code>kodeks obnašanja</code> na Endemit eventu."
       }
     },
     "summary": {
@@ -257,7 +257,7 @@
       "shipping": "Dostava:",
       "discount": "Popust:",
       "walletCredit": "Denarnca:",
-      "total": "Skupej:"
+      "total": "Skupaj:"
     },
     "promo": {
       "applied": "Promo koda <strong>{code}</strong> je notr",
@@ -388,7 +388,7 @@
     "wallet": {
       "transferFunds": "Prenesi denar",
       "receiveFunds": "Prejmi denar",
-      "receiveFundsDesc": "Pokaž ta QR drugmu — lahko ga skenira iz svoje denarnce pa ti pošle žetone.",
+      "receiveFundsDesc": "Pokaž ta QR drugmu — lahko ga skenira iz svoje denarnce da ti pošle žetone.",
       "receiveQrAlt": "QR za prejem",
       "orShareCode": "Al pa deli kodo",
       "copied": "Kopirano!",
@@ -423,13 +423,13 @@
       "conflictTitle": "Zapestnca {code} je povezana z drugim računom.",
       "conflictDesc": "Če misliš, da je to pomota, se obrn na člana ekipe.",
       "swapTitle": "Že maš povezano zapestnco {existingCode}.",
-      "swapDesc": "Če češ povezat {code}, najprej odklopi trenutno zapestnco v <editLink>Uredi profil</editLink> pa skeniraj spet.",
+      "swapDesc": "Če češ povezat {code}, najprej odjavi trenutno zapestnco v <editLink>Uredi profil</editLink> pa skeniraj spet.",
       "whatIsThis": "Kaj je to?",
       "showQr": "Pokaži QR",
       "linkForOffline": "Poveži zapestnco za plačilo brez telefona",
       "infoText": "Tapni za QR, k ga prodajalci skenirajo na blagajni. Če povežeš zapestnco lahko plačaš tut brez telefona.",
       "stickerConflictOther": "Ta zapestnca je povezana z drugim računom.",
-      "stickerSwapRequired": "Že maš povezano zapestnco {code}. Najprej jo odklopi.",
+      "stickerSwapRequired": "Že maš povezano zapestnco {code}. Najprej jo odjavi.",
       "scanHint": "Usmeri kamero v QR na svoji zapestnci."
     },
     "sidebar": {
@@ -513,7 +513,7 @@
       "subtotal": "Vmesni seštevek",
       "discount": "Popust",
       "shipping": "Dostava",
-      "total": "Skupej",
+      "total": "Skupaj",
       "ticketsCount": "Karte ({count})",
       "emptyDesc": "Ko kej kupiš, se naročila pojavijo tukej.",
       "itemCountLabel": "{count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}}",
@@ -823,10 +823,10 @@
       }
     },
     "walletTransfer": {
-      "subjectSent": "Sredstva poslana",
-      "subjectReceived": "Sredstva prejeta",
-      "descSent": "Poslal si <strong>{amount}</strong> uporabniku <strong>{name}</strong>.",
-      "descReceived": "Na tvojo denarnco je prišlo {amount} od <strong>{name}</strong>.",
+      "subjectSent": "Poslani žetoni",
+      "subjectReceived": "Prejeti žetoni",
+      "descSent": "<strong>{name}</strong> si poslal/a <strong>{amount}</strong>.",
+      "descReceived": "V tvojo denarnco je <strong>{name}</strong> poslal/a {amount}.",
       "amountSent": "Poslani znesek",
       "amountReceived": "Prejeti znesek",
       "note": "Opomba",
