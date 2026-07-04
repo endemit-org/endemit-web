@@ -106,7 +106,8 @@
     "poster": {
       "happenedOn": "Končano",
       "upcomingOn": "Kmalu -"
-    }
+    },
+    "breadcrumb": "Eventi"
   },
   "artists": {
     "appearsOn": "{name} igra na",
@@ -125,13 +126,15 @@
       "playSet": "Zavrti set od {name}"
     },
     "liveNow": "ZDEJ V ŽIVO",
-    "timeUntilPrefix": "čez"
+    "timeUntilPrefix": "čez",
+    "breadcrumb": "Artisti"
   },
   "venues": {
     "eventsHostedAt": "Eventi v {name}",
     "artistsPerformedAt": "Kdo je igral v {name}",
     "dontMissNextEvent": "Ne zamud naslednjga eventa v {name}",
-    "subscribePrompt": "Prijav se pa ti sporočimo za evente pa lineupe"
+    "subscribePrompt": "Prijav se pa ti sporočimo za evente pa lineupe",
+    "breadcrumb": "Lokacije"
   },
   "store": {
     "breadcrumb": {
@@ -875,7 +878,8 @@
       "allowPlay": "Potrdi predvajanje",
       "collapse": "Skrči predvajalnik",
       "close": "Zapri predvajalnik"
-    }
+    },
+    "breadcrumb": "Muzika"
   },
   "newsletter": {
     "defaultTitle": "PRIJAV SE",

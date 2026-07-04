@@ -106,7 +106,8 @@
     "poster": {
       "happenedOn": "Happened on",
       "upcomingOn": "Upcoming on"
-    }
+    },
+    "breadcrumb": "Events"
   },
   "artists": {
     "appearsOn": "{name} appears on",
@@ -125,13 +126,15 @@
       "playSet": "Play a set from {name}"
     },
     "liveNow": "LIVE NOW",
-    "timeUntilPrefix": "in"
+    "timeUntilPrefix": "in",
+    "breadcrumb": "Artists"
   },
   "venues": {
     "eventsHostedAt": "Events hosted at {name}",
     "artistsPerformedAt": "Artists performed at {name}",
     "dontMissNextEvent": "Don't miss the next event at {name}",
-    "subscribePrompt": "Subscribe and be notified about our events and lineups"
+    "subscribePrompt": "Subscribe and be notified about our events and lineups",
+    "breadcrumb": "Venues"
   },
   "store": {
     "breadcrumb": {
@@ -875,7 +878,8 @@
       "allowPlay": "Allow play",
       "collapse": "Collapse player",
       "close": "Close player"
-    }
+    },
+    "breadcrumb": "Music"
   },
   "newsletter": {
     "defaultTitle": "SUBSCRIBE",
