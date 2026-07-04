@@ -102,7 +102,11 @@
     },
     "moreAnnouncedSoon": "Kmau razkrijemo še več dogodkov",
     "detailsComingSoon": "Podrobnosti kmau",
-    "festivalTag": "Festival"
+    "festivalTag": "Festival",
+    "poster": {
+      "happenedOn": "Blo",
+      "upcomingOn": "Bo"
+    }
   },
   "artists": {
     "appearsOn": "{name} igra na",

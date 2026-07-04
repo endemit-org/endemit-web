@@ -84,22 +84,29 @@ export const formatDateTime = (date: Date) => {
   });
 };
 
-export const formatEventDate = (dateFrom: Date, dateTo: Date) => {
+export const formatEventDate = (
+  dateFrom: Date,
+  dateTo: Date,
+  locale: "sl" | "en" = "en"
+) => {
   const hoursDiff = (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60 * 60);
 
   if (hoursDiff > 18) {
     const dayFrom = dateFrom.getDate();
     const dayTo = dateTo.getDate();
-    const month = dateFrom.toLocaleDateString("en-US", {
-      month: "long",
-      timeZone: "Europe/Ljubljana",
-    });
+    const month = dateFrom.toLocaleDateString(
+      locale === "sl" ? "sl-SI" : "en-GB",
+      {
+        month: "long",
+        timeZone: "Europe/Ljubljana",
+      }
+    );
     const year = dateFrom.getFullYear().toString().slice(-2);
 
     return `${dayFrom} - ${dayTo} ${month} ${year}`;
   }
 
-  return formatDate(dateFrom);
+  return formatDate(dateFrom, locale);
 };
 
 export const formatEventDateAndTime = (

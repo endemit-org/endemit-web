@@ -57,7 +57,7 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end) : ""}`}`} • Events`;
+  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end, loc) : ""}`}`} • Events`;
   const description = event?.meta.description ?? event.description ?? undefined;
   const images = buildOpenGraphImages({
     metaImage: event.meta.image,
@@ -274,7 +274,7 @@ export default async function EventPage({
                     "uppercase max-lg:text-2xl lg:text-[clamp(0.7rem,2cqi,2rem)] flex-shrink-0"
                   }
                 >
-                  {formatEventDate(event.date_start, event.date_end)}
+                  {formatEventDate(event.date_start, event.date_end, loc)}
                   {isPastEvent && (
                     <div className={"text-neutral-400 text-sm"}>
                       {t("concluded")}

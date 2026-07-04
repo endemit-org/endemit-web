@@ -102,7 +102,11 @@
     },
     "moreAnnouncedSoon": "More events will be announced soon",
     "detailsComingSoon": "Details coming soon",
-    "festivalTag": "Festival"
+    "festivalTag": "Festival",
+    "poster": {
+      "happenedOn": "Happened on",
+      "upcomingOn": "Upcoming on"
+    }
   },
   "artists": {
     "appearsOn": "{name} appears on",

@@ -150,7 +150,12 @@ export default async function ProfileTicketPage({
           }
           initialScannedAt={initialScannedAt}
           formattedEventDate={
-            event?.date_start ? formatEventDateAndTime(event.date_start) : null
+            event?.date_start
+              ? formatEventDateAndTime(
+                  event.date_start,
+                  locale === "en" ? "en" : "sl"
+                )
+              : null
           }
           isEventPassed={isEventPassed}
         />
