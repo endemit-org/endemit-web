@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { ProductImage } from "@/domain/product/types/product";
 import clsx from "clsx";
 import ChevronPrevIcon from "@/app/_components/icon/ChevronPrevIcon";
@@ -25,6 +26,7 @@ export default function ImageGalleryWithMasonry({
   width = 1200,
   height = 1200,
 }: Props) {
+  const tA = useTranslations("common.a11y");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [desktopSlide, setDesktopSlide] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -140,14 +142,14 @@ export default function ImageGalleryWithMasonry({
             <button
               onClick={handleDesktopPrevious}
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-neutral-200 text-gray-900 bg-opacity-20 text-opacity-50 group-hover:text-opacity-90 hover:scale-110 active:scale-95 group-hover:bg-opacity-50 rounded-full p-2 shadow-lg transition-all"
-              aria-label="Previous image"
+              aria-label={tA("previousImage")}
             >
               <ChevronPrevIcon />
             </button>
             <button
               onClick={handleDesktopNext}
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-neutral-200 text-gray-900 bg-opacity-20 text-opacity-50 group-hover:text-opacity-90 hover:scale-110 active:scale-95 group-hover:bg-opacity-50 rounded-full p-2 shadow-lg transition-all"
-              aria-label="Next image"
+              aria-label={tA("nextImage")}
             >
               <ChevronNextIcon />
             </button>
@@ -162,7 +164,7 @@ export default function ImageGalleryWithMasonry({
                         ? "bg-neutral-100 w-4"
                         : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
                     }`}
-                    aria-label={`Go to slide ${index + 1}`}
+                    aria-label={tA("goToSlide", { number: index + 1 })}
                   />
                 ))}
               </div>
@@ -272,14 +274,14 @@ export default function ImageGalleryWithMasonry({
             <button
               onClick={handlePrevious}
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-neutral-200 text-gray-900 bg-opacity-20 text-opacity-50 group-hover:text-opacity-90 hover:scale-110 active:scale-95 group-hover:bg-opacity-50  rounded-full p-2 shadow-lg transition-all"
-              aria-label="Previous image"
+              aria-label={tA("previousImage")}
             >
               <ChevronPrevIcon />
             </button>
             <button
               onClick={handleNext}
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-neutral-200 text-gray-900 bg-opacity-20 text-opacity-50 group-hover:text-opacity-90 hover:scale-110 active:scale-95 group-hover:bg-opacity-50  rounded-full p-2 shadow-lg transition-all"
-              aria-label="Next image"
+              aria-label={tA("nextImage")}
             >
               <ChevronNextIcon />
             </button>
@@ -298,7 +300,7 @@ export default function ImageGalleryWithMasonry({
                     ? "bg-neutral-100 w-4"
                     : "bg-neutral-400 bg-opacity-70 group-hover:bg-opacity-100 transition-opacity hover:scale-125 active:scale-95"
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
+                aria-label={tA("goToSlide", { number: index + 1 })}
               />
             ))}
           </div>

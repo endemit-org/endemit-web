@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { TOKEN_CONFIG, formatTokensFromCents } from "@/lib/util/currency";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
+import { useTranslations } from "next-intl";
 
 interface Recipient {
   userId: string;
@@ -30,6 +31,7 @@ export default function SendFundsModal({
   onClose,
   senderBalance,
 }: Props) {
+  const t = useTranslations("profile.wallet.send");
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("scan");
   const [recipient, setRecipient] = useState<Recipient | null>(null);
@@ -171,7 +173,7 @@ export default function SendFundsModal({
           <div className="absolute inset-0 z-10 bg-neutral-900/95 flex flex-col items-center justify-center">
             <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
             <p className="text-white font-medium">
-              {isResolving ? "Resolving..." : "Sending..."}
+              {isResolving ? t("resolving") : t("sending")}
             </p>
           </div>
         )}
@@ -179,17 +181,16 @@ export default function SendFundsModal({
         <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">
-              {mode === "scan" && "Send funds"}
-              {mode === "confirm" && "Confirm transfer"}
-              {mode === "success" && "Sent"}
-              {mode === "error" && "Error"}
+              {mode === "scan" && t("titleScan")}
+              {mode === "confirm" && t("titleConfirm")}
+              {mode === "success" && t("titleSuccess")}
+              {mode === "error" && t("titleError")}
             </h2>
             {mode !== "success" && (
               <p className="text-xs text-neutral-500 mt-0.5">
-                Balance:{" "}
-                <span className="text-neutral-300">
-                  {formatTokensFromCents(senderBalance)}
-                </span>
+                {t("balance", {
+                  amount: formatTokensFromCents(senderBalance),
+                })}
               </p>
             )}
           </div>
@@ -218,8 +219,7 @@ export default function SendFundsModal({
           {mode === "scan" && (
             <div>
               <p className="text-neutral-300 mb-4 text-sm text-center">
-                Scan the recipient&apos;s QR code, or paste their sticker /
-                receive code below.
+                {t("scanHint")}
               </p>
               <div className="rounded-lg overflow-hidden mb-3 bg-black">
                 <Scanner
@@ -232,7 +232,7 @@ export default function SendFundsModal({
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="AB12 or ndr1.…"
+                  placeholder={t("codePlaceholder")}
                   value={manualInput}
                   disabled={isResolving}
                   onChange={e => {
@@ -256,7 +256,7 @@ export default function SendFundsModal({
                   disabled={!manualInput.trim() || isResolving}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg"
                 >
-                  Resolve
+                  {t("resolve")}
                 </button>
               </div>
               {error && (
@@ -290,7 +290,7 @@ export default function SendFundsModal({
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs uppercase tracking-widest text-neutral-500">
-                    Sending to
+                    {t("sendingTo")}
                   </p>
                   <p className="text-white font-medium truncate">
                     {recipientLabel}
@@ -302,9 +302,11 @@ export default function SendFundsModal({
               </div>
 
               <div className="flex items-baseline justify-between mb-1">
-                <label className="block text-sm text-neutral-300">Amount</label>
+                <label className="block text-sm text-neutral-300">{t("amount")}</label>
                 <span className="text-xs text-neutral-500">
-                  Balance: {formatTokensFromCents(senderBalance)}
+                  {t("balance", {
+                    amount: formatTokensFromCents(senderBalance),
+                  })}
                 </span>
               </div>
               <div className="relative mb-1">
@@ -333,17 +335,21 @@ export default function SendFundsModal({
                 }`}
               >
                 {exceedsBalance
-                  ? "Amount exceeds your balance"
+                  ? t("exceeds")
                   : amountCents > 0
-                    ? `After: ${formatTokensFromCents(balanceAfter)}`
-                    : `Available: ${formatTokensFromCents(senderBalance)}`}
+                    ? t("after", {
+                        amount: formatTokensFromCents(balanceAfter),
+                      })
+                    : t("available", {
+                        amount: formatTokensFromCents(senderBalance),
+                      })}
               </p>
 
               <label
                 htmlFor={noteId}
                 className="block text-sm text-neutral-300 mb-1"
               >
-                Note (optional)
+                {t("noteLabel")}
               </label>
               <input
                 id={noteId}
@@ -351,7 +357,7 @@ export default function SendFundsModal({
                 maxLength={120}
                 value={note}
                 onChange={e => setNote(e.target.value)}
-                placeholder="What's it for?"
+                placeholder={t("notePlaceholder")}
                 className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-sm mb-4 focus:outline-none focus:border-blue-500"
               />
 
@@ -367,10 +373,12 @@ export default function SendFundsModal({
                 className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
               >
                 {amountCents <= 0
-                  ? "Enter an amount"
+                  ? t("enterAmount")
                   : exceedsBalance
-                    ? "Insufficient balance"
-                    : `Send ${formatTokensFromCents(amountCents)}`}
+                    ? t("insufficient")
+                    : t("sendAmount", {
+                        amount: formatTokensFromCents(amountCents),
+                      })}
               </button>
 
               <button
@@ -384,7 +392,7 @@ export default function SendFundsModal({
                 }}
                 className="w-full mt-2 text-sm text-neutral-500 hover:text-neutral-300 py-2"
               >
-                ← Scan a different code
+                {t("scanDifferent")}
               </button>
             </div>
           )}
@@ -419,18 +427,18 @@ export default function SendFundsModal({
                 </WalletAnimationRenderer>
               </div>
               <h3 className="text-xl font-semibold text-green-400">
-                Sent {formatTokensFromCents(sentAmount)}
+                {t("sentAmount", { amount: formatTokensFromCents(sentAmount) })}
               </h3>
               <p className="text-neutral-400 mt-2">
                 {recipientLabel
-                  ? `to ${recipientLabel}`
-                  : "Transfer complete"}
+                  ? t("toName", { name: recipientLabel })
+                  : t("complete")}
               </p>
               <button
                 onClick={handleClose}
                 className="mt-6 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg"
               >
-                Done
+                {t("done")}
               </button>
             </div>
           )}

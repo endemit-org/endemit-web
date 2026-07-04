@@ -21,7 +21,8 @@
       "previousImage": "Previous image",
       "nextImage": "Next image",
       "viewImage": "View image {number}",
-      "noContent": "No content"
+      "noContent": "No content",
+      "goToSlide": "Go to slide {number}"
     }
   },
   "walletPass": {
@@ -55,7 +56,9 @@
     "pastEvent": "Past event",
     "location": {
       "loadingMap": "Loading map...",
-      "directions": "Show directions in Google Maps"
+      "directions": "Show directions in Google Maps",
+      "loadError": "Error loading map",
+      "loadErrorDetail": "Failed to load Google Maps"
     },
     "urgency": {
       "almostSoldOut": "Almost sold out, final batch",
@@ -127,7 +130,8 @@
     },
     "liveNow": "LIVE NOW",
     "timeUntilPrefix": "in",
-    "breadcrumb": "Artists"
+    "breadcrumb": "Artists",
+    "moreAbout": "More about {name}"
   },
   "venues": {
     "eventsHostedAt": "Events hosted at {name}",
@@ -141,7 +145,8 @@
       "store": "Store"
     },
     "category": {
-      "empty": "There are currently no products in {categoryName}"
+      "empty": "There are currently no products in {categoryName}",
+      "metaDescription": "Official Endemit {category} available to purchase securely online."
     },
     "product": {
       "descriptionHeading": "Description",
@@ -162,6 +167,12 @@
         "comingSoon": "coming soon",
         "outOfStock": "out of stock",
         "soldOut": "sold out"
+      },
+      "limits": {
+        "maxQuantity": "Max quantity per purchase is {quantity} items",
+        "regional": "Item only shippable to {regions}",
+        "availableUntil": "Available only until {date}",
+        "limitedAvailability": "Limited availability at this price"
       }
     },
     "checkout": {
@@ -190,6 +201,24 @@
       "needHelp": "Need help? <contact>Contact us</contact>",
       "metaTitle": "Payment interrupted",
       "metaDescription": "Your payment was interrupted and has not completed your order."
+    },
+    "categoryNames": {
+      "Merch": "Merch",
+      "Music": "Music",
+      "Albums": "Albums",
+      "Donations": "Donations",
+      "Tickets": "Tickets",
+      "Licenses": "Licenses",
+      "Currencies": "Currencies",
+      "Other": "Other"
+    },
+    "variantTypes": {
+      "Size": "Size",
+      "Colour": "Colour"
+    },
+    "variantValues": {
+      "Black": "Black",
+      "White": "White"
     }
   },
   "checkout": {
@@ -396,7 +425,34 @@
       "orShareCode": "Or share code",
       "copied": "Copied!",
       "copyCode": "Copy code",
-      "payQrAlt": "Wallet QR"
+      "payQrAlt": "Wallet QR",
+      "send": {
+        "resolving": "Resolving...",
+        "sending": "Sending...",
+        "titleScan": "Send funds",
+        "titleConfirm": "Confirm transfer",
+        "titleSuccess": "Sent",
+        "titleError": "Error",
+        "balance": "Balance: {amount}",
+        "scanHint": "Scan the recipient's QR code, or paste their sticker / receive code below.",
+        "codePlaceholder": "AB12 or ndr1.…",
+        "resolve": "Resolve",
+        "sendingTo": "Sending to",
+        "amount": "Amount",
+        "exceeds": "Amount exceeds your balance",
+        "after": "After: {amount}",
+        "available": "Available: {amount}",
+        "noteLabel": "Note (optional)",
+        "notePlaceholder": "What's it for?",
+        "enterAmount": "Enter an amount",
+        "insufficient": "Insufficient balance",
+        "sendAmount": "Send {amount}",
+        "scanDifferent": "← Scan a different code",
+        "sentAmount": "Sent {amount}",
+        "toName": "to {name}",
+        "complete": "Transfer complete",
+        "done": "Done"
+      }
     },
     "wristband": {
       "title": "Wristband",
@@ -850,7 +906,9 @@
       "totalLabel": "Total:",
       "walletBalance": "Wallet Balance",
       "viewWallet": "View Your Wallet",
-      "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>"
+      "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>",
+      "intro": "Your purchase at <strong>{registerName}</strong> went through. Details below.",
+      "item": "Item"
     }
   },
   "music": {
@@ -879,7 +937,14 @@
       "collapse": "Collapse player",
       "close": "Close player"
     },
-    "breadcrumb": "Music"
+    "breadcrumb": "Music",
+    "vinylPromo": {
+      "or": "or",
+      "buyDigital": "Buy digital album",
+      "clickToListen": "Click here to listen",
+      "playAlbum": "Play album",
+      "playingAlbum": "Playing album"
+    }
   },
   "newsletter": {
     "defaultTitle": "SUBSCRIBE",
@@ -1774,6 +1839,7 @@
     "endedOn": "Ended {date}",
     "untilDate": "Until {date}",
     "availableNow": "Available now",
-    "startsOn": "Starts {date}"
+    "startsOn": "Starts {date}",
+    "step": "Step {number}"
   }
 }

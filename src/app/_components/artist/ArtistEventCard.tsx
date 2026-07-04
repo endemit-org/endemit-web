@@ -1,5 +1,6 @@
 import { HTMLProps } from "react";
 import clsx from "clsx";
+import { useTranslations, useLocale } from "next-intl";
 import { formatDay, formatTime } from "@/lib/util/formatting";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -26,6 +27,8 @@ export default function ArtistEventCard({
   timeClassName = "text-neutral-200",
   showTimes = true,
 }: ArtistCardProps) {
+  const t = useTranslations("artists");
+  const locale = useLocale() as "sl" | "en";
   const isMoreThanThreeMonthsAgo = artist.start_time
     ? new Date(artist.start_time).getTime() < Date.now() - convertMonthsToMs(3)
     : false;
@@ -79,7 +82,8 @@ export default function ArtistEventCard({
                     timeClassName
                   )}
                 >
-                  {formatDay(artist.start_time)} {formatTime(artist.start_time)}{" "}
+                  {formatDay(artist.start_time, locale)}{" "}
+                  {formatTime(artist.start_time)}{" "}
                   - {formatTime(artist.end_time)}
                   {artist.stage && (
                     <div className={"mt-0.5 text-neutral-400"}>
@@ -165,7 +169,7 @@ export default function ArtistEventCard({
 
           {!artist.isB2b && (
             <Link className={"link mt-4"} href={`/artists/${artist.uid}`}>
-              More about {artist.name}
+              {t("moreAbout", { name: artist.name })}
             </Link>
           )}
 
@@ -177,7 +181,7 @@ export default function ArtistEventCard({
                   href={`/artists/${artist.uid}`}
                   key={artist.uid}
                 >
-                  More about {artist.name}
+                  {t("moreAbout", { name: artist.name })}
                 </Link>
               ))}
             </div>

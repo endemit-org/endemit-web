@@ -54,7 +54,8 @@ export async function generateUserTicketImageAction(
       return { success: false, error: "This ticket is no longer valid" };
     }
 
-    const event = await fetchEventFromCmsById(ticket.eventId);
+    const ticketLocale = ticket.locale === "en" ? ("en" as const) : ("sl" as const);
+    const event = await fetchEventFromCmsById(ticket.eventId, ticketLocale);
 
     if (!event) {
       return { success: false, error: "Event not found" };
@@ -76,7 +77,7 @@ export async function generateUserTicketImageAction(
       qrData: JSON.stringify(ticket.qrContent),
       eventName: ticket.eventName,
       eventDetails: event.venue.name ?? "",
-      eventDate: formatEventDateAndTime(event.date_start),
+      eventDate: formatEventDateAndTime(event.date_start, ticketLocale),
       attendeeName: ticket.ticketHolderName,
       attendeeEmail: ticket.ticketPayerEmail,
       artists: splitArtistsIntoLines(
@@ -85,6 +86,7 @@ export async function generateUserTicketImageAction(
       price: formatPrice(Number(ticket.price)),
       coverImageUrl: event.promoImage.src,
       template: ticket.isGuestList ? "guest" : "default",
+      locale: ticketLocale,
     });
 
     // Log download to Discord (fire and forget)

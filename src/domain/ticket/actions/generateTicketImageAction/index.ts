@@ -35,7 +35,8 @@ export async function generateTicketImageAction(
       return { success: false, error: "Ticket not found" };
     }
 
-    const event = await fetchEventFromCmsById(ticket.eventId);
+    const ticketLocale = ticket.locale === "en" ? ("en" as const) : ("sl" as const);
+    const event = await fetchEventFromCmsById(ticket.eventId, ticketLocale);
 
     if (!event) {
       return { success: false, error: "Event not found" };
@@ -57,7 +58,7 @@ export async function generateTicketImageAction(
       qrData: JSON.stringify(ticket.qrContent),
       eventName: ticket.eventName,
       eventDetails: event.venue.name ?? "",
-      eventDate: formatEventDateAndTime(event.date_start),
+      eventDate: formatEventDateAndTime(event.date_start, ticketLocale),
       attendeeName: ticket.ticketHolderName,
       attendeeEmail: ticket.ticketPayerEmail,
       artists: splitArtistsIntoLines(
@@ -66,6 +67,7 @@ export async function generateTicketImageAction(
       price: formatPrice(Number(ticket.price)),
       coverImageUrl: event.promoImage.src,
       template: ticket.isGuestList ? "guest" : "default",
+      locale: ticketLocale,
     });
 
     return { success: true, image };

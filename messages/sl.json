@@ -21,7 +21,8 @@
       "previousImage": "Prejšna slika",
       "nextImage": "Naslednja slika",
       "viewImage": "Poglej sliko {number}",
-      "noContent": "Ni vsebine"
+      "noContent": "Ni vsebine",
+      "goToSlide": "Pojdi na sliko {number}"
     }
   },
   "walletPass": {
@@ -49,13 +50,15 @@
       "tickets": "Karte"
     },
     "concluded": "Ta event je že mimo",
-    "getTickets": "Po karte",
+    "getTickets": "Izberi karto",
     "setTimes": "Cajti setov",
     "moreEventsToExplore": "Podobni eventi",
     "pastEvent": "Končan",
     "location": {
       "loadingMap": "Nalagam zemljevid…",
-      "directions": "Pokaž pot v Google Maps"
+      "directions": "Pokaž pot v Google Maps",
+      "loadError": "Zemljevida ni ratalo naložit",
+      "loadErrorDetail": "Google Maps se ni naložil"
     },
     "urgency": {
       "almostSoldOut": "Skor razprodano, zadnja runda",
@@ -67,7 +70,7 @@
     },
     "ticketStatus": {
       "hot": "Vroče",
-      "ticketsLimited": "Karte pohajajo"
+      "ticketsLimited": "Karte omejene"
     },
     "ticketsDisplay": {
       "hot": "Vroče",
@@ -98,14 +101,14 @@
     },
     "saveTheDate": {
       "secret": "Lep poskus, ampak to je skrivnost!",
-      "heading": "{count, plural, one {Zapiš si datum} two {Zapiš si datuma} few {Zapiš si datume} other {Zapiš si datume}}"
+      "heading": "{count, plural, one {Naslednji datum} two {Naslednja datuma} few {Naslednji datumi} other {Naslednji datumi}}"
     },
-    "moreAnnouncedSoon": "Kmalo razkrijemo še več eventov",
+    "moreAnnouncedSoon": "Kmalo bo še več eventov",
     "detailsComingSoon": "Podrobnosti kmalo",
     "festivalTag": "Festival",
     "poster": {
-      "happenedOn": "Končano",
-      "upcomingOn": "Kmalu -"
+      "happenedOn": "Končan",
+      "upcomingOn": "V prodaji"
     },
     "breadcrumb": "Eventi"
   },
@@ -127,7 +130,8 @@
     },
     "liveNow": "ZDEJ V ŽIVO",
     "timeUntilPrefix": "čez",
-    "breadcrumb": "Artisti"
+    "breadcrumb": "Artisti",
+    "moreAbout": "Zvej več o {name}"
   },
   "venues": {
     "eventsHostedAt": "Eventi v {name}",
@@ -141,11 +145,12 @@
       "store": "Štacuna"
     },
     "category": {
-      "empty": "V {categoryName} zaenkrat ni nč"
+      "empty": "V {categoryName} zaenkrat ni nč",
+      "metaDescription": "Uradni Endemit {category} — varen spletni nakup."
     },
     "product": {
       "descriptionHeading": "Opis",
-      "youMightAlsoLike": "Mogoče ti paše še",
+      "youMightAlsoLike": "Sorodni izdelki",
       "price": "Cena:",
       "selectQuantity": "Izberi količino",
       "checkout": "Na blagajno",
@@ -153,7 +158,7 @@
       "noLongerAvailable": "Izdelka ni več",
       "selectVariant": "Izberi {variantType}",
       "inCart": "(V <link>košari</link> jih maš {count})",
-      "addToCart": "Vrž v košaro",
+      "addToCart": "Dodaj v košaro",
       "addedToCart": "<strong>{name}</strong> je v košari!",
       "remaining": "še {time}",
       "statusText": {
@@ -162,19 +167,25 @@
         "comingSoon": "kmalo",
         "outOfStock": "razprodano",
         "soldOut": "razprodano"
+      },
+      "limits": {
+        "maxQuantity": "Največ {quantity} kosov na nakup",
+        "regional": "Pošiljamo samo v: {regions}",
+        "availableUntil": "Na voljo samo do {date}",
+        "limitedAvailability": "Po tej ceni omejena zaloga"
       }
     },
     "checkout": {
       "title": "Blagajna",
       "breadcrumb": "Blagajna",
-      "metaTitle": "Varna blagajna",
-      "metaDescription": "Varna blagajna štacune Endemit. Preglej naročilo, vpiši podatke za dostavo in varno zaključi nakup s SSL šifriranjem."
+      "metaTitle": "Blagajna",
+      "metaDescription": "Blagajna štacune Endemit. Preglej naročilo, vpiši podatke za dostavo in varno zaključi nakup s SSL šifriranjem."
     },
     "success": {
-      "title": "Naročilo je noter!",
+      "title": "Naročilo je sprejeto!",
       "thankYou": "Hvala za naročilo. Mejl s potrditvijo je odletel na",
       "emailLabel": "Email",
-      "ticketsNote": "Karte za <strong>{names}</strong> ti pridejo na mejl kmalo, v naslednjih 30 minutah.",
+      "ticketsNote": "Karte za <strong>{names}</strong> pridejo na mejl kmalo, v naslednjih 30 minutah.",
       "orderId": "Št. naročila",
       "metaTitle": "Naročilo potrjeno",
       "metaDescription": "Naročilo na endemit.org je uspešno potrjeno. Nadaljuj ali zapri to stran."
@@ -190,6 +201,24 @@
       "needHelp": "Rabiš pomoč? <contact>Piš nam</contact>",
       "metaTitle": "Plačilo prekinjeno",
       "metaDescription": "Plačilo je bilo prekinjeno in naročilo ni zaključeno."
+    },
+    "categoryNames": {
+      "Merch": "Merch",
+      "Music": "Muzika",
+      "Albums": "Albumi",
+      "Donations": "Donacije",
+      "Tickets": "Karte",
+      "Licenses": "Licence",
+      "Currencies": "Žetoni",
+      "Other": "Ostalo"
+    },
+    "variantTypes": {
+      "Size": "velikost",
+      "Colour": "barvo"
+    },
+    "variantValues": {
+      "Black": "Črna",
+      "White": "Bela"
     }
   },
   "checkout": {
@@ -202,7 +231,7 @@
       "heading": "Košara ({count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}})"
     },
     "itemCount": "{count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}}",
-    "continueToCheckout": "Naprej na blagajno",
+    "continueToCheckout": "Naprej",
     "continueToReview": "Naprej na pregled in plačilo",
     "updateInfoWarning": "Pojd nazaj in poprav svoje podatke.",
     "backToInformation": "← Nazaj na podatke",
@@ -217,8 +246,8 @@
       "contactInfo": {
         "title": "Tvoji kontaktni podatki",
         "signedIn": "Prijava uspešna. Za to naročilo uporabimo tvoj email.",
-        "description": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila.",
-        "descriptionWithTickets": "Prevr, da je email pravi, ker sm ti pošljemo potrditev naročila in digitalne karte."
+        "description": "Preveri, da je email pravi, ker ti tja pošljemo potrditev naročila.",
+        "descriptionWithTickets": "Preveri email, da je pravi id da ti pošljemo digitalne karte."
       },
       "email": "Email",
       "emailRepeat": "Ponov email",
@@ -246,7 +275,7 @@
       "country": "Država",
       "phone": "Telefon",
       "phonePlaceholder": "30 111 222",
-      "countryNotListed": "Tvoje države ni na seznamu? <contact>Piš nam</contact>.",
+      "countryNotListed": "Tvoje domovine ni na seznamu? <contact>Kontaktiraj nas</contact>.",
       "reachYou": "Dobimo te na {code} {phone}",
       "consent": {
         "terms": "Potrjujem naročilo in se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> in <withdrawal>pravico do odstopa</withdrawal>.",
@@ -256,14 +285,14 @@
     },
     "summary": {
       "loading": "Nalagam…",
-      "subtotal": "Vmesni seštevek:",
+      "subtotal": "Vsota:",
       "shipping": "Dostava:",
       "discount": "Popust:",
       "walletCredit": "Denarnca:",
       "total": "Skupaj:"
     },
     "promo": {
-      "applied": "Promo koda <strong>{code}</strong> je notr",
+      "applied": "Promo koda <strong>{code}</strong> je dodana",
       "remove": "Odstrani",
       "add": "+ Dodaj promo kodo",
       "placeholder": "Vpiš promo kodo",
@@ -277,7 +306,7 @@
       "maxQuantity": "Pozor, tega izdelka lahko vzameš največ {quantity}",
       "noLongerAvailable": "Ni več na voljo",
       "availableUntil": "Ta izdelek je naprodaj do",
-      "limitedAvailability": "Po tej ceni je omejena zaloga"
+      "limitedAvailability": "Omejeno število"
     },
     "donation": {
       "dismiss": "Zapri",
@@ -396,7 +425,34 @@
       "orShareCode": "Al deli kodo",
       "copied": "Kopirano!",
       "copyCode": "Kopiraj kodo",
-      "payQrAlt": "QR denarnce"
+      "payQrAlt": "QR denarnce",
+      "send": {
+        "resolving": "Iščem prejemnika…",
+        "sending": "Pošiljam…",
+        "titleScan": "Pošlji sredstva",
+        "titleConfirm": "Potrdi prenos",
+        "titleSuccess": "Poslano",
+        "titleError": "Napaka",
+        "balance": "Stanje: {amount}",
+        "scanHint": "Skeniraj QR prejemnika al spodej prilepi kodo zapestnce / kodo za prejem.",
+        "codePlaceholder": "AB12 al ndr1.…",
+        "resolve": "Poišči",
+        "sendingTo": "Pošiljaš",
+        "amount": "Znesek",
+        "exceeds": "Znesek presega tvoje stanje",
+        "after": "Po prenosu: {amount}",
+        "available": "Na voljo: {amount}",
+        "noteLabel": "Opomba (ni obvezna)",
+        "notePlaceholder": "Za kaj je?",
+        "enterAmount": "Vpiši znesek",
+        "insufficient": "Premalo sredstev",
+        "sendAmount": "Pošlji {amount}",
+        "scanDifferent": "← Skeniraj drugo kodo",
+        "sentAmount": "Poslano {amount}",
+        "toName": "za {name}",
+        "complete": "Prenos zaklučen",
+        "done": "Zapri"
+      }
     },
     "wristband": {
       "title": "Zapestnca",
@@ -612,7 +668,7 @@
     }
   },
   "signin": {
-    "signIn": "Prijava",
+    "signIn": "Prijavi se",
     "back": "Nazaj",
     "errors": {
       "generic": "Neki je šlo narobe. Probej še enkrat.",
@@ -850,7 +906,9 @@
       "totalLabel": "Skupaj:",
       "walletBalance": "Stanje denarnce",
       "viewWallet": "Poglej svojo denarnco",
-      "receiptNote": "To sporočilo velja kot potrdilo o tvoji transakciji. Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>"
+      "receiptNote": "To sporočilo velja kot potrdilo o tvoji transakciji. Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>",
+      "intro": "Nakup na blagajni <strong>{registerName}</strong> je uspel. Podrobnosti spodaj.",
+      "item": "Izdelek"
     }
   },
   "music": {
@@ -879,7 +937,14 @@
       "collapse": "Skrči predvajalnik",
       "close": "Zapri predvajalnik"
     },
-    "breadcrumb": "Muzika"
+    "breadcrumb": "Muzika",
+    "vinylPromo": {
+      "or": "al",
+      "buyDigital": "Kupi digitalni album",
+      "clickToListen": "Klikni za poslušanje",
+      "playAlbum": "Zavrti album",
+      "playingAlbum": "Album se vrti"
+    }
   },
   "newsletter": {
     "defaultTitle": "PRIJAV SE",
@@ -893,9 +958,9 @@
       "invalidEmail": "Vpiš pravi email",
       "failed": "Ni ratalo, probej spet",
       "subscribing": "Prijavljam…",
-      "subscribed": "Notr si!",
+      "subscribed": "Prijava uspešna!",
       "signUp": "Prijava",
-      "successHeading": "si zdej notr!",
+      "successHeading": "dodan na obveščanje!",
       "emailPlaceholder": "ime.priimek@gmail.com"
     }
   },
@@ -1771,9 +1836,10 @@
     "detailsHidden": "Podrobnosti skrite",
     "dateHidden": "Datum skrit",
     "ended": "Zaključeno",
-    "endedOn": "Končano {date}",
+    "endedOn": "Končan {date}",
     "untilDate": "Do {date}",
     "availableNow": "Na voljo zdej",
-    "startsOn": "Začne se {date}"
+    "startsOn": "Začne se {date}",
+    "step": "Korak {number}"
   }
 }

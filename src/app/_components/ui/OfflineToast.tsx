@@ -2,6 +2,20 @@
 
 import { useOnlineStatus } from "@/app/_hooks/useOnlineStatus";
 
+// Rendered from RootShell, OUTSIDE the NextIntlClientProvider — next-intl hooks
+// are unavailable here, so localize off <html lang> with an inline dictionary.
+const OFFLINE_TEXT = {
+  sl: { title: "Nisi povezan", body: "Nekatere funkcije morda ne delajo" },
+  en: { title: "You're offline", body: "Some features may be unavailable" },
+} as const;
+
+function useOfflineText() {
+  if (typeof document !== "undefined" && document.documentElement.lang === "sl") {
+    return OFFLINE_TEXT.sl;
+  }
+  return OFFLINE_TEXT.en;
+}
+
 /**
  * Toast notification that appears when the user goes offline.
  * Automatically hides when connection is restored.
@@ -9,6 +23,7 @@ import { useOnlineStatus } from "@/app/_hooks/useOnlineStatus";
  * Mount this in the root layout for global offline detection.
  */
 export default function OfflineToast() {
+  const text = useOfflineText();
   const { isOffline } = useOnlineStatus();
 
   if (!isOffline) return null;
@@ -42,11 +57,9 @@ export default function OfflineToast() {
       {/* Message */}
       <div className="flex flex-col">
         <span className="text-sm font-medium text-neutral-200">
-          You&apos;re offline
+          {text.title}
         </span>
-        <span className="text-xs text-neutral-400">
-          Some features may be unavailable
-        </span>
+        <span className="text-xs text-neutral-400">{text.body}</span>
       </div>
 
       {/* Pulsing indicator */}

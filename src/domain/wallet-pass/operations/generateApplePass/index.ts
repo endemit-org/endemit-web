@@ -20,11 +20,52 @@ export interface ApplePassTicketData {
   orderId: string;
   price: number;
   qrContent: string;
+  locale?: "sl" | "en";
 }
+
+// Pass field labels, keyed by ticket locale (mirrors the ticket-image approach —
+// this runs outside the next-intl request scope).
+const PASS_LABELS = {
+  en: {
+    attendee: "ATTENDEE",
+    event: "EVENT",
+    time: "TIME",
+    venue: "VENUE",
+    date: "DATE",
+    price: "Price",
+    orderId: "Order ID",
+    email: "Email",
+    address: "Address",
+    terms: "Terms & Conditions",
+    termsText:
+      "This ticket is valid for one person only. " +
+      "Present this pass at the venue entrance. " +
+      "This ticket is non-refundable, but transferable. ",
+    support: "Support",
+  },
+  sl: {
+    attendee: "IMETNIK",
+    event: "EVENT",
+    time: "URA",
+    venue: "LOKACIJA",
+    date: "DATUM",
+    price: "Cena",
+    orderId: "Št. naročila",
+    email: "Email",
+    address: "Naslov",
+    terms: "Pogoji",
+    termsText:
+      "Karta velja za eno osebo. " +
+      "Pokaži jo ob vstopu na prizorišče. " +
+      "Karta ni vračljiva, je pa prenosljiva. ",
+    support: "Podpora",
+  },
+} as const;
 
 export async function generateApplePass(
   data: ApplePassTicketData
 ): Promise<Buffer> {
+  const labels = PASS_LABELS[data.locale ?? "sl"];
   const certificates = getCertificates();
 
   // Load the pass model from the passmodel.pass directory
@@ -91,21 +132,21 @@ export async function generateApplePass(
   // Header fields (top right)
   pass.headerFields.push({
     key: "attendee",
-    label: "ATTENDEE",
+    label: labels.attendee,
     value: data.ticketHolderName,
   });
 
   // Secondary fields: EVENT, TIME
   pass.secondaryFields.push({
     key: "eventName",
-    label: "EVENT",
+    label: labels.event,
     value: data.eventName,
   });
 
   if (data.eventDate) {
     pass.secondaryFields.push({
       key: "time",
-      label: "TIME",
+      label: labels.time,
       value: formatTime(data.eventDate),
     });
   }
@@ -114,7 +155,7 @@ export async function generateApplePass(
   if (data.venueName) {
     pass.auxiliaryFields.push({
       key: "venue",
-      label: "VENUE",
+      label: labels.venue,
       value: data.venueName,
     });
   }
@@ -122,50 +163,47 @@ export async function generateApplePass(
   if (data.eventDate) {
     pass.auxiliaryFields.push({
       key: "date",
-      label: "DATE",
-      value: formatDate(data.eventDate),
+      label: labels.date,
+      value: formatDate(data.eventDate, data.locale ?? "sl"),
     });
   }
 
   // Back fields (information on the back of the pass)
   pass.backFields.push({
     key: "price",
-    label: "Price",
+    label: labels.price,
     value: formatPrice(data.price),
   });
 
   pass.backFields.push({
     key: "orderId",
-    label: "Order ID",
+    label: labels.orderId,
     value: data.orderId,
   });
 
   pass.backFields.push({
     key: "email",
-    label: "Email",
+    label: labels.email,
     value: data.ticketPayerEmail,
   });
 
   if (data.venueAddress) {
     pass.backFields.push({
       key: "address",
-      label: "Address",
+      label: labels.address,
       value: data.venueAddress,
     });
   }
 
   pass.backFields.push({
     key: "terms",
-    label: "Terms & Conditions",
-    value:
-      "This ticket is valid for one person only. " +
-      "Present this pass at the venue entrance. " +
-      "This ticket is non-refundable, but transferable. ",
+    label: labels.terms,
+    value: labels.termsText,
   });
 
   pass.backFields.push({
     key: "support",
-    label: "Support",
+    label: labels.support,
     value: "endemit@endemit.org",
   });
 
