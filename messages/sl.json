@@ -48,7 +48,7 @@
       "about": "Kaj bo",
       "tickets": "Karte"
     },
-    "concluded": "Ta dogodek je že mimo",
+    "concluded": "Ta event je že mimo",
     "getTickets": "Po karte",
     "setTimes": "Kdaj kdo igra",
     "moreEventsToExplore": "Še kej za vidt",
@@ -74,7 +74,7 @@
       "freeAdmission": "ZASTONJ vstop",
       "noTicketsRequired": "Karte niso potrebne",
       "noLongerAvailable": "Kart ni več",
-      "eventConcluded": "Ta dogodek je mimo.",
+      "eventConcluded": "Ta event je mimo.",
       "comingSoon": "Karte pridejo kmau",
       "notForSaleYet": "Karte še niso naprodaj",
       "notAvailableOnline": "Kart ni na spletu",
@@ -85,7 +85,7 @@
       "availableNow": "Karte so na voljo zdej",
       "personCount": "{count, plural, one {# oseba} two {# osebi} few {# osebe} other {# oseb}}",
       "includesTickets": "Vključuje karte za {count, plural, one {# osebo} two {# osebi} few {# osebe} other {# oseb}}",
-      "soldOutBanner": "Spletne karte so razprodane, ampak karte zase pa za kolege še zmerm dobiš, k prideš na dogodek. <strong>Sam keš.</strong>",
+      "soldOutBanner": "Spletne karte so razprodane, ampak karte zase pa za kolege še zmerm dobiš, k prideš na event. <strong>Sam keš.</strong>",
       "batchSoldOutBanner": "Ta runda kart za Endemit 2026 je razprodana. Naslednjo rundo spustimo kmau. Ostan na preži!"
     },
     "lineup": {
@@ -100,7 +100,7 @@
       "secret": "Lep poskus, ampak to je skrivnost!",
       "heading": "{count, plural, one {Zapiš si datum} two {Zapiš si datuma} few {Zapiš si datume} other {Zapiš si datume}}"
     },
-    "moreAnnouncedSoon": "Kmau razkrijemo še več dogodkov",
+    "moreAnnouncedSoon": "Kmau razkrijemo še več eventov",
     "detailsComingSoon": "Podrobnosti kmau",
     "festivalTag": "Festival",
     "poster": {
@@ -112,7 +112,7 @@
     "appearsOn": "{name} igra na",
     "exploreOther": "Zbrskaj še druge",
     "dontMissNextTime": "Ne zamud {name}, k pride spet",
-    "subscribePrompt": "Prijav se pa boš zvedo za dogodke pa lineupe",
+    "subscribePrompt": "Prijav se pa boš zvedo za evente pa lineupe",
     "setTimes": "Kdaj kdo igra",
     "profile": {
       "partOf": "Del",
@@ -128,10 +128,10 @@
     "timeUntilPrefix": "čez"
   },
   "venues": {
-    "eventsHostedAt": "Dogodki v {name}",
+    "eventsHostedAt": "Eventi v {name}",
     "artistsPerformedAt": "Kdo je igral v {name}",
-    "dontMissNextEvent": "Ne zamud naslednjga dogodka v {name}",
-    "subscribePrompt": "Prijav se pa boš zvedo za dogodke pa lineupe"
+    "dontMissNextEvent": "Ne zamud naslednjga eventa v {name}",
+    "subscribePrompt": "Prijav se pa boš zvedo za evente pa lineupe"
   },
   "store": {
     "breadcrumb": {
@@ -248,7 +248,7 @@
       "consent": {
         "terms": "Potrjujem naročilo pa se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> pa <withdrawal>pravico do odstopa</withdrawal>.",
         "nonRefundable": "Razumem pa sprejemam, da naročilo vsebuje reči, k se ne vračajo, tk kot piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
-        "codeOfConduct": "Razumem, sprejemam pa bom spoštval <code>kodeks obnašanja</code> na Endemit dogodkih."
+        "codeOfConduct": "Razumem, sprejemam pa bom spoštval <code>kodeks obnašanja</code> na Endemit eventu."
       }
     },
     "summary": {
@@ -308,11 +308,11 @@
       "viewOrder": "Poglej naročilo"
     },
     "cashless": {
-      "title": "Na dogodku brez keša",
-      "description": "Ta dogodek uporablja brezgotovinsko plačilo z EndePay. Napolni denarnco že zdej pa uživaj v hitrejši postrežbi na baru pa pri hrani.",
+      "title": "Event brez keša",
+      "description": "Ta event uporablja brezgotovinska plačila. Napolni digitalno denarnco že zdej pa uživaj v hitrejši postrežbi na baru pa pri hrani.",
       "popular": "Popularno",
       "add": "+ Dodaj",
-      "cashNote": "Denarnco lahko napolniš tut s kešem na dogodku"
+      "cashNote": "Denarnco lahko napolniš tut s kešem na eventu"
     },
     "ticketForm": {
       "namePrefix": "Ime",
@@ -449,14 +449,14 @@
       "detailTitle": "Karta {shortId}",
       "countLabel": "{count, plural, one {karta} two {karti} few {karte} other {kart}}",
       "empty": "Nobene prihajajoče karte",
-      "browseEvents": "Preglej dogodke",
+      "browseEvents": "Preglej evente",
       "view": "Poglej",
-      "eventEnded": "Dogodek je mimo",
-      "notUsedAtEvent": "Ta karta ni bla uporabljena na dogodku",
+      "eventEnded": "Event je mimo",
+      "notUsedAtEvent": "Ta karta ni bla uporabljena na eventu",
       "showQr": "Pokaž to QR kodo pr vhodu",
       "alreadyUsed": "Ta karta je že bla uporabljena",
       "noLongerValid": "Ta karta ni več veljavna",
-      "viewEventDetails": "Poglej podrobnosti dogodka",
+      "viewEventDetails": "Poglej podrobnosti eventa",
       "detailsHeading": "Podrobnosti karte",
       "ticketId": "Št. karte",
       "holderName": "Ime imetnika",
@@ -468,7 +468,7 @@
       "guestList": "Seznam gostov",
       "viewTicket": "Poglej karto",
       "noneYet": "Zaenkrat ni kart",
-      "noneYetDesc": "Ko kupiš karte za dogodek, se pojavijo tukej.",
+      "noneYetDesc": "Ko kupiš karte za event, se pojavijo tukej.",
       "activeTitle": "Aktivne karte",
       "pastTitle": "Pretekle karte",
       "qrAlt": "QR koda karte"
@@ -563,21 +563,21 @@
       "tryAgain": "Probej še enkrat"
     },
     "eventsAttended": {
-      "title": "Obiskani dogodki",
-      "claimMissing": "Prijavi manjkajoč dogodek",
-      "empty": "Še ni obiskanih dogodkov.",
-      "countLabel": "{count, plural, one {# dogodek} two {# dogodka} few {# dogodki} other {# dogodkov}}",
+      "title": "Obiskani eventi",
+      "claimMissing": "Prijavi manjkajoč event",
+      "empty": "Še ni obiskanih eventov.",
+      "countLabel": "{count, plural, one {# event} two {# eventa} few {# eventi} other {# eventov}}",
       "pendingClaims": "Čakajoče prijave",
-      "artistsAtEvents": "Umetniki na dogodkih",
+      "artistsAtEvents": "Artisti na eventih",
       "claimFailed": "Prijave ni ratalo oddat",
-      "claimModalTitle": "Prijavi manjkajoč dogodek",
-      "noPastEvents": "Ni preteklih dogodkov za prijavo.",
-      "claimModalDesc": "Izberi dogodek, k si ga obiskal, pa zanj nimaš karte. Prijave pregledamo pa običajno potrdimo v nekaj minutah.",
+      "claimModalTitle": "Prijavi manjkajoč event",
+      "noPastEvents": "Ni preteklih eventov za prijavo.",
+      "claimModalDesc": "Izberi event, k si ga obiskal/a, pa zanj nimaš karte. Prijave pregledamo in običajno potrdimo v nekaj minutah.",
       "submitting": "Oddajam…",
       "submitClaim": "Oddaj prijavo"
     },
     "upcomingPromo": {
-      "title": "Prihajajoči dogodki",
+      "title": "Prihajajoči eventi",
       "subtitle": "Ne zamud — zgrab karte!",
       "ticketsAvailable": "Karte na voljo"
     },
@@ -588,7 +588,7 @@
       },
       "tickets": {
         "title": "Karte",
-        "description": "Poglej svoje karte za dogodke"
+        "description": "Poglej svoje karte za evente"
       },
       "ticket": {
         "title": "Karta",
@@ -682,21 +682,21 @@
   },
   "emails": {
     "newTicket": {
-      "subject": "🎟️ Vstopnica za {eventName} ({name})",
-      "heading": "{name}, tvoja vstopnica je pripravljena!",
-      "intro": "Živjo {name}, tvoja varna vstopnica za dogodek {eventName} je bila ustvarjena. Shrani to sporočilo in ob vstopu na dogodek pokaži priloženo vstopnico.",
-      "useOptions": "Za vstop na dogodek lahko uporabiš priloženo datoteko z vstopnico, <profile>vstopnico v svojem profilu</profile> ali svojo <wallet>vstopnico Apple Wallet</wallet> <ios>(samo iOS)</ios>.",
+      "subject": "🎟️ Karta za {eventName} ({name})",
+      "heading": "{name}, tvoja karta je pripravljena!",
+      "intro": "{name}, tvoja varna karta za event {eventName} je bila ustvarjena. Shrani to sporočilo in ob vstopu na event pokaži priloženo karto.",
+      "useOptions": "Za vstop na event lahko uporabiš priloženo datoteko s karto, <profile>karto v svojem profilu</profile> ali svojo <wallet>Apple Wallet karto</wallet> <ios>(samo iOS)</ios>.",
       "date": "Datum:",
       "location": "Lokacija:",
-      "ticketHolder": "Imetnik vstopnice:",
+      "ticketHolder": "Imetnik karte:",
       "email": "E-pošta:",
-      "viewOnline": "Poglej vstopnico na spletu",
+      "viewOnline": "Poglej karto na spletu",
       "addToWallet": "Dodaj v Apple Wallet",
       "importantInfo": "Pomembne informacije",
-      "infoValidOne": "Ta vstopnica velja za eno osebo",
-      "infoNonRefundable": "Vstopnica je nepovratna, lahko pa jo preneseš na drugo osebo",
-      "infoCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših dogodkih",
-      "infoVenueTerms": "Vstop na dogodek je pogojen s pogoji prizorišča",
+      "infoValidOne": "Ta karta velja za eno osebo",
+      "infoNonRefundable": "Karta je nepovratna, lahko pa jo preneseš na drugo osebo",
+      "infoCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših eventih",
+      "infoVenueTerms": "Vstop na event je pogojen s pogoji prizorišča",
       "infoShowQr": "Ob vstopu pokaži to QR kodo",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
@@ -706,7 +706,7 @@
       "orderNumber": "Naročilo #{id}",
       "confirmation": "To je potrditev tvojega naročila pri nas. Spodaj so podrobnosti tvojega nakupa.",
       "willShip": "Naročilo bomo na navedeni naslov odpremili v kratkem, običajno v 3–5 dneh.",
-      "ticketsInfo": "Tvoje vstopnice bodo poslane na tvoj e-naslov v naslednjih 10 minutah. Preveri svoj nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka vstopnica bo poslana posebej</strong> s QR kodo, ki jo ob vstopu pokažeš na dogodku.",
+      "ticketsInfo": "Tvoje karte bodo poslane na tvoj e-naslov v naslednjih 10 minutah. Preveri svoj nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka karta bo poslana posebej</strong> s QR kodo, ki jo ob vstopu pokažeš na event.",
       "shippingAddress": "Naslov za dostavo",
       "phone": "Telefon: {phone}",
       "orderItems": "Izdelki v naročilu",
@@ -757,44 +757,44 @@
       "questions": "Če imaš vprašanja o vračilu, piši naši podpori na <link>endemit@endemit.org</link>"
     },
     "ticketInvalidation": {
-      "subjectOne": "Tvoja vstopnica je bila razveljavljena",
-      "subjectMany": "Tvoje vstopnice so bile razveljavljene",
-      "heading": "{count, plural, one {Vstopnica razveljavljena} two {Vstopnici razveljavljeni} few {Vstopnice razveljavljene} other {Vstopnice razveljavljene}}",
+      "subjectOne": "Tvoja karta je bila razveljavljena",
+      "subjectMany": "Tvoje karte so bile razveljavljene",
+      "heading": "{count, plural, one {karta razveljavljena} two {karti razveljavljeni} few {karte razveljavljene} other {karte razveljavljene}}",
       "importantNotice": "Pomembno obvestilo",
-      "warning": "{count, plural, one {Naslednja vstopnica ni več veljavna in je ni mogoče uporabiti za vstop na dogodek.} two {Naslednji vstopnici nista več veljavni in ju ni mogoče uporabiti za vstop na dogodek.} few {Naslednje vstopnice niso več veljavne in jih ni mogoče uporabiti za vstop na dogodek.} other {Naslednje vstopnice niso več veljavne in jih ni mogoče uporabiti za vstop na dogodek.}} Razlog je obdelano vračilo za povezano naročilo.",
-      "listHeading": "{count, plural, one {Razveljavljena vstopnica} two {Razveljavljeni vstopnici} few {Razveljavljene vstopnice} other {Razveljavljene vstopnice}}",
-      "eventCol": "Dogodek",
-      "holderCol": "Imetnik vstopnice",
-      "ticketIdCol": "Št. vstopnice",
+      "warning": "{count, plural, one {Naslednja karta ni več veljavna in je ni mogoče uporabiti za vstop na event.} two {Naslednji karti nista več veljavni in ju ni mogoče uporabiti za vstop na event.} few {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.} other {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.}} Razlog je obdelano vračilo za povezano naročilo.",
+      "listHeading": "{count, plural, one {Razveljavljena karta} two {Razveljavljeni karti} few {Razveljavljene karte} other {Razveljavljene karte}}",
+      "eventCol": "Event",
+      "holderCol": "Imetnik karte",
+      "ticketIdCol": "Št. karte",
       "statusCol": "Status",
       "invalidBadge": "NEVELJAVNO",
       "whatDoesThisMean": "Kaj to pomeni?",
-      "point1": "{count, plural, one {Te vstopnice} two {Teh vstopnic} few {Teh vstopnic} other {Teh vstopnic}} ni mogoče uporabiti za vstop na dogodek.",
-      "point2": "QR kode ali digitalne vstopnice, povezane s {count, plural, one {to vstopnico} two {tema vstopnicama} few {temi vstopnicami} other {temi vstopnicami}}, se ne bodo prebrale.",
+      "point1": "{count, plural, one {Te karte} two {Teh kart} few {Teh kart} other {Teh kart}} ni mogoče uporabiti za vstop na event.",
+      "point2": "QR kode ali digitalne karte, povezane s {count, plural, one {to karto} two {tema kartama} few {temi kartami} other {temi kartami}}, se ne bodo prebrale.",
       "point3": "Če meniš, da gre za napako, se nemudoma obrni na našo podporo.",
       "questions": "Če imaš vprašanja, piši naši podpori na <link>endemit@endemit.org</link>"
     },
     "eventReminder": {
-      "subject": "Jutri: {eventName} - {count, plural, one {Tvoja vstopnica je pripravljena!} two {Tvoji vstopnici ({count}) sta pripravljeni!} few {Tvoje vstopnice ({count}) so pripravljene!} other {Tvoje vstopnice ({count}) so pripravljene!}}",
-      "heading": "{eventName} je jutri!",
-      "intro": "{count, plural, one {Tvoja vstopnica za {eventName} je priložena in pripravljena za jutri. Ob vhodu jo pokaži za potrditev. Uporabiš lahko tudi povezavo do digitalne vstopnice ali jo dodaš v Apple Wallet. Se vidimo na plesišču!} two {Tvoji vstopnici ({count}) za {eventName} sta priloženi in pripravljeni za jutri. Ob vhodu ju pokaži za potrditev. Uporabiš lahko tudi povezavi do digitalnih vstopnic ali ju dodaš v Apple Wallet. Se vidimo na plesišču!} few {Tvoje vstopnice ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih vstopnic ali jih dodaš v Apple Wallet. Se vidimo na plesišču!} other {Tvoje vstopnice ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih vstopnic ali jih dodaš v Apple Wallet. Se vidimo na plesišču!}}",
+      "subject": "Jutri: {eventName} - {count, plural, one {Tvoja karta je pripravljena!} two {Tvoji karti ({count}) sta pripravljeni!} few {Tvoje karte ({count}) so pripravljene!} other {Tvoje karte ({count}) so pripravljene!}}",
+      "heading": "Event {eventName} je jutri!",
+      "intro": "{count, plural, one {Tvoja karta za {eventName} je priložena in pripravljena za jutri. Ob vhodu jo pokaži za potrditev. Uporabiš lahko tudi povezavo do digitalne karte ali jo dodaš v Apple Wallet. Se vidimo na floru!} two {Tvoji karti ({count}) za {eventName} sta priloženi in pripravljeni za jutri. Ob vhodu ju pokaži za potrditev. Uporabiš lahko tudi povezavi do digitalnih kart ali ju dodaš v Apple Wallet. Se vidimo na floru!} few {Tvoje karte ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih kart ali jih dodaš v Apple Wallet. Se vidimo na floru!} other {Tvoje karte ({count}) za {eventName} so priložene in pripravljene za jutri. Ob vhodu jih pokaži za potrditev. Uporabiš lahko tudi povezave do digitalnih kart ali jih dodaš v Apple Wallet. Se vidimo na floru!}}",
       "date": "Datum:",
       "location": "Lokacija:",
       "lineup": "Zasedba",
-      "yourTickets": "{count, plural, one {Tvoja vstopnica} two {Tvoji vstopnici ({count})} few {Tvoje vstopnice ({count})} other {Tvoje vstopnice ({count})}}",
+      "yourTickets": "{count, plural, one {Tvoja karta} two {Tvoji karti ({count})} few {Tvoje karte ({count})} other {Tvoje karte ({count})}}",
       "view": "Poglej",
       "appleWallet": "Apple Wallet",
-      "viewAll": "Poglej vse vstopnice",
+      "viewAll": "Poglej vse karte",
       "reminder": "Opomnik",
       "reminderShowQr": "Ob vhodu pokaži svojo QR kodo",
-      "reminderOnePerson": "Vsaka vstopnica velja za eno osebo",
-      "reminderCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših dogodkih",
+      "reminderOnePerson": "Vsaka karta velja za eno osebo",
+      "reminderCodeOfConduct": "<link>Kodeks ravnanja</link> velja na vseh naših eventih.",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
     "eventClaim": {
       "subject": "{eventName} je bil dodan v tvoj profil",
-      "heading": "Dogodek dodan v tvoj profil!",
-      "body": "Odlična novica! <strong>{eventName}</strong> je bil dodan na tvoj seznam »Obiskani dogodki«. Hvala, ker si del naše skupnosti!",
+      "heading": "Event dodan v tvoj profil!",
+      "body": "Odlična novica! <strong>{eventName}</strong> je bil dodan na tvoj seznam »Obiskani eventi«. Hvala, ker si del naše skupnosti!",
       "viewProfile": "Poglej svoj profil",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
@@ -880,7 +880,7 @@
   "newsletter": {
     "defaultTitle": "PRIJAV SE",
     "endemit": {
-      "defaultDescription": "Zvej za naše dogodke, muziko pa vse ostalo"
+      "defaultDescription": "Zvej za naše evente, muziko pa vse ostalo"
     },
     "festival": {
       "defaultDescription": "Endemit Festival je zaprto srečanje plemena, sam na povabilo. Če češ postat član, se prijav pa ti pošljemo več info."
@@ -958,8 +958,8 @@
       "noAnnouncements": "Še ni obvestil"
     },
     "eventClaims": {
-      "title": "Zahtevki za dogodke",
-      "subtitle": "Upravljaj uporabniške zahtevke za pretekle dogodke",
+      "title": "Zahtevki za evente",
+      "subtitle": "Upravljaj uporabniške zahtevke za pretekle evente",
       "total": "Skupaj",
       "pending": "V čakanju",
       "approved": "Odobreno",
@@ -967,7 +967,7 @@
       "searchPlaceholder": "Išči zahtevke...",
       "addClaim": "Dodaj zahtevek",
       "colUser": "Uporabnik",
-      "colEvent": "Dogodek",
+      "colEvent": "Event",
       "colStatus": "Status",
       "colCreated": "Ustvarjeno",
       "colActions": "Dejanja",
@@ -977,7 +977,7 @@
       "previous": "Nazaj",
       "next": "Naprej",
       "userSearchPlaceholder": "Išči po imenu, uporabniškem imenu ali e-pošti",
-      "selectEvent": "Izberi pretekli dogodek...",
+      "selectEvent": "Izberi pretekli event...",
       "autoApproveNote": "Zahtevek se bo uvrstil v vrsto za samodejno odobritev čez 5 minut, isto kot uporabnikov zahtevek. Uporabi »Odobri zdaj« v seznamu, če hočeš preskočiti čakanje.",
       "creating": "Ustvarjam...",
       "createClaim": "Ustvari zahtevek",
@@ -997,17 +997,17 @@
       "permissions": "Dovoljenja"
     },
     "events": {
-      "title": "Dogodki",
-      "subtitle": "Poglej in uredi vstopnice za dogodke",
+      "title": "Eventi",
+      "subtitle": "Poglej in uredi karte za evente",
       "totalRevenue": "Skupni prihodek",
-      "totalEvents": "Skupaj dogodkov",
-      "ticketsSold": "Prodane vstopnice",
+      "totalEvents": "Skupaj eventov",
+      "ticketsSold": "Prodanih kart",
       "upcoming": "Prihajajoče",
-      "pastEvent": "Pretekli dogodek",
-      "empty": "Ni najdenih dogodkov",
-      "backToEvents": "Nazaj na dogodke",
+      "pastEvent": "Pretekli eventi",
+      "empty": "Ni najdenih eventov",
+      "backToEvents": "Nazaj na evente",
       "list": {
-        "events": "Dogodki",
+        "events": "Eventi",
         "active": "Aktivni",
         "completed": "Zaključeni"
       },
@@ -1024,27 +1024,27 @@
         "pending": "V čakanju",
         "guest": "Gost"
       },
-      "pendingTickets": "Vstopnice v čakanju ({count})",
-      "scannedTickets": "Skenirane vstopnice ({count})"
+      "pendingTickets": "Karte v čakanju ({count})",
+      "scannedTickets": "Skenirane karte ({count})"
     },
     "tickets": {
-      "backToEvent": "Nazaj na dogodek",
-      "ticketTitle": "Vstopnica {shortId}",
+      "backToEvent": "Nazaj na event",
+      "ticketTitle": "Karta {shortId}",
       "guestList": "Seznam gostov",
       "close": "Zapri",
-      "viewEvent": "Poglej dogodek",
+      "viewEvent": "Poglej event",
       "sections": {
-        "ticketInfo": "Podatki o vstopnici",
+        "ticketInfo": "Podatki o karti",
         "orderInfo": "Podatki o naročilu",
         "actions": "Dejanja"
       },
       "fields": {
         "status": "Status",
         "shortId": "Kratki ID",
-        "ticketId": "ID vstopnice",
+        "ticketId": "ID karte",
         "name": "Ime",
         "email": "E-pošta",
-        "event": "Dogodek",
+        "event": "Event",
         "price": "Cena",
         "scanCount": "Št. skeniranj",
         "created": "Ustvarjeno",
@@ -1053,35 +1053,35 @@
         "customer": "Stranka",
         "orderStatus": "Status naročila"
       },
-      "downloadTicket": "Prenesi vstopnico",
+      "downloadTicket": "Prenesi karto",
       "generating": "Ustvarjam ...",
       "revert": {
         "button": "Razveljavi skeniranje",
         "confirm": "Potrdi razveljavitev",
         "reverting": "Razveljavljam ...",
-        "confirmText": "Si prepričan, da želiš razveljaviti skeniranje? Vstopnica bo spet označena kot v čakanju."
+        "confirmText": "Si prepričan, da želiš razveljaviti skeniranje? Karta bo spet označena kot v čakanju."
       },
       "table": {
-        "ticketId": "ID vstopnice",
+        "ticketId": "ID karte",
         "guest": "Gost",
         "customer": "Stranka",
         "email": "E-pošta",
         "status": "Status"
       },
       "guestForm": {
-        "addButton": "Dodaj vstopnico za gosta",
-        "title": "Dodaj vstopnice s seznama gostov",
-        "numberOfTickets": "Število vstopnic",
-        "holderNames": "Imena imetnikov vstopnic",
+        "addButton": "Dodaj karto za gosta",
+        "title": "Dodaj karte s seznama gostov",
+        "numberOfTickets": "Število kart",
+        "holderNames": "Imena imetnikov kart",
         "guestNamePlaceholder": "Ime gosta {number}",
-        "sendViaEmail": "Pošlji vstopnice po e-pošti",
-        "emailLabel": "E-pošta (za vse vstopnice)",
+        "sendViaEmail": "Pošlji karte po e-pošti",
+        "emailLabel": "E-pošta (za vse karte)",
         "emailPlaceholder": "Poišči obstoječega uporabnika ali vnesi novo e-pošto",
         "emailHint": "Tipkaj za iskanje obstoječih uporabnikov ali vnesi nov e-poštni naslov",
         "creating": "Ustvarjam ...",
-        "createButton": "{count, plural, one {Ustvari # vstopnico za gosta} two {Ustvari # vstopnici za gosta} few {Ustvari # vstopnice za gosta} other {Ustvari # vstopnic za gosta}}",
-        "successCreated": "{count, plural, one {# vstopnica za gosta ustvarjena} two {# vstopnici za gosta ustvarjeni} few {# vstopnice za gosta ustvarjene} other {# vstopnic za gosta ustvarjenih}}",
-        "successCreatedWithEmail": "{count, plural, one {# vstopnica za gosta ustvarjena in e-pošta poslana} two {# vstopnici za gosta ustvarjeni in e-pošta poslana} few {# vstopnice za gosta ustvarjene in e-pošta poslana} other {# vstopnic za gosta ustvarjenih in e-pošta poslana}}"
+        "createButton": "{count, plural, one {Ustvari # karto za gosta} two {Ustvari # karti za gosta} few {Ustvari # karte za gosta} other {Ustvari # karte za gosta}}",
+        "successCreated": "{count, plural, one {# karta za gosta ustvarjena} two {# karti za gosta ustvarjeni} few {# karte za gosta ustvarjene} other {# kart za gosta ustvarjenih}}",
+        "successCreatedWithEmail": "{count, plural, one {# karta za gosta ustvarjena in e-pošta poslana} two {# karti za gosta ustvarjeni in e-pošta poslana} few {# karte za gosta ustvarjene in e-pošta poslana} other {# kart za gosta ustvarjenih in e-pošta poslana}}"
       }
     },
     "orders": {
@@ -1105,7 +1105,7 @@
         "email": "E-pošta",
         "status": "Status",
         "total": "Skupaj",
-        "tickets": "Vstopnice",
+        "tickets": "Karte",
         "date": "Datum"
       },
       "detail": {
@@ -1124,8 +1124,8 @@
         "total": "Skupaj:",
         "items": "Artikli ({count})",
         "qty": "Količina: {count}",
-        "tickets": "Vstopnice ({count})",
-        "viewEventTickets": "Poglej vstopnice dogodka →",
+        "tickets": "Karte ({count})",
+        "viewEventTickets": "Poglej karte eventa →",
         "shippingAddress": "Naslov za dostavo",
         "close": "Zapri",
         "backToOrders": "Nazaj na naročila",
@@ -1586,7 +1586,7 @@
       "adminLabel": "Admin",
       "dashboard": "Nadzorna plošča",
       "orders": "Naročila",
-      "events": "Dogodki",
+      "events": "Eventi",
       "donations": "Donacije",
       "users": "Uporabniki",
       "roles": "Vloge",
@@ -1596,7 +1596,7 @@
       "scanner": "Skener",
       "posItems": "POS artikli",
       "posRegisters": "POS blagajne",
-      "eventClaims": "Zahtevki za dogodke",
+      "eventClaims": "Zahtevki za evente",
       "posOfflineQrs": "POS offline QR-ji",
       "posOrders": "POS naročila",
       "posTerminal": "POS terminal",
@@ -1714,40 +1714,40 @@
   },
   "scan": {
     "scanner": {
-      "title": "Skener vstopnic",
+      "title": "Skener za karte",
       "breadcrumb": "Skeniranje",
       "metaTitle": "{title} • Skener",
-      "heading": "Skener vstopnic za dogodke",
-      "intro": "Dobrodošel v skenerju vstopnic. Spodej izberi dogodek, za katerga želiš skenirat vstopnice.",
+      "heading": "Skener kart za event",
+      "intro": "Dobrodošel v skenerju kart. Spodej izberi event, za katerga želiš skenirat karte.",
       "scanningEnabled": "✅ Skeniranje omogočeno",
       "scanningDisabled": "❌ Skeniranje onemogočeno",
-      "noEvents": "Trenutno ni dogodkov za skeniranje",
+      "noEvents": "Trenutno ni eventov za skeniranje",
       "loading": "Nalaganje...",
       "scanningNotEnabled": "Skeniranje ni omogočeno",
       "tabScanner": "Skener",
       "tabDoorSales": "Prodaja na vratih",
-      "scanTicket": "Skeniraj vstopnico",
+      "scanTicket": "Skeniraj karto",
       "closeScanner": "Zapri skener",
-      "modalTitle": "Skeniraj QR vstopnico",
-      "pointCamera": "Usmeri kamero v QR kodo, da skeniraš vstopnico",
+      "modalTitle": "Skeniraj QR karto",
+      "pointCamera": "Usmeri kamero v QR kodo, da skeniraš karto",
       "recordingScan": "Beležim skeniranje na strežnik...",
-      "scanNext": "V redu – skeniraj naslednjo vstopnico"
+      "scanNext": "V redu – skeniraj naslednjo"
     },
     "result": {
       "verified": "Preverjeno",
       "warning": "Opozorilo",
       "error": "Napaka",
-      "validTicket": "Veljavna vstopnica",
+      "validTicket": "Veljavna karta",
       "scannedTimes": "Opozorilo: Skenirano {count}-krat",
-      "alreadyScanned": "Ta vstopnica je bla že skenirana.",
-      "wrongEvent": "Napačen dogodek – ta vstopnica je za drug dogodek",
+      "alreadyScanned": "Ta karta je bla že skenirana.",
+      "wrongEvent": "Napačen event – ta karta je za en drug event",
       "scanCount": "Število skeniranj: {count}",
-      "ticketHolderName": "Ime imetnika vstopnice",
+      "ticketHolderName": "Ime imetnika karte",
       "paymentEmail": "E-pošta plačila",
-      "ticketPrice": "Cena vstopnice"
+      "ticketPrice": "Cena karte"
     },
     "header": {
-      "title": "Skener vstopnic"
+      "title": "Skener za karte"
     }
   },
   "stagingLogin": {
