@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { SerializedOrder } from "@/domain/order/types/serialized";
 import OrderCard from "./OrderCard";
 
@@ -8,6 +9,8 @@ interface MyOrdersDisplayProps {
 }
 
 export default function MyOrdersDisplay({ orders }: MyOrdersDisplayProps) {
+  const t = useTranslations("profile");
+
   if (orders.length === 0) {
     return (
       <div className="text-center py-12">
@@ -27,11 +30,9 @@ export default function MyOrdersDisplay({ orders }: MyOrdersDisplayProps) {
           </svg>
         </div>
         <h3 className="text-lg font-medium text-neutral-300 mb-2">
-          No orders yet
+          {t("orders.empty")}
         </h3>
-        <p className="text-neutral-500">
-          When you make a purchase, your orders will appear here.
-        </p>
+        <p className="text-neutral-500">{t("orders.emptyDesc")}</p>
       </div>
     );
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import EventClaimModal from "@/app/_components/profile/EventClaimModal";
 
@@ -39,6 +40,7 @@ export default function ProfileEventsAttended({
   pendingClaims = [],
   claimableEvents = [],
 }: ProfileEventsAttendedProps) {
+  const t = useTranslations("profile");
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const [localPendingClaims, setLocalPendingClaims] = useState(pendingClaims);
 
@@ -51,7 +53,7 @@ export default function ProfileEventsAttended({
 
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.error || "Failed to submit claim");
+      throw new Error(data.error || t("eventsAttended.claimFailed"));
     }
 
     const { claim } = await response.json();
@@ -73,16 +75,16 @@ export default function ProfileEventsAttended({
       <div className="bg-neutral-900 rounded-lg overflow-hidden p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-neutral-200">
-            Events Attended
+            {t("eventsAttended.title")}
           </h3>
           <button
             onClick={() => setIsClaimModalOpen(true)}
             className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
           >
-            Claim missing event
+            {t("eventsAttended.claimMissing")}
           </button>
         </div>
-        <p className="text-neutral-400 text-sm">No events attended yet.</p>
+        <p className="text-neutral-400 text-sm">{t("eventsAttended.empty")}</p>
 
         <EventClaimModal
           isOpen={isClaimModalOpen}
@@ -101,10 +103,10 @@ export default function ProfileEventsAttended({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-neutral-200">
-              Events Attended
+              {t("eventsAttended.title")}
             </h3>
             <p className="text-sm text-neutral-400 mt-1">
-              {events.length} {events.length === 1 ? "event" : "events"}
+              {t("eventsAttended.countLabel", { count: events.length })}
             </p>
           </div>
           {hasClaimableEvents && (
@@ -112,7 +114,7 @@ export default function ProfileEventsAttended({
               onClick={() => setIsClaimModalOpen(true)}
               className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
             >
-              Claim missing event
+              {t("eventsAttended.claimMissing")}
             </button>
           )}
         </div>
@@ -122,7 +124,7 @@ export default function ProfileEventsAttended({
       {localPendingClaims.length > 0 && (
         <div className="p-4 bg-yellow-500/10 border-b border-yellow-500/30">
           <p className="text-sm text-yellow-200 font-medium mb-2">
-            Pending Claims
+            {t("eventsAttended.pendingClaims")}
           </p>
           <div className="space-y-1">
             {localPendingClaims.map((claim) => (
@@ -157,7 +159,7 @@ export default function ProfileEventsAttended({
         <div className="p-4 border-t border-neutral-700">
           <div className="flex items-baseline gap-2 mb-2">
             <h4 className="text-sm font-medium text-neutral-400">
-              Artists at events
+              {t("eventsAttended.artistsAtEvents")}
             </h4>
             <span className="text-xs text-neutral-500">
               {artistNames.length}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
@@ -28,15 +29,22 @@ const statusColors: Record<string, string> = {
   BANNED: "bg-red-500/20 text-red-400",
 };
 
-const statusLabels: Record<string, string> = {
-  VALIDATED: "Ready",
-  PENDING: "Ready",
-  SCANNED: "Used",
-  CANCELLED: "Cancelled",
-  BANNED: "Banned",
+const statusLabelKeys: Record<string, string> = {
+  VALIDATED: "status.ticket.ready",
+  PENDING: "status.ticket.ready",
+  SCANNED: "status.ticket.used",
+  CANCELLED: "status.ticket.cancelled",
+  BANNED: "status.ticket.banned",
 };
 
-export default async function ProfileTicketsPage() {
+export default async function ProfileTicketsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -48,11 +56,11 @@ export default async function ProfileTicketsPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="Tickets"
+        title={t("breadcrumb.tickets")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Tickets", path: "tickets" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.tickets"), path: "tickets" },
         ]}
       />
 
@@ -75,18 +83,18 @@ export default async function ProfileTicketsPage() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Profile
+            {t("nav.backToProfile")}
           </Link>
         </div>
 
         <ProfileTable
-          title="Upcoming Tickets"
+          title={t("tickets.upcomingTitle")}
           count={tickets.length}
-          countLabel={tickets.length === 1 ? "ticket" : "tickets"}
+          countLabel={t("tickets.countLabel", { count: tickets.length })}
           isEmpty={tickets.length === 0}
           emptyIcon={<TicketOutlineIcon className="w-6 h-6 text-neutral-500" />}
-          emptyMessage="No upcoming tickets"
-          emptyAction={{ label: "Browse events", href: "/events" }}
+          emptyMessage={t("tickets.empty")}
+          emptyAction={{ label: t("tickets.browseEvents"), href: "/events" }}
         >
           {tickets.map((ticket, index) => {
             const isUsable =
@@ -110,11 +118,17 @@ export default async function ProfileTicketsPage() {
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
                       >
-                        {statusLabels[ticket.status] || ticket.status}
+                        {statusLabelKeys[ticket.status]
+                          ? t(
+                              statusLabelKeys[
+                                ticket.status
+                              ] as Parameters<typeof t>[0]
+                            )
+                          : ticket.status}
                       </span>
                       {ticket.isGuestList && (
                         <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0 bg-purple-500/20 text-purple-400">
-                          Guest
+                          {t("status.guest")}
                         </span>
                       )}
                     </div>
@@ -125,7 +139,7 @@ export default async function ProfileTicketsPage() {
                 </div>
                 {isUsable && (
                   <div className="ml-4 text-sm text-blue-400 flex-shrink-0">
-                    View
+                    {t("tickets.view")}
                   </div>
                 )}
               </ProfileTableRow>

@@ -34,7 +34,7 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
   const productObject = slice.primary.product;
 
   // @ts-expect-error - ID does exist on the product
-  const product = await fetchProductFromCmsById(productObject.id);
+  const product = await fetchProductFromCmsById(productObject.id, locale);
 
   if (!product) {
     return;

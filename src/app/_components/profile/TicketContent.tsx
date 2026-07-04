@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
@@ -24,14 +25,14 @@ const statusColors: Record<string, string> = {
   REFUNDED: "bg-gray-500/20 text-gray-400",
 };
 
-const statusLabels: Record<string, string> = {
-  VALIDATED: "Ready to scan",
-  PENDING: "Ready to scan",
-  SCANNED: "Used",
-  CANCELLED: "Cancelled",
-  BANNED: "Banned",
-  REFUND_REQUESTED: "Refund Requested",
-  REFUNDED: "Refunded",
+const statusLabelKeys: Record<string, string> = {
+  VALIDATED: "status.ticket.readyToScan",
+  PENDING: "status.ticket.readyToScan",
+  SCANNED: "status.ticket.used",
+  CANCELLED: "status.ticket.cancelled",
+  BANNED: "status.ticket.banned",
+  REFUND_REQUESTED: "status.ticket.refundRequested",
+  REFUNDED: "status.ticket.refunded",
 };
 
 interface TicketContentProps {
@@ -66,6 +67,7 @@ export default function TicketContent({
   formattedEventDate,
   isEventPassed = false,
 }: TicketContentProps) {
+  const t = useTranslations("profile");
   const [status, setStatus] = useState(ticket.status);
   const [scannedAt, setScannedAt] = useState<string | null>(initialScannedAt);
   const [justScanned, setJustScanned] = useState(false);
@@ -146,7 +148,7 @@ export default function TicketContent({
         setQrContent(result.newQrContent);
       }
     } else {
-      setSaveError(result.error || "Failed to save");
+      setSaveError(result.error || t("tickets.saveFailed"));
     }
   };
 
@@ -186,9 +188,11 @@ export default function TicketContent({
               </svg>
             </div>
             <div>
-              <p className="text-amber-300 font-medium">Event has ended</p>
+              <p className="text-amber-300 font-medium">
+                {t("tickets.eventEnded")}
+              </p>
               <p className="text-amber-400/70 text-sm">
-                This ticket was not used at the event
+                {t("tickets.notUsedAtEvent")}
               </p>
             </div>
           </div>
@@ -235,11 +239,13 @@ export default function TicketContent({
               justScanned ? "animate-pulse" : ""
             } ${statusColors[status] || "bg-gray-500/20 text-gray-400"}`}
           >
-            {statusLabels[status] || status}
+            {statusLabelKeys[status]
+              ? t(statusLabelKeys[status] as Parameters<typeof t>[0])
+              : status}
           </span>
           {ticket.isGuestList && (
             <span className="text-sm px-3 py-1 rounded-full bg-purple-500/20 text-purple-400">
-              Guest
+              {t("status.guest")}
             </span>
           )}
         </div>
@@ -256,7 +262,7 @@ export default function TicketContent({
               />
             </div>
             <p className="text-xs text-neutral-200 text-center">
-              Show this QR code at the entrance
+              {t("tickets.showQr")}
             </p>
             <LiveTicketIndicator ticketHash={ticket.ticketHash} />
           </div>
@@ -295,8 +301,8 @@ export default function TicketContent({
             )}
             <p className="text-neutral-400">
               {status === "SCANNED"
-                ? "This ticket has already been used"
-                : "This ticket is no longer valid"}
+                ? t("tickets.alreadyUsed")
+                : t("tickets.noLongerValid")}
             </p>
           </div>
         )}
@@ -338,7 +344,9 @@ export default function TicketContent({
               <p className="text-neutral-200 font-medium truncate group-hover:text-white transition-colors">
                 {event.name}
               </p>
-              <p className="text-sm text-neutral-400">View event details</p>
+              <p className="text-sm text-neutral-400">
+                {t("tickets.viewEventDetails")}
+              </p>
             </div>
             <svg
               className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors"
@@ -360,15 +368,15 @@ export default function TicketContent({
       {/* Ticket Details */}
       <div className="p-3 mb-6">
         <h3 className="text-lg font-semibold text-neutral-200 mb-4">
-          Ticket Details
+          {t("tickets.detailsHeading")}
         </h3>
         <div className="space-y-3">
           <div className="flex justify-between">
-            <span className="text-neutral-400">Ticket ID</span>
+            <span className="text-neutral-400">{t("tickets.ticketId")}</span>
             <span className="text-neutral-200 font-mono">{ticket.shortId}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-neutral-400">Holder Name</span>
+            <span className="text-neutral-400">{t("tickets.holderName")}</span>
             {isEditingName ? (
               <div className="flex items-center gap-2">
                 <input
@@ -448,7 +456,7 @@ export default function TicketContent({
                   <button
                     onClick={() => setIsEditingName(true)}
                     className="text-neutral-500 hover:text-neutral-300 transition-colors"
-                    title="Edit holder name"
+                    title={t("tickets.editHolderName")}
                   >
                     <svg
                       className="w-4 h-4"
@@ -472,18 +480,18 @@ export default function TicketContent({
             <div className="text-red-400 text-xs text-right">{saveError}</div>
           )}
           <div className="flex justify-between">
-            <span className="text-neutral-400">Email</span>
+            <span className="text-neutral-400">{t("tickets.email")}</span>
             <span className="text-neutral-200">{ticket.ticketPayerEmail}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-neutral-400">Price</span>
+            <span className="text-neutral-400">{t("tickets.price")}</span>
             <span className="text-neutral-200">
               {formatPrice(Number(ticket.price))}
             </span>
           </div>
           {scannedAt && (
             <div className="flex justify-between">
-              <span className="text-neutral-400">Scanned at</span>
+              <span className="text-neutral-400">{t("tickets.scannedAt")}</span>
               <ClientDate date={scannedAt} className="text-neutral-200" />
             </div>
           )}

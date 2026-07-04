@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { formatTokensFromCents } from "@/lib/util/currency";
@@ -27,6 +28,7 @@ export function WalletPayScanner({
   onClose,
   onPaymentComplete,
 }: Props) {
+  const t = useTranslations("profile.walletPay");
   const [mode, setMode] = useState<"scan" | "confirm" | "success" | "error">(
     "scan"
   );
@@ -42,7 +44,7 @@ export function WalletPayScanner({
     onMessage: () => {
       setIsCancelled(true);
       setMode("error");
-      setError("Order was cancelled by the seller");
+      setError(t("orderCancelledBySeller"));
     },
     enabled: !!scanResult && mode === "confirm",
   });
@@ -62,19 +64,19 @@ export function WalletPayScanner({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Failed to scan order");
+          throw new Error(data.error || t("scanFailed"));
         }
 
         setScanResult(data);
         setMode("confirm");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to scan");
+        setError(err instanceof Error ? err.message : t("scanFailed"));
         setMode("error");
       } finally {
         setIsScanning(false);
       }
     },
-    [isScanning]
+    [isScanning, t]
   );
 
   const handleQrScan = useCallback(
@@ -122,7 +124,7 @@ export function WalletPayScanner({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Payment failed");
+          throw new Error(data.error || t("paymentFailed"));
         }
 
         setMode("success");
@@ -131,12 +133,12 @@ export function WalletPayScanner({
           handleClose();
         }, 2000);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Payment failed");
+        setError(err instanceof Error ? err.message : t("paymentFailed"));
       } finally {
         setIsProcessing(false);
       }
     },
-    [scanResult, isProcessing, onPaymentComplete, handleClose]
+    [scanResult, isProcessing, onPaymentComplete, handleClose, t]
   );
 
   if (!isOpen) return null;
@@ -154,16 +156,16 @@ export function WalletPayScanner({
         {isScanning && (
           <div className="absolute inset-0 z-10 bg-neutral-900/95 flex flex-col items-center justify-center">
             <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-white font-medium">Loading order...</p>
+            <p className="text-white font-medium">{t("loadingOrder")}</p>
           </div>
         )}
 
         <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">
-            {mode === "scan" && "Scan to Pay"}
-            {mode === "confirm" && "Confirm Payment"}
-            {mode === "success" && "Payment Complete"}
-            {mode === "error" && "Error"}
+            {mode === "scan" && t("scanTitle")}
+            {mode === "confirm" && t("confirmTitle")}
+            {mode === "success" && t("successTitle")}
+            {mode === "error" && t("errorTitle")}
           </h2>
           <button
             onClick={handleClose}
@@ -188,9 +190,7 @@ export function WalletPayScanner({
         <div className="p-6">
           {mode === "scan" && (
             <div className="text-center">
-              <p className="text-neutral-300 mb-4">
-                Point your camera at the QR code
-              </p>
+              <p className="text-neutral-300 mb-4">{t("pointCamera")}</p>
               <div className="relative rounded-lg overflow-hidden mb-2 bg-black">
                 <Scanner
                   onScan={handleQrScan}
@@ -231,9 +231,7 @@ export function WalletPayScanner({
                   />
                 </div>
               </div>
-              <p className="text-xs text-neutral-500">
-                Scan QR or type the 4-character code from the register
-              </p>
+              <p className="text-xs text-neutral-500">{t("scanCodeHint")}</p>
             </div>
           )}
 
@@ -287,12 +285,14 @@ export function WalletPayScanner({
               <h3
                 className={`text-xl font-semibold ${hasTopUp ? "text-emerald-400" : "text-green-400"}`}
               >
-                {hasTopUp ? "Balance Topped Up" : "Payment Complete"}
+                {hasTopUp ? t("toppedUpTitle") : t("successTitle")}
               </h3>
               <p className="text-neutral-400 mt-2">
                 {hasTopUp
-                  ? `+${formatTokensFromCents(creditTotal)} added`
-                  : "Thank you!"}
+                  ? t("amountAdded", {
+                      amount: formatTokensFromCents(creditTotal),
+                    })
+                  : t("thankYou")}
               </p>
             </div>
           )}
@@ -315,7 +315,7 @@ export function WalletPayScanner({
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-red-400">
-                {isCancelled ? "Order Cancelled" : "Error"}
+                {isCancelled ? t("orderCancelledTitle") : t("errorTitle")}
               </h3>
               <p className="text-neutral-400 mt-2">{error}</p>
             </div>
@@ -328,7 +328,7 @@ export function WalletPayScanner({
               onClick={reset}
               className="w-full px-4 py-3 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700"
             >
-              Try Again
+              {t("tryAgain")}
             </button>
           </div>
         )}

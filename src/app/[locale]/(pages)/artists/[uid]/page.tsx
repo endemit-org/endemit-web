@@ -19,6 +19,7 @@ import { getResizedPrismicImage } from "@/lib/util/util";
 import ArtistList from "@/app/_components/artist/ArtistList";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -78,6 +79,8 @@ export default async function ArtistPage({
   }>;
 }) {
   const { locale, uid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("artists");
   const loc = locale === "en" ? "en" : "sl";
   const artist = await fetchArtistFromCms(uid, loc);
 
@@ -86,8 +89,8 @@ export default async function ArtistPage({
   }
 
   const relatedEventsQuery = await fetchEventsForArtistFromCms(artist.id);
-  const relatedPodcasts = await fetchPodcastsForArtistFromCms(artist.id);
-  const relatedArtistsQuery = await fetchArtistsFromCms({});
+  const relatedPodcasts = await fetchPodcastsForArtistFromCms(artist.id, loc);
+  const relatedArtistsQuery = await fetchArtistsFromCms({ locale: loc });
   const relatedArtists = relatedArtistsQuery
     ?.filter(a => a.id !== artist.id && a.showInArtistPage)
     .sort(() => Math.random() - 0.5)
@@ -137,7 +140,7 @@ export default async function ArtistPage({
         {(showRelatedEvents || showRelatedPodcasts) && (
           <InnerPage>
             <h2 className={"text-3xl text-neutral-200"}>
-              {artist.name} appears on
+              {t("appearsOn", { name: artist.name })}
             </h2>
             <div
               className={clsx(
@@ -182,15 +185,15 @@ export default async function ArtistPage({
           <>
             <Spacer size={"small"} />
             <h2 className={"text-3xl text-neutral-200"}>
-              Explore other artists
+              {t("exploreOther")}
             </h2>
             <ArtistList artists={relatedArtists} />
           </>
         )}
         <Spacer size={"small"} />
         <EndemitSubscribe
-          title={`Don't miss ${artist.name} next time`}
-          description={"Subscribe and be notified about our events and lineups"}
+          title={t("dontMissNextTime", { name: artist.name })}
+          description={t("subscribePrompt")}
         />
       </OuterPage>
     </>

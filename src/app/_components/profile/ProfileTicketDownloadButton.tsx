@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { generateUserTicketImageAction } from "@/domain/ticket/actions/generateUserTicketImageAction";
 import { sanitizeForFilename } from "@/lib/util/formatting";
 
@@ -13,6 +14,7 @@ export default function ProfileTicketDownloadButton({
   shortId,
   holderName,
 }: ProfileTicketDownloadButtonProps) {
+  const t = useTranslations("profile");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,12 +26,12 @@ export default function ProfileTicketDownloadButton({
       const result = await generateUserTicketImageAction(shortId);
 
       if (!result) {
-        setError("No response from server");
+        setError(t("ticketDownload.noResponse"));
         return;
       }
 
       if (!result.success || !result.image) {
-        setError(result.error || "Failed to generate ticket");
+        setError(result.error || t("ticketDownload.failed"));
         return;
       }
 
@@ -52,7 +54,7 @@ export default function ProfileTicketDownloadButton({
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download error:", err);
-      setError(err instanceof Error ? err.message : "Failed to generate ticket");
+      setError(err instanceof Error ? err.message : t("ticketDownload.failed"));
     } finally {
       setIsGenerating(false);
     }
@@ -86,7 +88,7 @@ export default function ProfileTicketDownloadButton({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            Generating...
+            {t("ticketDownload.generating")}
           </>
         ) : (
           <>
@@ -103,7 +105,7 @@ export default function ProfileTicketDownloadButton({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
               />
             </svg>
-            Download Ticket Image
+            {t("ticketDownload.downloadImage")}
           </>
         )}
       </button>

@@ -2,6 +2,7 @@ import Input from "@/app/_components/form/Input";
 import { CheckoutFormData } from "@/domain/checkout/types/checkout";
 import { CheckoutValidationService } from "@/lib/services/validation/validation.service";
 import { CartItem } from "@/domain/checkout/types/cartItem";
+import { useTranslations } from "next-intl";
 
 interface CheckoutFormProps {
   index: number;
@@ -29,6 +30,7 @@ export default function CheckoutTicketForm({
   onEnter,
   validationTriggered,
 }: CheckoutFormProps) {
+  const t = useTranslations("checkout.ticketForm");
   const name = `ticket-${item.id}-${index + 1}-name`;
   const errorFieldName =
     CheckoutValidationService.formatComplementaryTicketKey(name);
@@ -42,8 +44,8 @@ export default function CheckoutTicketForm({
     <div className="text-sm text-red-600">
       <Input
         name={name}
-        prefix={"Name"}
-        label={`Ticket holder ${index + 1} name @ ${item.name}`}
+        prefix={t("namePrefix")}
+        label={t("label", { number: index + 1, itemName: item.name })}
         type="text"
         value={
           formData.complementaryTicketData

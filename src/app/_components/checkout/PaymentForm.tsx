@@ -10,6 +10,7 @@ import {
 import ActionButton from "@/app/_components/form/ActionButton";
 import { formatPrice } from "@/lib/util/formatting";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { useTranslations } from "next-intl";
 
 interface ConfirmPaymentResult {
   success: boolean;
@@ -36,6 +37,7 @@ export default function PaymentForm({
   canProceed,
   onConfirmPayment,
 }: PaymentFormProps) {
+  const t = useTranslations("checkout.payment");
   const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();
@@ -58,9 +60,9 @@ export default function PaymentForm({
         submitError.type === "card_error" ||
         submitError.type === "validation_error"
       ) {
-        onError(submitError.message || "Please check your payment details.");
+        onError(submitError.message || t("checkDetails"));
       } else {
-        onError("Please complete the payment form.");
+        onError(t("completeForm"));
       }
       onProcessingChange(false);
       return;
@@ -80,7 +82,7 @@ export default function PaymentForm({
     }
 
     if (!result.orderId || !result.clientSecret) {
-      onError("Failed to create order");
+      onError(t("failedCreateOrder"));
       onProcessingChange(false);
       return;
     }
@@ -99,9 +101,9 @@ export default function PaymentForm({
 
     if (error) {
       if (error.type === "card_error" || error.type === "validation_error") {
-        onError(error.message || "An error occurred with your payment.");
+        onError(error.message || t("cardError"));
       } else {
-        onError("An unexpected error occurred. Please try again.");
+        onError(t("unexpectedError"));
       }
       onProcessingChange(false);
     } else if (paymentIntent?.status === "succeeded") {
@@ -136,12 +138,13 @@ export default function PaymentForm({
         variant="success"
         className="py-3 text-lg"
       >
-        {isProcessing ? "Processing..." : `Pay ${formatPrice(totalAmount)}`}
+        {isProcessing
+          ? t("processing")
+          : t("pay", { amount: formatPrice(totalAmount) })}
       </ActionButton>
 
       <p className="text-xs text-neutral-500 text-center">
-        Your payment is securely processed by Stripe. Your card details are
-        never stored on our servers.
+        {t("securelyProcessed")}
       </p>
     </form>
   );

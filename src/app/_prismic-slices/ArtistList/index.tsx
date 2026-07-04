@@ -19,7 +19,7 @@ export type ArtistListProps = SliceComponentProps<
  */
 const ArtistList: FC<ArtistListProps> = async ({ slice, context }) => {
   const locale = context?.locale ?? "sl";
-  const artists = await fetchArtistsFromCms({});
+  const artists = await fetchArtistsFromCms({ locale });
 
   if (!artists || !artists.length) {
     return null;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { SerializedTicket } from "@/domain/ticket/types/ticket";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import ProfileTable, { ProfileTableRow, ProfileTableRowDiv } from "./ProfileTable";
@@ -17,28 +18,30 @@ const statusColors: Record<string, string> = {
   BANNED: "bg-red-500/20 text-red-400",
 };
 
-const statusLabels: Record<string, string> = {
-  VALIDATED: "Ready",
-  PENDING: "Ready",
-  SCANNED: "Used",
-  CANCELLED: "Cancelled",
-  BANNED: "Banned",
-};
-
 export default function ProfileTicketsPreview({
   tickets,
   totalCount,
 }: ProfileTicketsPreviewProps) {
+  const t = useTranslations("profile");
+
+  const statusLabels: Record<string, string> = {
+    VALIDATED: t("status.ticket.ready"),
+    PENDING: t("status.ticket.ready"),
+    SCANNED: t("status.ticket.used"),
+    CANCELLED: t("status.ticket.cancelled"),
+    BANNED: t("status.ticket.banned"),
+  };
+
   return (
     <ProfileTable
-      title="Upcoming Tickets"
+      title={t("tickets.upcomingTitle")}
       count={totalCount}
-      countLabel={totalCount === 1 ? "ticket" : "tickets"}
+      countLabel={t("tickets.countLabel", { count: totalCount })}
       viewAllHref="/profile/tickets"
       isEmpty={tickets.length === 0}
       emptyIcon={<TicketOutlineIcon className="w-6 h-6 text-neutral-500" />}
-      emptyMessage="No upcoming tickets"
-      emptyAction={{ label: "Browse events", href: "/events" }}
+      emptyMessage={t("tickets.empty")}
+      emptyAction={{ label: t("tickets.browseEvents"), href: "/events" }}
     >
       {tickets.map((ticket, index) => {
         const isClickable =

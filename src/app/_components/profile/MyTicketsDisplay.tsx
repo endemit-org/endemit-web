@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { SerializedTicket } from "@/domain/ticket/types/ticket";
 import TicketCard from "./TicketCard";
 
@@ -8,6 +9,8 @@ interface MyTicketsDisplayProps {
 }
 
 export default function MyTicketsDisplay({ tickets }: MyTicketsDisplayProps) {
+  const t = useTranslations("profile");
+
   if (tickets.length === 0) {
     return (
       <div className="text-center py-12">
@@ -27,11 +30,9 @@ export default function MyTicketsDisplay({ tickets }: MyTicketsDisplayProps) {
           </svg>
         </div>
         <h3 className="text-lg font-medium text-neutral-300 mb-2">
-          No tickets yet
+          {t("tickets.noneYet")}
         </h3>
-        <p className="text-neutral-500">
-          When you purchase event tickets, they will appear here.
-        </p>
+        <p className="text-neutral-500">{t("tickets.noneYetDesc")}</p>
       </div>
     );
   }
@@ -49,7 +50,7 @@ export default function MyTicketsDisplay({ tickets }: MyTicketsDisplayProps) {
       {activeTickets.length > 0 && (
         <section>
           <h2 className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
-            Active Tickets
+            {t("tickets.activeTitle")}
           </h2>
           <div className="space-y-3">
             {activeTickets.map(ticket => (
@@ -62,7 +63,7 @@ export default function MyTicketsDisplay({ tickets }: MyTicketsDisplayProps) {
       {pastTickets.length > 0 && (
         <section>
           <h2 className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
-            Past Tickets
+            {t("tickets.pastTitle")}
           </h2>
           <div className="space-y-3">
             {pastTickets.map(ticket => (

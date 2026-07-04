@@ -86,6 +86,10 @@ export default function ImageGalleryWithMasonry({
     );
 
   const hasRelatedEvent = !!relatedEvent;
+
+  // A product without any (filled) images has nothing to render here.
+  if (images.length === 0 && !hasRelatedEvent) return null;
+
   const hasSlider = images.length > 3 || (hasRelatedEvent && images.length > 1);
   const sliderImages = hasRelatedEvent
     ? images

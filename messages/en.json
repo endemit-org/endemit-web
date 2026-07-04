@@ -9,17 +9,596 @@
   },
   "cart": {
     "checkout": "Checkout",
-    "itemsInCart": "{count} items in your cart"
+    "itemsInCart": "{count, plural, one {# item} other {# items}} in your cart"
   },
   "footer": {},
   "home": {},
-  "events": {},
-  "artists": {},
-  "venues": {},
-  "store": {},
-  "checkout": {},
-  "profile": {},
-  "signin": {},
+  "events": {
+    "tabs": {
+      "lineup": "Lineup",
+      "location": "Location",
+      "about": "About",
+      "tickets": "Tickets"
+    },
+    "concluded": "This event has concluded",
+    "getTickets": "Get tickets",
+    "setTimes": "Set times",
+    "moreEventsToExplore": "More events to explore",
+    "pastEvent": "Past event",
+    "location": {
+      "loadingMap": "Loading map...",
+      "directions": "Show directions in Google Maps"
+    },
+    "urgency": {
+      "almostSoldOut": "Almost sold out, final batch",
+      "goingFast": "Tickets going fast, remaining:"
+    },
+    "miniCard": {
+      "wasOn": "Was on {date}",
+      "happeningOn": "Happening on {date}"
+    },
+    "ticketStatus": {
+      "hot": "Hot",
+      "ticketsLimited": "Tickets limited"
+    },
+    "ticketsDisplay": {
+      "hot": "Hot",
+      "freeAdmission": "FREE admission",
+      "noTicketsRequired": "No tickets required",
+      "noLongerAvailable": "Tickets no longer available",
+      "eventConcluded": "This event has concluded.",
+      "comingSoon": "Tickets coming soon",
+      "notForSaleYet": "Tickets are not for sale yet",
+      "notAvailableOnline": "Tickets not available online",
+      "onlineSoldOut": "Online tickets SOLD OUT",
+      "availableAtEntrance": "Tickets are available at entrance",
+      "batchSoldOut": "Ticket batch sold out",
+      "batchComingSoon": "Next ticket batch coming soon",
+      "availableNow": "Tickets available now",
+      "personCount": "{count, plural, one {# person} other {# people}}",
+      "includesTickets": "Includes tickets for {count, plural, one {# person} other {# people}}",
+      "soldOutBanner": "Online tickets are sold out, but you can still get the tickets for you and your friends when you arrive at the event. <strong>Cash only.</strong>",
+      "batchSoldOutBanner": "This ticket batch for Endemit 2026 is sold out. We will be releasing the next ticket batch soon. Stay tuned!"
+    },
+    "lineup": {
+      "sortBy": "Sort by:",
+      "sort": {
+        "default": "Default",
+        "performanceTime": "Performance Time",
+        "alphabetical": "Alphabetically"
+      }
+    },
+    "saveTheDate": {
+      "secret": "Nice try, it's a secret!",
+      "heading": "{count, plural, one {Save the date} other {Save the dates}}"
+    },
+    "moreAnnouncedSoon": "More events will be announced soon",
+    "detailsComingSoon": "Details coming soon",
+    "festivalTag": "Festival"
+  },
+  "artists": {
+    "appearsOn": "{name} appears on",
+    "exploreOther": "Explore other artists",
+    "dontMissNextTime": "Don't miss {name} next time",
+    "subscribePrompt": "Subscribe and be notified about our events and lineups",
+    "setTimes": "Set times",
+    "profile": {
+      "partOf": "Part of",
+      "inquireBooking": "Inquire about booking",
+      "viewFullProfile": "View {name}'s full profile",
+      "findOn": "Find {name} on:"
+    },
+    "preview": {
+      "nowPlaying": "Now playing {name}",
+      "playSet": "Play a set from {name}"
+    },
+    "liveNow": "LIVE NOW",
+    "timeUntilPrefix": "in"
+  },
+  "venues": {
+    "eventsHostedAt": "Events hosted at {name}",
+    "artistsPerformedAt": "Artists performed at {name}",
+    "dontMissNextEvent": "Don't miss the next event at {name}",
+    "subscribePrompt": "Subscribe and be notified about our events and lineups"
+  },
+  "store": {
+    "breadcrumb": {
+      "store": "Store"
+    },
+    "category": {
+      "empty": "There are currently no products in {categoryName}"
+    },
+    "product": {
+      "descriptionHeading": "Description",
+      "youMightAlsoLike": "You might also like",
+      "price": "Price:",
+      "selectQuantity": "Select quantity",
+      "checkout": "Checkout",
+      "expired": "Expired",
+      "noLongerAvailable": "Product no longer available",
+      "selectVariant": "Select {variantType}",
+      "inCart": "(You have {count} in <link>cart</link>)",
+      "addToCart": "Add to cart",
+      "addedToCart": "<strong>{name}</strong> was added to your cart!",
+      "remaining": "{time} remaining",
+      "statusText": {
+        "available": "available",
+        "preorder": "preorder",
+        "comingSoon": "coming soon",
+        "outOfStock": "out of stock",
+        "soldOut": "sold out"
+      }
+    },
+    "checkout": {
+      "title": "Checkout",
+      "breadcrumb": "Checkout"
+    },
+    "success": {
+      "title": "Order Confirmed!",
+      "thankYou": "Thank you for your order. A confirmation email has been sent to",
+      "emailLabel": "Email",
+      "ticketsNote": "Your tickets for <strong>{names}</strong> will also be sent to your email shortly, within the next 30 minutes.",
+      "orderId": "Order ID"
+    },
+    "interrupted": {
+      "title": "Your payment was interrupted!",
+      "breadcrumb": "Payment interrupted",
+      "heading": "Payment Not Completed",
+      "body": "You returned from the payment page without completing your order. Don't worry, your cart is still saved.",
+      "orderTotal": "Order Total",
+      "completePayment": "Complete Payment",
+      "returnToCart": "Return to Cart",
+      "needHelp": "Need help? <contact>Contact us</contact>"
+    }
+  },
+  "checkout": {
+    "back": "← Back",
+    "emptyCart": {
+      "title": "Your cart is empty.",
+      "body": "Visit the <link>Support us section</link> to select products for your purchase and support our non-profit work."
+    },
+    "cart": {
+      "heading": "Cart ({count, plural, one {# item} other {# items}})"
+    },
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "continueToCheckout": "Continue to checkout",
+    "continueToReview": "Continue to Review & Pay",
+    "updateInfoWarning": "Please go back to update your information.",
+    "backToInformation": "← Back to Information",
+    "failedToProcessPayment": "Failed to process payment",
+    "processing": "Processing...",
+    "completeWalletOrder": "Complete Order (Wallet Payment)",
+    "officialItems": {
+      "title": "Official items",
+      "description": "These are official endemit items you can add to your checkout. Explore and add to your cart."
+    },
+    "customer": {
+      "contactInfo": {
+        "title": "Your contact information",
+        "signedIn": "You are signed in. Your email will be used for this order.",
+        "description": "Ensure your email is correct as this is where you will receive your order confirmation.",
+        "descriptionWithTickets": "Ensure your email is correct as this is where you will receive your order confirmation and digital tickets."
+      },
+      "email": "E-mail",
+      "emailRepeat": "Repeat e-mail",
+      "emailPlaceholder": "jane@endemit.org",
+      "ticketHolder": {
+        "title": "Ticket holder information",
+        "description": "As a backup for lost tickets or inability to scan at the event, please provide the name of each ticket holder:"
+      },
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "removeTicket": "Remove ticket",
+      "remove": "Remove",
+      "shipping": {
+        "title": "Shipping information",
+        "description": "Please provide your shipping address where we will send your order."
+      },
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Jane Demit",
+      "address": "Address",
+      "addressPlaceholder": "Road to forever 42",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "2390",
+      "city": "City",
+      "cityPlaceholder": "Ravne na Koroškem",
+      "country": "Country",
+      "phone": "Phone",
+      "phonePlaceholder": "30 111 222",
+      "countryNotListed": "Is your country not listed? Please <contact>contact us</contact>.",
+      "reachYou": "We will reach you at {code} {phone}",
+      "consent": {
+        "terms": "I confirm the order, accept and agree to the <terms>Terms and conditions</terms>, <privacy>Privacy policy</privacy>, and <withdrawal>Right to withdrawal</withdrawal>.",
+        "nonRefundable": "I understand and accept that my order contains non refundable items as stated in <notice>Notice on purchase of digital products</notice>.",
+        "codeOfConduct": "I understand, accept and will respect the applicable <code>Code of conduct</code> at Endemit events."
+      }
+    },
+    "summary": {
+      "loading": "Loading...",
+      "subtotal": "Subtotal:",
+      "shipping": "Shipping:",
+      "discount": "Discount:",
+      "walletCredit": "Wallet Credit:",
+      "total": "Total:"
+    },
+    "promo": {
+      "applied": "Promo code <strong>{code}</strong> applied",
+      "remove": "Remove",
+      "add": "+ Add promo code",
+      "placeholder": "Enter promo code",
+      "applying": "Applying...",
+      "apply": "Apply"
+    },
+    "item": {
+      "removeAriaLabel": "Remove item",
+      "remove": "Remove",
+      "cannotShip": "Warning, this product can not be shipped to {country}",
+      "maxQuantity": "Warning, the maximum quantity for this product is {quantity}",
+      "noLongerAvailable": "No longer available",
+      "availableUntil": "This item is available for sale until",
+      "limitedAvailability": "Limited availability at this price"
+    },
+    "donation": {
+      "dismiss": "Dismiss",
+      "title": "Donations keep us running",
+      "prompt": "Add <strong>{amount} donation</strong> to your total<br></br>and <strong>round up to {rounded}</strong>?",
+      "description": "We are volunteers dedicated to a non-profit. Donations support our work and help us keep ticket prices low.",
+      "addButton": "Add {amount} donation",
+      "moreAbout": "More about our non-profit"
+    },
+    "wallet": {
+      "checking": "Checking wallet balance...",
+      "use": "Use Wallet Credit",
+      "available": "Available: {balance}",
+      "amountToApply": "Amount to apply:",
+      "remainingCard": "Remaining to pay by card:"
+    },
+    "actions": {
+      "redirecting": "Redirecting you to payment...",
+      "payWithStripe": "Pay securely with Stripe",
+      "fillRequired": "Please fill in all required fields to proceed to credit card payment. Fill in the remaining {count, plural, one {<strong>#</strong> required field.} other {<strong>#</strong> required fields.}}",
+      "poweredByStripe": "Powered by Stripe"
+    },
+    "steps": {
+      "cart": "Cart",
+      "information": "Information",
+      "reviewPay": "Review & Pay"
+    },
+    "return": {
+      "toProfile": "Return to Profile",
+      "continue": "Continue",
+      "viewOrder": "View order"
+    },
+    "cashless": {
+      "title": "Go Cashless at the Event",
+      "description": "This event uses cashless payments with EndePay. Preload your wallet now and enjoy faster service at the bar and food stands.",
+      "popular": "Popular",
+      "add": "+ Add",
+      "cashNote": "You can also top up with cash at the event"
+    },
+    "ticketForm": {
+      "namePrefix": "Name",
+      "label": "Ticket holder {number} name @ {itemName}"
+    },
+    "payment": {
+      "checkDetails": "Please check your payment details.",
+      "completeForm": "Please complete the payment form.",
+      "failedCreateOrder": "Failed to create order",
+      "cardError": "An error occurred with your payment.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "processing": "Processing...",
+      "pay": "Pay {amount}",
+      "securelyProcessed": "Your payment is securely processed by Stripe. Your card details are never stored on our servers."
+    }
+  },
+  "profile": {
+    "breadcrumb": {
+      "myProfile": "My Profile",
+      "edit": "Edit",
+      "tickets": "Tickets",
+      "transactions": "Transactions",
+      "orders": "Orders"
+    },
+    "nav": {
+      "editProfile": "Edit Profile",
+      "backToProfile": "Back to Profile",
+      "backToTickets": "Back to Tickets",
+      "backToTransactions": "Back to Transactions",
+      "backToOrders": "Back to Orders"
+    },
+    "cashlessTransactions": "Cashless Transactions",
+    "status": {
+      "guest": "Guest",
+      "ticket": {
+        "ready": "Ready",
+        "readyToScan": "Ready to scan",
+        "used": "Used",
+        "cancelled": "Cancelled",
+        "banned": "Banned",
+        "refundRequested": "Refund Requested",
+        "refunded": "Refunded"
+      },
+      "order": {
+        "paid": "Paid",
+        "created": "Created",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded",
+        "expired": "Expired",
+        "shipped": "Shipped",
+        "delivered": "Delivered"
+      }
+    },
+    "table": {
+      "noItems": "No items yet",
+      "viewAllCount": "View all ({count})",
+      "viewAllTitle": "View all {title}",
+      "itemCount": "{count, plural, one {item} other {items}}"
+    },
+    "editForm": {
+      "invalidFileType": "Invalid file type. Allowed: JPEG, PNG, WebP",
+      "uploadFailed": "Failed to upload",
+      "uploadImageFailed": "Failed to upload image",
+      "updateFailed": "Failed to update profile",
+      "success": "Profile updated successfully",
+      "displayName": "Display Name",
+      "namePlaceholder": "Enter your name",
+      "saving": "Saving...",
+      "save": "Save Changes",
+      "clickToChange": "Click to change",
+      "avatarAlt": "Profile avatar"
+    },
+    "wallet": {
+      "transferFunds": "Transfer funds",
+      "receiveFunds": "Receive funds",
+      "receiveFundsDesc": "Show this QR to another user — they can scan it from their wallet to send you tokens.",
+      "receiveQrAlt": "Receive QR",
+      "orShareCode": "Or share code",
+      "copied": "Copied!",
+      "copyCode": "Copy code",
+      "payQrAlt": "Wallet QR"
+    },
+    "wristband": {
+      "title": "Wristband",
+      "desc": "Link a wristband to your account so you can still pay at POS registers if your phone dies or you decide to roam around without it.",
+      "qrAlt": "Wristband {code} QR",
+      "linkedOn": "Linked on {date}",
+      "unlinking": "Unlinking...",
+      "unlink": "Unlink",
+      "scan": "Scan wristband",
+      "unlinkConfirm": "Unlink this backup sticker?",
+      "unlinkFailed": "Failed to unlink sticker",
+      "checking": "Checking wristband…",
+      "linking": "Linking wristband…",
+      "dismiss": "Dismiss",
+      "done": "Done",
+      "gotIt": "Got it",
+      "cancel": "Cancel",
+      "couldNotCheck": "Could not check sticker.",
+      "networkError": "Network error.",
+      "linkFailed": "Failed to link sticker.",
+      "unexpectedResponse": "Unexpected response.",
+      "linkedTitle": "Wristband {code} linked to your wallet.",
+      "linkedDesc": "Top up your wallet from the sidebar to start paying with it.",
+      "wouldLinkTitle": "Link wristband {code} to your wallet?",
+      "wouldLinkDesc": "Once linked, this wristband will be connected to your wallet. It can be scanned at a POS register and used as payment.",
+      "linkButton": "Link wristband",
+      "conflictTitle": "Wristband {code} is linked to another account.",
+      "conflictDesc": "If you believe this is a mistake, contact an crew member.",
+      "swapTitle": "You already have wristband {existingCode} linked.",
+      "swapDesc": "To link {code}, unlink your current wristband first by going to <editLink>Edit profile</editLink> and scan again.",
+      "whatIsThis": "What is this?",
+      "showQr": "Show QR",
+      "linkForOffline": "Link a wristband for offline checkout",
+      "infoText": "Tap to show a QR sellers can scan at POS registers to charge your wallet. Linking a wristband gives you the same code on a physical bracelet, so you can pay even without a phone.",
+      "stickerConflictOther": "This sticker is linked to another account.",
+      "stickerSwapRequired": "You already have sticker {code} linked. Unlink it first.",
+      "scanHint": "Point your camera at the QR on your wristband."
+    },
+    "sidebar": {
+      "donor": "Donor",
+      "walletBalance": "Wallet Balance",
+      "topUpWallet": "Top Up Wallet",
+      "scanPosOrder": "Scan a POS order instead",
+      "viewTickets": "View Tickets",
+      "endePayNotice": "EndePay drives our cashless payments, it will be re-enabled before the festival in August.",
+      "signOut": "Sign Out",
+      "signOutConfirmMessage": "Are you sure you want to sign out of your account?",
+      "cancel": "Cancel",
+      "signingOut": "Signing out..."
+    },
+    "tickets": {
+      "upcomingTitle": "Upcoming Tickets",
+      "detailTitle": "Ticket {shortId}",
+      "countLabel": "{count, plural, one {ticket} other {tickets}}",
+      "empty": "No upcoming tickets",
+      "browseEvents": "Browse events",
+      "view": "View",
+      "eventEnded": "Event has ended",
+      "notUsedAtEvent": "This ticket was not used at the event",
+      "showQr": "Show this QR code at the entrance",
+      "alreadyUsed": "This ticket has already been used",
+      "noLongerValid": "This ticket is no longer valid",
+      "viewEventDetails": "View event details",
+      "detailsHeading": "Ticket Details",
+      "ticketId": "Ticket ID",
+      "holderName": "Holder Name",
+      "editHolderName": "Edit holder name",
+      "email": "Email",
+      "price": "Price",
+      "scannedAt": "Scanned at",
+      "saveFailed": "Failed to save",
+      "guestList": "Guest List",
+      "viewTicket": "View Ticket",
+      "noneYet": "No tickets yet",
+      "noneYetDesc": "When you purchase event tickets, they will appear here.",
+      "activeTitle": "Active Tickets",
+      "pastTitle": "Past Tickets",
+      "qrAlt": "Ticket QR Code"
+    },
+    "transactions": {
+      "historyTitle": "Transaction History",
+      "detailTitle": "Transaction Details",
+      "countLabel": "{count, plural, one {transaction} other {transactions}}",
+      "empty": "No transactions yet",
+      "from": "From",
+      "to": "To",
+      "date": "Date",
+      "balanceAfter": "Balance After",
+      "note": "Note",
+      "transactionId": "Transaction ID",
+      "type": {
+        "credit": "Added",
+        "debit": "Spent",
+        "purchase": "Purchase",
+        "refund": "Refund",
+        "adjustment": "Adjustment",
+        "transfer": "Transfer"
+      },
+      "typeLong": {
+        "credit": "Credit Added",
+        "debit": "Debit",
+        "purchase": "Purchase",
+        "refund": "Refund",
+        "adjustment": "Adjustment",
+        "transfer": "Transfer"
+      }
+    },
+    "orders": {
+      "historyTitle": "Order History",
+      "detailTitle": "Order Details",
+      "countLabel": "{count, plural, one {order} other {orders}}",
+      "empty": "No orders yet",
+      "shippingAddress": "Shipping Address",
+      "itemsCount": "Items ({count})",
+      "qty": "Qty: {count}",
+      "summary": "Summary",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "total": "Total",
+      "ticketsCount": "Tickets ({count})",
+      "emptyDesc": "When you make a purchase, your orders will appear here.",
+      "itemCountLabel": "{count, plural, one {# item} other {# items}}",
+      "ticketsIncluded": "{count, plural, one {# ticket} other {# tickets}} included"
+    },
+    "ticketBadge": {
+      "validated": "VALIDATED",
+      "pending": "PENDING",
+      "scanned": "SCANNED"
+    },
+    "announcement": {
+      "dismiss": "Dismiss announcement"
+    },
+    "topUp": {
+      "hot": "Hot",
+      "selectAmount": "Select an amount",
+      "noOptions": "No top-up options available at the moment.",
+      "selectAmountDesc": "Select an amount of tokens to add to your wallet",
+      "redirecting": "Redirecting...",
+      "addToWallet": "Add {amount} to Wallet",
+      "cashNotice": "You can also top up the wallet with cash at the MERCH stand."
+    },
+    "ticketDownload": {
+      "failed": "Failed to generate ticket",
+      "noResponse": "No response from server",
+      "generating": "Generating...",
+      "downloadImage": "Download Ticket Image"
+    },
+    "walletPay": {
+      "pay": "Pay",
+      "balance": "Balance",
+      "handPhoneHint": "Hand your phone to the seller — they will scan this code to charge your wallet.",
+      "scanTitle": "Scan to Pay",
+      "confirmTitle": "Confirm Payment",
+      "successTitle": "Payment Complete",
+      "errorTitle": "Error",
+      "loadingOrder": "Loading order...",
+      "pointCamera": "Point your camera at the QR code",
+      "scanCodeHint": "Scan QR or type the 4-character code from the register",
+      "orderCancelledBySeller": "Order was cancelled by the seller",
+      "orderCancelledTitle": "Order Cancelled",
+      "scanFailed": "Failed to scan order",
+      "paymentFailed": "Payment failed",
+      "toppedUpTitle": "Balance Topped Up",
+      "amountAdded": "+{amount} added",
+      "thankYou": "Thank you!",
+      "tryAgain": "Try Again"
+    },
+    "eventsAttended": {
+      "title": "Events Attended",
+      "claimMissing": "Claim missing event",
+      "empty": "No events attended yet.",
+      "countLabel": "{count, plural, one {# event} other {# events}}",
+      "pendingClaims": "Pending Claims",
+      "artistsAtEvents": "Artists at events",
+      "claimFailed": "Failed to submit claim",
+      "claimModalTitle": "Claim Missing Event",
+      "noPastEvents": "No past events available to claim.",
+      "claimModalDesc": "Select an event you attended but don't have a ticket for. Claims are reviewed and typically approved within a few minutes.",
+      "submitting": "Submitting...",
+      "submitClaim": "Submit Claim"
+    },
+    "upcomingPromo": {
+      "title": "Upcoming Events",
+      "subtitle": "Don't miss out - get your tickets!",
+      "ticketsAvailable": "Tickets Available"
+    }
+  },
+  "signin": {
+    "signIn": "Sign In",
+    "back": "Back",
+    "errors": {
+      "generic": "An error occurred. Please try again.",
+      "somethingWrong": "Something went wrong. Please try again."
+    },
+    "password": {
+      "title": "Enter Password",
+      "signingInAs": "Signing in as",
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "signingIn": "Signing in..."
+    },
+    "emailForm": {
+      "createTitle": "Create Account",
+      "subtitle": "Enter your email and we'll send you a code to sign in. No passwords, no registrations, it just works!",
+      "createSubtitle": "No account found. Click below to create one.",
+      "label": "Username or Email",
+      "placeholder": "Enter your email",
+      "createConfirm": "We'll create an account for {identifier} and send you a sign-in code.",
+      "signInWithPassword": "Sign in with password",
+      "creatingAccount": "Creating account...",
+      "checking": "Checking...",
+      "sendingCode": "Sending code...",
+      "registerEmail": "Register this email",
+      "continue": "Continue",
+      "errors": {
+        "identifierRequired": "Please enter your @username or email",
+        "usernameInvalid": "Username must be 2-30 characters (letters, numbers, underscore)",
+        "emailInvalid": "Please enter a valid email address",
+        "usernameCantRegister": "Please use an email address to create a new account",
+        "createFailed": "Failed to create account. Please try again.",
+        "noAccountUsername": "No account found with this username",
+        "inactive": "Account is not active",
+        "sendFailed": "Failed to send code. Please try again."
+      }
+    },
+    "verify": {
+      "title": "Enter Your Code",
+      "sentTo": "We sent a code to",
+      "resendSuccess": "A new code has been sent to your email.",
+      "success": "Signed in successfully!",
+      "verifying": "Verifying...",
+      "sending": "Sending...",
+      "resendCooldown": "Resend code ({seconds}s)",
+      "resend": "Resend code",
+      "differentEmail": "Use a different email",
+      "invalidCode": "Invalid code. Please try again.",
+      "resendFailed": "Failed to resend code."
+    },
+    "profileButton": {
+      "profile": "Profile"
+    }
+  },
   "notFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist.",
@@ -75,7 +654,7 @@
     "otcSignIn": {
       "subject": "Your sign-in code: {code}",
       "heading": "Your Sign-in Code",
-      "intro": "Use the code below to sign in to your account. This code will expire in {minutes} minutes.",
+      "intro": "Use the code below to sign in to your account. This code will expire in {minutes, plural, one {# minute} other {# minutes}}.",
       "orClick": "Or click the button below:",
       "signInInstantly": "Sign In Instantly",
       "ignoreNote": "If you did not request this code, you can safely ignore this email. Someone may have entered your email address by mistake.",
@@ -199,6 +778,51 @@
       "walletBalance": "Wallet Balance",
       "viewWallet": "View Your Wallet",
       "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>"
+    }
+  },
+  "music": {
+    "latestEpisodes": "Enjoy our latest episodes",
+    "dontMissNextEpisode": "Don't miss our next episode",
+    "subscribeNewEpisode": "Subscribe and be notified when we release a new emit episode",
+    "comingSoon": "Coming soon",
+    "showLess": "Show less",
+    "viewAll": "View all {count} episodes",
+    "episodeLabel": "Episode {number}",
+    "byPrefix": "by",
+    "playing": "Playing",
+    "playEpisode": "Play Episode",
+    "viewDetails": "View Details",
+    "aboutEpisode": "About this episode",
+    "listenToEpisode": "Listen to the episode",
+    "currentlyPlaying": "Currently playing",
+    "tracklist": "Tracklist",
+    "labels": {
+      "episode": "Episode",
+      "artist": "Artist",
+      "published": "Published"
+    },
+    "player": {
+      "allowPlay": "Allow play",
+      "collapse": "Collapse player",
+      "close": "Close player"
+    }
+  },
+  "newsletter": {
+    "defaultTitle": "SUBSCRIBE",
+    "endemit": {
+      "defaultDescription": "Receive updates about our upcoming events, music, and announcements"
+    },
+    "festival": {
+      "defaultDescription": "Endemit Festival is private community gathering, accessible only by invitation. If you'd like to become a member, sign up and we'll send you more info."
+    },
+    "subscribe": {
+      "invalidEmail": "Please enter a valid email address",
+      "failed": "Failed to subscribe",
+      "subscribing": "Subscribing...",
+      "subscribed": "Subscribed!",
+      "signUp": "Sign me up",
+      "successHeading": "subscribed successfully!",
+      "emailPlaceholder": "you@gmail.com"
     }
   }
 }

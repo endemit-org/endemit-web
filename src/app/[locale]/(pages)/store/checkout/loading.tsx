@@ -1,5 +1,6 @@
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
+import { getTranslations } from "next-intl/server";
 
 function CheckoutSkeleton() {
   return (
@@ -69,15 +70,16 @@ function CheckoutSkeleton() {
   );
 }
 
-export default function CheckoutLoading() {
+export default async function CheckoutLoading() {
+  const t = await getTranslations("store");
   return (
     <OuterPage>
       <PageHeadline
-        title="Checkout"
+        title={t("checkout.title")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Store", path: "store" },
-          { label: "Checkout", path: "checkout" },
+          { label: t("breadcrumb.store"), path: "store" },
+          { label: t("checkout.breadcrumb"), path: "checkout" },
         ]}
       />
       <CheckoutSkeleton />

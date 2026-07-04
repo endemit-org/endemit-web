@@ -1,23 +1,25 @@
+import { getTranslations } from "next-intl/server";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { BackLinkSkeleton, ProfileTableSkeleton } from "@/app/_components/ui/Skeletons";
 
-export default function TransactionsLoading() {
+export default async function TransactionsLoading() {
+  const t = await getTranslations("profile");
   return (
     <OuterPage>
       <PageHeadline
-        title="Transactions"
+        title={t("breadcrumb.transactions")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Transactions", path: "transactions" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.transactions"), path: "transactions" },
         ]}
       />
 
       <InnerPage>
         <BackLinkSkeleton />
-        <ProfileTableSkeleton title="Transaction History" rows={5} />
+        <ProfileTableSkeleton title={t("transactions.historyTitle")} rows={5} />
       </InnerPage>
     </OuterPage>
   );

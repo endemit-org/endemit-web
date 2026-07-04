@@ -1,4 +1,4 @@
-import { asLink, Content } from "@prismicio/client";
+import { asLink, Content, isFilled } from "@prismicio/client";
 import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
 import Image from "next/image";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
@@ -20,9 +20,10 @@ const hasImage = (
     | Content.TextColumnSliceDefaultPrimaryColumnsItem
     | Content.TextColumnSliceColumnWithImagePrimaryColumnsItem
 ): column is Content.TextColumnSliceColumnWithImagePrimaryColumnsItem => {
-  return (
-    (column as Content.TextColumnSliceColumnWithImagePrimaryColumnsItem)
-      .image !== undefined
+  // An unfilled Prismic image is still a truthy object ({}), so check that it
+  // actually holds a url — next/image throws on a missing src.
+  return isFilled.image(
+    (column as Content.TextColumnSliceColumnWithImagePrimaryColumnsItem).image
   );
 };
 

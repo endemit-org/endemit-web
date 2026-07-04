@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import QRCode from "qrcode";
 
@@ -15,6 +16,7 @@ export default function ProfileTicketQrCode({
   size = 280,
   isGuestList = false,
 }: ProfileTicketQrCodeProps) {
+  const t = useTranslations("profile");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   const logoSize = 43;
@@ -45,7 +47,7 @@ export default function ProfileTicketQrCode({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={qrDataUrl}
-        alt="Ticket QR Code"
+        alt={t("tickets.qrAlt")}
         className="rounded-lg"
         style={{ width: size, height: size }}
       />

@@ -32,7 +32,10 @@ const PodcastList: FC<PodcastListProps> = async ({ slice, context }) => {
     const episodeCountValue = slice.primary.episode_count ?? "4";
     const isAll = episodeCountValue === "all";
     const episodeCount = isAll ? 200 : parseInt(episodeCountValue, 10);
-    const podcasts = await fetchPodcastsFromCms({ pageSize: episodeCount });
+    const podcasts = await fetchPodcastsFromCms({
+      pageSize: episodeCount,
+      locale,
+    });
 
     if (!podcasts || podcasts.length === 0) {
       return null;
@@ -106,13 +109,13 @@ const PodcastList: FC<PodcastListProps> = async ({ slice, context }) => {
 
     if (slice.primary.use_latest) {
       // Fetch latest episode
-      const podcasts = await fetchPodcastsFromCms({ pageSize: 1 });
+      const podcasts = await fetchPodcastsFromCms({ pageSize: 1, locale });
       podcast = podcasts?.[0] ?? null;
     } else if (isFilled.contentRelationship(slice.primary.selected_episode)) {
       // Fetch selected episode
       const selectedUid = slice.primary.selected_episode.uid;
       if (selectedUid) {
-        podcast = await fetchPodcastFromCms(selectedUid);
+        podcast = await fetchPodcastFromCms(selectedUid, { locale });
       }
     }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import OuterPage from "@/app/_components/ui/OuterPage";
@@ -25,7 +26,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ProfileEditPage() {
+export default async function ProfileEditPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -38,11 +46,11 @@ export default async function ProfileEditPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="Edit Profile"
+        title={t("nav.editProfile")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Edit", path: "edit" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.edit"), path: "edit" },
         ]}
       />
 
@@ -66,7 +74,7 @@ export default async function ProfileEditPage() {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Back to Profile
+              {t("nav.backToProfile")}
             </Link>
           </div>
 

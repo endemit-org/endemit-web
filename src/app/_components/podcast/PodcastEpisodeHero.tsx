@@ -10,6 +10,7 @@ import { usePlayerStore } from "@/app/_stores/PlayerStore";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { formatDate } from "@/lib/util/formatting";
 import PlayIcon from "@/app/_components/icon/PlayIcon";
+import { useTranslations } from "next-intl";
 
 interface PodcastEpisodeHeroProps {
   number: string;
@@ -31,15 +32,16 @@ export default function PodcastEpisodeHero({
   artist,
   date,
 }: PodcastEpisodeHeroProps) {
+  const t = useTranslations("music");
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const loadedTrack = usePlayerStore(state => state.currentTrack);
   const isCurrentTrackLoaded =
     loadedTrack?.title && loadedTrack?.url === trackUrl;
 
   const episodeDataSet = [
-    { value: number, label: "Episode" },
-    { value: artist, label: "Artist" },
-    { value: date ? formatDate(date) : false, label: "Published" },
+    { value: number, label: t("labels.episode") },
+    { value: artist, label: t("labels.artist") },
+    { value: date ? formatDate(date) : false, label: t("labels.published") },
   ].filter(item => !!item.value);
 
   const handleLoadTrack = () => {
@@ -71,12 +73,12 @@ export default function PodcastEpisodeHero({
         <h3 className="text-[#d31c18] text-8xl mb-0 pb-0 mix-blend-difference">
           {number}
         </h3>
-        <h2 className="text-2xl mb-6 -mt-4 pt-0">About this episode</h2>
+        <h2 className="text-2xl mb-6 -mt-4 pt-0">{t("aboutEpisode")}</h2>
         <RichTextDisplay richText={description} />
       </div>
       <div className="relative w-full xl:w-2/5">
         <InnerPage>
-          <h2 className="text-2xl">Listen to the episode</h2>
+          <h2 className="text-2xl">{t("listenToEpisode")}</h2>
           <div className={"flex gap-x-4 mt-4"}>
             <div
               className={"relative group cursor-pointer h-fit"}
@@ -94,7 +96,7 @@ export default function PodcastEpisodeHero({
                 </div>
                 {isCurrentTrackLoaded && (
                   <div className={"text-sm text-neutral-4 mt-2 text-shadow"}>
-                    Currently playing
+                    {t("currentlyPlaying")}
                   </div>
                 )}
               </div>
@@ -124,7 +126,7 @@ export default function PodcastEpisodeHero({
           {tracklist && tracklist.length > 0 && (
             <div className="mt-6">
               <span className={"font-heading uppercase text-2xl"}>
-                Tracklist
+                {t("tracklist")}
               </span>
               <div className="list-decimal lg:max-h-56 overflow-y-auto mt-3 scrollbar-thin scrollbar-track-neutral-800 scrollbar-thumb-neutral-600 hover:scrollbar-thumb-neutral-500">
                 {tracklist.map((track, index) => (

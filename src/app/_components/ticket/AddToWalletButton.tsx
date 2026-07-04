@@ -1,25 +1,44 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
-import { logTicketDownloadAction } from "@/domain/ticket/actions/logTicketDownloadAction";
+
+export interface AddToWalletButtonLabels {
+  addToWallet: string;
+  adding: string;
+  warningTitle: string;
+  warningBody: string;
+  cancel: string;
+  downloadAnyway: string;
+}
+
+// English defaults so unlocalized contexts (e.g. admin) work without a
+// next-intl provider; localized call sites pass translated labels.
+const defaultLabels: AddToWalletButtonLabels = {
+  addToWallet: "Add to Apple Wallet",
+  adding: "Adding to Wallet...",
+  warningTitle: "Apple Wallet Required",
+  warningBody:
+    "Apple Wallet passes work best on iPhone, iPad, or Mac. You can still download the pass file, but you may not be able to open it on this device.",
+  cancel: "Cancel",
+  downloadAnyway: "Download Anyway",
+};
 
 interface AddToWalletButtonProps {
-  ticketHash: string;
-  shortId: string;
+  passUrl: string;
+  onDownload?: () => void;
   size?: "sm" | "default";
+  labels?: AddToWalletButtonLabels;
 }
 
 export default function AddToWalletButton({
-  ticketHash,
-  shortId,
+  passUrl,
+  onDownload,
   size = "default",
+  labels = defaultLabels,
 }: AddToWalletButtonProps) {
   const [isAppleDevice, setIsAppleDevice] = useState<boolean | null>(null);
   const [showWarning, setShowWarning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const walletPassUrl = `${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticketHash}`;
 
   useEffect(() => {
     // Detect Apple devices (iOS, iPadOS, macOS)
@@ -34,11 +53,10 @@ export default function AddToWalletButton({
   const handleClick = async () => {
     if (isAppleDevice) {
       setIsLoading(true);
-      // Log download to Discord (fire and forget)
-      logTicketDownloadAction({ ticketShortId: shortId, downloadType: "apple_wallet" });
+      onDownload?.();
       // On Apple devices, navigate directly to the pass URL
       // iOS will automatically open the Wallet app
-      window.location.href = walletPassUrl;
+      window.location.href = passUrl;
 
       // Reset loading state after a delay (in case user comes back)
       setTimeout(() => setIsLoading(false), 3000);
@@ -51,9 +69,8 @@ export default function AddToWalletButton({
   const handleForceDownload = () => {
     setIsLoading(true);
     setShowWarning(false);
-    // Log download to Discord (fire and forget)
-    logTicketDownloadAction({ ticketShortId: shortId, downloadType: "apple_wallet" });
-    window.location.href = walletPassUrl;
+    onDownload?.();
+    window.location.href = passUrl;
     setTimeout(() => setIsLoading(false), 3000);
   };
 
@@ -92,7 +109,7 @@ export default function AddToWalletButton({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            Adding to Wallet...
+            {labels.adding}
           </>
         ) : (
           <>
@@ -116,7 +133,7 @@ export default function AddToWalletButton({
                 <path fillRule="evenodd" clipRule="evenodd" d="M20.1701 10.001C20.0201 10.001 19.8601 10.001 19.7101 10.001C19.5801 10.001 19.4501 10.001 19.3201 10.001C19.0401 10.001 18.7501 10.021 18.4801 10.071C18.2001 10.121 17.9301 10.201 17.6801 10.331C17.6501 10.351 16.9401 10.671 16.3101 11.651C15.8301 12.401 14.8901 13.191 13.5801 13.191C12.2701 13.191 11.3301 12.401 10.8501 11.651C10.1801 10.611 9.42014 10.301 9.48014 10.331C9.22014 10.201 8.96014 10.121 8.68014 10.071C8.40014 10.021 8.12014 10.001 7.84014 10.001C7.71014 10.001 7.58014 10.001 7.45014 10.001C7.30014 10.001 7.14014 10.001 6.99014 10.001H0.390137V20.001H26.8101V10.001H20.1701Z" fill="#DEDBCE"/>
               </g>
             </svg>
-            Add to Apple Wallet
+            {labels.addToWallet}
           </>
         )}
       </button>
@@ -126,25 +143,21 @@ export default function AddToWalletButton({
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-neutral-900 rounded-xl p-6 max-w-sm w-full">
             <h3 className="text-lg font-semibold text-white mb-2">
-              Apple Wallet Required
+              {labels.warningTitle}
             </h3>
-            <p className="text-neutral-400 mb-4">
-              Apple Wallet passes work best on iPhone, iPad, or Mac. You can
-              still download the pass file, but you may not be able to open it
-              on this device.
-            </p>
+            <p className="text-neutral-400 mb-4">{labels.warningBody}</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowWarning(false)}
                 className="flex-1 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors"
               >
-                Cancel
+                {labels.cancel}
               </button>
               <button
                 onClick={handleForceDownload}
                 className="flex-1 px-4 py-2 bg-white hover:bg-neutral-200 text-black rounded-lg transition-colors"
               >
-                Download Anyway
+                {labels.downloadAnyway}
               </button>
             </div>
           </div>

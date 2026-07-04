@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Props = {
   cutoffTimestamp: Date;
 };
 
 export default function ProductCountdown({ cutoffTimestamp }: Props) {
+  const t = useTranslations("store");
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
   useEffect(() => {
@@ -16,7 +18,7 @@ export default function ProductCountdown({ cutoffTimestamp }: Props) {
       const difference = cutoff - now;
 
       if (difference <= 0) {
-        setTimeRemaining("Expired");
+        setTimeRemaining(t("product.expired"));
         return;
       }
 
@@ -40,7 +42,9 @@ export default function ProductCountdown({ cutoffTimestamp }: Props) {
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);
-  }, [cutoffTimestamp]);
+  }, [cutoffTimestamp, t]);
 
-  return <div className={"py-2"}>{timeRemaining} remaining</div>;
+  return (
+    <div className={"py-2"}>{t("product.remaining", { time: timeRemaining })}</div>
+  );
 }

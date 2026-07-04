@@ -1,23 +1,25 @@
+import { getTranslations } from "next-intl/server";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { BackLinkSkeleton, ProfileTableSkeleton } from "@/app/_components/ui/Skeletons";
 
-export default function TicketsLoading() {
+export default async function TicketsLoading() {
+  const t = await getTranslations("profile");
   return (
     <OuterPage>
       <PageHeadline
-        title="Tickets"
+        title={t("breadcrumb.tickets")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Tickets", path: "tickets" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.tickets"), path: "tickets" },
         ]}
       />
 
       <InnerPage>
         <BackLinkSkeleton />
-        <ProfileTableSkeleton title="Upcoming Tickets" rows={5} />
+        <ProfileTableSkeleton title={t("tickets.upcomingTitle")} rows={5} />
       </InnerPage>
     </OuterPage>
   );

@@ -8,6 +8,7 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductVisible } from "@/domain/product/businessLogic";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -47,10 +48,14 @@ export default async function CategoryPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     categoryUid: string;
   }>;
 }) {
-  const { categoryUid } = await params;
+  const { locale, categoryUid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const loc = locale === "en" ? "en" : "sl";
+  const t = await getTranslations("store");
 
   const categoryName = getCategoryFromSlug(categoryUid);
 
@@ -60,6 +65,7 @@ export default async function CategoryPage({
 
   const allProducts = await fetchProductsFromCms({
     filters: [prismic.filter.at("my.product.product_category", categoryName)],
+    locale: loc,
   });
   const products = allProducts?.filter(isProductVisible) ?? [];
 
@@ -71,14 +77,14 @@ export default async function CategoryPage({
         title={categoryName}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Store", path: "store" },
+          { label: t("breadcrumb.store"), path: "store" },
           { label: categoryName, path: categoryUid },
         ]}
       />
 
       {!productsExistInCategory && (
         <InnerPage>
-          <div>There are currently no products in {categoryName}</div>
+          <div>{t("category.empty", { categoryName })}</div>
         </InnerPage>
       )}
 

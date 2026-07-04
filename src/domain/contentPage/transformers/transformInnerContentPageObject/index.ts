@@ -1,13 +1,16 @@
 import { InnerContentDocument } from "@/prismicio-types";
 import { InnerContentPage } from "@/domain/contentPage/types/innerContentPage";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { AppLocale } from "@/i18n/routing";
 
 export const transformInnerContentPageObject = (
-  contentPage: InnerContentDocument
+  contentPage: InnerContentDocument,
+  locale: AppLocale = "sl"
 ) => {
   return {
     id: contentPage.id,
     uid: contentPage.uid,
-    title: contentPage.data.title,
+    title: pickLocalized(contentPage.data, "title", locale),
     sortingWeight: contentPage.data.sorting_weight,
     slices: contentPage.data.slices,
     connectedToEvent: contentPage.data.connected_to_event

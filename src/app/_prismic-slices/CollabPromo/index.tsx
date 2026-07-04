@@ -36,7 +36,7 @@ const CollabPromo: FC<CollabPromoProps> = async ({ slice, context }) => {
     ?.map((item: any) => item.product?.id)
     .filter(Boolean);
 
-  let products = await fetchProductsFromCms({});
+  let products = await fetchProductsFromCms({ locale });
   products = products
     ? products.filter(product => productIds?.includes(product.id))
     : [];

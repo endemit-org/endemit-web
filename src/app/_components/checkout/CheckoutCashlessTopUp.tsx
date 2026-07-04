@@ -7,6 +7,7 @@ import { isProductSellable } from "@/domain/product/businessLogic";
 import { formatTokens } from "@/lib/util/currency";
 import type { CartItem } from "@/domain/checkout/types/cartItem";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface CheckoutCashlessTopUpProps {
   items: CartItem[];
@@ -21,6 +22,7 @@ export default function CheckoutCashlessTopUp({
   onAddTopUp,
   disabled = false,
 }: CheckoutCashlessTopUpProps) {
+  const t = useTranslations("checkout.cashless");
   // Check if any ticket item has cashless payments enabled
   const hasCashlessEvent = useMemo(() => {
     return items.some(
@@ -75,11 +77,10 @@ export default function CheckoutCashlessTopUp({
         </div>
         <div>
           <h4 className="text-lg font-medium text-neutral-200">
-            Go Cashless at the Event
+            {t("title")}
           </h4>
           <p className="text-smIf text-neutral-400 mt-1">
-            This event uses cashless payments with EndePay. Preload your wallet
-            now and enjoy faster service at the bar and food stands.
+            {t("description")}
           </p>
         </div>
       </div>
@@ -99,7 +100,7 @@ export default function CheckoutCashlessTopUp({
             {index === 1 && (
               <Image
                 src="/images/flame.gif"
-                alt="Popular"
+                alt={t("popular")}
                 width={20}
                 height={20}
                 className="absolute -top-1.5 -right-1.5 w-5 h-5"
@@ -109,13 +110,13 @@ export default function CheckoutCashlessTopUp({
             <div className="text-base font-bold text-neutral-200">
               {formatTokens(product.price, 0)}
             </div>
-            <div className="text-xs text-blue-400 mt-0.5">+ Add</div>
+            <div className="text-xs text-blue-400 mt-0.5">{t("add")}</div>
           </button>
         ))}
       </div>
 
       <p className="text-xs text-neutral-500 mt-3 text-center">
-        You can also top up with cash at the event
+        {t("cashNote")}
       </p>
     </div>
   );

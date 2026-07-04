@@ -2,15 +2,18 @@ import "server-only";
 
 import { prismicClient, prismic } from "@/lib/services/prismic";
 import { transformPodcastObject } from "@/domain/podcast/transformers/transformPodcastObject";
+import type { AppLocale } from "@/i18n/routing";
 
 export const fetchPodcastsFromCms = async ({
   pageSize = 200,
   filters,
   includeUnpublished = false,
+  locale = "sl",
 }: {
   pageSize?: number;
   filters?: string[];
   includeUnpublished?: boolean;
+  locale?: AppLocale;
 }) => {
   // Build filters array, always filtering for published unless explicitly including unpublished
   const allFilters = [...(filters ?? [])];
@@ -35,7 +38,7 @@ export const fetchPodcastsFromCms = async ({
 
   const transformedPodcasts = [];
   for (const podcast of podcasts) {
-    transformedPodcasts.push(await transformPodcastObject(podcast));
+    transformedPodcasts.push(await transformPodcastObject(podcast, locale));
   }
   return transformedPodcasts;
 };

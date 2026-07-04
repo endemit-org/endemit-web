@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
@@ -31,10 +32,15 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfilePage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ paymentCode?: string }>;
 }) {
+  const { locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
   const { paymentCode } = await searchParams;
 
@@ -48,10 +54,10 @@ export default async function ProfilePage({
   return (
     <OuterPage>
       <PageHeadline
-        title="My Profile"
+        title={t("breadcrumb.myProfile")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
         ]}
       />
 
@@ -87,15 +93,15 @@ export default async function ProfilePage({
               <ProfileUpcomingEventsAsync userId={user.id} />
             </Suspense>
 
-            <Suspense fallback={<ProfileTableSkeleton title="Cashless Transactions" />}>
+            <Suspense fallback={<ProfileTableSkeleton title={t("cashlessTransactions")} />}>
               <ProfileTransactionsAsync userId={user.id} />
             </Suspense>
 
-            <Suspense fallback={<ProfileTableSkeleton title="Upcoming Tickets" />}>
+            <Suspense fallback={<ProfileTableSkeleton title={t("tickets.upcomingTitle")} />}>
               <ProfileTicketsAsync userId={user.id} />
             </Suspense>
 
-            <Suspense fallback={<ProfileTableSkeleton title="Orders" />}>
+            <Suspense fallback={<ProfileTableSkeleton title={t("breadcrumb.orders")} />}>
               <ProfileOrdersAsync userId={user.id} />
             </Suspense>
 
