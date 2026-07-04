@@ -2,6 +2,7 @@ import "server-only";
 
 import { prismicClient, prismic } from "@/lib/services/prismic";
 import { transformPodcastObject } from "@/domain/podcast/transformers/transformPodcastObject";
+import { PODCAST_FETCH_LINKS } from "@/domain/cms/operations/fetchPodcastFromCms";
 import type { AppLocale } from "@/i18n/routing";
 
 export const fetchPodcastsFromCms = async ({
@@ -23,6 +24,7 @@ export const fetchPodcastsFromCms = async ({
 
   const podcasts = await prismicClient.getAllByType("podcast", {
     pageSize,
+    fetchLinks: PODCAST_FETCH_LINKS,
     orderings: [
       {
         field: "my.podcast.episode_date",

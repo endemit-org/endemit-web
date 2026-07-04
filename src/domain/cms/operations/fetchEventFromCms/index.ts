@@ -10,6 +10,30 @@ import {
   isProductSoldOut,
 } from "@/domain/product/businessLogic";
 
+// Linked venue/artist docs are only embedded field-by-field via fetchLinks. The
+// transformer localizes them with `_sl` twins, so those MUST be requested here —
+// otherwise only the base (English) fields come back and pickLocalized falls
+// back to English on the event's Location tab and lineup bios. Same for both
+// locales, so the fetch cache stays shared.
+const EVENT_FETCH_LINKS = [
+  "venue.name",
+  "venue.name_sl",
+  "venue.description",
+  "venue.description_sl",
+  "venue.address",
+  "venue.coordinates",
+  "venue.image",
+  "venue.venue_logo",
+  "venue.map_location_url",
+  "artist.name",
+  "artist.description",
+  "artist.description_sl",
+  "artist.image",
+  "artist.video",
+  "artist.is_b2b",
+  "artist.b2b_attributed_to_artist",
+];
+
 const getTicketProductIdsForEvent = async (eventId: string): Promise<string[]> => {
   const ticketsForEvent = await fetchTicketsForEventFromCms(eventId);
   const validTicketsForEvent = ticketsForEvent?.filter(
@@ -38,7 +62,7 @@ export const fetchEventFromCmsByUid = async (
   // Note: no `lang` param — the query is identical for both locales, so the
   // Next.js fetch cache is shared. Localization happens in the transformer.
   const prismicEvent = await prismicClient
-    .getByUID("event", eventUid)
+    .getByUID("event", eventUid, { fetchLinks: EVENT_FETCH_LINKS })
     .catch(() => null);
 
   if (!prismicEvent) {
@@ -54,7 +78,7 @@ export const fetchEventFromCmsById = async (
   locale: AppLocale = "sl"
 ) => {
   const prismicEvent = (await prismicClient
-    .getByID(eventId)
+    .getByID(eventId, { fetchLinks: EVENT_FETCH_LINKS })
     .catch(() => null)) as EventDocument;
 
   if (!prismicEvent) {
