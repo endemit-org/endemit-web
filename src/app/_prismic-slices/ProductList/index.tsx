@@ -37,12 +37,14 @@ const ProductList: FC<ProductListProps> = async ({ slice, context }) => {
           slice.primary.category
         ),
       ],
+      locale,
     });
   }
 
   if (slice.variation === "featured") {
     products = await fetchProductsFromCms({
       filters: [prismic.filter.at("my.product.featured_product", true)],
+      locale,
     });
   }
 
@@ -51,7 +53,7 @@ const ProductList: FC<ProductListProps> = async ({ slice, context }) => {
       //@ts-expect-error product does have an id
       product => product.product.id
     );
-    products = await fetchProductsFromCms({});
+    products = await fetchProductsFromCms({ locale });
     products = products
       ? products.filter(product => productIds.includes(product.id))
       : [];

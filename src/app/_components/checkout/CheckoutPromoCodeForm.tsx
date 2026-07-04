@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import Input from "@/app/_components/form/Input";
 import ActionButton from "@/app/_components/form/ActionButton";
@@ -26,6 +27,7 @@ export default function CheckoutPromoCodeForm({
   errorMessage,
   disabled = false,
 }: CheckoutPromoCodeFormProps) {
+  const t = useTranslations("checkout.promo");
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Show applied state
@@ -33,14 +35,17 @@ export default function CheckoutPromoCodeForm({
     return (
       <div className="flex text-sm justify-between mb-4">
         <span className="text-neutral-400">
-          Promo code <strong>{discount.promoCodeKey}</strong> applied
+          {t.rich("applied", {
+            code: discount.promoCodeKey,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </span>{" "}
         <button
           onClick={onRemovePromoCodeAction}
           disabled={disabled}
           className={`transition-colors ${disabled ? "text-neutral-600 cursor-not-allowed" : "text-neutral-400 hover:text-white"}`}
         >
-          Remove
+          {t("remove")}
         </button>
       </div>
     );
@@ -55,7 +60,7 @@ export default function CheckoutPromoCodeForm({
           disabled={disabled}
           className={`text-sm transition-colors ${disabled ? "text-neutral-600 cursor-not-allowed" : "text-neutral-400 hover:text-white"}`}
         >
-          + Add promo code
+          {t("add")}
         </button>
       </div>
     );
@@ -71,7 +76,7 @@ export default function CheckoutPromoCodeForm({
             type="text"
             value={promoCodeValue}
             onChangeAction={(name, value) => onPromoCodeChangeAction(value)}
-            placeholder="Enter promo code"
+            placeholder={t("placeholder")}
             disabled={isLoading || disabled}
           />
         </div>
@@ -82,7 +87,7 @@ export default function CheckoutPromoCodeForm({
             size={"sm"}
             disabled={disabled}
           >
-            {isLoading && promoCodeValue ? "Applying..." : "Apply"}
+            {isLoading && promoCodeValue ? t("applying") : t("apply")}
           </ActionButton>
         </div>
       </div>

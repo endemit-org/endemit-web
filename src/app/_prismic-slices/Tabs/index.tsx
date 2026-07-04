@@ -55,7 +55,7 @@ const TabsSlice = async ({ slice, context }: TabsProps) => {
           return null;
         }
 
-        const innerContent = await fetchInnerContentFromCms(uid);
+        const innerContent = await fetchInnerContentFromCms(uid, locale);
         if (!innerContent || !innerContent.slices) {
           return null;
         }

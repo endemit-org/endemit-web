@@ -14,6 +14,8 @@ import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
 import AutoLoginOnSuccess from "@/app/_components/checkout/AutoLoginOnSuccess";
 import { OrderStatus } from "@prisma/client";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "✅ Order Confirmed",
@@ -58,10 +60,13 @@ export default async function SuccessPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     sessionId: string;
   }>;
 }) {
-  const { sessionId } = await params;
+  const { locale, sessionId } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("store");
 
   if (!sessionId) {
     notFound();
@@ -89,7 +94,7 @@ export default async function SuccessPage({
         title={`Order ${order.id}`}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Store", path: "store" },
+          { label: t("breadcrumb.store"), path: "store" },
           {
             label: `Order ${order.id}`,
             path: `checkout/success/${sessionId}`,
@@ -107,16 +112,16 @@ export default async function SuccessPage({
 
             {/* Success Message */}
             <h1 className="text-3xl font-bold text-neutral-200 mb-4">
-              Order Confirmed!
+              {t("success.title")}
             </h1>
 
-            <p className="text-gray-400 mb-6">
-              Thank you for your order. A confirmation email has been sent to
-            </p>
+            <p className="text-gray-400 mb-6">{t("success.thankYou")}</p>
 
             {order.email && (
               <div className="bg-zinc-900 rounded-lg p-4 mb-8">
-                <p className="text-gray-500 text-sm mb-1">Email</p>
+                <p className="text-gray-500 text-sm mb-1">
+                  {t("success.emailLabel")}
+                </p>
                 <p className="text-neutral-200 text-sm break-all">
                   {order.email}
                 </p>
@@ -125,15 +130,18 @@ export default async function SuccessPage({
 
             {orderHasTickets && ticketHolders && (
               <p className="text-gray-400 mb-6">
-                Your tickets for <strong>{ticketHolders.join(", ")}</strong>{" "}
-                will also be sent to your email shortly, within the next 30
-                minutes.
+                {t.rich("success.ticketsNote", {
+                  names: ticketHolders.join(", "),
+                  strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+                })}
               </p>
             )}
 
             {order.id && (
               <div className="bg-zinc-900 rounded-lg p-4 mb-8">
-                <p className="text-gray-500 text-sm mb-1">Order ID</p>
+                <p className="text-gray-500 text-sm mb-1">
+                  {t("success.orderId")}
+                </p>
                 <p className="text-neutral-200 text-sm break-all">{order.id}</p>
               </div>
             )}

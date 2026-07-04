@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface EventUrgencyBarProps {
   eventStartDate: Date;
@@ -19,11 +20,13 @@ function UrgencyBarDisplay({
   percentage,
   isRedPhase,
   label,
+  message,
   fadeIn = false,
 }: {
   percentage: number;
   isRedPhase: boolean;
   label?: string;
+  message: string;
   fadeIn?: boolean;
 }) {
   return (
@@ -40,9 +43,7 @@ function UrgencyBarDisplay({
             isRedPhase ? "text-red-400" : "text-neutral-400"
           )}
         >
-          {isRedPhase
-            ? "Almost sold out, final batch"
-            : "Tickets going fast, remaining:"}
+          {message}
         </span>
         {label && <span className="text-xs text-neutral-500">{label}</span>}
       </div>
@@ -65,6 +66,7 @@ export default function EventUrgencyBar({
   eventStartDate,
   showDemo = false,
 }: EventUrgencyBarProps) {
+  const t = useTranslations("events");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -105,6 +107,9 @@ export default function EventUrgencyBar({
     return { shouldShow: true, percentage: pct, isRedPhase: red };
   }, [eventStartDate, mounted]);
 
+  const messageFor = (red: boolean) =>
+    red ? t("urgency.almostSoldOut") : t("urgency.goingFast");
+
   // Demo mode: show multiple states for preview
   if (showDemo) {
     return (
@@ -115,31 +120,37 @@ export default function EventUrgencyBar({
         <UrgencyBarDisplay
           percentage={65}
           isRedPhase={false}
+          message={messageFor(false)}
           label="21 days out (start)"
         />
         <UrgencyBarDisplay
           percentage={45}
           isRedPhase={false}
+          message={messageFor(false)}
           label="14 days out"
         />
         <UrgencyBarDisplay
           percentage={28}
           isRedPhase={false}
+          message={messageFor(false)}
           label="7 days out"
         />
         <UrgencyBarDisplay
           percentage={18}
           isRedPhase={true}
+          message={messageFor(true)}
           label="5 days out (red)"
         />
         <UrgencyBarDisplay
           percentage={10}
           isRedPhase={true}
+          message={messageFor(true)}
           label="2 days out"
         />
         <UrgencyBarDisplay
           percentage={5}
           isRedPhase={true}
+          message={messageFor(true)}
           label="Event day (min)"
         />
       </div>
@@ -157,7 +168,11 @@ export default function EventUrgencyBar({
         mounted ? "opacity-100" : "opacity-0"
       )}
     >
-      <UrgencyBarDisplay percentage={percentage} isRedPhase={isRedPhase} />
+      <UrgencyBarDisplay
+        percentage={percentage}
+        isRedPhase={isRedPhase}
+        message={messageFor(isRedPhase)}
+      />
     </div>
   );
 }

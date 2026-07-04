@@ -17,6 +17,7 @@ import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import VenueSeoMicrodata from "@/app/_components/seo/VenueSeoMicrodata";
 import ArtistList from "@/app/_components/artist/ArtistList";
 import type { Artist } from "@/domain/artist/types/artist";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -76,6 +77,8 @@ export default async function VenuePage({
   }>;
 }) {
   const { locale, uid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("venues");
   const loc = locale === "en" ? "en" : "sl";
   const venue = await fetchVenueFromCms(uid, loc);
 
@@ -111,7 +114,7 @@ export default async function VenuePage({
 
   // Sort artists alphabetically
   const sortedArtists = uniqueArtists.sort((a, b) =>
-    a.name.localeCompare(b.name)
+    (a.name ?? "").localeCompare(b.name ?? "")
   );
 
   const showArtists = sortedArtists.length > 0;
@@ -150,7 +153,7 @@ export default async function VenuePage({
         {showRelatedEvents && (
           <InnerPage>
             <h2 className={"text-3xl text-neutral-200"}>
-              Events hosted at {venue.name}
+              {t("eventsHostedAt", { name: venue.name })}
             </h2>
             <div
               className={clsx(
@@ -187,14 +190,14 @@ export default async function VenuePage({
             <ArtistList
               artists={sortedArtists}
               includeFrame
-              title={`Artists performed at ${venue.name}`}
+              title={t("artistsPerformedAt", { name: venue.name })}
             />
           </>
         )}
 
         <EndemitSubscribe
-          title={`Don't miss the next event at ${venue.name}`}
-          description={"Subscribe and be notified about our events and lineups"}
+          title={t("dontMissNextEvent", { name: venue.name })}
+          description={t("subscribePrompt")}
         />
       </OuterPage>
     </>

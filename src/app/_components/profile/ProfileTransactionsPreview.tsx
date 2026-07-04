@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
@@ -15,20 +16,20 @@ interface ProfileTransactionsPreviewProps {
   totalCount: number;
 }
 
-const typeLabels: Record<string, string> = {
-  CREDIT: "Added",
-  DEBIT: "Spent",
-  PURCHASE: "Purchase",
-  REFUND: "Refund",
-  ADJUSTMENT: "Adjustment",
-  P2P_TRANSFER: "Transfer",
-};
-
 export default function ProfileTransactionsPreview({
   userId,
   initialTransactions,
   totalCount,
 }: ProfileTransactionsPreviewProps) {
+  const t = useTranslations("profile");
+  const typeLabels: Record<string, string> = {
+    CREDIT: t("transactions.type.credit"),
+    DEBIT: t("transactions.type.debit"),
+    PURCHASE: t("transactions.type.purchase"),
+    REFUND: t("transactions.type.refund"),
+    ADJUSTMENT: t("transactions.type.adjustment"),
+    P2P_TRANSFER: t("transactions.type.transfer"),
+  };
   const [transactions, setTransactions] =
     useState<SerializedWalletTransaction[]>(initialTransactions);
   const [count, setCount] = useState(totalCount);
@@ -75,13 +76,13 @@ export default function ProfileTransactionsPreview({
 
   return (
     <ProfileTable
-      title="Cashless Transactions"
+      title={t("cashlessTransactions")}
       count={count}
-      countLabel={count === 1 ? "transaction" : "transactions"}
+      countLabel={t("transactions.countLabel", { count })}
       viewAllHref="/profile/transactions"
       isEmpty={transactions.length === 0}
       emptyIcon={<WalletIcon className="w-6 h-6 text-neutral-500" />}
-      emptyMessage="No transactions yet"
+      emptyMessage={t("transactions.empty")}
     >
       {transactions.map((tx, index) => (
         <ProfileTableRow

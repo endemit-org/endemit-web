@@ -2,6 +2,7 @@
 
 import { usePlayerStore } from "@/app/_stores/PlayerStore";
 import PlayIcon from "@/app/_components/icon/PlayIcon";
+import { useTranslations } from "next-intl";
 
 interface Props {
   soundcloudUrl: string;
@@ -14,6 +15,7 @@ export default function ArtistPreviewSetButton({
   artistName,
   artistImage,
 }: Props) {
+  const t = useTranslations("artists");
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const currentTrack = usePlayerStore(state => state.currentTrack);
   const isPlaying = usePlayerStore(state => state.isPlaying);
@@ -63,7 +65,9 @@ export default function ArtistPreviewSetButton({
         )}
       </span>
       <span className="underline underline-offset-4 decoration-dotted">
-        {isCurrentlyPlaying ? `Now playing ${artistName}` : `Play a set from ${artistName}`}
+        {isCurrentlyPlaying
+          ? t("preview.nowPlaying", { name: artistName })
+          : t("preview.playSet", { name: artistName })}
       </span>
     </button>
   );

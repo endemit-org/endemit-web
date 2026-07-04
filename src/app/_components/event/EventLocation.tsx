@@ -4,16 +4,14 @@ import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import { Link } from "@/i18n/navigation";
 import clsx from "clsx";
+import { getTranslations } from "next-intl/server";
+import MapLoadingPlaceholder from "@/app/_components/content/MapLoadingPlaceholder";
 
 // Dynamic import: Google Maps (~120KB) only loads when venue has coordinates
 const GoogleMapLocation = dynamic(
   () => import("@/app/_components/content/GoogleMapLocation"),
   {
-    loading: () => (
-      <div className="w-full h-[400px] bg-neutral-800 animate-pulse flex items-center justify-center text-neutral-500">
-        Loading map...
-      </div>
-    ),
+    loading: () => <MapLoadingPlaceholder />,
   }
 );
 
@@ -22,8 +20,10 @@ type Props = {
   logoWidth?: "small" | "large";
 };
 
-function EventLocationDetails({ venue }: Props) {
+async function EventLocationDetails({ venue }: Props) {
   if (!venue) return;
+
+  const t = await getTranslations("events");
 
   return (
     <>
@@ -64,11 +64,17 @@ function EventLocationDetails({ venue }: Props) {
         />
       )}
 
-      <div className={"text-center mt-6"}>
-        <Link className={"link"} href={venue.mapLocationUrl} target={"_blank"}>
-          Show directions in Google Maps
-        </Link>
-      </div>
+      {venue.mapLocationUrl && (
+        <div className={"text-center mt-6"}>
+          <Link
+            className={"link"}
+            href={venue.mapLocationUrl}
+            target={"_blank"}
+          >
+            {t("location.directions")}
+          </Link>
+        </div>
+      )}
     </>
   );
 }
@@ -104,13 +110,17 @@ export default function EventLocation({ venue, logoWidth = "small" }: Props) {
               </Link>
             </h3>
             <div className={"mb-6"}>
-              <Link
-                className={"link"}
-                href={venue.mapLocationUrl}
-                target={"_blank"}
-              >
-                {venue.address}
-              </Link>
+              {venue.mapLocationUrl ? (
+                <Link
+                  className={"link"}
+                  href={venue.mapLocationUrl}
+                  target={"_blank"}
+                >
+                  {venue.address}
+                </Link>
+              ) : (
+                venue.address
+              )}
             </div>
             <div className="max-lg:hidden">
               <EventLocationDetails venue={venue} />

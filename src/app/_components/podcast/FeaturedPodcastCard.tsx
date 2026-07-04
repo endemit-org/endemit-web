@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import PlayIcon from "@/app/_components/icon/PlayIcon";
@@ -23,6 +24,7 @@ export default function FeaturedPodcastCard({
   trackUrl,
   artist,
 }: FeaturedPodcastCardProps) {
+  const t = useTranslations("music");
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const currentTrack = usePlayerStore(state => state.currentTrack);
   const isCurrentlyPlaying = currentTrack?.url === trackUrl;
@@ -80,7 +82,7 @@ export default function FeaturedPodcastCard({
       {/* Right: Episode details */}
       <div className="flex flex-col justify-center flex-1 min-w-0">
         <div className="text-red-500 text-sm font-medium mb-2">
-          Episode {episodeNumber}
+          {t("episodeLabel", { number: episodeNumber })}
         </div>
 
         <Link href={`/music/emit/${uid}`}>
@@ -91,7 +93,7 @@ export default function FeaturedPodcastCard({
 
         {artist && (
           <div className="text-neutral-400 text-lg mb-6">
-            <span className="text-neutral-500">by </span>
+            <span className="text-neutral-500">{t("byPrefix")} </span>
             {artist}
           </div>
         )}
@@ -106,14 +108,14 @@ export default function FeaturedPodcastCard({
             }`}
           >
             <PlayIcon className="size-5" fill />
-            {isCurrentlyPlaying ? "Playing" : "Play Episode"}
+            {isCurrentlyPlaying ? t("playing") : t("playEpisode")}
           </button>
 
           <Link
             href={`/music/emit/${uid}`}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-neutral-600 text-neutral-200 hover:bg-neutral-800 transition-colors"
           >
-            View Details
+            {t("viewDetails")}
           </Link>
         </div>
       </div>

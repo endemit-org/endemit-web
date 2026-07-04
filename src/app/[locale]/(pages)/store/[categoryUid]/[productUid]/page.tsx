@@ -19,6 +19,7 @@ import ProductSeoMicrodata from "@/app/_components/seo/ProductSeoMicrodata";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductVisible } from "@/domain/product/businessLogic";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -39,12 +40,14 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     categoryUid: string;
     productUid: string;
   }>;
 }): Promise<Metadata> {
-  const { categoryUid, productUid } = await params;
-  const product = await fetchProductFromCmsByUid(productUid);
+  const { locale, categoryUid, productUid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const product = await fetchProductFromCmsByUid(productUid, loc);
 
   if (!product) {
     notFound();
@@ -73,9 +76,11 @@ export default async function ProductPage({
   }>;
 }) {
   const { locale, productUid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("store");
   const loc = locale === "en" ? "en" : "sl";
 
-  const product = await fetchProductFromCmsByUid(productUid);
+  const product = await fetchProductFromCmsByUid(productUid, loc);
 
   if (!product || !isProductVisible(product)) {
     notFound();
@@ -95,7 +100,7 @@ export default async function ProductPage({
           title={product.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Store", path: "store" },
+            { label: t("breadcrumb.store"), path: "store" },
             {
               label: product.category,
               path: getSlugFromText(product.category),
@@ -135,7 +140,7 @@ export default async function ProductPage({
             <div
               className={"lg:border-r lg:border-neutral-500 lg:pr-20 lg:w-2/3"}
             >
-              <h3 className="sr-only">Description</h3>
+              <h3 className="sr-only">{t("product.descriptionHeading")}</h3>
 
               {product.slices &&
                 product.displaySlicePosition === "Above description" && (
@@ -175,7 +180,7 @@ export default async function ProductPage({
         {relatedProducts && relatedProducts.length > 0 && (
           <div className="mt-20 mb-10 text-center">
             <h3 className={"text-neutral-200 text-2xl py-6"}>
-              You might also like
+              {t("product.youMightAlsoLike")}
             </h3>
             <div
               className={clsx(

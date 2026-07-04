@@ -1,17 +1,19 @@
+import { getTranslations } from "next-intl/server";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { BackLinkSkeleton, OrderDetailSkeleton } from "@/app/_components/ui/Skeletons";
 
-export default function OrderDetailLoading() {
+export default async function OrderDetailLoading() {
+  const t = await getTranslations("profile");
   return (
     <OuterPage>
       <PageHeadline
-        title="Order Details"
+        title={t("orders.detailTitle")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Orders", path: "orders" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.orders"), path: "orders" },
           { label: "...", path: "" },
         ]}
       />

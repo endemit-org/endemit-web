@@ -2,8 +2,12 @@ import "server-only";
 
 import { prismicClient } from "@/lib/services/prismic";
 import { transformInnerContentPageObject } from "@/domain/contentPage/transformers/transformInnerContentPageObject";
+import type { AppLocale } from "@/i18n/routing";
 
-export const fetchInnerContentFromCms = async (uid: string) => {
+export const fetchInnerContentFromCms = async (
+  uid: string,
+  locale: AppLocale = "sl"
+) => {
   const innerContent = await prismicClient
     .getByUID("inner_content", uid)
     .catch(() => null);
@@ -12,5 +16,5 @@ export const fetchInnerContentFromCms = async (uid: string) => {
     return null;
   }
 
-  return transformInnerContentPageObject(innerContent);
+  return transformInnerContentPageObject(innerContent, locale);
 };

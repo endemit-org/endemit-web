@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Product, ProductCategory } from "@/domain/product/types/product";
@@ -20,6 +21,7 @@ export default function TopUpModal({
   onClose,
   products,
 }: TopUpModalProps) {
+  const t = useTranslations("profile");
   const router = useRouter();
   const { addItem, clearCart } = useCartActions();
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +86,7 @@ export default function TopUpModal({
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-neutral-200">
-              Top Up Wallet
+              {t("sidebar.topUpWallet")}
             </h2>
             <button
               onClick={handleClose}
@@ -108,14 +110,12 @@ export default function TopUpModal({
 
           {currencyProducts.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="text-neutral-400">
-                No top-up options available at the moment.
-              </p>
+              <p className="text-neutral-400">{t("topUp.noOptions")}</p>
             </div>
           ) : (
             <>
               <p className="text-sm text-neutral-400 mb-4">
-                Select an amount of tokens to add to your wallet
+                {t("topUp.selectAmountDesc")}
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-6">
@@ -133,7 +133,7 @@ export default function TopUpModal({
                     {index === 1 && (
                       <Image
                         src="/images/flame.gif"
-                        alt="Hot"
+                        alt={t("topUp.hot")}
                         width={24}
                         height={24}
                         className="absolute -top-2 -right-2 w-6 h-6"
@@ -161,14 +161,16 @@ export default function TopUpModal({
                 )}
               >
                 {isLoading
-                  ? "Redirecting..."
+                  ? t("topUp.redirecting")
                   : selectedProduct
-                    ? `Add ${formatTokens(selectedProduct.price)} to Wallet`
-                    : "Select an amount"}
+                    ? t("topUp.addToWallet", {
+                        amount: formatTokens(selectedProduct.price),
+                      })
+                    : t("topUp.selectAmount")}
               </button>
 
               <p className="text-xs text-neutral-500 text-center mt-4">
-                You can also top up the wallet with cash at the MERCH stand.
+                {t("topUp.cashNotice")}
               </p>
             </>
           )}

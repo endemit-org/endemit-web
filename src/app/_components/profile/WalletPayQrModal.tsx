@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import { formatTokensFromCents } from "@/lib/util/currency";
@@ -23,6 +24,8 @@ export default function WalletPayQrModal({
   walletBalance,
   onLinkWristband,
 }: Props) {
+  const t = useTranslations("profile");
+  const tc = useTranslations("common");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   // Encode the wristband URL (printed form) when linked; fall back to the
@@ -72,10 +75,12 @@ export default function WalletPayQrModal({
         onClick={e => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-neutral-800 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Pay</h2>
+          <h2 className="text-lg font-semibold text-white">
+            {t("walletPay.pay")}
+          </h2>
           <button
             onClick={onClose}
-            aria-label="Close"
+            aria-label={tc("close")}
             className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
           >
             <svg
@@ -101,7 +106,9 @@ export default function WalletPayQrModal({
               <img
                 src={qrDataUrl}
                 alt={
-                  wristbandCode ? `Wristband ${wristbandCode} QR` : "Wallet QR"
+                  wristbandCode
+                    ? t("wristband.qrAlt", { code: wristbandCode })
+                    : t("wallet.payQrAlt")
                 }
                 className="w-full h-full rounded-xl"
               />
@@ -118,7 +125,7 @@ export default function WalletPayQrModal({
 
           <div className="w-full bg-neutral-950 rounded-lg px-4 py-3 flex items-center justify-between border border-neutral-800">
             <span className="text-xs uppercase tracking-widest text-neutral-500">
-              Balance
+              {t("walletPay.balance")}
             </span>
             <span className="font-mono text-neutral-200 text-lg">
               {walletBalance != null
@@ -128,8 +135,7 @@ export default function WalletPayQrModal({
           </div>
 
           <p className="text-xs text-neutral-500 text-center">
-            Hand your phone to the seller — they will scan this code to charge
-            your wallet.
+            {t("walletPay.handPhoneHint")}
           </p>
 
           {!wristbandCode && onLinkWristband && (
@@ -138,7 +144,7 @@ export default function WalletPayQrModal({
               onClick={onLinkWristband}
               className="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-2"
             >
-              Link a wristband for offline checkout
+              {t("wristband.linkForOffline")}
             </button>
           )}
         </div>

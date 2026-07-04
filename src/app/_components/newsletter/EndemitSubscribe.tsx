@@ -1,20 +1,20 @@
 import Subscribe from "@/app/_components/newsletter/Subscribe";
 import { getApiPath } from "@/lib/util/api";
+import { getTranslations } from "next-intl/server";
 
-export default function EndemitSubscribe({
+export default async function EndemitSubscribe({
   title,
   description,
 }: {
   title?: string;
   description?: string;
 }) {
+  const t = await getTranslations("newsletter");
+
   return (
     <Subscribe
-      title={title ?? "SUBSCRIBE"}
-      description={
-        description ??
-        "Receive updates about our upcoming events, music, and announcements"
-      }
+      title={title ?? t("defaultTitle")}
+      description={description ?? t("endemit.defaultDescription")}
       apiEndpoint={getApiPath("newsletter/general-subscribe")}
       containerClass="mt-16 mb-16"
     />

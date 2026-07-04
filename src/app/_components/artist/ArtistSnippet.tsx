@@ -1,5 +1,6 @@
 import { getTimeUntil } from "@/lib/util/util";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import { HTMLProps } from "react";
 import { formatTime } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -24,6 +25,7 @@ export default function ArtistSnippet({
   nameClassName = "font-bold text-black",
   descriptionClassName = "text-gray-600 ",
 }: ArtistSnippetProps) {
+  const t = useTranslations("artists");
   return (
     <div
       className={clsx(
@@ -48,14 +50,14 @@ export default function ArtistSnippet({
             {isLive && (
               <span className="animate-pulse text-red-600 flex gap-1 items-center">
                 <span className="inline-block bg-red-600 rounded-full w-2 h-2 -mt-1"></span>
-                LIVE NOW
+                {t("liveNow")}
               </span>
             )}
           </div>
           <div className={clsx(descriptionClassName)}>
             {!isLive &&
               artist.start_time &&
-              getTimeUntil(currentTime, artist.start_time)}
+              getTimeUntil(currentTime, artist.start_time, t("timeUntilPrefix"))}
             {artist.stage && <span>&nbsp;@ {artist.stage}</span>}
           </div>
         </div>

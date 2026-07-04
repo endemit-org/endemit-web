@@ -9,6 +9,8 @@ import { Link } from "@/i18n/navigation";
 import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
 import { notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "⚠️ Payment interrupted",
@@ -23,10 +25,13 @@ export default async function InterruptedPage({
   params,
 }: {
   params: Promise<{
+    locale: string;
     sessionId: string;
   }>;
 }) {
-  const { sessionId } = await params;
+  const { locale, sessionId } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("store");
 
   if (!sessionId) {
     notFound();
@@ -44,12 +49,12 @@ export default async function InterruptedPage({
   return (
     <OuterPage>
       <PageHeadline
-        title="Your payment was interrupted!"
+        title={t("interrupted.title")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Store", path: "store" },
+          { label: t("breadcrumb.store"), path: "store" },
           {
-            label: "Payment interrupted",
+            label: t("interrupted.breadcrumb"),
             path: `checkout/interrupted/${sessionId}`,
           },
         ]}
@@ -65,36 +70,38 @@ export default async function InterruptedPage({
 
             {/* Message */}
             <h1 className="text-3xl font-bold text-neutral-200 mb-4">
-              Payment Not Completed
+              {t("interrupted.heading")}
             </h1>
 
-            <p className="text-gray-400 mb-8">
-              You returned from the payment page without completing your order.
-              Don&#39;t worry, your cart is still saved.
-            </p>
+            <p className="text-gray-400 mb-8">{t("interrupted.body")}</p>
 
             {/* Amount Box */}
             <div className="bg-zinc-900 rounded-lg p-4 mb-8">
-              <p className="text-gray-500 text-sm mb-1">Order Total</p>
+              <p className="text-gray-500 text-sm mb-1">
+                {t("interrupted.orderTotal")}
+              </p>
               <p className="text-neutral-200 text-2xl">{totalAmount}</p>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-3">
               <ActionButton href={session.url ?? ""} variant="primary">
-                Complete Payment
+                {t("interrupted.completePayment")}
               </ActionButton>
 
               <ActionButton href="/store/checkout" variant="secondary">
-                Return to Cart
+                {t("interrupted.returnToCart")}
               </ActionButton>
             </div>
 
             <p className="text-gray-500 text-sm mt-6">
-              Need help?{" "}
-              <Link href="mailto:endemit@endemit.org" className="link">
-                Contact us
-              </Link>
+              {t.rich("interrupted.needHelp", {
+                contact: (chunks: ReactNode) => (
+                  <Link href="mailto:endemit@endemit.org" className="link">
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
           </div>
         </div>

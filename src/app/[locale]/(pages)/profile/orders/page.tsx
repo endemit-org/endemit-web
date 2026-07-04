@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getOrdersByUserId } from "@/domain/order/operations/getOrdersByUserId";
@@ -31,7 +32,24 @@ const statusColors: Record<string, string> = {
   DELIVERED: "bg-green-500/20 text-green-400",
 };
 
-export default async function ProfileOrdersPage() {
+const statusLabelKeys: Record<string, string> = {
+  PAID: "status.order.paid",
+  CREATED: "status.order.created",
+  CANCELLED: "status.order.cancelled",
+  REFUNDED: "status.order.refunded",
+  EXPIRED: "status.order.expired",
+  SHIPPED: "status.order.shipped",
+  DELIVERED: "status.order.delivered",
+};
+
+export default async function ProfileOrdersPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -43,11 +61,11 @@ export default async function ProfileOrdersPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="Orders"
+        title={t("breadcrumb.orders")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Orders", path: "orders" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.orders"), path: "orders" },
         ]}
       />
 
@@ -70,17 +88,17 @@ export default async function ProfileOrdersPage() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Profile
+            {t("nav.backToProfile")}
           </Link>
         </div>
 
         <ProfileTable
-          title="Order History"
+          title={t("orders.historyTitle")}
           count={orders.length}
-          countLabel={orders.length === 1 ? "order" : "orders"}
+          countLabel={t("orders.countLabel", { count: orders.length })}
           isEmpty={orders.length === 0}
           emptyIcon={<ShoppingBagIcon className="w-6 h-6 text-neutral-500" />}
-          emptyMessage="No orders yet"
+          emptyMessage={t("orders.empty")}
         >
           {orders.map((order, index) => {
             const formattedDate = new Date(order.createdAt).toLocaleDateString(
@@ -101,7 +119,13 @@ export default async function ProfileOrdersPage() {
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full ${statusColors[order.status] || "bg-gray-500/20 text-gray-400"}`}
                   >
-                    {order.status}
+                    {statusLabelKeys[order.status]
+                      ? t(
+                          statusLabelKeys[
+                            order.status
+                          ] as Parameters<typeof t>[0]
+                        )
+                      : order.status}
                   </span>
                 </div>
                 <div className="text-neutral-200 font-medium">

@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface Step {
   number: number;
@@ -12,20 +13,20 @@ interface Props {
   steps?: Step[];
 }
 
-const defaultSteps: Step[] = [
-  { number: 1, label: "Cart" },
-  { number: 2, label: "Information" },
-  { number: 3, label: "Review & Pay" },
-];
-
 export default function CheckoutStepIndicator({
   currentStep,
-  steps = defaultSteps,
+  steps,
 }: Props) {
+  const t = useTranslations("checkout.steps");
+  const resolvedSteps: Step[] = steps ?? [
+    { number: 1, label: t("cart") },
+    { number: 2, label: t("information") },
+    { number: 3, label: t("reviewPay") },
+  ];
   return (
     <div className="lg:hidden mb-6 w-full">
       <div className="flex items-start w-full">
-        {steps.map((step, index) => (
+        {resolvedSteps.map((step, index) => (
           <div key={step.number} className="flex-1 flex flex-col items-center relative">
             {/* Connector line (before circle, not on first step) */}
             {index > 0 && (

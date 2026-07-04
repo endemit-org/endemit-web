@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
@@ -18,6 +19,7 @@ export default function OtcVerifyForm({
   error: initialError,
   callbackUrl,
 }: OtcVerifyFormProps) {
+  const t = useTranslations("signin");
   const router = useRouter();
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState(initialError || "");
@@ -104,12 +106,12 @@ export default function OtcVerifyForm({
           router.refresh();
         }, 1500);
       } else {
-        setError(result.error || "Invalid code. Please try again.");
+        setError(result.error || t("verify.invalidCode"));
         setCode(["", "", "", ""]);
         inputRefs.current[0]?.focus();
       }
     } catch {
-      setError("An error occurred. Please try again.");
+      setError(t("errors.generic"));
     } finally {
       setIsLoading(false);
     }
@@ -130,10 +132,10 @@ export default function OtcVerifyForm({
         setCode(["", "", "", ""]);
         inputRefs.current[0]?.focus();
       } else {
-        setError(result.error || "Failed to resend code.");
+        setError(result.error || t("verify.resendFailed"));
       }
     } catch {
-      setError("Failed to resend code.");
+      setError(t("verify.resendFailed"));
     } finally {
       setIsResending(false);
     }
@@ -149,9 +151,11 @@ export default function OtcVerifyForm({
         </div>
 
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-white">Enter Your Code</h2>
+          <h2 className="text-xl font-semibold text-white">
+            {t("verify.title")}
+          </h2>
           <p className="mt-2 text-sm text-neutral-400">
-            We sent a code to <span className="text-white">{email}</span>
+            {t("verify.sentTo")} <span className="text-white">{email}</span>
           </p>
         </div>
 
@@ -191,7 +195,7 @@ export default function OtcVerifyForm({
           {resendSuccess && (
             <div className="rounded-lg bg-green-900/50 border border-green-800 p-4">
               <p className="text-sm text-green-200 text-center">
-                A new code has been sent to your email.
+                {t("verify.resendSuccess")}
               </p>
             </div>
           )}
@@ -200,7 +204,7 @@ export default function OtcVerifyForm({
             <div className="flex flex-col items-center justify-center py-4">
               <AnimatedSuccessIcon className="w-16 h-16" />
               <p className="mt-4 text-sm text-green-400">
-                Signed in successfully!
+                {t("verify.success")}
               </p>
             </div>
           ) : (
@@ -210,7 +214,7 @@ export default function OtcVerifyForm({
                 disabled={isLoading || code.some(c => !c)}
                 className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? "Verifying..." : "Sign In"}
+                {isLoading ? t("verify.verifying") : t("signIn")}
               </button>
 
               <div className="text-center space-y-3">
@@ -221,10 +225,10 @@ export default function OtcVerifyForm({
                   className="text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isResending
-                    ? "Sending..."
+                    ? t("verify.sending")
                     : resendCooldown > 0
-                      ? `Resend code (${resendCooldown}s)`
-                      : "Resend code"}
+                      ? t("verify.resendCooldown", { seconds: resendCooldown })
+                      : t("verify.resend")}
                 </button>
 
                 <div>
@@ -232,7 +236,7 @@ export default function OtcVerifyForm({
                     href="/signin"
                     className="text-sm text-neutral-400 hover:text-neutral-300"
                   >
-                    Use a different email
+                    {t("verify.differentEmail")}
                   </Link>
                 </div>
               </div>

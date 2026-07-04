@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
@@ -23,16 +24,23 @@ export const metadata: Metadata = {
   },
 };
 
-const typeLabels: Record<string, string> = {
-  CREDIT: "Added",
-  DEBIT: "Spent",
-  PURCHASE: "Purchase",
-  REFUND: "Refund",
-  ADJUSTMENT: "Adjustment",
-  P2P_TRANSFER: "Transfer",
+const typeLabelKeys: Record<string, string> = {
+  CREDIT: "transactions.type.credit",
+  DEBIT: "transactions.type.debit",
+  PURCHASE: "transactions.type.purchase",
+  REFUND: "transactions.type.refund",
+  ADJUSTMENT: "transactions.type.adjustment",
+  P2P_TRANSFER: "transactions.type.transfer",
 };
 
-export default async function ProfileTransactionsPage() {
+export default async function ProfileTransactionsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -45,11 +53,11 @@ export default async function ProfileTransactionsPage() {
   return (
     <OuterPage>
       <PageHeadline
-        title="Transactions"
+        title={t("breadcrumb.transactions")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "My Profile", path: "profile" },
-          { label: "Transactions", path: "transactions" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.transactions"), path: "transactions" },
         ]}
       />
 
@@ -72,7 +80,7 @@ export default async function ProfileTransactionsPage() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Profile
+            {t("nav.backToProfile")}
           </Link>
           <TransferFundsTrigger
             userId={user.id}
@@ -81,14 +89,14 @@ export default async function ProfileTransactionsPage() {
         </div>
 
         <ProfileTable
-          title="Transaction History"
+          title={t("transactions.historyTitle")}
           count={transactions.length}
-          countLabel={
-            transactions.length === 1 ? "transaction" : "transactions"
-          }
+          countLabel={t("transactions.countLabel", {
+            count: transactions.length,
+          })}
           isEmpty={transactions.length === 0}
           emptyIcon={<WalletIcon className="w-6 h-6 text-neutral-500" />}
-          emptyMessage="No transactions yet"
+          emptyMessage={t("transactions.empty")}
         >
           {transactions.map((tx, index) => {
             const formattedDate = new Date(tx.createdAt).toLocaleDateString(
@@ -115,7 +123,9 @@ export default async function ProfileTransactionsPage() {
                   </div>
                   <div>
                     <div className="text-neutral-200 text-sm">
-                      {typeLabels[tx.type] || tx.type}
+                      {typeLabelKeys[tx.type]
+                        ? t(typeLabelKeys[tx.type] as Parameters<typeof t>[0])
+                        : tx.type}
                     </div>
                     <div className="text-xs text-neutral-500">
                       {formattedDate}

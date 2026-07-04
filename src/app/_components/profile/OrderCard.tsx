@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { SerializedOrder } from "@/domain/order/types/serialized";
 import type { ProductInOrder } from "@/domain/order/types/order";
 import ClientDate from "@/app/_components/ui/ClientDate";
@@ -17,7 +18,18 @@ const statusColors: Record<string, string> = {
   EXPIRED: "bg-gray-500/20 text-gray-400",
 };
 
+const statusKeys: Record<string, string> = {
+  PAID: "status.order.paid",
+  CREATED: "status.order.created",
+  CANCELLED: "status.order.cancelled",
+  REFUNDED: "status.order.refunded",
+  EXPIRED: "status.order.expired",
+  SHIPPED: "status.order.shipped",
+  DELIVERED: "status.order.delivered",
+};
+
 export default function OrderCard({ order }: OrderCardProps) {
+  const t = useTranslations("profile");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const items = order.items as ProductInOrder[];
@@ -38,13 +50,13 @@ export default function OrderCard({ order }: OrderCardProps) {
               <span
                 className={`text-xs px-2 py-0.5 rounded-full ${statusColors[order.status] || "bg-gray-500/20 text-gray-400"}`}
               >
-                {order.status}
+                {statusKeys[order.status]
+                  ? t(statusKeys[order.status] as Parameters<typeof t>[0])
+                  : order.status}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm text-neutral-300">
-              <span>
-                {itemCount} {itemCount === 1 ? "item" : "items"}
-              </span>
+              <span>{t("orders.itemCountLabel", { count: itemCount })}</span>
               <span className="text-neutral-600">•</span>
               <span className="font-medium">
                 €{order.totalAmount.toFixed(2)}
@@ -96,7 +108,7 @@ export default function OrderCard({ order }: OrderCardProps) {
 
             {order.shippingAmount && order.shippingAmount > 0 ? (
               <div className="flex justify-between items-center text-sm pt-2 border-t border-neutral-700">
-                <span className="text-neutral-400">Shipping</span>
+                <span className="text-neutral-400">{t("orders.shipping")}</span>
                 <span className="text-neutral-400">
                   €{order.shippingAmount.toFixed(2)}
                 </span>
@@ -105,7 +117,7 @@ export default function OrderCard({ order }: OrderCardProps) {
 
             {order.discountAmount && order.discountAmount < 0 ? (
               <div className="flex justify-between items-center text-sm">
-                <span className="text-green-400">Discount</span>
+                <span className="text-green-400">{t("orders.discount")}</span>
                 <span className="text-green-400">
                   €{order.discountAmount.toFixed(2)}
                 </span>
@@ -113,7 +125,9 @@ export default function OrderCard({ order }: OrderCardProps) {
             ) : null}
 
             <div className="flex justify-between items-center text-sm pt-2 border-t border-neutral-700">
-              <span className="font-medium text-neutral-200">Total</span>
+              <span className="font-medium text-neutral-200">
+                {t("orders.total")}
+              </span>
               <span className="font-medium text-neutral-200">
                 €{order.totalAmount.toFixed(2)}
               </span>
@@ -122,8 +136,7 @@ export default function OrderCard({ order }: OrderCardProps) {
             {order.ticketCount > 0 && (
               <div className="pt-2">
                 <span className="text-xs text-blue-400">
-                  {order.ticketCount}{" "}
-                  {order.ticketCount === 1 ? "ticket" : "tickets"} included
+                  {t("orders.ticketsIncluded", { count: order.ticketCount })}
                 </span>
               </div>
             )}
