@@ -417,7 +417,7 @@ async function main() {
   await migrateLegal(
     "code-of-conduct",
     "Code of conduct",
-    "Kodeks ravnanja",
+    "Kodeks obnašanja",
     CODE_OF_CONDUCT
   );
   await migrateLegal(
