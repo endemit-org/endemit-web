@@ -5,7 +5,13 @@ import { Metadata } from "next";
 import React from "react";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const loc = locale === "en" ? "en" : "sl";
   const homePage = await fetchHomePageFromCms();
 
   const title = homePage?.data.meta_title ?? undefined;
@@ -14,9 +20,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const images = buildOpenGraphImages({
     metaImage: homePage?.data.meta_image.url,
   });
-  const url = "https://endemit.org";
-
-  return buildOpenGraphObject({ title, description, images, url, type: "website" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    type: "website",
+    locale: loc,
+    path: "",
+  });
 }
 
 export default async function Home({

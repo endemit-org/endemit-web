@@ -50,9 +50,15 @@ export async function generateMetadata({
     category: categoryLabel,
   });
   const images = buildOpenGraphImages({});
-  const url = `https://endemit.org/store/${categoryUid}`;
 
-  return buildOpenGraphObject({ title, description, images, url, type: "website" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    type: "website",
+    locale: loc,
+    path: `/store/${categoryUid}`,
+  });
 }
 
 export default async function CategoryPage({
