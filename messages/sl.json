@@ -53,7 +53,7 @@
     "getTickets": "Izberi karto",
     "setTimes": "Cajti setov",
     "moreEventsToExplore": "Podobni eventi",
-    "pastEvent": "Končan",
+    "pastEvent": "Pretekel",
     "location": {
       "loadingMap": "Nalagam zemljevid…",
       "directions": "Pokaž pot v Google Maps",
@@ -65,7 +65,7 @@
       "goingFast": "Karte gredo hitro, ostalo:"
     },
     "miniCard": {
-      "wasOn": "Končan {date}",
+      "wasOn": "Potekal {date}",
       "happeningOn": "Kmalu, {date}"
     },
     "ticketStatus": {
@@ -85,7 +85,7 @@
       "availableAtEntrance": "Karte dobiš na vhodu",
       "batchSoldOut": "Ta runda kart je razprodana",
       "batchComingSoon": "Naslednja runda kart pride kmalo",
-      "availableNow": "Karte so na voljo",
+      "availableNow": "Izberi svojo karto",
       "personCount": "{count, plural, one {# oseba} two {# osebi} few {# osebe} other {# oseb}}",
       "includesTickets": "Vključuje karte za {count, plural, one {# osebo} two {# osebi} few {# osebe} other {# oseb}}",
       "soldOutBanner": "Spletne karte so razprodane, ampak karte zase in za kolege še zmerm dobiš, k prideš na event. <strong>Sam keš.</strong>",
@@ -107,8 +107,8 @@
     "detailsComingSoon": "Podrobnosti kmalo",
     "festivalTag": "Festival",
     "poster": {
-      "happenedOn": "Končan",
-      "upcomingOn": "V prodaji"
+      "happenedOn": "Potekal",
+      "upcomingOn": "Poteka"
     },
     "breadcrumb": "Eventi"
   },
@@ -172,7 +172,7 @@
         "maxQuantity": "Največ {quantity} kosov na nakup",
         "regional": "Pošiljamo samo v: {regions}",
         "availableUntil": "Na voljo samo do {date}",
-        "limitedAvailability": "Po tej ceni omejena zaloga"
+        "limitedAvailability": "Omejeno število, ne prveč čakat"
       }
     },
     "checkout": {
@@ -963,11 +963,11 @@
       "defaultDescription": "Endemit Festival je zaprto srečanje plemena, sam na povabilo. Če češ postat član, se prijav in ti pošljemo več info."
     },
     "subscribe": {
-      "invalidEmail": "Vpiš pravi email",
+      "invalidEmail": "Vpiš' veljaven email",
       "failed": "Ni ratalo, probej spet",
       "subscribing": "Prijavljam…",
-      "subscribed": "Prijava uspešna!",
-      "signUp": "Prijava",
+      "subscribed": "Uspešno naročen/a!",
+      "signUp": "Naroči se",
       "successHeading": "dodan na obveščanje!",
       "emailPlaceholder": "ime.priimek@gmail.com"
     }
