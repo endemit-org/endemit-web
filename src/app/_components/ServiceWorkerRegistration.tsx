@@ -17,18 +17,30 @@ export default function ServiceWorkerRegistration() {
     // key, so after any code change it serves stale JS against freshly built
     // HTML — causing hydration mismatches that only a hard refresh clears.
     if (process.env.NODE_ENV !== "production") {
-      navigator.serviceWorker.getRegistrations().then(registrations => {
-        registrations.forEach(registration => registration.unregister());
+      const hadController = !!navigator.serviceWorker.controller;
+      Promise.all([
+        navigator.serviceWorker
+          .getRegistrations()
+          .then(regs => Promise.all(regs.map(r => r.unregister()))),
+        window.caches
+          ? caches
+              .keys()
+              .then(keys =>
+                Promise.all(
+                  keys
+                    .filter(key => key.startsWith("endemit-"))
+                    .map(key => caches.delete(key))
+                )
+              )
+          : Promise.resolve(),
+      ]).then(() => {
+        // If a stale SW was still controlling this page, reload once so we get
+        // fresh (uncached) chunks — otherwise this page keeps the old JS.
+        if (hadController && !sessionStorage.getItem("sw-dev-cleaned")) {
+          sessionStorage.setItem("sw-dev-cleaned", "1");
+          window.location.reload();
+        }
       });
-      if (window.caches) {
-        caches.keys().then(keys =>
-          Promise.all(
-            keys
-              .filter(key => key.startsWith("endemit-"))
-              .map(key => caches.delete(key))
-          )
-        );
-      }
       return;
     }
 

@@ -28,7 +28,7 @@
   "walletPass": {
     "addToWallet": "Dodej v Apple Wallet",
     "adding": "Dodajam...",
-    "warningTitle": "Rabš Apple Wallet",
+    "warningTitle": "Maš Apple Wallet?",
     "warningBody": "Apple Wallet karte najbolš laufajo na iPhonu, iPadu al Macu. Fajl lahko vseeno potegneš dol, sam mogoče ga na tej napravi ne bo dalo odpret.",
     "cancel": "Prekliči",
     "downloadAnyway": "Vseeno potegn dol"
@@ -63,7 +63,7 @@
     },
     "urgency": {
       "almostSoldOut": "Skor razprodano, zadnja runda",
-      "goingFast": "Karte gredo hitro, ostalo:"
+      "goingFast": "Karte grejo hitro, ostalo:"
     },
     "miniCard": {
       "wasOn": "Potekal {date}",
@@ -76,14 +76,14 @@
     "ticketsDisplay": {
       "hot": "Vroče",
       "freeAdmission": "ZASTONJ vstop",
-      "noTicketsRequired": "Ne rabiš karte",
+      "noTicketsRequired": "Vstop brez karte",
       "noLongerAvailable": "Kart ni več",
       "eventConcluded": "Ta event je končan.",
       "comingSoon": "Karte pridejo kmalo",
       "notForSaleYet": "Karte še niso naprodaj",
       "notAvailableOnline": "Kart ni na spletu",
       "onlineSoldOut": "Spletne karte RAZPRODANE",
-      "availableAtEntrance": "Karte dobiš na vhodu",
+      "availableAtEntrance": "Karte dobiš na vhodo",
       "batchSoldOut": "Ta runda kart je razprodana",
       "batchComingSoon": "Naslednja runda kart pride kmalo",
       "availableNow": "Izberi svojo karto",
@@ -101,7 +101,7 @@
       }
     },
     "saveTheDate": {
-      "secret": "Lep poskus, ampak to je skrivnost!",
+      "secret": "Ne ne, tajna!",
       "heading": "{count, plural, one {Naslednji datum} two {Naslednja datuma} few {Naslednji datumi} other {Naslednji datumi}}"
     },
     "moreAnnouncedSoon": "Kmalo bo še več eventov",
@@ -115,9 +115,9 @@
   },
   "artists": {
     "appearsOn": "{name} igra na",
-    "exploreOther": "Zbrskaj še druge",
+    "exploreOther": "Poglej še druge talente",
     "dontMissNextTime": "Ne zamud k {name} spet rola",
-    "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
+    "subscribePrompt": "Naroči se, da te obvestimo o novih eventih",
     "setTimes": "Kdaj kdo igra",
     "profile": {
       "partOf": "Del",
@@ -138,7 +138,7 @@
     "eventsHostedAt": "{name} eventi ",
     "artistsPerformedAt": "Artististi, ki jih je slišo {name}",
     "dontMissNextEvent": "Ne zamud naslednjga {name} eventa",
-    "subscribePrompt": "Naroči se, da te obvestimo za evente in lineupe",
+    "subscribePrompt": "Naroči se, da te obvestimo o novih eventih",
     "breadcrumb": "Lokacije"
   },
   "store": {
@@ -151,7 +151,7 @@
     },
     "product": {
       "descriptionHeading": "Opis",
-      "youMightAlsoLike": "Sorodni izdelki",
+      "youMightAlsoLike": "Podobni izdelki",
       "price": "Cena:",
       "selectQuantity": "Izberi količino",
       "checkout": "Na blagajno",
@@ -166,14 +166,14 @@
         "available": "na voljo",
         "preorder": "prednaročilo",
         "comingSoon": "kmalo",
-        "outOfStock": "razprodano",
+        "outOfStock": "ni na zalogi",
         "soldOut": "razprodano"
       },
       "limits": {
         "maxQuantity": "Največ {quantity} kosov na nakup",
         "regional": "Pošiljamo samo v: {regions}",
         "availableUntil": "Na voljo samo do {date}",
-        "limitedAvailability": "Omejeno število, ne prveč čakat"
+        "limitedAvailability": "Omejeno število, ne prevč čakat"
       }
     },
     "checkout": {
@@ -215,7 +215,7 @@
     },
     "variantTypes": {
       "Size": "velikost",
-      "Colour": "barvo"
+      "Colour": "barva"
     },
     "variantValues": {
       "Black": "Črna",
@@ -226,7 +226,7 @@
     "back": "← Nazaj",
     "emptyCart": {
       "title": "Košara je prazna.",
-      "body": "Skoč v <link>Štacuno</link>, zberi kej zase in s tem podpreš naše neprofitno delo."
+      "body": "Pejd u <link>Štacuno</link>, zberi kej zase in s tem podpreš naše neprofitno delo."
     },
     "cart": {
       "heading": "Košara ({count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}})"
@@ -237,7 +237,7 @@
     "updateInfoWarning": "Pojd nazaj in poprav svoje podatke.",
     "backToInformation": "← Nazaj na podatke",
     "failedToProcessPayment": "Plačilo ni ratalo",
-    "processing": "Se procesira…",
+    "processing": "Procesiram…",
     "completeWalletOrder": "Zaključi naročilo (plačaj z denarnco)",
     "officialItems": {
       "title": "Endemit izdelki",
@@ -248,11 +248,11 @@
         "title": "Tvoji kontaktni podatki",
         "signedIn": "Prijava uspešna. Za to naročilo uporabimo tvoj email.",
         "description": "Preveri, da je email pravi, ker ti tja pošljemo potrditev naročila.",
-        "descriptionWithTickets": "Preveri email, da je pravi - ker ti tja pošljemo karte."
+        "descriptionWithTickets": "Preveri, da je email pravi - ker ti tja pošljemo karte."
       },
       "email": "Email",
       "emailRepeat": "Ponov email",
-      "emailPlaceholder": "jani@endemit.org",
+      "emailPlaceholder": "ime.priimek@endemit.org",
       "ticketHolder": {
         "title": "Podatki imetnika karte",
         "description": "Če se karta zgubi al se ne da skenirat, vpiš ime vsakga imetnika karte:"
@@ -318,7 +318,7 @@
       "moreAbout": "Več o naši neprofitni zgodbi"
     },
     "wallet": {
-      "checking": "Preverjam stanje denarnce…",
+      "checking": "Preverjam dobroimetje denarnce…",
       "use": "Uporabi denarnco",
       "available": "Na voljo: {balance}",
       "amountToApply": "Koliko uporabiš:",
@@ -328,7 +328,7 @@
       "redirecting": "Preusmerjam te na plačilo…",
       "payWithStripe": "Plačaj varno prek Stripe",
       "fillRequired": "Izpolni vsa obvezna polja za plačilo s kartico. {count, plural, one {Ostane še <strong>#</strong> obvezno polje.} two {Ostaneta še <strong>#</strong> obvezni polji.} few {Ostanejo še <strong>#</strong> obvezna polja.} other {Ostane še <strong>#</strong> obveznih polj.}}",
-      "poweredByStripe": "Poganja Stripe"
+      "poweredByStripe": "Plačila poganja Stripe"
     },
     "steps": {
       "cart": "Košara",
@@ -342,7 +342,7 @@
     },
     "cashless": {
       "title": "Event brez keša",
-      "description": "Ta event laufa brez keša. Nafilaj denarnco že zdej, da na šanku ne čakaš v vrsti.",
+      "description": "Ta event laufa brez keša. Nafilaj denarnco že zdej, da ne boš pol žejn/a.",
       "popular": "Popularno",
       "add": "+ Dodaj",
       "cashNote": "Denarnco lahko nafilaš tut s kešom na eventu"
@@ -352,14 +352,14 @@
       "label": "Imetnik karte {number} @ {itemName}"
     },
     "payment": {
-      "checkDetails": "Prevr podatke za plačilo.",
-      "completeForm": "Izpolni obrazec za plačilo.",
+      "checkDetails": "Prevr' podatke za plačilo.",
+      "completeForm": "Izpoln' obrazec za plačilo.",
       "failedCreateOrder": "Naročila ni ratalo ustvarit",
       "cardError": "Pr plačilu je šlo neki narobe.",
       "unexpectedError": "Neki je šlo narobe. Probej še enkrat.",
-      "processing": "Se procesira…",
+      "processing": "Procesiram…",
       "pay": "Plačaj {amount}",
-      "securelyProcessed": "Plačilo varno obdela Stripe. Podatkov tvoje kartice nikol ne hranimo na naših strežnikih."
+      "securelyProcessed": "Plačilo varno obdela Stripe. Podatkov tvoje kartice nikol ne vidimo in ne hranimo."
     }
   },
   "profile": {
@@ -421,7 +421,7 @@
     "wallet": {
       "transferFunds": "Pošlji žetone",
       "receiveFunds": "Prejmi žetone",
-      "receiveFundsDesc": "Pokaž ta QR drugmu — lahko ga skenira iz svoje denarnce da ti pošle žetone.",
+      "receiveFundsDesc": "Pokaž ta QR kolego — da ga skenira iz svoje denarnce da ti pošle žetone.",
       "receiveQrAlt": "QR za prejem",
       "orShareCode": "Al deli kodo",
       "copied": "Kopirano!",
@@ -434,13 +434,13 @@
         "titleConfirm": "Potrdi prenos",
         "titleSuccess": "Poslano",
         "titleError": "Napaka",
-        "balance": "Stanje: {amount}",
-        "scanHint": "Skeniraj QR prejemnika al spodej prilepi kodo zapestnce / kodo za prejem.",
+        "balance": "Dobroimetje: {amount}",
+        "scanHint": "Skeniraj QR prejemnika al spodej prilepi kodo za prejem.",
         "codePlaceholder": "AB12 al ndr1.…",
         "resolve": "Poišči",
         "sendingTo": "Pošiljaš",
         "amount": "Znesek",
-        "exceeds": "Znesek presega tvoje stanje",
+        "exceeds": "Znesek presega tvoje dobroimetje",
         "after": "Po prenosu: {amount}",
         "available": "Na voljo: {amount}",
         "noteLabel": "Opomba (ni obvezna)",
@@ -494,7 +494,7 @@
     },
     "sidebar": {
       "donor": "Donator",
-      "walletBalance": "Stanje denarnce",
+      "walletBalance": "Dobroimetje denarnce",
       "topUpWallet": "Nafilaj denarnco",
       "scanPosOrder": "Al skeniraj POS naročilo",
       "viewTickets": "Poglej karte",
@@ -541,7 +541,7 @@
       "from": "Od",
       "to": "Za",
       "date": "Datum",
-      "balanceAfter": "Stanje po",
+      "balanceAfter": "Dobroimetje po",
       "note": "Opomba",
       "transactionId": "Št. transakcije",
       "type": {
@@ -553,7 +553,7 @@
         "transfer": "Prenos"
       },
       "typeLong": {
-        "credit": "Dodano stanje",
+        "credit": "Dodano dobroimetje",
         "debit": "Porabljeno",
         "purchase": "Nakup",
         "refund": "Refund",
@@ -600,12 +600,12 @@
       "failed": "Karte ni ratalo ustvarit",
       "noResponse": "Strežnik ne odgovarja",
       "generating": "Ustvarjam…",
-      "downloadImage": "Prenesi kopijo karte"
+      "downloadImage": "Prenesis kopijo karte"
     },
     "walletPay": {
       "pay": "Plačaj",
-      "balance": "Stanje",
-      "handPhoneHint": "Pokaž telefon prodajalcu, da ti skenira to kodo.",
+      "balance": "Dobroimetje",
+      "handPhoneHint": "Pokaž telefon prodajalcu, da skenira tvojo kodo.",
       "scanTitle": "Skeniraj in plačaj",
       "confirmTitle": "Potrdi plačilo",
       "successTitle": "Plačilo uspešno",
@@ -898,7 +898,7 @@
       "amountSent": "Poslani znesek",
       "amountReceived": "Prejeti znesek",
       "note": "Opomba",
-      "walletBalance": "Stanje denarnce",
+      "walletBalance": "Dobromimetje denarnce",
       "viewTransaction": "Poglej transakcijo",
       "questions": "Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>."
     },
@@ -913,7 +913,7 @@
       "subtotal": "Vmesni seštevek:",
       "tip": "Napitnina:",
       "totalLabel": "Skupaj:",
-      "walletBalance": "Stanje denarnce",
+      "walletBalance": "Dobromimetje denarnce",
       "viewWallet": "Poglej svojo denarnco",
       "receiptNote": "To sporočilo velja kot potrdilo o tvoji transakciji. Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>",
       "intro": "Nakup na blagajni <strong>{registerName}</strong> je uspel. Podrobnosti spodaj.",
@@ -1240,7 +1240,7 @@
         "alreadyRefunded": "Že vrnjeno",
         "shippingRefund": "Vračilo dostave:",
         "totalRefundAmount": "Skupni znesek vračila:",
-        "limitedByWallet": "Omejeno s preostalim stanjem denarnce ({balance})",
+        "limitedByWallet": "Omejeno s preostalim dobroimetjem denarnce ({balance})",
         "previouslyRefunded": "Predhodno vrnjeno: {amount}",
         "reasonLabel": "Razlog (neobvezno)",
         "reasonPlaceholder": "Razlog za refund…",
@@ -1510,7 +1510,7 @@
         "lastLogin": "Zadnja prijava:",
         "never": "Nikoli",
         "wallet": "Denarnca",
-        "balance": "Stanje",
+        "balance": "Dobroimetje",
         "manageWallet": "Upravljaj denarnco",
         "wristband": "Plačilna zapestnca",
         "editUser": "Uredi uporabnika",
@@ -1577,9 +1577,9 @@
     },
     "wallets": {
       "title": "Denarnce",
-      "subtitle": "Poglej in upravljaj stanja uporabniških denarnc",
+      "subtitle": "Poglej in upravljaj dobroimetja uporabniških denarnc",
       "stats": {
-        "totalBalance": "Skupno stanje",
+        "totalBalance": "Skupno dobroimetje",
         "wallets": "Denarnce",
         "transactions": "Transakcije"
       },
@@ -1590,15 +1590,15 @@
       "unknownUser": "Neznan uporabnik",
       "backToWallets": "Nazaj na denarnce",
       "viewUserProfile": "Poglej profil uporabnika",
-      "currentBalance": "Trenutno stanje",
+      "currentBalance": "Trenutno dobroimetje",
       "walletInformation": "Podatki o denarnci",
       "walletId": "ID denarnce:",
       "created": "Ustvarjeno:",
       "lastUpdatedLabel": "Zadnjič posodobljeno:",
-      "manageBalance": "Upravljaj stanje",
+      "manageBalance": "Upravljaj dobroimetje",
       "transactionHistory": "Zgodovina transakcij ({count})",
       "errorInvalidAmount": "Vpiši veljaven pozitiven znesek",
-      "errorDebitExceeds": "Ne moreš vzet več, kokr je trenutno stanje ({balance})",
+      "errorDebitExceeds": "Ne moreš vzet več, kokr je trenutno dobroimetje ({balance})",
       "successAdded": "V denarnco dodano {amount}",
       "successRemoved": "Iz denarnce odvzeto {amount}",
       "errorGeneric": "Pršlo je do napake",
@@ -1613,12 +1613,12 @@
       "col": {
         "user": "Uporabnik",
         "email": "Email",
-        "balance": "Stanje",
+        "balance": "Dobroimetje",
         "lastUpdated": "Zadnjič posodobljeno",
         "date": "Datum",
         "type": "Tip",
         "amount": "Znesek",
-        "balanceAfter": "Stanje po",
+        "balanceAfter": "Dobroimetje po",
         "note": "Opomba",
         "createdBy": "Ustvaril"
       }
@@ -1641,7 +1641,7 @@
         "user": "Uporabnik",
         "type": "Tip",
         "amount": "Znesek",
-        "balanceAfter": "Stanje po",
+        "balanceAfter": "Dobroimetje po",
         "note": "Opomba",
         "createdBy": "Ustvaril"
       },
@@ -1760,7 +1760,7 @@
       "orderCode": "Koda naročila",
       "qrAlt": "QR koda naročila",
       "customerScanned": "{name} je skeniral",
-      "balanceLabel": "Stanje",
+      "balanceLabel": "Dobroimetje",
       "insufficient": "(Premalo)",
       "customer": "Kupec",
       "waitingForScan": "Čakam, da kupec skenira…",
@@ -1774,7 +1774,7 @@
       "pendingOrdersCount": "Naročila v čakanju ({count})",
       "noPendingOrders": "Ni naročil v čakanju",
       "moreItems": "+{count} več",
-      "lowBalance": "Prenizko stanje",
+      "lowBalance": "Prenizko dobroimetje",
       "scanned": "Skenirano",
       "waitingForScanShort": "Čakam na sken",
       "cancel": "Prekliči"
@@ -1782,7 +1782,7 @@
     "sticker": {
       "resolving": "Povezujem zapestnco…",
       "scanWristband": "Skeniraj zapestnco",
-      "instructions": "Usmeri kamero na zapestnco ali vtipkaj 4-mestno kodo.",
+      "instructions": "Skeniraj zapestnco ali vtipkaj 4-mestno kodo.",
       "hint": "Skeniraj QR ali vtipkaj 4-mestno kodo zapestnce",
       "backToQr": "← Nazaj na QR"
     },
