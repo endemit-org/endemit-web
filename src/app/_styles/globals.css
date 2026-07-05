@@ -1,5 +1,6 @@
 @import "styles.css";
 @import "animations.css";
+@import "themes/crt.css";
 
 @tailwind base;
 @tailwind components;

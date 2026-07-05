@@ -27,6 +27,10 @@ import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import EventInnerContentLinks from "@/app/_components/event/EventInnerContentLinks";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import ThemedEventPage from "@/app/_components/event/ThemedEventPage";
+import { getPageTheme } from "@/domain/event/config/pageThemes";
+import { renderHeadingEffect } from "@/app/_components/theme/effectRegistry";
+import GlitchText from "@/app/_components/theme/GlitchText";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -104,6 +108,21 @@ export default async function EventPage({
   const innerContentPages = await fetchInnerContentPagesForEvent(event.id, loc);
   const isPastEvent = isEventCompleted(event);
 
+  // Per-event art-direction theme. `general` is a complete no-op (see
+  // ThemedEventPage); a themed event drives backgrounds, overlays, tokens and
+  // per-slice overrides. WebGL (three) loads only on pages whose theme declares
+  // a webgl layer.
+  const theme = getPageTheme(event.theme);
+  const showBlurredCover = theme.background?.showBlurredCover ?? true;
+  const showWormsPattern = theme.background?.showWormsPattern ?? true;
+  const wormsBackground = showWormsPattern
+    ? {
+        backgroundImage: "url('/images/worms.png')",
+        backgroundRepeat: "repeat" as const,
+        backgroundSize: "150px",
+      }
+    : {};
+
   // Fetch other events to explore for past events
   let otherEvents: (typeof event)[] = [];
   if (isPastEvent) {
@@ -162,7 +181,11 @@ export default async function EventPage({
             sortingWeight: page.sortingWeight,
             content: (
               <div className={"w-full"}>
-                <SliceDisplay slices={page.slices} locale={loc} />
+                <SliceDisplay
+                  slices={page.slices}
+                  locale={loc}
+                  theme={theme}
+                />
               </div>
             ),
           }))
@@ -196,7 +219,7 @@ export default async function EventPage({
       label: t("tabs.about"),
       content: (
         <div>
-          <SliceDisplay slices={event.slices} locale={loc} />
+          <SliceDisplay slices={event.slices} locale={loc} theme={theme} />
         </div>
       ),
       id: "overview",
@@ -219,44 +242,48 @@ export default async function EventPage({
     <>
       <EventSeoMicrodata products={products} event={event} />
       <OuterPage className={"max-lg:pt-10"}>
+       <ThemedEventPage theme={theme}>
         <PageHeadline
           title={event.name}
+          titleSlot={renderHeadingEffect(theme.headingEffect, event.name)}
           segments={[
             { label: "Endemit", path: "" },
             { label: t("breadcrumb"), path: "events" },
             { label: event.name, path: event.uid },
           ]}
         />
-        <div
-          className={
-            "absolute top-80 h-[600px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
-          }
-          style={
-            event.coverImage
-              ? {
-                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
-                }
-              : {}
-          }
-        ></div>
-        <div
-          className={
-            "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
-          }
-          style={
-            event.coverImage
-              ? {
-                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
-                }
-              : {}
-          }
-        ></div>
+        {showBlurredCover && (
+          <>
+            <div
+              className={
+                "absolute top-80 h-[600px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
+              }
+              style={
+                event.coverImage
+                  ? {
+                      backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                    }
+                  : {}
+              }
+            ></div>
+            <div
+              className={
+                "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
+              }
+              style={
+                event.coverImage
+                  ? {
+                      backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                    }
+                  : {}
+              }
+            ></div>
+          </>
+        )}
         <div
           style={{
-            backgroundImage: "url('/images/worms.png')",
-            backgroundRepeat: "repeat",
+            ...wormsBackground,
             backgroundBlendMode: "soft-light",
-            backgroundSize: "150px",
 
             // backgroundColor: event.colour,
           }}
@@ -328,7 +355,7 @@ export default async function EventPage({
                         }
                         key={`artist-marquee-${artist.id}`}
                       >
-                        {artist.name}
+                        {renderHeadingEffect(theme.headingEffect, artist.name)}
                       </h3>
                     ))}
                   </div>
@@ -387,7 +414,15 @@ export default async function EventPage({
                   : (event.name ?? "");
               if (!pattern) return null;
               const repeatCount = Math.ceil(200 / pattern.length);
-              return Array(repeatCount).fill(pattern).join(" · ");
+              const marquee = Array(repeatCount).fill(pattern).join(" · ");
+              // Themed pages get a white glitch treatment on the marquee.
+              return theme.headingEffect ? (
+                <GlitchText as="span" className="crt-glitch-text--white">
+                  {marquee}
+                </GlitchText>
+              ) : (
+                marquee
+              );
             })()}
           </div>
         </div>
@@ -416,10 +451,8 @@ export default async function EventPage({
                   "p-8 flex-1 bg-neutral-800 rounded-md h-fit rounded-bl-none shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
                 }
                 style={{
-                  backgroundImage: "url('/images/worms.png')",
-                  backgroundRepeat: "repeat",
+                  ...wormsBackground,
                   backgroundBlendMode: "multiply",
-                  backgroundSize: "150px",
 
                   // backgroundColor: event.colour,
                 }}
@@ -486,6 +519,7 @@ export default async function EventPage({
         <div className="relative z-10">
           <EndemitSubscribe />
         </div>
+       </ThemedEventPage>
       </OuterPage>
     </>
   );

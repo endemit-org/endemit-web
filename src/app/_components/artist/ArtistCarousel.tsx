@@ -160,7 +160,7 @@ export default function ArtistCarousel({
               <div
                 key={item.id}
                 className={clsx(
-                  "flex-shrink-0 flex items-center justify-center rounded-lg w-10",
+                  "day-divider flex-shrink-0 flex items-center justify-center rounded-lg w-10",
                   dayDividerClassName
                 )}
               >

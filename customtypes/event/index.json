@@ -278,6 +278,17 @@
           ]
         }
       },
+      "page_theme": {
+        "type": "Select",
+        "config": {
+          "label": "Page theme",
+          "placeholder": "General (default)",
+          "options": [
+            "General",
+            "RAVE-ON"
+          ]
+        }
+      },
       "colour": {
         "type": "Color",
         "config": {

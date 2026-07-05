@@ -218,8 +218,8 @@ export default function Tabs({
                     key={`tab-top-navigation-${item.label}-${item.id}`}
                     href={`#${item.id}`}
                     onClick={() => handleTabClick(item.id, false)}
-                    className={`text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
-                ${activeTabId === item.id && "!text-neutral-100 !border-b-blue-500"}`}
+                    className={`app-tab-mobile text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
+                ${activeTabId === item.id && "app-tab-mobile--active !text-neutral-100 !border-b-blue-500"}`}
                   >
                     {item.label}
                   </Link>
@@ -257,10 +257,10 @@ export default function Tabs({
                   }
                   handleTabClick(item.id, true);
                 }}
-                className={`whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
+                className={`app-tab whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
                   activeTabId === item.id
-                    ? "border-blue-500 text-neutral-200 backdrop-blur-lg rounded-t-md"
-                    : "border-transparent text-neutral-950 hover:text-neutral-900 [text-shadow:0_0px_10px_rgba(255,255,255,0.2)] hover:border-neutral-300"
+                    ? "app-tab--active border-blue-500 text-neutral-200 backdrop-blur-lg rounded-t-md"
+                    : "app-tab--inactive border-transparent text-neutral-950 hover:text-neutral-900 [text-shadow:0_0px_10px_rgba(255,255,255,0.2)] hover:border-neutral-300"
                 }`}
               >
                 {item.label}
