@@ -24,6 +24,8 @@ import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
+import EventInnerContentLinks from "@/app/_components/event/EventInnerContentLinks";
+import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 // Static until next deploy - no ISR
@@ -146,18 +148,42 @@ export default async function EventPage({
     sortingWeight: 400,
   });
 
-  if (innerContentPages && innerContentPages?.length > 0) {
-    innerContentPages.forEach(page => {
-      defaultContent.push({
-        label: page.title,
-        content: (
-          <div className={"max-lg:text-xs w-full"}>
-            <SliceDisplay slices={page.slices} locale={loc} />
-          </div>
-        ),
-        id: page.uid,
-        sortingWeight: page.sortingWeight,
-      });
+  const innerContentLinks =
+    innerContentPages && innerContentPages.length > 0
+      ? [...innerContentPages]
+          .sort((a, b) => (a.sortingWeight ?? 0) - (b.sortingWeight ?? 0))
+          .map(page => ({
+            id: page.uid,
+            title: page.title,
+            sortingWeight: page.sortingWeight,
+            content: (
+              <div className={"w-full"}>
+                <SliceDisplay slices={page.slices} locale={loc} />
+              </div>
+            ),
+          }))
+      : [];
+
+  // Desktop: each linked page is its own tab. Mobile: a single "More" nav
+  // entry scrolls to a section listing them as links that open in modals
+  // (keeps content-heavy events from becoming an endless mobile scroll).
+  innerContentLinks.forEach(page => {
+    defaultContent.push({
+      label: page.title,
+      content: page.content,
+      id: page.id,
+      sortingWeight: page.sortingWeight,
+      desktopOnly: true,
+    });
+  });
+
+  if (innerContentLinks.length > 0) {
+    defaultContent.push({
+      label: t("tabs.more"),
+      content: <EventInnerContentLinks pages={innerContentLinks} />,
+      id: "more-info",
+      sortingWeight: 500,
+      mobileOnly: true,
     });
   }
 
@@ -341,7 +367,7 @@ export default async function EventPage({
         )}
         <div
           className={
-            "-left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
+            "max-lg:hidden -left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
           }
         >
           <div className={"animate-marquee-move"}>
@@ -371,12 +397,19 @@ export default async function EventPage({
                 <ArtistCarousel
                   artists={event.artists}
                   headline={t("setTimes")}
+                  eventStart={event.date_start}
+                  eventEnd={event.date_end}
+                  hideBeforeEventOnMobile
                 />
               )}
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
 
-          <section className={"max-lg:hidden flex-1"}>
+          <section
+            className={
+              "max-lg:hidden flex-1 lg:sticky lg:top-8 lg:self-start lg:h-fit"
+            }
+          >
             <div
               className={
                 "p-8 flex-1 bg-neutral-800 rounded-md h-fit rounded-bl-none shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
@@ -447,6 +480,10 @@ export default async function EventPage({
             </div>
           </div>
         )}
+
+        <div className="relative z-10">
+          <EndemitSubscribe />
+        </div>
       </OuterPage>
     </>
   );

@@ -10,7 +10,7 @@ import { usePlayerStore } from "@/app/_stores/PlayerStore";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { formatDate } from "@/lib/util/formatting";
 import PlayIcon from "@/app/_components/icon/PlayIcon";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface PodcastEpisodeHeroProps {
   number: string;
@@ -32,6 +32,7 @@ export default function PodcastEpisodeHero({
   artist,
   date,
 }: PodcastEpisodeHeroProps) {
+  const locale = useLocale() as "sl" | "en";
   const t = useTranslations("music");
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const loadedTrack = usePlayerStore(state => state.currentTrack);
@@ -41,7 +42,7 @@ export default function PodcastEpisodeHero({
   const episodeDataSet = [
     { value: number, label: t("labels.episode") },
     { value: artist, label: t("labels.artist") },
-    { value: date ? formatDate(date) : false, label: t("labels.published") },
+    { value: date ? formatDate(date, locale) : false, label: t("labels.published") },
   ].filter(item => !!item.value);
 
   const handleLoadTrack = () => {

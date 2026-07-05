@@ -47,7 +47,8 @@
       "lineup": "Lineup",
       "location": "Location",
       "about": "About",
-      "tickets": "Tickets"
+      "tickets": "Tickets",
+      "more": "More"
     },
     "concluded": "This event has concluded",
     "getTickets": "Get tickets",

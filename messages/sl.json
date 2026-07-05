@@ -47,7 +47,8 @@
       "lineup": "Lineup",
       "location": "Lokacija",
       "about": "O eventu",
-      "tickets": "Karte"
+      "tickets": "Karte",
+      "more": "Več"
     },
     "concluded": "Ta event je že mimo",
     "getTickets": "Izberi karto",
@@ -56,7 +57,7 @@
     "pastEvent": "Pretekel",
     "location": {
       "loadingMap": "Nalagam zemljevid…",
-      "directions": "Pokaž pot v Google Maps",
+      "directions": "Poglej si v Google Maps",
       "loadError": "Zemljevida ni ratalo naložit",
       "loadErrorDetail": "Google Maps se ni naložil"
     },
@@ -115,7 +116,7 @@
   "artists": {
     "appearsOn": "{name} igra na",
     "exploreOther": "Zbrskaj še druge",
-    "dontMissNextTime": "Ne zamud {name}, k pride spet",
+    "dontMissNextTime": "Ne zamud k {name} spet rola",
     "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
     "setTimes": "Kdaj kdo igra",
     "profile": {
@@ -125,19 +126,19 @@
       "findOn": "{name} najdeš na:"
     },
     "preview": {
-      "nowPlaying": "Zdej se vrti {name}",
-      "playSet": "Zavrti set od {name}"
+      "nowPlaying": "Rola ti {name}",
+      "playSet": "Posluši {name} set"
     },
     "liveNow": "ZDEJ V ŽIVO",
     "timeUntilPrefix": "čez",
     "breadcrumb": "Artisti",
-    "moreAbout": "Zvej več o {name}"
+    "moreAbout": "Več o {name}"
   },
   "venues": {
-    "eventsHostedAt": "Eventi v {name}",
-    "artistsPerformedAt": "Kdo je igral v {name}",
-    "dontMissNextEvent": "Ne zamud naslednjga eventa v {name}",
-    "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
+    "eventsHostedAt": "{name} eventi ",
+    "artistsPerformedAt": "Artististi, ki jih je slišo {name}",
+    "dontMissNextEvent": "Ne zamud naslednjga {name} eventa",
+    "subscribePrompt": "Naroči se, da te obvestimo za evente in lineupe",
     "breadcrumb": "Lokacije"
   },
   "store": {
@@ -146,7 +147,7 @@
     },
     "category": {
       "empty": "V {categoryName} zaenkrat ni nč",
-      "metaDescription": "Uradni Endemit {category} — varen spletni nakup."
+      "metaDescription": "Uradni Endemit {category}"
     },
     "product": {
       "descriptionHeading": "Opis",
@@ -344,7 +345,7 @@
       "description": "Ta event laufa brez keša. Nafilaj denarnco že zdej, da na šanku ne čakaš v vrsti.",
       "popular": "Popularno",
       "add": "+ Dodaj",
-      "cashNote": "Denarnco lahko nafilaš tut s kešem na eventu"
+      "cashNote": "Denarnco lahko nafilaš tut s kešom na eventu"
     },
     "ticketForm": {
       "namePrefix": "Ime",
@@ -593,7 +594,7 @@
       "selectAmountDesc": "Izberi, koliko žetonov daš v denarnco",
       "redirecting": "Preusmerjam…",
       "addToWallet": "Dodaj {amount} v denarnco",
-      "cashNotice": "Denarnco lahko nafilaš tut s kešem na MERCH štantu."
+      "cashNotice": "Denarnco lahko nafilaš tut s kešom na MERCH štantu."
     },
     "ticketDownload": {
       "failed": "Karte ni ratalo ustvarit",
@@ -955,9 +956,9 @@
     }
   },
   "newsletter": {
-    "defaultTitle": "PRIJAV SE",
+    "defaultTitle": "Naroč se",
     "endemit": {
-      "defaultDescription": "Zvej za naše evente, muziko in vse ostalo"
+      "defaultDescription": "Zvej za naše evente, karte, datume in muziko"
     },
     "festival": {
       "defaultDescription": "Endemit Festival je zaprto srečanje plemena, sam na povabilo. Če češ postat član, se prijav in ti pošljemo več info."
@@ -1653,7 +1654,7 @@
         "POS_PURCHASE": "POS nakup",
         "POS_TIP": "POS napitnina",
         "CARD_TOPUP": "Polnjenje s kartico",
-        "CASH_TOPUP": "Polnjenje s kešem",
+        "CASH_TOPUP": "Polnjenje s kešom",
         "P2P_TRANSFER": "Prenos"
       }
     },

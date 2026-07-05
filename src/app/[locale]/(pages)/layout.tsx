@@ -41,7 +41,7 @@ export default async function ContentPageLayout({
               backgroundSize: "150px",
             }}
           />
-          <div className={"overflow-hidden relative p-4 lg:p-12 max-lg:py-12"}>
+          <div className={"overflow-x-clip relative p-4 lg:p-12 max-lg:py-12"}>
             <div className={"relative"}>{children}</div>
           </div>
           <SiteFooter locale={loc} />

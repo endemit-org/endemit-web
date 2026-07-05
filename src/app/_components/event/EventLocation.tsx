@@ -37,7 +37,8 @@ async function EventLocationDetails({ venue }: Props) {
         <RichTextDisplay richText={venue.description} />
       </div>
       {venue?.coordinates && (
-        <GoogleMapLocation
+        <div className="max-lg:hidden">
+          <GoogleMapLocation
           center={{
             lat: venue?.coordinates.latitude,
             lng: venue?.coordinates.longitude,
@@ -56,12 +57,13 @@ async function EventLocationDetails({ venue }: Props) {
               },
             },
           ]}
-          mapOptions={{
-            disableDefaultUI: false,
-            zoomControl: true,
-            streetViewControl: true,
-          }}
-        />
+            mapOptions={{
+              disableDefaultUI: false,
+              zoomControl: true,
+              streetViewControl: true,
+            }}
+          />
+        </div>
       )}
 
       {venue.mapLocationUrl && (

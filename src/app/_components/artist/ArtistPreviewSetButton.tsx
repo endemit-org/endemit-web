@@ -64,7 +64,7 @@ export default function ArtistPreviewSetButton({
           <PlayIcon className="w-3 h-3 ml-0.5" />
         )}
       </span>
-      <span className="underline underline-offset-4 decoration-dotted">
+      <span className="underline underline-offset-4 decoration-dotted max-md:text-left">
         {isCurrentlyPlaying
           ? t("preview.nowPlaying", { name: artistName })
           : t("preview.playSet", { name: artistName })}

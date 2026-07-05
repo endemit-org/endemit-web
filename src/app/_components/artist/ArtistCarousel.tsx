@@ -15,6 +15,10 @@ interface ArtistCarouselProps {
   nameClassName?: string;
   descriptionClassName?: string;
   dayDividerClassName?: string;
+  eventStart?: Date | null;
+  eventEnd?: Date | null;
+  /** On mobile, hide the set-times until the event is actually happening. */
+  hideBeforeEventOnMobile?: boolean;
 }
 
 type TimelineItem = {
@@ -32,11 +36,15 @@ export default function ArtistCarousel({
   nameClassName,
   descriptionClassName,
   dayDividerClassName = "bg-gray-900 text-black bg-opacity-25 text-opacity-80",
+  eventStart,
+  eventEnd,
+  hideBeforeEventOnMobile = false,
 }: ArtistCarouselProps) {
   const t = useTranslations("artists");
   const locale = useLocale() as "sl" | "en";
   const resolvedHeadline = headline ?? t("setTimes");
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -44,11 +52,21 @@ export default function ArtistCarousel({
 
   // Update time every minute
   useEffect(() => {
+    setMounted(true);
     const interval = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(interval);
   }, []);
 
   const now = currentTime.getTime();
+
+  // On mobile, hide the set-times until the event window has actually begun.
+  // Gated behind `mounted` so SSR/first paint matches (avoids hydration flash).
+  const hideOnMobile =
+    hideBeforeEventOnMobile &&
+    mounted &&
+    eventStart != null &&
+    now < eventStart.getTime() &&
+    (eventEnd == null || now <= eventEnd.getTime());
 
   if (!artists || artists.length === 0) {
     return null;
@@ -111,7 +129,12 @@ export default function ArtistCarousel({
   if (timelineItems.length === 0) return null;
 
   return (
-    <div className="w-full space-y-4 max-lg:mb-6">
+    <div
+      className={clsx(
+        "w-full space-y-4 max-lg:mb-6",
+        hideOnMobile && "max-lg:hidden"
+      )}
+    >
       <h3 className="text-2xl font-bold uppercase">{resolvedHeadline}</h3>
       <div
         ref={scrollRef}
