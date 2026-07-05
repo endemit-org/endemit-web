@@ -110,6 +110,8 @@ export default function EventTicketDisplay({
   event,
 }: EventTicketDisplayProps) {
   const t = useTranslations("events");
+  // Defensive: never crash the whole page if an event somehow arrives undefined.
+  if (!event) return null;
   const isPastEvent = isEventCompleted(event);
   const hasProducts = products.length > 0;
   const hasMultipleProducts = products.length > 1;
