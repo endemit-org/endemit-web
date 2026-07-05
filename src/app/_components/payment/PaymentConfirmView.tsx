@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 
@@ -43,12 +44,12 @@ interface TipPreset {
 }
 
 const BASE_TIP_PRESETS: TipPreset[] = [
-  { label: "No tip", value: 0 },
+  { label: "noTip", value: 0 },
   { label: "12%", percent: 12 },
   { label: "25%", percent: 25 },
 ];
 
-const CUSTOM_TIP_PRESET: TipPreset = { label: "Custom", value: -1 };
+const CUSTOM_TIP_PRESET: TipPreset = { label: "customTip", value: -1 };
 
 export function PaymentConfirmView({
   order,
@@ -60,6 +61,7 @@ export function PaymentConfirmView({
   onPay,
   onCancel,
 }: Props) {
+  const t = useTranslations("profile.walletPay");
   const [selectedTip, setSelectedTip] = useState(0);
   const [customTip, setCustomTip] = useState("");
   const [showCustomTip, setShowCustomTip] = useState(false);
@@ -118,7 +120,7 @@ export function PaymentConfirmView({
 
       {!hasTopUp && (
         <div className="mb-4">
-          <div className="text-sm text-neutral-500 mb-2">Add a tip?</div>
+          <div className="text-sm text-neutral-500 mb-2">{t("addTip")}</div>
           <div
             className={`grid gap-2 ${
               tipPresets.length === 4 ? "grid-cols-4" : "grid-cols-3"
@@ -153,7 +155,9 @@ export function PaymentConfirmView({
                       : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
                   }`}
                 >
-                  {preset.label}
+                  {preset.label === "noTip" || preset.label === "customTip"
+                    ? t(preset.label)
+                    : preset.label}
                 </button>
               );
             })}
@@ -175,7 +179,7 @@ export function PaymentConfirmView({
 
       <div className="bg-neutral-800 rounded-xl p-3 mb-4 text-center">
         <div className="text-neutral-500 text-sm mb-1">
-          {hasTopUp ? "Top-up Amount" : "Total to Pay"}
+          {hasTopUp ? t("topUpAmount") : t("totalToPay")}
         </div>
         {hasTopUp ? (
           <div className="text-4xl font-bold text-green-400">
@@ -230,10 +234,10 @@ export function PaymentConfirmView({
           }`}
         >
           {isProcessing
-            ? "Processing..."
+            ? t("processing")
             : hasTopUp
-              ? `Top-up ${formatTokensFromCents(creditTotal)}`
-              : `Pay ${formatTokensFromCents(totalToPay)}`}
+              ? t("topUpButton", { amount: formatTokensFromCents(creditTotal) })
+              : t("payButton", { amount: formatTokensFromCents(totalToPay) })}
         </button>
         <button
           onClick={onCancel}

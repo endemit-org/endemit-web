@@ -107,8 +107,10 @@ async function EventListContent({
       )}
       <div
         className={clsx(
-          "grid sm:grid-cols-2 gap-4 relative z-10",
-          type === "Past" && "md:grid-cols-3"
+          "grid gap-4 relative z-10",
+          type === "Past"
+            ? "grid-cols-2 md:grid-cols-3"
+            : "sm:grid-cols-2"
         )}
       >
         {type === "Past"

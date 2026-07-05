@@ -70,7 +70,7 @@
     },
     "ticketStatus": {
       "hot": "Vroče",
-      "ticketsLimited": "Karte omejene"
+      "ticketsLimited": "Omejene karte"
     },
     "ticketsDisplay": {
       "hot": "Vroče",
@@ -619,7 +619,15 @@
       "toppedUpTitle": "Denarnca nafilana",
       "amountAdded": "+{amount} dodano",
       "thankYou": "Hvala!",
-      "tryAgain": "Probaj še enkrat"
+      "tryAgain": "Probaj še enkrat",
+      "addTip": "Dodaš napitnino?",
+      "noTip": "Brez napitnine",
+      "customTip": "Po meri",
+      "topUpAmount": "Znesek polnjenja",
+      "totalToPay": "Za plačat",
+      "processing": "Se procesira…",
+      "topUpButton": "Napolni {amount}",
+      "payButton": "Plačaj {amount}"
     },
     "eventsAttended": {
       "title": "Obiskani eventi",
@@ -1800,7 +1808,10 @@
       "modalTitle": "Skeniraj QR karto",
       "pointCamera": "Usmeri kamero v QR kodo, da skeniraš karto",
       "recordingScan": "Beležim skeniranje na strežnik...",
-      "scanNext": "V redu – skeniraj naslednjo"
+      "scanNext": "V redu – skeniraj naslednjo",
+      "processing": "Se procesira…",
+      "holding": "Drži…",
+      "holdToScan": "Drži za skeniranje"
     },
     "result": {
       "verified": "Preverjeno",
@@ -1817,6 +1828,21 @@
     },
     "header": {
       "title": "Skener za karte"
+    },
+    "doorSale": {
+      "numberOfTickets": "Število kart",
+      "totalAmount": "Skupni znesek (uredljiv)",
+      "emailOptional": "Email (ni obvezen)",
+      "searchPlaceholder": "Poišči uporabnika al vpiši email",
+      "sendViaEmail": "Pošlji karte po emailu",
+      "proceed": "Naprej - {price}",
+      "confirmCash": "Potrdi prejet keš",
+      "forTickets": "za {count, plural, one {# karto} two {# karti} few {# karte} other {# kart}}",
+      "back": "Nazaj",
+      "processing": "Se procesira…",
+      "cashReceived": "Keš prejet",
+      "success": "{count, plural, one {# karta prodana na vratih} two {# karti prodani na vratih} few {# karte prodane na vratih} other {# kart prodanih na vratih}} za {price}",
+      "emailSentSuffix": " - email poslan"
     }
   },
   "stagingLogin": {

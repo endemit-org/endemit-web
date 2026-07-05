@@ -619,7 +619,15 @@
       "toppedUpTitle": "Balance Topped Up",
       "amountAdded": "+{amount} added",
       "thankYou": "Thank you!",
-      "tryAgain": "Try Again"
+      "tryAgain": "Try Again",
+      "addTip": "Add a tip?",
+      "noTip": "No tip",
+      "customTip": "Custom",
+      "topUpAmount": "Top-up Amount",
+      "totalToPay": "Total to Pay",
+      "processing": "Processing...",
+      "topUpButton": "Top-up {amount}",
+      "payButton": "Pay {amount}"
     },
     "eventsAttended": {
       "title": "Events Attended",
@@ -1800,7 +1808,10 @@
       "modalTitle": "Scan QR Ticket",
       "pointCamera": "Point your camera to scan a ticket",
       "recordingScan": "Recording scan to server...",
-      "scanNext": "OK - Scan Next Ticket"
+      "scanNext": "OK - Scan Next Ticket",
+      "processing": "Processing...",
+      "holding": "Hold...",
+      "holdToScan": "Hold to Scan"
     },
     "result": {
       "verified": "Verified",
@@ -1817,6 +1828,21 @@
     },
     "header": {
       "title": "Ticket scanner"
+    },
+    "doorSale": {
+      "numberOfTickets": "Number of Tickets",
+      "totalAmount": "Total Amount (editable)",
+      "emailOptional": "Email (optional)",
+      "searchPlaceholder": "Search user or enter email",
+      "sendViaEmail": "Send tickets via email",
+      "proceed": "Proceed - {price}",
+      "confirmCash": "Confirm Cash Received",
+      "forTickets": "for {count, plural, one {# ticket} other {# tickets}}",
+      "back": "Back",
+      "processing": "Processing...",
+      "cashReceived": "Cash Received",
+      "success": "{count, plural, one {# door sale ticket created} other {# door sale tickets created}} for {price}",
+      "emailSentSuffix": " - email sent"
     }
   },
   "stagingLogin": {
