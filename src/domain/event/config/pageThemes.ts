@@ -76,7 +76,7 @@ const CRT_GLITCH: PageThemeConfig = {
     // Core theme colour.
     "--theme-accent": "#d9e020",
     "--theme-glow": "rgba(217, 224, 32, 0.45)",
-    "--theme-scanline-opacity": "0.16",
+    "--theme-scanline-opacity": "0.3",
     // ── Optional per-component colour overrides ──────────────────────────
     // Each is consumed by a scoped `[data-theme="crt"]` rule in crt.css via
     // `var(--name, <original default>)`, so removing any line here falls back
@@ -127,9 +127,7 @@ const CMS_THEME_LABELS: Record<string, EventPageTheme> = {
   "CRT Glitch": EventPageTheme.CrtGlitch,
 };
 
-export function mapPageTheme(
-  label: string | null | undefined
-): EventPageTheme {
+export function mapPageTheme(label: string | null | undefined): EventPageTheme {
   return (label && CMS_THEME_LABELS[label]) || EventPageTheme.General;
 }
 

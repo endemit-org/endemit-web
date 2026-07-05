@@ -101,8 +101,8 @@ const fragmentShader = /* glsl */ `
     beams += laser(uv, t, 0.0);
     beams += laser(uv, t, 1.0);
     beams += laser(uv, t, 2.0);
-    // Warm, bright yellow beams with additive glow.
-    vec3 laserColor = vec3(1.0, 0.88, 0.12);
+    // Bright yellow (#dadb00) beams + room glow with additive bloom.
+    vec3 laserColor = vec3(0.855, 0.859, 0.0);
     col += laserColor * beams * 0.55;
 
     // ── TV noise (stronger animated static) ──
@@ -113,7 +113,7 @@ const fragmentShader = /* glsl */ `
     float gFlick = 0.9 + 0.1 * hash(vec2(floor(t * 1.2), 7.0));
     col *= gFlick;
 
-    // Rounded CRT tube mask: darken the curved edges into a bezel.
+    // Rounded CRT tube mask: keep the area beyond the curved screen black.
     vec2 edge = smoothstep(vec2(0.0), vec2(0.02), uv) *
                 smoothstep(vec2(1.0), vec2(0.98), uv);
     float tube = edge.x * edge.y;
@@ -122,6 +122,14 @@ const fragmentShader = /* glsl */ `
     // Vignette for CRT depth.
     vec2 vc = uv * 2.0 - 1.0;
     col *= 1.0 - 0.22 * dot(vc, vc);
+
+    // Pulsing yellow BLOOM in the "room" AROUND the screen (the bezel area
+    // beyond the curved edge), fading out from the screen edge — slow pulse.
+    float edgeDist = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
+    float outDist = max(0.0, -edgeDist);           // >0 only outside the screen
+    float roomBloom = smoothstep(0.42, 0.0, outDist) * (1.0 - tube);
+    float pulse = 0.5 + 0.5 * sin(uTime * 0.6);    // slow (~10s period)
+    col += laserColor * roomBloom * pulse * 0.9;
 
     gl_FragColor = vec4(col, 1.0);
   }
