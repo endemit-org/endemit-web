@@ -2,6 +2,7 @@ import {
   Product,
   ProductCompositionType,
   ProductStatus,
+  ProductVisibility,
 } from "@/domain/product/types/product";
 
 import { asLink, asText, isFilled } from "@prismicio/client";
@@ -52,6 +53,14 @@ export const transformProductObject = async (
       // Empty row or broken relationship — skip instead of emitting a null
       // entry that crashes the related-products grid at prerender.
       if (!relatedProduct || !relatedProduct.data) continue;
+
+      // Respect product visibility — never surface a Hidden product as a
+      // "related product". Honours the FEAT_IGNORE_VISIBILITY preview flag.
+      if (
+        process.env.FEAT_IGNORE_VISIBILITY !== "true" &&
+        relatedProduct.data.product_visibility !== ProductVisibility.VISIBLE
+      )
+        continue;
 
       const images = [];
       for (const img of relatedProduct.data.images) {
