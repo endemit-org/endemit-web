@@ -926,7 +926,7 @@
     "subscribeNewEpisode": "Prijav se in ti sporočimo, k pride nova emit epizoda",
     "comingSoon": "Kmalo pride",
     "showLess": "Manj",
-    "viewAll": "Poglej vse epizode ({count})",
+    "viewAll": "Poglej vseh  {count} epizod",
     "episodeLabel": "Epizoda {number}",
     "byPrefix": "od",
     "playing": "Špila",
