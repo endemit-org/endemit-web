@@ -1,6 +1,11 @@
 User-agent: *
 Disallow: /admin/
+Disallow: /pos/
 Disallow: /scan/
 Disallow: /api/
+Disallow: /profile
+Disallow: /en/profile
+Disallow: /store/checkout
+Disallow: /en/store/checkout
 
 Sitemap: https://endemit.org/sitemap.xml

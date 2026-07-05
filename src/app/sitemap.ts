@@ -118,18 +118,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...categoryPages,
   ];
 
-  // Add sl/en hreflang alternates to every entry. The base url is the
-  // unprefixed (Slovenian) URL; the English variant lives under /en.
-  return entries.map(entry => {
+  // Per Google's localized-sitemap format, EVERY language version gets its own
+  // <url> entry, each carrying the full sl/en alternate set (the base url is
+  // the unprefixed Slovenian URL; the English variant lives under /en).
+  return entries.flatMap(entry => {
     const path = entry.url.slice(baseUrl.length);
-    return {
-      ...entry,
-      alternates: {
-        languages: {
-          sl: entry.url,
-          en: `${baseUrl}/en${path}`,
-        },
+    const alternates = {
+      languages: {
+        sl: entry.url,
+        en: `${baseUrl}/en${path}`,
       },
     };
+    return [
+      { ...entry, alternates },
+      { ...entry, url: `${baseUrl}/en${path}`, alternates },
+    ];
   });
 }

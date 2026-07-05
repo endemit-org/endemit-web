@@ -67,9 +67,13 @@ export async function generateMetadata({
       ? product.images.map(image => image.src)
       : undefined,
   });
-  const url = `https://endemit.org/store/${categoryUid}/${productUid}`;
-
-  return buildOpenGraphObject({ title, description, images, url });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    locale: loc,
+    path: `/store/${categoryUid}/${productUid}`,
+  });
 }
 
 export default async function ProductPage({

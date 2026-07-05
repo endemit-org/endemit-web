@@ -77,7 +77,8 @@ export const buildOpenGraphObject = ({
   path?: string;
 }) => {
   const buildLanguageAlternates = () => {
-    if (!path) return undefined;
+    // path may be "" for the home page — only bail when it's absent entirely.
+    if (path === undefined) return undefined;
     const slUrl = `${PUBLIC_BASE_WEB_URL}${path}`;
     const enUrl = `${PUBLIC_BASE_WEB_URL}/en${path}`;
     return {
