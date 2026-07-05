@@ -248,14 +248,14 @@
         "title": "Tvoji kontaktni podatki",
         "signedIn": "Prijava uspešna. Za to naročilo uporabimo tvoj email.",
         "description": "Preveri, da je email pravi, ker ti tja pošljemo potrditev naročila.",
-        "descriptionWithTickets": "Preveri email, da je pravi id da ti pošljemo digitalne karte."
+        "descriptionWithTickets": "Preveri email, da je pravi - ker ti tja pošljemo karte."
       },
       "email": "Email",
       "emailRepeat": "Ponov email",
       "emailPlaceholder": "jani@endemit.org",
       "ticketHolder": {
         "title": "Podatki imetnika karte",
-        "description": "Za vsak slučaj, če se karta zgubi al se ne da skenirat, vpiš ime vsakga imetnika karte:"
+        "description": "Če se karta zgubi al se ne da skenirat, vpiš ime vsakga imetnika karte:"
       },
       "decreaseQuantity": "Manj",
       "increaseQuantity": "Več",
@@ -349,7 +349,7 @@
     },
     "ticketForm": {
       "namePrefix": "Ime",
-      "label": "Ime imetnika karte {number} @ {itemName}"
+      "label": "Imetnik karte {number} @ {itemName}"
     },
     "payment": {
       "checkDetails": "Prevr podatke za plačilo.",
@@ -419,8 +419,8 @@
       "avatarAlt": "Profilna slika"
     },
     "wallet": {
-      "transferFunds": "Prenesi denar",
-      "receiveFunds": "Prejmi denar",
+      "transferFunds": "Pošlji žetone",
+      "receiveFunds": "Prejmi žetone",
       "receiveFundsDesc": "Pokaž ta QR drugmu — lahko ga skenira iz svoje denarnce da ti pošle žetone.",
       "receiveQrAlt": "QR za prejem",
       "orShareCode": "Al deli kodo",
@@ -430,7 +430,7 @@
       "send": {
         "resolving": "Iščem prejemnika…",
         "sending": "Pošiljam…",
-        "titleScan": "Pošlji sredstva",
+        "titleScan": "Pošlji žetone",
         "titleConfirm": "Potrdi prenos",
         "titleSuccess": "Poslano",
         "titleError": "Napaka",
@@ -446,7 +446,7 @@
         "noteLabel": "Opomba (ni obvezna)",
         "notePlaceholder": "Za kaj je?",
         "enterAmount": "Vpiši znesek",
-        "insufficient": "Premalo sredstev",
+        "insufficient": "Premalo dobroimetja",
         "sendAmount": "Pošlji {amount}",
         "scanDifferent": "← Skeniraj drugo kodo",
         "sentAmount": "Poslano {amount}",
@@ -631,7 +631,7 @@
       "payButton": "Plačaj {amount}"
     },
     "eventsAttended": {
-      "title": "Obiskani eventi",
+      "title": "Moji eventi",
       "claimMissing": "Prijavi manjkajoč event",
       "empty": "Brez obiskanih eventov.",
       "countLabel": "{count, plural, one {# event} two {# eventa} few {# eventi} other {# eventov}}",
@@ -645,8 +645,8 @@
       "submitClaim": "Oddaj prijavo"
     },
     "upcomingPromo": {
-      "title": "Prihajajoči eventi",
-      "subtitle": "Ne zamudi — zgrab karte!",
+      "title": "Bodoči eventi",
+      "subtitle": "Da ne bo prej kart zmanjkal!",
       "ticketsAvailable": "Karte na voljo"
     },
     "meta": {
@@ -809,7 +809,7 @@
     "refund": {
       "subject": "Refund za tvoje naročilo je obdelan",
       "heading": "Refund obdelan",
-      "intro": "Refund je urejen. Denar se vrne na isti način plačila v 5–10 delovnih dneh.",
+      "intro": "Refund je urejen. Sredstva se ti vrnejo na isti način plačila v 5–10 delovnih dneh.",
       "refundAmount": "Znesek refunda",
       "refundedTo": "Vrnjeno na: {method}",
       "orderDetails": "Podrobnosti naročila",
@@ -1606,8 +1606,8 @@
       "noteLabel": "Opomba (neobvezno)",
       "notePlaceholder": "Razlog za transakcijo",
       "processing": "Se obdeluje…",
-      "addCredit": "+ Dodaj dobroimetje",
-      "removeFunds": "- Odvzemi sredstva",
+      "addCredit": "+ Dodaj žetone",
+      "removeFunds": "- Odvzemi žetone",
       "noTransactions": "Še ni transakcij",
       "system": "Sistem",
       "col": {
@@ -1655,7 +1655,7 @@
         "POS_TIP": "POS napitnina",
         "CARD_TOPUP": "Polnjenje s kartico",
         "CASH_TOPUP": "Polnjenje s kešom",
-        "P2P_TRANSFER": "Prenos"
+        "P2P_TRANSFER": "Prenos frendu"
       }
     },
     "nav": {

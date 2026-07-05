@@ -12,9 +12,11 @@ import { useTranslations } from "next-intl";
 
 interface Props {
   variant?: "compact" | "detailed";
+  /** Called when the user navigates to checkout (e.g. to close the mobile menu). */
+  onNavigate?: () => void;
 }
 
-export default function Cart({ variant = "detailed" }: Props) {
+export default function Cart({ variant = "detailed", onNavigate }: Props) {
   const t = useTranslations("cart");
   const itemCount = useCartItemCount();
   const totalPrice = useCartTotal();
@@ -42,6 +44,7 @@ export default function Cart({ variant = "detailed" }: Props) {
   }, [totalPrice, prevTotal]);
 
   const handleGoToCart = () => {
+    onNavigate?.();
     router.push("/store/checkout");
   };
 
@@ -59,6 +62,7 @@ export default function Cart({ variant = "detailed" }: Props) {
       <Link
         className="flex items-center space-x-3 h-14 text-md group"
         href="/store/checkout"
+        onClick={onNavigate}
       >
         <div
           className={clsx(
