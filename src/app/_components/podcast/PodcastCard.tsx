@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { formatDate } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { CmsImage } from "@/domain/cms/types/common";
@@ -18,6 +19,7 @@ export default function PodcastCard({
   name,
   image,
 }: PodcastCardProps) {
+  const locale = useLocale() as "sl" | "en";
   return (
     <div
       className={
@@ -47,7 +49,7 @@ export default function PodcastCard({
               <span className={"text-red-500"}>{episodeNumber}</span>
               {" • "}
               {date && (
-                <span className={"text-neutral-200"}>{formatDate(date)}</span>
+                <span className={"text-neutral-200"}>{formatDate(date, locale)}</span>
               )}
             </p>
           </div>

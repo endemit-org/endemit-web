@@ -40,12 +40,15 @@ export default function EventSeoMicrodata({ event, products = [] }: Props) {
         }),
       },
     }),
-    performer: event.artists.map(artist => ({
-      "@type": "Person",
-      name: artist.name,
-      jobTitle: "DJ",
-    })),
+    performer: event.artists
+      .filter(artist => artist?.name)
+      .map(artist => ({
+        "@type": "Person",
+        name: artist.name,
+        jobTitle: "DJ",
+      })),
     ...(lowestPriceProduct &&
+      lowestPriceProduct.price != null &&
       event.tickets.available && {
         offers: {
           "@type": "Offer",

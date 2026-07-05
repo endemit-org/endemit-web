@@ -1,0 +1,160 @@
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { getCurrentUser } from "@/lib/services/auth";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import { formatTokensFromCents } from "@/lib/util/currency";
+import { formatDate } from "@/lib/util/formatting";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import InnerPage from "@/app/_components/ui/InnerPage";
+import WalletIcon from "@/app/_components/icon/WalletIcon";
+import ProfileTable, {
+  ProfileTableRow,
+} from "@/app/_components/profile/ProfileTable";
+import TransferFundsTrigger from "@/app/_components/wallet/TransferFundsTrigger";
+import clsx from "clsx";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.transactions.title"),
+    description: t("meta.transactions.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+const typeLabelKeys: Record<string, string> = {
+  CREDIT: "transactions.type.credit",
+  DEBIT: "transactions.type.debit",
+  PURCHASE: "transactions.type.purchase",
+  REFUND: "transactions.type.refund",
+  ADJUSTMENT: "transactions.type.adjustment",
+  P2P_TRANSFER: "transactions.type.transfer",
+};
+
+export default async function ProfileTransactionsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("profile");
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/signin");
+  }
+
+  const wallet = await getWalletByUserId(user.id);
+  const transactions = wallet?.transactions ?? [];
+
+  return (
+    <OuterPage>
+      <PageHeadline
+        title={t("breadcrumb.transactions")}
+        segments={[
+          { label: "Endemit", path: "" },
+          { label: t("breadcrumb.myProfile"), path: "profile" },
+          { label: t("breadcrumb.transactions"), path: "transactions" },
+        ]}
+      />
+
+      <InnerPage>
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <Link
+            href="/profile"
+            className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            {t("nav.backToProfile")}
+          </Link>
+          <TransferFundsTrigger
+            userId={user.id}
+            initialBalance={wallet?.balance ?? 0}
+          />
+        </div>
+
+        <ProfileTable
+          title={t("transactions.historyTitle")}
+          count={transactions.length}
+          countLabel={t("transactions.countLabel", {
+            count: transactions.length,
+          })}
+          isEmpty={transactions.length === 0}
+          emptyIcon={<WalletIcon className="w-6 h-6 text-neutral-500" />}
+          emptyMessage={t("transactions.empty")}
+        >
+          {transactions.map((tx, index) => {
+            const formattedDate = formatDate(
+              new Date(tx.createdAt),
+              locale as "sl" | "en"
+            );
+
+            return (
+              <ProfileTableRow
+                key={tx.id}
+                href={`/profile/transactions/${tx.id}`}
+                index={index}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={clsx(
+                      "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
+                      tx.amount > 0
+                        ? "bg-green-500/20 text-green-400"
+                        : "bg-red-500/20 text-red-400"
+                    )}
+                  >
+                    {tx.amount > 0 ? "+" : "-"}
+                  </div>
+                  <div>
+                    <div className="text-neutral-200 text-sm">
+                      {typeLabelKeys[tx.type]
+                        ? t(typeLabelKeys[tx.type] as Parameters<typeof t>[0])
+                        : tx.type}
+                    </div>
+                    <div className="text-xs text-neutral-500">
+                      {formattedDate}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={clsx(
+                    "font-semibold",
+                    tx.amount > 0 ? "text-green-400" : "text-red-400"
+                  )}
+                >
+                  {tx.amount > 0 ? "+" : ""}
+                  {formatTokensFromCents(tx.amount)}
+                </div>
+              </ProfileTableRow>
+            );
+          })}
+        </ProfileTable>
+      </InnerPage>
+    </OuterPage>
+  );
+}

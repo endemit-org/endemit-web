@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useTranslations, useFormatter } from "next-intl";
 import QRCode from "qrcode";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
@@ -17,6 +18,8 @@ interface Props {
 }
 
 export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
+  const t = useTranslations("profile");
+  const format = useFormatter();
   const router = useRouter();
   const [isLinking, setIsLinking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +43,7 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
   }, [currentCode]);
 
   const handleUnlink = useCallback(async () => {
-    if (!confirm("Unlink this backup sticker?")) return;
+    if (!confirm(t("wristband.unlinkConfirm"))) return;
     setIsLinking(true);
     try {
       const response = await fetch("/api/v1/wallet/sticker", {
@@ -48,23 +51,22 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
       });
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to unlink sticker");
+        throw new Error(data.error || t("wristband.unlinkFailed"));
       }
       router.refresh();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to unlink sticker");
+      alert(err instanceof Error ? err.message : t("wristband.unlinkFailed"));
     } finally {
       setIsLinking(false);
     }
-  }, [router]);
+  }, [router, t]);
 
   return (
     <div className="bg-neutral-900 rounded-lg p-6 mt-6">
-      <h3 className="text-lg font-semibold text-neutral-200 mb-1">Wristband</h3>
-      <p className="text-sm text-neutral-400 mb-4">
-        Link a wristband to your account so you can still pay at POS registers
-        if your phone dies or you decide to roam around without it.
-      </p>
+      <h3 className="text-lg font-semibold text-neutral-200 mb-1">
+        {t("wristband.title")}
+      </h3>
+      <p className="text-sm text-neutral-400 mb-4">{t("wristband.desc")}</p>
 
       {currentCode ? (
         <div className="flex items-center gap-4">
@@ -73,7 +75,7 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={qrDataUrl}
-                alt={`Wristband ${currentCode} QR`}
+                alt={t("wristband.qrAlt", { code: currentCode })}
                 className="w-full h-full rounded-lg"
               />
             ) : (
@@ -86,7 +88,13 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
             </p>
             {claimedAt && (
               <p className="text-xs text-neutral-500 mt-1 mb-3">
-                Linked on {new Date(claimedAt).toLocaleDateString()}
+                {t("wristband.linkedOn", {
+                  date: format.dateTime(new Date(claimedAt), {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }),
+                })}
               </p>
             )}
             <button
@@ -94,7 +102,7 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
               disabled={isLinking}
               className="px-4 py-2 text-sm text-red-400 hover:text-red-300 border border-red-900/50 hover:border-red-700 rounded-lg transition-colors disabled:opacity-50"
             >
-              {isLinking ? "Unlinking..." : "Unlink"}
+              {isLinking ? t("wristband.unlinking") : t("wristband.unlink")}
             </button>
           </div>
         </div>
@@ -103,7 +111,7 @@ export default function BackupStickerCard({ currentCode, claimedAt }: Props) {
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
         >
-          Scan wristband
+          {t("wristband.scan")}
         </button>
       )}
 

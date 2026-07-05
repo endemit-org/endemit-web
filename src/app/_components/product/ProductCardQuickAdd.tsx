@@ -7,6 +7,7 @@ import { useCartActions } from "@/app/_stores/CartStore";
 import { Product } from "@/domain/product/types/product";
 import ActionButton from "@/app/_components/form/ActionButton";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
+import { useTranslations } from "next-intl";
 
 interface Props {
   product: Product;
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export default function ProductCardQuickAdd({ product, cardRef }: Props) {
+  const t = useTranslations("common");
+  const ts = useTranslations("store");
   const { addItem } = useCartActions();
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -40,7 +43,7 @@ export default function ProductCardQuickAdd({ product, cardRef }: Props) {
       <button
         className="absolute right-2 top-2 p-2 cursor-pointer hover:scale-110 transition-transform text-xl"
         onClick={handleClose}
-        aria-label="Close"
+        aria-label={t("close")}
       >
         ⤫
       </button>
@@ -56,13 +59,16 @@ export default function ProductCardQuickAdd({ product, cardRef }: Props) {
           </div>
         )}
         <div>
-          <strong>{product.name}</strong> was added to your cart!
+          {ts.rich("product.addedToCart", {
+            name: product.name,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </div>
       </div>
 
       <div className="flex-shrink-0">
         <ActionButton href="/store/checkout" size="sm">
-          Checkout
+          {ts("product.checkout")}
         </ActionButton>
       </div>
     </div>
@@ -74,7 +80,7 @@ export default function ProductCardQuickAdd({ product, cardRef }: Props) {
         onClick={handleAddToCart}
         className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
       >
-        Add to cart
+        {ts("product.addToCart")}
       </button>
 
       {cardRef?.current

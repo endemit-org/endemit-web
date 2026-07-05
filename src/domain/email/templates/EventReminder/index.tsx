@@ -4,6 +4,7 @@ import { Img, Text, Link, Hr } from "@react-email/components";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface TicketInfo {
   shortId: string;
@@ -26,6 +27,7 @@ interface EventReminderProps {
   };
   artists: { name: string }[];
   tickets: TicketInfo[];
+  locale?: string;
 }
 
 function EventReminderTemplate({
@@ -35,18 +37,18 @@ function EventReminderTemplate({
   venue,
   artists,
   tickets,
+  locale = "sl",
 }: EventReminderProps) {
   const ticketCount = tickets.length;
-  const isMultipleTickets = ticketCount > 1;
+  const t = getEmailTranslator(locale, "emails.eventReminder");
+  const loc: "sl" | "en" = locale === "en" ? "en" : "sl";
 
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">{eventName} is Tomorrow!</h1>
+        <h1 className="text-2xl font-bold mb-2">{t("heading", { eventName })}</h1>
         <Text className="text-gray-600 mb-6">
-          {isMultipleTickets
-            ? `Your ${ticketCount} tickets for ${eventName} are attached and ready for tomorrow. Just show them at the door to get validated. You can also use the digital ticket links or add it them your Apple Wallet. See you on the floor!`
-            : `Your ticket for ${eventName} is attached and ready for tomorrow. Just show it at the door to get validated. You can also use the digital ticket link or add it to your Apple Wallet. See you on the floor!`}
+          {t("intro", { count: ticketCount, eventName })}
         </Text>
 
         <div
@@ -104,19 +106,19 @@ function EventReminderTemplate({
                           }}
                         >
                           <Text className="text-neutral-600 text-sm my-0">
-                            Date:
+                            {t("date")}
                           </Text>
                         </td>
                         <td style={{ padding: "4px 0" }}>
                           <Text className="font-semibold text-sm my-0">
-                            {formatEventDateAndTime(eventDate)}
+                            {formatEventDateAndTime(eventDate, loc)}
                           </Text>
                         </td>
                       </tr>
                       <tr>
                         <td style={{ padding: "4px 0", verticalAlign: "top" }}>
                           <Text className="text-neutral-600 text-sm my-0">
-                            Location:
+                            {t("location")}
                           </Text>
                         </td>
                         <td style={{ padding: "4px 0" }}>
@@ -136,7 +138,7 @@ function EventReminderTemplate({
         {/* Artist Lineup */}
         {artists.length > 0 && (
           <div style={{ marginBottom: "24px" }}>
-            <Text className="font-semibold text-base mb-2">Lineup</Text>
+            <Text className="font-semibold text-base mb-2">{t("lineup")}</Text>
             <Text className="text-neutral-600 text-sm my-0 uppercase">
               {artists.map(a => a.name).join(" • ")}
             </Text>
@@ -148,7 +150,7 @@ function EventReminderTemplate({
         {/* Tickets Section */}
         <div style={{ marginBottom: "24px" }}>
           <Text className="font-semibold text-base mb-4">
-            {isMultipleTickets ? `Your ${ticketCount} Tickets` : "Your Ticket"}
+            {t("yourTickets", { count: ticketCount })}
           </Text>
 
           {tickets.map((ticket, index) => (
@@ -182,7 +184,7 @@ function EventReminderTemplate({
                           marginRight: "12px",
                         }}
                       >
-                        View
+                        {t("view")}
                       </Link>
                       <Link
                         href={`${PUBLIC_BASE_WEB_URL}/api/v1/tickets/wallet-pass/${ticket.ticketHash}`}
@@ -192,7 +194,7 @@ function EventReminderTemplate({
                           textDecoration: "none",
                         }}
                       >
-                        Apple Wallet
+                        {t("appleWallet")}
                       </Link>
                     </td>
                   </tr>
@@ -222,7 +224,7 @@ function EventReminderTemplate({
               fontSize: "14px",
             }}
           >
-            View All Tickets
+            {t("viewAll")}
           </Link>
         </div>
 
@@ -236,28 +238,33 @@ function EventReminderTemplate({
           }}
         >
           <Text className="text-sm font-semibold mb-1 text-neutral-200 mt-0">
-            Reminder
+            {t("reminder")}
           </Text>
           <Text className="text-sm text-neutral-400 my-1">
-            • Show your QR code at the entrance
-            <br />
-            • Each ticket is valid for one person
+            • {t("reminderShowQr")}
+            <br />• {t("reminderOnePerson")}
             <br />•{" "}
-            <Link
-              href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
-              className="link"
-            >
-              Code of conduct
-            </Link>{" "}
-            applies at all our events
+            {t.rich("reminderCodeOfConduct", {
+              link: chunks => (
+                <Link
+                  href={`${PUBLIC_BASE_WEB_URL}/code-of-conduct`}
+                  className="link"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </Text>
         </div>
 
         <Text className="text-gray-600 my-6">
-          Questions? Contact us at{" "}
-          <Link href="mailto:endemit@endemit.org" className="link">
-            endemit@endemit.org
-          </Link>
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href="mailto:endemit@endemit.org" className="link">
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

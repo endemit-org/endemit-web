@@ -3,17 +3,23 @@ import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { fetchArtistsFromCms } from "@/domain/cms/operations/fetchArtistsFromCms";
 import ArtistListComponent from "@/app/_components/artist/ArtistList";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `ArtistList`.
  */
-export type ArtistListProps = SliceComponentProps<Content.ArtistListSlice>;
+export type ArtistListProps = SliceComponentProps<
+  Content.ArtistListSlice,
+  SliceContext
+>;
 
 /**
  * Component for "ArtistList" Slices.
  */
-const ArtistList: FC<ArtistListProps> = async ({ slice }) => {
-  const artists = await fetchArtistsFromCms({});
+const ArtistList: FC<ArtistListProps> = async ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
+  const artists = await fetchArtistsFromCms({ locale });
 
   if (!artists || !artists.length) {
     return null;
@@ -37,8 +43,8 @@ const ArtistList: FC<ArtistListProps> = async ({ slice }) => {
       <ArtistListComponent
         artists={sortedArtists}
         sortByName={true}
-        title={slice.primary.title}
-        description={slice.primary.description}
+        title={pickLocalized(slice.primary, "title", locale)}
+        description={pickLocalized(slice.primary, "description", locale)}
         includeFrame={slice.primary.render_frame}
       />
     </section>

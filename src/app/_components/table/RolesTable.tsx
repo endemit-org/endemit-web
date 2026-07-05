@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import type { SerializedRole } from "@/domain/role/types";
 
 interface RolesTableProps {
@@ -9,6 +10,7 @@ interface RolesTableProps {
 }
 
 export default function RolesTable({ roles, onRowClick }: RolesTableProps) {
+  const t = useTranslations("admin.roles");
   return (
     <table className="min-w-full divide-y divide-gray-200">
       <thead className="bg-gray-50">
@@ -17,37 +19,37 @@ export default function RolesTable({ roles, onRowClick }: RolesTableProps) {
             scope="col"
             className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
           >
-            Name
+            {t("table.name")}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
           >
-            Slug
+            {t("table.slug")}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
           >
-            Description
+            {t("table.description")}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
           >
-            Permissions
+            {t("table.permissions")}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
           >
-            Users
+            {t("table.users")}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
           >
-            Type
+            {t("table.type")}
           </th>
         </tr>
       </thead>
@@ -79,11 +81,11 @@ export default function RolesTable({ roles, onRowClick }: RolesTableProps) {
             <td className="whitespace-nowrap px-6 py-4 text-sm text-center">
               {role.isSystem ? (
                 <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                  System
+                  {t("table.system")}
                 </span>
               ) : (
                 <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                  Custom
+                  {t("table.custom")}
                 </span>
               )}
             </td>

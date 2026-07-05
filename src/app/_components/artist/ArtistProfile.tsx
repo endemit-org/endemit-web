@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { isFilled, RichTextField } from "@prismicio/client";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
@@ -7,6 +7,7 @@ import ArtistPreviewSetButton from "@/app/_components/artist/ArtistPreviewSetBut
 import { CmsImage } from "@/domain/cms/types/common";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 interface ArtistLink {
   url: string;
@@ -34,7 +35,7 @@ interface PodcastArtistSectionProps {
   soundcloudUrl?: string | null;
 }
 
-export default function ArtistProfile({
+export default async function ArtistProfile({
   artist,
   coverSrc,
   showLinkToPage = false,
@@ -44,6 +45,7 @@ export default function ArtistProfile({
   videoOverride,
   soundcloudUrl,
 }: PodcastArtistSectionProps) {
+  const t = await getTranslations("artists");
   const image = imageOverride ?? artist.image;
   const cover = imageOverride?.src ?? coverSrc;
   const name = nameOverride || artist.name;
@@ -104,7 +106,7 @@ export default function ArtistProfile({
                 className={" w-full  flex gap-x-1 relative z-10 items-center"}
               >
                 <div className={"uppercase font-heading pt-2 text-neutral-500"}>
-                  Part of
+                  {t("profile.partOf")}
                 </div>{" "}
                 <div className={"w-20 text-neutral-300"}>
                   <AnimatedEndemitLogo />
@@ -115,7 +117,7 @@ export default function ArtistProfile({
                     href={`mailto:endemit@endemit.org?subject=Booking endemit artist: ${name}`}
                     className={"link text-[#d31c18] hover:text-[#87100e]"}
                   >
-                    Inquire about booking
+                    {t("profile.inquireBooking")}
                   </Link>
                 </div>
               </div>
@@ -141,14 +143,14 @@ export default function ArtistProfile({
                 href={`/artists/${artist.uid}`}
                 className={"link text-[#d31c18] hover:text-[#87100e]"}
               >
-                View {name}&#39;s full profile
+                {t("profile.viewFullProfile", { name })}
               </Link>
             </div>
           )}
           {artist.links && artist.links.length > 0 && (
             <div className="gap-y-2 gap-x-6 flex mt-6 max-xl:flex-col">
               <div className="text-neutral-300 text-sm">
-                Find {name} on:
+                {t("profile.findOn", { name })}
               </div>
               {artist.links.map((link, index) => (
                 <div key={`artist-link-${index}`}>

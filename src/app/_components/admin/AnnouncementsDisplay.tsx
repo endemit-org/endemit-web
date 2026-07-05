@@ -9,6 +9,7 @@ import { updateAnnouncementAction } from "@/domain/announcement/actions/updateAn
 import { deleteAnnouncementAction } from "@/domain/announcement/actions/deleteAnnouncementAction";
 import { AnnouncementType } from "@prisma/client";
 import ClientDate from "@/app/_components/ui/ClientDate";
+import { useTranslations } from "next-intl";
 
 interface AnnouncementsDisplayProps {
   initialData: AnnouncementWithStatus[];
@@ -43,11 +44,12 @@ function formatDateForInput(date: Date | null): string {
 }
 
 function StatusBadge({ status }: { status: AnnouncementWithStatus["status"] }) {
+  const t = useTranslations("admin.announcements");
   const config = {
-    active: { bg: "bg-green-100", text: "text-green-800", label: "Active" },
-    scheduled: { bg: "bg-blue-100", text: "text-blue-800", label: "Scheduled" },
-    expired: { bg: "bg-gray-100", text: "text-gray-600", label: "Expired" },
-    inactive: { bg: "bg-red-100", text: "text-red-800", label: "Inactive" },
+    active: { bg: "bg-green-100", text: "text-green-800", label: t("active") },
+    scheduled: { bg: "bg-blue-100", text: "text-blue-800", label: t("scheduled") },
+    expired: { bg: "bg-gray-100", text: "text-gray-600", label: t("expired") },
+    inactive: { bg: "bg-red-100", text: "text-red-800", label: t("inactive") },
   }[status];
 
   return (
@@ -64,9 +66,10 @@ function StatusBadge({ status }: { status: AnnouncementWithStatus["status"] }) {
 }
 
 function TypeBadge({ type }: { type: AnnouncementType }) {
+  const t = useTranslations("admin.announcements");
   const config = {
-    INFO: { bg: "bg-blue-50", text: "text-blue-700", label: "Info" },
-    WARNING: { bg: "bg-amber-50", text: "text-amber-700", label: "Warning" },
+    INFO: { bg: "bg-blue-50", text: "text-blue-700", label: t("typeInfo") },
+    WARNING: { bg: "bg-amber-50", text: "text-amber-700", label: t("typeWarning") },
   }[type];
 
   return (
@@ -87,6 +90,8 @@ export default function AnnouncementsDisplay({
   canWrite,
 }: AnnouncementsDisplayProps) {
   const router = useRouter();
+  const t = useTranslations("admin.announcements");
+  const tc = useTranslations("admin.common");
   const [announcements, setAnnouncements] = useState(initialData);
   const [formMode, setFormMode] = useState<FormMode>("closed");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -181,7 +186,7 @@ export default function AnnouncementsDisplay({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Total:{" "}
+            {t("totalLabel")}{" "}
             <strong className="text-gray-900">{announcements.length}</strong>
           </div>
         </div>
@@ -191,14 +196,14 @@ export default function AnnouncementsDisplay({
               onClick={handleCreate}
               className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
             >
-              Create Announcement
+              {t("createButton")}
             </button>
           )}
           <button
             onClick={handleRefresh}
             className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors"
           >
-            Refresh
+            {tc("refresh")}
           </button>
         </div>
       </div>
@@ -206,12 +211,12 @@ export default function AnnouncementsDisplay({
       {formMode !== "closed" && (
         <div className="bg-white shadow rounded-lg p-4 mb-4">
           <h3 className="text-sm font-medium text-gray-900 mb-4">
-            {formMode === "create" ? "New Announcement" : "Edit Announcement"}
+            {formMode === "create" ? t("newTitle") : t("editTitle")}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Title (optional)
+                {t("titleLabel")}
               </label>
               <input
                 type="text"
@@ -220,13 +225,13 @@ export default function AnnouncementsDisplay({
                   setFormData({ ...formData, title: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Optional title"
+                placeholder={t("titlePlaceholder")}
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Message *
+                {t("messageLabel")} *
               </label>
               <textarea
                 value={formData.message}
@@ -235,7 +240,7 @@ export default function AnnouncementsDisplay({
                 }
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Announcement message"
+                placeholder={t("messagePlaceholder")}
                 required
               />
             </div>
@@ -243,7 +248,7 @@ export default function AnnouncementsDisplay({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Type
+                  {t("typeLabel")}
                 </label>
                 <select
                   value={formData.type}
@@ -255,8 +260,8 @@ export default function AnnouncementsDisplay({
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="INFO">Info</option>
-                  <option value="WARNING">Warning</option>
+                  <option value="INFO">{t("typeInfo")}</option>
+                  <option value="WARNING">{t("typeWarning")}</option>
                 </select>
               </div>
 
@@ -270,7 +275,7 @@ export default function AnnouncementsDisplay({
                     }
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700">Active</span>
+                  <span className="text-sm text-gray-700">{t("active")}</span>
                 </label>
               </div>
             </div>
@@ -278,7 +283,7 @@ export default function AnnouncementsDisplay({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Starts At (optional)
+                  {t("startsAt")}
                 </label>
                 <input
                   type="datetime-local"
@@ -292,7 +297,7 @@ export default function AnnouncementsDisplay({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ends At (optional)
+                  {t("endsAt")}
                 </label>
                 <input
                   type="datetime-local"
@@ -311,7 +316,7 @@ export default function AnnouncementsDisplay({
                 onClick={handleCancel}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
               >
-                Cancel
+                {tc("cancel")}
               </button>
               <button
                 type="submit"
@@ -319,10 +324,10 @@ export default function AnnouncementsDisplay({
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50"
               >
                 {isSubmitting
-                  ? "Saving..."
+                  ? t("saving")
                   : formMode === "create"
-                    ? "Create"
-                    : "Update"}
+                    ? tc("create")
+                    : t("update")}
               </button>
             </div>
           </form>
@@ -336,20 +341,20 @@ export default function AnnouncementsDisplay({
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Message
+                    {t("colMessage")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Type
+                    {t("colType")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    {t("colStatus")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Schedule
+                    {t("colSchedule")}
                   </th>
                   {canWrite && (
                     <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      {t("colActions")}
                     </th>
                   )}
                 </tr>
@@ -380,19 +385,19 @@ export default function AnnouncementsDisplay({
                         <div className="space-y-1">
                           {announcement.startsAt && (
                             <div>
-                              From:{" "}
+                              {t("from")}{" "}
                               <ClientDate date={announcement.startsAt} />
                             </div>
                           )}
                           {announcement.endsAt && (
                             <div>
-                              Until:{" "}
+                              {t("until")}{" "}
                               <ClientDate date={announcement.endsAt} />
                             </div>
                           )}
                         </div>
                       ) : (
-                        <span className="text-gray-400">Always</span>
+                        <span className="text-gray-400">{t("always")}</span>
                       )}
                     </td>
                     {canWrite && (
@@ -400,20 +405,20 @@ export default function AnnouncementsDisplay({
                         {deleteConfirmId === announcement.id ? (
                           <div className="flex items-center justify-end gap-2">
                             <span className="text-xs text-gray-500">
-                              Delete?
+                              {t("deleteConfirm")}
                             </span>
                             <button
                               onClick={() => handleDelete(announcement.id)}
                               disabled={isSubmitting}
                               className="px-2 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors disabled:opacity-50"
                             >
-                              Yes
+                              {t("yes")}
                             </button>
                             <button
                               onClick={() => setDeleteConfirmId(null)}
                               className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                             >
-                              No
+                              {t("no")}
                             </button>
                           </div>
                         ) : (
@@ -422,7 +427,7 @@ export default function AnnouncementsDisplay({
                               onClick={() => handleEdit(announcement)}
                               className="px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
                             >
-                              Edit
+                              {tc("edit")}
                             </button>
                             <button
                               onClick={() =>
@@ -430,7 +435,7 @@ export default function AnnouncementsDisplay({
                               }
                               className="px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800 transition-colors"
                             >
-                              Delete
+                              {tc("delete")}
                             </button>
                           </div>
                         )}
@@ -443,7 +448,7 @@ export default function AnnouncementsDisplay({
           </div>
         ) : (
           <div className="p-8 text-center text-gray-500">
-            No announcements yet
+            {t("noAnnouncements")}
           </div>
         )}
       </div>

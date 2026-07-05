@@ -4,7 +4,7 @@ import {
   isCutoffWithin48Hours,
 } from "@/domain/product/businessLogic";
 import { ensureTypeIsDate } from "@/lib/util/util";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { formatDecimalPrice } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import CartQtyControl from "@/app/_components/cart/CartQtyControl";
@@ -14,6 +14,7 @@ import { ReactNode } from "react";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { CartItem } from "@/domain/checkout/types/cartItem";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import { useTranslations } from "next-intl";
 
 type Props = {
   item: CartItem;
@@ -32,6 +33,7 @@ export default function CheckoutItem({
   onRemoveItem,
   editable = false,
 }: Props) {
+  const t = useTranslations("checkout.item");
   const isSellableObject = isProductSellable(item, country);
   const productLink = getProductLink(item.uid, item.category);
 
@@ -74,9 +76,9 @@ export default function CheckoutItem({
                   <div
                     onClick={() => onRemoveItem(item.id)}
                     className="link text-neutral-500 cursor-pointer text-xs"
-                    aria-label="Remove item"
+                    aria-label={t("removeAriaLabel")}
                   >
-                    Remove️
+                    {t("remove")}
                   </div>
                 )}
               </div>
@@ -91,21 +93,23 @@ export default function CheckoutItem({
         <>
           {!isSellableObject?.isSellableByRegion && country && (
             <CheckoutItemWarning>
-              Warning, this product can not be shipped to{" "}
-              {shippingService.getCountryDetails(country).name}
+              {t("cannotShip", {
+                country: shippingService.getCountryDetails(country).name,
+              })}
             </CheckoutItemWarning>
           )}
           {item?.limits?.quantityLimit &&
             item.quantity > item.limits.quantityLimit && (
               <CheckoutItemWarning>
-                Warning, the maximum quantity for this product is{" "}
-                {item.limits.quantityLimit}
+                {t("maxQuantity", { quantity: item.limits.quantityLimit })}
               </CheckoutItemWarning>
             )}
 
           {item.limits?.cutoffTimestamp &&
             !isProductSellableByCutoffDate(item) && (
-              <CheckoutItemWarning>No longer available</CheckoutItemWarning>
+              <CheckoutItemWarning>
+                {t("noLongerAvailable")}
+              </CheckoutItemWarning>
             )}
 
           {item.limits?.cutoffTimestamp &&
@@ -113,11 +117,13 @@ export default function CheckoutItem({
               <div className="text-neutral-400  text-sm pt-2">
                 {isCutoffWithin48Hours(item) ? (
                   <>
-                    <span className="text-orange-400">This item is available for sale until</span>{" "}
+                    <span className="text-orange-400">
+                      {t("availableUntil")}
+                    </span>{" "}
                     <ClientDate date={ensureTypeIsDate(item.limits.cutoffTimestamp)} />
                   </>
                 ) : (
-                  <span>Limited availability at this price</span>
+                  <span>{t("limitedAvailability")}</span>
                 )}
               </div>
             )}

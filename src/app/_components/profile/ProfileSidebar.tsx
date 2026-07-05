@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import TicketOutlineIcon from "@/app/_components/icon/TicketOutlineIcon";
 import LogoutIcon from "@/app/_components/icon/LogoutIcon";
@@ -52,6 +53,7 @@ export default function ProfileSidebar({
   backupStickerCode = null,
   receiveCode,
 }: ProfileSidebarProps) {
+  const t = useTranslations("profile");
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
@@ -179,7 +181,9 @@ export default function ProfileSidebar({
               >
                 <path d="M3 16 L4 7 L7 10 L10 5 L13 10 L16 7 L17 16 H3 Z" />
               </svg>
-              <span className="text-xs font-medium text-yellow-300">Donor</span>
+              <span className="text-xs font-medium text-yellow-300">
+                {t("sidebar.donor")}
+              </span>
             </div>
           )}
         </div>
@@ -206,7 +210,7 @@ export default function ProfileSidebar({
                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
               />
             </svg>
-            Edit Profile
+            {t("nav.editProfile")}
           </Link>
           <span className="text-neutral-600">|</span>
           <button
@@ -214,7 +218,7 @@ export default function ProfileSidebar({
             className="text-sm text-neutral-400 hover:text-red-400 flex items-center gap-1 transition-colors"
           >
             <LogoutIcon className="w-4 h-4" />
-            Sign Out
+            {t("sidebar.signOut")}
           </button>
         </div>
       </div>
@@ -241,7 +245,9 @@ export default function ProfileSidebar({
               }}
             ></div>
             <div className="relative z-10 text-center">
-              <div className="text-xs text-blue-300 mb-1">Wallet Balance</div>
+              <div className="text-xs text-blue-300 mb-1">
+                {t("sidebar.walletBalance")}
+              </div>
               <AnimatedBalance
                 value={walletBalance}
                 className={`text-2xl font-bold ${
@@ -285,7 +291,7 @@ export default function ProfileSidebar({
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
-            Top Up Wallet
+            {t("sidebar.topUpWallet")}
           </ActionButton>
 
           {isEndemitPayEnabled() && (
@@ -294,7 +300,7 @@ export default function ProfileSidebar({
               onClick={() => setIsPayScannerOpen(true)}
               className="w-full text-center text-xs text-neutral-500 hover:text-neutral-300 py-1 transition-colors"
             >
-              Scan a POS order instead
+              {t("sidebar.scanPosOrder")}
             </button>
           )}
         </>
@@ -304,15 +310,14 @@ export default function ProfileSidebar({
             className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 font-medium rounded-lg transition-colors"
           >
             <TicketOutlineIcon className="w-5 h-5" />
-            View Tickets
+            {t("sidebar.viewTickets")}
           </Link>
         )}
       </div>
 
       {!isEndemitPayEnabled() && (
         <div className="mt-6 text-center text-sm text-neutral-400">
-          EndePay drives our cashless payments, it will be re-enabled before the
-          festival in August.
+          {t("sidebar.endePayNotice")}
         </div>
       )}
 
@@ -346,10 +351,10 @@ export default function ProfileSidebar({
               onClick={e => e.stopPropagation()}
             >
               <h3 className="text-lg font-semibold text-neutral-200 mb-2">
-                Sign Out
+                {t("sidebar.signOut")}
               </h3>
               <p className="text-sm text-neutral-400 mb-6">
-                Are you sure you want to sign out of your account?
+                {t("sidebar.signOutConfirmMessage")}
               </p>
               <div className="flex gap-3">
                 <button
@@ -357,14 +362,14 @@ export default function ProfileSidebar({
                   disabled={isLoggingOut}
                   className="flex-1 px-4 py-2 text-sm font-medium text-neutral-200 bg-neutral-700 hover:bg-neutral-600 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  Cancel
+                  {t("sidebar.cancel")}
                 </button>
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  {isLoggingOut ? "Signing out..." : "Sign Out"}
+                  {isLoggingOut ? t("sidebar.signingOut") : t("sidebar.signOut")}
                 </button>
               </div>
             </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { Podcast } from "@/domain/podcast/types/podcast";
 import PlayablePodcastCard from "@/app/_components/podcast/PlayablePodcastCard";
+import { useTranslations } from "next-intl";
 
 interface Props {
   podcasts: Podcast[];
@@ -16,6 +17,7 @@ export default function ExpandablePodcastGrid({
   initialCount = 8,
   gridCols = "4",
 }: Props) {
+  const t = useTranslations("music");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasMore = podcasts.length > initialCount;
@@ -53,7 +55,9 @@ export default function ExpandablePodcastGrid({
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-neutral-400 hover:text-neutral-200 text-sm transition-colors"
           >
-            {isExpanded ? "Show less" : `View all ${podcasts.length} episodes`}
+            {isExpanded
+              ? t("showLess")
+              : t("viewAll", { count: podcasts.length })}
           </button>
         </div>
       )}

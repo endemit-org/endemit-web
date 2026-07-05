@@ -7,6 +7,8 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import { fetchArtistFromCms } from "@/domain/cms/operations/fetchArtistFromCms";
 import { CmsImage } from "@/domain/cms/types/common";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 // Inline types until slicemachine regenerates `prismicio-types.d.ts`.
 interface ArtistLineupItem {
@@ -29,7 +31,9 @@ interface ArtistLineupSlice {
   variation: string;
   primary: {
     title?: string | null;
+    title_sl?: string | null;
     description?: string | null;
+    description_sl?: string | null;
     render_frame?: boolean;
     show_names?: boolean;
     link_override?: LinkField;
@@ -37,7 +41,13 @@ interface ArtistLineupSlice {
   };
 }
 
-const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
+const ArtistLineup: FC<{
+  slice: ArtistLineupSlice;
+  context?: SliceContext;
+}> = async ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
+  const lineupTitle = pickLocalized(slice.primary, "title", locale);
+  const lineupDescription = pickLocalized(slice.primary, "description", locale);
   const items = slice.primary.artists ?? [];
 
   if (items.length === 0) {
@@ -55,7 +65,7 @@ const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
         isFilled.contentRelationship(
           item.artist as Parameters<typeof isFilled.contentRelationship>[0]
         ) && item.artist.uid
-          ? await fetchArtistFromCms(item.artist.uid)
+          ? await fetchArtistFromCms(item.artist.uid, locale)
           : null;
 
       let imageOverride: CmsImage | null = null;
@@ -77,17 +87,17 @@ const ArtistLineup: FC<{ slice: ArtistLineupSlice }> = async ({ slice }) => {
 
   const content = (
     <>
-      {slice.primary.title && (
-        <h2 className="text-3xl text-neutral-200">{slice.primary.title}</h2>
+      {lineupTitle && (
+        <h2 className="text-3xl text-neutral-200">{lineupTitle}</h2>
       )}
-      {slice.primary.description && (
-        <p className="text-md text-neutral-400">{slice.primary.description}</p>
+      {lineupDescription && (
+        <p className="text-md text-neutral-400">{lineupDescription}</p>
       )}
 
       <div
         className={clsx(
           "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2",
-          slice.primary.title || slice.primary.description ? "mt-8" : "mt-0"
+          lineupTitle || lineupDescription ? "mt-8" : "mt-0"
         )}
       >
         {resolved.map(({ artist, imageOverride, nameOverride }, index) =>

@@ -8,6 +8,7 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 import { PUBLIC_GOOGLE_MAP_API_KEY } from "@/lib/services/env/public";
+import { useTranslations } from "next-intl";
 
 interface GoogleMapProps {
   center?: { lat: number; lng: number };
@@ -124,6 +125,7 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
   onMapLoad,
   darkMode = true,
 }) => {
+  const t = useTranslations("events.location");
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: PUBLIC_GOOGLE_MAP_API_KEY!,
   });
@@ -137,8 +139,8 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
         style={{ height, width }}
       >
         <div className="text-red-500 text-center p-4">
-          <p className="font-semibold">Error loading map</p>
-          <p className="text-sm mt-1">Failed to load Google Maps</p>
+          <p className="font-semibold">{t("loadError")}</p>
+          <p className="text-sm mt-1">{t("loadErrorDetail")}</p>
         </div>
       </div>
     );
@@ -150,7 +152,7 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
         className={`flex items-center justify-center bg-gray-100 ${className}`}
         style={{ height, width }}
       >
-        <div className="text-gray-600">Loading map...</div>
+        <div className="text-gray-600">{t("loadingMap")}</div>
       </div>
     );
   }

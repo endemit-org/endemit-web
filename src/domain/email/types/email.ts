@@ -16,6 +16,7 @@ export interface EventReminderData {
     mapUrl: string;
   };
   artists: { name: string }[];
+  locale?: string;
   tickets: {
     shortId: string;
     ticketHash: string;

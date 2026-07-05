@@ -4,11 +4,16 @@ import { SliceComponentProps } from "@prismicio/react";
 import { TileConfig } from "@/app/_components/grid/TileConfig";
 import MasonryGrid from "@/app/_components/grid/MasonryGrid";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `GridTile`.
  */
-export type GridTileProps = SliceComponentProps<Content.GridTileSlice>;
+export type GridTileProps = SliceComponentProps<
+  Content.GridTileSlice,
+  SliceContext
+>;
 
 /**
  * Component for "GridTile" Slices.
@@ -20,7 +25,8 @@ type MediaSrc = {
   placeholder?: string;
 };
 
-const GridTile: FC<GridTileProps> = async ({ slice }) => {
+const GridTile: FC<GridTileProps> = async ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
   const tilesFromSlice = [];
 
   for (const [index, tile] of slice.primary.tiles.entries()) {
@@ -49,8 +55,8 @@ const GridTile: FC<GridTileProps> = async ({ slice }) => {
       size: tile.size
         ? (tile.size.toLowerCase() as TileConfig["size"])
         : "square",
-      title: tile.headline || undefined,
-      subtitle: tile.content || undefined,
+      title: pickLocalized(tile, "headline", locale) || undefined,
+      subtitle: pickLocalized(tile, "content", locale) || undefined,
       className: tile.override_class_definition || undefined,
       media: mediaSrc ?? undefined,
       link: linkObject ?? undefined,

@@ -28,6 +28,15 @@
           "multi": "paragraph,heading2,strong,em,hyperlink,image,list-item"
         }
       },
+      "description_sl": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description (SL)",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,heading2,strong,em,hyperlink,image,list-item"
+        }
+      },
       "cover_image": {
         "type": "Image",
         "config": {
@@ -146,7 +155,10 @@
                       "image",
                       {
                         "id": "links",
-                        "fields": ["type", "link"]
+                        "fields": [
+                          "type",
+                          "link"
+                        ]
                       },
                       "video",
                       "is_b2b",
@@ -159,7 +171,9 @@
                             "customtypes": [
                               {
                                 "id": "artist",
-                                "fields": ["name"]
+                                "fields": [
+                                  "name"
+                                ]
                               }
                             ]
                           }
@@ -191,6 +205,13 @@
                 "placeholder": "(Optional) name of the stage where artist will be. Leave blank if only 1 stage per venue"
               }
             },
+            "stage_sl": {
+              "type": "Text",
+              "config": {
+                "label": "Stage (SL)",
+                "placeholder": "(Optional) name of the stage where artist will be. Leave blank if only 1 stage per venue"
+              }
+            },
             "name_override": {
               "type": "Text",
               "config": {
@@ -202,6 +223,15 @@
               "type": "StructuredText",
               "config": {
                 "label": "Description override",
+                "placeholder": "",
+                "allowTargetBlank": true,
+                "multi": "paragraph,strong,em,hyperlink"
+              }
+            },
+            "description_override_sl": {
+              "type": "StructuredText",
+              "config": {
+                "label": "Description override (SL)",
                 "placeholder": "",
                 "allowTargetBlank": true,
                 "multi": "paragraph,strong,em,hyperlink"
@@ -241,7 +271,22 @@
         "config": {
           "label": "Event type",
           "placeholder": "",
-          "options": ["Single day", "Festival", "Guest appearance"]
+          "options": [
+            "Single day",
+            "Festival",
+            "Guest appearance"
+          ]
+        }
+      },
+      "page_theme": {
+        "type": "Select",
+        "config": {
+          "label": "Page theme",
+          "placeholder": "General (default)",
+          "options": [
+            "General",
+            "RAVE-ON"
+          ]
         }
       },
       "colour": {
@@ -256,7 +301,10 @@
         "config": {
           "label": "Visible in events",
           "placeholder": "",
-          "options": ["Visible", "Hidden"]
+          "options": [
+            "Visible",
+            "Hidden"
+          ]
         }
       },
       "enable_link_to_full_page": {
@@ -272,6 +320,13 @@
         "type": "Text",
         "config": {
           "label": "Annotation",
+          "placeholder": "(Optional)"
+        }
+      },
+      "annotation_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Annotation (SL)",
           "placeholder": "(Optional)"
         }
       },
@@ -427,9 +482,23 @@
         },
         "type": "Text"
       },
+      "meta_title_sl": {
+        "config": {
+          "label": "Meta Title (SL)",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
       "meta_description": {
         "config": {
           "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_description_sl": {
+        "config": {
+          "label": "Meta Description (SL)",
           "placeholder": "A brief summary of the page"
         },
         "type": "Text"

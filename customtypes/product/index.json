@@ -19,6 +19,13 @@
           "placeholder": "Name of the product"
         }
       },
+      "title_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Title (SL)",
+          "placeholder": "Name of the product"
+        }
+      },
       "product_category": {
         "type": "Select",
         "config": {
@@ -42,7 +49,10 @@
         "config": {
           "label": "Product type",
           "placeholder": "Is this a physical or digital item",
-          "options": ["Physical", "Digital"],
+          "options": [
+            "Physical",
+            "Digital"
+          ],
           "default_value": "Physical"
         }
       },
@@ -91,7 +101,9 @@
                       "title",
                       {
                         "id": "images",
-                        "fields": ["image"]
+                        "fields": [
+                          "image"
+                        ]
                       },
                       "price",
                       "product_category",
@@ -111,6 +123,13 @@
                 "label": "Call to action",
                 "placeholder": "Example, \"Goes great with\", \"To wear with your shirt\""
               }
+            },
+            "call_to_action_sl": {
+              "type": "Text",
+              "config": {
+                "label": "Call to action (SL)",
+                "placeholder": "Example, \"Goes great with\", \"To wear with your shirt\""
+              }
             }
           }
         }
@@ -122,10 +141,24 @@
           "placeholder": "Optional - Special notice or disclaimer goes here"
         }
       },
+      "special_notice_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Special notice (SL)",
+          "placeholder": "Optional - Special notice or disclaimer goes here"
+        }
+      },
       "checkout_description": {
         "type": "Text",
         "config": {
           "label": "Checkout description",
+          "placeholder": "Item description visible in Stripe"
+        }
+      },
+      "checkout_description_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Checkout description (SL)",
           "placeholder": "Item description visible in Stripe"
         }
       }
@@ -140,12 +173,24 @@
           "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
         }
       },
+      "description_sl": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description (SL)",
+          "placeholder": "Descriptive text to highlight the features of the product",
+          "allowTargetBlank": true,
+          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
+        }
+      },
       "display_content_slices": {
         "type": "Select",
         "config": {
           "label": "Display content slices",
           "placeholder": "",
-          "options": ["Above description", "Below description"],
+          "options": [
+            "Above description",
+            "Below description"
+          ],
           "default_value": "Above description"
         }
       },
@@ -239,7 +284,10 @@
         "config": {
           "label": "Product visibility",
           "placeholder": "Is the product visible on site?",
-          "options": ["Visible", "Hidden"],
+          "options": [
+            "Visible",
+            "Hidden"
+          ],
           "default_value": "Visible"
         }
       },
@@ -328,7 +376,16 @@
               "config": {
                 "label": "Variant value",
                 "placeholder": "What is the variants value",
-                "options": ["XS", "S", "M", "L", "XL", "XXL", "Black", "White"]
+                "options": [
+                  "XS",
+                  "S",
+                  "M",
+                  "L",
+                  "XL",
+                  "XXL",
+                  "Black",
+                  "White"
+                ]
               }
             },
             "variant_type": {
@@ -336,7 +393,10 @@
               "config": {
                 "label": "Variant type",
                 "placeholder": "What type of a variant is it",
-                "options": ["Size", "Colour"],
+                "options": [
+                  "Size",
+                  "Colour"
+                ],
                 "default_value": "Size"
               }
             }
@@ -393,9 +453,23 @@
         },
         "type": "Text"
       },
+      "meta_title_sl": {
+        "config": {
+          "label": "Meta Title (SL)",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
       "meta_description": {
         "config": {
           "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_description_sl": {
+        "config": {
+          "label": "Meta Description (SL)",
           "placeholder": "A brief summary of the page"
         },
         "type": "Text"

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface ActionButtonProps {
   href?: string;
@@ -52,8 +52,12 @@ export default function ActionButton({
     ? "bg-neutral-500 text-neutral-400 hover:bg-neutral-500 cursor-not-allowed"
     : "";
 
+  // Stable hooks so a page theme can optionally re-skin / glitch buttons via
+  // scoped CSS without changing any default styling.
+  const hookClasses = `app-btn app-btn--${variant}`;
+
   const combinedClasses =
-    `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${disabledClass} ${className}`.trim();
+    `${baseClasses} ${hookClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${disabledClass} ${className}`.trim();
 
   const handleClick = (e: React.MouseEvent) => {
     if (onClick) {

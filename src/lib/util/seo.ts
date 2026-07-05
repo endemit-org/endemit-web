@@ -60,23 +60,52 @@ export const buildOpenGraphObject = ({
   images,
   url,
   type = "website",
+  locale,
+  path,
 }: {
   title?: string;
   description?: string;
   images?: { url: string; width?: number; height?: number }[];
   url?: string;
   type?: OpenGraphType;
+  /** Current locale of the page — enables hreflang alternates when set. */
+  locale?: "sl" | "en";
+  /**
+   * Locale-agnostic path (e.g. "/events/foo"). When provided together with
+   * `locale`, canonical + hreflang alternates are generated for both locales.
+   */
+  path?: string;
 }) => {
+  const buildLanguageAlternates = () => {
+    // path may be "" for the home page — only bail when it's absent entirely.
+    if (path === undefined) return undefined;
+    const slUrl = `${PUBLIC_BASE_WEB_URL}${path}`;
+    const enUrl = `${PUBLIC_BASE_WEB_URL}/en${path}`;
+    return {
+      canonical: locale === "en" ? enUrl : slUrl,
+      languages: {
+        sl: slUrl,
+        en: enUrl,
+        "x-default": slUrl,
+      },
+    };
+  };
+
+  const alternates =
+    buildLanguageAlternates() ?? (url ? { canonical: url } : undefined);
+  const ogLocale = locale === "en" ? "en_US" : locale === "sl" ? "sl_SI" : undefined;
+
   return {
     title,
     description,
-    alternates: url ? { canonical: url } : undefined,
+    alternates,
     openGraph: {
       title,
       description,
       images,
-      url,
+      url: alternates?.canonical ?? url,
       type,
+      locale: ogLocale,
     },
     twitter: {
       title,

@@ -3,6 +3,7 @@ import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface PosTransactionItem {
   name: string;
@@ -20,6 +21,7 @@ interface Props {
   total: number;
   balanceAfter: number;
   paidAt: Date;
+  locale?: string;
 }
 
 function PosTransactionToCustomerTemplate({
@@ -31,28 +33,37 @@ function PosTransactionToCustomerTemplate({
   total,
   balanceAfter,
   paidAt,
+  locale = "sl",
 }: Props) {
-  const formattedDate = paidAt.toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const t = getEmailTranslator(locale, "emails.posTransaction");
+  const formattedDate = paidAt.toLocaleString(
+    locale === "en" ? "en-GB" : "sl-SI",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">Transaction Confirmed</h1>
-        <Text className="text-gray-800 mb-2">Transaction #{shortCode}</Text>
+        <h1 className="text-2xl font-bold mb-2">{t("heading")}</h1>
+        <Text className="text-gray-800 mb-2">
+          {t("transactionNumber", { code: shortCode })}
+        </Text>
         <Text className="text-gray-500 mb-6">{formattedDate}</Text>
 
         <Text className="text-gray-600 mb-6">
-          Your purchase at <strong>{registerName}</strong> has been completed
-          successfully. Below are the details of your transaction.
+          {t.rich("intro", {
+            registerName,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </Text>
 
-        <h2 className="text-xl font-bold mb-2 mt-8">Items</h2>
+        <h2 className="text-xl font-bold mb-2 mt-8">{t("items")}</h2>
 
         <table style={{ width: "100%", marginBottom: "16px" }}>
           <thead>
@@ -65,7 +76,7 @@ function PosTransactionToCustomerTemplate({
                 }}
               >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Item
+                  {t("item")}
                 </Text>
               </th>
               <th
@@ -75,17 +86,8 @@ function PosTransactionToCustomerTemplate({
                   padding: "8px",
                 }}
               >
-                <Text className="font-semibold mb-1 text-neutral-800">Qty</Text>
-              </th>
-              <th
-                align="right"
-                style={{
-                  borderBottom: "1px solid #e5e7eb",
-                  padding: "8px",
-                }}
-              >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Price
+                  {t("qty")}
                 </Text>
               </th>
               <th
@@ -96,7 +98,18 @@ function PosTransactionToCustomerTemplate({
                 }}
               >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Total
+                  {t("price")}
+                </Text>
+              </th>
+              <th
+                align="right"
+                style={{
+                  borderBottom: "1px solid #e5e7eb",
+                  padding: "8px",
+                }}
+              >
+                <Text className="font-semibold mb-1 text-neutral-800">
+                  {t("total")}
                 </Text>
               </th>
             </tr>
@@ -154,7 +167,7 @@ function PosTransactionToCustomerTemplate({
                   <tbody>
                     <tr>
                       <td align="right" style={{ padding: "4px 0" }}>
-                        <Text className="text-gray-600">Subtotal:</Text>
+                        <Text className="text-gray-600">{t("subtotal")}</Text>
                       </td>
                       <td
                         align="right"
@@ -168,7 +181,7 @@ function PosTransactionToCustomerTemplate({
                     {tipAmount > 0 && (
                       <tr>
                         <td align="right" style={{ padding: "4px 0" }}>
-                          <Text className="text-gray-600">Tip:</Text>
+                          <Text className="text-gray-600">{t("tip")}</Text>
                         </td>
                         <td
                           align="right"
@@ -188,7 +201,7 @@ function PosTransactionToCustomerTemplate({
                           borderTop: "2px solid #000",
                         }}
                       >
-                        <Text className="font-bold">Total:</Text>
+                        <Text className="font-bold">{t("totalLabel")}</Text>
                       </td>
                       <td
                         align="right"
@@ -220,7 +233,7 @@ function PosTransactionToCustomerTemplate({
           }}
         >
           <Text className="font-semibold mb-2" style={{ color: "#93c5fd" }}>
-            Wallet Balance
+            {t("walletBalance")}
           </Text>
           <Text
             className="text-2xl font-bold my-1"
@@ -252,16 +265,18 @@ function PosTransactionToCustomerTemplate({
               fontSize: "14px",
             }}
           >
-            View Your Wallet
+            {t("viewWallet")}
           </Link>
         </div>
 
         <Text className="text-gray-600 my-6">
-          This email serves as a receipt for your transaction. If you have any
-          questions, please contact us at{" "}
-          <Link href={"mailto:endemit@endemit.org"} className={"link"}>
-            endemit@endemit.org
-          </Link>
+          {t.rich("receiptNote", {
+            link: chunks => (
+              <Link href={"mailto:endemit@endemit.org"} className={"link"}>
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

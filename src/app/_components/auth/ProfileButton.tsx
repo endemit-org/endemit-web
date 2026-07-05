@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useCurrentUser } from "@/app/_hooks/useCurrentUser";
 
 interface ProfileButtonProps {
@@ -10,6 +11,7 @@ interface ProfileButtonProps {
 export default function ProfileButton({
   variant = "compact",
 }: ProfileButtonProps) {
+  const t = useTranslations("signin");
   const { user, isLoading } = useCurrentUser();
 
   // Compact variant (mobile header)
@@ -18,7 +20,11 @@ export default function ProfileButton({
       <Link
         href={user ? "/profile" : "/signin"}
         className="flex h-14 items-center px-3 text-gray-100 hover:text-gray-400"
-        title={user ? user.name || user.email || "Profile" : "Sign In"}
+        title={
+          user
+            ? user.name || user.email || t("profileButton.profile")
+            : t("signIn")
+        }
       >
         <div className="relative">
           <svg
@@ -57,7 +63,7 @@ export default function ProfileButton({
       <span
         className={`truncate transition-opacity duration-300 ${!isLoading ? "opacity-100" : "opacity-0"}`}
       >
-        {user ? user.name || user.email : "Sign In"}
+        {user ? user.name || user.email : t("signIn")}
       </span>
       <div className="relative flex-shrink-0">
         <svg

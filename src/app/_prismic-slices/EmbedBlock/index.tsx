@@ -1,23 +1,29 @@
 import { Content } from "@prismicio/client";
 import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
  * Props for `EmbedBlock`.
  */
-export type EmbedBlockProps = SliceComponentProps<Content.EmbedBlockSlice>;
+export type EmbedBlockProps = SliceComponentProps<
+  Content.EmbedBlockSlice,
+  SliceContext
+>;
 
 /**
  * Component for "EmbedBlock" Slices.
  */
-const EmbedBlock = ({ slice }: EmbedBlockProps) => {
+const EmbedBlock = ({ slice, context }: EmbedBlockProps) => {
+  const locale = context?.locale ?? "sl";
   return (
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
     >
-      <PrismicRichText field={slice.primary.heading} />
+      <PrismicRichText field={pickLocalized(slice.primary, "heading", locale)} />
       <PrismicRichText
-        field={slice.primary.content}
+        field={pickLocalized(slice.primary, "content", locale)}
         components={{
           paragraph: ({ children }) => <p className="text-lg">{children}</p>,
         }}

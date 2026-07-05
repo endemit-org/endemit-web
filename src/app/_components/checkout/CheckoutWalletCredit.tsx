@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/util/formatting";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import Spinner from "@/app/_components/ui/Spinner";
 import WalletIcon from "@/app/_components/icon/WalletIcon";
+import { useTranslations } from "next-intl";
 
 interface CheckoutWalletCreditProps {
   walletBalance: number; // in cents
@@ -30,10 +31,11 @@ export default function CheckoutWalletCredit({
   onToggle,
   onAmountChange,
 }: CheckoutWalletCreditProps) {
+  const t = useTranslations("checkout.wallet");
   if (isLoading) {
     return (
       <div className="bg-neutral-800 rounded-lg p-4">
-        <Spinner text="Checking wallet balance..." />
+        <Spinner text={t("checking")} />
       </div>
     );
   }
@@ -54,9 +56,11 @@ export default function CheckoutWalletCredit({
             <WalletIcon className="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h3 className="font-medium text-neutral-200">Use Wallet Credit</h3>
+            <h3 className="font-medium text-neutral-200">{t("use")}</h3>
             <p className="text-sm text-neutral-400">
-              Available: {formatTokensFromCents(walletBalance)}
+              {t("available", {
+                balance: formatTokensFromCents(walletBalance),
+              })}
             </p>
           </div>
         </div>
@@ -75,7 +79,7 @@ export default function CheckoutWalletCredit({
       {isUsingWallet && (
         <div className="mt-4 space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-neutral-400">Amount to apply:</span>
+            <span className="text-neutral-400">{t("amountToApply")}</span>
             <span className="text-blue-400 font-medium">
               -{formatTokensFromCents(walletCreditAmount)}
             </span>
@@ -102,9 +106,7 @@ export default function CheckoutWalletCredit({
 
           <div className="pt-2 border-t border-blue-700/30">
             <div className="flex justify-between text-sm">
-              <span className="text-neutral-400">
-                Remaining to pay by card:
-              </span>
+              <span className="text-neutral-400">{t("remainingCard")}</span>
               <span className="text-neutral-200 font-medium">
                 {formatCurrency(remainingToPay)}
               </span>

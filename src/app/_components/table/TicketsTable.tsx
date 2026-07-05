@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Column, Table } from "@/app/_components/table/Table";
 import { SerializedTicket } from "@/domain/ticket/types/ticket";
 
@@ -10,17 +11,19 @@ export default function TicketsTable({
   tickets: SerializedTicket[];
   onRowClick?: (row: SerializedTicket) => void;
 }) {
+  const t = useTranslations("admin.tickets.table");
+  const ts = useTranslations("admin.status.ticket");
   const columns: Column<SerializedTicket>[] = [
     {
       key: "shortId",
-      header: "Ticket ID",
+      header: t("ticketId"),
       sortable: true,
       render: ticket => (
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs">{ticket.shortId}</span>
           {ticket.isGuestList && (
             <span className="rounded-full px-2 py-0.5 text-xs bg-purple-100 text-purple-800 font-medium">
-              Guest
+              {t("guest")}
             </span>
           )}
         </div>
@@ -28,17 +31,17 @@ export default function TicketsTable({
     },
     {
       key: "ticketHolderName",
-      header: "Customer",
+      header: t("customer"),
       sortable: true,
     },
     {
       key: "ticketPayerEmail",
-      header: "Email",
+      header: t("email"),
       sortable: true,
     },
     {
       key: "status",
-      header: "Status",
+      header: t("status"),
       sortable: true,
       render: ticket => (
         <span
@@ -48,7 +51,7 @@ export default function TicketsTable({
               : "bg-blue-100 text-blue-800"
           }`}
         >
-          {ticket.status}
+          {ts(ticket.status)}
         </span>
       ),
     },

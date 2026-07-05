@@ -152,6 +152,15 @@
   animation: unblur 1.2s ease-out forwards;
 }
 
+/* Scroll-triggered unblur (JS-free, so the Poem slice can stay a Server
+   Component). Browsers with scroll-driven animations map the unblur to the
+   element entering the viewport; others simply play it once on load. */
+.animate-unblur-text-in {
+  animation: unblur 1.2s ease-out both;
+  animation-timeline: view();
+  animation-range: entry 10% cover 35%;
+}
+
 @keyframes subtle-pulse {
   0%, 100% {
     opacity: 1;

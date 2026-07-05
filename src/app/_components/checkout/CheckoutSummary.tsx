@@ -5,6 +5,7 @@ import { DiscountDetails } from "@/domain/checkout/types/checkout";
 import clsx from "clsx";
 import { ConvertGramToKilogram } from "@/lib/util/converters";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
+import { useTranslations } from "next-intl";
 
 interface Props {
   subTotal: number;
@@ -36,8 +37,8 @@ function LineItem({
   );
 }
 
-function LineItemSpinner() {
-  return <Spinner text={"Loading..."} />;
+function LineItemSpinner({ text }: { text: string }) {
+  return <Spinner text={text} />;
 }
 
 export default function CheckoutSummary({
@@ -52,6 +53,7 @@ export default function CheckoutSummary({
   loadingShippingCost,
   loadingPromoCode,
 }: Props) {
+  const t = useTranslations("checkout.summary");
   const destinationCountry = getCountry(country);
   const showWalletCredit = walletCreditEur && walletCreditEur > 0;
   const showSubtotal = subTotal !== total;
@@ -59,12 +61,12 @@ export default function CheckoutSummary({
   return (
     <div className="text-md text-neutral-200 space-y-4 pt-4">
       {showSubtotal && (
-        <LineItem label={"Subtotal:"}>{formatDecimalPrice(subTotal)}</LineItem>
+        <LineItem label={t("subtotal")}>{formatDecimalPrice(subTotal)}</LineItem>
       )}
 
       {shippingCost > 0 && (
-        <LineItem label={"Shipping:"}>
-          {loadingShippingCost && <LineItemSpinner />}
+        <LineItem label={t("shipping")}>
+          {loadingShippingCost && <LineItemSpinner text={t("loading")} />}
           {!loadingShippingCost && country && (
             <>
               <div className="text-right">
@@ -80,7 +82,7 @@ export default function CheckoutSummary({
       )}
 
       {discountObject && discountObject.coupon && (
-        <LineItem label={"Discount:"}>
+        <LineItem label={t("discount")}>
           {discountObject.coupon.percent_off && (
             <>
               <span className={"mr-6 italic text-neutral-400"}>
@@ -92,7 +94,7 @@ export default function CheckoutSummary({
           {discountObject.coupon.amount_off && (
             <>
               {loadingPromoCode ? (
-                <LineItemSpinner />
+                <LineItemSpinner text={t("loading")} />
               ) : (
                 formatDecimalPrice(discountAmount)
               )}
@@ -102,14 +104,14 @@ export default function CheckoutSummary({
       )}
 
       {showWalletCredit ? (
-        <LineItem label={"Wallet Credit:"} className="text-blue-400">
+        <LineItem label={t("walletCredit")} className="text-blue-400">
           <span>-{formatDecimalPrice(walletCreditEur)}</span>
         </LineItem>
       ) : null}
 
-      <LineItem label={"Total:"} className={"text-2xl"}>
+      <LineItem label={t("total")} className={"text-2xl"}>
         {loadingPromoCode || loadingShippingCost ? (
-          <LineItemSpinner />
+          <LineItemSpinner text={t("loading")} />
         ) : (
           formatDecimalPrice(total)
         )}

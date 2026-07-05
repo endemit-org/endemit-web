@@ -45,6 +45,7 @@ export type TicketCreationData = {
   ticketPayerEmail: string;
   price: number;
   orderId: string;
+  locale?: string;
   metadata?: Record<string, string | number | boolean>;
 };
 

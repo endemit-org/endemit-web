@@ -107,7 +107,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   });
 
-  return [
+  const entries = [
     ...homePage,
     ...contentPages,
     ...eventPages,
@@ -117,4 +117,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...podcastPages,
     ...categoryPages,
   ];
+
+  // Per Google's localized-sitemap format, EVERY language version gets its own
+  // <url> entry, each carrying the full sl/en alternate set (the base url is
+  // the unprefixed Slovenian URL; the English variant lives under /en).
+  return entries.flatMap(entry => {
+    const path = entry.url.slice(baseUrl.length);
+    const alternates = {
+      languages: {
+        sl: entry.url,
+        en: `${baseUrl}/en${path}`,
+      },
+    };
+    return [
+      { ...entry, alternates },
+      { ...entry, url: `${baseUrl}/en${path}`, alternates },
+    ];
+  });
 }

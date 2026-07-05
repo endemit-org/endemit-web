@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useHasMounted } from "@/app/_hooks/useHasMounted";
 import {
   formatDateTime,
@@ -29,6 +30,7 @@ export default function ClientDate({
   className,
 }: ClientDateProps) {
   const hasMounted = useHasMounted();
+  const locale = useLocale() as "sl" | "en";
 
   if (!date) {
     return <span className={className}>{fallback}</span>;
@@ -46,14 +48,14 @@ export default function ClientDate({
   } else {
     switch (format) {
       case "date":
-        formatted = formatDate(dateObj);
+        formatted = formatDate(dateObj, locale);
         break;
       case "time":
         formatted = formatTime(dateObj);
         break;
       case "datetime":
       default:
-        formatted = formatDateTime(dateObj);
+        formatted = formatDateTime(dateObj, locale);
         break;
     }
   }

@@ -1,6 +1,7 @@
 import React from "react";
 import { formatDayOfMonth, formatMonthNameShort } from "@/lib/util/formatting";
 import clsx from "clsx";
+import { useTranslations, useLocale } from "next-intl";
 
 export interface SaveTheDateProps {
   saveTheDateItem: {
@@ -14,8 +15,10 @@ export interface SaveTheDateProps {
 export default function EventSaveTheDate({
   saveTheDateItem,
 }: SaveTheDateProps) {
+  const t = useTranslations("events");
+  const locale = useLocale() as "sl" | "en";
   const date = new Date(saveTheDateItem.date);
-  const monthNameShort = formatMonthNameShort(date);
+  const monthNameShort = formatMonthNameShort(date, locale);
   const dayOfMonth = formatDayOfMonth(date);
   return (
     <div className="flex-1 flex w-full gap-x-4 cursor-not-allowed">
@@ -34,7 +37,7 @@ export default function EventSaveTheDate({
             !saveTheDateItem.title && "blur-md select-none scale-y-75"
           )}
         >
-          {saveTheDateItem.title ?? "Nice try, it's a secret!"}
+          {saveTheDateItem.title ?? t("saveTheDate.secret")}
         </div>
         {saveTheDateItem.description && (
           <div className="text-neutral-300">{saveTheDateItem.description}</div>

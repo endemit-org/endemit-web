@@ -10,6 +10,7 @@ import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { formatDecimalPrice } from "@/lib/util/formatting";
 import { playBeep, playBlorp } from "@/domain/ticket/util";
+import { useTranslations } from "next-intl";
 
 interface ScanResult {
   rawValue: string;
@@ -28,8 +29,6 @@ type Props = {
   eventId: string;
 };
 
-const ALREADY_SCANNED_MESSAGE = "This ticket has already been scanned.";
-
 const getVerificationStatus = (
   verification: VerificationResult | null
 ): VerificationStatus => {
@@ -44,23 +43,24 @@ const getVerificationStyles = (status: VerificationStatus) => {
     success: {
       bg: "bg-green-100 text-green-800",
       icon: "✓",
-      title: "Verified",
+      titleKey: "verified",
     },
     warning: {
       bg: "bg-yellow-100 text-yellow-800",
       icon: "⚠",
-      title: "Warning",
+      titleKey: "warning",
     },
     error: {
       bg: "bg-red-100 text-red-800",
       icon: "✗",
-      title: "Error",
+      titleKey: "error",
     },
-  };
+  } as const;
   return styles[status];
 };
 
 export default function QRScanner({ eventId }: Props) {
+  const t = useTranslations("scan");
   const [isOpen, setIsOpen] = useState(false);
   const [scannedData, setScannedData] = useState<QrTicketPayload | null>(null);
   const [verification, setVerification] = useState<VerificationResult | null>(
@@ -93,7 +93,7 @@ export default function QRScanner({ eventId }: Props) {
     setVerification({
       success: false,
       scanCount: 0,
-      message: "Wrong event - This ticket is for a different event",
+      message: t("result.wrongEvent"),
     });
   };
 
@@ -107,7 +107,8 @@ export default function QRScanner({ eventId }: Props) {
         });
 
         if (!markTicketScan.success) {
-          const message = markTicketScan.message ?? ALREADY_SCANNED_MESSAGE;
+          const message =
+            markTicketScan.message ?? t("result.alreadyScanned");
 
           playBlorp();
           setIsMarkingOnServer(false);
@@ -116,7 +117,7 @@ export default function QRScanner({ eventId }: Props) {
             scanCount: 0,
             message:
               markTicketScan.reason === "already_scanned"
-                ? ALREADY_SCANNED_MESSAGE
+                ? t("result.alreadyScanned")
                 : message,
           });
           return;
@@ -132,8 +133,10 @@ export default function QRScanner({ eventId }: Props) {
           scanCount: markTicketScan.scannedTicketData.scanCount,
           message:
             markTicketScan.scannedTicketData.scanCount === 1
-              ? "Valid ticket"
-              : `Warning: Scanned ${markTicketScan.scannedTicketData.scanCount} times`,
+              ? t("result.validTicket")
+              : t("result.scannedTimes", {
+                  count: markTicketScan.scannedTicketData.scanCount,
+                }),
         });
       }
     } catch (error) {
@@ -172,15 +175,15 @@ export default function QRScanner({ eventId }: Props) {
   const renderTicketDetails = (scannedData: QrTicketPayload) => {
     const details = [
       {
-        label: "Ticket holder name",
+        label: t("result.ticketHolderName"),
         value: scannedData.ticketHolderName,
       },
       {
-        label: "Payment email",
+        label: t("result.paymentEmail"),
         value: scannedData.ticketPayerEmail,
       },
       {
-        label: "Ticket price",
+        label: t("result.ticketPrice"),
         value: formatDecimalPrice(scannedData.price),
       },
     ];
@@ -202,7 +205,7 @@ export default function QRScanner({ eventId }: Props) {
       return (
         <div className="flex items-center gap-2 text-gray-600 text-center py-5">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
-          <span>Recording scan to server...</span>
+          <span>{t("scanner.recordingScan")}</span>
         </div>
       );
     }
@@ -216,7 +219,7 @@ export default function QRScanner({ eventId }: Props) {
       <div className="space-y-3">
         <div className={`p-4 rounded-lg ${styles.bg}`}>
           <div className="font-semibold">
-            {styles.icon} {styles.title}
+            {styles.icon} {t(`result.${styles.titleKey}`)}
           </div>
           <div className="text-sm mt-1">{verification.message}</div>
           {verification.success && (
@@ -225,13 +228,13 @@ export default function QRScanner({ eventId }: Props) {
                 verification.scanCount > 1 ? "text-yellow-900" : ""
               }`}
             >
-              Scan count: {verification.scanCount}
+              {t("result.scanCount", { count: verification.scanCount })}
             </div>
           )}
         </div>
         {shouldShowActionButton(verification) && (
           <ActionButton onClick={resetScanState}>
-            OK - Scan Next Ticket
+            {t("scanner.scanNext")}
           </ActionButton>
         )}
       </div>
@@ -241,7 +244,7 @@ export default function QRScanner({ eventId }: Props) {
   return (
     <div className="">
       <ActionButton onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? "Close Scanner" : "Scan ticket"}
+        {isOpen ? t("scanner.closeScanner") : t("scanner.scanTicket")}
       </ActionButton>
 
       {isOpen && (
@@ -249,7 +252,9 @@ export default function QRScanner({ eventId }: Props) {
           <div className="bg-white rounded-lg w-full max-w-2xl h-[90vh] overflow-auto text-neutral-900">
             <div className="p-4 relative">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Scan QR Ticket</h2>
+                <h2 className="text-xl font-bold">
+                  {t("scanner.modalTitle")}
+                </h2>
                 <button
                   onClick={handleCloseModal}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -286,7 +291,7 @@ export default function QRScanner({ eventId }: Props) {
                     sound={false}
                   />
                   <div className="mt-12 text-center">
-                    Point your camera to scan a ticket
+                    {t("scanner.pointCamera")}
                   </div>
                 </div>
               )}

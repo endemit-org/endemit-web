@@ -1,4 +1,9 @@
-export const formatPrice = (price: number, decimals: number = 0) => {
+export const formatPrice = (
+  price: number | null | undefined,
+  decimals: number = 0
+) => {
+  // CMS price fields can be unfilled — render nothing instead of crashing.
+  if (price == null) return "";
   return price.toLocaleString("sl-SI", {
     style: "currency",
     currency: "EUR",
@@ -37,15 +42,18 @@ export const formatTime = (date: Date) => {
   });
 };
 
-export const formatDay = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+export const formatDay = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     weekday: "long",
     timeZone: "Europe/Ljubljana",
   });
 };
 
-export const formatMonthNameShort = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+export const formatMonthNameShort = (
+  date: Date,
+  locale: "sl" | "en" = "en"
+) => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-US", {
     month: "short",
     timeZone: "Europe/Ljubljana",
   });
@@ -58,8 +66,8 @@ export const formatDayOfMonth = (date: Date) => {
   });
 };
 
-export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("en-GB", {
+export const formatDate = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     day: "2-digit",
     month: "long",
     year: "2-digit",
@@ -67,8 +75,8 @@ export const formatDate = (date: Date) => {
   });
 };
 
-export const formatDateTime = (date: Date) => {
-  return date.toLocaleDateString("en-GB", {
+export const formatDateTime = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     day: "2-digit",
     month: "long",
     year: "2-digit",
@@ -79,34 +87,44 @@ export const formatDateTime = (date: Date) => {
   });
 };
 
-export const formatEventDate = (dateFrom: Date, dateTo: Date) => {
+export const formatEventDate = (
+  dateFrom: Date,
+  dateTo: Date,
+  locale: "sl" | "en" = "en"
+) => {
   const hoursDiff = (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60 * 60);
 
   if (hoursDiff > 18) {
     const dayFrom = dateFrom.getDate();
     const dayTo = dateTo.getDate();
-    const month = dateFrom.toLocaleDateString("en-US", {
-      month: "long",
-      timeZone: "Europe/Ljubljana",
-    });
+    const month = dateFrom.toLocaleDateString(
+      locale === "sl" ? "sl-SI" : "en-GB",
+      {
+        month: "long",
+        timeZone: "Europe/Ljubljana",
+      }
+    );
     const year = dateFrom.getFullYear().toString().slice(-2);
 
     return `${dayFrom} - ${dayTo} ${month} ${year}`;
   }
 
-  return formatDate(dateFrom);
+  return formatDate(dateFrom, locale);
 };
 
-export const formatEventDateAndTime = (date: Date) => {
-  return `${formatDate(date)} @ ${formatTime(date)}`;
+export const formatEventDateAndTime = (
+  date: Date,
+  locale: "sl" | "en" = "en"
+) => {
+  return `${formatDate(date, locale)} @ ${formatTime(date)}`;
 };
 
 export const formatWeight = (number: number) => {
   return `${formatNumber(number, 3)} kg`;
 };
 
-export const formatDayName = (date: Date) => {
-  return date.toLocaleDateString("en-GB", {
+export const formatDayName = (date: Date, locale: "sl" | "en" = "en") => {
+  return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
     weekday: "long",
     timeZone: "Europe/Ljubljana",
   });

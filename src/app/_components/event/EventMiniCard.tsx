@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { formatEventDate } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { CmsImage } from "@/domain/cms/types/common";
@@ -6,6 +6,7 @@ import React from "react";
 import clsx from "clsx";
 import { isDateInPast } from "@/lib/util/util";
 import EventPastEventStatus from "@/app/_components/event/EventPastEventStatus";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   image?: CmsImage | null;
@@ -24,7 +25,13 @@ export default function EventMiniCard({
   name,
   image,
 }: Props) {
+  const t = useTranslations("events");
+  const locale = useLocale() as "sl" | "en";
   const isPastEvent = dateEnd && isDateInPast(dateEnd);
+  const dateOrLocation =
+    dateStart && dateEnd
+      ? formatEventDate(dateStart, dateEnd, locale)
+      : location;
 
   return (
     <div
@@ -66,10 +73,9 @@ export default function EventMiniCard({
             <h3 className="text-2xl text-neutral-200">{name}</h3>
             <p className="text-sm ">
               <span className={"text-neutral-200"}>
-                {isPastEvent ? "Was on " : "Happening on "}
-                {dateStart && dateEnd
-                  ? formatEventDate(dateStart, dateEnd)
-                  : location}
+                {isPastEvent
+                  ? t("miniCard.wasOn", { date: dateOrLocation ?? "" })
+                  : t("miniCard.happeningOn", { date: dateOrLocation ?? "" })}
               </span>
             </p>
           </div>

@@ -7,8 +7,13 @@ import {
 import { asLink, asText, isFilled } from "@prismicio/client";
 import { ProductDocument } from "@/prismicio-types";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { AppLocale } from "@/i18n/routing";
 
-export const transformProductObject = async (product: ProductDocument) => {
+export const transformProductObject = async (
+  product: ProductDocument,
+  locale: AppLocale = "sl"
+) => {
   const hasVariants =
     product.data.variants.filter(variant => variant.variant_value).length > 0;
 
@@ -27,6 +32,9 @@ export const transformProductObject = async (product: ProductDocument) => {
 
   const images = [];
   for (const img of product.data.images) {
+    // Empty repeatable image rows have no url — skip them so next/image
+    // never receives a null src.
+    if (!isFilled.image(img.image)) continue;
     images.push({
       src: img.image.url,
       alt: img.image.alt,
@@ -41,13 +49,13 @@ export const transformProductObject = async (product: ProductDocument) => {
         ? rp.related_product
         : null;
 
-      if (!relatedProduct || !relatedProduct.data) {
-        relatedProducts.push(null);
-        continue;
-      }
+      // Empty row or broken relationship — skip instead of emitting a null
+      // entry that crashes the related-products grid at prerender.
+      if (!relatedProduct || !relatedProduct.data) continue;
 
       const images = [];
       for (const img of relatedProduct.data.images) {
+        if (!isFilled.image(img.image)) continue;
         images.push({
           src: img.image.url,
           alt: img.image.alt,
@@ -58,9 +66,9 @@ export const transformProductObject = async (product: ProductDocument) => {
       relatedProducts.push({
         id: relatedProduct.id,
         uid: relatedProduct.uid,
-        title: relatedProduct.data.title,
+        title: pickLocalized(relatedProduct.data, "title", locale),
         description: relatedProduct.data.description
-          ? asText(relatedProduct.data.description)
+          ? asText(pickLocalized(relatedProduct.data, "description", locale))
           : null,
         category: relatedProduct.data.product_category,
         productType: relatedProduct.data.product_type,
@@ -69,7 +77,7 @@ export const transformProductObject = async (product: ProductDocument) => {
         images,
         price: relatedProduct.data.price,
         sortingWeight: relatedProduct.data.sorting_weight ?? 0,
-        callToAction: rp.call_to_action,
+        callToAction: pickLocalized(rp, "call_to_action", locale),
       });
     }
   }
@@ -77,8 +85,8 @@ export const transformProductObject = async (product: ProductDocument) => {
   return {
     id: product.id,
     uid: product.uid,
-    name: product.data.title,
-    description: product.data.description,
+    name: pickLocalized(product.data, "title", locale),
+    description: pickLocalized(product.data, "description", locale),
     images,
     video: asLink(product.data.video) ?? null,
     price: product.data.price,
@@ -125,14 +133,18 @@ export const transformProductObject = async (product: ProductDocument) => {
     walletTopupReward:
       (product.data as { wallet_topup_reward?: number }).wallet_topup_reward ??
       null,
-    specialNotice: product.data.special_notice,
-    checkoutDescription: product.data.checkout_description,
+    specialNotice: pickLocalized(product.data, "special_notice", locale),
+    checkoutDescription: pickLocalized(
+      product.data,
+      "checkout_description",
+      locale
+    ),
     slices: product.data.slices,
     displaySlicePosition: product.data.display_content_slices,
     updatedAt: new Date(product.last_publication_date),
     meta: {
-      title: product.data.meta_title,
-      description: product.data.meta_description,
+      title: pickLocalized(product.data, "meta_title", locale),
+      description: pickLocalized(product.data, "meta_description", locale),
       image: product.data.meta_image?.url || null,
     },
   } as Product;

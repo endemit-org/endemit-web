@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export interface Column<T> {
   key: string;
@@ -30,10 +31,11 @@ export function Table<T>({
   data,
   columns,
   className = "",
-  emptyMessage = "No data available",
+  emptyMessage,
   onRowClick,
   maxHeight = "600px",
 }: TableProps<T>) {
+  const t = useTranslations("common.table");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "",
     direction: null,
@@ -145,7 +147,7 @@ export function Table<T>({
   if (data.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <p className="text-gray-500">{emptyMessage}</p>
+        <p className="text-gray-500">{emptyMessage ?? t("noResults")}</p>
       </div>
     );
   }

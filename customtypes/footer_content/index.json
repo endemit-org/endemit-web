@@ -13,10 +13,28 @@
           "placeholder": ""
         }
       },
+      "footer_text_sl": {
+        "type": "Text",
+        "config": {
+          "label": "Footer text (SL)",
+          "placeholder": ""
+        }
+      },
       "links": {
         "type": "Link",
         "config": {
           "label": "Links",
+          "placeholder": "Links in the footer",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": true
+        }
+      },
+      "links_sl": {
+        "type": "Link",
+        "config": {
+          "label": "Links (SL)",
           "placeholder": "Links in the footer",
           "select": null,
           "allowTargetBlank": true,

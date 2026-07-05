@@ -10,11 +10,12 @@ import {
   isProductConfigurable,
   isProductSellable,
 } from "@/domain/product/businessLogic";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { getProductsQtyInCart } from "@/domain/checkout/actions/getProductsQtyInCart";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { isProductInCart } from "@/domain/checkout/businessRules";
+import { useTranslations } from "next-intl";
 
 interface Props {
   product: Product;
@@ -23,6 +24,18 @@ interface Props {
 }
 
 export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
+  const t = useTranslations("store");
+
+  const VARIANT_TYPES = ["Size", "Colour"] as const;
+  const VARIANT_VALUES = ["Black", "White"] as const;
+  const translateVariantType = (v: string) =>
+    (VARIANT_TYPES as readonly string[]).includes(v)
+      ? t(`variantTypes.${v as (typeof VARIANT_TYPES)[number]}`)
+      : v;
+  const translateVariantValue = (v: string) =>
+    (VARIANT_VALUES as readonly string[]).includes(v)
+      ? t(`variantValues.${v as (typeof VARIANT_VALUES)[number]}`)
+      : v;
   const { addItem } = useCartActions();
   const cartItems = useCartItems();
   const [productEntity, setProductEntity] = useState<Product | undefined>(
@@ -76,7 +89,13 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
     <div className="flex flex-col items-center align-middle rounded-md relative overflow-hidden gap-x-10 w-full">
       {showCartAdd && numberOfVariants > 0 && (
         <div className="flex flex-col items-center mb-6">
-          <div>Select {product.variants[0].variant_type}</div>
+          <div>
+            {t("product.selectVariant", {
+              variantType: translateVariantType(
+                product.variants[0].variant_type
+              ),
+            })}
+          </div>
           <div className="flex gap-x-3 mt-2">
             {productVariants.map(variantProduct => {
               const middleIndex = Math.floor(numberOfVariants / 2);
@@ -93,7 +112,9 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
               return (
                 <div
                   key={variantProduct.uid}
-                  aria-label={variantProduct.variants[0].variant_value}
+                  aria-label={translateVariantValue(
+                    variantProduct.variants[0].variant_value
+                  )}
                   onClick={() => handleVariantSelection(variantProduct)}
                   className={clsx(
                     "group relative flex items-center justify-center rounded-md border border-gray-300 p-3 cursor-pointer",
@@ -108,7 +129,9 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
                       !isSelected && "text-gray-900 group-hover:text-gray-800"
                     )}
                   >
-                    {variantProduct.variants[0].variant_value}
+                    {translateVariantValue(
+                      variantProduct.variants[0].variant_value
+                    )}
                   </span>
                 </div>
               );
@@ -119,7 +142,7 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
 
       {showCartAdd && (
         <div>
-          <div className={"mb-2 text-center"}>Select quantity</div>
+          <div className={"mb-2 text-center"}>{t("product.selectQuantity")}</div>
           <IncrementalInput
             handleDecrement={handleDecrement}
             handleIncrement={handleIncrement}
@@ -127,8 +150,12 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
           />
           {isInCart && (
             <div className={"text-sm text-neutral-400 mt-4"}>
-              (You have {quantityInCart} in{" "}
-              <Link href={"/store/checkout"}>cart</Link>)
+              {t.rich("product.inCart", {
+                count: quantityInCart,
+                link: chunks => (
+                  <Link href={"/store/checkout"}>{chunks}</Link>
+                ),
+              })}
             </div>
           )}
         </div>
@@ -137,7 +164,7 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
       {showCartAdd && (
         <>
           <ActionButton onClick={handleAddToCart} className={"mt-10"}>
-            Add to cart
+            {t("product.addToCart")}
           </ActionButton>
           <div
             className={clsx(
@@ -172,11 +199,16 @@ export default function ProductConfigure({ product, defaultQty = 1 }: Props) {
                     />
                   </div>
                 )}
-                <strong>{product.name}</strong> was added to your cart!
+                {t.rich("product.addedToCart", {
+                  name: product.name,
+                  strong: chunks => <strong>{chunks}</strong>,
+                })}
               </div>
             </div>
 
-            <ActionButton href={"/store/checkout"}>Checkout</ActionButton>
+            <ActionButton href={"/store/checkout"}>
+              {t("product.checkout")}
+            </ActionButton>
           </div>
         </>
       )}

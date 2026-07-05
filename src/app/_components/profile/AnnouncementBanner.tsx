@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import type { Announcement } from "@prisma/client";
 
 interface AnnouncementBannerProps {
@@ -66,6 +67,7 @@ export default function AnnouncementBanner({
   announcement,
   onDismiss,
 }: AnnouncementBannerProps) {
+  const t = useTranslations("profile");
   const isWarning = announcement.type === "WARNING";
 
   return (
@@ -112,7 +114,7 @@ export default function AnnouncementBanner({
             ? "text-amber-400 hover:text-amber-300 hover:bg-amber-900/50"
             : "text-blue-400 hover:text-blue-300 hover:bg-blue-900/50"
         )}
-        aria-label="Dismiss announcement"
+        aria-label={t("announcement.dismiss")}
       >
         <CloseIcon className="w-4 h-4" />
       </button>

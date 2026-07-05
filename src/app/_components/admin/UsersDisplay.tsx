@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import UsersTable from "@/app/_components/table/UsersTable";
 import Pagination from "@/app/_components/table/Pagination";
 import UserCreateForm from "@/app/_components/admin/UserCreateForm";
@@ -18,6 +19,8 @@ export default function UsersDisplay({
   canCreateUsers = false,
 }: UsersDisplayProps) {
   const router = useRouter();
+  const t = useTranslations("admin.users");
+  const tc = useTranslations("admin.common");
   const [users, setUsers] = useState(initialData.users);
   const [currentPage, setCurrentPage] = useState(initialData.page);
   const [totalPages, setTotalPages] = useState(initialData.totalPages);
@@ -55,11 +58,12 @@ export default function UsersDisplay({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Total Users:{" "}
+            {t("list.total")}{" "}
             <strong className="text-gray-900">{totalCount}</strong>
           </div>
           <div className="text-sm text-gray-600">
-            Showing: <strong className="text-gray-900">{users.length}</strong>
+            {tc("showing")}{" "}
+            <strong className="text-gray-900">{users.length}</strong>
           </div>
         </div>
         <div className="flex gap-2">
@@ -68,7 +72,7 @@ export default function UsersDisplay({
               onClick={() => setShowCreateForm(true)}
               className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
             >
-              + Add User
+              {t("list.addUser")}
             </button>
           )}
           <button
@@ -76,7 +80,7 @@ export default function UsersDisplay({
             disabled={isLoading}
             className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
           >
-            {isLoading ? "Loading..." : "Refresh"}
+            {isLoading ? tc("loading") : tc("refresh")}
           </button>
         </div>
       </div>

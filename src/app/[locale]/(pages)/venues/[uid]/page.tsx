@@ -1,0 +1,205 @@
+import PageHeadline from "@/app/_components/ui/PageHeadline";
+import InnerPage from "@/app/_components/ui/InnerPage";
+import OuterPage from "@/app/_components/ui/OuterPage";
+import { notFound } from "next/navigation";
+import Spacer from "@/app/_components/content/Spacer";
+import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
+import clsx from "clsx";
+import EventMiniCard from "@/app/_components/event/EventMiniCard";
+import { Metadata } from "next";
+import { prismic } from "@/lib/services/prismic";
+import { getResizedPrismicImage } from "@/lib/util/util";
+import { fetchVenuesFromCms } from "@/domain/cms/operations/fetchVenuesFromCms";
+import { fetchVenueFromCms } from "@/domain/cms/operations/fetchVenueFromCms";
+import { fetchEventsForVenueFromCms } from "@/domain/cms/operations/fetchEventsForVenueFromCms";
+import EventLocation from "@/app/_components/event/EventLocation";
+import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
+import VenueSeoMicrodata from "@/app/_components/seo/VenueSeoMicrodata";
+import ArtistList from "@/app/_components/artist/ArtistList";
+import type { Artist } from "@/domain/artist/types/artist";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+
+// Static until next deploy - no ISR
+export const revalidate = false;
+
+export async function generateStaticParams() {
+  const venues = await fetchVenuesFromCms({});
+
+  if (!venues || venues.length === 0) {
+    return [];
+  }
+
+  return venues.map(venue => ({
+    uid: venue.uid,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    locale: string;
+    uid: string;
+  }>;
+}): Promise<Metadata> {
+  const { locale, uid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const venue = await fetchVenueFromCms(uid, loc);
+
+  if (!venue) {
+    notFound();
+  }
+
+  const title = `${venue.meta.title ?? venue.name} • Venues`;
+  const description =
+    venue?.meta.description ?? prismic.asText(venue.description) ?? undefined;
+  const images = buildOpenGraphImages({
+    metaImage: venue.meta.image,
+    fallbackImages: venue.image?.src ? [venue.image.src] : undefined,
+  });
+
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    type: "profile",
+    locale: loc,
+    path: `/venues/${uid}`,
+  });
+}
+
+export default async function VenuePage({
+  params,
+}: {
+  params: Promise<{
+    locale: string;
+    uid: string;
+  }>;
+}) {
+  const { locale, uid } = await params;
+  setRequestLocale(locale as "sl" | "en");
+  const t = await getTranslations("venues");
+  const loc = locale === "en" ? "en" : "sl";
+  const venue = await fetchVenueFromCms(uid, loc);
+
+  if (!venue || !venue.showOnVenuePage) {
+    notFound();
+  }
+
+  const relatedEventsQuery = await fetchEventsForVenueFromCms(venue.id);
+
+  const relatedEvents = relatedEventsQuery
+    ? relatedEventsQuery.sort((a, b) => {
+        if (!a.date_start || !b.date_start) return 0;
+        return b.date_start.getTime() - a.date_start.getTime();
+      })
+    : null;
+
+  const showRelatedEvents = relatedEvents && relatedEvents?.length > 0;
+
+  // Extract unique artists from all events at this venue
+  const uniqueArtists: Artist[] = [];
+  const seenArtistIds = new Set<string>();
+
+  if (relatedEvents) {
+    for (const event of relatedEvents) {
+      for (const artist of event.artists) {
+        if (!seenArtistIds.has(artist.id)) {
+          seenArtistIds.add(artist.id);
+          uniqueArtists.push(artist);
+        }
+      }
+    }
+  }
+
+  // Sort artists alphabetically
+  const sortedArtists = uniqueArtists.sort((a, b) =>
+    (a.name ?? "").localeCompare(b.name ?? "")
+  );
+
+  const showArtists = sortedArtists.length > 0;
+
+  return (
+    <>
+      <VenueSeoMicrodata venue={venue} />
+      <OuterPage>
+        <PageHeadline
+          title={venue.name}
+          segments={[
+            { label: "Endemit", path: "" },
+            { label: t("breadcrumb"), path: "venues" },
+            { label: venue.name, path: venue.uid },
+          ]}
+        />
+        <div
+          className={
+            "absolute top-80 h-[400px] blur-3xl -left-10 -right-10 bg-cover opacity-40 z-0 "
+          }
+          style={
+            venue.image
+              ? {
+                  backgroundImage: `url('${getResizedPrismicImage(venue.image?.src, { width: 400, quality: 50 })}')`,
+                }
+              : {}
+          }
+        ></div>
+        <div className={"text-neutral-200"}>
+          <EventLocation
+            venue={{ ...venue, mapLocationUrl: venue.mapUrl ?? "" }}
+            logoWidth={"large"}
+          />
+        </div>
+        <Spacer size={"xlarge"} />
+        {showRelatedEvents && (
+          <InnerPage>
+            <h2 className={"text-3xl text-neutral-200"}>
+              {t("eventsHostedAt", { name: venue.name })}
+            </h2>
+            <div
+              className={clsx(
+                "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2 mt-8"
+              )}
+            >
+              {showRelatedEvents &&
+                relatedEvents.map(event => {
+                  const shouldShowLink =
+                    event.options.enabledLink ||
+                    event.options.externalEventLink;
+                  const link =
+                    event.options.externalEventLink ?? `/events/${event.uid}`;
+
+                  return (
+                    <EventMiniCard
+                      location={event.venue?.name}
+                      dateStart={event.date_start}
+                      dateEnd={event.date_end}
+                      key={event.id}
+                      image={event.promoImage}
+                      name={event.name}
+                      link={shouldShowLink ? link : null}
+                    />
+                  );
+                })}
+            </div>
+          </InnerPage>
+        )}
+
+        {showArtists && (
+          <>
+            <Spacer size={"large"} />
+            <ArtistList
+              artists={sortedArtists}
+              includeFrame
+              title={t("artistsPerformedAt", { name: venue.name })}
+            />
+          </>
+        )}
+
+        <EndemitSubscribe
+          title={t("dontMissNextEvent", { name: venue.name })}
+          description={t("subscribePrompt")}
+        />
+      </OuterPage>
+    </>
+  );
+}

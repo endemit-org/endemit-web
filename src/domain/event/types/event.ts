@@ -13,6 +13,16 @@ export enum EventType {
   GuestAppearance = "Guest appearance",
 }
 
+/**
+ * Per-event page theme (art direction). `General` is the default look and a
+ * complete no-op. New themes are added as enum members + a registry entry in
+ * src/domain/event/config/pageThemes.ts — no page code changes required.
+ */
+export enum EventPageTheme {
+  General = "general",
+  CrtGlitch = "crt",
+}
+
 export type VenueInEvent = {
   id: string;
   uid: string;
@@ -57,6 +67,7 @@ export type Event = {
   hasCashlessPayments: boolean;
   annotation?: string;
   type: EventType;
+  theme: EventPageTheme;
   date_start: Date | null;
   date_end: Date | null;
   event: string | null;

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { formatPrice, formatEmailForDisplay } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import Pagination from "@/app/_components/table/Pagination";
@@ -27,6 +28,8 @@ export default function DonationsDisplay({
   initialData,
   initialDonorsData,
 }: DonationsDisplayProps) {
+  const t = useTranslations("admin.donations");
+  const tc = useTranslations("admin.common");
   const [activeTab, setActiveTab] = useState<Tab>("transactions");
 
   // Transactions state
@@ -100,7 +103,7 @@ export default function DonationsDisplay({
               : "text-gray-600 hover:text-gray-900"
           }`}
         >
-          Transactions
+          {t("tabTransactions")}
         </button>
         <button
           onClick={() => setActiveTab("donors")}
@@ -110,7 +113,7 @@ export default function DonationsDisplay({
               : "text-gray-600 hover:text-gray-900"
           }`}
         >
-          Donors ({donors.length})
+          {t("tabDonors", { count: donors.length })}
         </button>
       </div>
 
@@ -120,26 +123,26 @@ export default function DonationsDisplay({
           {activeTab === "transactions" ? (
             <>
               <div className="text-sm text-gray-600">
-                Total Donations:{" "}
+                {t("totalDonations")}{" "}
                 <strong className="text-green-600 text-lg">
                   {formatPrice(totalAmount)}
                 </strong>
               </div>
               <div className="text-sm text-gray-600">
-                Count: <strong className="text-gray-900">{totalCount}</strong>
+                {t("count")} <strong className="text-gray-900">{totalCount}</strong>
               </div>
               <div className="text-sm text-gray-600">
-                Showing: <strong className="text-gray-900">{donations.length}</strong>
+                {tc("showing")} <strong className="text-gray-900">{donations.length}</strong>
               </div>
             </>
           ) : (
             <>
               <div className="text-sm text-gray-600">
-                Total Donors:{" "}
+                {t("totalDonors")}{" "}
                 <strong className="text-gray-900">{donors.length}</strong>
               </div>
               <div className="text-sm text-gray-600">
-                Total Donated:{" "}
+                {t("totalDonatedColon")}{" "}
                 <strong className="text-green-600 text-lg">
                   {formatPrice(initialDonorsData.totalAmount)}
                 </strong>
@@ -152,7 +155,7 @@ export default function DonationsDisplay({
           disabled={isLoadingAny}
           className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
         >
-          {isLoadingAny ? "Loading..." : "Refresh"}
+          {isLoadingAny ? tc("loading") : tc("refresh")}
         </button>
       </div>
 
@@ -169,31 +172,31 @@ export default function DonationsDisplay({
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Date
+                        {t("date")}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Donor
+                        {t("donor")}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Email
+                        {t("email")}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Amount
+                        {t("amount")}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
                       >
-                        Order
+                        {t("order")}
                       </th>
                     </tr>
                   </thead>
@@ -207,7 +210,7 @@ export default function DonationsDisplay({
                           <ClientDate date={donation.createdAt} />
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                          {donation.orderName || "Anonymous"}
+                          {donation.orderName || t("anonymous")}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                           {formatEmailForDisplay(donation.orderEmail)}
@@ -220,7 +223,7 @@ export default function DonationsDisplay({
                             href={`/admin/orders/${donation.orderId}`}
                             className="text-blue-600 hover:text-blue-800"
                           >
-                            View
+                            {t("view")}
                           </Link>
                         </td>
                       </tr>
@@ -230,7 +233,7 @@ export default function DonationsDisplay({
               </div>
             ) : (
               <div className="p-8 text-center text-gray-500">
-                No donations found
+                {t("noDonations")}
               </div>
             )}
           </div>
@@ -280,7 +283,7 @@ export default function DonationsDisplay({
                           </svg>
                           <div className="min-w-0">
                             <div className="font-medium text-gray-900 truncate">
-                              {donor.name || "Anonymous"}
+                              {donor.name || t("anonymous")}
                             </div>
                             <div className="text-sm text-gray-500 truncate">
                               {formatEmailForDisplay(donor.email)}
@@ -290,20 +293,20 @@ export default function DonationsDisplay({
 
                         <div className="flex items-center gap-6 flex-shrink-0">
                           <div className="text-right hidden sm:block">
-                            <div className="text-xs text-gray-500">First</div>
+                            <div className="text-xs text-gray-500">{t("first")}</div>
                             <div className="text-sm text-gray-600">
                               <ClientDate date={donor.firstDonation} format="date" />
                             </div>
                           </div>
                           <div className="text-right hidden sm:block">
-                            <div className="text-xs text-gray-500">Last</div>
+                            <div className="text-xs text-gray-500">{t("last")}</div>
                             <div className="text-sm text-gray-600">
                               <ClientDate date={donor.lastDonation} format="date" />
                             </div>
                           </div>
                           <div className="text-right">
                             <div className="text-xs text-gray-500">
-                              {donor.donationCount} donation{donor.donationCount !== 1 ? "s" : ""}
+                              {t("donationCount", { count: donor.donationCount })}
                             </div>
                             <div className="text-lg font-semibold text-green-600">
                               {formatPrice(donor.totalAmount)}
@@ -321,13 +324,13 @@ export default function DonationsDisplay({
                             <thead>
                               <tr>
                                 <th className="text-left text-xs font-medium text-gray-500 uppercase py-2">
-                                  Date
+                                  {t("date")}
                                 </th>
                                 <th className="text-right text-xs font-medium text-gray-500 uppercase py-2">
-                                  Amount
+                                  {t("amount")}
                                 </th>
                                 <th className="text-right text-xs font-medium text-gray-500 uppercase py-2">
-                                  Order
+                                  {t("order")}
                                 </th>
                               </tr>
                             </thead>
@@ -345,7 +348,7 @@ export default function DonationsDisplay({
                                       href={`/admin/orders/${donation.orderId}`}
                                       className="text-blue-600 hover:text-blue-800"
                                     >
-                                      View
+                                      {t("view")}
                                     </Link>
                                   </td>
                                 </tr>
@@ -361,7 +364,7 @@ export default function DonationsDisplay({
             </div>
           ) : (
             <div className="p-8 text-center text-gray-500">
-              No donors found
+              {t("noDonors")}
             </div>
           )}
         </div>

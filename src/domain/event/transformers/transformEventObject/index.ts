@@ -4,10 +4,14 @@ import { asLink, asText, isFilled } from "@prismicio/client";
 import { EventDocument } from "@/prismicio-types";
 import { convertMinutesToMs } from "@/lib/util/converters";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import { mapPageTheme } from "@/domain/event/config/pageThemes";
+import type { AppLocale } from "@/i18n/routing";
 
 export const transformEventObject = async (
   event: EventDocument,
-  ticketProductIds: string[]
+  ticketProductIds: string[],
+  locale: AppLocale = "sl"
 ) => {
   const venueDoc = isFilled.contentRelationship(event.data.venue)
     ? event.data.venue
@@ -19,10 +23,9 @@ export const transformEventObject = async (
       if (!isFilled.contentRelationship(item.artist)) continue;
 
       const artist = item.artist;
-      if (!artist || !artist.data) {
-        artists.push(null);
-        continue;
-      }
+      // Broken relationship (unpublished/deleted artist doc) — skip instead of
+      // emitting a null entry that crashes every consumer that maps artists.
+      if (!artist || !artist.data) continue;
 
       const imageUrl =
         item.image_override && item.image_override.url
@@ -39,10 +42,10 @@ export const transformEventObject = async (
         uid: artist.uid,
         name: item.name_override ?? artist.data.name,
         description:
-          item.description_override.length > 0
-            ? item.description_override
-            : artist.data.description
-              ? artist.data.description
+          pickLocalized(item, "description_override", locale).length > 0
+            ? pickLocalized(item, "description_override", locale)
+            : pickLocalized(artist.data, "description", locale)
+              ? pickLocalized(artist.data, "description", locale)
               : null,
         image: {
           src: imageUrl,
@@ -59,24 +62,30 @@ export const transformEventObject = async (
               )
             : null,
         duration: item.duration,
-        stage: item.stage,
+        stage: pickLocalized(item, "stage", locale),
         isB2b: artist.data.is_b2b,
         b2bAttribution: artist.data.is_b2b
-          ? artist.data.b2b_attributed_to_artist.map(artist => {
-              if (!isFilled.contentRelationship(artist.artist)) return;
+          ? artist.data.b2b_attributed_to_artist
+              .map(artist => {
+                if (!isFilled.contentRelationship(artist.artist)) return;
 
-              return {
-                name: artist.artist.data?.name,
-                id: artist.artist.id,
-                uid: artist.artist.uid,
-              };
-            })
+                return {
+                  name: artist.artist.data?.name,
+                  id: artist.artist.id,
+                  uid: artist.artist.uid,
+                };
+              })
+              // Empty repeatable rows map to undefined — drop them.
+              .filter(Boolean)
           : null,
         links: artist.data.links
-          ? artist.data.links.map(link => ({
-              type: link.type,
-              url: asLink(link.link),
-            }))
+          ? artist.data.links
+              .map(link => ({
+                type: link.type,
+                url: asLink(link.link),
+              }))
+              // Empty repeatable entries in Prismic come through as null type/url.
+              .filter(link => link.type && link.url)
           : [],
         soundcloudUrl: (item as { soundcloud_url?: string }).soundcloud_url || null,
       });
@@ -87,7 +96,10 @@ export const transformEventObject = async (
     id: event.id,
     uid: event.uid,
     name: event.data.title,
-    description: event.data.description ? asText(event.data.description) : null,
+    description: (() => {
+      const d = pickLocalized(event.data, "description", locale);
+      return d ? asText(d) : null;
+    })(),
     coverImage: event.data.cover_image
       ? {
           src: event.data.cover_image.url,
@@ -116,9 +128,9 @@ export const transformEventObject = async (
         ? {
             id: venueDoc.id,
             uid: venueDoc.uid,
-            name: venueDoc.data.name,
+            name: pickLocalized(venueDoc.data, "name", locale),
             address: venueDoc.data.address,
-            description: venueDoc.data.description,
+            description: pickLocalized(venueDoc.data, "description", locale),
             coordinates: venueDoc.data.coordinates,
             image: venueDoc.data.image
               ? {
@@ -161,8 +173,11 @@ export const transformEventObject = async (
     hasCashlessPayments:
       (event.data as { has_cashless_payments?: boolean }).has_cashless_payments ??
       false,
-    annotation: event.data.annotation,
+    annotation: pickLocalized(event.data, "annotation", locale),
     type: event.data.event_type,
+    theme: mapPageTheme(
+      (event.data as { page_theme?: string | null }).page_theme
+    ),
     date_start: event.data.date_start ? new Date(event.data.date_start) : null,
     date_end: event.data.date_end ? new Date(event.data.date_end) : null,
     event: asLink(event.data.video) ?? null,

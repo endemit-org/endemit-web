@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export interface TabItem {
   label: string;
@@ -11,6 +12,7 @@ export interface TabItem {
   sortingWeight?: number;
   hideTitle?: boolean;
   mobileOnly?: boolean;
+  desktopOnly?: boolean;
 }
 
 export interface TabsProps {
@@ -26,6 +28,7 @@ export default function Tabs({
   sortByWeight = false,
   backgroundColor,
 }: TabsProps) {
+  const t = useTranslations("common");
   const hashFromUrl =
     typeof window !== "undefined" ? window.location.hash.slice(1) : "";
 
@@ -205,20 +208,22 @@ export default function Tabs({
             className="overflow-x-auto scrollbar-hide py-2 pl-6 pr-8"
           >
             <div className="flex gap-x-5 justify-between">
-              {items.map(item => (
-                <Link
-                  ref={el => {
-                    mobileLinksRef.current[item.id] = el;
-                  }}
-                  key={`tab-top-navigation-${item.label}-${item.id}`}
-                  href={`#${item.id}`}
-                  onClick={() => handleTabClick(item.id, false)}
-                  className={`text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
-                ${activeTabId === item.id && "!text-neutral-100 !border-b-blue-500"}`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {items
+                .filter(item => !item.desktopOnly)
+                .map(item => (
+                  <Link
+                    ref={el => {
+                      mobileLinksRef.current[item.id] = el;
+                    }}
+                    key={`tab-top-navigation-${item.label}-${item.id}`}
+                    href={`#${item.id}`}
+                    onClick={() => handleTabClick(item.id, false)}
+                    className={`app-tab-mobile text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
+                ${activeTabId === item.id && "app-tab-mobile--active !text-neutral-100 !border-b-blue-500"}`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
             </div>
           </div>
           <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black to-transparent" />
@@ -236,7 +241,7 @@ export default function Tabs({
           <nav
             ref={desktopNavRef}
             className="flex space-x-8 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
-            aria-label="Tabs"
+            aria-label={t("a11y.tabs")}
             onPointerDown={handleDesktopPointerDown}
           >
             {desktopTabs.map(item => (
@@ -252,10 +257,10 @@ export default function Tabs({
                   }
                   handleTabClick(item.id, true);
                 }}
-                className={`whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
+                className={`app-tab whitespace-nowrap py-4 px-3 border-b-2 font-medium font-heading transition-colors text-2xl tracking-wider uppercase ${
                   activeTabId === item.id
-                    ? "border-blue-500 text-neutral-200 backdrop-blur-lg rounded-t-md"
-                    : "border-transparent text-neutral-950 hover:text-neutral-900 [text-shadow:0_0px_10px_rgba(255,255,255,0.2)] hover:border-neutral-300"
+                    ? "app-tab--active border-blue-500 text-neutral-200 backdrop-blur-lg rounded-t-md"
+                    : "app-tab--inactive border-transparent text-neutral-950 hover:text-neutral-900 [text-shadow:0_0px_10px_rgba(255,255,255,0.2)] hover:border-neutral-300"
                 }`}
               >
                 {item.label}
@@ -288,23 +293,25 @@ export default function Tabs({
       {/* Mobile expanded content */}
       <section>
         <div className="lg:hidden space-y-6">
-          {items.map(item => (
-            <div
-              key={item.id}
-              className="first:pt-0 pt-28 scroll-my-16"
-              id={!item.hideTitle ? item.id : undefined}
-              data-tab-id={item.id}
-            >
-              {!item.hideTitle && (
-                <h3 className="text-5xl font-heading tracking-wider text-neutral-400 mb-6">
-                  {item.label}
-                </h3>
-              )}
-              <InnerPage style={{ backgroundColor }}>
-                <div className="max-w-none">{item.content}</div>
-              </InnerPage>
-            </div>
-          ))}
+          {items
+            .filter(item => !item.desktopOnly)
+            .map(item => (
+              <div
+                key={item.id}
+                className="first:pt-0 first:mt-0 pt-28 scroll-my-16"
+                id={!item.hideTitle ? item.id : undefined}
+                data-tab-id={item.id}
+              >
+                {!item.hideTitle && (
+                  <h3 className="text-5xl font-heading tracking-wider text-neutral-400 mb-6">
+                    {item.label}
+                  </h3>
+                )}
+                <InnerPage style={{ backgroundColor }}>
+                  <div className="max-w-none">{item.content}</div>
+                </InnerPage>
+              </div>
+            ))}
         </div>
       </section>
     </>

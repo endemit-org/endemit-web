@@ -57,6 +57,13 @@ function shouldNeverCache(request) {
 function getCacheStrategy(request) {
   const url = new URL(request.url);
 
+  // Without a real deployment id, caches never invalidate across builds, so
+  // serving cached `/_next/static/` chunks against fresh HTML causes hydration
+  // mismatches. Bail out to the network entirely in that case.
+  if (DEPLOYMENT_ID === "dev") {
+    return "network-only";
+  }
+
   // Never cache mutations
   if (shouldNeverCache(request)) {
     return "network-only";

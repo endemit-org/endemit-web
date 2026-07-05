@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { PosItemGrid } from "./PosItemGrid";
@@ -58,6 +59,7 @@ export function PosRegisterInterface({
   initialPendingOrders,
   showBackButton = true,
 }: Props) {
+  const t = useTranslations("pos");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [pendingOrders, setPendingOrders] =
     useState<PosOrderSummary[]>(initialPendingOrders);
@@ -323,7 +325,7 @@ export function PosRegisterInterface({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search items..."
+                  placeholder={t("register.searchPlaceholder")}
                   autoFocus
                   className="w-48 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -360,7 +362,7 @@ export function PosRegisterInterface({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search items..."
+                placeholder={t("register.searchPlaceholder")}
                 autoFocus
                 className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -480,7 +482,7 @@ export function PosRegisterInterface({
           />
           <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl overflow-auto">
             <div className="flex items-center justify-between p-4 border-b">
-              <span className="font-medium">Pending Orders</span>
+              <span className="font-medium">{t("orders.pendingOrders")}</span>
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 className="p-2 hover:bg-gray-100 rounded-full"

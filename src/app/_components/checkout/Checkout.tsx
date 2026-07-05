@@ -15,7 +15,8 @@ import CheckoutWalletCredit from "@/app/_components/checkout/CheckoutWalletCredi
 import CheckoutCartSummaryCollapsible from "@/app/_components/checkout/CheckoutCartSummaryCollapsible";
 import CheckoutStepIndicator from "@/app/_components/checkout/CheckoutStepIndicator";
 import PaymentForm from "@/app/_components/checkout/PaymentForm";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 // Dynamic import: Stripe (~80KB) only loads when payment form is rendered
 const StripeProvider = dynamic(
@@ -43,6 +44,7 @@ export default function Checkout({
   donationProduct = null,
   userEmail,
 }: Props) {
+  const t = useTranslations("checkout");
   const [isClient, setIsClient] = useState(false);
   const [mobileStep, setMobileStep] = useState<1 | 2 | 3>(1);
   const [donationDismissed, setDonationDismissed] = useState(false);
@@ -189,7 +191,7 @@ export default function Checkout({
         disabled={isPaymentProcessing}
         className="text-neutral-400 hover:text-white text-sm transition-colors disabled:opacity-50"
       >
-        ← Back
+        {t("back")}
       </button>
     </div>
   );
@@ -219,21 +221,22 @@ export default function Checkout({
                     <div className="flex flex-col justify-center items-center mb-6 text-neutral-400">
                       <AnimatedWarningIcon color="currentColor" />
                     </div>
-                    Your cart is empty.
+                    {t("emptyCart.title")}
                     <div className="pt-4">
-                      Visit the{" "}
-                      <Link href={"/store"} className="link">
-                        Support us section
-                      </Link>{" "}
-                      to select products for your purchase and support our
-                      non-profit work.
+                      {t.rich("emptyCart.body", {
+                        link: (chunks: React.ReactNode) => (
+                          <Link href={"/store"} className="link">
+                            {chunks}
+                          </Link>
+                        ),
+                      })}
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="bg-neutral-800 p-4 rounded-md space-y-4">
                   <h3 className="text-xl font-medium font-heading text-neutral-200">
-                    Cart ({totalItems} {totalItems === 1 ? "item" : "items"})
+                    {t("cart.heading", { count: totalItems })}
                   </h3>
 
                   <CheckoutItemList
@@ -267,7 +270,7 @@ export default function Checkout({
                   {/* Subtotal summary for step 1 */}
                   <div className="text-md text-neutral-200 pt-4 border-t border-neutral-700">
                     <div className="flex justify-between text-lg">
-                      <span>Subtotal:</span>
+                      <span>{t("summary.subtotal")}</span>
                       <span className="font-medium">
                         {formatCurrency(displayTotals.subTotal)}
                       </span>
@@ -280,7 +283,7 @@ export default function Checkout({
                       onClick={handleToInformation}
                       className="w-full font-medium py-3 px-6 rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                      Continue to checkout
+                      {t("continueToCheckout")}
                     </button>
                   </div>
                 </div>
@@ -327,7 +330,7 @@ export default function Checkout({
                       : "bg-neutral-600 text-neutral-400 cursor-not-allowed"
                   )}
                 >
-                  Continue to Review & Pay
+                  {t("continueToReview")}
                 </button>
               </div>
 
@@ -396,13 +399,13 @@ export default function Checkout({
                 {!isFormValid && (
                   <div className="p-3 bg-amber-900/30 border border-amber-700/40 rounded text-center">
                     <p className="text-sm text-amber-200">
-                      Please go back to update your information.
+                      {t("updateInfoWarning")}
                     </p>
                     <button
                       onClick={handleBack}
                       className="mt-2 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
                     >
-                      ← Back to Information
+                      {t("backToInformation")}
                     </button>
                   </div>
                 )}
@@ -421,7 +424,7 @@ export default function Checkout({
                       onClick={async () => {
                         const result = await actions.confirmPayment();
                         if (!result.success) {
-                          setPaymentError("Failed to process payment");
+                          setPaymentError(t("failedToProcessPayment"));
                         }
                       }}
                       disabled={!canProceed || isProcessing}
@@ -429,8 +432,8 @@ export default function Checkout({
                       className="py-3 text-lg"
                     >
                       {isProcessing
-                        ? "Processing..."
-                        : "Complete Order (Wallet Payment)"}
+                        ? t("processing")
+                        : t("completeWalletOrder")}
                     </ActionButton>
                   </div>
                 ) : payment.amountToCharge > 0 ? (
@@ -462,14 +465,15 @@ export default function Checkout({
                   <div className="flex flex-col justify-center items-center mb-6 text-neutral-400">
                     <AnimatedWarningIcon color="currentColor" />
                   </div>
-                  Your cart is empty.
+                  {t("emptyCart.title")}
                   <div className="pt-4">
-                    Visit the{" "}
-                    <Link href={"/store"} className="link">
-                      Support us section
-                    </Link>{" "}
-                    to select products for your purchase and support our
-                    non-profit work.
+                    {t.rich("emptyCart.body", {
+                      link: (chunks: React.ReactNode) => (
+                        <Link href={"/store"} className="link">
+                          {chunks}
+                        </Link>
+                      ),
+                    })}
                   </div>
                 </div>
               </div>
@@ -498,7 +502,7 @@ export default function Checkout({
           {isClient && (
             <>
               <h3 className="text-2xl font-medium font-heading mb-3 text-neutral-200">
-                Cart ({totalItems} items)
+                {t("cart.heading", { count: totalItems })}
               </h3>
 
               <CheckoutItemList
@@ -587,7 +591,7 @@ export default function Checkout({
                         onClick={async () => {
                           const result = await actions.confirmPayment();
                           if (!result.success) {
-                            setPaymentError("Failed to process payment");
+                            setPaymentError(t("failedToProcessPayment"));
                           }
                         }}
                         disabled={!canProceed || isProcessing}
@@ -595,8 +599,8 @@ export default function Checkout({
                         className="py-3 text-lg"
                       >
                         {isProcessing
-                          ? "Processing..."
-                          : "Complete Order (Wallet Payment)"}
+                          ? t("processing")
+                          : t("completeWalletOrder")}
                       </ActionButton>
                     </div>
                   ) : payment.amountToCharge > 0 ? (
@@ -621,12 +625,10 @@ export default function Checkout({
       {!hasItems && products && (
         <ProductSection
           products={products}
-          title={"Official items"}
+          title={t("officialItems.title")}
           gridType={"small"}
           quickAddToCart={true}
-          description={
-            "These are official endemit items you can add to your checkout. Explore and add to your cart."
-          }
+          description={t("officialItems.description")}
         />
       )}
     </>

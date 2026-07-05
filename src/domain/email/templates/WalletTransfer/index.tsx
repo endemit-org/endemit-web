@@ -3,6 +3,7 @@ import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 type Direction = "sent" | "received";
 
@@ -14,6 +15,7 @@ interface Props {
   note: string | null;
   occurredAt: Date;
   transactionId: string;
+  locale?: string;
 }
 
 function WalletTransferTemplate({
@@ -24,36 +26,35 @@ function WalletTransferTemplate({
   note,
   occurredAt,
   transactionId,
+  locale = "sl",
 }: Props) {
   const sent = direction === "sent";
-  const formattedDate = occurredAt.toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const t = getEmailTranslator(locale, "emails.walletTransfer");
+  const formattedDate = occurredAt.toLocaleString(
+    locale === "en" ? "en-GB" : "sl-SI",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
   return (
     <MasterTemplate>
       <div>
         <h1 className="text-2xl font-bold mb-2">
-          {sent ? "Funds sent" : "Funds received"}
+          {sent ? t("subjectSent") : t("subjectReceived")}
         </h1>
         <Text className="text-gray-500 mb-6">{formattedDate}</Text>
 
         <Text className="text-gray-600 mb-6">
-          {sent ? (
-            <>
-              You sent <strong>{formatTokensFromCents(amount)}</strong> to{" "}
-              <strong>{counterpartyName}</strong>.
-            </>
-          ) : (
-            <>
-              <strong>{counterpartyName}</strong> sent you{" "}
-              <strong>{formatTokensFromCents(amount)}</strong>.
-            </>
-          )}
+          {t.rich(sent ? "descSent" : "descReceived", {
+            amount: formatTokensFromCents(amount),
+            name: counterpartyName,
+            strong: chunks => <strong>{chunks}</strong>,
+          })}
         </Text>
 
         <div
@@ -66,7 +67,7 @@ function WalletTransferTemplate({
           }}
         >
           <Text className="text-gray-500 text-sm mb-1">
-            {sent ? "Amount sent" : "Amount received"}
+            {sent ? t("amountSent") : t("amountReceived")}
           </Text>
           <Text
             style={{
@@ -90,7 +91,7 @@ function WalletTransferTemplate({
               marginBottom: "24px",
             }}
           >
-            <Text className="text-gray-500 text-xs mb-1">Note</Text>
+            <Text className="text-gray-500 text-xs mb-1">{t("note")}</Text>
             <Text className="text-gray-800 m-0">{note}</Text>
           </div>
         )}
@@ -105,7 +106,7 @@ function WalletTransferTemplate({
           }}
         >
           <Text className="font-semibold mb-2" style={{ color: "#93c5fd" }}>
-            Wallet Balance
+            {t("walletBalance")}
           </Text>
           <Text
             className="text-2xl font-bold my-1"
@@ -137,16 +138,18 @@ function WalletTransferTemplate({
               fontSize: "14px",
             }}
           >
-            View transaction
+            {t("viewTransaction")}
           </Link>
         </div>
 
         <Text className="text-gray-600 my-6">
-          If you have any questions, please contact us at{" "}
-          <Link href="mailto:endemit@endemit.org" className="link">
-            endemit@endemit.org
-          </Link>
-          .
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href="mailto:endemit@endemit.org" className="link">
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

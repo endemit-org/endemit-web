@@ -5,6 +5,7 @@ import { formatPrice, formatEmailForDisplay } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface OrderDetailsDialogProps {
   order: SerializedOrderWithTickets | null;
@@ -33,6 +34,9 @@ export default function OrderDetailsDialog({
   isLoading,
   onClose,
 }: OrderDetailsDialogProps) {
+  const t = useTranslations("admin.orders");
+  const ts = useTranslations("admin.status.order");
+  const tk = useTranslations("admin.orders.ticketStatus");
   if (!isOpen) return null;
 
   return (
@@ -47,14 +51,14 @@ export default function OrderDetailsDialog({
         {isLoading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto" />
-            <p className="mt-4 text-gray-600">Loading order details...</p>
+            <p className="mt-4 text-gray-600">{t("detail.loading")}</p>
           </div>
         ) : order ? (
           <>
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Order Details
+                  {t("detail.title")}
                 </h2>
                 <span
                   className={clsx(
@@ -62,7 +66,7 @@ export default function OrderDetailsDialog({
                     statusColors[order.status] || "bg-gray-100 text-gray-800"
                   )}
                 >
-                  {order.status}
+                  {ts(order.status)}
                 </span>
               </div>
               <p className="text-sm text-gray-500 font-mono mt-1">{order.id}</p>
@@ -71,21 +75,21 @@ export default function OrderDetailsDialog({
             <div className="p-6 space-y-6">
               <section>
                 <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                  Customer Information
+                  {t("detail.customerInfo")}
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                   {order.name && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Name:</span>
+                      <span className="text-gray-600">{t("detail.name")}</span>
                       <span className="font-medium">{order.name}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Email:</span>
+                    <span className="text-gray-600">{t("detail.email")}</span>
                     <span className="font-medium">{formatEmailForDisplay(order.email)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Date:</span>
+                    <span className="text-gray-600">{t("detail.date")}</span>
                     <ClientDate date={order.createdAt} className="font-medium" />
                   </div>
                 </div>
@@ -93,27 +97,27 @@ export default function OrderDetailsDialog({
 
               <section>
                 <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                  Order Summary
+                  {t("detail.orderSummary")}
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal:</span>
+                    <span className="text-gray-600">{t("detail.subtotal")}</span>
                     <span>{formatPrice(order.subtotal)}</span>
                   </div>
                   {order.discountAmount != null && order.discountAmount > 0 && (
                     <div className="flex justify-between text-green-600">
-                      <span>Discount:</span>
+                      <span>{t("detail.discount")}</span>
                       <span>-{formatPrice(order.discountAmount)}</span>
                     </div>
                   )}
                   {order.shippingAmount != null && order.shippingAmount > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Shipping:</span>
+                      <span className="text-gray-600">{t("detail.shipping")}</span>
                       <span>{formatPrice(order.shippingAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
-                    <span>Total:</span>
+                    <span>{t("detail.total")}</span>
                     <span>{formatPrice(order.totalAmount)}</span>
                   </div>
                 </div>
@@ -121,7 +125,7 @@ export default function OrderDetailsDialog({
 
               <section>
                 <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                  Items ({order.items.length})
+                  {t("detail.items", { count: order.items.length })}
                 </h3>
                 <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
                   {order.items.map((item, index) => (
@@ -129,7 +133,7 @@ export default function OrderDetailsDialog({
                       <div>
                         <p className="font-medium">{item.name}</p>
                         <p className="text-sm text-gray-500">
-                          {item.category} • Qty: {item.quantity}
+                          {item.category} • {t("detail.qty", { count: item.quantity })}
                         </p>
                       </div>
                       <span className="font-medium">
@@ -143,7 +147,7 @@ export default function OrderDetailsDialog({
               {order.tickets.length > 0 && (
                 <section>
                   <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                    Tickets ({order.tickets.length})
+                    {t("detail.tickets", { count: order.tickets.length })}
                   </h3>
                   <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
                     {order.tickets.map(ticket => (
@@ -169,7 +173,7 @@ export default function OrderDetailsDialog({
                                     : "bg-gray-100 text-gray-800"
                               )}
                             >
-                              {ticket.status}
+                              {tk.has(ticket.status) ? tk(ticket.status) : ticket.status}
                             </span>
                             <p className="text-sm font-medium mt-1">
                               {formatPrice(ticket.price)}
@@ -184,7 +188,7 @@ export default function OrderDetailsDialog({
                       href={`/admin/events/${order.tickets[0].eventId}`}
                       className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-800"
                     >
-                      View event tickets →
+                      {t("detail.viewEventTickets")}
                     </Link>
                   )}
                 </section>
@@ -193,7 +197,7 @@ export default function OrderDetailsDialog({
               {order.shippingRequired && order.shippingAddress && (
                 <section>
                   <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                    Shipping Address
+                    {t("detail.shippingAddress")}
                   </h3>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <pre className="text-sm whitespace-pre-wrap">
@@ -209,13 +213,13 @@ export default function OrderDetailsDialog({
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors"
                 onClick={onClose}
               >
-                Close
+                {t("detail.close")}
               </button>
             </div>
           </>
         ) : (
           <div className="p-8 text-center text-gray-600">
-            Order not found
+            {t("detail.notFound")}
           </div>
         )}
       </div>

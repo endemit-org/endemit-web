@@ -5,6 +5,8 @@ import InnerPage from "@/app/_components/ui/InnerPage";
 import { fetchArtistFromCms } from "@/domain/cms/operations/fetchArtistFromCms";
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 import { getBlurDataURL } from "@/lib/util/util";
+import { pickLocalized } from "@/domain/cms/pickLocalized";
+import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 interface ArtistProfileListItem {
   artist: {
@@ -16,6 +18,7 @@ interface ArtistProfileListItem {
   };
   name_override?: string | null;
   description_override?: RichTextField | null;
+  description_override_sl?: RichTextField | null;
   image_override?: {
     url?: string | null;
     alt?: string | null;
@@ -29,16 +32,22 @@ interface ArtistProfileListSlice {
   variation: string;
   primary: {
     title?: string | null;
+    title_sl?: string | null;
     description?: string | null;
+    description_sl?: string | null;
     render_frame?: boolean;
     show_link_to_page?: boolean;
     artists?: ArtistProfileListItem[];
   };
 }
 
-const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
-  slice,
-}) => {
+const ArtistProfileList: FC<{
+  slice: ArtistProfileListSlice;
+  context?: SliceContext;
+}> = async ({ slice, context }) => {
+  const locale = context?.locale ?? "sl";
+  const listTitle = pickLocalized(slice.primary, "title", locale);
+  const listDescription = pickLocalized(slice.primary, "description", locale);
   const items = slice.primary.artists ?? [];
 
   if (items.length === 0) {
@@ -56,7 +65,7 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
         return null;
       }
 
-      const artist = await fetchArtistFromCms(item.artist.uid);
+      const artist = await fetchArtistFromCms(item.artist.uid, locale);
       if (!artist) return null;
 
       const image = item.image_override?.url
@@ -67,8 +76,13 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
           }
         : artist.image;
 
-      const description = isFilled.richText(item.description_override ?? [])
-        ? item.description_override
+      const localizedOverride = pickLocalized(
+        item,
+        "description_override",
+        locale
+      );
+      const description = isFilled.richText(localizedOverride ?? [])
+        ? localizedOverride
         : artist.description;
 
       const video = item.video_override
@@ -98,13 +112,11 @@ const ArtistProfileList: FC<{ slice: ArtistProfileListSlice }> = async ({
 
   const content = (
     <>
-      {slice.primary.title && (
-        <h2 className="text-3xl text-neutral-200">{slice.primary.title}</h2>
+      {listTitle && (
+        <h2 className="text-3xl text-neutral-200">{listTitle}</h2>
       )}
-      {slice.primary.description && (
-        <p className="text-md text-neutral-400 mb-8">
-          {slice.primary.description}
-        </p>
+      {listDescription && (
+        <p className="text-md text-neutral-400 mb-8">{listDescription}</p>
       )}
       <EventLineUp artists={artists} />
     </>

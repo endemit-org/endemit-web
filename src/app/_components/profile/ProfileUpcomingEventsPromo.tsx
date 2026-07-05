@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { formatEventDate } from "@/lib/util/formatting";
 
@@ -20,6 +21,9 @@ interface ProfileUpcomingEventsPromoProps {
 export default function ProfileUpcomingEventsPromo({
   events,
 }: ProfileUpcomingEventsPromoProps) {
+  const t = useTranslations("profile");
+  const locale = useLocale() as "sl" | "en";
+
   if (events.length === 0) {
     return null;
   }
@@ -28,10 +32,10 @@ export default function ProfileUpcomingEventsPromo({
     <div className="bg-neutral-900 rounded-lg overflow-hidden">
       <div className="p-4 border-b border-blue-700/30">
         <h3 className="text-lg font-semibold text-neutral-200">
-          Upcoming Events
+          {t("upcomingPromo.title")}
         </h3>
         <p className="text-sm text-neutral-400 mt-1">
-          Don&apos;t miss out - get your tickets!
+          {t("upcomingPromo.subtitle")}
         </p>
       </div>
 
@@ -60,12 +64,12 @@ export default function ProfileUpcomingEventsPromo({
               </h4>
               {event.dateStart && event.dateEnd && (
                 <p className="text-sm text-neutral-400 mt-0.5">
-                  {formatEventDate(event.dateStart, event.dateEnd)}
+                  {formatEventDate(event.dateStart, event.dateEnd, locale)}
                 </p>
               )}
               {event.hasTicketsAvailable && (
                 <span className="inline-block mt-1.5 text-xs font-medium text-green-400 bg-green-400/10 px-2 py-0.5 rounded">
-                  Tickets Available
+                  {t("upcomingPromo.ticketsAvailable")}
                 </span>
               )}
             </div>

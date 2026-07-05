@@ -5,8 +5,12 @@ import { transformProductObject } from "@/domain/product/transformers/transformP
 import { isFilled } from "@prismicio/client";
 import { ProductDocument } from "@/prismicio-types";
 import { FEAT_IGNORE_VISIBILITY } from "@/lib/services/env/private";
+import type { AppLocale } from "@/i18n/routing";
 
-export const fetchTicketsForEventFromCms = async (eventId: string) => {
+export const fetchTicketsForEventFromCms = async (
+  eventId: string,
+  locale: AppLocale = "sl"
+) => {
   const products = (await prismicClient.getAllByType("product", {
     pageSize: 200,
   })) as ProductDocument[];
@@ -38,7 +42,7 @@ export const fetchTicketsForEventFromCms = async (eventId: string) => {
 
   const transformedProducts = [];
   for (const product of ticketsForEvent) {
-    transformedProducts.push(await transformProductObject(product));
+    transformedProducts.push(await transformProductObject(product, locale));
   }
   return transformedProducts;
 };

@@ -20,6 +20,15 @@
             "allowTargetBlank": true,
             "multi": "strong,paragraph"
           }
+        },
+        "content_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content (SL)",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "strong,paragraph"
+          }
         }
       },
       "items": {}

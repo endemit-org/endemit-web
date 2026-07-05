@@ -32,7 +32,9 @@ export const runTicketIssueAutomation = inngest.createFunction(
       price,
       orderId,
       metadata,
+      locale: rawLocale = "sl",
     } = event.data as TicketCreationData;
+    const locale: "sl" | "en" = rawLocale === "en" ? "en" : "sl";
 
     const ticketBaseData = await step.run("generate-ticket-hash", async () => {
       const shortId = await generateShortId();
@@ -106,13 +108,14 @@ export const runTicketIssueAutomation = inngest.createFunction(
           qrData: JSON.stringify(ticketBaseData.qrContent),
           eventName: eventName,
           eventDetails: event.venue.name ?? "",
-          eventDate: formatEventDateAndTime(event.date_start),
+          eventDate: formatEventDateAndTime(event.date_start, locale),
           attendeeName: ticketHolderName,
           attendeeEmail: ticketPayerEmail,
           artists: artistNames,
           price: formatPrice(Number(issuedTicket.price)),
           coverImageUrl: event.promoImage.src,
           template: templateId,
+          locale,
         });
 
         if (!image) {
@@ -148,7 +151,8 @@ export const runTicketIssueAutomation = inngest.createFunction(
             mapUrl: ticketImageWithEvent.event.venue?.mapLocationUrl || "",
             address: ticketImageWithEvent.event.venue?.address || "",
           },
-          ticketImageWithEvent.image
+          ticketImageWithEvent.image,
+          locale
         );
 
         if (!result || result.error) {

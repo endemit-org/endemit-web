@@ -8,6 +8,7 @@ import { subscribeFromClient } from "@/domain/newsletter/actions/subscribeFromCl
 import CheckoutError from "@/app/_components/checkout/CheckoutError";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import Spinner from "@/app/_components/ui/Spinner";
+import { useTranslations } from "next-intl";
 
 interface SubscribeProps {
   title: string;
@@ -24,6 +25,7 @@ export default function Subscribe({
   apiEndpoint,
   containerClass = "",
 }: SubscribeProps) {
+  const t = useTranslations("newsletter");
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [emailValue, setEmailValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -39,7 +41,7 @@ export default function Subscribe({
 
     if (!CheckoutValidationService.isValidEmail(emailValue)) {
       setSubmitState("idle");
-      setErrorMessage("Please enter a valid email address");
+      setErrorMessage(t("subscribe.invalidEmail"));
       return;
     }
 
@@ -52,18 +54,18 @@ export default function Subscribe({
       setSubmitState("success");
     } else {
       setSubmitState("idle");
-      setErrorMessage(result.error || "Failed to subscribe");
+      setErrorMessage(result.error || t("subscribe.failed"));
     }
   };
 
   const getButtonText = () => {
     switch (submitState) {
       case "loading":
-        return <Spinner text={"Subscribing..."} />;
+        return <Spinner text={t("subscribe.subscribing")} />;
       case "success":
-        return "Subscribed!";
+        return t("subscribe.subscribed");
       default:
-        return "Sign me up";
+        return t("subscribe.signUp");
     }
   };
 
@@ -79,7 +81,7 @@ export default function Subscribe({
 
           <div className="text-neutral-400">{emailValue}</div>
           <h1 className="text-3xl font-bold text-neutral-200 mb-4">
-            subscribed successfully!
+            {t("subscribe.successHeading")}
           </h1>
         </>
       )}
@@ -91,7 +93,7 @@ export default function Subscribe({
           <div className="max-w-xl mx-auto mb-12 px-4 space-y-4 flex flex-col items-center justify-center">
             <Input
               name={"emailNewsletter"}
-              placeholder={"you@gmail.com"}
+              placeholder={t("subscribe.emailPlaceholder")}
               type="email"
               value={emailValue}
               onChangeAction={handleValueChange}

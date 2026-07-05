@@ -1,22 +1,21 @@
 import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text } from "@react-email/components";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   code: string;
+  locale?: string;
 }
 
-function StickerLinkedTemplate({ code }: Props) {
+function StickerLinkedTemplate({ code, locale = "sl" }: Props) {
+  const t = getEmailTranslator(locale, "emails.sticker");
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Your wristband is active</h1>
+        <h1 className="text-2xl font-bold mb-4">{t("linked.heading")}</h1>
 
-        <Text className="text-gray-600 mb-6">
-          A wristband is now linked to your Endemit wallet. Keep it with you and
-          use it at bars or shops within the area to make payments using your
-          online balance.
-        </Text>
+        <Text className="text-gray-600 mb-6">{t("linked.intro")}</Text>
 
         <div
           style={{
@@ -28,7 +27,7 @@ function StickerLinkedTemplate({ code }: Props) {
           }}
         >
           <Text className="text-gray-500 text-sm mb-1">
-            Your wristband code
+            {t("linked.codeLabel")}
           </Text>
           <Text
             style={{
@@ -43,12 +42,10 @@ function StickerLinkedTemplate({ code }: Props) {
           </Text>
         </div>
 
-        <h2 className="text-lg font-semibold mb-2">How to use it</h2>
-        <Text className="text-gray-600 mb-6">
-          If your phone is dead or missing at a POS register, show the wristband
-          to the cashier. They can scan it (or type the code) and the payment
-          screen will appear on their device for you to confirm.
-        </Text>
+        <h2 className="text-lg font-semibold mb-2">
+          {t("howToUseHeading")}
+        </h2>
+        <Text className="text-gray-600 mb-6">{t("howToUseBody")}</Text>
       </div>
     </MasterTemplate>
   );

@@ -19,6 +19,13 @@
             "single": "heading2"
           }
         },
+        "heading_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Heading (SL)",
+            "single": "heading2"
+          }
+        },
         "layout": {
           "type": "Select",
           "config": {
@@ -63,6 +70,12 @@
           "type": "Text",
           "config": {
             "label": "Caption"
+          }
+        },
+        "caption_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Caption (SL)"
           }
         }
       }

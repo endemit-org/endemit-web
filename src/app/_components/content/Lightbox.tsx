@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import ChevronPrevIcon from "@/app/_components/icon/ChevronPrevIcon";
 import ChevronNextIcon from "@/app/_components/icon/ChevronNextIcon";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
@@ -28,6 +29,7 @@ export default function Lightbox({
   onPrev,
   onSelectIndex,
 }: LightboxProps) {
+  const t = useTranslations("common");
   const thumbnailsRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
   const [localIndex, setLocalIndex] = useState(currentIndex);
@@ -109,7 +111,7 @@ export default function Lightbox({
       <button
         className="absolute top-4 right-4 text-neutral-200 text-4xl hover:text-gray-300 transition-colors z-10"
         onClick={onClose}
-        aria-label="Close lightbox"
+        aria-label={t("a11y.closeLightbox")}
       >
         &times;
       </button>
@@ -122,7 +124,7 @@ export default function Lightbox({
               e.stopPropagation();
               onPrev();
             }}
-            aria-label="Previous image"
+            aria-label={t("a11y.previousImage")}
           >
             <ChevronPrevIcon />
           </button>
@@ -133,7 +135,7 @@ export default function Lightbox({
               e.stopPropagation();
               onNext();
             }}
-            aria-label="Next image"
+            aria-label={t("a11y.nextImage")}
           >
             <ChevronNextIcon />
           </button>
@@ -197,7 +199,7 @@ export default function Lightbox({
                     ? "ring-2 ring-neutral-100 opacity-100"
                     : "opacity-50 hover:opacity-75"
                 }`}
-                aria-label={`View image ${index + 1}`}
+                aria-label={t("a11y.viewImage", { number: index + 1 })}
               >
                 <ImageWithFallback
                   src={image.src}

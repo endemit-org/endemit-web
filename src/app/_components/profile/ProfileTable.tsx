@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import clsx from "clsx";
 import type { ReactNode } from "react";
 
@@ -28,12 +29,14 @@ export default function ProfileTable({
   viewAllHref,
   viewAllLabel,
   emptyIcon,
-  emptyMessage = "No items yet",
+  emptyMessage,
   emptyAction,
   headerAction,
   children,
   isEmpty = false,
 }: ProfileTableProps) {
+  const t = useTranslations("profile");
+  const displayEmptyMessage = emptyMessage ?? t("table.noItems");
   if (isEmpty) {
     return (
       <div className="bg-neutral-900 rounded-lg p-6">
@@ -47,7 +50,7 @@ export default function ProfileTable({
               {emptyIcon}
             </div>
           )}
-          <p className="text-neutral-400 text-sm">{emptyMessage}</p>
+          <p className="text-neutral-400 text-sm">{displayEmptyMessage}</p>
           {emptyAction && (
             <Link
               href={emptyAction.href}
@@ -72,11 +75,11 @@ export default function ProfileTable({
               href={viewAllHref}
               className="text-sm text-blue-400 hover:text-blue-300"
             >
-              {viewAllLabel || `View all (${count})`}
+              {viewAllLabel || t("table.viewAllCount", { count })}
             </Link>
           ) : count !== undefined ? (
             <span className="text-sm text-neutral-500">
-              {count} {countLabel || (count === 1 ? "item" : "items")}
+              {count} {countLabel || t("table.itemCount", { count })}
             </span>
           ) : null}
         </div>
@@ -90,7 +93,7 @@ export default function ProfileTable({
             href={viewAllHref}
             className="block w-full text-center text-sm text-blue-400 hover:text-blue-300"
           >
-            {viewAllLabel || `View all ${title.toLowerCase()}`}
+            {viewAllLabel || t("table.viewAllTitle", { title: title.toLowerCase() })}
           </Link>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const LinkStickerModal = dynamic(
   () => import("@/app/_components/profile/LinkStickerModal"),
@@ -19,9 +20,6 @@ interface Props {
   receiveCode: string;
 }
 
-const INFO_TEXT =
-  "Tap to show a QR sellers can scan at POS registers to charge your wallet. Linking a wristband gives you the same code on a physical bracelet, so you can pay even without a phone.";
-
 function InfoButton({
   isOpen,
   onToggle,
@@ -29,10 +27,11 @@ function InfoButton({
   isOpen: boolean;
   onToggle: () => void;
 }) {
+  const t = useTranslations("profile");
   return (
     <button
       type="button"
-      aria-label="What is this?"
+      aria-label={t("wristband.whatIsThis")}
       aria-expanded={isOpen}
       onClick={e => {
         e.preventDefault();
@@ -51,6 +50,7 @@ export default function BackupStickerInline({
   walletBalance = null,
   receiveCode,
 }: Props) {
+  const t = useTranslations("profile");
   const [isLinkOpen, setIsLinkOpen] = useState(false);
   const [isQrOpen, setIsQrOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -79,7 +79,7 @@ export default function BackupStickerInline({
                 d="M4 4h4v4H4V4zm0 8h4v4H4v-4zm0 8h4v-4h4v4H8v-4H4v4zm8-16h4v4h-4V4zm0 8h4v4h-4v-4zm0 8h4v-4h4v4h-4v-4h-4v4zm8-16h-4v4h4V4zm0 8h-4v4h4v-4z"
               />
             </svg>
-            <span className="text-base">Pay</span>
+            <span className="text-base">{t("walletPay.pay")}</span>
           </span>
           <span className="flex items-center gap-2 text-xs uppercase tracking-widest text-blue-100/80">
             {currentCode ? (
@@ -87,7 +87,7 @@ export default function BackupStickerInline({
                 {currentCode}
               </span>
             ) : (
-              <span>Show QR</span>
+              <span>{t("wristband.showQr")}</span>
             )}
             <svg
               className="w-4 h-4 text-blue-100/70 group-hover:translate-x-0.5 transition-transform"
@@ -113,13 +113,13 @@ export default function BackupStickerInline({
           onClick={() => setIsLinkOpen(true)}
           className="mt-2 w-full text-center text-xs text-blue-400 hover:text-blue-300 py-1"
         >
-          Link a wristband for offline checkout
+          {t("wristband.linkForOffline")}
         </button>
       )}
 
       {isInfoOpen && (
         <p className="mt-2 px-3 py-2 text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 rounded-lg leading-relaxed">
-          {INFO_TEXT}
+          {t("wristband.infoText")}
         </p>
       )}
 

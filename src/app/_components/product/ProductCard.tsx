@@ -7,7 +7,7 @@ import {
   ProductImage,
   ProductStatus,
 } from "@/domain/product/types/product";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import ProductStatusTag from "@/app/_components/product/ProductStatusTag";
 import { formatPrice } from "@/lib/util/formatting";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
@@ -15,6 +15,8 @@ import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import React, { useRef } from "react";
 import ProductCardQuickAdd from "@/app/_components/product/ProductCardQuickAdd";
 import { isProductSellable } from "@/domain/product/businessLogic";
+import { useTranslations } from "next-intl";
+import { translateCategory } from "@/lib/util/translateCategory";
 
 interface ProductCardProps {
   video?: string;
@@ -41,6 +43,7 @@ export default function ProductCard({
   quickAddToCart,
   product,
 }: ProductCardProps) {
+  const tCat = useTranslations("store.categoryNames");
   const showQuickAdd =
     quickAddToCart &&
     product &&
@@ -95,7 +98,7 @@ export default function ProductCard({
           <div className={"flex-1"}>
             <h3 className="text-2xl text-neutral-200">{name}</h3>
             <p className="category text-sm text-neutral-400">
-              {callToAction ?? category}
+              {callToAction ?? translateCategory(tCat, category)}
             </p>
           </div>
           <div className={"pl-2 flex flex-col items-end"}>

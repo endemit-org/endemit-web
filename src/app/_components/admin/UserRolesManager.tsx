@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { assignRoleAction } from "@/domain/user/actions/assignRoleAction";
 import { removeRoleAction } from "@/domain/user/actions/removeRoleAction";
 import type { SerializedRole } from "@/domain/role/types";
@@ -48,6 +49,7 @@ export default function UserRolesManager({
   canManageRoles,
 }: UserRolesManagerProps) {
   const router = useRouter();
+  const t = useTranslations("admin.users");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -120,7 +122,7 @@ export default function UserRolesManager({
                   onClick={() => handleRemoveRole(role)}
                   disabled={isLoading}
                   className="hover:text-red-600 transition-colors disabled:opacity-50"
-                  title="Remove role"
+                  title={t("roles.removeTitle")}
                 >
                   <svg
                     className="w-4 h-4"
@@ -140,7 +142,7 @@ export default function UserRolesManager({
             </span>
           ))
         ) : (
-          <span className="text-sm text-gray-500">No roles assigned</span>
+          <span className="text-sm text-gray-500">{t("roles.none")}</span>
         )}
       </div>
 
@@ -156,7 +158,7 @@ export default function UserRolesManager({
             disabled={isLoading}
             className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            <option value="">+ Add Role</option>
+            <option value="">{t("roles.addOption")}</option>
             {availableRoles.map(role => (
               <option key={role.slug} value={role.slug}>
                 {role.name}
@@ -176,7 +178,9 @@ export default function UserRolesManager({
       {aggregatedPermissions.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-            Aggregated Permissions ({aggregatedPermissions.length})
+            {t("roles.aggregatedPermissions", {
+              count: aggregatedPermissions.length,
+            })}
           </h4>
           <div className="space-y-3">
             {Object.entries(groupedPermissions).map(([resource, perms]) => (

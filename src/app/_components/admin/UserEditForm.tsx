@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { updateUserAction } from "@/domain/user/actions/updateUserAction";
 import type { SerializedUserWithSessions } from "@/domain/user/types";
@@ -21,6 +22,8 @@ const userStatuses: UserStatus[] = [
 
 export default function UserEditForm({ user }: UserEditFormProps) {
   const router = useRouter();
+  const t = useTranslations("admin.users");
+  const ts = useTranslations("admin.status.user");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -60,7 +63,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
             htmlFor="username"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Username
+            {t("form.username")}
           </label>
           <input
             type="text"
@@ -76,7 +79,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Email
+            {t("form.email")}
           </label>
           <input
             type="email"
@@ -94,7 +97,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
             htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Name
+            {t("form.name")}
           </label>
           <input
             type="text"
@@ -109,7 +112,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
             htmlFor="status"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Status
+            {t("form.status")}
           </label>
           <select
             id="status"
@@ -119,7 +122,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
           >
             {userStatuses.map(s => (
               <option key={s} value={s}>
-                {s}
+                {ts(s)}
               </option>
             ))}
           </select>
@@ -134,7 +137,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
 
       {success && (
         <div className="p-3 bg-green-50 text-green-700 rounded-md text-sm">
-          User updated successfully
+          {t("edit.success")}
         </div>
       )}
 
@@ -144,7 +147,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
         size="sm"
         fullWidth={false}
       >
-        {isLoading ? "Saving..." : "Save Changes"}
+        {isLoading ? t("edit.submitting") : t("edit.submit")}
       </ActionButton>
     </form>
   );

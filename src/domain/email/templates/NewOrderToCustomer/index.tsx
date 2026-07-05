@@ -11,12 +11,16 @@ import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { CartItem } from "@/domain/checkout/types/cartItem";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   order: Order;
+  locale?: string;
 }
 
-function NewOrderToCustomerTemplate({ order }: Props) {
+function NewOrderToCustomerTemplate({ order, locale = "sl" }: Props) {
+  const t = getEmailTranslator(locale, "emails.orderCustomer");
+
   if (!order.items) {
     return null;
   }
@@ -35,25 +39,21 @@ function NewOrderToCustomerTemplate({ order }: Props) {
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">Thank you for your order!</h1>
-        <Text className="text-gray-800 mb-6">Order #{order.id}</Text>
+        <h1 className="text-2xl font-bold mb-2">{t("thankYou")}</h1>
+        <Text className="text-gray-800 mb-6">
+          {t("orderNumber", { id: order.id })}
+        </Text>
         <Text className="text-gray-600 mb-6">
-          This is a confirmation of your order placed with us. Below are the
-          details of your purchase.
-          {shippingAddress && (
-            <div>
-              We will ship your order to the address provided shortly, usually
-              within 3 - 5 days.
-            </div>
-          )}
+          {t("confirmation")}
+          {shippingAddress && <div>{t("willShip")}</div>}
         </Text>
 
         {hasTicketItems && (
           <Text className="text-gray-600 mb-6">
-            Your tickets will be sent to your email within the next 10 minutes.
-            Please check your inbox <i>(and spam folder)</i> for the ticket
-            email. <strong>Each ticket will be sent separately</strong> with a
-            QR code that you can present at the event for entry.
+            {t.rich("ticketsInfo", {
+              i: chunks => <i>{chunks}</i>,
+              strong: chunks => <strong>{chunks}</strong>,
+            })}
           </Text>
         )}
 
@@ -66,7 +66,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
               borderRadius: "8px",
             }}
           >
-            <Text className="font-semibold mb-2">Shipping Address</Text>
+            <Text className="font-semibold mb-2">{t("shippingAddress")}</Text>
             <Text className="text-neutral-700 my-1">
               {shippingAddress.name}
             </Text>
@@ -79,13 +79,13 @@ function NewOrderToCustomerTemplate({ order }: Props) {
             </Text>
             {shippingAddress.phone && (
               <Text className="text-neutral-700 my-1">
-                Phone: {shippingAddress.phone}
+                {t("phone", { phone: shippingAddress.phone })}
               </Text>
             )}
           </div>
         )}
 
-        <h2 className="text-xl font-bold mb-2 mt-10">Your order items</h2>
+        <h2 className="text-xl font-bold mb-2 mt-10">{t("orderItems")}</h2>
 
         <table style={{ width: "100%", marginBottom: "16px" }}>
           <thead>
@@ -103,27 +103,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                 colSpan={6}
               >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Product
-                </Text>
-              </th>
-              <th
-                align="center"
-                style={{
-                  borderBottom: "1px solid #e5e7eb",
-                  padding: "8px",
-                }}
-              >
-                <Text className="font-semibold mb-1 text-neutral-800">Qty</Text>
-              </th>
-              <th
-                align="center"
-                style={{
-                  borderBottom: "1px solid #e5e7eb",
-                  padding: "8px",
-                }}
-              >
-                <Text className="font-semibold mb-1 text-neutral-800">
-                  Price
+                  {t("product")}
                 </Text>
               </th>
               <th
@@ -134,7 +114,29 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                 }}
               >
                 <Text className="font-semibold mb-1 text-neutral-800">
-                  Total
+                  {t("qty")}
+                </Text>
+              </th>
+              <th
+                align="center"
+                style={{
+                  borderBottom: "1px solid #e5e7eb",
+                  padding: "8px",
+                }}
+              >
+                <Text className="font-semibold mb-1 text-neutral-800">
+                  {t("price")}
+                </Text>
+              </th>
+              <th
+                align="center"
+                style={{
+                  borderBottom: "1px solid #e5e7eb",
+                  padding: "8px",
+                }}
+              >
+                <Text className="font-semibold mb-1 text-neutral-800">
+                  {t("total")}
                 </Text>
               </th>
             </tr>
@@ -239,7 +241,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                   <tbody>
                     <tr>
                       <td align="right" style={{ padding: "4px 0" }}>
-                        <Text className="text-gray-600">Subtotal:</Text>
+                        <Text className="text-gray-600">{t("subtotal")}</Text>
                       </td>
                       <td
                         align="right"
@@ -255,8 +257,9 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                         <tr>
                           <td align="right" style={{ padding: "4px 0" }}>
                             <Text className="text-gray-600">
-                              Shipping to {countryDetails?.flag}{" "}
-                              {countryDetails?.name}:
+                              {t("shippingTo", {
+                                country: `${countryDetails?.flag ?? ""} ${countryDetails?.name ?? ""}`.trim(),
+                              })}
                             </Text>
                           </td>
                           <td
@@ -273,7 +276,9 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                       Number(order.discountAmount) < 0 && (
                         <tr>
                           <td align="right" style={{ padding: "4px 0" }}>
-                            <Text className="text-gray-600">Discount:</Text>
+                            <Text className="text-gray-600">
+                              {t("discount")}
+                            </Text>
                           </td>
                           <td
                             align="right"
@@ -293,7 +298,7 @@ function NewOrderToCustomerTemplate({ order }: Props) {
                           borderTop: "2px solid #000",
                         }}
                       >
-                        <Text className="font-bold">Total:</Text>
+                        <Text className="font-bold">{t("totalLabel")}</Text>
                       </td>
                       <td
                         align="right"
@@ -337,17 +342,18 @@ function NewOrderToCustomerTemplate({ order }: Props) {
               fontSize: "14px",
             }}
           >
-            View Your Order online
+            {t("viewOrder")}
           </Link>
         </div>
 
         <Text className="text-gray-600 my-6">
-          This email message serves as an invoice. Please feel free to reach out
-          to our support team at{" "}
-          <Link href={"mailto:endemit@endemit.org"} className={"link"}>
-            endemit@endemit.org
-          </Link>{" "}
-          if you have any questions or need further assistance.
+          {t.rich("invoiceNote", {
+            link: chunks => (
+              <Link href={"mailto:endemit@endemit.org"} className={"link"}>
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

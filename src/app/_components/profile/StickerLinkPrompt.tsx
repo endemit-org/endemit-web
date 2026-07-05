@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 interface Props {
   paymentCode: string;
@@ -22,6 +23,7 @@ type UiState =
   | { kind: "error"; message: string };
 
 export default function StickerLinkPrompt({ paymentCode }: Props) {
+  const t = useTranslations("profile");
   const router = useRouter();
   const [state, setState] = useState<UiState>({ kind: "loading" });
 
@@ -46,7 +48,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
         if (!response.ok) {
           setState({
             kind: "error",
-            message: data?.error || "Could not check sticker.",
+            message: data?.error || t("wristband.couldNotCheck"),
           });
           return;
         }
@@ -59,7 +61,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
         setState({ kind: "preview", preview: data });
       } catch {
         if (!cancelled) {
-          setState({ kind: "error", message: "Network error." });
+          setState({ kind: "error", message: t("wristband.networkError") });
         }
       }
     })();
@@ -67,7 +69,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [paymentCode, dismiss]);
+  }, [paymentCode, dismiss, t]);
 
   const confirmLink = useCallback(async () => {
     setState({ kind: "linking" });
@@ -81,7 +83,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
       if (!response.ok) {
         setState({
           kind: "error",
-          message: data?.error || "Failed to link sticker.",
+          message: data?.error || t("wristband.linkFailed"),
         });
         return;
       }
@@ -112,16 +114,16 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
         });
         return;
       }
-      setState({ kind: "error", message: "Unexpected response." });
+      setState({ kind: "error", message: t("wristband.unexpectedResponse") });
     } catch {
-      setState({ kind: "error", message: "Network error." });
+      setState({ kind: "error", message: t("wristband.networkError") });
     }
-  }, [paymentCode, router, dismiss]);
+  }, [paymentCode, router, dismiss, t]);
 
   if (state.kind === "loading") {
     return (
       <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6 text-neutral-400 text-sm">
-        Checking wristband…
+        {t("wristband.checking")}
       </div>
     );
   }
@@ -134,7 +136,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
           onClick={dismiss}
           className="px-3 py-1.5 text-sm text-red-200 hover:text-white border border-red-900/60 rounded"
         >
-          Dismiss
+          {t("wristband.dismiss")}
         </button>
       </div>
     );
@@ -143,7 +145,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
   if (state.kind === "linking") {
     return (
       <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6 text-neutral-300 text-sm">
-        Linking wristband…
+        {t("wristband.linking")}
       </div>
     );
   }
@@ -153,17 +155,17 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
       <div className="bg-emerald-950/40 border border-emerald-900/60 rounded-lg p-4 mb-6 flex items-center justify-between gap-4">
         <div>
           <p className="text-emerald-200 font-semibold">
-            Wristband {state.code} linked to your wallet.
+            {t("wristband.linkedTitle", { code: state.code })}
           </p>
           <p className="text-emerald-300/80 text-sm mt-1">
-            Top up your wallet from the sidebar to start paying with it.
+            {t("wristband.linkedDesc")}
           </p>
         </div>
         <button
           onClick={dismiss}
           className="px-3 py-1.5 text-sm text-emerald-200 hover:text-white border border-emerald-900/60 rounded"
         >
-          Done
+          {t("wristband.done")}
         </button>
       </div>
     );
@@ -175,24 +177,23 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
     return (
       <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6">
         <p className="text-neutral-200 font-semibold mb-1">
-          Link wristband {preview.code} to your wallet?
+          {t("wristband.wouldLinkTitle", { code: preview.code })}
         </p>
         <p className="text-neutral-400 text-sm mb-4">
-          Once linked, this wristband will be connected to your wallet. It can
-          be scanned at a POS register and used as payment.
+          {t("wristband.wouldLinkDesc")}
         </p>
         <div className="flex gap-3">
           <button
             onClick={confirmLink}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
           >
-            Link wristband
+            {t("wristband.linkButton")}
           </button>
           <button
             onClick={dismiss}
             className="px-4 py-2 text-sm text-neutral-300 hover:text-white border border-neutral-700 rounded-lg"
           >
-            Cancel
+            {t("wristband.cancel")}
           </button>
         </div>
       </div>
@@ -204,17 +205,17 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
       <div className="bg-red-950/40 border border-red-900/60 rounded-lg p-4 mb-6 flex items-center justify-between gap-4">
         <div>
           <p className="text-red-200 font-semibold">
-            Wristband {preview.code} is linked to another account.
+            {t("wristband.conflictTitle", { code: preview.code })}
           </p>
           <p className="text-red-300/80 text-sm mt-1">
-            If you believe this is a mistake, contact an crew member.
+            {t("wristband.conflictDesc")}
           </p>
         </div>
         <button
           onClick={dismiss}
           className="px-3 py-1.5 text-sm text-red-200 hover:text-white border border-red-900/60 rounded"
         >
-          Dismiss
+          {t("wristband.dismiss")}
         </button>
       </div>
     );
@@ -225,17 +226,21 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
   return (
     <div className="bg-amber-950/40 border border-amber-900/60 rounded-lg p-4 mb-6">
       <p className="text-amber-200 font-semibold">
-        You already have wristband {preview.existingCode} linked.
+        {t("wristband.swapTitle", { existingCode: preview.existingCode })}
       </p>
       <p className="text-amber-300/80 text-sm mt-1 mb-3">
-        To link {preview.code}, unlink your current wristband first by going to
-        <Link href={"/profile/edit"}>Edit profile</Link> and scan again.
+        {t.rich("wristband.swapDesc", {
+          code: preview.code,
+          editLink: (chunks: ReactNode) => (
+            <Link href={"/profile/edit"}>{chunks}</Link>
+          ),
+        })}
       </p>
       <button
         onClick={dismiss}
         className="px-3 py-1.5 text-sm text-amber-200 hover:text-white border border-amber-900/60 rounded"
       >
-        Got it
+        {t("wristband.gotIt")}
       </button>
     </div>
   );

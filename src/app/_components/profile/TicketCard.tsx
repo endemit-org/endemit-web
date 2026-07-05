@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { SerializedTicket } from "@/domain/ticket/types/ticket";
 
 interface TicketCardProps {
@@ -18,7 +19,13 @@ const statusColors: Record<string, string> = {
 };
 
 export default function TicketCard({ ticket }: TicketCardProps) {
+  const t = useTranslations("profile");
   const isUsable = ticket.status === "VALIDATED" || ticket.status === "PENDING";
+
+  const statusBadgeLabels: Record<string, string> = {
+    VALIDATED: t("ticketBadge.validated"),
+    PENDING: t("ticketBadge.pending"),
+  };
 
   return (
     <div className="bg-neutral-800 rounded-lg p-4 hover:bg-neutral-700/50 transition-colors">
@@ -28,11 +35,11 @@ export default function TicketCard({ ticket }: TicketCardProps) {
             <span
               className={`text-xs px-2 py-0.5 rounded-full ${statusColors[ticket.status] || "bg-gray-500/20 text-gray-400"}`}
             >
-              {ticket.status}
+              {statusBadgeLabels[ticket.status] || ticket.status}
             </span>
             {ticket.isGuestList && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
-                Guest List
+                {t("tickets.guestList")}
               </span>
             )}
           </div>
@@ -89,7 +96,7 @@ export default function TicketCard({ ticket }: TicketCardProps) {
               href={`/profile/tickets/${ticket.shortId}`}
               className="text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
             >
-              View Ticket
+              {t("tickets.viewTicket")}
             </Link>
           )}
         </div>

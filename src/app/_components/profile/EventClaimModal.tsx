@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations, useFormatter } from "next-intl";
 import clsx from "clsx";
 
 interface ClaimableEvent {
@@ -24,6 +25,8 @@ export default function EventClaimModal({
   pendingClaimIds,
   onClaim,
 }: EventClaimModalProps) {
+  const t = useTranslations("profile");
+  const format = useFormatter();
   const [selectedEvent, setSelectedEvent] = useState<ClaimableEvent | null>(
     null
   );
@@ -47,7 +50,9 @@ export default function EventClaimModal({
       setSelectedEvent(null);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit claim");
+      setError(
+        err instanceof Error ? err.message : t("eventsAttended.claimFailed")
+      );
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +77,7 @@ export default function EventClaimModal({
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-neutral-200">
-            Claim Missing Event
+            {t("eventsAttended.claimModalTitle")}
           </h2>
           <button
             onClick={handleClose}
@@ -103,14 +108,13 @@ export default function EventClaimModal({
         {availableEvents.length === 0 ? (
           <div className="py-8 text-center">
             <p className="text-neutral-400">
-              No past events available to claim.
+              {t("eventsAttended.noPastEvents")}
             </p>
           </div>
         ) : (
           <>
             <p className="text-sm text-neutral-400 mb-4">
-              Select an event you attended but don&apos;t have a ticket for.
-              Claims are reviewed and typically approved within a few minutes.
+              {t("eventsAttended.claimModalDesc")}
             </p>
 
             <div className="space-y-2 mb-6 max-h-60 overflow-y-auto">
@@ -130,7 +134,7 @@ export default function EventClaimModal({
                   </div>
                   {event.dateStart && (
                     <div className="text-sm text-neutral-400 mt-1">
-                      {event.dateStart.toLocaleDateString("en-GB", {
+                      {format.dateTime(event.dateStart, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -151,7 +155,9 @@ export default function EventClaimModal({
                   : "bg-neutral-700 text-neutral-400 cursor-not-allowed"
               )}
             >
-              {isLoading ? "Submitting..." : "Submit Claim"}
+              {isLoading
+                ? t("eventsAttended.submitting")
+                : t("eventsAttended.submitClaim")}
             </button>
           </>
         )}

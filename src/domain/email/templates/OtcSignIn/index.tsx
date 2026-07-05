@@ -1,21 +1,28 @@
 import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
+import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
 
 interface Props {
   code: string;
   magicLinkUrl: string;
   expiresInMinutes: number;
+  locale?: string;
 }
 
-function OtcSignInTemplate({ code, magicLinkUrl, expiresInMinutes }: Props) {
+function OtcSignInTemplate({
+  code,
+  magicLinkUrl,
+  expiresInMinutes,
+  locale = "sl",
+}: Props) {
+  const t = getEmailTranslator(locale, "emails.otcSignIn");
   return (
     <MasterTemplate>
       <div>
-        <h1 className="text-2xl font-bold mb-2">Your Sign-in Code</h1>
+        <h1 className="text-2xl font-bold mb-2">{t("heading")}</h1>
         <Text className="text-gray-600 mb-6">
-          Use the code below to sign in to your account. This code will expire
-          in {expiresInMinutes} minutes.
+          {t("intro", { minutes: expiresInMinutes })}
         </Text>
 
         <div
@@ -47,7 +54,7 @@ function OtcSignInTemplate({ code, magicLinkUrl, expiresInMinutes }: Props) {
             marginBottom: "24px",
           }}
         >
-          <Text className="text-gray-500 mb-4">Or click the button below:</Text>
+          <Text className="text-gray-500 mb-4">{t("orClick")}</Text>
           <Link
             href={magicLinkUrl}
             style={{
@@ -60,7 +67,7 @@ function OtcSignInTemplate({ code, magicLinkUrl, expiresInMinutes }: Props) {
               display: "inline-block",
             }}
           >
-            Sign In Instantly
+            {t("signInInstantly")}
           </Link>
         </div>
 
@@ -73,16 +80,18 @@ function OtcSignInTemplate({ code, magicLinkUrl, expiresInMinutes }: Props) {
           }}
         >
           <Text className="text-sm text-neutral-600 my-0">
-            If you did not request this code, you can safely ignore this email.
-            Someone may have entered your email address by mistake.
+            {t("ignoreNote")}
           </Text>
         </div>
 
         <Text className="text-gray-600 text-sm">
-          Questions? Contact us at{" "}
-          <Link href="mailto:endemit@endemit.org" className="link">
-            endemit@endemit.org
-          </Link>
+          {t.rich("questions", {
+            link: chunks => (
+              <Link href="mailto:endemit@endemit.org" className="link">
+                {chunks}
+              </Link>
+            ),
+          })}
         </Text>
       </div>
     </MasterTemplate>

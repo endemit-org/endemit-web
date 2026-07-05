@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 import { SerializedTicket } from "@/domain/ticket/types/ticket";
 import {
@@ -28,6 +29,7 @@ export default function TicketDetailsDialog({
   actionError,
   onClearError,
 }: TicketDetailsDialogProps) {
+  const t = useTranslations("scan.scanner");
   const [isHolding, setIsHolding] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -155,10 +157,10 @@ export default function TicketDetailsDialog({
               />
               <span className="relative z-10">
                 {isProcessing
-                  ? "Processing..."
+                  ? t("processing")
                   : isHolding
-                    ? "Hold..."
-                    : "Hold to Scan"}
+                    ? t("holding")
+                    : t("holdToScan")}
               </span>
             </button>
           )}
