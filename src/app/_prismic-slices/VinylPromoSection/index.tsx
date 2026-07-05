@@ -3,6 +3,7 @@ import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
+import { isProductVisible } from "@/domain/product/businessLogic";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
@@ -38,7 +39,8 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
   // @ts-expect-error - ID does exist on the product
   const product = await fetchProductFromCmsById(productObject.id, locale);
 
-  if (!product) {
+  // Don't promote a product that isn't publicly visible.
+  if (!product || !isProductVisible(product)) {
     return;
   }
 
