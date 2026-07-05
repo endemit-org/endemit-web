@@ -14,9 +14,10 @@ import { useTranslations } from "next-intl";
 
 export interface EventProps {
   event: Event;
+  compact?: boolean;
 }
 
-export default function EventPoster({ event }: EventProps) {
+export default function EventPoster({ event, compact = false }: EventProps) {
   const t = useTranslations("events");
   const locale = useLocale() as "sl" | "en";
   const shouldShowLink =
@@ -57,9 +58,10 @@ export default function EventPoster({ event }: EventProps) {
 
               {isPastEvent && (
                 <EventPastEventStatus
-                  className={
-                    "group-hover:translate-x-4 group-hover:translate-y-4 transition-transform duration-500"
-                  }
+                  className={clsx(
+                    "group-hover:translate-x-4 group-hover:translate-y-4 transition-transform duration-500",
+                    compact && "max-md:hidden"
+                  )}
                 />
               )}
 
@@ -113,9 +115,14 @@ export default function EventPoster({ event }: EventProps) {
                 </div>
               )}
             </div>
-            <div className="flex flex-col justify-center flex-1 my-6 px-6 @container">
-              <h3 className=" font-bold mb-2  uppercase flex-1">
-                <span className="text-neutral-200 text-[clamp(3rem,16cqi,20rem)] leading-tight">
+            <div
+              className={clsx(
+                "flex flex-col flex-1 @container",
+                compact ? "my-3 px-3 md:my-6 md:px-6" : "my-6 px-6"
+              )}
+            >
+              <h3 className=" font-bold mb-2  uppercase">
+                <span className="text-neutral-200 text-[clamp(1.5rem,16cqi,20rem)] leading-tight">
                   {event.name}
                 </span>
 
@@ -141,7 +148,7 @@ export default function EventPoster({ event }: EventProps) {
                 </p>
               )}
               {event.options.showEventLineup && event.artists && event.artists.length > 0 && (
-                <div className="text-[clamp(1rem,6cqi,2rem)] text-neutral-200 font-heading uppercase tracking-wider">
+                <div className="mt-auto text-[clamp(1rem,6cqi,2rem)] text-neutral-200 font-heading uppercase tracking-wider">
                   {event.artists.map(
                     (artist, index) => `${index > 0 ? " • " : ""}${artist.name}`
                   )}

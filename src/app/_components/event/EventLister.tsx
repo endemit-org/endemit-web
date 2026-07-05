@@ -39,7 +39,7 @@ function buildEventListWithYearSeparators(events: Event[]): ListItem[] {
 
 function YearCard({ year }: { year: number }) {
   return (
-    <div className="relative overflow-hidden bg-neutral-900 rounded-sm flex items-center justify-center max-md:py-16 border-neutral-950 ">
+    <div className="col-span-2 md:col-span-1 relative overflow-hidden bg-neutral-900 rounded-sm flex items-center justify-center max-md:py-16 border-neutral-950 ">
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -107,8 +107,10 @@ async function EventListContent({
       )}
       <div
         className={clsx(
-          "grid sm:grid-cols-2 gap-4 relative z-10",
-          type === "Past" && "md:grid-cols-3"
+          "grid gap-4 relative z-10",
+          type === "Past"
+            ? "grid-cols-2 md:grid-cols-3"
+            : "sm:grid-cols-2"
         )}
       >
         {type === "Past"
@@ -123,6 +125,7 @@ async function EventListContent({
                   <EventPoster
                     key={`${item.event.id}-${index}`}
                     event={item.event}
+                    compact
                   />
                 )
             )

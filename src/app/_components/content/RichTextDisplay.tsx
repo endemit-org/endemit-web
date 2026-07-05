@@ -9,7 +9,7 @@ interface Props {
 
 const components: JSXMapSerializer = {
   heading1: ({ children }) => (
-    <h1 className="text-4xl font-bold first:pt-0">{children}</h1>
+    <h1 className="text-4xl font-bold first:pt-0 first:mt-0">{children}</h1>
   ),
   heading2: ({ children }) => (
     <h2 className="text-3xl font-semibold pt-12">{children}</h2>

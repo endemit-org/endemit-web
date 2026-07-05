@@ -17,6 +17,11 @@ interface ArtistCardProps {
   descriptionClassName?: HTMLProps<HTMLElement>["className"];
   timeClassName?: HTMLProps<HTMLElement>["className"];
   showTimes?: boolean;
+  /**
+   * When shown inside the mobile lineup swiper: fill the card to full height
+   * and soft-cap the description so cards stay uniform (scroll for the rest).
+   */
+  sliderMode?: boolean;
 }
 
 export default function ArtistEventCard({
@@ -26,6 +31,7 @@ export default function ArtistEventCard({
   descriptionClassName = "text-neutral-300 ",
   timeClassName = "text-neutral-200",
   showTimes = true,
+  sliderMode = false,
 }: ArtistCardProps) {
   const t = useTranslations("artists");
   const locale = useLocale() as "sl" | "en";
@@ -46,8 +52,13 @@ export default function ArtistEventCard({
     soundcloudUrls.length > 1;
 
   return (
-    <div className={clsx("", cardClassName)}>
-      <div className="flex flex-col lg:flex-row gap-6 p-4">
+    <div className={clsx(sliderMode && "max-lg:h-full", cardClassName)}>
+      <div
+        className={clsx(
+          "flex flex-col lg:flex-row gap-6 lg:p-4",
+          sliderMode && "max-lg:h-full"
+        )}
+      >
         {/* Artist Photo */}
         <div className="lg:w-1/3 flex-shrink-0">
           <div className="relative w-full aspect-[2/3] overflow-hidden bg-neutral-800">
@@ -83,8 +94,8 @@ export default function ArtistEventCard({
                   )}
                 >
                   {formatDay(artist.start_time, locale)}{" "}
-                  {formatTime(artist.start_time)}{" "}
-                  - {formatTime(artist.end_time)}
+                  {formatTime(artist.start_time)} -{" "}
+                  {formatTime(artist.end_time)}
                   {artist.stage && (
                     <div className={"mt-0.5 text-neutral-400"}>
                       @ {artist.stage}
@@ -117,7 +128,7 @@ export default function ArtistEventCard({
         </div>
 
         {/* Artist Info */}
-        <div className="lg:w-2/3 flex flex-col justify-center  max-lg:p-4">
+        <div className="lg:w-2/3 flex flex-col justify-center max-lg:p-4 max-lg:pt-0">
           <div className="flex items-start justify-between">
             <h3
               className={clsx(
@@ -133,6 +144,8 @@ export default function ArtistEventCard({
             <div
               className={clsx(
                 "leading-relaxed text-sm lg:text-base",
+                sliderMode &&
+                  "max-lg:max-h-40 max-lg:overflow-y-auto max-lg:pr-1 scrollbar-thin scrollbar-track-neutral-800 scrollbar-thumb-neutral-600",
                 descriptionClassName
               )}
             >

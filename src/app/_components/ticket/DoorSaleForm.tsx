@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { addDoorSaleTicketsAction } from "@/domain/ticket/actions/addDoorSaleTicketsAction";
 import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
@@ -18,6 +19,7 @@ export default function DoorSaleForm({
   cashTicketPrice,
   onTicketAdded,
 }: DoorSaleFormProps) {
+  const t = useTranslations("scan.doorSale");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(cashTicketPrice);
@@ -73,9 +75,11 @@ export default function DoorSaleForm({
         return;
       }
 
-      const ticketText = result.ticketCount === 1 ? "ticket" : "tickets";
       setSuccess(
-        `${result.ticketCount} door sale ${ticketText} created for ${formatPrice(totalAmount / 100)}${sendEmail && email ? " - email sent" : ""}`
+        t("success", {
+          count: result.ticketCount ?? 0,
+          price: formatPrice(totalAmount / 100),
+        }) + (sendEmail && email ? t("emailSentSuffix") : "")
       );
       setQuantity(1);
       setTotalAmount(cashTicketPrice);
@@ -110,7 +114,7 @@ export default function DoorSaleForm({
           {/* Quantity selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Number of Tickets
+              {t("numberOfTickets")}
             </label>
             <div className="flex items-center gap-3">
               <button
@@ -138,7 +142,7 @@ export default function DoorSaleForm({
           {/* Editable total price */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Total Amount (editable)
+              {t("totalAmount")}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">
@@ -160,13 +164,13 @@ export default function DoorSaleForm({
           {/* Optional email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email (optional)
+              {t("emailOptional")}
             </label>
             <UserAutocomplete
               value={email}
               onChange={setEmail}
               onUserSelect={handleUserSelect}
-              placeholder="Search user or enter email"
+              placeholder={t("searchPlaceholder")}
             />
             <p className="mt-1 text-xs text-gray-500">
               Leave empty for anonymous door sale
@@ -183,7 +187,7 @@ export default function DoorSaleForm({
                 className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
               />
               <label htmlFor="send-email" className="text-sm text-gray-700">
-                Send tickets via email
+                {t("sendViaEmail")}
               </label>
             </div>
           )}
@@ -205,7 +209,7 @@ export default function DoorSaleForm({
             onClick={handleProceedToConfirm}
             className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
           >
-            Proceed - {formatPrice(totalAmount / 100)}
+            {t("proceed", { price: formatPrice(totalAmount / 100) })}
           </button>
         </div>
       ) : (
@@ -214,13 +218,13 @@ export default function DoorSaleForm({
           <div className="p-6 bg-yellow-50 rounded-lg border-2 border-yellow-400">
             <div className="text-center">
               <div className="text-lg font-medium text-yellow-800 mb-2">
-                Confirm Cash Received
+                {t("confirmCash")}
               </div>
               <div className="text-4xl font-bold text-yellow-900 mb-2">
                 {formatPrice(totalAmount / 100)}
               </div>
               <div className="text-sm text-yellow-700">
-                for {quantity} ticket{quantity > 1 ? "s" : ""}
+                {t("forTickets", { count: quantity })}
               </div>
             </div>
           </div>
@@ -232,7 +236,7 @@ export default function DoorSaleForm({
               disabled={isSubmitting}
               className="flex-1 py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors disabled:opacity-50"
             >
-              Back
+              {t("back")}
             </button>
             <button
               type="button"
@@ -240,7 +244,7 @@ export default function DoorSaleForm({
               disabled={isSubmitting}
               className="flex-1 py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
             >
-              {isSubmitting ? "Processing..." : "Cash Received"}
+              {isSubmitting ? t("processing") : t("cashReceived")}
             </button>
           </div>
         </div>

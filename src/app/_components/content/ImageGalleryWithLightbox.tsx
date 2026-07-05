@@ -28,22 +28,22 @@ export default function ImageGalleryWithLightbox({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const columnClasses = {
-    "2": "grid-cols-1 md:grid-cols-2",
-    "3": "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
-    "4": "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
+    "2": "grid-cols-2",
+    "3": "grid-cols-2 lg:grid-cols-3",
+    "4": "grid-cols-2 lg:grid-cols-4",
   };
 
   const masonryColumnClasses = {
-    "2": "md:columns-2",
-    "3": "md:columns-2 lg:columns-3",
-    "4": "md:columns-2 lg:columns-4",
+    "2": "columns-2",
+    "3": "columns-2 lg:columns-3",
+    "4": "columns-2 lg:columns-4",
   };
 
-  // Per-tile width budget: 100vw on mobile, then split by column count.
+  // Per-tile width budget: 50vw on mobile (2 columns), then split by column count.
   const sizesByColumns: Record<"2" | "3" | "4", string> = {
-    "2": "(min-width: 768px) 50vw, 100vw",
-    "3": "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw",
-    "4": "(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw",
+    "2": "50vw",
+    "3": "(min-width: 1024px) 33vw, 50vw",
+    "4": "(min-width: 1024px) 25vw, 50vw",
   };
   const tileSizes = sizesByColumns[columns];
 
@@ -90,7 +90,7 @@ export default function ImageGalleryWithLightbox({
         </div>
       ) : (
         <div
-          className={`columns-1 ${masonryColumnClasses[columns]} gap-4 space-y-4`}
+          className={`${masonryColumnClasses[columns]} gap-4 space-y-4`}
         >
           {images.map((image, index) => (
             <div

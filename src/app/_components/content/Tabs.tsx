@@ -12,6 +12,7 @@ export interface TabItem {
   sortingWeight?: number;
   hideTitle?: boolean;
   mobileOnly?: boolean;
+  desktopOnly?: boolean;
 }
 
 export interface TabsProps {
@@ -207,20 +208,22 @@ export default function Tabs({
             className="overflow-x-auto scrollbar-hide py-2 pl-6 pr-8"
           >
             <div className="flex gap-x-5 justify-between">
-              {items.map(item => (
-                <Link
-                  ref={el => {
-                    mobileLinksRef.current[item.id] = el;
-                  }}
-                  key={`tab-top-navigation-${item.label}-${item.id}`}
-                  href={`#${item.id}`}
-                  onClick={() => handleTabClick(item.id, false)}
-                  className={`text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
+              {items
+                .filter(item => !item.desktopOnly)
+                .map(item => (
+                  <Link
+                    ref={el => {
+                      mobileLinksRef.current[item.id] = el;
+                    }}
+                    key={`tab-top-navigation-${item.label}-${item.id}`}
+                    href={`#${item.id}`}
+                    onClick={() => handleTabClick(item.id, false)}
+                    className={`text-neutral-400 hover:text-neutral-600 text-sm uppercase tracking-wide border-b border-b-transparent whitespace-nowrap
                 ${activeTabId === item.id && "!text-neutral-100 !border-b-blue-500"}`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
             </div>
           </div>
           <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black to-transparent" />
@@ -290,23 +293,25 @@ export default function Tabs({
       {/* Mobile expanded content */}
       <section>
         <div className="lg:hidden space-y-6">
-          {items.map(item => (
-            <div
-              key={item.id}
-              className="first:pt-0 pt-28 scroll-my-16"
-              id={!item.hideTitle ? item.id : undefined}
-              data-tab-id={item.id}
-            >
-              {!item.hideTitle && (
-                <h3 className="text-5xl font-heading tracking-wider text-neutral-400 mb-6">
-                  {item.label}
-                </h3>
-              )}
-              <InnerPage style={{ backgroundColor }}>
-                <div className="max-w-none">{item.content}</div>
-              </InnerPage>
-            </div>
-          ))}
+          {items
+            .filter(item => !item.desktopOnly)
+            .map(item => (
+              <div
+                key={item.id}
+                className="first:pt-0 first:mt-0 pt-28 scroll-my-16"
+                id={!item.hideTitle ? item.id : undefined}
+                data-tab-id={item.id}
+              >
+                {!item.hideTitle && (
+                  <h3 className="text-5xl font-heading tracking-wider text-neutral-400 mb-6">
+                    {item.label}
+                  </h3>
+                )}
+                <InnerPage style={{ backgroundColor }}>
+                  <div className="max-w-none">{item.content}</div>
+                </InnerPage>
+              </div>
+            ))}
         </div>
       </section>
     </>

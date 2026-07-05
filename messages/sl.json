@@ -47,16 +47,17 @@
       "lineup": "Lineup",
       "location": "Lokacija",
       "about": "O eventu",
-      "tickets": "Karte"
+      "tickets": "Karte",
+      "more": "Več"
     },
     "concluded": "Ta event je že mimo",
     "getTickets": "Izberi karto",
     "setTimes": "Cajti setov",
     "moreEventsToExplore": "Podobni eventi",
-    "pastEvent": "Končan",
+    "pastEvent": "Pretekel",
     "location": {
       "loadingMap": "Nalagam zemljevid…",
-      "directions": "Pokaž pot v Google Maps",
+      "directions": "Poglej si v Google Maps",
       "loadError": "Zemljevida ni ratalo naložit",
       "loadErrorDetail": "Google Maps se ni naložil"
     },
@@ -65,12 +66,12 @@
       "goingFast": "Karte gredo hitro, ostalo:"
     },
     "miniCard": {
-      "wasOn": "Končan {date}",
+      "wasOn": "Potekal {date}",
       "happeningOn": "Kmalu, {date}"
     },
     "ticketStatus": {
       "hot": "Vroče",
-      "ticketsLimited": "Karte omejene"
+      "ticketsLimited": "Omejene karte"
     },
     "ticketsDisplay": {
       "hot": "Vroče",
@@ -85,7 +86,7 @@
       "availableAtEntrance": "Karte dobiš na vhodu",
       "batchSoldOut": "Ta runda kart je razprodana",
       "batchComingSoon": "Naslednja runda kart pride kmalo",
-      "availableNow": "Karte so na voljo",
+      "availableNow": "Izberi svojo karto",
       "personCount": "{count, plural, one {# oseba} two {# osebi} few {# osebe} other {# oseb}}",
       "includesTickets": "Vključuje karte za {count, plural, one {# osebo} two {# osebi} few {# osebe} other {# oseb}}",
       "soldOutBanner": "Spletne karte so razprodane, ampak karte zase in za kolege še zmerm dobiš, k prideš na event. <strong>Sam keš.</strong>",
@@ -107,15 +108,15 @@
     "detailsComingSoon": "Podrobnosti kmalo",
     "festivalTag": "Festival",
     "poster": {
-      "happenedOn": "Končan",
-      "upcomingOn": "V prodaji"
+      "happenedOn": "Potekal",
+      "upcomingOn": "Poteka"
     },
     "breadcrumb": "Eventi"
   },
   "artists": {
     "appearsOn": "{name} igra na",
     "exploreOther": "Zbrskaj še druge",
-    "dontMissNextTime": "Ne zamud {name}, k pride spet",
+    "dontMissNextTime": "Ne zamud k {name} spet rola",
     "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
     "setTimes": "Kdaj kdo igra",
     "profile": {
@@ -125,19 +126,19 @@
       "findOn": "{name} najdeš na:"
     },
     "preview": {
-      "nowPlaying": "Zdej se vrti {name}",
-      "playSet": "Zavrti set od {name}"
+      "nowPlaying": "Rola ti {name}",
+      "playSet": "Posluši {name} set"
     },
     "liveNow": "ZDEJ V ŽIVO",
     "timeUntilPrefix": "čez",
     "breadcrumb": "Artisti",
-    "moreAbout": "Zvej več o {name}"
+    "moreAbout": "Več o {name}"
   },
   "venues": {
-    "eventsHostedAt": "Eventi v {name}",
-    "artistsPerformedAt": "Kdo je igral v {name}",
-    "dontMissNextEvent": "Ne zamud naslednjga eventa v {name}",
-    "subscribePrompt": "Prijav se in ti sporočimo za evente in lineupe",
+    "eventsHostedAt": "{name} eventi ",
+    "artistsPerformedAt": "Artististi, ki jih je slišo {name}",
+    "dontMissNextEvent": "Ne zamud naslednjga {name} eventa",
+    "subscribePrompt": "Naroči se, da te obvestimo za evente in lineupe",
     "breadcrumb": "Lokacije"
   },
   "store": {
@@ -146,7 +147,7 @@
     },
     "category": {
       "empty": "V {categoryName} zaenkrat ni nč",
-      "metaDescription": "Uradni Endemit {category} — varen spletni nakup."
+      "metaDescription": "Uradni Endemit {category}"
     },
     "product": {
       "descriptionHeading": "Opis",
@@ -172,7 +173,7 @@
         "maxQuantity": "Največ {quantity} kosov na nakup",
         "regional": "Pošiljamo samo v: {regions}",
         "availableUntil": "Na voljo samo do {date}",
-        "limitedAvailability": "Po tej ceni omejena zaloga"
+        "limitedAvailability": "Omejeno število, ne prveč čakat"
       }
     },
     "checkout": {
@@ -247,14 +248,14 @@
         "title": "Tvoji kontaktni podatki",
         "signedIn": "Prijava uspešna. Za to naročilo uporabimo tvoj email.",
         "description": "Preveri, da je email pravi, ker ti tja pošljemo potrditev naročila.",
-        "descriptionWithTickets": "Preveri email, da je pravi id da ti pošljemo digitalne karte."
+        "descriptionWithTickets": "Preveri email, da je pravi - ker ti tja pošljemo karte."
       },
       "email": "Email",
       "emailRepeat": "Ponov email",
       "emailPlaceholder": "jani@endemit.org",
       "ticketHolder": {
         "title": "Podatki imetnika karte",
-        "description": "Za vsak slučaj, če se karta zgubi al se ne da skenirat, vpiš ime vsakga imetnika karte:"
+        "description": "Če se karta zgubi al se ne da skenirat, vpiš ime vsakga imetnika karte:"
       },
       "decreaseQuantity": "Manj",
       "increaseQuantity": "Več",
@@ -344,11 +345,11 @@
       "description": "Ta event laufa brez keša. Nafilaj denarnco že zdej, da na šanku ne čakaš v vrsti.",
       "popular": "Popularno",
       "add": "+ Dodaj",
-      "cashNote": "Denarnco lahko nafilaš tut s kešem na eventu"
+      "cashNote": "Denarnco lahko nafilaš tut s kešom na eventu"
     },
     "ticketForm": {
       "namePrefix": "Ime",
-      "label": "Ime imetnika karte {number} @ {itemName}"
+      "label": "Imetnik karte {number} @ {itemName}"
     },
     "payment": {
       "checkDetails": "Prevr podatke za plačilo.",
@@ -418,8 +419,8 @@
       "avatarAlt": "Profilna slika"
     },
     "wallet": {
-      "transferFunds": "Prenesi denar",
-      "receiveFunds": "Prejmi denar",
+      "transferFunds": "Pošlji žetone",
+      "receiveFunds": "Prejmi žetone",
       "receiveFundsDesc": "Pokaž ta QR drugmu — lahko ga skenira iz svoje denarnce da ti pošle žetone.",
       "receiveQrAlt": "QR za prejem",
       "orShareCode": "Al deli kodo",
@@ -429,7 +430,7 @@
       "send": {
         "resolving": "Iščem prejemnika…",
         "sending": "Pošiljam…",
-        "titleScan": "Pošlji sredstva",
+        "titleScan": "Pošlji žetone",
         "titleConfirm": "Potrdi prenos",
         "titleSuccess": "Poslano",
         "titleError": "Napaka",
@@ -445,7 +446,7 @@
         "noteLabel": "Opomba (ni obvezna)",
         "notePlaceholder": "Za kaj je?",
         "enterAmount": "Vpiši znesek",
-        "insufficient": "Premalo sredstev",
+        "insufficient": "Premalo dobroimetja",
         "sendAmount": "Pošlji {amount}",
         "scanDifferent": "← Skeniraj drugo kodo",
         "sentAmount": "Poslano {amount}",
@@ -593,7 +594,7 @@
       "selectAmountDesc": "Izberi, koliko žetonov daš v denarnco",
       "redirecting": "Preusmerjam…",
       "addToWallet": "Dodaj {amount} v denarnco",
-      "cashNotice": "Denarnco lahko nafilaš tut s kešem na MERCH štantu."
+      "cashNotice": "Denarnco lahko nafilaš tut s kešom na MERCH štantu."
     },
     "ticketDownload": {
       "failed": "Karte ni ratalo ustvarit",
@@ -619,10 +620,18 @@
       "toppedUpTitle": "Denarnca nafilana",
       "amountAdded": "+{amount} dodano",
       "thankYou": "Hvala!",
-      "tryAgain": "Probaj še enkrat"
+      "tryAgain": "Probaj še enkrat",
+      "addTip": "Dodaš napitnino?",
+      "noTip": "Brez napitnine",
+      "customTip": "Po meri",
+      "topUpAmount": "Znesek polnjenja",
+      "totalToPay": "Za plačat",
+      "processing": "Se procesira…",
+      "topUpButton": "Napolni {amount}",
+      "payButton": "Plačaj {amount}"
     },
     "eventsAttended": {
-      "title": "Obiskani eventi",
+      "title": "Moji eventi",
       "claimMissing": "Prijavi manjkajoč event",
       "empty": "Brez obiskanih eventov.",
       "countLabel": "{count, plural, one {# event} two {# eventa} few {# eventi} other {# eventov}}",
@@ -636,8 +645,8 @@
       "submitClaim": "Oddaj prijavo"
     },
     "upcomingPromo": {
-      "title": "Prihajajoči eventi",
-      "subtitle": "Ne zamudi — zgrab karte!",
+      "title": "Bodoči eventi",
+      "subtitle": "Da ne bo prej kart zmanjkal!",
       "ticketsAvailable": "Karte na voljo"
     },
     "meta": {
@@ -800,7 +809,7 @@
     "refund": {
       "subject": "Refund za tvoje naročilo je obdelan",
       "heading": "Refund obdelan",
-      "intro": "Refund je urejen. Denar se vrne na isti način plačila v 5–10 delovnih dneh.",
+      "intro": "Refund je urejen. Sredstva se ti vrnejo na isti način plačila v 5–10 delovnih dneh.",
       "refundAmount": "Znesek refunda",
       "refundedTo": "Vrnjeno na: {method}",
       "orderDetails": "Podrobnosti naročila",
@@ -917,7 +926,7 @@
     "subscribeNewEpisode": "Prijav se in ti sporočimo, k pride nova emit epizoda",
     "comingSoon": "Kmalo pride",
     "showLess": "Manj",
-    "viewAll": "Poglej vse epizode ({count})",
+    "viewAll": "Poglej vseh  {count} epizod",
     "episodeLabel": "Epizoda {number}",
     "byPrefix": "od",
     "playing": "Špila",
@@ -947,19 +956,19 @@
     }
   },
   "newsletter": {
-    "defaultTitle": "PRIJAV SE",
+    "defaultTitle": "Naroč se",
     "endemit": {
-      "defaultDescription": "Zvej za naše evente, muziko in vse ostalo"
+      "defaultDescription": "Zvej za naše evente, karte, datume in muziko"
     },
     "festival": {
       "defaultDescription": "Endemit Festival je zaprto srečanje plemena, sam na povabilo. Če češ postat član, se prijav in ti pošljemo več info."
     },
     "subscribe": {
-      "invalidEmail": "Vpiš pravi email",
+      "invalidEmail": "Vpiš' veljaven email",
       "failed": "Ni ratalo, probej spet",
       "subscribing": "Prijavljam…",
-      "subscribed": "Prijava uspešna!",
-      "signUp": "Prijava",
+      "subscribed": "Uspešno naročen/a!",
+      "signUp": "Naroči se",
       "successHeading": "dodan na obveščanje!",
       "emailPlaceholder": "ime.priimek@gmail.com"
     }
@@ -1597,8 +1606,8 @@
       "noteLabel": "Opomba (neobvezno)",
       "notePlaceholder": "Razlog za transakcijo",
       "processing": "Se obdeluje…",
-      "addCredit": "+ Dodaj dobroimetje",
-      "removeFunds": "- Odvzemi sredstva",
+      "addCredit": "+ Dodaj žetone",
+      "removeFunds": "- Odvzemi žetone",
       "noTransactions": "Še ni transakcij",
       "system": "Sistem",
       "col": {
@@ -1645,8 +1654,8 @@
         "POS_PURCHASE": "POS nakup",
         "POS_TIP": "POS napitnina",
         "CARD_TOPUP": "Polnjenje s kartico",
-        "CASH_TOPUP": "Polnjenje s kešem",
-        "P2P_TRANSFER": "Prenos"
+        "CASH_TOPUP": "Polnjenje s kešom",
+        "P2P_TRANSFER": "Prenos frendu"
       }
     },
     "nav": {
@@ -1800,7 +1809,10 @@
       "modalTitle": "Skeniraj QR karto",
       "pointCamera": "Usmeri kamero v QR kodo, da skeniraš karto",
       "recordingScan": "Beležim skeniranje na strežnik...",
-      "scanNext": "V redu – skeniraj naslednjo"
+      "scanNext": "V redu – skeniraj naslednjo",
+      "processing": "Se procesira…",
+      "holding": "Drži…",
+      "holdToScan": "Drži za skeniranje"
     },
     "result": {
       "verified": "Preverjeno",
@@ -1817,6 +1829,21 @@
     },
     "header": {
       "title": "Skener za karte"
+    },
+    "doorSale": {
+      "numberOfTickets": "Število kart",
+      "totalAmount": "Skupni znesek (uredljiv)",
+      "emailOptional": "Email (ni obvezen)",
+      "searchPlaceholder": "Poišči uporabnika al vpiši email",
+      "sendViaEmail": "Pošlji karte po emailu",
+      "proceed": "Naprej - {price}",
+      "confirmCash": "Potrdi prejet keš",
+      "forTickets": "za {count, plural, one {# karto} two {# karti} few {# karte} other {# kart}}",
+      "back": "Nazaj",
+      "processing": "Se procesira…",
+      "cashReceived": "Keš prejet",
+      "success": "{count, plural, one {# karta prodana na vratih} two {# karti prodani na vratih} few {# karte prodane na vratih} other {# kart prodanih na vratih}} za {price}",
+      "emailSentSuffix": " - email poslan"
     }
   },
   "stagingLogin": {

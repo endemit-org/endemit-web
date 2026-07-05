@@ -235,7 +235,7 @@ export default function Sidebar({
 
           {showCart && (
             <div className="px-5 pb-4">
-              <Cart variant={"detailed"} />
+              <Cart variant={"detailed"} onNavigate={close} />
             </div>
           )}
 
