@@ -56,68 +56,64 @@ const fragmentShader = /* glsl */ `
     return c * 0.5 + 0.5;
   }
 
+  // One horizontal laser channel: an occasional beam that ZAPS across from the
+  // left or right edge (thin bright line + brighter head), then fades out. Off
+  // most of the time so it stays infrequent and calm.
+  float laser(vec2 uv, float t, float id) {
+    float period = 1.25 + hash(vec2(id, 1.0)) * 1.5;  // 1.25–2.75s between zaps (4x)
+    float phase = hash(vec2(id, 2.0)) * period;
+    float cyc = floor((t + phase) / period);          // which zap
+    float lt = fract((t + phase) / period);           // 0..1 through the cycle
+    float win = 0.14;                                  // short = quick zap
+    float fire = step(lt, win);
+    float p = clamp(lt / win, 0.0, 1.0);               // sweep progress
+    float ease = 1.0 - pow(1.0 - p, 3.0);              // fast-in, ease-out
+
+    float dir = step(0.5, hash(vec2(id, cyc + 3.0)));  // 0 = L→R, 1 = R→L
+    float y = 0.12 + 0.76 * hash(vec2(id, cyc + 7.0)); // beam row (new each zap)
+    float head = dir > 0.5 ? 1.0 - ease : ease;        // head x-position
+
+    // Bright thin core + a soft glowing halo above/below it (glowy beam).
+    float dy = abs(uv.y - y);
+    float core = smoothstep(0.005, 0.0, dy);
+    float halo = smoothstep(0.055, 0.0, dy) * 0.55;
+    float yProfile = core + halo;
+
+    // Trail: lit from the origin edge up to the head, fading toward the origin.
+    float behind = dir > 0.5 ? step(head, uv.x) : step(uv.x, head);
+    float trail = behind * (1.0 - abs(uv.x - head)) * 0.8;
+    float headGlow = smoothstep(0.05, 0.0, abs(uv.x - head)) * 1.8;
+
+    return fire * yProfile * (trail + headGlow);
+  }
+
   void main() {
     // CRT warp: distort UVs so the picture bulges like a tube (rounded edges).
     vec2 uv = barrel(vUv, 0.18);
-
-    // Backdrop colour (#231f20) with sparse yellow BROKEN HORIZONTAL
-    // SCANLINE-STREAKS drifting across it (data-mosh look).
-    vec3 bg = vec3(0.1373, 0.1216, 0.1255);
-
-    // Slow, calm timebase — the whole backdrop moves lazily.
     float t = uTime * uIntensity;
-    float tb = floor(t * 3.0);
 
-    // Finer horizontal rows.
-    float rows = 240.0;
-    float row = floor(uv.y * rows);
+    // Backdrop colour (#231f20).
+    vec3 bg = vec3(0.1373, 0.1216, 0.1255);
+    vec3 col = bg;
 
-    // Some rows are randomly DEFOCUSED (soft/blurred), the rest crisp.
-    float blur = smoothstep(0.5, 1.0, hash(vec2(row, tb + 11.0)));
+    // ── Lasers zapping in from the sides ──
+    float beams = 0.0;
+    beams += laser(uv, t, 0.0);
+    beams += laser(uv, t, 1.0);
+    beams += laser(uv, t, 2.0);
+    // Bright yellow (#dadb00) beams + room glow with additive bloom.
+    vec3 laserColor = vec3(0.855, 0.859, 0.0);
+    col += laserColor * beams * 0.55;
 
-    // Lit band inside each row cell (gap between rows = the scanline look).
-    // Sharp lines are thin; blurred lines are wider and dimmer (defocus look).
-    float d = abs(fract(uv.y * rows) - 0.5);
-    float lineSharp = smoothstep(0.60, 0.10, d);
-    float lineSoft = smoothstep(0.82, 0.05, d) * 0.5;
-    float lineY = mix(lineSharp, lineSoft, blur);
-
-    // Per-row continuous horizontal travel — slow drift so lines creep across.
-    float travel = (hash(vec2(row, 2.0)) - 0.5) * t * 0.14 * uIntensity;
-    // Plus abrupt per-bucket shove (the "tear" jump).
-    float shoveRow = step(0.5, hash(vec2(row, tb + 3.0)));
-    float shove = shoveRow * (hash(vec2(row, tb)) - 0.5) * 0.4 * uIntensity;
-    float x = uv.x + travel + shove;
-
-    // How many rows are lit at once — VERY sparse (~7% of the previous
-    // density): only a few horizontal glitch lines visible at a time.
-    float envelope = 0.14 + 0.04 * (1.0 - abs(uv.y - 0.5) * 2.0);
-    float rowSeed = hash(vec2(row, tb * 0.5 + 1.0));
-    float rowActive = step(1.0 - envelope, rowSeed);
-
-    // Broken dashes along the row — softened on defocused rows.
-    float segs = 26.0 + 60.0 * hash(vec2(row, 9.0));
-    float seg = floor(x * segs);
-    float dashRaw = hash(vec2(seg, row + tb));
-    float dash = mix(step(0.5, dashRaw), smoothstep(0.42, 0.66, dashRaw), blur);
-
-    // Occasional long streak that glides across.
-    float streakRow = step(0.992, hash(vec2(row, floor(t * 0.7))));
-    float streakEdge = smoothstep(0.0, 0.05, x) * smoothstep(1.0, 0.8, x);
-    float streak = streakRow * streakEdge;
-
-    // Per-dash flicker — slow, calm CRT hiss.
-    float flick = 0.55 + 0.45 * hash(vec2(seg, row + floor(t * 2.2)));
-
-    float lit = max(rowActive * dash * flick, streak) * lineY;
+    // ── TV noise (stronger animated static) ──
+    float tv = hash(uv * uResolution.xy + floor(t * 24.0));
+    col += vec3(tv - 0.5) * 0.16;
 
     // Gentle whole-field CRT flicker — slow.
-    float gFlick = 0.85 + 0.15 * hash(vec2(floor(t * 1.2), 7.0));
+    float gFlick = 0.9 + 0.1 * hash(vec2(floor(t * 1.2), 7.0));
+    col *= gFlick;
 
-    // Yellow lines composited over the #231f20 backdrop.
-    vec3 col = (bg + uGlow * lit * 0.95) * gFlick;
-
-    // Rounded CRT tube mask: darken the curved edges into a bezel.
+    // Rounded CRT tube mask: keep the area beyond the curved screen black.
     vec2 edge = smoothstep(vec2(0.0), vec2(0.02), uv) *
                 smoothstep(vec2(1.0), vec2(0.98), uv);
     float tube = edge.x * edge.y;
@@ -126,6 +122,14 @@ const fragmentShader = /* glsl */ `
     // Vignette for CRT depth.
     vec2 vc = uv * 2.0 - 1.0;
     col *= 1.0 - 0.22 * dot(vc, vc);
+
+    // Pulsing yellow BLOOM in the "room" AROUND the screen (the bezel area
+    // beyond the curved edge), fading out from the screen edge — slow pulse.
+    float edgeDist = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
+    float outDist = max(0.0, -edgeDist);           // >0 only outside the screen
+    float roomBloom = smoothstep(0.42, 0.0, outDist) * (1.0 - tube);
+    float pulse = 0.5 + 0.5 * sin(uTime * 0.6);    // slow (~10s period)
+    col += laserColor * roomBloom * pulse * 0.9;
 
     gl_FragColor = vec4(col, 1.0);
   }

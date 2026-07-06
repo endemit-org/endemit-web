@@ -103,12 +103,14 @@
 }
 
 .crt-scanlines {
+  /* Thicker, denser dark bands (2px clear / 2px dark) for more intense CRT
+     scanlines. Intensity is driven by --theme-scanline-opacity. */
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 0px,
     rgba(0, 0, 0, 0) 2px,
-    rgba(0, 0, 0, var(--theme-scanline-opacity, 0.16)) 3px,
-    rgba(0, 0, 0, var(--theme-scanline-opacity, 0.16)) 3px
+    rgba(0, 0, 0, var(--theme-scanline-opacity, 0.4)) 2px,
+    rgba(0, 0, 0, var(--theme-scanline-opacity, 0.4)) 4px
   );
 }
 
