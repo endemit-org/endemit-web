@@ -19,10 +19,11 @@
  * remain gated behind `prefers-reduced-motion: no-preference` separately.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -135,6 +136,235 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
+/**
+ * Scattered RAVEON logo instances that all point toward the mouse.
+ *
+ * Performance: ONE InstancedMesh (single draw call for every logo), a static
+ * count, a dynamic instanceMatrix buffer, and per-frame work that is only
+ * `count` quaternion slerps + matrix composes — no per-instance React, no
+ * per-instance draw calls. The GLB geometry is baked/centered once.
+ */
+/** Beat tempo the instances pulse to. 60 to start; techno lives at ~130–140. */
+const RAVEON_BPM = 60;
+
+/** Max tilt away from facing the viewer — never show more than this per side. */
+const RAVEON_MAX_TILT = THREE.MathUtils.degToRad(30);
+const RAVEON_FORWARD = new THREE.Vector3(0, 0, 1);
+
+function RaveonInstances({ isMobile }: { isMobile: boolean }) {
+  const gltf = useLoader(GLTFLoader, "/models/raveon3d.glb");
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const { camera } = useThree();
+  const count = isMobile ? 14 : 40;
+
+  // Mouse in NDC. The canvas is pointer-events-none, so r3f's own pointer
+  // events never fire — track the window instead.
+  const pointer = useRef({ x: 0, y: 0, active: false });
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      pointer.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      pointer.current.active = true;
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
+  // Bake the source mesh's transform into a centered, unit-scaled geometry
+  // whose thinnest axis (the logo's face normal) is +Z, so lookAt() points
+  // the face at the target.
+  const geometry = useMemo(() => {
+    let src: THREE.Mesh | null = null;
+    gltf.scene.updateMatrixWorld(true);
+    gltf.scene.traverse((o) => {
+      if (!src && (o as THREE.Mesh).isMesh) src = o as THREE.Mesh;
+    });
+    if (!src) return new THREE.BufferGeometry();
+    const geo = (src as THREE.Mesh).geometry.clone();
+    geo.applyMatrix4((src as THREE.Mesh).matrixWorld);
+    geo.computeBoundingBox();
+    const size = geo.boundingBox!.getSize(new THREE.Vector3());
+    if (size.y <= size.x && size.y <= size.z) geo.rotateX(Math.PI / 2);
+    else if (size.x <= size.y && size.x <= size.z) geo.rotateY(Math.PI / 2);
+    geo.center();
+    geo.computeBoundingBox();
+    const s = geo.boundingBox!.getSize(new THREE.Vector3());
+    geo.scale(1 / Math.max(s.x, s.y, s.z), 1 / Math.max(s.x, s.y, s.z), 1);
+    geo.computeVertexNormals();
+    return geo;
+  }, [gltf]);
+
+  // Static per-instance scatter: position inside the camera frustum (wider
+  // spread at greater depth), scale, roll offset/speed, turn responsiveness.
+  const instances = useMemo(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    const aspect = Math.max(cam.aspect || 1.7, 1);
+    const tanFov = Math.tan(((cam.fov || 40) * Math.PI) / 360);
+    return Array.from({ length: count }, () => {
+      const z = -14 + Math.random() * 16; // depth: -14 … +2
+      const halfH = tanFov * (cam.position.z - z) * 1.1;
+      return {
+        position: new THREE.Vector3(
+          (Math.random() * 2 - 1) * halfH * aspect,
+          (Math.random() * 2 - 1) * halfH,
+          z
+        ),
+        scale: (1.4 + Math.random() * 2.2) * 0.75,
+        roll: Math.random() * Math.PI * 2,
+        rollSpeed: (Math.random() - 0.5) * 0.3,
+        turn: 3 + Math.random() * 3,
+        quaternion: new THREE.Quaternion(),
+        // Beat response: how hard this instance kicks/shakes, and a random
+        // shake direction + frequency so the field doesn't move in unison.
+        pulseAmp: 0.1 + Math.random() * 0.14,
+        shakeAmp: 0.06 + Math.random() * 0.14,
+        shakeDir: new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          Math.random() - 0.5
+        ).normalize(),
+        shakeFreq: 18 + Math.random() * 14,
+        shakePhase: Math.random() * Math.PI * 2,
+        // ~40% of instances get a darker tint (multiplies the material colour).
+        shade: Math.random() < 0.4 ? 0.35 + Math.random() * 0.35 : 1,
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
+
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const target = useMemo(() => new THREE.Vector3(), []);
+  const lookDir = useMemo(() => new THREE.Vector3(), []);
+  const tiltAxis = useMemo(() => new THREE.Vector3(), []);
+  const tiltQuat = useMemo(() => new THREE.Quaternion(), []);
+
+  // Yellow theme material (Lambert = cheapest lit shading) with a beat-driven
+  // vertex "dismorph" patched in: on each kick the surface ripples along its
+  // normals, easing back to the clean shape as the beat envelope decays.
+  const beatUniforms = useMemo(
+    () => ({ uBeat: { value: 0 }, uTime: { value: 0 } }),
+    []
+  );
+  const material = useMemo(() => {
+    const mat = new THREE.MeshLambertMaterial({
+      color: "#d9e020",
+      emissive: "#d9e020",
+      emissiveIntensity: 0.18,
+    });
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uBeat = beatUniforms.uBeat;
+      shader.uniforms.uTime = beatUniforms.uTime;
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          "#include <common>",
+          `#include <common>
+           uniform float uBeat;
+           uniform float uTime;`
+        )
+        .replace(
+          "#include <begin_vertex>",
+          `#include <begin_vertex>
+           // Beat dismorph: cheap layered sine ripple along the normal,
+           // scaled by the eased beat envelope (0 between beats).
+           float dm = sin(position.x * 7.0 + uTime * 5.0) *
+                      sin(position.y * 9.0 + uTime * 3.7) +
+                      0.5 * sin((position.x + position.y) * 13.0 - uTime * 6.0);
+           transformed += normal * dm * uBeat * 0.05;`
+        );
+    };
+    return mat;
+  }, [beatUniforms]);
+  useEffect(() => () => material.dispose(), [material]);
+
+  useEffect(() => {
+    meshRef.current?.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  }, []);
+
+  // Per-instance shade: instanceColor multiplies the material colour, so the
+  // darker instances read as dimmer yellow while staying in one draw call.
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    const c = new THREE.Color();
+    instances.forEach((inst, i) => mesh.setColorAt(i, c.setScalar(inst.shade)));
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [instances]);
+
+  useFrame((state, delta) => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    const t = state.clock.elapsedTime;
+
+    // World-space look target: the mouse ray intersected with the z=6 plane
+    // (in front of every instance), or a slow drifting point on touch devices.
+    if (pointer.current.active) {
+      target.set(pointer.current.x, pointer.current.y, 0.5).unproject(camera);
+      target.sub(camera.position).normalize();
+      const dist = (6 - camera.position.z) / target.z;
+      target.multiplyScalar(dist).add(camera.position);
+    } else {
+      target.set(Math.sin(t * 0.3) * 7, Math.cos(t * 0.23) * 4, 6);
+    }
+
+    // Beat envelope: instant kick on the beat, eased (cubic) decay back to 0.
+    const beatT = (t * RAVEON_BPM) / 60;
+    const env = Math.pow(1 - (beatT % 1), 3);
+    beatUniforms.uBeat.value = env;
+    beatUniforms.uTime.value = t;
+    // The glow breathes with the beat too.
+    material.emissiveIntensity = 0.18 + env * 0.35;
+
+    const dt = Math.min(delta, 0.05);
+    for (let i = 0; i < instances.length; i++) {
+      const inst = instances[i];
+      // Shake: high-frequency jitter along a per-instance direction, gated by
+      // the beat envelope so it hits on the kick and settles between beats.
+      const shake =
+        Math.sin(t * inst.shakeFreq + inst.shakePhase) * inst.shakeAmp * env;
+      dummy.position
+        .copy(inst.position)
+        .addScaledVector(inst.shakeDir, shake * inst.scale);
+      // Clamp the look direction to a cone around "facing the viewer": if the
+      // target sits more than RAVEON_MAX_TILT off the forward axis, rotate
+      // forward only that far toward it, so no side ever turns past 15°.
+      lookDir.subVectors(target, dummy.position).normalize();
+      const tilt = lookDir.angleTo(RAVEON_FORWARD);
+      if (tilt > RAVEON_MAX_TILT) {
+        tiltAxis.crossVectors(RAVEON_FORWARD, lookDir);
+        if (tiltAxis.lengthSq() > 1e-10) {
+          tiltAxis.normalize();
+          lookDir
+            .copy(RAVEON_FORWARD)
+            .applyQuaternion(
+              tiltQuat.setFromAxisAngle(tiltAxis, RAVEON_MAX_TILT)
+            );
+        } else {
+          lookDir.copy(RAVEON_FORWARD);
+        }
+      }
+      dummy.lookAt(lookDir.add(dummy.position));
+      dummy.rotateZ(inst.roll + t * inst.rollSpeed);
+      // Frame-rate-independent smoothing toward the desired orientation.
+      inst.quaternion.slerp(dummy.quaternion, 1 - Math.exp(-inst.turn * dt));
+      dummy.quaternion.copy(inst.quaternion);
+      // Resize: pump up on the kick, ease back down with the envelope.
+      dummy.scale.setScalar(inst.scale * (1 + env * inst.pulseAmp));
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh
+      ref={meshRef}
+      args={[geometry, material, count]}
+      frustumCulled={false}
+      renderOrder={1}
+    />
+  );
+}
+
 function CrtPlane() {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const { size, viewport } = useThree();
@@ -218,10 +448,18 @@ export default function CrtScene() {
         frameloop={hidden ? "never" : "always"}
         dpr={[1, isMobile ? 1.25 : 1.75]}
         gl={{ antialias: false, powerPreference: "low-power" }}
-        orthographic
-        camera={{ position: [0, 0, 1] }}
+        // Perspective camera for the 3D logo instances; the CRT plane writes
+        // clip-space positions directly, so it ignores the camera either way.
+        camera={{ position: [0, 0, 16], fov: 40, near: 0.1, far: 60 }}
       >
+        {/* Distant instances fade into the CRT backdrop colour. */}
+        <fog attach="fog" args={["#231f20", 16, 34]} />
         <CrtPlane />
+        <ambientLight intensity={0.55} />
+        <directionalLight position={[5, 8, 10]} intensity={1.4} />
+        <Suspense fallback={null}>
+          <RaveonInstances isMobile={isMobile} />
+        </Suspense>
       </Canvas>
     </div>,
     document.body

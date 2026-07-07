@@ -27,7 +27,8 @@ function isLocaleExcluded(pathname: string): boolean {
     pathname === "/manifest.json" ||
     pathname === "/sw.js" ||
     pathname.startsWith("/images") ||
-    pathname.startsWith("/fonts")
+    pathname.startsWith("/fonts") ||
+    pathname.startsWith("/models")
   );
 }
 
@@ -163,6 +164,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/api/:path*",
-    "/((?!_next/static|_next/image|favicon.ico|images|fonts).*)",
+    "/((?!_next/static|_next/image|favicon.ico|images|fonts|models).*)",
   ],
 };

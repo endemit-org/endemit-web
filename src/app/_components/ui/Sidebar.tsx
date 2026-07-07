@@ -233,6 +233,21 @@ export default function Sidebar({
             <ProfileButton variant="detailed" />
           </div>
 
+          {/* Mobile: an unmissable static "My profile" entry between the menu
+              and the cart — the header icon alone is easy to overlook. Always
+              shown; signed-out users go through sign-in to reach the profile. */}
+          <div className="lg:hidden px-5 pb-4">
+            <div className="border-t border-neutral-800" />
+            <Link
+              href="/profile"
+              onClick={close}
+              className="block px-3 py-3 text-right text-2xl font-heading tracking-widest uppercase text-neutral-200 hover:!text-gray-400 active:text-gray-600 hover:underline underline-offset-4 decoration-dotted"
+            >
+              {t("myProfile")}
+            </Link>
+            <div className="border-t border-neutral-800" />
+          </div>
+
           {showCart && (
             <div className="px-5 pb-4">
               <Cart variant={"detailed"} onNavigate={close} />

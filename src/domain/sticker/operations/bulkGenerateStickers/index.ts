@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
+import type { StickerCodeProperty } from "@prisma/client";
 
 const LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 const NUMBERS = "0123456789";
@@ -20,7 +21,8 @@ export interface BulkGenerateStickersResult {
 }
 
 export async function bulkGenerateStickers(
-  count: number
+  count: number,
+  property?: StickerCodeProperty | null
 ): Promise<BulkGenerateStickersResult> {
   if (!Number.isFinite(count) || count <= 0) {
     throw new Error("count must be a positive integer");
@@ -48,7 +50,7 @@ export async function bulkGenerateStickers(
   }
 
   const result = await prisma.stickerCode.createMany({
-    data: toCreate.map(code => ({ code })),
+    data: toCreate.map(code => ({ code, property: property ?? null })),
     skipDuplicates: true,
   });
 

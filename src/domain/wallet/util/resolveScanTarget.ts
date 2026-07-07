@@ -12,8 +12,12 @@ import {
 export async function resolveScanTarget(
   rawValue: string
 ): Promise<{ userId: string }> {
-  const value = rawValue.trim();
+  let value = rawValue.trim();
   if (!value) throw new Error("No code provided");
+
+  // Shared receive links (/send/ndr1.*) may be pasted or scanned whole.
+  const linkMatch = value.match(/\/send\/(ndr1\.[^\s/?#]+)/);
+  if (linkMatch) value = decodeURIComponent(linkMatch[1]);
 
   if (looksLikeReceiveCode(value)) {
     const userId = verifyReceiveCode(value);

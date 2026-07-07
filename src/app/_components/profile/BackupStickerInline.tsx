@@ -57,55 +57,61 @@ export default function BackupStickerInline({
 
   const toggleInfo = () => setIsInfoOpen(v => !v);
 
+  // With nothing to spend, the big Pay button is just noise — hide it and
+  // keep the wristband-link affordance.
+  const canPay = (walletBalance ?? 0) > 0;
+
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setIsQrOpen(true)}
-          className="group flex-1 flex items-center justify-between gap-3 px-4 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-md font-medium transition-colors shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:outline-none"
-        >
-          <span className="flex items-center gap-2">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4h4v4H4V4zm0 8h4v4H4v-4zm0 8h4v-4h4v4H8v-4H4v4zm8-16h4v4h-4V4zm0 8h4v4h-4v-4zm0 8h4v-4h4v4h-4v-4h-4v4zm8-16h-4v4h4V4zm0 8h-4v4h4v-4z"
-              />
-            </svg>
-            <span className="text-base">{t("walletPay.pay")}</span>
-          </span>
-          <span className="flex items-center gap-2 text-xs uppercase tracking-widest text-blue-100/80">
-            {currentCode ? (
-              <span className="font-mono tracking-[0.25em] text-white text-sm">
-                {currentCode}
-              </span>
-            ) : (
-              <span>{t("wristband.showQr")}</span>
-            )}
-            <svg
-              className="w-4 h-4 text-blue-100/70 group-hover:translate-x-0.5 transition-transform"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </span>
-        </button>
-        <InfoButton isOpen={isInfoOpen} onToggle={toggleInfo} />
-      </div>
+      {canPay && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsQrOpen(true)}
+            className="group flex-1 flex items-center justify-between gap-3 px-4 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-md font-medium transition-colors shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:outline-none"
+          >
+            <span className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4h4v4H4V4zm0 8h4v4H4v-4zm0 8h4v-4h4v4H8v-4H4v4zm8-16h4v4h-4V4zm0 8h4v4h-4v-4zm0 8h4v-4h4v4h-4v-4h-4v4zm8-16h-4v4h4V4zm0 8h-4v4h4v-4z"
+                />
+              </svg>
+              <span className="text-base">{t("walletPay.pay")}</span>
+            </span>
+            <span className="flex items-center gap-2 text-xs uppercase tracking-widest text-blue-100/80">
+              {currentCode ? (
+                <span className="font-mono tracking-[0.25em] text-white text-sm">
+                  {currentCode}
+                </span>
+              ) : (
+                <span>{t("wristband.showQr")}</span>
+              )}
+              <svg
+                className="w-4 h-4 text-blue-100/70 group-hover:translate-x-0.5 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </span>
+          </button>
+          <InfoButton isOpen={isInfoOpen} onToggle={toggleInfo} />
+        </div>
+      )}
 
       {!currentCode && (
         <button
