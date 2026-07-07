@@ -34,7 +34,8 @@
     "downloadAnyway": "Vseeno potegn dol"
   },
   "nav": {
-    "menu": "MENI"
+    "menu": "MENI",
+    "myProfile": "Moj profil"
   },
   "cart": {
     "checkout": "Na blagajno",
@@ -423,9 +424,11 @@
       "receiveFunds": "Prejmi žetone",
       "receiveFundsDesc": "Pokaž ta QR kolego — da ga skenira iz svoje denarnce da ti pošle žetone.",
       "receiveQrAlt": "QR za prejem",
-      "orShareCode": "Al deli kodo",
-      "copied": "Kopirano!",
-      "copyCode": "Kopiraj kodo",
+      "enlargeQr": "Povečaj QR kodo",
+      "receiveQrInstruction": "Pošiljatel to kodo skenira s skenerjem za pošiljanje žetonov v svoji denarnci.",
+      "closeQr": "Zapri",
+      "shareLink": "Deli link",
+      "linkCopied": "Link kopiran!",
       "payQrAlt": "QR denarnce",
       "send": {
         "resolving": "Iščem prejemnika…",
@@ -435,9 +438,7 @@
         "titleSuccess": "Poslano",
         "titleError": "Napaka",
         "balance": "Dobroimetje: {amount}",
-        "scanHint": "Skeniraj QR prejemnika al spodej prilepi kodo za prejem.",
-        "codePlaceholder": "AB12 al ndr1.…",
-        "resolve": "Poišči",
+        "scanHint": "Skeniraj QR prejemnika, da mu pošlješ tokene.",
         "sendingTo": "Pošiljaš",
         "amount": "Znesek",
         "exceeds": "Znesek presega tvoje dobroimetje",
@@ -452,7 +453,8 @@
         "sentAmount": "Poslano {amount}",
         "toName": "za {name}",
         "complete": "Prenos zaklučen",
-        "done": "Zapri"
+        "done": "Zapri",
+        "friends": "Frendi"
       }
     },
     "wristband": {
@@ -471,19 +473,36 @@
       "done": "Končano",
       "gotIt": "Jasno",
       "cancel": "Prekliči",
-      "couldNotCheck": "Preverjanje zapestnce je spodletelo.",
-      "networkError": "Napaka omrežja.",
+      "couldNotCheck": "Ni ratalo preverit zapestnce.",
+      "networkError": "Neki je narobe s povezavo.",
       "linkFailed": "Zapestnce ni ratalo povezat.",
-      "unexpectedResponse": "Nepričakovan odziv.",
+      "unexpectedResponse": "Neki čudnega je pršlo nazaj.",
       "linkedTitle": "Zapestnca {code} je povezana s tvojo denarnco.",
       "linkedDesc": "Nafilaj denarnco da lahko začneš plačevat z njo.",
-      "wouldLinkTitle": "Povežem zapestnco {code} s tvojo denarnco?",
-      "wouldLinkDesc": "K jo enkrat povežeš, je zapestnca vezana na tvojo denarnco. Na POS blagajni jo skenirajo in z njo plačaš.",
+      "alreadyLinkedTitle": "Zapestnca {code} je že povezana s tvojo denarnco.",
+      "alreadyLinkedDesc": "Vse je nared — skeniri jo na blagajni pa plačaš.",
+      "intro": {
+        "title": "Povež zapestnco",
+        "subtitle": "Zapestnca se poveže na tvojo digitalno denarnco da ne rabš telefona s sabo.",
+        "step0": "Skeniri zapestnco",
+        "step1": "Vpiš svoj email in potrd kodo",
+        "step2": "Povež to zapestnco s svojo denarnco",
+        "step3": "Nafili denarnco z žetoni",
+        "cta": "Naprej",
+        "progress": "{percent}% narejeno",
+        "emailTitle": "Vpiši svoj email"
+      },
+      "balanceLabel": "Stanje v denarnci",
+      "topUpNow": "Najlaži jo nafilaš tu s kreditno kartico, Apple Pay al Google Pay.",
+      "topUpOptionCard": "Nafilaj zdaj",
+      "topUpOptionCash": "Ne, bom z gotovino na merch štantu",
+      "wouldLinkTitle": "Povežem zapestnco {code}?",
+      "wouldLinkDesc": "K jo enkrat povežeš, je zapestnca vezana na tvojo denarnco. Skeniraj jo na blagajni pa plačaj.",
       "linkButton": "Poveži zapestnco",
       "conflictTitle": "Zapestnca {code} je povezana z drugim računom.",
-      "conflictDesc": "Če misliš, da je to pomota, se obrn na člana ekipe.",
+      "conflictDesc": "Če mislš, da je to feler, se obrn na člana ekipe.",
       "swapTitle": "Že maš povezano zapestnco {existingCode}.",
-      "swapDesc": "Če češ povezat {code}, najprej odjavi trenutno zapestnco v <editLink>Uredi profil</editLink> in skeniraj spet.",
+      "swapDesc": "Če češ povezat {code}, najprej odjavi trenutno zapestnco v <editLink>Uredi profil</editLink> pa skeniraj spet.",
       "whatIsThis": "Kaj je to?",
       "showQr": "Pokaži QR",
       "linkForOffline": "Poveži zapestnco za plačilo brez telefona",
@@ -502,7 +521,12 @@
       "signOut": "Odjava",
       "signOutConfirmMessage": "Si zihr, da se češ odjavit iz računa?",
       "cancel": "Prekliči",
-      "signingOut": "Odjavljam…"
+      "signingOut": "Odjavljam…",
+      "advancedOptions": "Napredne možnosti",
+      "wristbandLinked": "Zapestnca {code} povezana",
+      "exchangeDesc": "Za izmenjavo žetonov s kolegi.",
+      "sendTokens": "Pošli",
+      "receiveTokens": "Prejmi"
     },
     "tickets": {
       "upcomingTitle": "Prihajajoče karte",
@@ -559,7 +583,8 @@
         "refund": "Refund",
         "adjustment": "Prilagoditev",
         "transfer": "Prenos"
-      }
+      },
+      "sendTokens": "Pošlji tokene"
     },
     "orders": {
       "historyTitle": "Zgodovina naročil",
@@ -1406,7 +1431,15 @@
         "assignFailed": "Nalepke ni uspelo dodelit",
         "replacedWarning": "Nalepka dodeljena. Prejšnja uporabnikova nalepka ({code}) je bla odvezana.",
         "assigning": "Dodeljujem…",
-        "assignAction": "Dodeli"
+        "assignAction": "Dodeli",
+        "colProperty": "Lastnost",
+        "propertyNone": "Brez lastnosti",
+        "propertyNames": {
+          "Festival26Black": "Festival 26 črna",
+          "Festival26Red": "Festival 26 rdeča",
+          "Festival26Blue": "Festival 26 modra"
+        },
+        "propertyUpdateFailed": "Lastnosti ni uspelo spremenit."
       }
     },
     "users": {

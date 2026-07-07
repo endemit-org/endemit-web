@@ -1,40 +1,145 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
+import { fetchMyWalletAction } from "@/domain/wallet/actions/fetchMyWalletAction";
+import { formatTokensFromCents } from "@/lib/util/currency";
+import { OPEN_TOP_UP_EVENT } from "./topUpEvent";
+import type { SceneStatus, WristbandColor } from "./WristbandScene";
+
+// three.js stage — client-only and heavy, so keep it out of the page bundle.
+const WristbandScene = dynamic(() => import("./WristbandScene"), {
+  ssr: false,
+});
 
 interface Props {
   paymentCode: string;
 }
 
-type PreviewStatus =
+type PreviewStatus = {
+  /** Wristband color from the DB — null cycles the band's palette. */
+  property: WristbandColor | null;
+} & (
   | { status: "would_link"; code: string }
   | { status: "already_yours"; code: string }
   | { status: "conflict_other"; code: string }
-  | { status: "swap_required"; code: string; existingCode: string };
+  | { status: "swap_required"; code: string; existingCode: string }
+);
 
 type UiState =
   | { kind: "loading" }
   | { kind: "preview"; preview: PreviewStatus }
-  | { kind: "linking" }
-  | { kind: "linked"; code: string }
+  | { kind: "linking"; preview: PreviewStatus }
+  | {
+      kind: "linked";
+      code: string;
+      balance: number | null;
+      property: WristbandColor | null;
+    }
   | { kind: "error"; message: string };
+
+const panelSpring = {
+  type: "spring" as const,
+  stiffness: 420,
+  damping: 34,
+  mass: 0.9,
+};
 
 export default function StickerLinkPrompt({ paymentCode }: Props) {
   const t = useTranslations("profile");
   const router = useRouter();
+  const reducedMotion = useReducedMotion() ?? false;
   const [state, setState] = useState<UiState>({ kind: "loading" });
+  const [open, setOpen] = useState(true);
 
-  // Strip ?paymentCode= from the URL without a navigation/scroll.
+  const isBusy = state.kind === "linking";
+
+  // Center icon in the 3D band: check when this band is (or already was)
+  // linked to this account, cross when it belongs to someone else.
+  const previewStatus =
+    state.kind === "preview" || state.kind === "linking"
+      ? state.preview.status
+      : null;
+  const sceneStatus: SceneStatus =
+    state.kind === "linked" || previewStatus === "already_yours"
+      ? "success"
+      : previewStatus === "conflict_other"
+        ? "error"
+        : "none";
+
+  // Band color from the DB once we know which sticker this is; while loading
+  // or on error the band cycles its palette.
+  const sceneColor: WristbandColor | null =
+    state.kind === "linked"
+      ? state.property
+      : state.kind === "preview" || state.kind === "linking"
+        ? state.preview.property
+        : null;
+
+  // Play the exit animation first; strip ?paymentCode= once it finishes.
   const dismiss = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  // "Top up now" closes this modal, then asks the sidebar to open its
+  // TopUpModal (it owns the currency products) once the exit finishes.
+  const openTopUpAfterCloseRef = useRef(false);
+  const topUpNow = useCallback(() => {
+    openTopUpAfterCloseRef.current = true;
+    setOpen(false);
+  }, []);
+
+  const removeQueryParam = useCallback(() => {
     router.replace("/profile", { scroll: false });
+    if (openTopUpAfterCloseRef.current) {
+      openTopUpAfterCloseRef.current = false;
+      window.dispatchEvent(new CustomEvent(OPEN_TOP_UP_EVENT));
+    }
   }, [router]);
 
-  // Fetch preview on mount. For already_yours, dismiss silently.
+  // Lock page scroll while the modal is up.
   useEffect(() => {
-    let cancelled = false;
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !isBusy) dismiss();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [dismiss, isBusy]);
+
+  // Fetch preview once per code. The ref guard matters: router.refresh()
+  // after linking gives this effect new dep identities, and re-fetching then
+  // would clobber the success screen. No cleanup "cancelled" flag on purpose —
+  // under StrictMode's double-mount the ref stays set while the first run's
+  // cleanup fires, so cancelling would drop the only fetch and leave the
+  // modal stuck on the loading state. Applying results only while still
+  // loading makes the late resolution safe instead.
+  const previewFetchedRef = useRef(false);
+  useEffect(() => {
+    if (previewFetchedRef.current) return;
+    previewFetchedRef.current = true;
+
+    const applyIfStillLoading = (next: UiState) => {
+      setState(current => (current.kind === "loading" ? next : current));
+    };
 
     (async () => {
       try {
@@ -43,36 +148,28 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
           { method: "GET" }
         );
         const data = await response.json();
-        if (cancelled) return;
 
         if (!response.ok) {
-          setState({
+          applyIfStillLoading({
             kind: "error",
             message: data?.error || t("wristband.couldNotCheck"),
           });
           return;
         }
 
-        if (data.status === "already_yours") {
-          dismiss();
-          return;
-        }
-
-        setState({ kind: "preview", preview: data });
+        applyIfStillLoading({ kind: "preview", preview: data });
       } catch {
-        if (!cancelled) {
-          setState({ kind: "error", message: t("wristband.networkError") });
-        }
+        applyIfStillLoading({
+          kind: "error",
+          message: t("wristband.networkError"),
+        });
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [paymentCode, dismiss, t]);
+  }, [paymentCode, t]);
 
   const confirmLink = useCallback(async () => {
-    setState({ kind: "linking" });
+    if (state.kind !== "preview") return;
+    setState({ kind: "linking", preview: state.preview });
     try {
       const response = await fetch("/api/v1/wallet/sticker/link", {
         method: "POST",
@@ -87,19 +184,36 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
         });
         return;
       }
-      if (data.status === "linked") {
-        setState({ kind: "linked", code: data.code });
+      if (data.status === "linked" || data.status === "already_yours") {
+        // Show success immediately; the balance fades in when it arrives.
+        setState({
+          kind: "linked",
+          code: data.code,
+          balance: null,
+          property: state.preview.property,
+        });
         router.refresh();
-        return;
-      }
-      if (data.status === "already_yours") {
-        dismiss();
+        fetchMyWalletAction()
+          .then(wallet => {
+            setState(current =>
+              current.kind === "linked"
+                ? { ...current, balance: wallet?.balance ?? null }
+                : current
+            );
+          })
+          .catch(() => {
+            // Balance is a nice-to-have on this screen; linking already worked.
+          });
         return;
       }
       if (data.status === "conflict_other") {
         setState({
           kind: "preview",
-          preview: { status: "conflict_other", code: data.code },
+          preview: {
+            status: "conflict_other",
+            code: data.code,
+            property: state.preview.property,
+          },
         });
         return;
       }
@@ -110,6 +224,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
             status: "swap_required",
             code: data.code,
             existingCode: data.existingCode,
+            property: state.preview.property,
           },
         });
         return;
@@ -118,11 +233,121 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
     } catch {
       setState({ kind: "error", message: t("wristband.networkError") });
     }
-  }, [paymentCode, router, dismiss, t]);
+  }, [state, paymentCode, router, t]);
+
+  return (
+    <AnimatePresence onExitComplete={removeQueryParam}>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.18 } }}
+          onClick={() => !isBusy && dismiss()}
+        >
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            className="relative w-full max-w-sm bg-neutral-900 border border-neutral-800 rounded-3xl shadow-2xl shadow-black/60 overflow-hidden"
+            initial={
+              reducedMotion
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.94, y: 24 }
+            }
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={
+              reducedMotion
+                ? { opacity: 0, transition: { duration: 0.15 } }
+                : {
+                    opacity: 0,
+                    scale: 0.96,
+                    y: 12,
+                    transition: { duration: 0.16, ease: "easeIn" },
+                  }
+            }
+            transition={panelSpring}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* 3D stage */}
+            <div className="relative h-48">
+              {/* white pool of light under the band, kept off the model */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-16 opacity-80"
+                style={{
+                  background:
+                    "radial-gradient(55% 90% at 50% 100%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 55%, transparent 80%)",
+                }}
+              />
+              <WristbandScene
+                reducedMotion={reducedMotion}
+                status={sceneStatus}
+                color={sceneColor}
+                className="absolute inset-0"
+              />
+              <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-neutral-900 to-transparent" />
+            </div>
+
+            {/* state content, crossfaded */}
+            <div className="px-6 pb-6 pt-1">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={contentKey(state)}
+                  initial={
+                    reducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: 8, filter: "blur(4px)" }
+                  }
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={
+                    reducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: -8, filter: "blur(4px)" }
+                  }
+                  transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
+                >
+                  <ModalContent
+                    state={state}
+                    onConfirm={confirmLink}
+                    onDismiss={dismiss}
+                    onTopUp={topUpNow}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Linking keeps the preview layout (button goes busy), so it shares a key —
+// no crossfade between "preview" and "linking".
+function contentKey(state: UiState): string {
+  if (state.kind === "preview" || state.kind === "linking") {
+    return `preview:${state.preview.status}`;
+  }
+  return state.kind;
+}
+
+function ModalContent({
+  state,
+  onConfirm,
+  onDismiss,
+  onTopUp,
+}: {
+  state: UiState;
+  onConfirm: () => void;
+  onDismiss: () => void;
+  onTopUp: () => void;
+}) {
+  const t = useTranslations("profile");
 
   if (state.kind === "loading") {
     return (
-      <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6 text-neutral-400 text-sm">
+      <div className="flex items-center justify-center gap-3 py-6 text-neutral-400 text-sm">
+        <Spinner />
         {t("wristband.checking")}
       </div>
     );
@@ -130,71 +355,105 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
 
   if (state.kind === "error") {
     return (
-      <div className="bg-red-950/40 border border-red-900/60 rounded-lg p-4 mb-6 flex items-center justify-between gap-4">
-        <p className="text-red-300 text-sm">{state.message}</p>
-        <button
-          onClick={dismiss}
-          className="px-3 py-1.5 text-sm text-red-200 hover:text-white border border-red-900/60 rounded"
-        >
+      <div className="text-center">
+        <p className="text-red-300 text-sm mb-5">{state.message}</p>
+        <SecondaryButton onClick={onDismiss} fullWidth>
           {t("wristband.dismiss")}
-        </button>
-      </div>
-    );
-  }
-
-  if (state.kind === "linking") {
-    return (
-      <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6 text-neutral-300 text-sm">
-        {t("wristband.linking")}
+        </SecondaryButton>
       </div>
     );
   }
 
   if (state.kind === "linked") {
     return (
-      <div className="bg-emerald-950/40 border border-emerald-900/60 rounded-lg p-4 mb-6 flex items-center justify-between gap-4">
-        <div>
-          <p className="text-emerald-200 font-semibold">
-            {t("wristband.linkedTitle", { code: state.code })}
+      <div className="text-center">
+        <p className="text-white text-lg font-semibold mb-3">
+          {t("wristband.linkedTitle", { code: state.code })}
+        </p>
+        <div className="bg-neutral-800/60 border border-neutral-700/60 rounded-2xl px-4 py-3 mb-3">
+          <p className="text-neutral-400 text-xs uppercase tracking-wide mb-0.5">
+            {t("wristband.balanceLabel")}
           </p>
-          <p className="text-emerald-300/80 text-sm mt-1">
-            {t("wristband.linkedDesc")}
-          </p>
+          <AnimatePresence mode="wait" initial={false}>
+            {state.balance !== null ? (
+              <motion.p
+                key="balance"
+                className="text-white text-2xl font-semibold tabular-nums"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                {formatTokensFromCents(state.balance)}
+              </motion.p>
+            ) : (
+              <motion.p
+                key="loading"
+                className="text-neutral-500 text-2xl font-semibold"
+                exit={{ opacity: 0 }}
+              >
+                …
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
+        <p className="text-neutral-400 text-sm mb-5">
+          {t("wristband.topUpNow")}
+        </p>
+        <PrimaryButton onClick={onTopUp} fullWidth>
+          {t("wristband.topUpOptionCard")}
+        </PrimaryButton>
         <button
-          onClick={dismiss}
-          className="px-3 py-1.5 text-sm text-emerald-200 hover:text-white border border-emerald-900/60 rounded"
+          onClick={onDismiss}
+          className="mt-3 w-full text-center text-sm text-neutral-400 hover:text-neutral-200 underline underline-offset-4 decoration-neutral-600 hover:decoration-neutral-400 py-1 transition-colors"
         >
-          {t("wristband.done")}
+          {t("wristband.topUpOptionCash")}
         </button>
       </div>
     );
   }
 
   const preview = state.preview;
+  const busy = state.kind === "linking";
+
+  if (preview.status === "already_yours") {
+    return (
+      <div className="text-center">
+        <p className="text-white text-lg font-semibold mb-1">
+          {t("wristband.alreadyLinkedTitle", { code: preview.code })}
+        </p>
+        <p className="text-neutral-400 text-sm mb-5">
+          {t("wristband.alreadyLinkedDesc")}
+        </p>
+        <PrimaryButton onClick={onDismiss} fullWidth>
+          {t("wristband.done")}
+        </PrimaryButton>
+      </div>
+    );
+  }
 
   if (preview.status === "would_link") {
     return (
-      <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6">
-        <p className="text-neutral-200 font-semibold mb-1">
+      <div className="text-center">
+        <p className="text-white text-lg font-semibold mb-1">
           {t("wristband.wouldLinkTitle", { code: preview.code })}
         </p>
-        <p className="text-neutral-400 text-sm mb-4">
+        <p className="text-neutral-400 text-sm mb-5">
           {t("wristband.wouldLinkDesc")}
         </p>
-        <div className="flex gap-3">
-          <button
-            onClick={confirmLink}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-          >
-            {t("wristband.linkButton")}
-          </button>
-          <button
-            onClick={dismiss}
-            className="px-4 py-2 text-sm text-neutral-300 hover:text-white border border-neutral-700 rounded-lg"
-          >
+        <div className="flex flex-col gap-2">
+          <PrimaryButton onClick={onConfirm} disabled={busy} fullWidth>
+            {busy ? (
+              <span className="inline-flex items-center gap-2">
+                <Spinner />
+                {t("wristband.linking")}
+              </span>
+            ) : (
+              t("wristband.linkButton")
+            )}
+          </PrimaryButton>
+          <SecondaryButton onClick={onDismiss} disabled={busy} fullWidth>
             {t("wristband.cancel")}
-          </button>
+          </SecondaryButton>
         </div>
       </div>
     );
@@ -202,21 +461,16 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
 
   if (preview.status === "conflict_other") {
     return (
-      <div className="bg-red-950/40 border border-red-900/60 rounded-lg p-4 mb-6 flex items-center justify-between gap-4">
-        <div>
-          <p className="text-red-200 font-semibold">
-            {t("wristband.conflictTitle", { code: preview.code })}
-          </p>
-          <p className="text-red-300/80 text-sm mt-1">
-            {t("wristband.conflictDesc")}
-          </p>
-        </div>
-        <button
-          onClick={dismiss}
-          className="px-3 py-1.5 text-sm text-red-200 hover:text-white border border-red-900/60 rounded"
-        >
+      <div className="text-center">
+        <p className="text-red-200 font-semibold mb-1">
+          {t("wristband.conflictTitle", { code: preview.code })}
+        </p>
+        <p className="text-red-300/80 text-sm mb-5">
+          {t("wristband.conflictDesc")}
+        </p>
+        <SecondaryButton onClick={onDismiss} fullWidth>
           {t("wristband.dismiss")}
-        </button>
+        </SecondaryButton>
       </div>
     );
   }
@@ -224,24 +478,62 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
   if (preview.status !== "swap_required") return null;
 
   return (
-    <div className="bg-amber-950/40 border border-amber-900/60 rounded-lg p-4 mb-6">
-      <p className="text-amber-200 font-semibold">
+    <div className="text-center">
+      <p className="text-amber-200 font-semibold mb-1">
         {t("wristband.swapTitle", { existingCode: preview.existingCode })}
       </p>
-      <p className="text-amber-300/80 text-sm mt-1 mb-3">
+      <p className="text-amber-300/80 text-sm mb-5">
         {t.rich("wristband.swapDesc", {
           code: preview.code,
           editLink: (chunks: ReactNode) => (
-            <Link href={"/profile/edit"}>{chunks}</Link>
+            <Link href={"/profile/edit"} className="underline">
+              {chunks}
+            </Link>
           ),
         })}
       </p>
-      <button
-        onClick={dismiss}
-        className="px-3 py-1.5 text-sm text-amber-200 hover:text-white border border-amber-900/60 rounded"
-      >
+      <SecondaryButton onClick={onDismiss} fullWidth>
         {t("wristband.gotIt")}
-      </button>
+      </SecondaryButton>
     </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
+    />
+  );
+}
+
+function PrimaryButton({
+  fullWidth,
+  className,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { fullWidth?: boolean }) {
+  return (
+    <button
+      {...props}
+      className={`px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60 rounded-xl transition-colors active:scale-[0.98] ${
+        fullWidth ? "w-full" : ""
+      } ${className ?? ""}`}
+    />
+  );
+}
+
+function SecondaryButton({
+  fullWidth,
+  className,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { fullWidth?: boolean }) {
+  return (
+    <button
+      {...props}
+      className={`px-4 py-2.5 text-sm text-neutral-300 hover:text-white border border-neutral-700 hover:border-neutral-500 disabled:opacity-60 rounded-xl transition-colors active:scale-[0.98] ${
+        fullWidth ? "w-full" : ""
+      } ${className ?? ""}`}
+    />
   );
 }

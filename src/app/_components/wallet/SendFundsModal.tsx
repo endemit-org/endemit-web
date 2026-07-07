@@ -20,16 +20,19 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   senderBalance: number;
+  initialCode?: string;
+  /** Skip scanning entirely — open on the confirm step for this recipient. */
+  initialRecipient?: Recipient | null;
 }
 
 type Mode = "scan" | "confirm" | "success" | "error";
-
-const STICKER_PATTERN = /^[A-Z]{2}[0-9]{2}$/;
 
 export default function SendFundsModal({
   isOpen,
   onClose,
   senderBalance,
+  initialCode,
+  initialRecipient,
 }: Props) {
   const t = useTranslations("profile.wallet.send");
   const router = useRouter();
@@ -42,7 +45,6 @@ export default function SendFundsModal({
   const [note, setNote] = useState("");
   const [sentAmount, setSentAmount] = useState(0);
   const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
-  const [manualInput, setManualInput] = useState("");
   const noteId = useId();
   const successIconRef = useRef<HTMLDivElement>(null);
   const successAnim = useWalletAnimation();
@@ -68,8 +70,8 @@ export default function SendFundsModal({
     setNote("");
     setSentAmount(0);
     setIdempotencyKey(null);
-    setManualInput("");
     hasTriggeredCoinsRef.current = false;
+    initialCodeHandledRef.current = false;
   }, []);
 
   const handleClose = useCallback(() => {
@@ -103,6 +105,45 @@ export default function SendFundsModal({
       setIsResolving(false);
     }
   }, [isResolving]);
+
+  // Known recipient (friends list, transaction detail) — no resolve needed.
+  const selectRecipient = useCallback((r: Recipient) => {
+    setRecipient(r);
+    setIdempotencyKey(crypto.randomUUID());
+    setError(null);
+    setMode("confirm");
+  }, []);
+
+  // Pre-resolve the recipient when opened from a shared receive link.
+  const initialCodeHandledRef = useRef(false);
+  useEffect(() => {
+    if (!isOpen || initialCodeHandledRef.current) return;
+    if (!initialCode && !initialRecipient) return;
+    initialCodeHandledRef.current = true;
+    if (initialRecipient) {
+      selectRecipient(initialRecipient);
+    } else if (initialCode) {
+      resolveValue(initialCode);
+    }
+  }, [isOpen, initialCode, initialRecipient, resolveValue, selectRecipient]);
+
+  // Recent transfer counterparties — quick-pick so repeat sends skip the scan.
+  const [friends, setFriends] = useState<Recipient[] | null>(null);
+  useEffect(() => {
+    if (!isOpen || friends !== null) return;
+    let cancelled = false;
+    fetch("/api/v1/wallet/transfer/friends")
+      .then(res => (res.ok ? res.json() : { friends: [] }))
+      .then(data => {
+        if (!cancelled) setFriends(data.friends ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setFriends([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, friends]);
 
   const handleQrScan = useCallback(
     (result: { rawValue: string }[]) => {
@@ -229,38 +270,53 @@ export default function SendFundsModal({
                   styles={{ container: { width: "100%" } }}
                 />
               </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder={t("codePlaceholder")}
-                  value={manualInput}
-                  disabled={isResolving}
-                  onChange={e => {
-                    const v = e.target.value;
-                    setManualInput(
-                      STICKER_PATTERN.test(v.trim().toUpperCase()) ||
-                        v.length <= 4
-                        ? v.toUpperCase()
-                        : v
-                    );
-                  }}
-                  onKeyDown={e => {
-                    if (e.key === "Enter" && manualInput.trim()) {
-                      resolveValue(manualInput);
-                    }
-                  }}
-                  className="flex-1 px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-sm font-mono disabled:opacity-50 placeholder-neutral-600 focus:outline-none focus:border-blue-500"
-                />
-                <button
-                  onClick={() => resolveValue(manualInput)}
-                  disabled={!manualInput.trim() || isResolving}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg"
-                >
-                  {t("resolve")}
-                </button>
-              </div>
               {error && (
                 <p className="mt-3 text-red-400 text-sm text-center">{error}</p>
+              )}
+
+              {friends && friends.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs uppercase tracking-widest text-neutral-500 mb-2">
+                    {t("friends")}
+                  </p>
+                  <div className="flex gap-3 overflow-x-auto pb-1">
+                    {friends.map(friend => {
+                      const label = friend.name || friend.username;
+                      return (
+                        <button
+                          key={friend.userId}
+                          type="button"
+                          onClick={() => selectRecipient(friend)}
+                          className="flex flex-col items-center gap-1 w-16 flex-shrink-0 group"
+                        >
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center group-hover:ring-2 group-hover:ring-blue-500 transition-shadow">
+                            {friend.image ? (
+                              <Image
+                                src={friend.image}
+                                alt={label}
+                                width={48}
+                                height={48}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-sm font-bold text-white">
+                                {label
+                                  .split(" ")
+                                  .map(n => n[0])
+                                  .join("")
+                                  .toUpperCase()
+                                  .slice(0, 2)}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-neutral-400 group-hover:text-neutral-200 truncate w-full text-center">
+                            {label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
           )}

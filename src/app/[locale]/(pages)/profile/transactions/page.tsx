@@ -44,10 +44,13 @@ const typeLabelKeys: Record<string, string> = {
 
 export default async function ProfileTransactionsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ send?: string }>;
 }) {
   const { locale } = await params;
+  const { send } = await searchParams;
   setRequestLocale(locale as "sl" | "en");
   const t = await getTranslations("profile");
   const user = await getCurrentUser();
@@ -94,6 +97,7 @@ export default async function ProfileTransactionsPage({
           <TransferFundsTrigger
             userId={user.id}
             initialBalance={wallet?.balance ?? 0}
+            initialSendCode={send}
           />
         </div>
 

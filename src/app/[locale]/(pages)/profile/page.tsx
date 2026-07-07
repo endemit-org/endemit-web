@@ -21,6 +21,8 @@ import ProfileUpcomingEventsAsync from "@/app/_components/profile/async/ProfileU
 import ProfileAnnouncementsAsync from "@/app/_components/profile/async/ProfileAnnouncementsAsync";
 import ProfileAccessButtonsAsync from "@/app/_components/profile/async/ProfileAccessButtonsAsync";
 import StickerLinkPrompt from "@/app/_components/profile/StickerLinkPrompt";
+import WristbandIntro from "@/app/_components/profile/WristbandIntro";
+import { getStickerProperty } from "@/domain/sticker/operations/getStickerProperty";
 
 export async function generateMetadata({
   params,
@@ -53,10 +55,12 @@ export default async function ProfilePage({
   const { paymentCode } = await searchParams;
 
   if (!user) {
-    const callback = paymentCode
-      ? `/profile?paymentCode=${encodeURIComponent(paymentCode)}`
-      : "/profile";
-    redirect(`/signin?callbackUrl=${encodeURIComponent(callback)}`);
+    // Someone scanned a wristband QR without being signed in: show them what
+    // the flow looks like before sending them into sign-in.
+    if (paymentCode) {
+      return <WristbandIntro color={await getStickerProperty(paymentCode)} />;
+    }
+    redirect(`/signin?callbackUrl=${encodeURIComponent("/profile")}`);
   }
 
   return (

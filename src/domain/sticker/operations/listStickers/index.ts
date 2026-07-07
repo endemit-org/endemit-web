@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/services/prisma";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, StickerCodeProperty } from "@prisma/client";
 
 export type StickerListFilter = "all" | "claimed" | "unclaimed";
 
@@ -15,6 +15,7 @@ export interface ListStickersInput {
 export interface StickerListItem {
   code: string;
   userId: string | null;
+  property: StickerCodeProperty | null;
   claimedAt: Date | null;
   createdAt: Date;
   user: {
@@ -84,6 +85,7 @@ export async function listStickers(
     items: items.map(s => ({
       code: s.code,
       userId: s.userId,
+      property: s.property,
       claimedAt: s.claimedAt,
       createdAt: s.createdAt,
       user: s.user,
