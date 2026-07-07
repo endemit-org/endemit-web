@@ -12,9 +12,18 @@ const AssignStickerToUserModal = dynamic(
   { ssr: false }
 );
 
+const STICKER_PROPERTIES = [
+  "Festival26Black",
+  "Festival26Red",
+  "Festival26Blue",
+] as const;
+
+type StickerProperty = (typeof STICKER_PROPERTIES)[number];
+
 interface StickerRow {
   code: string;
   userId: string | null;
+  property: StickerProperty | null;
   claimedAt: string | null;
   user: {
     id: string;
@@ -44,8 +53,12 @@ export default function StickerPoolDisplay({ initial }: Props) {
   const [searchInput, setSearchInput] = useState(initial.search);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState("1000");
+  const [generateProperty, setGenerateProperty] = useState<string>("");
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [assignCode, setAssignCode] = useState<string | null>(null);
+  const [savingPropertyCode, setSavingPropertyCode] = useState<string | null>(
+    null
+  );
 
   const updateParam = useCallback(
     (updates: Record<string, string | null>) => {
@@ -91,7 +104,10 @@ export default function StickerPoolDisplay({ initial }: Props) {
       const response = await fetch("/api/v1/admin/stickers/bulk-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count }),
+        body: JSON.stringify({
+          count,
+          property: generateProperty || null,
+        }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -106,7 +122,33 @@ export default function StickerPoolDisplay({ initial }: Props) {
     } finally {
       setIsGenerating(false);
     }
-  }, [generateCount, router, t]);
+  }, [generateCount, generateProperty, router, t]);
+
+  const onPropertyChange = useCallback(
+    async (code: string, property: string) => {
+      setSavingPropertyCode(code);
+      try {
+        const response = await fetch(
+          `/api/v1/admin/stickers/${encodeURIComponent(code)}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ property: property || null }),
+          }
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || t("propertyUpdateFailed"));
+        }
+        router.refresh();
+      } catch (err) {
+        alert(err instanceof Error ? err.message : t("propertyUpdateFailed"));
+      } finally {
+        setSavingPropertyCode(null);
+      }
+    },
+    [router, t]
+  );
 
   const totalPages = Math.max(1, Math.ceil(initial.total / initial.pageSize));
 
@@ -163,6 +205,18 @@ export default function StickerPoolDisplay({ initial }: Props) {
           onChange={e => setGenerateCount(e.target.value)}
           className="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-md"
         />
+        <select
+          value={generateProperty}
+          onChange={e => setGenerateProperty(e.target.value)}
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white"
+        >
+          <option value="">{t("propertyNone")}</option>
+          {STICKER_PROPERTIES.map(p => (
+            <option key={p} value={p}>
+              {t(`propertyNames.${p}`)}
+            </option>
+          ))}
+        </select>
         <button
           onClick={onBulkGenerate}
           disabled={isGenerating}
@@ -186,6 +240,9 @@ export default function StickerPoolDisplay({ initial }: Props) {
                 {t("colStatus")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {t("colProperty")}
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t("colAssignedTo")}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -198,7 +255,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
             {initial.items.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   {t("noStickers")}
@@ -221,6 +278,23 @@ export default function StickerPoolDisplay({ initial }: Props) {
                     >
                       {item.userId ? t("claimed") : t("unclaimed")}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={item.property ?? ""}
+                      disabled={savingPropertyCode === item.code}
+                      onChange={e =>
+                        onPropertyChange(item.code, e.target.value)
+                      }
+                      className="px-2 py-1 text-sm border border-gray-300 rounded-md bg-white disabled:opacity-50"
+                    >
+                      <option value="">{t("propertyNone")}</option>
+                      {STICKER_PROPERTIES.map(p => (
+                        <option key={p} value={p}>
+                          {t(`propertyNames.${p}`)}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-700">
                     {item.user ? (

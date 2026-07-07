@@ -88,6 +88,7 @@ export default async function AdminPosStickersPage({
           items: result.items.map(i => ({
             code: i.code,
             userId: i.userId,
+            property: i.property,
             claimedAt: i.claimedAt?.toISOString() ?? null,
             user: i.user,
           })),

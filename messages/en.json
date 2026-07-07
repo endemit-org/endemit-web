@@ -34,7 +34,8 @@
     "downloadAnyway": "Download Anyway"
   },
   "nav": {
-    "menu": "MENU"
+    "menu": "MENU",
+    "myProfile": "My profile"
   },
   "cart": {
     "checkout": "Checkout",
@@ -423,9 +424,11 @@
       "receiveFunds": "Receive funds",
       "receiveFundsDesc": "Show this QR to another user — they can scan it from their wallet to send you tokens.",
       "receiveQrAlt": "Receive QR",
-      "orShareCode": "Or share code",
-      "copied": "Copied!",
-      "copyCode": "Copy code",
+      "enlargeQr": "Enlarge QR code",
+      "receiveQrInstruction": "The sender scans this code with the Send funds scanner in their wallet.",
+      "closeQr": "Close",
+      "shareLink": "Share link",
+      "linkCopied": "Link copied!",
       "payQrAlt": "Wallet QR",
       "send": {
         "resolving": "Resolving...",
@@ -435,9 +438,7 @@
         "titleSuccess": "Sent",
         "titleError": "Error",
         "balance": "Balance: {amount}",
-        "scanHint": "Scan the recipient's QR code, or paste their sticker / receive code below.",
-        "codePlaceholder": "AB12 or ndr1.…",
-        "resolve": "Resolve",
+        "scanHint": "Scan the recipient's QR code to send them tokens.",
         "sendingTo": "Sending to",
         "amount": "Amount",
         "exceeds": "Amount exceeds your balance",
@@ -452,7 +453,8 @@
         "sentAmount": "Sent {amount}",
         "toName": "to {name}",
         "complete": "Transfer complete",
-        "done": "Done"
+        "done": "Done",
+        "friends": "Friends"
       }
     },
     "wristband": {
@@ -477,7 +479,24 @@
       "unexpectedResponse": "Unexpected response.",
       "linkedTitle": "Wristband {code} linked to your wallet.",
       "linkedDesc": "Top up your wallet from the sidebar to start paying with it.",
-      "wouldLinkTitle": "Link wristband {code} to your wallet?",
+      "alreadyLinkedTitle": "Wristband {code} is already linked to your wallet.",
+      "alreadyLinkedDesc": "You're all set — scan it at a register to pay.",
+      "intro": {
+        "title": "Link your wristband",
+        "subtitle": "Link it to your digital wallet and pay at any register with a scan.",
+        "step0": "Scan your wristband",
+        "step1": "Type in your email and verify",
+        "step2": "Link this wristband to your wallet",
+        "step3": "Top up and pay by showing the code",
+        "cta": "Next",
+        "progress": "{percent}% done",
+        "emailTitle": "Enter your email"
+      },
+      "balanceLabel": "Wallet balance",
+      "topUpNow": "You can fill it up right now with your credit card, Apple Pay or Google Pay.",
+      "topUpOptionCard": "Top up now",
+      "topUpOptionCash": "I'll fill it up with cash at the merch stand",
+      "wouldLinkTitle": "Link wristband {code}?",
       "wouldLinkDesc": "Once linked, this wristband will be connected to your wallet. It can be scanned at a POS register and used as payment.",
       "linkButton": "Link wristband",
       "conflictTitle": "Wristband {code} is linked to another account.",
@@ -502,7 +521,12 @@
       "signOut": "Sign Out",
       "signOutConfirmMessage": "Are you sure you want to sign out of your account?",
       "cancel": "Cancel",
-      "signingOut": "Signing out..."
+      "signingOut": "Signing out...",
+      "advancedOptions": "Advanced options",
+      "wristbandLinked": "Wristband {code} linked",
+      "exchangeDesc": "For exchanging tokens with friends.",
+      "sendTokens": "Send",
+      "receiveTokens": "Receive"
     },
     "tickets": {
       "upcomingTitle": "Upcoming Tickets",
@@ -559,7 +583,8 @@
         "refund": "Refund",
         "adjustment": "Adjustment",
         "transfer": "Transfer"
-      }
+      },
+      "sendTokens": "Send tokens"
     },
     "orders": {
       "historyTitle": "Order History",
@@ -1406,7 +1431,15 @@
         "assignFailed": "Failed to assign sticker",
         "replacedWarning": "Sticker assigned. The user's previous sticker ({code}) was unlinked.",
         "assigning": "Assigning…",
-        "assignAction": "Assign"
+        "assignAction": "Assign",
+        "colProperty": "Property",
+        "propertyNone": "No property",
+        "propertyNames": {
+          "Festival26Black": "Festival 26 Black",
+          "Festival26Red": "Festival 26 Red",
+          "Festival26Blue": "Festival 26 Blue"
+        },
+        "propertyUpdateFailed": "Failed to update property."
       }
     },
     "users": {

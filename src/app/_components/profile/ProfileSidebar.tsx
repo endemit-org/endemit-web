@@ -27,6 +27,17 @@ import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation
 import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import BackupStickerInline from "@/app/_components/profile/BackupStickerInline";
+import { OPEN_TOP_UP_EVENT } from "@/app/_components/profile/topUpEvent";
+
+// Send/receive modals are behind the collapsed "advanced" section — load lazily.
+const SendFundsModal = dynamic(
+  () => import("@/app/_components/wallet/SendFundsModal"),
+  { ssr: false }
+);
+const ReceiveFundsModal = dynamic(
+  () => import("@/app/_components/profile/ReceiveFundsModal"),
+  { ssr: false }
+);
 
 interface ProfileSidebarProps {
   userId: string;
@@ -57,6 +68,9 @@ export default function ProfileSidebar({
   const router = useRouter();
   const [isPayScannerOpen, setIsPayScannerOpen] = useState(false);
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [isSendOpen, setIsSendOpen] = useState(false);
+  const [isReceiveOpen, setIsReceiveOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(initialWalletBalance);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -75,7 +89,12 @@ export default function ProfileSidebar({
   } = useWalletAnimation();
 
   // Check if any modal is open
-  const isModalOpen = isPayScannerOpen || isTopUpOpen || showLogoutConfirm;
+  const isModalOpen =
+    isPayScannerOpen ||
+    isTopUpOpen ||
+    showLogoutConfirm ||
+    isSendOpen ||
+    isReceiveOpen;
 
   // Trigger pending animation and balance update when modals close
   useEffect(() => {
@@ -105,6 +124,13 @@ export default function ProfileSidebar({
   const handlePaymentComplete = useCallback(() => {
     router.refresh();
   }, [router]);
+
+  // The wristband-link modal asks us to open the top-up flow after it closes.
+  useEffect(() => {
+    const openTopUp = () => setIsTopUpOpen(true);
+    window.addEventListener(OPEN_TOP_UP_EVENT, openTopUp);
+    return () => window.removeEventListener(OPEN_TOP_UP_EVENT, openTopUp);
+  }, []);
 
   // Subscribe to wallet transaction updates for real-time balance
   const handleWalletUpdate = useCallback(
@@ -225,42 +251,54 @@ export default function ProfileSidebar({
 
       {/* Wallet Balance */}
       {walletBalance !== null && (
-        <WalletAnimationRenderer
-          animations={animations}
-          showGlow={showGlow}
-          glowDirection={glowDirection}
-          onAnimationComplete={removeAnimation}
-        >
-          <Link
-            ref={walletRef}
-            href="/profile/transactions"
-            className="block mb-6 p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 hover:border-blue-500/70 rounded-lg text-center relative overflow-hidden transition-colors"
+        <div className="mb-6">
+          <WalletAnimationRenderer
+            animations={animations}
+            showGlow={showGlow}
+            glowDirection={glowDirection}
+            onAnimationComplete={removeAnimation}
           >
-            <div
-              className="absolute h-full opacity-10 inset w-full top-0 left-0"
-              style={{
-                background: "url('/images/noise.gif') no-repeat center center",
-                backgroundSize: "400px",
-                backgroundRepeat: "repeat",
-              }}
-            ></div>
-            <div className="relative z-10 text-center">
-              <div className="text-xs text-blue-300 mb-1">
-                {t("sidebar.walletBalance")}
+            <Link
+              ref={walletRef}
+              href="/profile/transactions"
+              className="block p-4 bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 hover:border-blue-500/70 rounded-lg text-center relative overflow-hidden transition-colors"
+            >
+              <div
+                className="absolute h-full opacity-10 inset w-full top-0 left-0"
+                style={{
+                  background:
+                    "url('/images/noise.gif') no-repeat center center",
+                  backgroundSize: "400px",
+                  backgroundRepeat: "repeat",
+                }}
+              ></div>
+              <div className="relative z-10 text-center">
+                <div className="text-xs text-blue-300 mb-1">
+                  {t("sidebar.walletBalance")}
+                </div>
+                <AnimatedBalance
+                  value={walletBalance}
+                  className={`text-2xl font-bold ${
+                    walletBalance > 0
+                      ? "text-green-400"
+                      : walletBalance < 0
+                        ? "text-red-400"
+                        : "text-neutral-300"
+                  }`}
+                />
               </div>
-              <AnimatedBalance
-                value={walletBalance}
-                className={`text-2xl font-bold ${
-                  walletBalance > 0
-                    ? "text-green-400"
-                    : walletBalance < 0
-                      ? "text-red-400"
-                      : "text-neutral-300"
-                }`}
+            </Link>
+          </WalletAnimationRenderer>
+          {backupStickerCode && (
+            <div className="mt-1 flex items-center justify-center gap-1.5 text-[11px] text-neutral-400">
+              <span
+                aria-hidden
+                className="w-1.5 h-1.5 rounded-full bg-emerald-400"
               />
+              {t("sidebar.wristbandLinked", { code: backupStickerCode })}
             </div>
-          </Link>
-        </WalletAnimationRenderer>
+          )}
+        </div>
       )}
 
       {walletBalance !== null && (
@@ -276,7 +314,8 @@ export default function ProfileSidebar({
         <>
           <ActionButton
             onClick={() => setIsTopUpOpen(true)}
-            variant="secondary"
+            // With an empty wallet, topping up is the main thing to do here.
+            variant={(walletBalance ?? 0) <= 0 ? "primary" : "secondary"}
           >
             <svg
               className="w-5 h-5"
@@ -294,7 +333,11 @@ export default function ProfileSidebar({
             {t("sidebar.topUpWallet")}
           </ActionButton>
 
-          {isEndemitPayEnabled() && (
+          {/* Muted for now: customers scanning the register's order QR is a
+              second payment flow — we want one flow (register scans the
+              customer) to work first, without confusing users. Re-enable by
+              restoring this button. */}
+          {false && isEndemitPayEnabled() && (
             <button
               type="button"
               onClick={() => setIsPayScannerOpen(true)}
@@ -314,6 +357,91 @@ export default function ProfileSidebar({
           </Link>
         )}
       </div>
+
+      {/* Advanced options — rarely-needed extras, collapsed by default */}
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={() => setIsAdvancedOpen(v => !v)}
+          aria-expanded={isAdvancedOpen}
+          className="w-full flex items-center justify-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-300 py-1 transition-colors"
+        >
+          {t("sidebar.advancedOptions")}
+          <svg
+            className={`w-3.5 h-3.5 transition-transform ${isAdvancedOpen ? "rotate-180" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+        {isAdvancedOpen && (
+          <div className="mt-2">
+            <p className="text-xs text-neutral-500 text-center mb-3">
+              {t("sidebar.exchangeDesc")}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setIsSendOpen(true)}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-neutral-200 text-sm font-medium rounded-lg transition-colors"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 17L17 7m0 0H9m8 0v8"
+                  />
+                </svg>
+                {t("sidebar.sendTokens")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsReceiveOpen(true)}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-neutral-200 text-sm font-medium rounded-lg transition-colors"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 7L7 17m0 0h8m-8 0V9"
+                  />
+                </svg>
+                {t("sidebar.receiveTokens")}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <SendFundsModal
+        isOpen={isSendOpen}
+        onClose={() => setIsSendOpen(false)}
+        senderBalance={walletBalance ?? 0}
+      />
+      <ReceiveFundsModal
+        isOpen={isReceiveOpen}
+        onClose={() => setIsReceiveOpen(false)}
+        receiveCode={receiveCode}
+      />
 
       {!isEndemitPayEnabled() && (
         <div className="mt-6 text-center text-sm text-neutral-400">
@@ -336,6 +464,7 @@ export default function ProfileSidebar({
         isOpen={isTopUpOpen}
         onClose={() => setIsTopUpOpen(false)}
         products={currencyProducts}
+        balance={walletBalance}
       />
 
       {/* Logout Confirmation Modal - rendered via portal */}
@@ -369,7 +498,9 @@ export default function ProfileSidebar({
                   disabled={isLoggingOut}
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  {isLoggingOut ? t("sidebar.signingOut") : t("sidebar.signOut")}
+                  {isLoggingOut
+                    ? t("sidebar.signingOut")
+                    : t("sidebar.signOut")}
                 </button>
               </div>
             </div>

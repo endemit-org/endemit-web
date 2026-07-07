@@ -5,6 +5,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTransactionById } from "@/domain/wallet/operations/getTransactionById";
+import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
+import SendToUserButton from "@/app/_components/wallet/SendToUserButton";
 import { formatDateTime } from "@/lib/util/formatting";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import OuterPage from "@/app/_components/ui/OuterPage";
@@ -79,6 +81,9 @@ export default async function ProfileTransactionDetailPage({
     ? counterparty.name || counterparty.username
     : null;
 
+  // Current balance for the "send tokens again" shortcut.
+  const wallet = counterparty ? await getWalletByUserId(user.id) : null;
+
   return (
     <OuterPage>
       <PageHeadline
@@ -144,7 +149,8 @@ export default async function ProfileTransactionDetailPage({
             </div>
 
             {isTransfer && counterparty && counterpartyLabel && (
-              <div className="flex items-center gap-3 bg-neutral-900 rounded-lg p-3 border border-neutral-800">
+              <div className="bg-neutral-900 rounded-lg p-3 border border-neutral-800">
+                <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                   {counterparty.image ? (
                     <Image
@@ -175,6 +181,13 @@ export default async function ProfileTransactionDetailPage({
                   <p className="text-xs text-neutral-500 truncate">
                     {counterparty.username}
                   </p>
+                </div>
+                </div>
+                <div className="mt-3">
+                  <SendToUserButton
+                    recipient={counterparty}
+                    senderBalance={wallet?.balance ?? 0}
+                  />
                 </div>
               </div>
             )}

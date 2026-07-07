@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
       items: result.items.map(s => ({
         code: s.code,
         userId: s.userId,
+        property: s.property,
         claimedAt: s.claimedAt?.toISOString() ?? null,
         createdAt: s.createdAt.toISOString(),
         user: s.user,
