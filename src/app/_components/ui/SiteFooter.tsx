@@ -45,8 +45,9 @@ export default async function SiteFooter({
         <EndemitSymbol />
       </div>
       <div>
-        {replacedTextValueWithVars}
+        {/* Copyright + version line is desktop-only. */}
         <span className="max-lg:hidden">
+          {replacedTextValueWithVars}
           <Divider />
         </span>
         <div className={"lg:inline-block max-lg:mt-2"}>

@@ -7,12 +7,13 @@ import Image from "next/image";
 import clsx from "clsx";
 import LanguageSwitcher from "@/app/_components/ui/LanguageSwitcher";
 import Cart from "@/app/_components/cart/Cart";
+import WalletBar from "@/app/_components/wallet/WalletBar";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import MenuClosedIcon from "@/app/_components/icon/MenuClosedIcon";
 import MenuOpenIcon from "@/app/_components/icon/MenuOpenIcon";
 import ProfileButton from "@/app/_components/auth/ProfileButton";
-import UserIcon from "@/app/_components/icon/UserIcon";
+import { useCurrentUser } from "@/app/_hooks/useCurrentUser";
 
 interface NavigationItem {
   label: string;
@@ -64,6 +65,9 @@ export default function Sidebar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("nav");
+  // Enriches the mobile "My profile" entry once we know the visitor is
+  // signed in — same filled icon + checkmark treatment as the header button.
+  const { user, isLoading } = useCurrentUser();
 
   const defaultSocialLinks: SocialLink[] = [
     {
@@ -271,9 +275,40 @@ export default function Sidebar({
               onClick={close}
               className="flex items-center justify-end gap-2 px-3 pt-3 pb-1.5 text-right text-2xl font-heading tracking-widest uppercase text-neutral-200 hover:!text-gray-400 active:text-gray-600 hover:underline underline-offset-4 decoration-dotted"
             >
-              <UserIcon className="w-6 h-6 shrink-0" />
+              {/* Same icon + fading checkmark badge as the header's
+                  ProfileButton, for consistency. */}
+              <span className="relative shrink-0">
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+                <span
+                  className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center transition-opacity duration-300 ${!isLoading && user ? "opacity-100" : "opacity-0"}`}
+                >
+                  <svg
+                    className="w-2 h-2 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+              </span>
               {t("myProfile")}
             </Link>
+          </div>
+
+          {/* Mobile: green wallet strip stacked on top of the checkout bar —
+              only renders with a positive balance. */}
+          <div className="lg:hidden">
+            <WalletBar active={isMenuOpen} onNavigate={close} />
           </div>
 
           {showCart && (

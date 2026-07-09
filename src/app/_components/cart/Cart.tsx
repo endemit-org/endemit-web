@@ -59,7 +59,7 @@ export default function Cart({ variant = "detailed", onNavigate }: Props) {
     // Nothing in the cart -> no bar; it only exists to push to checkout.
     if (isEmpty) return null;
     return (
-      <div className="flex items-center gap-3 bg-blue-600 px-5 py-3 text-white">
+      <div className="flex items-center gap-3 bg-black px-5 py-3 text-white">
         <Link
           href="/store/checkout"
           onClick={onNavigate}
@@ -70,7 +70,7 @@ export default function Cart({ variant = "detailed", onNavigate }: Props) {
             <div className="text-2xl font-heading">
               {formatPrice(displayTotalPrice)}
             </div>
-            <div className="text-xs text-blue-100">
+            <div className="text-xs text-neutral-400 -mt-1">
               {t("itemsInCart", { count: displayItemCount })}
             </div>
           </div>
@@ -78,7 +78,7 @@ export default function Cart({ variant = "detailed", onNavigate }: Props) {
         <ActionButton
           onClick={handleGoToCart}
           size="sm"
-          variant="secondary"
+          variant="primary"
           fullWidth={false}
         >
           {t("checkout")}

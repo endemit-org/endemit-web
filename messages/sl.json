@@ -74,6 +74,16 @@
       "hot": "Vroče",
       "ticketsLimited": "Omejene karte"
     },
+    "heroMarker": {
+      "sellingFast": "Karte grejo hitr",
+      "lastTickets": "Zadne karte",
+      "soldOut": "Vse pošlo",
+      "justAnnounced": "Frišno najavleno",
+      "new": "Frišno",
+      "newEpisode": "Frišna epizoda",
+      "freeEntry": "Fraj vstop",
+      "comingSoon": "Kmal"
+    },
     "ticketsDisplay": {
       "hot": "Vroče",
       "freeAdmission": "ZASTONJ vstop",
@@ -617,6 +627,7 @@
       "selectAmount": "Zbri znesek",
       "noOptions": "Trenutno ni možnosti za filanje.",
       "selectAmountDesc": "Zbri, koliko žetonov daš v denarnco",
+      "newBalance": "Novo stanje denarnce",
       "redirecting": "Preusmerjam…",
       "addToWallet": "Dodaj {amount} v denarnco",
       "cashNotice": "Denarnco lahko nafilaš tut s kešom na MERCH štantu."
@@ -671,7 +682,7 @@
     },
     "upcomingPromo": {
       "title": "Prhajajoči eventi",
-      "subtitle": "Da ne bo prej kart zmanjkal!",
+      "subtitle": "Omejeno število kart, ne čaki predovgo",
       "ticketsAvailable": "Karte na voljo"
     },
     "meta": {
