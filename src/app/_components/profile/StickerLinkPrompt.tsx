@@ -454,9 +454,12 @@ function ModalContent({
         <p className="text-neutral-400 text-sm mb-5">
           {t("wristband.alreadyLinkedDesc")}
         </p>
-        <PrimaryButton onClick={onDismiss} fullWidth>
-          {t("wristband.done")}
+        <PrimaryButton onClick={onTopUp} fullWidth>
+          {t("wristband.topUpOptionCard")}
         </PrimaryButton>
+        <SecondaryButton onClick={onDismiss} fullWidth className="mt-2">
+          {t("wristband.done")}
+        </SecondaryButton>
       </div>
     );
   }
