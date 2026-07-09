@@ -12,6 +12,7 @@ import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import MenuClosedIcon from "@/app/_components/icon/MenuClosedIcon";
 import MenuOpenIcon from "@/app/_components/icon/MenuOpenIcon";
 import ProfileButton from "@/app/_components/auth/ProfileButton";
+import UserIcon from "@/app/_components/icon/UserIcon";
 
 interface NavigationItem {
   label: string;
@@ -236,13 +237,14 @@ export default function Sidebar({
           {/* Mobile: an unmissable static "My profile" entry between the menu
               and the cart — the header icon alone is easy to overlook. Always
               shown; signed-out users go through sign-in to reach the profile. */}
-          <div className="lg:hidden px-5 pb-4">
+          <div className="lg:hidden px-5 pb-1">
             <div className="border-t border-neutral-800" />
             <Link
               href="/profile"
               onClick={close}
-              className="block px-3 py-3 text-right text-2xl font-heading tracking-widest uppercase text-neutral-200 hover:!text-gray-400 active:text-gray-600 hover:underline underline-offset-4 decoration-dotted"
+              className="flex items-center justify-end gap-2 px-3 pt-3 pb-1.5 text-right text-2xl font-heading tracking-widest uppercase text-neutral-200 hover:!text-gray-400 active:text-gray-600 hover:underline underline-offset-4 decoration-dotted"
             >
+              <UserIcon className="w-6 h-6 shrink-0" />
               {t("myProfile")}
             </Link>
           </div>

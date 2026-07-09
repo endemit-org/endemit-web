@@ -50,13 +50,13 @@ export default async function ProfilePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ paymentCode?: string }>;
+  searchParams: Promise<{ paymentCode?: string; autoLink?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale as "sl" | "en");
   const t = await getTranslations("profile");
   const user = await getCurrentUser();
-  const { paymentCode } = await searchParams;
+  const { paymentCode, autoLink } = await searchParams;
 
   if (!user) {
     // Someone scanned a wristband QR without being signed in: show them what
@@ -104,7 +104,12 @@ export default async function ProfilePage({
 
           {/* Main content - streams progressively */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
-            {paymentCode && <StickerLinkPrompt paymentCode={paymentCode} />}
+            {paymentCode && (
+              <StickerLinkPrompt
+                paymentCode={paymentCode}
+                autoLink={autoLink === "1"}
+              />
+            )}
 
             {/* Access buttons for staff (admin, POS, scanner) */}
             <Suspense fallback={null}>
