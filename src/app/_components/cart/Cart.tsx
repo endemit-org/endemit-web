@@ -56,6 +56,8 @@ export default function Cart({ variant = "detailed", onNavigate }: Props) {
   const isEmpty = displayItemCount === 0;
 
   if (variant === "bar") {
+    // Nothing in the cart -> no bar; it only exists to push to checkout.
+    if (isEmpty) return null;
     return (
       <div className="flex items-center gap-3 bg-blue-600 px-5 py-3 text-white">
         <Link
@@ -73,16 +75,14 @@ export default function Cart({ variant = "detailed", onNavigate }: Props) {
             </div>
           </div>
         </Link>
-        {!isEmpty && (
-          <ActionButton
-            onClick={handleGoToCart}
-            size="sm"
-            variant="secondary"
-            fullWidth={false}
-          >
-            {t("checkout")}
-          </ActionButton>
-        )}
+        <ActionButton
+          onClick={handleGoToCart}
+          size="sm"
+          variant="secondary"
+          fullWidth={false}
+        >
+          {t("checkout")}
+        </ActionButton>
       </div>
     );
   }
