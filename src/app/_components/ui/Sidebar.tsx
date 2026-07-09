@@ -203,7 +203,7 @@ export default function Sidebar({
             own. Tapping a link inside closes the menu like nav items do. */}
         {promo && (
           <div
-            className="lg:hidden absolute left-4 top-8 w-36 max-w-full overflow-hidden"
+            className="lg:hidden absolute left-4 top-8 w-36 max-w-full max-h-[50dvh] overflow-hidden"
             onClickCapture={e => {
               if ((e.target as HTMLElement).closest("a")) close();
             }}
