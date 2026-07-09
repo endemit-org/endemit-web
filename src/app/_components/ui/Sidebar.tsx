@@ -136,7 +136,13 @@ export default function Sidebar({
   };
 
   return (
-    <div className="fixed top-0 !z-40 flex w-full flex-col bg-neutral-950 lg:bg-opacity-80 lg:backdrop-blur-sm lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800">
+    <div
+      className={clsx(
+        "fixed top-0 flex w-full flex-col bg-neutral-950 lg:bg-opacity-80 lg:backdrop-blur-sm lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-neutral-800 lg:py-12  lg:border-l-[1px] lg:border-x-neutral-800",
+        // The open mobile menu must cover the persistent player (z-50).
+        isMenuOpen ? "!z-[60]" : "!z-40"
+      )}
+    >
       <div className="flex h-14 items-center px-4 py-4 lg:h-auto ">
         <Link
           href={logoHref}
@@ -182,13 +188,24 @@ export default function Sidebar({
 
       <div
         className={clsx("lg:flex lg:flex-col lg:flex-1 lg:min-h-0 ", {
-          "fixed inset-x-0 bottom-0 top-14  max-lg:bg-neutral-950 max-lg:bg-opacity-85 max-lg:backdrop-blur-lg flex flex-col":
+          // bottom-0 is the fallback; dvh pins the menu to the real visible
+          // viewport on mobile browsers with collapsing URL bars.
+          "fixed inset-x-0 bottom-0 top-14 max-lg:h-[calc(100dvh-3.5rem)] max-lg:bg-neutral-950 max-lg:bg-opacity-85 max-lg:backdrop-blur-lg flex flex-col":
             isMenuOpen,
           hidden: !isMenuOpen,
         })}
       >
+        {/* Mobile-only promo slot floating left of the (right-aligned) nav —
+            placeholder yellow box until a real event promo goes in. */}
+        <div
+          aria-hidden
+          className="lg:hidden absolute left-4 top-8 w-36 h-48 bg-yellow-400 rounded-2xl"
+        />
+
         {/* Scrollable navigation area */}
-        <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl max-sm:space-y-1 space-y-2 overflow-y-auto lg:flex-1 font-heading tracking-widest">
+        {/* flex-1 pushes the pinned bottom section to the screen bottom and
+            keeps long menus scrollable within the viewport. */}
+        <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl max-sm:space-y-1 space-y-2 overflow-y-auto flex-1 min-h-0 font-heading tracking-widest">
           {navigationItems.map((item, index) => {
             const isActive = isItemActive(item, navigationItems);
 
@@ -250,9 +267,16 @@ export default function Sidebar({
           </div>
 
           {showCart && (
-            <div className="px-5 pb-4">
-              <Cart variant={"detailed"} onNavigate={close} />
-            </div>
+            <>
+              <div className="hidden lg:block px-5 pb-4">
+                <Cart variant={"detailed"} onNavigate={close} />
+              </div>
+              {/* Mobile: full-width blue checkout bar pinned above the
+                  transparent language/social strip. */}
+              <div className="lg:hidden">
+                <Cart variant={"bar"} onNavigate={close} />
+              </div>
+            </>
           )}
 
           {/* On mobile: switcher inline to the LEFT of the social icons (one
