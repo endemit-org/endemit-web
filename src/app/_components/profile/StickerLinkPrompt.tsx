@@ -24,6 +24,10 @@ const WristbandScene = dynamic(() => import("./WristbandScene"), {
 
 interface Props {
   paymentCode: string;
+  /** Set when the user arrives from the signed-out intro flow — they already
+      committed to linking there, so skip the confirm step and link directly.
+      Conflict/swap outcomes still render their prompts. */
+  autoLink?: boolean;
 }
 
 type PreviewStatus = {
@@ -55,7 +59,10 @@ const panelSpring = {
   mass: 0.9,
 };
 
-export default function StickerLinkPrompt({ paymentCode }: Props) {
+export default function StickerLinkPrompt({
+  paymentCode,
+  autoLink = false,
+}: Props) {
   const t = useTranslations("profile");
   const router = useRouter();
   const reducedMotion = useReducedMotion() ?? false;
@@ -243,6 +250,19 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
       setState({ kind: "error", message: t("wristband.networkError") });
     }
   }, [state, paymentCode, router, t]);
+
+  // Arriving from the signed-out intro flow (?autoLink=1): the user already
+  // committed to linking there, so once the preview confirms the band is
+  // free, link it without asking again. Fires at most once — conflict/swap
+  // responses from the link call fall back to their normal prompts.
+  const autoLinkFiredRef = useRef(false);
+  useEffect(() => {
+    if (!autoLink || autoLinkFiredRef.current) return;
+    if (state.kind === "preview" && state.preview.status === "would_link") {
+      autoLinkFiredRef.current = true;
+      confirmLink();
+    }
+  }, [autoLink, state, confirmLink]);
 
   return (
     <AnimatePresence onExitComplete={removeQueryParam}>
