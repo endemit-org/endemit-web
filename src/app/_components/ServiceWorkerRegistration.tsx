@@ -12,6 +12,38 @@ export default function ServiceWorkerRegistration() {
     if (typeof window === "undefined") return;
     if (!("serviceWorker" in navigator)) return;
 
+    // In development, ensure no stale SW is left controlling the page. A dev SW
+    // caches `/_next/static/` chunks cache-first under a constant `dev` cache
+    // key, so after any code change it serves stale JS against freshly built
+    // HTML — causing hydration mismatches that only a hard refresh clears.
+    if (process.env.NODE_ENV !== "production") {
+      const hadController = !!navigator.serviceWorker.controller;
+      Promise.all([
+        navigator.serviceWorker
+          .getRegistrations()
+          .then(regs => Promise.all(regs.map(r => r.unregister()))),
+        window.caches
+          ? caches
+              .keys()
+              .then(keys =>
+                Promise.all(
+                  keys
+                    .filter(key => key.startsWith("endemit-"))
+                    .map(key => caches.delete(key))
+                )
+              )
+          : Promise.resolve(),
+      ]).then(() => {
+        // If a stale SW was still controlling this page, reload once so we get
+        // fresh (uncached) chunks — otherwise this page keeps the old JS.
+        if (hadController && !sessionStorage.getItem("sw-dev-cleaned")) {
+          sessionStorage.setItem("sw-dev-cleaned", "1");
+          window.location.reload();
+        }
+      });
+      return;
+    }
+
     const deploymentId =
       process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_ID ||
       process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ||

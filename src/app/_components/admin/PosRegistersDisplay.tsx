@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import type { PosItem, PosRegisterStatus } from "@prisma/client";
 import type { PosRegisterWithRelations } from "@/domain/pos/operations/getAllPosRegisters";
 import { createPosRegisterAction } from "@/domain/pos/actions/createPosRegisterAction";
@@ -28,6 +29,8 @@ export default function PosRegistersDisplay({
   allUsers,
   canWrite,
 }: Props) {
+  const t = useTranslations("admin.pos.registers");
+  const tc = useTranslations("admin.common");
   const [registers, setRegisters] = useState(initialRegisters);
   const [showForm, setShowForm] = useState(false);
   const [editingRegister, setEditingRegister] =
@@ -249,13 +252,13 @@ export default function PosRegistersDisplay({
       className="bg-white rounded-lg shadow p-6 space-y-4"
     >
       <h3 className="text-lg font-medium">
-        {register ? "Edit Register" : "New Register"}
+        {register ? t("editRegister") : t("newRegister")}
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Name
+            {t("fieldName")}
           </label>
           <input
             name="name"
@@ -268,21 +271,21 @@ export default function PosRegistersDisplay({
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Status
+            {t("fieldStatus")}
           </label>
           <select
             name="status"
             defaultValue={register?.status ?? "ACTIVE"}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="ACTIVE">Active</option>
-            <option value="INACTIVE">Inactive</option>
+            <option value="ACTIVE">{t("statusActive")}</option>
+            <option value="INACTIVE">{t("statusInactive")}</option>
           </select>
         </div>
 
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700">
-            Description
+            {t("fieldDescription")}
           </label>
           <input
             name="description"
@@ -302,7 +305,7 @@ export default function PosRegistersDisplay({
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <span className="text-sm font-medium text-gray-700">
-              Can process cash top-ups
+              {t("canTopUp")}
             </span>
           </label>
         </div>
@@ -314,14 +317,14 @@ export default function PosRegistersDisplay({
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
         >
-          Cancel
+          {tc("cancel")}
         </button>
         <button
           type="submit"
           disabled={isPending}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
         >
-          {isPending ? "Saving..." : register ? "Update" : "Create"}
+          {isPending ? t("saving") : register ? t("update") : tc("create")}
         </button>
       </div>
     </form>
@@ -345,7 +348,7 @@ export default function PosRegistersDisplay({
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
           <div className="px-6 py-4 border-b flex items-center justify-between">
             <h2 className="text-lg font-semibold">
-              Manage: {managingRegister.name}
+              {t("manageTitle", { name: managingRegister.name })}
             </h2>
             <button
               onClick={() => setManagingRegister(null)}
@@ -371,7 +374,7 @@ export default function PosRegistersDisplay({
             {/* Items Section */}
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-3">
-                Assigned Items
+                {t("assignedItems")}
               </h3>
               <div className="space-y-2 mb-3">
                 {managingRegister.items.map(({ item, itemId }) => (
@@ -393,13 +396,13 @@ export default function PosRegistersDisplay({
                         disabled={isPending}
                         className="text-red-600 hover:text-red-800 text-sm disabled:opacity-50"
                       >
-                        Remove
+                        {t("remove")}
                       </button>
                     )}
                   </div>
                 ))}
                 {managingRegister.items.length === 0 && (
-                  <p className="text-gray-500 text-sm">No items assigned</p>
+                  <p className="text-gray-500 text-sm">{t("noItemsAssigned")}</p>
                 )}
               </div>
               {canWrite && availableItems.length > 0 && (
@@ -408,7 +411,7 @@ export default function PosRegistersDisplay({
                     id="addItem"
                     className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   >
-                    <option value="">Select item to add...</option>
+                    <option value="">{t("selectItem")}</option>
                     {availableItems.map(item => (
                       <option key={item.id} value={item.id}>
                         {item.name} - {formatPrice(item.cost)}
@@ -428,7 +431,7 @@ export default function PosRegistersDisplay({
                     disabled={isPending}
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
                   >
-                    Add
+                    {t("add")}
                   </button>
                 </div>
               )}
@@ -437,7 +440,7 @@ export default function PosRegistersDisplay({
             {/* Sellers Section */}
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-3">
-                Assigned Sellers
+                {t("assignedSellers")}
               </h3>
               <div className="space-y-2 mb-3">
                 {managingRegister.sellers.map(({ user, userId }) => (
@@ -447,7 +450,7 @@ export default function PosRegistersDisplay({
                   >
                     <div>
                       <span className="font-medium">
-                        {user.name || "Unnamed"}
+                        {user.name || t("unnamed")}
                       </span>
                       <span className="text-gray-500 ml-2">{user.email || ""}</span>
                     </div>
@@ -459,13 +462,13 @@ export default function PosRegistersDisplay({
                         disabled={isPending}
                         className="text-red-600 hover:text-red-800 text-sm disabled:opacity-50"
                       >
-                        Remove
+                        {t("remove")}
                       </button>
                     )}
                   </div>
                 ))}
                 {managingRegister.sellers.length === 0 && (
-                  <p className="text-gray-500 text-sm">No sellers assigned</p>
+                  <p className="text-gray-500 text-sm">{t("noSellersAssigned")}</p>
                 )}
               </div>
               {canWrite && availableUsers.length > 0 && (
@@ -474,7 +477,7 @@ export default function PosRegistersDisplay({
                     id="addSeller"
                     className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   >
-                    <option value="">Select user to add...</option>
+                    <option value="">{t("selectUser")}</option>
                     {availableUsers.map(user => (
                       <option key={user.id} value={user.id}>
                         {user.name || user.email} ({user.email})
@@ -494,7 +497,7 @@ export default function PosRegistersDisplay({
                     disabled={isPending}
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
                   >
-                    Add
+                    {t("add")}
                   </button>
                 </div>
               )}
@@ -512,7 +515,7 @@ export default function PosRegistersDisplay({
           onClick={() => setShowForm(true)}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
         >
-          Add Register
+          {t("addRegister")}
         </button>
       )}
 
@@ -557,26 +560,26 @@ export default function PosRegistersDisplay({
 
             <div className="p-4 space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Items / Sellers:</span>
+                <span className="text-gray-500">{t("cardItemsSellers")}</span>
                 <span className="font-medium">
                   {register.items.length} / {register.sellers.length}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Sales:</span>
+                <span className="text-gray-500">{t("cardSales")}</span>
                 <span className="font-medium">
                   {register.traffic.paidOrdersCount} ({formatPrice(register.traffic.salesRevenue)})
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Tips:</span>
+                <span className="text-gray-500">{t("cardTips")}</span>
                 <span className="font-medium text-amber-600">
                   {formatPrice(register.traffic.tipsCollected)}
                 </span>
               </div>
               {register.canTopUp && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Cash to Collect:</span>
+                  <span className="text-gray-500">{t("cardCashToCollect")}</span>
                   <span className="font-medium text-red-600">
                     {formatPrice(register.traffic.topUpsProcessed)}
                   </span>
@@ -589,14 +592,14 @@ export default function PosRegistersDisplay({
                 onClick={() => setManagingRegister(register)}
                 className="flex-1 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-md"
               >
-                Manage
+                {t("manage")}
               </button>
               {canWrite && (
                 <button
                   onClick={() => setEditingRegister(register)}
                   className="flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md"
                 >
-                  Edit
+                  {tc("edit")}
                 </button>
               )}
             </div>
@@ -605,7 +608,7 @@ export default function PosRegistersDisplay({
 
         {registers.length === 0 && (
           <div className="col-span-full text-center py-8 text-gray-500">
-            No registers found. Create your first register to get started.
+            {t("emptyRegisters")}
           </div>
         )}
       </div>

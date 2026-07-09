@@ -15,6 +15,7 @@ export const getSessionByToken = async (sessionToken: string) => {
           name: true,
           image: true,
           status: true,
+          locale: true,
           createdAt: true,
           userRoles: {
             select: {

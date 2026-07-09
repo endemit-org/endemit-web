@@ -12,14 +12,22 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
-export const metadata: Metadata = {
-  title: "⚠️ Payment interrupted",
-  description: "Your payment was interrupted and has not completed your order.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; sessionId: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "store" });
+  return {
+    title: t("interrupted.metaTitle"),
+    description: t("interrupted.metaDescription"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function InterruptedPage({
   params,

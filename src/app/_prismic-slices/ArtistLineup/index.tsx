@@ -110,6 +110,7 @@ const ArtistLineup: FC<{
               grayscale={false}
               showName={showNames}
               linkOverride={linkOverride}
+              showCrewBadge={false}
             />
           ) : (
             <BlurredArtistCard key={`blurred-${index}`} seed={index} />

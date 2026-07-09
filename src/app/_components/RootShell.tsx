@@ -41,6 +41,16 @@ export default function RootShell({
         <link rel="preconnect" href="https://f.vimeocdn.com" crossOrigin="" />
         <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://player.vimeo.com" />
+        {process.env.NODE_ENV !== "production" && (
+          // Runs from the always-fresh HTML before any (possibly stale) bundle:
+          // a dev service worker serving cached chunks causes hydration
+          // mismatches, so unregister it + clear caches and reload once.
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){if(!rs.length)return;Promise.all(rs.map(function(r){return r.unregister()})).then(function(){return window.caches?caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}):null}).then(function(){if(!sessionStorage.getItem('sw-dev-killed')){sessionStorage.setItem('sw-dev-killed','1');location.reload()}})})}`,
+            }}
+          />
+        )}
       </head>
       <body
         className="m-auto overflow-y-scroll"

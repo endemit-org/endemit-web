@@ -8,6 +8,7 @@ import {
   ContextMenuDivider,
   ContextMenuLabel,
 } from "@/app/_components/ui/ContextMenu";
+import CookieLanguageSwitcher from "@/app/_components/ui/CookieLanguageSwitcher";
 import Link from "next/link";
 
 export default async function PosLayout({
@@ -43,6 +44,7 @@ export default async function PosLayout({
               </span>
             </div>
             <div className="flex items-center space-x-4">
+              <CookieLanguageSwitcher className="text-sm text-gray-600 hover:text-gray-900" />
               <ContextMenu
                 trigger={
                   <button className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none">

@@ -15,8 +15,10 @@ export const DEFAULT_TEMPLATE: TicketTemplate = {
   textContent: {
     priceLabel: null,
     tagline: null,
-    legalText:
-      "Ticket admits one person. Ticket is transferable, but non-refundable.",
+    legalText: {
+      en: "Ticket admits one person. Ticket is transferable, but non-refundable.",
+      sl: "Karta velja za eno osebo. Karta je prenosljiva, ampak nevračljiva.",
+    },
   },
   invertLogo: false,
 };
@@ -34,9 +36,15 @@ export const GUEST_TEMPLATE: TicketTemplate = {
     qrLight: "#000000",
   },
   textContent: {
-    priceLabel: "VIP PASS",
-    tagline: "GUEST PASS :: NOT FOR SALE",
-    legalText: "Ticket admits one person. Non-transferable, non-refundable.",
+    priceLabel: { en: "VIP PASS", sl: "VIP PASS" },
+    tagline: {
+      en: "GUEST PASS :: NOT FOR SALE",
+      sl: "GOST :: NI NAPRODAJ",
+    },
+    legalText: {
+      en: "Ticket admits one person. Non-transferable, non-refundable.",
+      sl: "Karta velja za eno osebo. Ni prenosljiva, ni vračljiva.",
+    },
   },
   invertLogo: true,
 };

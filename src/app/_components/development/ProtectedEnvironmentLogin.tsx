@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getApiPath } from "@/lib/util/api";
+import { useTranslations } from "next-intl";
 
 export default function ProtectedEnvironmentLogin() {
+  const t = useTranslations("stagingLogin");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +24,7 @@ export default function ProtectedEnvironmentLogin() {
       });
 
       if (!res.ok) {
-        setError("Invalid password");
+        setError(t("invalidPassword"));
         setLoading(false);
         return;
       }
@@ -30,7 +32,7 @@ export default function ProtectedEnvironmentLogin() {
       router.push("/");
       router.refresh();
     } catch (err) {
-      setError(err ? String(err) : "Something went wrong");
+      setError(err ? String(err) : t("somethingWrong"));
       setLoading(false);
     }
   };
@@ -45,10 +47,10 @@ export default function ProtectedEnvironmentLogin() {
     <div className="max-w-md w-full space-y-8 p-8 bg-neutral-200 rounded-lg shadow">
       <div>
         <h2 className="text-3xl font-bold text-center text-gray-900">
-          Staging Environment
+          {t("heading")}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Enter password to continue
+          {t("subheading")}
         </p>
       </div>
 
@@ -58,7 +60,7 @@ export default function ProtectedEnvironmentLogin() {
           value={password}
           onChange={e => setPassword(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Password"
+          placeholder={t("passwordPlaceholder")}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
           disabled={loading}
         />
@@ -70,7 +72,7 @@ export default function ProtectedEnvironmentLogin() {
           disabled={loading || !password}
           className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-neutral-200 rounded-md transition-colors"
         >
-          {loading ? "Loading..." : "Continue"}
+          {loading ? t("loading") : t("continue")}
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import type { PosOrderStatus } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
@@ -33,6 +34,8 @@ export default function PosOrdersDisplay({
   totalCount: initialTotalCount,
   registers,
 }: Props) {
+  const t = useTranslations("admin.pos.orders");
+  const tt = useTranslations("common.table");
   const [orders, setOrders] = useState(initialOrders);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
@@ -68,7 +71,7 @@ export default function PosOrdersDisplay({
         <div className="flex flex-wrap gap-4 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+              {t("filterStatus")}
             </label>
             <select
               value={statusFilter}
@@ -78,16 +81,16 @@ export default function PosOrdersDisplay({
               }}
               className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
-              <option value="">All statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="PAID">Paid</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="">{t("allStatuses")}</option>
+              <option value="PENDING">{t("statusPending")}</option>
+              <option value="PAID">{t("statusPaid")}</option>
+              <option value="CANCELLED">{t("statusCancelled")}</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Register
+              {t("filterRegister")}
             </label>
             <select
               value={registerFilter}
@@ -97,7 +100,7 @@ export default function PosOrdersDisplay({
               }}
               className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
-              <option value="">All registers</option>
+              <option value="">{t("allRegisters")}</option>
               {registers.map(r => (
                 <option key={r.id} value={r.id}>
                   {r.name}
@@ -107,7 +110,7 @@ export default function PosOrdersDisplay({
           </div>
 
           <div className="text-sm text-gray-500">
-            {totalCount} order{totalCount !== 1 ? "s" : ""} found
+            {t("ordersFound", { count: totalCount })}
           </div>
         </div>
       </div>
@@ -118,25 +121,25 @@ export default function PosOrdersDisplay({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Order
+                {t("colOrder")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Register
+                {t("colRegister")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Customer
+                {t("colCustomer")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total
+                {t("colTotal")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                {t("colStatus")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
+                {t("colCreated")}
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                {t("colActions")}
               </th>
             </tr>
           </thead>
@@ -148,7 +151,7 @@ export default function PosOrdersDisplay({
                     {order.shortCode}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                    {t("itemsCount", { count: order.items.length })}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -158,14 +161,14 @@ export default function PosOrdersDisplay({
                   {order.customer ? (
                     <div>
                       <div className="text-gray-900">
-                        {order.customer.name || "Unnamed"}
+                        {order.customer.name || t("unnamed")}
                       </div>
                       <div className="text-xs text-gray-500">
                         {order.customer.email ? formatEmailForDisplay(order.customer.email, "") : ""}
                       </div>
                     </div>
                   ) : (
-                    <span className="text-gray-400">No customer</span>
+                    <span className="text-gray-400">{t("noCustomer")}</span>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -174,7 +177,7 @@ export default function PosOrdersDisplay({
                   </div>
                   {order.tipAmount > 0 && (
                     <div className="text-xs text-green-600">
-                      +{formatPrice(order.tipAmount)} tip
+                      {t("tipSuffix", { amount: formatPrice(order.tipAmount) })}
                     </div>
                   )}
                 </td>
@@ -195,7 +198,7 @@ export default function PosOrdersDisplay({
                     onClick={() => setSelectedOrder(order)}
                     className="text-blue-600 hover:text-blue-900"
                   >
-                    Details
+                    {t("details")}
                   </button>
                 </td>
               </tr>
@@ -203,7 +206,7 @@ export default function PosOrdersDisplay({
             {orders.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                  No orders found.
+                  {t("emptyOrders")}
                 </td>
               </tr>
             )}
@@ -219,17 +222,17 @@ export default function PosOrdersDisplay({
             disabled={page <= 1 || isPending}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Previous
+            {t("previous")}
           </button>
           <span className="text-sm text-gray-700">
-            Page {page} of {totalPages}
+            {tt("pageOf", { current: page, total: totalPages })}
           </span>
           <button
             onClick={() => loadOrders(page + 1)}
             disabled={page >= totalPages || isPending}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            {t("next")}
           </button>
         </div>
       )}
@@ -240,7 +243,7 @@ export default function PosOrdersDisplay({
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b flex items-center justify-between">
               <h2 className="text-lg font-semibold">
-                Order {selectedOrder.shortCode}
+                {t("modalOrder", { code: selectedOrder.shortCode })}
               </h2>
               <button
                 onClick={() => setSelectedOrder(null)}
@@ -265,7 +268,7 @@ export default function PosOrdersDisplay({
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Status</span>
+                  <span className="text-gray-500">{t("labelStatus")}</span>
                   <div className="mt-1">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -277,39 +280,39 @@ export default function PosOrdersDisplay({
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Register</span>
+                  <span className="text-gray-500">{t("labelRegister")}</span>
                   <div className="mt-1 font-medium">
                     {selectedOrder.register.name}
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Seller</span>
+                  <span className="text-gray-500">{t("labelSeller")}</span>
                   <div className="mt-1 font-medium">
-                    {selectedOrder.seller.name || formatEmailForDisplay(selectedOrder.seller.email, "Unknown")}
+                    {selectedOrder.seller.name || formatEmailForDisplay(selectedOrder.seller.email, t("unknown"))}
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Customer</span>
+                  <span className="text-gray-500">{t("labelCustomer")}</span>
                   <div className="mt-1 font-medium">
                     {selectedOrder.customer
                       ? selectedOrder.customer.name ||
-                        formatEmailForDisplay(selectedOrder.customer.email, "Unknown")
-                      : "None"}
+                        formatEmailForDisplay(selectedOrder.customer.email, t("unknown"))
+                      : t("none")}
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Created</span>
+                  <span className="text-gray-500">{t("labelCreated")}</span>
                   <div className="mt-1"><ClientDate date={selectedOrder.createdAt} /></div>
                 </div>
                 {selectedOrder.paidAt && (
                   <div>
-                    <span className="text-gray-500">Paid</span>
+                    <span className="text-gray-500">{t("labelPaid")}</span>
                     <div className="mt-1"><ClientDate date={selectedOrder.paidAt} /></div>
                   </div>
                 )}
                 {selectedOrder.cancelledAt && (
                   <div className="col-span-2">
-                    <span className="text-gray-500">Cancelled</span>
+                    <span className="text-gray-500">{t("labelCancelled")}</span>
                     <div className="mt-1">
                       <ClientDate date={selectedOrder.cancelledAt} />
                       {selectedOrder.cancelReason && (
@@ -323,7 +326,7 @@ export default function PosOrdersDisplay({
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-gray-900 mb-2">Items</h3>
+                <h3 className="text-sm font-medium text-gray-900 mb-2">{t("itemsHeading")}</h3>
                 <div className="border rounded-lg divide-y">
                   {selectedOrder.items.map(item => (
                     <div
@@ -343,19 +346,19 @@ export default function PosOrdersDisplay({
 
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Subtotal</span>
+                  <span className="text-gray-500">{t("subtotal")}</span>
                   <span>{formatPrice(selectedOrder.subtotal)}</span>
                 </div>
                 {selectedOrder.tipAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Tip</span>
+                    <span className="text-gray-500">{t("tip")}</span>
                     <span className="text-green-600">
                       {formatPrice(selectedOrder.tipAmount)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between font-semibold">
-                  <span>Total</span>
+                  <span>{t("total")}</span>
                   <span>{formatPrice(selectedOrder.total)}</span>
                 </div>
               </div>

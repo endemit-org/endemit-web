@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import { getUserById } from "@/domain/user/operations/getUserById";
 import { getWalletByUserId } from "@/domain/wallet/operations/getWalletByUserId";
 import { getAllRoles } from "@/domain/role/operations/getAllRoles";
@@ -78,6 +79,9 @@ export default async function AdminUserDetailPage({
     canManageStickers ? getUserSticker(id) : null,
   ]);
 
+  const t = await getTranslations("admin.users");
+  const ts = await getTranslations("admin.status.user");
+
   return (
     <div>
       <div className="mb-6">
@@ -98,7 +102,7 @@ export default async function AdminUserDetailPage({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Users
+          {t("detail.back")}
         </Link>
       </div>
 
@@ -111,7 +115,7 @@ export default async function AdminUserDetailPage({
                 {user.image ? (
                   <Image
                     src={user.image}
-                    alt={`${user.username}'s avatar`}
+                    alt={t("detail.avatarAlt", { username: user.username })}
                     fill
                     className="object-cover"
                     sizes="64px"
@@ -150,7 +154,7 @@ export default async function AdminUserDetailPage({
                   statusColors[user.status] || "bg-gray-100 text-gray-800"
                 )}
               >
-                {user.status}
+                {ts(user.status)}
               </span>
               <span
                 className={clsx(
@@ -160,7 +164,9 @@ export default async function AdminUserDetailPage({
                     : "bg-indigo-100 text-indigo-800"
                 )}
               >
-                {user.signInType === "PASSWORD" ? "Password" : "Magic Link"}
+                {user.signInType === "PASSWORD"
+                  ? t("detail.authPassword")
+                  : t("detail.authMagicLink")}
               </span>
             </div>
           </div>
@@ -170,23 +176,23 @@ export default async function AdminUserDetailPage({
           {/* User Info */}
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              User Information
+              {t("detail.userInfo")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">User ID:</span>
+                <span className="text-gray-600">{t("detail.userId")}</span>
                 <span className="font-mono text-sm">{user.id}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Created:</span>
+                <span className="text-gray-600">{t("detail.created")}</span>
                 <span>{formatDateTime(new Date(user.createdAt))}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Last Login:</span>
+                <span className="text-gray-600">{t("detail.lastLogin")}</span>
                 <span>
                   {user.lastLoginAt
                     ? formatDateTime(new Date(user.lastLoginAt))
-                    : "Never"}
+                    : t("detail.never")}
                 </span>
               </div>
             </div>
@@ -196,12 +202,14 @@ export default async function AdminUserDetailPage({
           {canViewWallets && wallet && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Wallet
+                {t("detail.wallet")}
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm text-gray-600">Balance</div>
+                    <div className="text-sm text-gray-600">
+                      {t("detail.balance")}
+                    </div>
                     <div
                       className={clsx(
                         "text-2xl font-bold",
@@ -219,7 +227,7 @@ export default async function AdminUserDetailPage({
                     href={`/admin/wallets/${wallet.id}`}
                     className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 border border-blue-300 hover:border-blue-400 rounded-md transition-colors"
                   >
-                    Manage Wallet
+                    {t("detail.manageWallet")}
                   </Link>
                 </div>
               </div>
@@ -230,7 +238,7 @@ export default async function AdminUserDetailPage({
           {canManageStickers && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Payment wristband
+                {t("detail.wristband")}
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <UserStickerManager
@@ -246,7 +254,7 @@ export default async function AdminUserDetailPage({
           {canUpdate && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Edit User
+                {t("detail.editUser")}
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <UserEditForm user={user} />
@@ -258,7 +266,7 @@ export default async function AdminUserDetailPage({
           {canUpdate && user.signInType === "PASSWORD" && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Set New Password
+                {t("detail.setPassword")}
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <UserPasswordForm userId={user.id} />
@@ -269,7 +277,7 @@ export default async function AdminUserDetailPage({
           {/* Roles */}
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Roles
+              {t("detail.roles")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4">
               <UserRolesManager
@@ -285,7 +293,7 @@ export default async function AdminUserDetailPage({
           {canUpdate && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Active Sessions ({user.sessions.length})
+                {t("detail.sessionsTitle", { count: user.sessions.length })}
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <UserSessionsTable userId={user.id} sessions={user.sessions} />

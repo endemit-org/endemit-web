@@ -89,6 +89,12 @@ enum EventClaimStatus {
   APPROVED
 }
 
+enum StickerCodeProperty {
+  Festival26Black
+  Festival26Red
+  Festival26Blue
+}
+
 model Order {
   id               String      @id @default(cuid())
   stripeSession    String      @unique
@@ -456,12 +462,13 @@ model PosOrderItem {
 }
 
 model StickerCode {
-  code      String    @id
-  userId    String?   @unique
-  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  code      String               @id
+  userId    String?              @unique
+  user      User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property  StickerCodeProperty?
   claimedAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
 
   @@index([userId])
 }

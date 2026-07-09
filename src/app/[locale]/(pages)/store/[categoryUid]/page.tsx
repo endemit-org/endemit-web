@@ -9,6 +9,7 @@ import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromC
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import { isProductVisible } from "@/domain/product/businessLogic";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { translateCategory } from "@/lib/util/translateCategory";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -25,10 +26,17 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{
+    locale: string;
     categoryUid: string;
   }>;
 }) {
-  const { categoryUid } = await params;
+  const { locale, categoryUid } = await params;
+  const loc = locale === "en" ? "en" : "sl";
+  const t = await getTranslations({ locale: loc, namespace: "store" });
+  const tCat = await getTranslations({
+    locale: loc,
+    namespace: "store.categoryNames",
+  });
 
   const categoryName = getCategoryFromSlug(categoryUid);
 
@@ -36,12 +44,21 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = `${categoryName} • Store`;
-  const description = `Official Endemit ${categoryName} available to purchase securely online.`;
+  const categoryLabel = translateCategory(tCat, categoryName);
+  const title = `${categoryLabel} • ${t("breadcrumb.store")}`;
+  const description = t("category.metaDescription", {
+    category: categoryLabel,
+  });
   const images = buildOpenGraphImages({});
-  const url = `https://endemit.org/store/${categoryUid}`;
 
-  return buildOpenGraphObject({ title, description, images, url, type: "website" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    type: "website",
+    locale: loc,
+    path: `/store/${categoryUid}`,
+  });
 }
 
 export default async function CategoryPage({
@@ -56,12 +73,15 @@ export default async function CategoryPage({
   setRequestLocale(locale as "sl" | "en");
   const loc = locale === "en" ? "en" : "sl";
   const t = await getTranslations("store");
+  const tCat = await getTranslations("store.categoryNames");
 
   const categoryName = getCategoryFromSlug(categoryUid);
 
   if (!categoryName) {
     notFound();
   }
+
+  const categoryLabel = translateCategory(tCat, categoryName);
 
   const allProducts = await fetchProductsFromCms({
     filters: [prismic.filter.at("my.product.product_category", categoryName)],
@@ -74,17 +94,17 @@ export default async function CategoryPage({
   return (
     <OuterPage>
       <PageHeadline
-        title={categoryName}
+        title={categoryLabel}
         segments={[
           { label: "Endemit", path: "" },
           { label: t("breadcrumb.store"), path: "store" },
-          { label: categoryName, path: categoryUid },
+          { label: categoryLabel, path: categoryUid },
         ]}
       />
 
       {!productsExistInCategory && (
         <InnerPage>
-          <div>{t("category.empty", { categoryName })}</div>
+          <div>{t("category.empty", { categoryName: categoryLabel })}</div>
         </InnerPage>
       )}
 

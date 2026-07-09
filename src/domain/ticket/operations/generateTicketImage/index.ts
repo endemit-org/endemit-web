@@ -7,7 +7,10 @@ import satori from "satori";
 import fs from "fs";
 import type { ReactElement } from "react";
 import type { TicketTemplate } from "../../types/ticketTemplate";
-import { getTemplateById, DEFAULT_TEMPLATE } from "../../config/ticketTemplates";
+import {
+  getTemplateById,
+  DEFAULT_TEMPLATE,
+} from "../../config/ticketTemplates";
 
 interface TicketData {
   shortId: string;
@@ -27,7 +30,7 @@ interface TicketData {
 
 // Header label shown before the ticket short id (e.g. "TICKET 1A2B" / "VSTOPNICA 1A2B").
 const TICKET_LABEL: Record<"sl" | "en", string> = {
-  sl: "VSTOPNICA",
+  sl: "KARTA",
   en: "TICKET",
 };
 
@@ -149,13 +152,21 @@ async function createQRCode(
       bottom: 10,
       left: 10,
       right: 10,
-      background: { r: qrLightRgb.r, g: qrLightRgb.g, b: qrLightRgb.b, alpha: 1 },
+      background: {
+        r: qrLightRgb.r,
+        g: qrLightRgb.g,
+        b: qrLightRgb.b,
+        alpha: 1,
+      },
     })
     .png()
     .toBuffer();
 }
 
-async function loadLogo(size: number, invertLogo: boolean = false): Promise<Buffer> {
+async function loadLogo(
+  size: number,
+  invertLogo: boolean = false
+): Promise<Buffer> {
   const logoFile = invertLogo ? "endemit-logo-light.png" : "endemit-logo.png";
   const logoPath = path.join(process.cwd(), "public", "images", logoFile);
 
@@ -173,7 +184,10 @@ async function loadLogo(size: number, invertLogo: boolean = false): Promise<Buff
     .toBuffer();
 }
 
-async function loadEndemitLogo(size: number, invertLogo: boolean = false): Promise<Buffer> {
+async function loadEndemitLogo(
+  size: number,
+  invertLogo: boolean = false
+): Promise<Buffer> {
   const logoFile = invertLogo ? "endemit-light.png" : "endemit.png";
   const logoPath = path.join(process.cwd(), "public", "images", logoFile);
 
@@ -279,6 +293,14 @@ async function createTextOverlay(
   const scheme = template.colorScheme;
   const textContent = template.textContent;
 
+  // Resolve locale-keyed ticket text (Satori-rendered, not next-intl).
+  const locale = data.locale ?? "sl";
+  const priceLabel = textContent.priceLabel
+    ? textContent.priceLabel[locale]
+    : null;
+  const tagline = textContent.tagline ? textContent.tagline[locale] : null;
+  const legalText = textContent.legalText[locale];
+
   const eventInfo =
     `${data.eventName} · ${data.eventDate} · ${data.eventDetails}`.toUpperCase();
   const firstPart = data.hashId.slice(0, 64).toUpperCase();
@@ -287,7 +309,7 @@ async function createTextOverlay(
   // Build price/label section based on template
   const priceSectionChildren: ReactElement[] = [];
 
-  if (textContent.priceLabel) {
+  if (priceLabel) {
     // Custom label (e.g., "VIP PASS")
     priceSectionChildren.push({
       type: "div",
@@ -302,12 +324,12 @@ async function createTextOverlay(
           color: scheme.accent,
           whiteSpace: "nowrap",
         },
-        children: textContent.priceLabel,
+        children: priceLabel,
       },
     } as ReactElement);
 
     // Optional tagline (e.g., "NOT FOR SALE")
-    if (textContent.tagline) {
+    if (tagline) {
       priceSectionChildren.push({
         type: "div",
         props: {
@@ -320,7 +342,7 @@ async function createTextOverlay(
             color: scheme.textSecondary,
             whiteSpace: "nowrap",
           },
-          children: textContent.tagline,
+          children: tagline,
         },
       } as ReactElement);
     }
@@ -462,7 +484,7 @@ async function createTextOverlay(
               color: infoTextColor,
               whiteSpace: "nowrap",
             },
-            children: textContent.legalText,
+            children: legalText,
           },
         },
         // Attendee name

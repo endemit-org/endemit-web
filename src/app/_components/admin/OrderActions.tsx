@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import {
   getOrderActions,
   filterActionsByPermissions,
@@ -35,6 +36,7 @@ export default function OrderActions({
   onOpenRefundDialog,
 }: OrderActionsProps) {
   const router = useRouter();
+  const t = useTranslations("admin.orders");
   const [pendingAction, setPendingAction] = useState<OrderAction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,13 +73,13 @@ export default function OrderActions({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Action failed");
+        throw new Error(data.error || t("actions.actionFailed"));
       }
 
       onActionComplete?.();
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Action failed");
+      setError(err instanceof Error ? err.message : t("actions.actionFailed"));
     } finally {
       setIsLoading(false);
       setPendingAction(null);
@@ -141,6 +143,8 @@ function ActionButton({
   sendEmail,
   onSendEmailChange,
 }: ActionButtonProps) {
+  const t = useTranslations("admin.orders");
+  const tc = useTranslations("admin.common");
   const buttonClasses = clsx(
     "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -163,14 +167,14 @@ function ActionButton({
           onClick={onConfirm}
           disabled={isLoading}
         >
-          {isLoading ? "..." : "Confirm"}
+          {isLoading ? "..." : t("actions.confirm")}
         </button>
         <button
           className="px-3 py-1 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm rounded"
           onClick={onCancelConfirmation}
           disabled={isLoading}
         >
-          Cancel
+          {tc("cancel")}
         </button>
       </div>
     );
@@ -184,7 +188,7 @@ function ActionButton({
         disabled={disabled}
         title={config.description}
       >
-        {isLoading ? "Processing..." : config.label}
+        {isLoading ? t("actions.processing") : config.label}
       </button>
       {config.showEmailCheckbox && (
         <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">

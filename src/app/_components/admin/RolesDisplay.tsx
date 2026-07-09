@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import RolesTable from "@/app/_components/table/RolesTable";
 import { fetchRoles } from "@/domain/role/actions/fetchRolesAction";
 import type { SerializedRole } from "@/domain/role/types";
@@ -14,6 +15,8 @@ interface RolesDisplayProps {
 
 export default function RolesDisplay({ initialData, canCreate }: RolesDisplayProps) {
   const router = useRouter();
+  const t = useTranslations("admin.roles");
+  const tc = useTranslations("admin.common");
   const [roles, setRoles] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,16 +43,17 @@ export default function RolesDisplay({ initialData, canCreate }: RolesDisplayPro
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="text-sm text-gray-600">
-            Total Roles: <strong className="text-gray-900">{roles.length}</strong>
+            {t("list.total")}{" "}
+            <strong className="text-gray-900">{roles.length}</strong>
           </div>
           <div className="text-sm text-gray-600">
-            System:{" "}
+            {t("list.system")}{" "}
             <strong className="text-blue-600">
               {roles.filter(r => r.isSystem).length}
             </strong>
           </div>
           <div className="text-sm text-gray-600">
-            Custom:{" "}
+            {t("list.custom")}{" "}
             <strong className="text-gray-900">
               {roles.filter(r => !r.isSystem).length}
             </strong>
@@ -61,7 +65,7 @@ export default function RolesDisplay({ initialData, canCreate }: RolesDisplayPro
               href="/admin/roles/new"
               className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
             >
-              Create Role
+              {t("list.create")}
             </Link>
           )}
           <button
@@ -69,7 +73,7 @@ export default function RolesDisplay({ initialData, canCreate }: RolesDisplayPro
             disabled={isLoading}
             className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors disabled:opacity-50"
           >
-            {isLoading ? "Loading..." : "Refresh"}
+            {isLoading ? tc("loading") : tc("refresh")}
           </button>
         </div>
       </div>
@@ -80,7 +84,7 @@ export default function RolesDisplay({ initialData, canCreate }: RolesDisplayPro
             <RolesTable roles={roles} onRowClick={handleRoleClick} />
           </div>
         ) : (
-          <div className="p-8 text-center text-gray-500">No roles found</div>
+          <div className="p-8 text-center text-gray-500">{t("list.empty")}</div>
         )}
       </div>
     </>

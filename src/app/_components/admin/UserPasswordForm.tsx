@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import ActionButton from "@/app/_components/form/ActionButton";
 import { updateUserPasswordAction } from "@/domain/user/actions/updateUserPasswordAction";
 
@@ -9,6 +10,7 @@ interface UserPasswordFormProps {
 }
 
 export default function UserPasswordForm({ userId }: UserPasswordFormProps) {
+  const t = useTranslations("admin.users");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -38,7 +40,7 @@ export default function UserPasswordForm({ userId }: UserPasswordFormProps) {
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          placeholder="Enter new password (min 8 characters)"
+          placeholder={t("password.placeholder")}
           className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           minLength={8}
           required
@@ -49,7 +51,7 @@ export default function UserPasswordForm({ userId }: UserPasswordFormProps) {
           size="sm"
           fullWidth={false}
         >
-          {isLoading ? "Setting..." : "Set Password"}
+          {isLoading ? t("password.submitting") : t("password.submit")}
         </ActionButton>
       </div>
 
@@ -61,7 +63,7 @@ export default function UserPasswordForm({ userId }: UserPasswordFormProps) {
 
       {success && (
         <div className="p-3 bg-green-50 text-green-700 rounded-md text-sm">
-          Password updated successfully
+          {t("password.success")}
         </div>
       )}
     </form>

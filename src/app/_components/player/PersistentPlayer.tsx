@@ -72,49 +72,55 @@ export function PersistentPlayer() {
     }
   }, [isPlaying]);
 
-  // Load SoundCloud Widget API
+  // Load SoundCloud Widget API (once — never removed; window.SC is a global
+  // and this component remounts on every locale switch)
   useEffect(() => {
     if (typeof window !== "undefined" && !window.SC) {
       const script = document.createElement("script");
       script.src = "https://w.soundcloud.com/player/api.js";
       script.async = true;
       document.body.appendChild(script);
-
-      return () => {
-        if (document.body.contains(script)) {
-          document.body.removeChild(script);
-        }
-      };
     }
   }, []);
 
-  // Initialize widget and bind events
+  // Initialize widget and bind events. Every SC call is guarded: the widget
+  // API talks to the iframe via postMessage and throws synchronously when the
+  // iframe is (being) detached — which happens on every locale switch, since
+  // the whole [locale] tree remounts. An uncaught throw in an effect/cleanup
+  // crashes the app ("Application error"), so failures here are non-fatal.
   useEffect(() => {
     if (!iframeRef.current || !window.SC) return;
 
-    const widget = window.SC.Widget(iframeRef.current);
-    widgetRef.current = widget;
+    let widget: ReturnType<typeof window.SC.Widget> | null = null;
+    try {
+      widget = window.SC.Widget(iframeRef.current);
+      widgetRef.current = widget;
 
-    // Bind play/pause events to track state
-    widget.bind(window.SC.Widget.Events.PLAY, () => {
-      setIsPlaying(true);
-    });
-
-    widget.bind(window.SC.Widget.Events.PAUSE, () => {
-      setIsPlaying(false);
-    });
-
-    widget.bind(window.SC.Widget.Events.FINISH, () => {
-      setIsPlaying(false);
-    });
+      widget.bind(window.SC.Widget.Events.PLAY, () => {
+        setIsPlaying(true);
+      });
+      widget.bind(window.SC.Widget.Events.PAUSE, () => {
+        setIsPlaying(false);
+      });
+      widget.bind(window.SC.Widget.Events.FINISH, () => {
+        setIsPlaying(false);
+      });
+    } catch {
+      widgetRef.current = null;
+      return;
+    }
 
     return () => {
-      // Clean up event listeners
-      if (widgetRef.current) {
-        widgetRef.current.unbind(window.SC.Widget.Events.PLAY);
-        widgetRef.current.unbind(window.SC.Widget.Events.PAUSE);
-        widgetRef.current.unbind(window.SC.Widget.Events.FINISH);
+      try {
+        if (widgetRef.current && window.SC) {
+          widgetRef.current.unbind(window.SC.Widget.Events.PLAY);
+          widgetRef.current.unbind(window.SC.Widget.Events.PAUSE);
+          widgetRef.current.unbind(window.SC.Widget.Events.FINISH);
+        }
+      } catch {
+        // Iframe already detached — nothing to clean up.
       }
+      widgetRef.current = null;
     };
   }, [currentTrack, setIsPlaying]);
 
@@ -124,7 +130,13 @@ export function PersistentPlayer() {
       // Check if this is initial load from localStorage
       const shouldAutoplay = isInitialLoad ? getStoredPlayState() : true; // Always autoplay when user clicks a new track
 
-      widgetRef.current.load(currentTrack.url, { auto_play: shouldAutoplay });
+      try {
+        widgetRef.current.load(currentTrack.url, {
+          auto_play: shouldAutoplay,
+        });
+      } catch {
+        // Widget/iframe went away mid-navigation — the next mount reloads it.
+      }
 
       // After first load, mark as no longer initial
       if (isInitialLoad) {

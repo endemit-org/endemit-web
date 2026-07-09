@@ -1,0 +1,118 @@
+{
+  "format": "custom",
+  "id": "mobile_menu_promo",
+  "label": "Mobile menu promo",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Main": {
+      "published": {
+        "type": "Boolean",
+        "config": {
+          "label": "Published",
+          "placeholder_false": "hidden",
+          "placeholder_true": "shown",
+          "default_value": false
+        }
+      },
+      "dismissable": {
+        "type": "Boolean",
+        "config": {
+          "label": "Dismissable",
+          "placeholder_false": "always shown",
+          "placeholder_true": "users can dismiss",
+          "default_value": true
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "venue_list": {
+              "type": "SharedSlice"
+            },
+            "save_the_date": {
+              "type": "SharedSlice"
+            },
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "event_list": {
+              "type": "SharedSlice"
+            },
+            "ticket_price_progress": {
+              "type": "SharedSlice"
+            },
+            "banner": {
+              "type": "SharedSlice"
+            },
+            "artist_list": {
+              "type": "SharedSlice"
+            },
+            "artist_lineup": {
+              "type": "SharedSlice"
+            },
+            "artist_profile_list": {
+              "type": "SharedSlice"
+            },
+            "blurred_blob": {
+              "type": "SharedSlice"
+            },
+            "snowfall": {
+              "type": "SharedSlice"
+            },
+            "collab_promo": {
+              "type": "SharedSlice"
+            },
+            "sound_cloud": {
+              "type": "SharedSlice"
+            },
+            "vinyl_promo_section": {
+              "type": "SharedSlice"
+            },
+            "poem": {
+              "type": "SharedSlice"
+            },
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "horizontal_rule": {
+              "type": "SharedSlice"
+            },
+            "text_column": {
+              "type": "SharedSlice"
+            },
+            "product_list": {
+              "type": "SharedSlice"
+            },
+            "podcast_list": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "newsletter_subscription": {
+              "type": "SharedSlice"
+            },
+            "content_section": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            },
+            "embed_block": {
+              "type": "SharedSlice"
+            }
+          }
+        }
+      }
+    }
+  }
+}

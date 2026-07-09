@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllPosOrders } from "@/domain/pos/operations/getAllPosOrders";
@@ -21,6 +22,8 @@ export default async function AdminPosOrdersPage() {
   if (!currentUser?.permissions.includes(PERMISSIONS.POS_ORDERS_READ)) {
     redirect("/admin");
   }
+
+  const t = await getTranslations("admin.pos.orders");
 
   const [ordersResult, registers, stats, paidOrdersWithItems] =
     await Promise.all([
@@ -76,40 +79,46 @@ export default async function AdminPosOrdersPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">POS Orders</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          View and manage all POS orders
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Total Orders</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.total")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {ordersResult.totalCount}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Paid</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.paid")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {statusCounts.PAID?.count ?? 0}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Revenue</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.revenue")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-green-600">
             {formatTokensFromCents(totalRevenue)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Tips</div>
+          <div className="text-sm font-medium text-gray-500">
+            {t("stats.tips")}
+          </div>
           <div className="mt-1 text-2xl font-semibold text-amber-600">
             {formatTokensFromCents(totalTips)}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">
-            Cash to Collect
+            {t("stats.cashToCollect")}
           </div>
           <div className="mt-1 text-2xl font-semibold text-red-600">
             {formatTokensFromCents(totalTopUps)}

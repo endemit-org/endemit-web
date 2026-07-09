@@ -1,6 +1,7 @@
 "use client";
 
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
+import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import clsx from "clsx";
@@ -8,14 +9,6 @@ import clsx from "clsx";
 interface WalletTransactionsTableProps {
   transactions: SerializedWalletTransaction[];
 }
-
-const typeLabels: Record<string, string> = {
-  CREDIT: "Credit",
-  DEBIT: "Debit",
-  PURCHASE: "Purchase",
-  REFUND: "Refund",
-  ADJUSTMENT: "Adjustment",
-};
 
 const typeColors: Record<string, string> = {
   CREDIT: "bg-green-100 text-green-800",
@@ -28,10 +21,12 @@ const typeColors: Record<string, string> = {
 export default function WalletTransactionsTable({
   transactions,
 }: WalletTransactionsTableProps) {
+  const t = useTranslations("admin.wallets");
+  const tt = useTranslations("admin.transactions.type");
   if (transactions.length === 0) {
     return (
       <div className="bg-gray-50 rounded-lg p-8 text-center text-gray-500">
-        No transactions yet
+        {t("noTransactions")}
       </div>
     );
   }
@@ -42,22 +37,22 @@ export default function WalletTransactionsTable({
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Date
+              {t("col.date")}
             </th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Type
+              {t("col.type")}
             </th>
             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Amount
+              {t("col.amount")}
             </th>
             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Balance After
+              {t("col.balanceAfter")}
             </th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Note
+              {t("col.note")}
             </th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Created By
+              {t("col.createdBy")}
             </th>
           </tr>
         </thead>
@@ -74,7 +69,7 @@ export default function WalletTransactionsTable({
                     typeColors[tx.type] || "bg-gray-100 text-gray-800"
                   )}
                 >
-                  {typeLabels[tx.type] || tx.type}
+                  {tt.has(tx.type) ? tt(tx.type) : tx.type}
                 </span>
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-right">
@@ -95,7 +90,7 @@ export default function WalletTransactionsTable({
                 {tx.note || "-"}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                {tx.createdBy?.name || tx.createdBy?.username || "System"}
+                {tx.createdBy?.name || tx.createdBy?.username || t("system")}
               </td>
             </tr>
           ))}

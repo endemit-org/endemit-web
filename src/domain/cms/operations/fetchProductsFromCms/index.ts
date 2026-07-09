@@ -2,6 +2,7 @@ import "server-only";
 
 import { prismicClient } from "@/lib/services/prismic";
 import { transformProductObject } from "@/domain/product/transformers/transformProductObject";
+import { PRODUCT_FETCH_LINKS } from "@/domain/cms/operations/fetchProductFromCms";
 import type { AppLocale } from "@/i18n/routing";
 
 export const fetchProductsFromCms = async ({
@@ -15,6 +16,7 @@ export const fetchProductsFromCms = async ({
 }) => {
   const products = await prismicClient.getAllByType("product", {
     pageSize,
+    fetchLinks: PRODUCT_FETCH_LINKS,
     ...(filters && { filters }),
   });
 

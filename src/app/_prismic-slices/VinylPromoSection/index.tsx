@@ -3,12 +3,14 @@ import { Content } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
+import { isProductVisible } from "@/domain/product/businessLogic";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
 import InnerClientToggle from "@/app/_prismic-slices/VinylPromoSection/InnerClientToggle";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
+import { getTranslations } from "next-intl/server";
 import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
 /**
@@ -27,6 +29,7 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
   context,
 }) => {
   const locale = context?.locale ?? "sl";
+  const t = await getTranslations({ locale, namespace: "music.vinylPromo" });
   if (!slice.primary.product) {
     return;
   }
@@ -36,7 +39,8 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
   // @ts-expect-error - ID does exist on the product
   const product = await fetchProductFromCmsById(productObject.id, locale);
 
-  if (!product) {
+  // Don't promote a product that isn't publicly visible.
+  if (!product || !isProductVisible(product)) {
     return;
   }
 
@@ -95,7 +99,7 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
             </div>
             <ProductAddToCart product={product} />
             <div className={"mt-3 gap-y-3 flex flex-col  items-center"}>
-              <div>or</div>
+              <div>{t("or")}</div>
               <div className={"w-fit"}>
                 <ActionButton
                   variant={"secondary"}
@@ -103,7 +107,7 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
                   size={"sm"}
                   href={"https://endemit.bandcamp.com/album/issun-boshi"}
                 >
-                  Buy digital album
+                  {t("buyDigital")}
                 </ActionButton>
               </div>
             </div>

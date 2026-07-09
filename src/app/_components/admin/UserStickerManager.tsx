@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface Props {
   userId: string;
@@ -15,6 +16,8 @@ export default function UserStickerManager({
   claimedAt,
 }: Props) {
   const router = useRouter();
+  const t = useTranslations("admin.users");
+  const tc = useTranslations("admin.common");
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +39,7 @@ export default function UserStickerManager({
       const code = raw.trim().toUpperCase();
       if (!code || isBusy) return;
       if (!/^[A-Z]{2}[0-9]{2}$/.test(code)) {
-        setError("Code must be 2 letters followed by 2 numbers (e.g. AB12)");
+        setError(t("sticker.invalidCode"));
         return;
       }
 
@@ -62,11 +65,11 @@ export default function UserStickerManager({
         setIsBusy(false);
       }
     },
-    [isBusy, router, userId]
+    [isBusy, router, userId, t]
   );
 
   const handleUnlink = useCallback(async () => {
-    if (!confirm("Unlink this QR code from the user?")) return;
+    if (!confirm(t("sticker.unlinkConfirm"))) return;
     setIsBusy(true);
     setError(null);
     try {
@@ -83,7 +86,7 @@ export default function UserStickerManager({
     } finally {
       setIsBusy(false);
     }
-  }, [router, userId]);
+  }, [router, userId, t]);
 
   return (
     <div className="space-y-3">
@@ -95,7 +98,9 @@ export default function UserStickerManager({
             </p>
             {claimedAt && (
               <p className="text-xs text-gray-500 mt-1">
-                Linked on {new Date(claimedAt).toLocaleString()}
+                {t("sticker.linkedOn", {
+                  date: new Date(claimedAt).toLocaleString(),
+                })}
               </p>
             )}
           </div>
@@ -105,26 +110,26 @@ export default function UserStickerManager({
               disabled={isBusy}
               className="px-3 py-1.5 text-sm border border-gray-300 hover:border-gray-400 text-gray-700 rounded-md transition-colors disabled:opacity-50"
             >
-              Replace
+              {t("sticker.replace")}
             </button>
             <button
               onClick={handleUnlink}
               disabled={isBusy}
               className="px-3 py-1.5 text-sm text-red-600 border border-red-300 hover:border-red-500 rounded-md transition-colors disabled:opacity-50"
             >
-              Unlink
+              {t("sticker.unlink")}
             </button>
           </div>
         </div>
       ) : (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-gray-500">No QR code linked</p>
+          <p className="text-sm text-gray-500">{t("sticker.none")}</p>
           <button
             onClick={openModal}
             disabled={isBusy}
             className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50"
           >
-            Assign QR code
+            {t("sticker.assign")}
           </button>
         </div>
       )}
@@ -146,7 +151,9 @@ export default function UserStickerManager({
           >
             <div className="px-6 py-4 border-b flex items-center justify-between">
               <h3 className="text-base font-semibold text-gray-900">
-                {currentCode ? "Replace Sticker" : "Assign Sticker"}
+                {currentCode
+                  ? t("sticker.replaceTitle")
+                  : t("sticker.assignTitle")}
               </h3>
               <button
                 onClick={closeModal}
@@ -170,7 +177,7 @@ export default function UserStickerManager({
             </div>
             <div className="p-6">
               <p className="text-sm text-gray-600 mb-4">
-                Enter the 4-character code from the QR code.
+                {t("sticker.modalHint")}
               </p>
               <input
                 type="text"
@@ -201,14 +208,14 @@ export default function UserStickerManager({
                   disabled={isBusy}
                   className="flex-1 px-4 py-2 text-sm text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-md transition-colors disabled:opacity-50"
                 >
-                  Cancel
+                  {tc("cancel")}
                 </button>
                 <button
                   onClick={() => submitCode(codeInput)}
                   disabled={isBusy || codeInput.length !== 4}
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50"
                 >
-                  {isBusy ? "Saving..." : "Save"}
+                  {isBusy ? t("sticker.saving") : tc("save")}
                 </button>
               </div>
             </div>

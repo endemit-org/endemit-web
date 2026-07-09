@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { generateTicketImageAction } from "@/domain/ticket/actions/generateTicketImageAction";
 import { sanitizeForFilename } from "@/lib/util/formatting";
 
@@ -15,6 +16,7 @@ export default function TicketDownloadButton({
   shortId,
   holderName,
 }: TicketDownloadButtonProps) {
+  const t = useTranslations("admin.tickets");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,7 +90,7 @@ export default function TicketDownloadButton({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            Generating...
+            {t("generating")}
           </>
         ) : (
           <>
@@ -105,7 +107,7 @@ export default function TicketDownloadButton({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
               />
             </svg>
-            Download Ticket
+            {t("downloadTicket")}
           </>
         )}
       </button>

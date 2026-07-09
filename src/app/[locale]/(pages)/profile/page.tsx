@@ -21,34 +21,56 @@ import ProfileUpcomingEventsAsync from "@/app/_components/profile/async/ProfileU
 import ProfileAnnouncementsAsync from "@/app/_components/profile/async/ProfileAnnouncementsAsync";
 import ProfileAccessButtonsAsync from "@/app/_components/profile/async/ProfileAccessButtonsAsync";
 import StickerLinkPrompt from "@/app/_components/profile/StickerLinkPrompt";
+import WristbandIntro from "@/app/_components/profile/WristbandIntro";
+import { getStickerProperty } from "@/domain/sticker/operations/getStickerProperty";
+import {
+  isValidStickerCode,
+  normalizeStickerCode,
+} from "@/domain/sticker/util/validateStickerCode";
 
-export const metadata: Metadata = {
-  title: "Profile",
-  description: "View and manage your Endemit account",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.profile.title"),
+    description: t("meta.profile.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function ProfilePage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ paymentCode?: string }>;
+  searchParams: Promise<{ paymentCode?: string; autoLink?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale as "sl" | "en");
   const t = await getTranslations("profile");
   const user = await getCurrentUser();
-  const { paymentCode } = await searchParams;
+  const { paymentCode, autoLink } = await searchParams;
 
   if (!user) {
-    const callback = paymentCode
-      ? `/profile?paymentCode=${encodeURIComponent(paymentCode)}`
-      : "/profile";
-    redirect(`/signin?callbackUrl=${encodeURIComponent(callback)}`);
+    // Someone scanned a wristband QR without being signed in: show them what
+    // the flow looks like before sending them into sign-in.
+    if (paymentCode) {
+      const normalizedCode = normalizeStickerCode(paymentCode);
+      return (
+        <WristbandIntro
+          color={await getStickerProperty(paymentCode)}
+          code={isValidStickerCode(normalizedCode) ? normalizedCode : null}
+        />
+      );
+    }
+    redirect(`/signin?callbackUrl=${encodeURIComponent("/profile")}`);
   }
 
   return (
@@ -82,7 +104,12 @@ export default async function ProfilePage({
 
           {/* Main content - streams progressively */}
           <div className="flex-1 space-y-6 max-sm:space-y-12">
-            {paymentCode && <StickerLinkPrompt paymentCode={paymentCode} />}
+            {paymentCode && (
+              <StickerLinkPrompt
+                paymentCode={paymentCode}
+                autoLink={autoLink === "1"}
+              />
+            )}
 
             {/* Access buttons for staff (admin, POS, scanner) */}
             <Suspense fallback={null}>

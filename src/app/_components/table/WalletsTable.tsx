@@ -1,6 +1,7 @@
 "use client";
 
 import type { SerializedWallet } from "@/domain/wallet/types";
+import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 
@@ -13,10 +14,11 @@ export default function WalletsTable({
   wallets,
   onRowClick,
 }: WalletsTableProps) {
+  const t = useTranslations("admin.wallets");
   if (wallets.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-        No wallets found
+        {t("noWallets")}
       </div>
     );
   }
@@ -26,16 +28,16 @@ export default function WalletsTable({
       <thead className="bg-gray-50 border-b border-gray-200">
         <tr>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            User
+            {t("col.user")}
           </th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Email
+            {t("col.email")}
           </th>
           <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Balance
+            {t("col.balance")}
           </th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Last Updated
+            {t("col.lastUpdated")}
           </th>
         </tr>
       </thead>
@@ -48,7 +50,7 @@ export default function WalletsTable({
           >
             <td className="px-6 py-4 whitespace-nowrap">
               <div className="text-sm font-medium text-gray-900">
-                {wallet.user?.name || wallet.user?.username || "Unknown"}
+                {wallet.user?.name || wallet.user?.username || t("unknown")}
               </div>
               {wallet.user?.name && (
                 <div className="text-sm text-gray-500">

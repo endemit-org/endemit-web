@@ -2,6 +2,7 @@ import { FC } from "react";
 import { isFilled } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
+import { isProductVisible } from "@/domain/product/businessLogic";
 import ProductCard from "@/app/_components/product/ProductCard";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
@@ -38,7 +39,9 @@ const CollabPromo: FC<CollabPromoProps> = async ({ slice, context }) => {
 
   let products = await fetchProductsFromCms({ locale });
   products = products
-    ? products.filter(product => productIds?.includes(product.id))
+    ? products.filter(
+        product => productIds?.includes(product.id) && isProductVisible(product)
+      )
     : [];
 
   // Get media

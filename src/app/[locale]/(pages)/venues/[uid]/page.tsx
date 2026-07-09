@@ -127,7 +127,7 @@ export default async function VenuePage({
           title={venue.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Venues", path: "venues" },
+            { label: t("breadcrumb"), path: "venues" },
             { label: venue.name, path: venue.uid },
           ]}
         />

@@ -24,7 +24,13 @@ import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
+import EventInnerContentLinks from "@/app/_components/event/EventInnerContentLinks";
+import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import ThemedEventPage from "@/app/_components/event/ThemedEventPage";
+import { getPageTheme } from "@/domain/event/config/pageThemes";
+import { renderHeadingEffect } from "@/app/_components/theme/effectRegistry";
+import GlitchText from "@/app/_components/theme/GlitchText";
 
 // Static until next deploy - no ISR
 export const revalidate = false;
@@ -57,7 +63,7 @@ export async function generateMetadata({
     notFound();
   }
 
-  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end) : ""}`}`} • Events`;
+  const title = `${event.meta.title ?? `${`${event.name} - ${event.date_start && event.date_end ? formatEventDate(event.date_start, event.date_end, loc) : ""}`}`} • Events`;
   const description = event?.meta.description ?? event.description ?? undefined;
   const images = buildOpenGraphImages({
     metaImage: event.meta.image,
@@ -102,25 +108,44 @@ export default async function EventPage({
   const innerContentPages = await fetchInnerContentPagesForEvent(event.id, loc);
   const isPastEvent = isEventCompleted(event);
 
+  // Per-event art-direction theme. `general` is a complete no-op (see
+  // ThemedEventPage); a themed event drives backgrounds, overlays, tokens and
+  // per-slice overrides. WebGL (three) loads only on pages whose theme declares
+  // a webgl layer.
+  const theme = getPageTheme(event.theme);
+  const showBlurredCover = theme.background?.showBlurredCover ?? true;
+  const showWormsPattern = theme.background?.showWormsPattern ?? true;
+  const wormsBackground = showWormsPattern
+    ? {
+        backgroundImage: "url('/images/worms.png')",
+        backgroundRepeat: "repeat" as const,
+        backgroundSize: "150px",
+      }
+    : {};
+
   // Fetch other events to explore for past events
   let otherEvents: (typeof event)[] = [];
   if (isPastEvent) {
     const allEvents = await fetchEventsFromCms({});
-    const filteredEvents = (allEvents ?? []).filter(
+    const others = (allEvents ?? []).filter(
       e =>
         e.uid !== event.uid && isEventVisible(e) && !e.options.externalEventLink
     );
 
-    // Shuffle array using Fisher-Yates algorithm for random selection
-    for (let i = filteredEvents.length - 1; i > 0; i--) {
+    // Always surface upcoming events first (soonest first), then fill the
+    // remaining slots with a random selection of past events.
+    const upcoming = others
+      .filter(e => !isEventCompleted(e) && e.date_start !== null)
+      .sort((a, b) => a.date_start!.getTime() - b.date_start!.getTime());
+
+    const past = others.filter(e => isEventCompleted(e));
+    // Shuffle past events using Fisher-Yates for variety
+    for (let i = past.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [filteredEvents[i], filteredEvents[j]] = [
-        filteredEvents[j],
-        filteredEvents[i],
-      ];
+      [past[i], past[j]] = [past[j], past[i]];
     }
 
-    otherEvents = filteredEvents.slice(0, 4);
+    otherEvents = [...upcoming, ...past].slice(0, 4);
   }
 
   const defaultContent = [] as TabItem[];
@@ -146,18 +171,46 @@ export default async function EventPage({
     sortingWeight: 400,
   });
 
-  if (innerContentPages && innerContentPages?.length > 0) {
-    innerContentPages.forEach(page => {
-      defaultContent.push({
-        label: page.title,
-        content: (
-          <div className={"max-lg:text-xs w-full"}>
-            <SliceDisplay slices={page.slices} locale={loc} />
-          </div>
-        ),
-        id: page.uid,
-        sortingWeight: page.sortingWeight,
-      });
+  const innerContentLinks =
+    innerContentPages && innerContentPages.length > 0
+      ? [...innerContentPages]
+          .sort((a, b) => (a.sortingWeight ?? 0) - (b.sortingWeight ?? 0))
+          .map(page => ({
+            id: page.uid,
+            title: page.title,
+            sortingWeight: page.sortingWeight,
+            content: (
+              <div className={"w-full"}>
+                <SliceDisplay
+                  slices={page.slices}
+                  locale={loc}
+                  theme={theme}
+                />
+              </div>
+            ),
+          }))
+      : [];
+
+  // Desktop: each linked page is its own tab. Mobile: a single "More" nav
+  // entry scrolls to a section listing them as links that open in modals
+  // (keeps content-heavy events from becoming an endless mobile scroll).
+  innerContentLinks.forEach(page => {
+    defaultContent.push({
+      label: page.title,
+      content: page.content,
+      id: page.id,
+      sortingWeight: page.sortingWeight,
+      desktopOnly: true,
+    });
+  });
+
+  if (innerContentLinks.length > 0) {
+    defaultContent.push({
+      label: t("tabs.more"),
+      content: <EventInnerContentLinks pages={innerContentLinks} />,
+      id: "more-info",
+      sortingWeight: 500,
+      mobileOnly: true,
     });
   }
 
@@ -166,7 +219,7 @@ export default async function EventPage({
       label: t("tabs.about"),
       content: (
         <div>
-          <SliceDisplay slices={event.slices} locale={loc} />
+          <SliceDisplay slices={event.slices} locale={loc} theme={theme} />
         </div>
       ),
       id: "overview",
@@ -189,44 +242,48 @@ export default async function EventPage({
     <>
       <EventSeoMicrodata products={products} event={event} />
       <OuterPage className={"max-lg:pt-10"}>
+       <ThemedEventPage theme={theme}>
         <PageHeadline
           title={event.name}
+          titleSlot={renderHeadingEffect(theme.headingEffect, event.name)}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Events", path: "events" },
+            { label: t("breadcrumb"), path: "events" },
             { label: event.name, path: event.uid },
           ]}
         />
-        <div
-          className={
-            "absolute top-80 h-[600px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
-          }
-          style={
-            event.coverImage
-              ? {
-                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
-                }
-              : {}
-          }
-        ></div>
-        <div
-          className={
-            "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
-          }
-          style={
-            event.coverImage
-              ? {
-                  backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
-                }
-              : {}
-          }
-        ></div>
+        {showBlurredCover && (
+          <>
+            <div
+              className={
+                "absolute top-80 h-[600px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-80 @container"
+              }
+              style={
+                event.coverImage
+                  ? {
+                      backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                    }
+                  : {}
+              }
+            ></div>
+            <div
+              className={
+                "max-lg:hidden absolute bottom-10 h-[800px] blur-2xl -left-10 -right-10 bg-cover animate-blurred-backdrop opacity-60 @container"
+              }
+              style={
+                event.coverImage
+                  ? {
+                      backgroundImage: `url('${getResizedPrismicImage(event.coverImage?.src, { width: 400, quality: 50 })}')`,
+                    }
+                  : {}
+              }
+            ></div>
+          </>
+        )}
         <div
           style={{
-            backgroundImage: "url('/images/worms.png')",
-            backgroundRepeat: "repeat",
+            ...wormsBackground,
             backgroundBlendMode: "soft-light",
-            backgroundSize: "150px",
 
             // backgroundColor: event.colour,
           }}
@@ -274,7 +331,7 @@ export default async function EventPage({
                     "uppercase max-lg:text-2xl lg:text-[clamp(0.7rem,2cqi,2rem)] flex-shrink-0"
                   }
                 >
-                  {formatEventDate(event.date_start, event.date_end)}
+                  {formatEventDate(event.date_start, event.date_end, loc)}
                   {isPastEvent && (
                     <div className={"text-neutral-400 text-sm"}>
                       {t("concluded")}
@@ -298,7 +355,7 @@ export default async function EventPage({
                         }
                         key={`artist-marquee-${artist.id}`}
                       >
-                        {artist.name}
+                        {renderHeadingEffect(theme.headingEffect, artist.name)}
                       </h3>
                     ))}
                   </div>
@@ -341,7 +398,7 @@ export default async function EventPage({
         )}
         <div
           className={
-            "-left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
+            "max-lg:hidden -left-12 text-[clamp(4rem,4cqi,20rem)] w-[120%] leading-[clamp(4rem,4cqi,20rem)] relative text-neutral-950 uppercase font-heading flex text-center  justify-between overflow-hidden text-nowrap -scale-y-100"
           }
         >
           <div className={"animate-marquee-move"}>
@@ -357,7 +414,15 @@ export default async function EventPage({
                   : (event.name ?? "");
               if (!pattern) return null;
               const repeatCount = Math.ceil(200 / pattern.length);
-              return Array(repeatCount).fill(pattern).join(" · ");
+              const marquee = Array(repeatCount).fill(pattern).join(" · ");
+              // Themed pages get a white glitch treatment on the marquee.
+              return theme.headingEffect ? (
+                <GlitchText as="span" className="crt-glitch-text--white">
+                  {marquee}
+                </GlitchText>
+              ) : (
+                marquee
+              );
             })()}
           </div>
         </div>
@@ -371,53 +436,56 @@ export default async function EventPage({
                 <ArtistCarousel
                   artists={event.artists}
                   headline={t("setTimes")}
+                  eventStart={event.date_start}
+                  eventEnd={event.date_end}
+                  hideBeforeEventOnMobile
                 />
               )}
             <Tabs items={defaultContent} sortByWeight={true} />
           </div>
 
           <section className={"max-lg:hidden flex-1"}>
-            <div
-              className={
-                "p-8 flex-1 bg-neutral-800 rounded-md h-fit rounded-bl-none shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
-              }
-              style={{
-                backgroundImage: "url('/images/worms.png')",
-                backgroundRepeat: "repeat",
-                backgroundBlendMode: "multiply",
-                backgroundSize: "150px",
+            <div className={"lg:sticky lg:top-8"}>
+              <div
+                className={
+                  "p-8 flex-1 bg-neutral-800 rounded-md h-fit rounded-bl-none shadow-[0_6px_7px_rgba(0,0,0,0.4)]"
+                }
+                style={{
+                  ...wormsBackground,
+                  backgroundBlendMode: "multiply",
 
-                // backgroundColor: event.colour,
-              }}
-            >
-              <EventTicketDisplay products={products} event={event} />
-            </div>
+                  // backgroundColor: event.colour,
+                }}
+              >
+                <EventTicketDisplay products={products} event={event} />
+              </div>
 
-            <div className={"p4 text-center mt-10 "}>
-              {event.video && (
-                <div className=" w-full  object-cover rounded-lg overflow-hidden px-8 mb-8">
-                  <video
-                    src={event.video}
-                    loop={true}
-                    muted={true}
-                    autoPlay={true}
-                    playsInline={true}
-                    className={"aspect-square"}
-                  />
+              <div className={"p4 text-center mt-10 "}>
+                {event.video && (
+                  <div className=" w-full  object-cover rounded-lg overflow-hidden px-8 mb-8">
+                    <video
+                      src={event.video}
+                      loop={true}
+                      muted={true}
+                      autoPlay={true}
+                      playsInline={true}
+                      className={"aspect-square"}
+                    />
+                  </div>
+                )}
+                {event.date_start && (
+                  <div
+                    className={
+                      "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
+                    }
+                  >
+                    {formatEventDateAndTime(event.date_start)}
+                  </div>
+                )}
+                <div className={"text-neutral-400 text-md font-thin "}>
+                  {event.venue?.name}
+                  <div>{event.venue?.address}</div>
                 </div>
-              )}
-              {event.date_start && (
-                <div
-                  className={
-                    "text-neutral-200 text-2xl font-heading tracking-wider uppercase"
-                  }
-                >
-                  {formatEventDateAndTime(event.date_start)}
-                </div>
-              )}
-              <div className={"text-neutral-400 text-md font-thin "}>
-                {event.venue?.name}
-                <div>{event.venue?.address}</div>
               </div>
             </div>
           </section>
@@ -447,6 +515,11 @@ export default async function EventPage({
             </div>
           </div>
         )}
+
+        <div className="relative z-10">
+          <EndemitSubscribe />
+        </div>
+       </ThemedEventPage>
       </OuterPage>
     </>
   );

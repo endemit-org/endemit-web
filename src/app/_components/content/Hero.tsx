@@ -3,7 +3,9 @@ import React from "react";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import HeroVimeoBackground from "@/app/_components/content/HeroVimeoBackground";
 import { CmsImage } from "@/domain/cms/types/common";
-import EventTicketAvailableStatus from "@/app/_components/event/EventTicketAvailableStatus";
+import HeroMarker, {
+  type HeroSpecialMarker,
+} from "@/app/_components/content/HeroMarker";
 
 export interface HeroProps {
   heading: string;
@@ -13,7 +15,12 @@ export interface HeroProps {
   backgroundVideo?: string;
   vimeoVideoId?: string;
   overlayOpacity?: number;
-  specialMarker?: "None" | "Tickets available";
+  specialMarker?: HeroSpecialMarker;
+  /**
+   * Optional themed replacement for the plain heading text (e.g. GlitchText).
+   * Falls back to `heading` when absent — non-themed pages are unaffected.
+   */
+  headingSlot?: React.ReactNode;
 }
 
 export default function Hero({
@@ -25,6 +32,7 @@ export default function Hero({
   vimeoVideoId,
   overlayOpacity = 50,
   specialMarker,
+  headingSlot,
 }: HeroProps) {
   const hasVideo = Boolean(vimeoVideoId || backgroundVideo);
   return (
@@ -36,8 +44,11 @@ export default function Hero({
         <div className="absolute inset-0 border-[20px] border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none z-20" />
       )}
 
-      {specialMarker && specialMarker === "Tickets available" && (
-        <EventTicketAvailableStatus className=" lg:left-auto right-6 lg:top-auto lg:bottom-6 z-20" />
+      {specialMarker && specialMarker !== "None" && (
+        <HeroMarker
+          marker={specialMarker}
+          className=" lg:left-auto right-6 lg:top-auto lg:bottom-6 z-20"
+        />
       )}
 
       {backgroundImage && (
@@ -80,7 +91,7 @@ export default function Hero({
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-200 max-w-4xl text-shadow"
               style={{ textShadow: "0 4px 8px rgba(0, 0, 0, 0.9)" }}
             >
-              {heading}
+              {headingSlot ?? heading}
             </h1>
 
             {description && (

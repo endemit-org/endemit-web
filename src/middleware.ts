@@ -27,7 +27,8 @@ function isLocaleExcluded(pathname: string): boolean {
     pathname === "/manifest.json" ||
     pathname === "/sw.js" ||
     pathname.startsWith("/images") ||
-    pathname.startsWith("/fonts")
+    pathname.startsWith("/fonts") ||
+    pathname.startsWith("/models")
   );
 }
 
@@ -97,6 +98,17 @@ function handleStagingAuth(request: NextRequest): NextResponse | null {
   return null;
 }
 
+// Search/social crawlers must never be geo-redirected: Googlebot crawls
+// mostly from US IPs, so redirecting non-SI visitors to /en would hide every
+// unprefixed (Slovenian, default-locale) page from indexing. Bots get the
+// content of the URL they asked for and discover /en via hreflang alternates.
+const BOT_UA =
+  /bot|crawler|spider|crawling|googlebot|bingbot|slurp|duckduckbot|baiduspider|yandex|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|applebot|petalbot/i;
+
+function isBot(request: NextRequest): boolean {
+  return BOT_UA.test(request.headers.get("user-agent") ?? "");
+}
+
 /**
  * Resolve the locale for an unprefixed request.
  * Precedence: manual switch cookie > Vercel IP geolocation > Slovenian default.
@@ -136,8 +148,9 @@ export function middleware(request: NextRequest) {
   const hasEnPrefix = pathname === "/en" || pathname.startsWith("/en/");
 
   // For unprefixed requests, redirect foreign / cookie-en visitors to /en.
-  // An explicit /en URL always wins regardless of cookie/geo.
-  if (!hasEnPrefix && resolveLocale(request) === "en") {
+  // An explicit /en URL always wins regardless of cookie/geo. Crawlers are
+  // never geo-redirected (see BOT_UA) so both language trees stay indexable.
+  if (!hasEnPrefix && !isBot(request) && resolveLocale(request) === "en") {
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" ? "/en" : `/en${pathname}`;
     return NextResponse.redirect(url);
@@ -151,6 +164,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/api/:path*",
-    "/((?!_next/static|_next/image|favicon.ico|images|fonts).*)",
+    "/((?!_next/static|_next/image|favicon.ico|images|fonts|models).*)",
   ],
 };

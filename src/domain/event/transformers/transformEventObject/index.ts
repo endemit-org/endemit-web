@@ -5,6 +5,7 @@ import { EventDocument } from "@/prismicio-types";
 import { convertMinutesToMs } from "@/lib/util/converters";
 import { getBlurDataURL } from "@/lib/util/util";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
+import { mapPageTheme } from "@/domain/event/config/pageThemes";
 import type { AppLocale } from "@/i18n/routing";
 
 export const transformEventObject = async (
@@ -172,8 +173,11 @@ export const transformEventObject = async (
     hasCashlessPayments:
       (event.data as { has_cashless_payments?: boolean }).has_cashless_payments ??
       false,
-    annotation: event.data.annotation,
+    annotation: pickLocalized(event.data, "annotation", locale),
     type: event.data.event_type,
+    theme: mapPageTheme(
+      (event.data as { page_theme?: string | null }).page_theme
+    ),
     date_start: event.data.date_start ? new Date(event.data.date_start) : null,
     date_end: event.data.date_end ? new Date(event.data.date_end) : null,
     event: asLink(event.data.video) ?? null,

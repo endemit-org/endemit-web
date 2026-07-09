@@ -13,14 +13,16 @@ const SendFundsModal = dynamic(
 interface Props {
   userId: string;
   initialBalance: number;
+  initialSendCode?: string;
 }
 
 export default function TransferFundsTrigger({
   userId,
   initialBalance,
+  initialSendCode,
 }: Props) {
   const t = useTranslations("profile");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(!!initialSendCode);
   const [balance, setBalance] = useState(initialBalance);
 
   const handleWalletUpdate = useCallback(
@@ -48,6 +50,7 @@ export default function TransferFundsTrigger({
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         senderBalance={balance}
+        initialCode={initialSendCode}
       />
     </>
   );

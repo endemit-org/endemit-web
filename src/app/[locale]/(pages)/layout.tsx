@@ -2,6 +2,9 @@ import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
 import BackToTopButton from "@/app/_components/ui/BackToTopButton";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
+import { fetchMobileMenuPromoFromCms } from "@/domain/cms/operations/fetchMobileMenuPromoFromCms";
+import MobileMenuPromoFrame from "@/app/_components/ui/MobileMenuPromoFrame";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import PlayerContentWrapper from "@/app/_components/player/PlayerContentWrapper";
 
@@ -14,7 +17,10 @@ export default async function ContentPageLayout({
 }>) {
   const { locale } = await params;
   const loc = locale === "en" ? "en" : "sl";
-  const menuItems = await fetchNavigationMenuFromCms(loc);
+  const [menuItems, menuPromo] = await Promise.all([
+    fetchNavigationMenuFromCms(loc),
+    fetchMobileMenuPromoFromCms(),
+  ]);
 
   return (
     <PlayerContentWrapper>
@@ -28,12 +34,19 @@ export default async function ContentPageLayout({
               ctaText: item.ctaText,
             }))}
             hideCartOnPath={["/store/checkout"]}
+            promo={
+              menuPromo ? (
+                <MobileMenuPromoFrame dismissable={menuPromo.dismissable}>
+                  <SliceDisplay slices={menuPromo.slices} locale={loc} />
+                </MobileMenuPromoFrame>
+              ) : null
+            }
           />
         )}
 
-        <div className="lg:ml-72 relative bg-neutral-900 min-h-dvh lg:mt-12 lg:mb-20 lg:rounded-r-xl lg:border-y-2 lg:border-r-2 lg:border-neutral-800  max-lg:mb-36 max-lg:mt-14  ">
+        <div className="app-page-frame lg:ml-72 relative bg-neutral-900 min-h-dvh lg:mt-12 lg:mb-20 lg:rounded-r-xl lg:border-y-2 lg:border-r-2 lg:border-neutral-800  max-lg:mb-36 max-lg:mt-14  ">
           <div
-            className="absolute  top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-50 min-h-dvh"
+            className="app-page-frame__worms absolute  top-0 bottom-0 left-0 right-0 bg-neutral-900 opacity-50 min-h-dvh"
             style={{
               backgroundImage: "url('/images/worms.png')",
               backgroundRepeat: "repeat",
@@ -41,7 +54,7 @@ export default async function ContentPageLayout({
               backgroundSize: "150px",
             }}
           />
-          <div className={"overflow-hidden relative p-4 lg:p-12 max-lg:py-12"}>
+          <div className={"overflow-x-clip relative p-4 lg:p-12 max-lg:py-12"}>
             <div className={"relative"}>{children}</div>
           </div>
           <SiteFooter locale={loc} />

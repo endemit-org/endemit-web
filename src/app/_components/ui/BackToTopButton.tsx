@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import clsx from "clsx";
 
 export default function BackToTopButton() {
+  const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -37,7 +39,9 @@ export default function BackToTopButton() {
     <button
       onClick={scrollToTop}
       className={clsx(
-        "lg:hidden fixed bottom-20 right-4 z-40",
+        // z-30 keeps it below the mobile nav menu (z-40) so it doesn't overlay
+        // the expanded menu, while still floating above page content.
+        "lg:hidden fixed bottom-20 right-4 z-30",
         "w-12 h-12 rounded-full",
         "bg-neutral-800 border border-neutral-700",
         "flex items-center justify-center",
@@ -47,7 +51,7 @@ export default function BackToTopButton() {
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-4 pointer-events-none"
       )}
-      aria-label="Back to top"
+      aria-label={t("a11y.backToTop")}
     >
       <svg
         className="w-5 h-5 text-neutral-300"

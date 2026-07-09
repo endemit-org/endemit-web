@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getOrdersByUserId } from "@/domain/order/operations/getOrdersByUserId";
-import { formatCurrency } from "@/lib/util/formatting";
+import { formatCurrency, formatDate } from "@/lib/util/formatting";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -13,14 +13,22 @@ import ProfileTable, {
   ProfileTableRow,
 } from "@/app/_components/profile/ProfileTable";
 
-export const metadata: Metadata = {
-  title: "Orders",
-  description: "View your order history",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.orders.title"),
+    description: t("meta.orders.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 const statusColors: Record<string, string> = {
   PAID: "bg-green-500/20 text-green-400",
@@ -101,9 +109,9 @@ export default async function ProfileOrdersPage({
           emptyMessage={t("orders.empty")}
         >
           {orders.map((order, index) => {
-            const formattedDate = new Date(order.createdAt).toLocaleDateString(
-              "en-US",
-              { month: "short", day: "numeric", year: "numeric" }
+            const formattedDate = formatDate(
+              new Date(order.createdAt),
+              locale as "sl" | "en"
             );
 
             return (

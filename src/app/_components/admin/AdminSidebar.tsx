@@ -2,13 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
 import type { Permission } from "@/domain/auth/config/permissions.config";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import WalletIcon from "@/app/_components/icon/WalletIcon";
+import CookieLanguageSwitcher from "@/app/_components/ui/CookieLanguageSwitcher";
+
+type NavT = ReturnType<typeof useTranslations<"admin.nav">>;
+type NavKey = Parameters<NavT>[0];
 
 interface NavItem {
-  label: string;
+  labelKey: NavKey;
   href: string;
   icon: React.ReactNode;
   permission?: Permission;
@@ -33,7 +38,7 @@ const ExternalLinkIcon = () => (
 
 const navItems: NavItem[] = [
   {
-    label: "Dashboard",
+    labelKey: "dashboard",
     href: "/admin",
     icon: (
       <svg
@@ -52,7 +57,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Orders",
+    labelKey: "orders",
     href: "/admin/orders",
     icon: (
       <svg
@@ -71,7 +76,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Events",
+    labelKey: "events",
     href: "/admin/events",
     icon: (
       <svg
@@ -90,7 +95,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Donations",
+    labelKey: "donations",
     href: "/admin/donations",
     icon: (
       <svg
@@ -109,7 +114,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Users",
+    labelKey: "users",
     href: "/admin/users",
     permission: PERMISSIONS.USERS_READ,
     icon: (
@@ -129,7 +134,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Roles",
+    labelKey: "roles",
     href: "/admin/roles",
     permission: PERMISSIONS.ROLES_READ,
     icon: (
@@ -149,13 +154,13 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Wallets",
+    labelKey: "wallets",
     href: "/admin/wallets",
     permission: PERMISSIONS.WALLETS_READ,
     icon: <WalletIcon className="w-5 h-5" />,
   },
   {
-    label: "Announcements",
+    labelKey: "announcements",
     href: "/admin/announcements",
     permission: PERMISSIONS.ANNOUNCEMENTS_READ,
     icon: (
@@ -175,7 +180,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Transactions",
+    labelKey: "transactions",
     href: "/admin/transactions",
     permission: PERMISSIONS.TRANSACTIONS_READ,
     icon: (
@@ -195,7 +200,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Scanner",
+    labelKey: "scanner",
     href: "/scan",
     external: true,
     icon: (
@@ -215,7 +220,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "POS Items",
+    labelKey: "posItems",
     href: "/admin/pos/items",
     permission: PERMISSIONS.POS_ITEMS_READ,
     icon: (
@@ -235,7 +240,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "POS Registers",
+    labelKey: "posRegisters",
     href: "/admin/pos/registers",
     permission: PERMISSIONS.POS_REGISTERS_READ,
     icon: (
@@ -255,7 +260,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Event Claims",
+    labelKey: "eventClaims",
     href: "/admin/event-claims",
     permission: PERMISSIONS.EVENT_CLAIMS_MANAGE,
     icon: (
@@ -275,7 +280,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "POS offline QRs",
+    labelKey: "posOfflineQrs",
     href: "/admin/pos/stickers",
     permission: PERMISSIONS.POS_STICKERS_MANAGE,
     icon: (
@@ -295,7 +300,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "POS Orders",
+    labelKey: "posOrders",
     href: "/admin/pos/orders",
     permission: PERMISSIONS.POS_ORDERS_READ,
     icon: (
@@ -315,7 +320,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "POS Terminal",
+    labelKey: "posTerminal",
     href: "/pos",
     external: true,
     permission: PERMISSIONS.POS_ACCESS,
@@ -336,7 +341,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "My Profile",
+    labelKey: "myProfile",
     href: "/profile",
     external: true,
     icon: (
@@ -358,11 +363,12 @@ const navItems: NavItem[] = [
 ];
 
 export function MobileNavTrigger({ onClick }: { onClick: () => void }) {
+  const t = useTranslations("admin.nav");
   return (
     <button
       onClick={onClick}
       className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-      aria-label="Open navigation menu"
+      aria-label={t("openMenu")}
     >
       <svg
         className="w-6 h-6"
@@ -391,6 +397,8 @@ export function MobileNav({
   permissions?: Permission[];
 }) {
   const pathname = usePathname();
+  const t = useTranslations("admin.nav");
+  const locale = useLocale();
 
   const isActive = (href: string) => {
     if (href === "/admin") {
@@ -403,7 +411,11 @@ export function MobileNav({
     item => !item.permission || permissions.includes(item.permission)
   );
 
-  const { dashboard, internal, external } = organizeNavItems(filteredItems);
+  const { dashboard, internal, external } = organizeNavItems(
+    filteredItems,
+    t,
+    locale
+  );
 
   const renderNavItem = (item: NavItem) => (
     <Link
@@ -420,7 +432,7 @@ export function MobileNav({
       )}
     >
       {item.icon}
-      {item.label}
+      {t(item.labelKey)}
       {item.external && <ExternalLinkIcon />}
     </Link>
   );
@@ -438,7 +450,7 @@ export function MobileNav({
       />
       <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 shadow-xl flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-gray-800 flex-shrink-0">
-          <span className="text-white font-semibold">Admin Menu</span>
+          <span className="text-white font-semibold">{t("menuTitle")}</span>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white"
@@ -465,6 +477,9 @@ export function MobileNav({
           {external.length > 0 && <MobileDivider />}
           {external.map(renderNavItem)}
         </nav>
+        <div className="px-4 py-4 border-t border-gray-800 flex-shrink-0">
+          <CookieLanguageSwitcher className="text-sm text-gray-400 hover:text-white" />
+        </div>
       </div>
     </div>
   );
@@ -474,14 +489,14 @@ interface AdminSidebarProps {
   permissions?: Permission[];
 }
 
-function organizeNavItems(items: NavItem[]) {
+function organizeNavItems(items: NavItem[], t: NavT, locale: string) {
+  const byLabel = (a: NavItem, b: NavItem) =>
+    t(a.labelKey).localeCompare(t(b.labelKey), locale);
   const dashboard = items.find(item => item.href === "/admin");
   const internal = items
     .filter(item => item.href !== "/admin" && !item.external)
-    .sort((a, b) => a.label.localeCompare(b.label));
-  const external = items
-    .filter(item => item.external)
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort(byLabel);
+  const external = items.filter(item => item.external).sort(byLabel);
 
   return { dashboard, internal, external };
 }
@@ -490,6 +505,8 @@ const Divider = () => <div className="my-2 border-t border-gray-800" />;
 
 export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations("admin.nav");
+  const locale = useLocale();
 
   const isActive = (href: string) => {
     if (href === "/admin") {
@@ -502,7 +519,11 @@ export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
     item => !item.permission || permissions.includes(item.permission)
   );
 
-  const { dashboard, internal, external } = organizeNavItems(filteredItems);
+  const { dashboard, internal, external } = organizeNavItems(
+    filteredItems,
+    t,
+    locale
+  );
 
   const renderNavItem = (item: NavItem) => (
     <Link
@@ -518,7 +539,7 @@ export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
       )}
     >
       {item.icon}
-      {item.label}
+      {t(item.labelKey)}
       {item.external && <ExternalLinkIcon />}
     </Link>
   );
@@ -532,6 +553,9 @@ export default function AdminSidebar({ permissions = [] }: AdminSidebarProps) {
         {external.length > 0 && <Divider />}
         {external.map(renderNavItem)}
       </nav>
+      <div className="px-4 py-4 border-t border-gray-800">
+        <CookieLanguageSwitcher className="text-sm text-gray-400 hover:text-white" />
+      </div>
     </aside>
   );
 }

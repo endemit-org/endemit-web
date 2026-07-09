@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getOrderWithTickets } from "@/domain/order/operations/getOrderWithTickets";
 import { formatPrice, formatDateTime } from "@/lib/util/formatting";
 import { getCurrentUser } from "@/lib/services/auth";
@@ -13,9 +14,10 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getTranslations("admin.orders");
 
   return {
-    title: `Order ${id.slice(0, 8)}...  •  Orders  •  Admin`,
+    title: t("detail.metaTitle", { id: `${id.slice(0, 8)}...` }),
     robots: {
       index: false,
       follow: false,
@@ -47,21 +49,14 @@ const ticketStatusColors: Record<string, string> = {
   REFUNDED: "bg-gray-100 text-gray-800",
 };
 
-const ticketStatusLabels: Record<string, string> = {
-  VALIDATED: "Ready to scan",
-  PENDING: "Ready to scan",
-  SCANNED: "Used",
-  CANCELLED: "Cancelled",
-  BANNED: "Banned",
-  REFUND_REQUESTED: "Refund Requested",
-  REFUNDED: "Refunded",
-};
-
 export default async function AdminOrderDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = await getTranslations("admin.orders");
+  const ts = await getTranslations("admin.status.order");
+  const tk = await getTranslations("admin.orders.ticketStatus");
   const currentUser = await getCurrentUser();
 
   // Permission check - must have ORDERS_READ_ALL to view this page
@@ -96,7 +91,7 @@ export default async function AdminOrderDetailPage({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Orders
+          {t("detail.backToOrders")}
         </Link>
       </div>
 
@@ -105,7 +100,7 @@ export default async function AdminOrderDetailPage({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                Order Details
+                {t("detail.title")}
               </h1>
               <p className="text-sm text-gray-500 font-mono mt-1">{order.id}</p>
             </div>
@@ -115,7 +110,7 @@ export default async function AdminOrderDetailPage({
                 statusColors[order.status] || "bg-gray-100 text-gray-800"
               )}
             >
-              {order.status}
+              {ts(order.status)}
             </span>
           </div>
 
@@ -135,17 +130,17 @@ export default async function AdminOrderDetailPage({
         <div className="p-6 space-y-6">
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Customer Information
+              {t("detail.customerInfo")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
               {order.name && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Name:</span>
+                  <span className="text-gray-600">{t("detail.name")}</span>
                   <span className="font-medium">{order.name}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-gray-600">Email:</span>
+                <span className="text-gray-600">{t("detail.email")}</span>
                 <a
                   href={`mailto:${order.email}`}
                   className="font-medium text-blue-600 hover:text-blue-800"
@@ -154,7 +149,7 @@ export default async function AdminOrderDetailPage({
                 </a>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Date:</span>
+                <span className="text-gray-600">{t("detail.date")}</span>
                 <span className="font-medium">
                   {formatDateTime(new Date(order.createdAt))}
                 </span>
@@ -164,27 +159,27 @@ export default async function AdminOrderDetailPage({
 
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Order Summary
+              {t("detail.orderSummary")}
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-gray-600">{t("detail.subtotal")}</span>
                 <span>{formatPrice(order.subtotal)}</span>
               </div>
               {order.discountAmount != null && order.discountAmount > 0 && (
                 <div className="flex justify-between text-green-600">
-                  <span>Discount:</span>
+                  <span>{t("detail.discount")}</span>
                   <span>-{formatPrice(order.discountAmount)}</span>
                 </div>
               )}
               {order.shippingAmount != null && order.shippingAmount > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping:</span>
+                  <span className="text-gray-600">{t("detail.shipping")}</span>
                   <span>{formatPrice(order.shippingAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
-                <span>Total:</span>
+                <span>{t("detail.total")}</span>
                 <span>{formatPrice(order.totalAmount)}</span>
               </div>
             </div>
@@ -192,7 +187,7 @@ export default async function AdminOrderDetailPage({
 
           <section>
             <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-              Items ({order.items.length})
+              {t("detail.items", { count: order.items.length })}
             </h2>
             <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
               {order.items.map((item, index) => (
@@ -203,7 +198,7 @@ export default async function AdminOrderDetailPage({
                   <div>
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-500">
-                      {item.category} • Qty: {item.quantity}
+                      {item.category} • {t("detail.qty", { count: item.quantity })}
                     </p>
                   </div>
                   <span className="font-medium">
@@ -217,7 +212,7 @@ export default async function AdminOrderDetailPage({
           {order.tickets.length > 0 && (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Tickets ({order.tickets.length})
+                {t("detail.tickets", { count: order.tickets.length })}
               </h2>
               <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
                 {order.tickets.map(ticket => (
@@ -232,7 +227,7 @@ export default async function AdminOrderDetailPage({
                           <p className="font-medium">{ticket.eventName}</p>
                           {ticket.isGuestList && (
                             <span className="rounded-full px-2 py-0.5 text-xs bg-purple-100 text-purple-800 font-medium">
-                              Guest
+                              {t("detail.guest")}
                             </span>
                           )}
                         </div>
@@ -250,7 +245,7 @@ export default async function AdminOrderDetailPage({
                             ticketStatusColors[ticket.status] || "bg-gray-100 text-gray-800"
                           )}
                         >
-                          {ticketStatusLabels[ticket.status] || ticket.status}
+                          {tk.has(ticket.status) ? tk(ticket.status) : ticket.status}
                         </span>
                         <p className="text-sm font-medium mt-1">
                           {formatPrice(ticket.price)}
@@ -278,7 +273,7 @@ export default async function AdminOrderDetailPage({
                   href={`/admin/events/${order.tickets[0].eventId}`}
                   className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-800"
                 >
-                  View event tickets →
+                  {t("detail.viewEventTickets")}
                 </Link>
               )}
             </section>
@@ -296,24 +291,24 @@ export default async function AdminOrderDetailPage({
             return (
             <section>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Shipping Address
+                {t("detail.shippingAddress")}
               </h2>
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                 {addr.name && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Name:</span>
+                    <span className="text-gray-600">{t("detail.name")}</span>
                     <span className="font-medium">{addr.name}</span>
                   </div>
                 )}
                 {addr.address && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Address:</span>
+                    <span className="text-gray-600">{t("detail.address")}</span>
                     <span className="font-medium">{addr.address}</span>
                   </div>
                 )}
                 {(addr.postalCode || addr.city) && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">City:</span>
+                    <span className="text-gray-600">{t("detail.city")}</span>
                     <span className="font-medium">
                       {[addr.postalCode, addr.city].filter(Boolean).join(" ")}
                     </span>
@@ -321,13 +316,13 @@ export default async function AdminOrderDetailPage({
                 )}
                 {addr.country && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Country:</span>
+                    <span className="text-gray-600">{t("detail.country")}</span>
                     <span className="font-medium">{addr.country}</span>
                   </div>
                 )}
                 {addr.phone && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Phone:</span>
+                    <span className="text-gray-600">{t("detail.phone")}</span>
                     <a
                       href={`tel:${addr.phone}`}
                       className="font-medium text-blue-600 hover:text-blue-800"
@@ -366,7 +361,7 @@ export default async function AdminOrderDetailPage({
                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                       />
                     </svg>
-                    View on Google Maps
+                    {t("detail.viewOnGoogleMaps")}
                   </a>
                 </div>
               </div>

@@ -1,13 +1,15 @@
 import PageHeadline from "@/app/_components/ui/PageHeadline";
+import { getTranslations } from "next-intl/server";
 
-export default function EventScanLoading() {
+export default async function EventScanLoading() {
+  const t = await getTranslations("scan.scanner");
   return (
     <>
       <PageHeadline
-        title="Loading..."
+        title={t("loading")}
         segments={[
           { label: "Endemit", path: "" },
-          { label: "Scan", path: "scan" },
+          { label: t("breadcrumb"), path: "scan" },
           { label: "...", path: "" },
         ]}
       />

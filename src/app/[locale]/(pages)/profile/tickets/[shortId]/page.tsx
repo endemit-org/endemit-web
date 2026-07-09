@@ -11,14 +11,22 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import TicketContent from "@/app/_components/profile/TicketContent";
 
-export const metadata: Metadata = {
-  title: "Ticket",
-  description: "View your ticket",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ shortId: string; locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.ticket.title"),
+    description: t("meta.ticket.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 interface ProfileTicketPageProps {
   params: Promise<{ shortId: string; locale: string }>;
@@ -142,7 +150,12 @@ export default async function ProfileTicketPage({
           }
           initialScannedAt={initialScannedAt}
           formattedEventDate={
-            event?.date_start ? formatEventDateAndTime(event.date_start) : null
+            event?.date_start
+              ? formatEventDateAndTime(
+                  event.date_start,
+                  locale === "en" ? "en" : "sl"
+                )
+              : null
           }
           isEventPassed={isEventPassed}
         />

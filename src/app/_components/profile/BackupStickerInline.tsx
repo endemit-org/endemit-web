@@ -1,7 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 const LinkStickerModal = dynamic(
@@ -18,52 +20,56 @@ interface Props {
   currentCode: string | null;
   walletBalance?: number | null;
   receiveCode: string;
-}
-
-function InfoButton({
-  isOpen,
-  onToggle,
-}: {
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  const t = useTranslations("profile");
-  return (
-    <button
-      type="button"
-      aria-label={t("wristband.whatIsThis")}
-      aria-expanded={isOpen}
-      onClick={e => {
-        e.preventDefault();
-        e.stopPropagation();
-        onToggle();
-      }}
-      className="flex-shrink-0 w-6 h-6 rounded-full border border-neutral-700 text-neutral-500 hover:text-neutral-200 hover:border-neutral-500 flex items-center justify-center text-xs transition-colors"
-    >
-      ?
-    </button>
-  );
+  /** Render the Pay button flush against the wallet balance card above it. */
+  attached?: boolean;
+  /** Increment to open the pay QR modal from the parent (e.g. tapping the
+      wallet balance card). */
+  openQrRequest?: number;
 }
 
 export default function BackupStickerInline({
   currentCode,
   walletBalance = null,
   receiveCode,
+  attached = false,
+  openQrRequest = 0,
 }: Props) {
   const t = useTranslations("profile");
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLinkOpen, setIsLinkOpen] = useState(false);
   const [isQrOpen, setIsQrOpen] = useState(false);
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-  const toggleInfo = () => setIsInfoOpen(v => !v);
+  // With nothing to spend, the big Pay button is just noise — hide it and
+  // keep the wristband-link affordance.
+  const canPay = (walletBalance ?? 0) > 0;
+
+  // Parent-triggered open (wallet balance card tap).
+  useEffect(() => {
+    if (openQrRequest > 0) setIsQrOpen(true);
+  }, [openQrRequest]);
+
+  // ?pay=1 (e.g. the mobile menu's wallet bar) deep-links straight into the
+  // pay QR modal; strip the param so a refresh doesn't reopen it.
+  const autoOpenedRef = useRef(false);
+  useEffect(() => {
+    if (autoOpenedRef.current) return;
+    if (searchParams.get("pay") === "1" && canPay) {
+      autoOpenedRef.current = true;
+      setIsQrOpen(true);
+      router.replace("/profile", { scroll: false });
+    }
+  }, [searchParams, canPay, router]);
 
   return (
-    <div className="mb-6">
-      <div className="flex items-center gap-2">
+    <div className={attached ? "" : "mb-6"}>
+      {canPay && (
         <button
           type="button"
           onClick={() => setIsQrOpen(true)}
-          className="group flex-1 flex items-center justify-between gap-3 px-4 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-md font-medium transition-colors shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:outline-none"
+          className={`group w-full flex items-center justify-between gap-3 px-4 py-3 bg-blue-700 hover:bg-blue-800 text-white font-medium transition-colors shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:outline-none ${
+            attached ? "rounded-b-lg" : "rounded-md"
+          }`}
         >
           <span className="flex items-center gap-2">
             <svg
@@ -104,8 +110,7 @@ export default function BackupStickerInline({
             </svg>
           </span>
         </button>
-        <InfoButton isOpen={isInfoOpen} onToggle={toggleInfo} />
-      </div>
+      )}
 
       {!currentCode && (
         <button
@@ -115,12 +120,6 @@ export default function BackupStickerInline({
         >
           {t("wristband.linkForOffline")}
         </button>
-      )}
-
-      {isInfoOpen && (
-        <p className="mt-2 px-3 py-2 text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 rounded-lg leading-relaxed">
-          {t("wristband.infoText")}
-        </p>
       )}
 
       <LinkStickerModal

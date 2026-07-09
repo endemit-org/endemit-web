@@ -7,7 +7,7 @@ export const isEventVisible = (event: Event) => {
 };
 
 export const isEventCompleted = (event: Event, bufferHours: number = 0) => {
-  if (!event.date_end) {
+  if (!event?.date_end) {
     return false;
   }
 

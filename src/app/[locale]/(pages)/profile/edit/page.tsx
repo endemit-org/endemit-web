@@ -9,22 +9,28 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import ProfileEditForm from "@/app/_components/profile/ProfileEditForm";
 import { getUserSticker } from "@/domain/sticker/operations/getUserSticker";
-import { signReceiveCode } from "@/domain/wallet/util/receiveCode";
-import ReceiveFundsCard from "@/app/_components/profile/ReceiveFundsCard";
 
 // Dynamic import: QR Scanner (~120KB) only loads when component mounts
 const BackupStickerCard = dynamic(
   () => import("@/app/_components/profile/BackupStickerCard")
 );
 
-export const metadata: Metadata = {
-  title: "Edit Profile",
-  description: "Edit your profile information",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "profile" });
+  return {
+    title: t("meta.edit.title"),
+    description: t("meta.edit.description"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function ProfileEditPage({
   params,
@@ -41,7 +47,6 @@ export default async function ProfileEditPage({
   }
 
   const sticker = await getUserSticker(user.id);
-  const receiveCode = signReceiveCode(user.id);
 
   return (
     <OuterPage>
@@ -82,11 +87,10 @@ export default async function ProfileEditPage({
             <ProfileEditForm name={user.name} image={user.image} />
           </div>
 
-          <ReceiveFundsCard receiveCode={receiveCode} />
-
           <BackupStickerCard
             currentCode={sticker?.code ?? null}
             claimedAt={sticker?.claimedAt?.toISOString() ?? null}
+            property={sticker?.property ?? null}
           />
         </div>
       </InnerPage>

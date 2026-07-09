@@ -35,14 +35,14 @@ export default function ArtistPreviewSetButton({
   return (
     <button
       onClick={handlePlay}
-      className={`flex items-center gap-2 text-md transition-colors group ${
+      className={`artist-play-btn flex items-center gap-2 text-md transition-colors group ${
         isCurrentlyPlaying
           ? "text-blue-400"
           : "text-neutral-200 hover:text-neutral-300"
       }`}
     >
       <span
-        className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+        className={`artist-play-icon-wrap w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
           isCurrentlyPlaying
             ? "bg-blue-500"
             : "bg-blue-800 group-hover:bg-blue-700"
@@ -64,7 +64,7 @@ export default function ArtistPreviewSetButton({
           <PlayIcon className="w-3 h-3 ml-0.5" />
         )}
       </span>
-      <span className="underline underline-offset-4 decoration-dotted">
+      <span className="underline underline-offset-4 decoration-dotted max-md:text-left">
         {isCurrentlyPlaying
           ? t("preview.nowPlaying", { name: artistName })
           : t("preview.playSet", { name: artistName })}

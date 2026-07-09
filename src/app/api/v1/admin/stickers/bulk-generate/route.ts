@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { bulkGenerateStickers } from "@/domain/sticker/operations/bulkGenerateStickers";
+import { isStickerCodeProperty } from "@/domain/sticker/operations/updateStickerProperty";
 
 export async function POST(request: Request) {
   try {
@@ -15,8 +16,11 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const count = Number(body?.count);
+    const property = isStickerCodeProperty(body?.property)
+      ? body.property
+      : null;
 
-    const result = await bulkGenerateStickers(count);
+    const result = await bulkGenerateStickers(count, property);
     return NextResponse.json(result);
   } catch (error) {
     const message =

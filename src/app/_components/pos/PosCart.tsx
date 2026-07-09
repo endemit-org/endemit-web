@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 
 interface PosItem {
@@ -30,11 +31,11 @@ export function PosCart({
   onCreateOrder,
   isCreating,
 }: Props) {
+  const t = useTranslations("pos");
+
   if (items.length === 0) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        Tap items above to add them to the order
-      </div>
+      <div className="p-4 text-center text-gray-500">{t("cart.empty")}</div>
     );
   }
 
@@ -51,7 +52,7 @@ export function PosCart({
                 {item.name}
               </span>
               <span className="text-xs text-gray-500">
-                {formatTokensFromCents(item.cost)} each
+                {t("cart.each", { amount: formatTokensFromCents(item.cost) })}
               </span>
             </div>
             <div className="flex items-center gap-2 ml-2">
@@ -81,7 +82,7 @@ export function PosCart({
           onClick={onClear}
           className="px-4 py-2 text-sm font-medium text-red-600 border border-red-300 hover:bg-red-50 rounded-lg transition-colors"
         >
-          Clear
+          {t("cart.clear")}
         </button>
         <div className="flex items-center gap-4">
           <span className="text-lg font-bold">{formatTokensFromCents(total)}</span>
@@ -90,7 +91,7 @@ export function PosCart({
             disabled={isCreating}
             className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isCreating ? "Creating..." : "Create Order"}
+            {isCreating ? t("cart.creating") : t("cart.createOrder")}
           </button>
         </div>
       </div>

@@ -67,3 +67,4 @@ next-env.d.ts
 !README.md
 /.claude/worktrees/
 prismic-backup/
+content-review/

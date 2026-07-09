@@ -1221,6 +1221,91 @@ export type InnerContentDocument<Lang extends string = string> =
     Lang
   >;
 
+type MobileMenuPromoDocumentDataSlicesSlice =
+  | VenueListSlice
+  | SaveTheDateSlice
+  | TabsSlice
+  | EventListSlice
+  | TicketPriceProgressSlice
+  | BannerSlice
+  | ArtistListSlice
+  | ArtistLineupSlice
+  | ArtistProfileListSlice
+  | BlurredBlobSlice
+  | SnowfallSlice
+  | CollabPromoSlice
+  | SoundCloudSlice
+  | VinylPromoSectionSlice
+  | PoemSlice
+  | SpacerSlice
+  | HorizontalRuleSlice
+  | TextColumnSlice
+  | ProductListSlice
+  | PodcastListSlice
+  | HeroSlice
+  | GridTileSlice
+  | ImageGallerySlice
+  | NewsletterSubscriptionSlice
+  | ContentSectionSlice
+  | AccordionSlice
+  | EmbedBlockSlice;
+
+/**
+ * Content for Mobile menu promo documents
+ */
+interface MobileMenuPromoDocumentData {
+  /**
+   * Published field in *Mobile menu promo*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: mobile_menu_promo.published
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  published: prismic.BooleanField;
+
+  /**
+   * Dismissable field in *Mobile menu promo*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: true
+   * - **API ID Path**: mobile_menu_promo.dismissable
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/boolean
+   */
+  dismissable: prismic.BooleanField;
+
+  /**
+   * Slice Zone field in *Mobile menu promo*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: mobile_menu_promo.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<MobileMenuPromoDocumentDataSlicesSlice>;
+}
+
+/**
+ * Mobile menu promo document from Prismic
+ *
+ * - **API ID**: `mobile_menu_promo`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type MobileMenuPromoDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<MobileMenuPromoDocumentData>,
+    "mobile_menu_promo",
+    Lang
+  >;
+
 /**
  * Item in *Menu navigation → Items*
  */
@@ -2182,6 +2267,7 @@ export type AllDocumentTypes =
   | HomePageDocument
   | InnerContentDocument
   | MenuNavigationDocument
+  | MobileMenuPromoDocument
   | PodcastDocument
   | ProductDocument
   | VenueDocument;
@@ -3406,7 +3492,18 @@ export interface HeroSliceDefaultPrimary {
    * - **API ID Path**: hero.default.primary.special_marker
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
-  special_marker: prismic.SelectField<"None" | "Tickets available">;
+  special_marker: prismic.SelectField<
+    | "None"
+    | "Tickets available"
+    | "Selling fast"
+    | "Last tickets"
+    | "Sold out"
+    | "Just announced"
+    | "New"
+    | "New episode"
+    | "Free entry"
+    | "Coming soon"
+  >;
 }
 
 /**
@@ -4946,6 +5043,9 @@ declare module "@prismicio/client" {
       MenuNavigationDocument,
       MenuNavigationDocumentData,
       MenuNavigationDocumentDataItemsItem,
+      MobileMenuPromoDocument,
+      MobileMenuPromoDocumentData,
+      MobileMenuPromoDocumentDataSlicesSlice,
       PodcastDocument,
       PodcastDocumentData,
       PodcastDocumentDataTracklistItem,

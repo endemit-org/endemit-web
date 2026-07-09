@@ -54,9 +54,14 @@ export async function generateMetadata({
     metaImage: podcast.meta.image,
     fallbackImages: podcast.cover?.src ? [podcast.cover.src] : undefined,
   });
-  const url = `https://endemit.org/music/emit/${uid}`;
-
-  return buildOpenGraphObject({ title, description, images, url, type: "music.song" });
+  return buildOpenGraphObject({
+    title,
+    description,
+    images,
+    type: "music.song",
+    locale: loc,
+    path: `/music/emit/${uid}`,
+  });
 }
 
 export default async function PodcastPage({
@@ -93,7 +98,7 @@ export default async function PodcastPage({
           title={podcast.name}
           segments={[
             { label: "Endemit", path: "" },
-            { label: "Music", path: "music" },
+            { label: t("breadcrumb"), path: "music" },
             { label: podcast.name, path: `emit/${uid}` },
           ]}
         />

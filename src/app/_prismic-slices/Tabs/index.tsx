@@ -6,6 +6,7 @@ import SliceDisplay, {
   type SliceContext,
 } from "@/app/_components/content/SliceDisplay";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
+import { getTranslations } from "next-intl/server";
 
 /**
  * Props for `Tabs`.
@@ -30,6 +31,7 @@ interface InnerContentItem {
 const TabsSlice = async ({ slice, context }: TabsProps) => {
   const { primary, items } = slice;
   const locale = context?.locale ?? "sl";
+  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "common" });
 
   const localizedHeading = pickLocalized(primary, "heading", locale);
   const heading = isFilled.richText(localizedHeading)
@@ -87,7 +89,7 @@ const TabsSlice = async ({ slice, context }: TabsProps) => {
           content: isFilled.richText(content) ? (
             <PrismicRichText field={content} />
           ) : (
-            <p>No content</p>
+            <p>{t("a11y.noContent")}</p>
           ),
         };
       }) as TabItem[];

@@ -1,0 +1,330 @@
+/**
+ * CRT / glitch theme skin (acid-yellow on near-black — "RAVE" palette).
+ *
+ * Scope is intentionally narrow: this theme touches only the page BACKGROUND
+ * (WebGL, rendered elsewhere), the page HEADER and the EVENT TITLE. It does NOT
+ * style slice bodies or embedded videos — that keeps the animated glitch off
+ * dozens of elements (performance) and off video content.
+ *
+ * EVERY rule is scoped under `[data-theme="crt"]` (or a class only emitted on
+ * themed pages), so nothing leaks to general pages. Static look (phosphor
+ * colour, vignette, scanline texture) lives outside the motion query; all
+ * animation is gated behind `prefers-reduced-motion: no-preference`.
+ *
+ * Epilepsy safety: flicker period ≥0.5s, glitch burst ≤10% duty on a 5s cycle,
+ * tear <1.5Hz, no more than ~2 luminance pulses/sec. Do not tighten these.
+ */
+
+/* ── Tokens ────────────────────────────────────────────────────────────── */
+
+[data-theme="crt"] {
+  --crt-accent: var(--theme-accent, #d8e600);
+  --crt-glow: var(--theme-glow, rgba(216, 230, 0, 0.45));
+}
+
+/* Blurred backdrops are removed for CRT, but if a themed page ever keeps one,
+   push it toward the phosphor hue. */
+[data-theme="crt"] .animate-blurred-backdrop {
+  filter: hue-rotate(15deg) saturate(1.4) brightness(0.9);
+}
+
+/* Embedded videos must stay pristine — lift them above the foreground overlays
+   and strip any inherited theme filtering. */
+[data-theme="crt"] video {
+  position: relative;
+  z-index: 45;
+  filter: none;
+}
+
+/* ── Optional per-component colour overrides ───────────────────────────── */
+/*
+ * Each rule reads a `--theme-*` custom property (set in the theme config's
+ * tokens) with the component's ORIGINAL colour as the fallback, so dropping a
+ * token restores default behaviour and nothing outside a themed page changes.
+ * Scoped under `[data-theme="crt"]` (the vars live on that wrapper).
+ */
+
+/* Buttons (ticket CTA, newsletter, …) — background + text. */
+[data-theme="crt"] .app-btn--primary {
+  background-color: var(--theme-btn-bg, #1d4ed8);
+  color: var(--theme-btn-fg, #e5e5e5);
+}
+[data-theme="crt"] .app-btn--primary:hover {
+  background-color: var(--theme-btn-bg, #1e40af);
+  filter: brightness(0.92);
+}
+
+/* Tabs — selected underline + label, and deselected label. */
+[data-theme="crt"] .app-tab--active {
+  border-color: var(--theme-tab-active, #3b82f6);
+  color: var(--theme-tab-active-text, #e5e5e5);
+}
+[data-theme="crt"] .app-tab--inactive {
+  color: var(--theme-tab-inactive-text, #0a0a0a);
+}
+[data-theme="crt"] .app-tab-mobile--active {
+  color: var(--theme-tab-active-text, #f5f5f5) !important;
+  border-bottom-color: var(--theme-tab-active, #3b82f6) !important;
+}
+
+/* Links (artist cards, location embedding, directions, …) — cover ALL states
+   so the default/visited blue never shows through. */
+[data-theme="crt"] .link,
+[data-theme="crt"] .link:link,
+[data-theme="crt"] .link:visited,
+[data-theme="crt"] .link:hover,
+[data-theme="crt"] .link:focus,
+[data-theme="crt"] .link:active {
+  color: var(--theme-link, inherit);
+}
+
+/* Play icon in artist listings — circle + glyph. */
+[data-theme="crt"] .artist-play-icon-wrap {
+  background-color: var(--theme-play-bg, #1e40af);
+}
+[data-theme="crt"] .artist-play-btn svg {
+  color: var(--theme-play-fg, #ffffff);
+}
+
+/* Day dividers in the set-times slider. */
+[data-theme="crt"] .day-divider {
+  background-color: var(--theme-day-divider-bg, rgba(17, 24, 39, 0.25));
+  color: var(--theme-day-divider-text, inherit);
+}
+
+/* ── Full-viewport foreground overlays (rendered by ThemedEventPage) ───── */
+
+.crt-scanlines,
+.crt-noise-overlay,
+.crt-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.crt-scanlines {
+  /* Thicker, denser dark bands (2px clear / 2px dark) for more intense CRT
+     scanlines. Intensity is driven by --theme-scanline-opacity. */
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, var(--theme-scanline-opacity, 0.4)) 2px,
+    rgba(0, 0, 0, var(--theme-scanline-opacity, 0.4)) 4px
+  );
+}
+
+.crt-noise-overlay {
+  background-image: url("/images/noise.gif");
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.1;
+}
+
+.crt-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 52%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+/* ── JS-free glitch text (GlitchText.tsx) — header + event title only ──── */
+
+.crt-glitch-text {
+  position: relative;
+  display: inline-block;
+  color: var(--crt-accent, #d8e600);
+  text-shadow: 0 0 14px var(--crt-glow);
+}
+
+.crt-glitch-text::before,
+.crt-glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.9;
+  /* Static (reduced-motion) look: a chromatic split, no movement. */
+}
+
+/* Yellow / greenish-yellow glitch split (no pink, no black). */
+.crt-glitch-text::before {
+  color: #9fbf1e;
+  transform: translateX(-2px);
+}
+
+.crt-glitch-text::after {
+  color: var(--crt-accent, #d8e600);
+  transform: translateX(2px);
+}
+
+/* White variant — used on the traveling marquee (white / black split). */
+.crt-glitch-text--white {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+}
+
+.crt-glitch-text--white::before {
+  color: #231f20;
+}
+
+.crt-glitch-text--white::after {
+  color: #ffffff;
+}
+
+/* ── Frame: let the CRT background fill the standard page frame ────────── */
+/*
+ * The shared (pages) layout wraps content in an opaque `bg-neutral-900` panel
+ * (`.app-page-frame`) with a worms overlay — that panel normally hides the
+ * fixed WebGL glitch behind the content, leaving it visible only in the outer
+ * margins. On a CRT-themed page we make the panel transparent and drop its
+ * worms overlay so the glitch shows THROUGH the frame's padding (the regular
+ * `p-4 lg:p-12` gutter becomes the CRT "bezel"), while the panel border stays
+ * as the framing. `:has()` keys this off the themed wrapper anywhere inside;
+ * non-themed pages and older browsers are unaffected.
+ */
+@supports selector(:has(*)) {
+  body:has([data-theme="crt"]) .app-page-frame {
+    /* Slight frosted panel over the moving glitch: a hint of dark fill plus a
+     * backdrop blur so foreground text stays readable while the CRT background
+     * still reads through. The glitch stays sharp in the outer margins (outside
+     * this panel); inside the frame it's softened. */
+    background-color: rgba(38, 34, 35, 0.7);
+    backdrop-filter: blur(11px);
+    -webkit-backdrop-filter: blur(11px);
+    border: 12px solid #dbdc00;
+  }
+
+  /* Mobile: thinner frame border (⅓ of desktop) and extra top margin so the
+     top border sits clear of the fixed header and is comfortably visible. */
+  @media (max-width: 1023px) {
+    body:has([data-theme="crt"]) .app-page-frame {
+      border-width: 10px 4px;
+      margin-top: 6.5rem;
+    }
+  }
+
+  body:has([data-theme="crt"]) .app-page-frame__worms {
+    display: none;
+  }
+}
+
+/* ── Motion — only for users who allow it ─────────────────────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Barely-there phosphor flicker (period 0.55s ⇒ <2 pulses/sec). */
+  @keyframes crt-flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.94;
+    }
+  }
+
+  /* ≤2px positional jitter, more active than before. */
+  @keyframes crt-jitter {
+    0%,
+    86%,
+    100% {
+      transform: translate(0, 0);
+    }
+    88% {
+      transform: translate(-2px, 1px);
+    }
+    90% {
+      transform: translate(2px, -1px);
+    }
+    92% {
+      transform: translate(-1px, 0);
+    }
+  }
+
+  /* Chromatic split with frequent glitch bursts (≤10% duty on 5s). */
+  @keyframes crt-glitch-before {
+    0%,
+    82%,
+    100% {
+      clip-path: inset(0 0 0 0);
+      transform: translateX(-2px);
+    }
+    83% {
+      clip-path: inset(15% 0 55% 0);
+      transform: translateX(-8px);
+    }
+    86% {
+      clip-path: inset(70% 0 8% 0);
+      transform: translateX(6px);
+    }
+    89% {
+      clip-path: inset(40% 0 40% 0);
+      transform: translateX(-5px);
+    }
+  }
+
+  @keyframes crt-glitch-after {
+    0%,
+    82%,
+    100% {
+      clip-path: inset(0 0 0 0);
+      transform: translateX(2px);
+    }
+    84% {
+      clip-path: inset(60% 0 15% 0);
+      transform: translateX(8px);
+    }
+    87% {
+      clip-path: inset(8% 0 75% 0);
+      transform: translateX(-6px);
+    }
+    90% {
+      clip-path: inset(35% 0 45% 0);
+      transform: translateX(5px);
+    }
+  }
+
+  /* Subtle, non-intrusive button glitch (ticket CTA, newsletter, …): a brief
+     jitter + chromatic flash every few seconds — no layout impact. */
+  @keyframes crt-btn-glitch {
+    0%,
+    90%,
+    100% {
+      transform: translate(0, 0);
+      text-shadow: none;
+    }
+    92% {
+      transform: translate(-1px, 0);
+      text-shadow: -1.5px 0 var(--theme-glow, rgba(217, 224, 32, 0.6));
+    }
+    94% {
+      transform: translate(1px, 0);
+      text-shadow: 1.5px 0 rgba(159, 191, 30, 0.7);
+    }
+    96% {
+      transform: translate(-1px, 0);
+    }
+  }
+
+  [data-theme="crt"] .app-btn--primary {
+    animation: crt-btn-glitch 5.5s steps(1, end) infinite;
+    will-change: transform;
+  }
+
+  [data-theme="crt"] .crt-scanlines {
+    animation: crt-flicker 0.55s steps(2, end) infinite;
+  }
+
+  .crt-glitch-text {
+    animation: crt-jitter 3s steps(1, end) infinite;
+  }
+
+  .crt-glitch-text::before {
+    animation: crt-glitch-before 5s steps(1, end) infinite;
+  }
+
+  .crt-glitch-text::after {
+    animation: crt-glitch-after 5s steps(1, end) infinite;
+  }
+}

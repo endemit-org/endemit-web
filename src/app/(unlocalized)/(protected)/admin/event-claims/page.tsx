@@ -9,6 +9,7 @@ import {
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { isEventVisible } from "@/domain/event/businessLogic";
 import EventClaimsDisplay from "@/app/_components/admin/EventClaimsDisplay";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Event Claims  •  Admin",
@@ -67,32 +68,30 @@ export default async function AdminEventClaimsPage({ searchParams }: PageProps) 
       return new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime();
     });
 
+  const t = await getTranslations("admin.eventClaims");
+
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Event Claims</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Review user claims for past events. Claims auto-approve 5 minutes
-          after submission — this page lets you approve earlier, delete
-          unwanted ones, or add a claim on behalf of a user.
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Total</div>
+          <div className="text-sm font-medium text-gray-500">{t("total")}</div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {claimsResult.pendingCount + claimsResult.approvedCount}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Pending</div>
+          <div className="text-sm font-medium text-gray-500">{t("pending")}</div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {claimsResult.pendingCount}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="text-sm font-medium text-gray-500">Approved</div>
+          <div className="text-sm font-medium text-gray-500">{t("approved")}</div>
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {claimsResult.approvedCount}
           </div>

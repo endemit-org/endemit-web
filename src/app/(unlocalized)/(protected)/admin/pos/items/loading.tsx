@@ -1,16 +1,15 @@
+import { getTranslations } from "next-intl/server";
 import {
   AdminPageHeaderSkeleton,
   AdminStatsSkeleton,
   AdminTableSkeleton,
 } from "@/app/_components/ui/Skeletons";
 
-export default function AdminPosItemsLoading() {
+export default async function AdminPosItemsLoading() {
+  const t = await getTranslations("admin.pos.items");
   return (
     <div>
-      <AdminPageHeaderSkeleton
-        title="POS Items"
-        subtitle="Manage items available for sale at POS registers"
-      />
+      <AdminPageHeaderSkeleton title={t("title")} subtitle={t("subtitle")} />
       <AdminStatsSkeleton count={3} />
       <AdminTableSkeleton rows={8} />
     </div>
