@@ -11,7 +11,10 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 interface Props {
-  variant?: "compact" | "detailed";
+  /** "bar" is the mobile-menu pinned variant: a full-width blue strip with
+      the bag icon + amount/count on the left and a checkout button on the
+      right. */
+  variant?: "compact" | "detailed" | "bar";
   /** Called when the user navigates to checkout (e.g. to close the mobile menu). */
   onNavigate?: () => void;
 }
@@ -51,6 +54,38 @@ export default function Cart({ variant = "detailed", onNavigate }: Props) {
   const displayItemCount = isClient ? itemCount || 0 : 0;
   const displayTotalPrice = isClient ? (totalPrice ?? 0) : 0;
   const isEmpty = displayItemCount === 0;
+
+  if (variant === "bar") {
+    // Nothing in the cart -> no bar; it only exists to push to checkout.
+    if (isEmpty) return null;
+    return (
+      <div className="flex items-center gap-3 bg-black px-5 py-3 text-white">
+        <Link
+          href="/store/checkout"
+          onClick={onNavigate}
+          className="flex flex-1 min-w-0 items-center gap-3"
+        >
+          <ToteBagIcon className="w-6 shrink-0" />
+          <div className="leading-tight">
+            <div className="text-2xl font-heading">
+              {formatPrice(displayTotalPrice)}
+            </div>
+            <div className="text-xs text-neutral-400 -mt-1">
+              {t("itemsInCart", { count: displayItemCount })}
+            </div>
+          </div>
+        </Link>
+        <ActionButton
+          onClick={handleGoToCart}
+          size="sm"
+          variant="primary"
+          fullWidth={false}
+        >
+          {t("checkout")}
+        </ActionButton>
+      </div>
+    );
+  }
 
   return (
     <div

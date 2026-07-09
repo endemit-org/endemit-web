@@ -2,6 +2,9 @@ import Sidebar from "@/app/_components/ui/Sidebar";
 import SiteFooter from "@/app/_components/ui/SiteFooter";
 import BackToTopButton from "@/app/_components/ui/BackToTopButton";
 import { fetchNavigationMenuFromCms } from "@/domain/cms/operations/fetchNavigationMenuFromCms";
+import { fetchMobileMenuPromoFromCms } from "@/domain/cms/operations/fetchMobileMenuPromoFromCms";
+import MobileMenuPromoFrame from "@/app/_components/ui/MobileMenuPromoFrame";
+import SliceDisplay from "@/app/_components/content/SliceDisplay";
 import { PersistentPlayer } from "@/app/_components/player/PersistentPlayer";
 import PlayerContentWrapper from "@/app/_components/player/PlayerContentWrapper";
 
@@ -14,7 +17,10 @@ export default async function ContentPageLayout({
 }>) {
   const { locale } = await params;
   const loc = locale === "en" ? "en" : "sl";
-  const menuItems = await fetchNavigationMenuFromCms(loc);
+  const [menuItems, menuPromo] = await Promise.all([
+    fetchNavigationMenuFromCms(loc),
+    fetchMobileMenuPromoFromCms(),
+  ]);
 
   return (
     <PlayerContentWrapper>
@@ -28,6 +34,13 @@ export default async function ContentPageLayout({
               ctaText: item.ctaText,
             }))}
             hideCartOnPath={["/store/checkout"]}
+            promo={
+              menuPromo ? (
+                <MobileMenuPromoFrame dismissable={menuPromo.dismissable}>
+                  <SliceDisplay slices={menuPromo.slices} locale={loc} />
+                </MobileMenuPromoFrame>
+              ) : null
+            }
           />
         )}
 

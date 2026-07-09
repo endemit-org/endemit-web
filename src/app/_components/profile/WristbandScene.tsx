@@ -159,10 +159,12 @@ export type SceneStatus = "none" | "success" | "error";
 
 /**
  * Wristband code floating in the middle of the band while there is no status
- * icon — the icon takes over the same spot on success/error.
+ * icon — the icon takes over the same spot on success/error. Waits out the
+ * roll-in (`delay`), then fades in once the band has settled in the center.
  */
-function CodeLabel({ label }: { label: string }) {
+function CodeLabel({ label, delay }: { label: string; delay: number }) {
   const spriteRef = useRef<THREE.Sprite>(null);
+  const materialRef = useRef<THREE.SpriteMaterial>(null);
   const startRef = useRef<number | null>(null);
 
   const texture = useMemo(() => {
@@ -186,17 +188,32 @@ function CodeLabel({ label }: { label: string }) {
   }, [label]);
 
   useFrame(({ clock }) => {
-    if (startRef.current === null) startRef.current = clock.elapsedTime;
+    // `delay` is measured from scene start (the roll-in runs on the same
+    // clock), so a label that mounts late — preview fetch slower than the
+    // roll — still fades in right away instead of waiting the delay again.
+    if (startRef.current === null) {
+      startRef.current = Math.max(clock.elapsedTime, delay);
+    }
     const elapsed = clock.elapsedTime - startRef.current;
-    const pop = easeOutBack(Math.min(elapsed / 0.45, 1));
-    const scale = Math.max(pop, 0);
+    const t = THREE.MathUtils.clamp(elapsed / 0.6, 0, 1);
+    const fade = easeOutCubic(t);
+    if (materialRef.current) materialRef.current.opacity = fade;
+    // Gentle settle from slightly small, so the fade has some life to it.
+    const scale = 0.92 + 0.08 * fade;
     // Canvas is 2:1, keep the sprite the same so glyphs aren't stretched.
     spriteRef.current?.scale.set(2.4 * scale, 1.2 * scale, 1);
+    if (spriteRef.current) spriteRef.current.visible = t > 0;
   });
 
   return (
-    <sprite ref={spriteRef} scale={0}>
-      <spriteMaterial map={texture} transparent depthWrite={false} />
+    <sprite ref={spriteRef} visible={false}>
+      <spriteMaterial
+        ref={materialRef}
+        map={texture}
+        transparent
+        opacity={0}
+        depthWrite={false}
+      />
     </sprite>
   );
 }
@@ -314,7 +331,14 @@ export default function WristbandScene({
       {status !== "none" ? (
         <StatusIcon key={status} status={status} />
       ) : (
-        label && <CodeLabel key={label} label={label} />
+        label && (
+          <CodeLabel
+            key={label}
+            label={label}
+            // Hold until the roll-in lands the band in the center.
+            delay={entrance && !reducedMotion ? ROLL_DURATION + 0.25 : 0}
+          />
+        )
       )}
       <Suspense fallback={null}>
         <WristbandModel

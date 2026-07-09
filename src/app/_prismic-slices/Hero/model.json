@@ -85,7 +85,15 @@
             "placeholder": "",
             "options": [
               "None",
-              "Tickets available"
+              "Tickets available",
+              "Selling fast",
+              "Last tickets",
+              "Sold out",
+              "Just announced",
+              "New",
+              "New episode",
+              "Free entry",
+              "Coming soon"
             ]
           }
         }

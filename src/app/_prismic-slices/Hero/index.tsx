@@ -72,7 +72,7 @@ const HeroSlice: FC<HeroProps> = async ({ slice, context }) => {
         backgroundVideo={backgroundVideo}
         vimeoVideoId={vimeoVideoId}
         overlayOpacity={primary.overlayOpacity || 50}
-        specialMarker={primary.special_marker as "None" | "Tickets available"}
+        specialMarker={primary.special_marker ?? "None"}
       />
     </section>
   );

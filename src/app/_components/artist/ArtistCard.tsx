@@ -14,6 +14,8 @@ type Props = {
   grayscale?: boolean;
   showName?: boolean;
   linkOverride?: string | null;
+  /** Hide the "part of Endemit" crew overlay (e.g. in lineup grids). */
+  showCrewBadge?: boolean;
 };
 
 export default function ArtistCard({
@@ -23,6 +25,7 @@ export default function ArtistCard({
   grayscale = true,
   showName = true,
   linkOverride = null,
+  showCrewBadge = true,
 }: Props) {
   const t = useTranslations("artists");
   const image = imageOverride ?? artist.image;
@@ -66,7 +69,7 @@ export default function ArtistCard({
           </div>
         </div>
       )}
-      {artist.isEndemitCrew && (
+      {showCrewBadge && artist.isEndemitCrew && (
         <div
           className={
             " w-full  flex gap-x-1  z-10 items-center absolute bottom-2 justify-center left-0"

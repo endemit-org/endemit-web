@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
+import ModalPortal from "@/app/_components/ui/ModalPortal";
 
 interface Props {
   receiveCode: string;
@@ -104,41 +105,43 @@ export default function ReceiveFundsCard({ receiveCode }: Props) {
 
       {/* Enlarged QR modal — the sender scans this from their Send funds flow. */}
       {isQrModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setIsQrModalOpen(false)}
-        >
+        <ModalPortal>
           <div
-            role="dialog"
-            aria-modal="true"
-            className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 max-w-sm w-full text-center"
-            onClick={e => e.stopPropagation()}
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 p-4"
+            onClick={() => setIsQrModalOpen(false)}
           >
-            <h4 className="text-lg font-semibold text-neutral-200 mb-1">
-              {t("wallet.receiveFunds")}
-            </h4>
-            <p className="text-sm text-neutral-400 mb-4">
-              {t("wallet.receiveQrInstruction")}
-            </p>
-            <div className="bg-white rounded-xl p-3 mx-auto w-full max-w-[288px]">
-              {qrDataUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={qrDataUrl}
-                  alt={t("wallet.receiveQrAlt")}
-                  className="w-full h-full"
-                />
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsQrModalOpen(false)}
-              className="mt-4 w-full px-4 py-2 text-sm text-neutral-300 hover:text-white border border-neutral-700 hover:border-neutral-500 rounded-lg transition-colors"
+            <div
+              role="dialog"
+              aria-modal="true"
+              className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 max-w-sm w-full text-center"
+              onClick={e => e.stopPropagation()}
             >
-              {t("wallet.closeQr")}
-            </button>
+              <h4 className="text-lg font-semibold text-neutral-200 mb-1">
+                {t("wallet.receiveFunds")}
+              </h4>
+              <p className="text-sm text-neutral-400 mb-4">
+                {t("wallet.receiveQrInstruction")}
+              </p>
+              <div className="bg-white rounded-xl p-3 mx-auto w-full max-w-[288px]">
+                {qrDataUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={qrDataUrl}
+                    alt={t("wallet.receiveQrAlt")}
+                    className="w-full h-full"
+                  />
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(false)}
+                className="mt-4 w-full px-4 py-2 text-sm text-neutral-300 hover:text-white border border-neutral-700 hover:border-neutral-500 rounded-lg transition-colors"
+              >
+                {t("wallet.closeQr")}
+              </button>
+            </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
     </div>
   );

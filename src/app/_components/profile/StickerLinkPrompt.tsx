@@ -24,6 +24,10 @@ const WristbandScene = dynamic(() => import("./WristbandScene"), {
 
 interface Props {
   paymentCode: string;
+  /** Set when the user arrives from the signed-out intro flow — they already
+      committed to linking there, so skip the confirm step and link directly.
+      Conflict/swap outcomes still render their prompts. */
+  autoLink?: boolean;
 }
 
 type PreviewStatus = {
@@ -55,7 +59,10 @@ const panelSpring = {
   mass: 0.9,
 };
 
-export default function StickerLinkPrompt({ paymentCode }: Props) {
+export default function StickerLinkPrompt({
+  paymentCode,
+  autoLink = false,
+}: Props) {
   const t = useTranslations("profile");
   const router = useRouter();
   const reducedMotion = useReducedMotion() ?? false;
@@ -244,11 +251,24 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
     }
   }, [state, paymentCode, router, t]);
 
+  // Arriving from the signed-out intro flow (?autoLink=1): the user already
+  // committed to linking there, so once the preview confirms the band is
+  // free, link it without asking again. Fires at most once — conflict/swap
+  // responses from the link call fall back to their normal prompts.
+  const autoLinkFiredRef = useRef(false);
+  useEffect(() => {
+    if (!autoLink || autoLinkFiredRef.current) return;
+    if (state.kind === "preview" && state.preview.status === "would_link") {
+      autoLinkFiredRef.current = true;
+      confirmLink();
+    }
+  }, [autoLink, state, confirmLink]);
+
   return (
     <AnimatePresence onExitComplete={removeQueryParam}>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.18 } }}
@@ -434,9 +454,12 @@ function ModalContent({
         <p className="text-neutral-400 text-sm mb-5">
           {t("wristband.alreadyLinkedDesc")}
         </p>
-        <PrimaryButton onClick={onDismiss} fullWidth>
-          {t("wristband.done")}
+        <PrimaryButton onClick={onTopUp} fullWidth>
+          {t("wristband.topUpOptionCard")}
         </PrimaryButton>
+        <SecondaryButton onClick={onDismiss} fullWidth className="mt-2">
+          {t("wristband.done")}
+        </SecondaryButton>
       </div>
     );
   }

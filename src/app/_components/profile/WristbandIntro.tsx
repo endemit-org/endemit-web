@@ -79,7 +79,13 @@ export default function WristbandIntro({
 
   // Magic-link continuation: the emailed sign-in button must land back on
   // this exact URL (with ?paymentCode=) so the link prompt takes over.
-  const continueUrl = () => window.location.pathname + window.location.search;
+  // autoLink=1 tells the prompt the user already committed to linking by
+  // going through this flow — it links without asking again.
+  const continueUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("autoLink", "1");
+    return `${window.location.pathname}?${params.toString()}`;
+  };
 
   // ---- email step -------------------------------------------------------
 
@@ -197,7 +203,7 @@ export default function WristbandIntro({
         return;
       }
       setPhase({ kind: "success" });
-      setTimeout(() => router.refresh(), 1200);
+      setTimeout(() => router.replace(continueUrl()), 1200);
     } catch {
       setError(tSignin("errors.generic"));
     } finally {
@@ -240,8 +246,9 @@ export default function WristbandIntro({
         if (result.success) {
           setPhase({ kind: "success" });
           // Give the check in the band a beat, then re-render the page as
-          // signed-in: this modal unmounts and the link prompt takes over.
-          setTimeout(() => router.refresh(), 1200);
+          // signed-in (with autoLink=1): this modal unmounts and the link
+          // prompt links the band without asking again.
+          setTimeout(() => router.replace(continueUrl()), 1200);
         } else {
           setError(result.error || tSignin("verify.invalidCode"));
           setCode(["", "", "", ""]);
@@ -332,7 +339,7 @@ export default function WristbandIntro({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <motion.div
         role="dialog"
         aria-modal="true"
