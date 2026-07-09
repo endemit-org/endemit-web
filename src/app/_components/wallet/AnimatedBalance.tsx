@@ -8,12 +8,20 @@ interface AnimatedBalanceProps {
   value: number;
   className?: string;
   countFromZero?: boolean;
+  /** Where the count-up starts on mount (defaults to value, i.e. no intro
+      animation). Only read on first render. */
+  initialValue?: number;
 }
 
-export default function AnimatedBalance({ value, className, countFromZero = false }: AnimatedBalanceProps) {
+export default function AnimatedBalance({
+  value,
+  className,
+  countFromZero = false,
+  initialValue,
+}: AnimatedBalanceProps) {
   const prevValue = useRef(value);
 
-  const spring = useSpring(countFromZero ? 0 : value, {
+  const spring = useSpring(initialValue ?? (countFromZero ? 0 : value), {
     stiffness: 100,
     damping: 20,
     mass: 1,

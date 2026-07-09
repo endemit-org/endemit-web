@@ -3492,7 +3492,18 @@ export interface HeroSliceDefaultPrimary {
    * - **API ID Path**: hero.default.primary.special_marker
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
-  special_marker: prismic.SelectField<"None" | "Tickets available">;
+  special_marker: prismic.SelectField<
+    | "None"
+    | "Tickets available"
+    | "Selling fast"
+    | "Last tickets"
+    | "Sold out"
+    | "Just announced"
+    | "New"
+    | "New episode"
+    | "Free entry"
+    | "Coming soon"
+  >;
 }
 
 /**

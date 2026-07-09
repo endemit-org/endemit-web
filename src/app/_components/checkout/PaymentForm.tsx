@@ -125,6 +125,9 @@ export default function PaymentForm({
         onReady={() => setIsReady(true)}
         options={{
           layout: "tabs",
+          // Wallets first: Apple Pay leads (falls back to Google Pay/card
+          // where unavailable — Stripe skips methods the device can't use).
+          paymentMethodOrder: ["apple_pay", "google_pay", "card"],
           wallets: {
             applePay: "auto",
             googlePay: "auto",

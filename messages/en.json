@@ -74,6 +74,16 @@
       "hot": "Hot",
       "ticketsLimited": "Tickets limited"
     },
+    "heroMarker": {
+      "sellingFast": "Selling fast",
+      "lastTickets": "Last tickets",
+      "soldOut": "Sold out",
+      "justAnnounced": "Just announced",
+      "new": "New",
+      "newEpisode": "New episode",
+      "freeEntry": "Free entry",
+      "comingSoon": "Coming soon"
+    },
     "ticketsDisplay": {
       "hot": "Hot",
       "freeAdmission": "FREE admission",
@@ -617,6 +627,7 @@
       "selectAmount": "Select an amount",
       "noOptions": "No top-up options available at the moment.",
       "selectAmountDesc": "Select an amount of tokens to add to your wallet",
+      "newBalance": "New wallet balance",
       "redirecting": "Redirecting...",
       "addToWallet": "Add {amount} to Wallet",
       "cashNotice": "You can also top up the wallet with cash at the MERCH stand."

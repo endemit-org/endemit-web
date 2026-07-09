@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
@@ -68,9 +69,12 @@ export default function WalletPayQrModal({
 
   if (!isOpen) return null;
 
-  return (
+  // Portal to <body>: rendered in place, ancestors' stacking contexts
+  // (sticky sidebar, animation wrappers) trap the overlay under z-indexed
+  // page content like artist/venue cards.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
       onClick={onClose}
     >
       <div
@@ -162,6 +166,7 @@ export default function WalletPayQrModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

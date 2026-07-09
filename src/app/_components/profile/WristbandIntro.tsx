@@ -339,7 +339,7 @@ export default function WristbandIntro({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <motion.div
         role="dialog"
         aria-modal="true"
