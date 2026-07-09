@@ -157,6 +157,50 @@ function WristbandModel({
 
 export type SceneStatus = "none" | "success" | "error";
 
+/**
+ * Wristband code floating in the middle of the band while there is no status
+ * icon — the icon takes over the same spot on success/error.
+ */
+function CodeLabel({ label }: { label: string }) {
+  const spriteRef = useRef<THREE.Sprite>(null);
+  const startRef = useRef<number | null>(null);
+
+  const texture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d")!;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font =
+      "700 96px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+    // Soft dark halo so the white text stays readable over the band.
+    ctx.shadowColor = "rgba(0,0,0,0.55)";
+    ctx.shadowBlur = 24;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(label, 256, 128);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }, [label]);
+
+  useFrame(({ clock }) => {
+    if (startRef.current === null) startRef.current = clock.elapsedTime;
+    const elapsed = clock.elapsedTime - startRef.current;
+    const pop = easeOutBack(Math.min(elapsed / 0.45, 1));
+    const scale = Math.max(pop, 0);
+    // Canvas is 2:1, keep the sprite the same so glyphs aren't stretched.
+    spriteRef.current?.scale.set(2.4 * scale, 1.2 * scale, 1);
+  });
+
+  return (
+    <sprite ref={spriteRef} scale={0}>
+      <spriteMaterial map={texture} transparent depthWrite={false} />
+    </sprite>
+  );
+}
+
 // easeOutBack — pops in with a small overshoot, so the icon feels stamped on.
 function easeOutBack(t: number) {
   const c1 = 1.70158;
@@ -243,6 +287,8 @@ interface Props {
   entrance?: boolean;
   /** DB wristband color. Omit/null when unknown — the band cycles colors. */
   color?: WristbandColor | null;
+  /** Scanned wristband code shown in the band center while status is none. */
+  label?: string | null;
   className?: string;
 }
 
@@ -252,6 +298,7 @@ export default function WristbandScene({
   status = "none",
   entrance = true,
   color = null,
+  label = null,
   className,
 }: Props) {
   return (
@@ -264,7 +311,11 @@ export default function WristbandScene({
       <ambientLight intensity={0.55} />
       <directionalLight position={[3, 4, 5]} intensity={1.4} />
       <directionalLight position={[-4, 2, -3]} intensity={0.5} />
-      {status !== "none" && <StatusIcon key={status} status={status} />}
+      {status !== "none" ? (
+        <StatusIcon key={status} status={status} />
+      ) : (
+        label && <CodeLabel key={label} label={label} />
+      )}
       <Suspense fallback={null}>
         <WristbandModel
           reducedMotion={reducedMotion}
