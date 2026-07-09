@@ -69,18 +69,44 @@ export const requestOtcCode = async ({
     };
   }
 
-  // Generate code and magic link
-  const code = generateOtcCode();
-  const magicLink = generateMagicLink();
-  const expiresAt = new Date(Date.now() + OTC_EXPIRATION_MINUTES * 60 * 1000);
-
-  // Create OTC token
-  await createOtcToken({
-    userId: user.id,
-    code,
-    magicLink,
-    expiresAt,
+  // Re-use a fresh, still-valid token instead of minting a new one: minting
+  // invalidates every previous code, so a quick retry racing a slow email
+  // delivery makes each emailed code dead on arrival. Re-sending the same
+  // code keeps all recent emails valid at once.
+  const existingToken = await prisma.otcToken.findFirst({
+    where: {
+      userId: user.id,
+      usedAt: null,
+      // Only re-use while it has a comfortable amount of life left.
+      expiresAt: { gt: new Date(Date.now() + 5 * 60 * 1000) },
+    },
+    orderBy: { createdAt: "desc" },
   });
+
+  let code: string;
+  let magicLink: string;
+  let expiresInMinutes = OTC_EXPIRATION_MINUTES;
+
+  if (existingToken) {
+    code = existingToken.code;
+    magicLink = existingToken.magicLink;
+    expiresInMinutes = Math.max(
+      1,
+      Math.round((existingToken.expiresAt.getTime() - Date.now()) / 60_000)
+    );
+  } else {
+    code = generateOtcCode();
+    magicLink = generateMagicLink();
+    const expiresAt = new Date(
+      Date.now() + OTC_EXPIRATION_MINUTES * 60 * 1000
+    );
+    await createOtcToken({
+      userId: user.id,
+      code,
+      magicLink,
+      expiresAt,
+    });
+  }
 
   // Record the request for rate limiting
   await recordOtcRequest(normalizedEmail);
@@ -91,7 +117,7 @@ export const requestOtcCode = async ({
     email: normalizedEmail,
     code,
     magicLink,
-    expiresInMinutes: OTC_EXPIRATION_MINUTES,
+    expiresInMinutes,
     callbackUrl,
     locale,
   });
