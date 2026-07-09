@@ -47,6 +47,8 @@ interface FlexibleSidebarProps {
   showFooter?: boolean;
   hideCartOnPath?: string[];
   activeColor?: string;
+  /** Server-rendered promo floating left of the mobile nav (CMS-driven). */
+  promo?: React.ReactNode;
 }
 
 export default function Sidebar({
@@ -57,6 +59,7 @@ export default function Sidebar({
   showFooter = true,
   hideCartOnPath,
   activeColor = "text-blue-500",
+  promo,
 }: FlexibleSidebarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -195,12 +198,19 @@ export default function Sidebar({
           hidden: !isMenuOpen,
         })}
       >
-        {/* Mobile-only promo slot floating left of the (right-aligned) nav —
-            placeholder yellow box until a real event promo goes in. */}
-        <div
-          aria-hidden
-          className="lg:hidden absolute left-4 top-8 w-36 h-48 bg-yellow-400 rounded-2xl"
-        />
+        {/* Mobile-only promo slot floating left of the (right-aligned) nav.
+            The w-36 frame is the promo's max width; content height is its
+            own. Tapping a link inside closes the menu like nav items do. */}
+        {promo && (
+          <div
+            className="lg:hidden absolute left-4 top-8 w-36 max-w-full max-h-[50dvh] overflow-hidden"
+            onClickCapture={e => {
+              if ((e.target as HTMLElement).closest("a")) close();
+            }}
+          >
+            {promo}
+          </div>
+        )}
 
         {/* Scrollable navigation area */}
         {/* flex-1 pushes the pinned bottom section to the screen bottom and
@@ -282,7 +292,7 @@ export default function Sidebar({
           {/* On mobile: switcher inline to the LEFT of the social icons (one
               row). On desktop (lg): stacked with social above switcher — order
               preserved via lg:order. */}
-          <div className="flex items-center justify-end gap-x-4 pr-6 pb-4 lg:flex-col lg:items-end lg:gap-x-0 lg:gap-y-2 lg:pb-3">
+          <div className="flex items-center justify-end gap-x-4 max-lg:pt-3 pr-6 pb-4 lg:flex-col lg:items-end lg:gap-x-0 lg:gap-y-2 lg:pb-3">
             <LanguageSwitcher className="text-sm lg:order-2 lg:mt-2" />
             {mergedSocialLinks.length > 0 && (
               <div className="social-icons flex lg:order-1">
