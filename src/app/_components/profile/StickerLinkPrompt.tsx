@@ -86,6 +86,15 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
         ? state.preview.property
         : null;
 
+  // Wristband number floating in the band center once the code is resolved;
+  // the status icon takes over the same spot on success/error.
+  const sceneLabel: string | null =
+    state.kind === "linked"
+      ? state.code
+      : state.kind === "preview" || state.kind === "linking"
+        ? state.preview.code
+        : null;
+
   // Play the exit animation first; strip ?paymentCode= once it finishes.
   const dismiss = useCallback(() => {
     setOpen(false);
@@ -283,6 +292,7 @@ export default function StickerLinkPrompt({ paymentCode }: Props) {
                 reducedMotion={reducedMotion}
                 status={sceneStatus}
                 color={sceneColor}
+                label={sceneLabel}
                 className="absolute inset-0"
               />
               <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-neutral-900 to-transparent" />

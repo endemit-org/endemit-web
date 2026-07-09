@@ -245,7 +245,6 @@ export default function Sidebar({
             >
               {t("myProfile")}
             </Link>
-            <div className="border-t border-neutral-800" />
           </div>
 
           {showCart && (

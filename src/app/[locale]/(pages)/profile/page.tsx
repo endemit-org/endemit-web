@@ -23,6 +23,10 @@ import ProfileAccessButtonsAsync from "@/app/_components/profile/async/ProfileAc
 import StickerLinkPrompt from "@/app/_components/profile/StickerLinkPrompt";
 import WristbandIntro from "@/app/_components/profile/WristbandIntro";
 import { getStickerProperty } from "@/domain/sticker/operations/getStickerProperty";
+import {
+  isValidStickerCode,
+  normalizeStickerCode,
+} from "@/domain/sticker/util/validateStickerCode";
 
 export async function generateMetadata({
   params,
@@ -58,7 +62,13 @@ export default async function ProfilePage({
     // Someone scanned a wristband QR without being signed in: show them what
     // the flow looks like before sending them into sign-in.
     if (paymentCode) {
-      return <WristbandIntro color={await getStickerProperty(paymentCode)} />;
+      const normalizedCode = normalizeStickerCode(paymentCode);
+      return (
+        <WristbandIntro
+          color={await getStickerProperty(paymentCode)}
+          code={isValidStickerCode(normalizedCode) ? normalizedCode : null}
+        />
+      );
     }
     redirect(`/signin?callbackUrl=${encodeURIComponent("/profile")}`);
   }

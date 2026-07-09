@@ -50,9 +50,14 @@ const isValidUsername = (value: string): boolean =>
 interface Props {
   /** Wristband color of the scanned code — null cycles the band's palette. */
   color?: WristbandColor | null;
+  /** Normalized wristband code, shown in the center of the 3D band. */
+  code?: string | null;
 }
 
-export default function WristbandIntro({ color = null }: Props) {
+export default function WristbandIntro({
+  color = null,
+  code: bandCode = null,
+}: Props) {
   const t = useTranslations("profile");
   const tSignin = useTranslations("signin");
   const router = useRouter();
@@ -71,6 +76,10 @@ export default function WristbandIntro({ color = null }: Props) {
     setIsLoading(false);
     setPhase(next);
   }, []);
+
+  // Magic-link continuation: the emailed sign-in button must land back on
+  // this exact URL (with ?paymentCode=) so the link prompt takes over.
+  const continueUrl = () => window.location.pathname + window.location.search;
 
   // ---- email step -------------------------------------------------------
 
@@ -124,7 +133,7 @@ export default function WristbandIntro({ color = null }: Props) {
 
       // For @username sign-ins check-mode resolves the account's email.
       const email = result.email || identifier;
-      const sent = await requestOtcCode({ email });
+      const sent = await requestOtcCode({ email, callbackUrl: continueUrl() });
       if (sent.success) {
         goTo({ kind: "code", email });
       } else {
@@ -142,7 +151,10 @@ export default function WristbandIntro({ color = null }: Props) {
     setError("");
     setIsLoading(true);
     try {
-      const result = await registerOtcUser({ email: phase.email });
+      const result = await registerOtcUser({
+        email: phase.email,
+        callbackUrl: continueUrl(),
+      });
       if (result.success) {
         goTo({ kind: "code", email: phase.email });
       } else {
@@ -275,7 +287,10 @@ export default function WristbandIntro({ color = null }: Props) {
     setError("");
     setIsResending(true);
     try {
-      const result = await requestOtcCode({ email: phase.email });
+      const result = await requestOtcCode({
+        email: phase.email,
+        callbackUrl: continueUrl(),
+      });
       if (result.success) {
         setResendCooldown(60);
         setCode(["", "", "", ""]);
@@ -292,16 +307,18 @@ export default function WristbandIntro({ color = null }: Props) {
 
   // ---- render -----------------------------------------------------------
 
-  // Scanning the QR is what got them here — that step is already done.
+  // Scanning the QR is what got them here — that step is already done, and
+  // it's the big one: it gets double weight in both the bar and the percent
+  // so the three remaining steps read as smaller fills.
   const steps = [
-    { label: t("wristband.intro.step0"), done: true },
-    { label: t("wristband.intro.step1"), done: false },
-    { label: t("wristband.intro.step2"), done: false },
-    { label: t("wristband.intro.step3"), done: false },
+    { label: t("wristband.intro.step0"), done: true, weight: 2 },
+    { label: t("wristband.intro.step1"), done: false, weight: 1 },
+    { label: t("wristband.intro.step2"), done: false, weight: 1 },
+    { label: t("wristband.intro.step3"), done: false, weight: 1 },
   ];
-  const progressPercent = Math.round(
-    (steps.filter(s => s.done).length / steps.length) * 100
-  );
+  const totalWeight = steps.reduce((sum, s) => sum + s.weight, 0);
+  const doneWeight = steps.reduce((sum, s) => sum + (s.done ? s.weight : 0), 0);
+  const progressPercent = Math.round((doneWeight / totalWeight) * 100);
 
   const fade = {
     initial: reducedMotion
@@ -340,6 +357,7 @@ export default function WristbandIntro({ color = null }: Props) {
             reducedMotion={reducedMotion}
             status={sceneStatus}
             color={color}
+            label={bandCode}
             className="absolute inset-0"
           />
           <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-neutral-900 to-transparent" />
@@ -366,21 +384,32 @@ export default function WristbandIntro({ color = null }: Props) {
                         })}
                       </span>
                     </div>
-                    <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-emerald-500 rounded-full"
-                        initial={
-                          reducedMotion
-                            ? { width: `${progressPercent}%` }
-                            : { width: 0 }
-                        }
-                        animate={{ width: `${progressPercent}%` }}
-                        transition={{
-                          duration: 0.6,
-                          delay: 0.3,
-                          ease: [0.32, 0.72, 0, 1],
-                        }}
-                      />
+                    {/* One segment per step; the scan segment is wider since
+                        it's the big one already behind them, the remaining
+                        three are smaller fills. */}
+                    <div className="flex gap-1">
+                      {steps.map((step, index) => (
+                        <div
+                          key={index}
+                          className="h-1.5 bg-neutral-800 rounded-full overflow-hidden"
+                          style={{ flexGrow: step.weight, flexBasis: 0 }}
+                        >
+                          <motion.div
+                            className="h-full bg-emerald-500 rounded-full"
+                            initial={
+                              reducedMotion
+                                ? { width: step.done ? "100%" : "0%" }
+                                : { width: 0 }
+                            }
+                            animate={{ width: step.done ? "100%" : "0%" }}
+                            transition={{
+                              duration: 0.6,
+                              delay: 0.3,
+                              ease: [0.32, 0.72, 0, 1],
+                            }}
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -575,7 +604,9 @@ export default function WristbandIntro({ color = null }: Props) {
                           inputRefs.current[index] = el;
                         }}
                         type="text"
-                        inputMode="text"
+                        // Code format is 2 letters + 2 digits — numeric pad
+                        // for the digit fields, same as the signin verify page.
+                        inputMode={index < 2 ? "text" : "numeric"}
                         maxLength={4}
                         value={char}
                         onChange={e => handleCodeChange(index, e.target.value)}
