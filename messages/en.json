@@ -669,7 +669,7 @@
     "eventsAttended": {
       "title": "Events Attended",
       "claimMissing": "Claim missing event",
-      "empty": "No events attended yet.",
+      "empty": "No events attended yet. If you bought the ticket at the event or with another email you can claim it above.",
       "countLabel": "{count, plural, one {# event} other {# events}}",
       "pendingClaims": "Pending Claims",
       "artistsAtEvents": "Artists at events",

@@ -14,6 +14,7 @@ import ImageGallery from "@/app/_prismic-slices/ImageGallery";
 import Newsletter from "@/app/_prismic-slices/Newsletter";
 import PodcastList from "@/app/_prismic-slices/PodcastList";
 import ProductList from "@/app/_prismic-slices/ProductList";
+import PromoCard from "@/app/_prismic-slices/PromoCard";
 import SaveTheDate from "@/app/_prismic-slices/SaveTheDate";
 import Snowfall from "@/app/_prismic-slices/Snowfall";
 import SoundCloud from "@/app/_prismic-slices/SoundCloud";
@@ -45,6 +46,7 @@ export const components = {
   podcast_list: PodcastList,
   poem: EventIntro,
   product_list: ProductList,
+  promo_card: PromoCard,
   save_the_date: SaveTheDate,
   snowfall: Snowfall,
   sound_cloud: SoundCloud,
