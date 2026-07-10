@@ -668,8 +668,8 @@
     },
     "eventsAttended": {
       "title": "Moji eventi",
-      "claimMissing": "Prjavi manjkajoč event",
-      "empty": "Brez obiskanih eventov.",
+      "claimMissing": "Dodaj manjkajoč event",
+      "empty": "Brez obiskanih eventov. Če si karto kupil/a z drugim mailom al na eventu lahko dodaš manjkajoč event",
       "countLabel": "{count, plural, one {# event} two {# eventa} few {# eventi} other {# eventov}}",
       "pendingClaims": "Čakajoče prjave",
       "artistsAtEvents": "Artisti na eventih",

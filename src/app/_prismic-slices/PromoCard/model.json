@@ -1,0 +1,66 @@
+{
+  "id": "promo_card",
+  "type": "SharedSlice",
+  "name": "PromoCard",
+  "description": "Single promo card: image or video with a CTA bar below, the whole card linking somewhere. Built for the mobile menu promo.",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "video": {
+          "type": "Link",
+          "config": {
+            "label": "Video (optional, replaces the image)",
+            "placeholder": "Muted looping mp4",
+            "select": "media",
+            "allowText": false
+          }
+        },
+        "cta": {
+          "type": "Text",
+          "config": {
+            "label": "CTA",
+            "placeholder": "e.g. Get tickets"
+          }
+        },
+        "cta_sl": {
+          "type": "Text",
+          "config": {
+            "label": "CTA (SL)",
+            "placeholder": ""
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": {
+            "label": "Link",
+            "placeholder": "Where the card points",
+            "select": null,
+            "allowText": false
+          }
+        },
+        "countdown_to": {
+          "type": "Timestamp",
+          "config": {
+            "label": "Countdown to (optional)",
+            "placeholder": "Card shows a countdown and disappears at zero"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
