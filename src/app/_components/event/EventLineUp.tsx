@@ -3,7 +3,7 @@
 import { ArtistAtEvent } from "@/domain/artist/types/artistAtEvent";
 
 import ArtistEventCard from "@/app/_components/artist/ArtistEventCard";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { convertMonthsToMs } from "@/lib/util/converters";
 import { useTranslations } from "next-intl";
 import clsx from "clsx";
@@ -50,6 +50,29 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
 
   // For long lineups, swipe horizontally on mobile instead of a tall stack.
   const isBigLineup = sortedArtists.length > 5;
+
+  // Deep-link support: /events/foo#artist-<uid> scrolls the lineup to that
+  // card. Cards are the same DOM nodes on mobile and desktop, so one
+  // scrollIntoView covers both the horizontal swiper (inline) and the
+  // vertical stack (block).
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = decodeURIComponent(window.location.hash.slice(1));
+      if (!hash.startsWith("artist-")) return;
+      document.getElementById(hash)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    };
+    // Give images/layout a beat to settle before measuring scroll targets.
+    const timer = setTimeout(scrollToHash, 300);
+    window.addEventListener("hashchange", scrollToHash);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("hashchange", scrollToHash);
+    };
+  }, []);
 
   return (
     <div className={"flex flex-col gap-y-6"}>
@@ -98,6 +121,7 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
         {sortedArtists.map((artist: ArtistAtEvent) => (
           <div
             key={artist.id}
+            id={`artist-${artist.uid}`}
             className={clsx(
               isBigLineup &&
                 "max-lg:w-[85%] max-lg:flex-shrink-0 max-lg:snap-center"

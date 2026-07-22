@@ -95,6 +95,13 @@
                   "constraint": {},
                   "thumbnails": []
                 }
+              },
+              "link_override": {
+                "type": "Link",
+                "config": {
+                  "label": "Link override (optional, takes precedence over the slice-level link; supports hash links like /events/foo#artist-uid)",
+                  "allowTargetBlank": true
+                }
               }
             }
           }
