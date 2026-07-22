@@ -74,7 +74,7 @@ export default function HeroMarker({ marker, className }: Props) {
           <Image
             width={40}
             height={40}
-            src="/images/flame.gif"
+            src="/images/transparent.gif"
             alt=""
             aria-hidden
             className="w-5 h-5 ml-1"

@@ -161,7 +161,7 @@ export default function TopUpModal({
                         >
                           {index === 1 && (
                             <Image
-                              src="/images/flame.gif"
+                              src="/images/transparent.gif"
                               alt={t("topUp.hot")}
                               width={24}
                               height={24}

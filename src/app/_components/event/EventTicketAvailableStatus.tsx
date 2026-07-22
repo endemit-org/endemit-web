@@ -14,7 +14,7 @@ export default function EventTicketAvailableStatus({ className }: Props) {
         <Image
           width={40}
           height={40}
-          src="/images/flame.gif"
+          src="/images/transparent.gif"
           alt={t("ticketStatus.hot")}
           className="w-5 h-5 ml-1"
           unoptimized
