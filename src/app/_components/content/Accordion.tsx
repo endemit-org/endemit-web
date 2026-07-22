@@ -52,6 +52,15 @@ export default function Accordion({
     // Only start timer if in view
     if (isInViewRef.current) {
       expandTimeoutRef.current = setTimeout(() => {
+        // A deep link (#artist-<uid>, tab anchors, ...) means the visitor came
+        // for a specific element; expanding would push that element out of
+        // view. Yield without marking hasAutoExpanded so a later organic
+        // visit to the accordion can still auto-expand.
+        const hash = decodeURIComponent(window.location.hash.slice(1));
+        if (hash) {
+          const target = document.getElementById(hash);
+          if (target && !containerRef.current?.contains(target)) return;
+        }
         // Only auto-expand if no item is currently selected
         setOpenIndexes(current => {
           if (current.length === 0) {
