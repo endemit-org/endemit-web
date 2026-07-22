@@ -38,7 +38,7 @@ export function formatTicketTitle(
         {product.name}
         {isHot && (
           <Image
-            src="/images/flame.gif"
+            src="/images/transparent.gif"
             alt={hotAlt}
             className="w-5 h-5 h"
             width={40}

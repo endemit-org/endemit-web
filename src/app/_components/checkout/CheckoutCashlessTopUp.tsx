@@ -99,7 +99,7 @@ export default function CheckoutCashlessTopUp({
           >
             {index === 1 && (
               <Image
-                src="/images/flame.gif"
+                src="/images/transparent.gif"
                 alt={t("popular")}
                 width={20}
                 height={20}
