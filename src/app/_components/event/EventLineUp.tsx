@@ -52,18 +52,47 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
   const isBigLineup = sortedArtists.length > 5;
 
   // Deep-link support: /events/foo#artist-<uid> scrolls the lineup to that
-  // card. Cards are the same DOM nodes on mobile and desktop, so one
-  // scrollIntoView covers both the horizontal swiper (inline) and the
-  // vertical stack (block).
+  // card. In the mobile swiper the cards live in a horizontal scroller, so
+  // the page scrolls to the #lineup section (the same spot the tab nav
+  // targets) and only the swiper centers the card; the hash is normalised to
+  // #lineup so the scroll-spy state stays consistent. Desktop and the mobile
+  // vertical stack scroll straight to the card.
   useEffect(() => {
     const scrollToHash = () => {
       const hash = decodeURIComponent(window.location.hash.slice(1));
       if (!hash.startsWith("artist-")) return;
-      document.getElementById(hash)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "center",
-      });
+      const card = document.getElementById(hash);
+      if (!card) return;
+
+      const isMobileSwiper = window.innerWidth < 1024 && isBigLineup;
+      if (!isMobileSwiper) {
+        card.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "center",
+        });
+        return;
+      }
+
+      document
+        .getElementById("lineup")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      const scroller = card.parentElement;
+      if (scroller) {
+        const scrollerRect = scroller.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        const offset =
+          cardRect.left +
+          cardRect.width / 2 -
+          (scrollerRect.left + scrollerRect.width / 2);
+        scroller.scrollTo({
+          left: scroller.scrollLeft + offset,
+          behavior: "smooth",
+        });
+      }
+
+      window.history.replaceState(null, "", "#lineup");
     };
     // Give images/layout a beat to settle before measuring scroll targets.
     const timer = setTimeout(scrollToHash, 300);
@@ -72,7 +101,7 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
       clearTimeout(timer);
       window.removeEventListener("hashchange", scrollToHash);
     };
-  }, []);
+  }, [isBigLineup]);
 
   return (
     <div className={"flex flex-col gap-y-6"}>
