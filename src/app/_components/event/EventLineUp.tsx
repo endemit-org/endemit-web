@@ -61,7 +61,7 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
       if (!hash.startsWith("artist-")) return;
       document.getElementById(hash)?.scrollIntoView({
         behavior: "smooth",
-        block: "center",
+        block: "start",
         inline: "center",
       });
     };
@@ -123,6 +123,9 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
             key={artist.id}
             id={`artist-${artist.uid}`}
             className={clsx(
+              // Deep-link landing offset: clear the fixed mobile tab nav,
+              // leave a small gap above the card on desktop.
+              "scroll-mt-28 lg:scroll-mt-8",
               isBigLineup &&
                 "max-lg:w-[85%] max-lg:flex-shrink-0 max-lg:snap-center"
             )}

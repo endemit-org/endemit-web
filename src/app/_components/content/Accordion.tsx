@@ -36,6 +36,7 @@ export default function Accordion({
   const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInViewRef = useRef(false);
+  const suppressedByDeepLinkRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const expandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -52,15 +53,7 @@ export default function Accordion({
     // Only start timer if in view
     if (isInViewRef.current) {
       expandTimeoutRef.current = setTimeout(() => {
-        // A deep link (#artist-<uid>, tab anchors, ...) means the visitor came
-        // for a specific element; expanding would push that element out of
-        // view. Yield without marking hasAutoExpanded so a later organic
-        // visit to the accordion can still auto-expand.
-        const hash = decodeURIComponent(window.location.hash.slice(1));
-        if (hash) {
-          const target = document.getElementById(hash);
-          if (target && !containerRef.current?.contains(target)) return;
-        }
+        if (suppressedByDeepLinkRef.current) return;
         // Only auto-expand if no item is currently selected
         setOpenIndexes(current => {
           if (current.length === 0) {
@@ -74,6 +67,25 @@ export default function Accordion({
       }, autoExpandDelay);
     }
   }, [autoExpandDelay, autoExpandIndexOnView, hasAutoExpanded]);
+
+  // A deep link at page entry (#artist-<uid>, ...) means the visitor came for
+  // a specific element; auto-expanding above it would push it out of view.
+  // Checked once at mount so the tab scroll-spy rewriting the hash later
+  // doesn't disable organic auto-expand. Hashes targeting the accordion
+  // itself (or a section containing it, e.g. #tickets) don't suppress.
+  useEffect(() => {
+    const hash = decodeURIComponent(window.location.hash.slice(1));
+    if (!hash) return;
+    const target = document.getElementById(hash);
+    if (
+      target &&
+      containerRef.current &&
+      !target.contains(containerRef.current) &&
+      !containerRef.current.contains(target)
+    ) {
+      suppressedByDeepLinkRef.current = true;
+    }
+  }, []);
 
   // Track scroll state - cancel and restart expand timer on scroll
   useEffect(() => {
