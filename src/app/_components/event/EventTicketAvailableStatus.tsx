@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Image from "next/image";
+// import Image from "next/image"; // Flame gif removed for now
 import { useTranslations } from "next-intl";
 
 type Props = {
@@ -11,14 +11,15 @@ export default function EventTicketAvailableStatus({ className }: Props) {
   return (
     <div className={clsx("absolute top-4 left-4 z-10", className)}>
       <span className="backdrop-blur-lg px-2 py-1 text-neutral-300  text-sm flex w-fit gap-x-2  uppercase font-bold border border-neutral-700">
+        {/* Flame gif removed for now
         <Image
           width={40}
           height={40}
-          src="/images/transparent.gif"
+          src="/images/flame.gif"
           alt={t("ticketStatus.hot")}
           className="w-5 h-5 ml-1"
           unoptimized
-        />
+        /> */}
         <span className={"animate-pulse"}>{t("ticketStatus.ticketsLimited")}</span>
       </span>
     </div>

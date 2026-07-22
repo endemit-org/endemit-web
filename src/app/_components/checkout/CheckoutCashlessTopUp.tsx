@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import Image from "next/image";
+// import Image from "next/image"; // Flame gif removed for now
 import { Product, ProductCategory } from "@/domain/product/types/product";
 import { isProductSellable } from "@/domain/product/businessLogic";
 import { formatTokens } from "@/lib/util/currency";
@@ -86,7 +86,8 @@ export default function CheckoutCashlessTopUp({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {availableTopUps.map((product, index) => (
+        {/* re-add `index` to map params when restoring the flame gif */}
+        {availableTopUps.map(product => (
           <button
             key={product.id}
             onClick={() => onAddTopUp(product)}
@@ -97,16 +98,17 @@ export default function CheckoutCashlessTopUp({
               disabled && "opacity-50 cursor-not-allowed"
             )}
           >
+            {/* Flame gif removed for now
             {index === 1 && (
               <Image
-                src="/images/transparent.gif"
+                src="/images/flame.gif"
                 alt={t("popular")}
                 width={20}
                 height={20}
                 className="absolute -top-1.5 -right-1.5 w-5 h-5"
                 unoptimized
               />
-            )}
+            )} */}
             <div className="text-base font-bold text-neutral-200">
               {formatTokens(product.price, 0)}
             </div>

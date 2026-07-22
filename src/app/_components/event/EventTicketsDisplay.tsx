@@ -13,7 +13,7 @@ import Banner from "@/app/_components/ui/Banner";
 import Accordion from "@/app/_components/content/Accordion";
 import { formatPrice } from "@/lib/util/formatting";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
-import Image from "next/image";
+// import Image from "next/image"; // Flame gif removed for now
 import EventUrgencyBar from "./EventUrgencyBar";
 import { useTranslations } from "next-intl";
 
@@ -25,6 +25,7 @@ interface EventTicketDisplayProps {
 export function formatTicketTitle(
   product: Product,
   isHot?: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used by the commented-out flame gif below
   hotAlt: string = "Hot",
   personCountLabel?: string
 ) {
@@ -36,16 +37,17 @@ export function formatTicketTitle(
     <div>
       <div className={"font-semibold flex gap-x-1.5 items-center"}>
         {product.name}
+        {/* Flame gif removed for now
         {isHot && (
           <Image
-            src="/images/transparent.gif"
+            src="/images/flame.gif"
             alt={hotAlt}
             className="w-5 h-5 h"
             width={40}
             height={40}
             unoptimized
           />
-        )}
+        )} */}
       </div>
       <div className={"text-sm text-neutral-400 flex gap-x-1.5 items-center"}>
         <span className={"flex gap-x-1 opacity-65"}>
