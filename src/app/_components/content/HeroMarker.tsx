@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Image from "next/image";
+// import Image from "next/image"; // Flame gif removed for now
 import { useTranslations } from "next-intl";
 import EventTicketAvailableStatus from "@/app/_components/event/EventTicketAvailableStatus";
 
@@ -70,17 +70,18 @@ export default function HeroMarker({ marker, className }: Props) {
           badge.flame ? "px-2" : "px-3"
         )}
       >
+        {/* Flame gif removed for now
         {badge.flame && (
           <Image
             width={40}
             height={40}
-            src="/images/transparent.gif"
+            src="/images/flame.gif"
             alt=""
             aria-hidden
             className="w-5 h-5 ml-1"
             unoptimized
           />
-        )}
+        )} */}
         <span className={badge.pulse ? "animate-pulse" : undefined}>
           {labels[marker]}
         </span>
