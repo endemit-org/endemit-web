@@ -161,6 +161,8 @@ export default async function EventPage({
       ),
       id: "lineup",
       sortingWeight: 300,
+      // #artist-<uid> deep links land on this tab (see EventLineUp scroll).
+      hashPrefixes: ["artist-"],
     });
   }
 
