@@ -161,6 +161,9 @@
             },
             "content_section": {
               "type": "SharedSlice"
+            },
+            "vfx": {
+              "type": "SharedSlice"
             }
           }
         }

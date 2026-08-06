@@ -1,0 +1,64 @@
+{
+  "id": "vfx",
+  "type": "SharedSlice",
+  "name": "Vfx",
+  "description": "Full-width VFX section with a selectable WebGL effect, title, description and link",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "vfx": {
+          "type": "Select",
+          "config": {
+            "label": "VFX",
+            "placeholder": "",
+            "options": ["Rave On"],
+            "default_value": "Rave On"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "single": "heading2"
+          }
+        },
+        "title_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title (SL)",
+            "single": "heading2"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "single": "paragraph"
+          }
+        },
+        "description_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description (SL)",
+            "single": "paragraph"
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": {
+            "label": "Link",
+            "placeholder": "",
+            "select": null
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
