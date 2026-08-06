@@ -3,7 +3,8 @@
 import { useState, useCallback, useEffect } from "react";
 import { getApiPath } from "@/lib/util/api";
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
-import { isPromoCodeValid } from "@/domain/checkout/businessRules";
+import { isQualified } from "@/domain/discount/businessLogic/checkQualifiers";
+import type { DiscountCartItem } from "@/domain/discount/types/discount";
 
 interface UsePromoCodesReturn {
   discount: DiscountDetails | undefined;
@@ -17,12 +18,14 @@ interface UsePromoCodesReturn {
 
 async function validatePromoCode(
   code: string,
-  amount: number
+  items: DiscountCartItem[],
+  subtotal: number,
+  shippingCost: number
 ): Promise<DiscountDetails> {
   const response = await fetch(getApiPath(`checkout/promo-code`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ promoCode: code, subtotal: amount }),
+    body: JSON.stringify({ promoCode: code, items, subtotal, shippingCost }),
   });
 
   if (!response.ok) {
@@ -39,6 +42,7 @@ async function validatePromoCode(
 }
 
 export function usePromoCodes(
+  items: DiscountCartItem[],
   subtotal: number,
   shippingCost: number
 ): UsePromoCodesReturn {
@@ -47,10 +51,8 @@ export function usePromoCodes(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const baseForDiscount = subtotal + shippingCost;
-
   const applyPromoCode = useCallback(async () => {
-    if (!promoCodeValue || baseForDiscount === 0) {
+    if (!promoCodeValue || subtotal + shippingCost === 0) {
       setError("Invalid promo code or cart amount");
       return;
     }
@@ -59,7 +61,16 @@ export function usePromoCodes(
     setError(null);
 
     try {
-      const data = await validatePromoCode(promoCodeValue, baseForDiscount);
+      const data = await validatePromoCode(
+        promoCodeValue,
+        items.map(item => ({
+          uid: item.uid,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        subtotal,
+        shippingCost
+      );
       setDiscount(data);
     } catch (err) {
       const errorMessage =
@@ -69,7 +80,7 @@ export function usePromoCodes(
     } finally {
       setIsLoading(false);
     }
-  }, [promoCodeValue, baseForDiscount]);
+  }, [promoCodeValue, items, subtotal, shippingCost]);
 
   const removePromoCode = useCallback(() => {
     setPromoCodeValue("");
@@ -77,11 +88,17 @@ export function usePromoCodes(
     setError(null);
   }, []);
 
+  // Drop the applied code when the cart stops qualifying (item removed,
+  // min amount no longer met, window closed) — the rule travels with the
+  // discount, so this is a pure local re-check, no network round-trip.
   useEffect(() => {
-    if (discount && !isPromoCodeValid(discount, baseForDiscount)) {
+    if (
+      discount &&
+      !isQualified(discount, { items, subTotal: subtotal, shippingCost })
+    ) {
       removePromoCode();
     }
-  }, [baseForDiscount, discount, removePromoCode]);
+  }, [discount, items, subtotal, shippingCost, removePromoCode]);
 
   return {
     discount,

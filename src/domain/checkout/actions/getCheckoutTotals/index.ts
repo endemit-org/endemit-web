@@ -1,40 +1,24 @@
 import { DiscountDetails } from "@/domain/checkout/types/checkout";
-
-import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
-
-const getDiscountByAmount = (discountAmount: number) => {
-  return discountAmount * -1;
-};
-
-const getDiscountByPercent = (discountPercent: number, prevTotal: number) => {
-  return Math.round((prevTotal * discountPercent) / 100) * -1;
-};
+import { evaluateDiscount } from "@/domain/discount/businessLogic/evaluateDiscount";
+import type { DiscountCartItem } from "@/domain/discount/types/discount";
 
 export const getCheckoutTotals = ({
   subTotal,
   discount,
   shippingCost,
+  items = [],
 }: {
   subTotal: number;
   discount?: DiscountDetails;
   shippingCost: number;
+  /** Cart lines — required for ITEM-type discounts to find matching lines. */
+  items?: DiscountCartItem[];
 }) => {
-  let discountAmount = 0;
-  const baseForDiscount = subTotal + shippingCost;
+  const discountAmount = discount
+    ? -evaluateDiscount(discount, items, subTotal, shippingCost)
+    : 0;
 
-  if (discount && discount?.coupon?.amount_off) {
-    discountAmount = getDiscountByAmount(
-      transformPriceFromStripe(discount.coupon.amount_off)
-    );
-  }
-  if (discount && discount?.coupon?.percent_off) {
-    discountAmount = getDiscountByPercent(
-      discount.coupon.percent_off,
-      baseForDiscount
-    );
-  }
-
-  const total = baseForDiscount + discountAmount;
+  const total = subTotal + shippingCost + discountAmount;
 
   return {
     subTotal,

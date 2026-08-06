@@ -41,6 +41,7 @@ function useCheckoutRequirements(items: CartItem[]) {
 function useCheckoutTotals(
   subtotalPrice: number,
   shippingCost: number,
+  items: CartItem[],
   discount?: DiscountDetails
 ) {
   return useMemo(
@@ -49,8 +50,9 @@ function useCheckoutTotals(
         subTotal: subtotalPrice,
         shippingCost,
         discount,
+        items,
       }),
-    [subtotalPrice, shippingCost, discount]
+    [subtotalPrice, shippingCost, items, discount]
   );
 }
 
@@ -128,7 +130,7 @@ export function useCheckoutState() {
     setPromoCodeValue,
     applyPromoCode,
     removePromoCode,
-  } = usePromoCodes(subtotalPrice, shippingCost);
+  } = usePromoCodes(items, subtotalPrice, shippingCost);
 
   useEffect(() => {
     const discountCodeId = discount?.success ? discount.promoCodeId : undefined;
@@ -138,6 +140,7 @@ export function useCheckoutState() {
   const { subTotal, total: totalBeforeWallet, discountAmount } = useCheckoutTotals(
     subtotalPrice,
     shippingCost,
+    items,
     discount
   );
 

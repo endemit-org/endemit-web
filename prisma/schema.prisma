@@ -89,6 +89,21 @@ enum EventClaimStatus {
   APPROVED
 }
 
+enum DiscountType {
+  ITEM
+  CART
+}
+
+enum DiscountValueType {
+  PERCENTAGE
+  ABSOLUTE
+}
+
+enum DiscountCodeStatus {
+  ACTIVE
+  INACTIVE
+}
+
 enum StickerCodeProperty {
   Festival26Black
   Festival26Red
@@ -106,6 +121,9 @@ model Order {
   totalAmount      Decimal     @db.Decimal(10, 2)
   shippingAmount   Decimal?    @db.Decimal(10, 2)
   discountAmount   Decimal?    @default(0) @db.Decimal(10, 2)
+  discountCodeId   String?
+  discountCode     DiscountCode? @relation(fields: [discountCodeId], references: [id], onDelete: SetNull)
+  discountCodeKey  String? // Snapshot of the code string; survives code deletion
   walletAmountUsed Int         @default(0)
   shippingRequired Boolean
   shippingAddress  Json?
@@ -131,6 +149,31 @@ model Order {
   @@index([userId])
   @@index([status])
   @@index([status, createdAt])
+  @@index([discountCodeId])
+}
+
+model DiscountCode {
+  id                String             @id @default(cuid())
+  code              String             @unique // Stored uppercase, matched case-insensitively
+  description       String?
+  type              DiscountType
+  valueType         DiscountValueType
+  value             Decimal            @db.Decimal(10, 2) // € for ABSOLUTE, 0-100 for PERCENTAGE
+  targetProductUids String[]           @default([]) // ITEM type only: Prismic product uids
+  // Qualifiers — all optional, AND-ed
+  containsItemUids  String[]           @default([])
+  minOrderAmount    Decimal?           @db.Decimal(10, 2) // € against subtotal + shipping
+  validFrom         DateTime?
+  validUntil        DateTime?
+  maxUses           Int?
+  usedCount         Int                @default(0)
+  status            DiscountCodeStatus @default(ACTIVE)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  orders Order[]
+
+  @@index([status])
 }
 
 model OrderRefund {

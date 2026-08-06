@@ -140,6 +140,9 @@ export const useCartStore = create<CartStore>()(
             complementaryTicketData,
             termsAndConditions,
             subscribeToNewsletter,
+            // Pulled out so it stays excluded from shippingAddress; discount
+            // codes are DB-backed now and the legacy session can't apply them.
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             discountCodeId,
             ...shippingAddress
           } = formData;
@@ -156,7 +159,8 @@ export const useCartStore = create<CartStore>()(
               termsAndConditions,
               shippingAddress,
               subscribeToNewsletter,
-              discountCodeId,
+              // Discount codes live in our DB now (not Stripe promotion
+              // codes), so the legacy Stripe-hosted session can't apply them.
               formData,
               walletCreditAmount,
               locale: document.documentElement.lang || "sl",
