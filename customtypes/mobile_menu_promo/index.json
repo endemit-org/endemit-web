@@ -112,6 +112,9 @@
             },
             "embed_block": {
               "type": "SharedSlice"
+            },
+            "vfx": {
+              "type": "SharedSlice"
             }
           }
         }

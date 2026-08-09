@@ -1722,7 +1722,8 @@
       "posOfflineQrs": "POS offline QRs",
       "posOrders": "POS Orders",
       "posTerminal": "POS Terminal",
-      "myProfile": "My Profile"
+      "myProfile": "My Profile",
+      "discounts": "Discount Codes"
     },
     "common": {
       "loading": "Loading...",
@@ -1770,6 +1771,58 @@
         "PENDING_VERIFICATION": "Pending verification",
         "DELETED": "Deleted"
       }
+    },
+    "discounts": {
+      "title": "Discount Codes",
+      "subtitle": "Create and manage discount codes for the store checkout",
+      "stats": {
+        "total": "Total Codes",
+        "active": "Active",
+        "redemptions": "Redemptions"
+      },
+      "addCode": "Add Code",
+      "newCode": "New Code",
+      "editCode": "Edit Code",
+      "fieldCode": "Code",
+      "fieldDescription": "Description",
+      "fieldType": "Discount type",
+      "typeCart": "Whole cart (subtotal + shipping)",
+      "typeItem": "Specific item(s)",
+      "fieldValueType": "Value type",
+      "valuePercentage": "Percentage (%)",
+      "valueAbsolute": "Amount (€)",
+      "fieldValue": "Value",
+      "fieldTargetProducts": "Discounted products",
+      "fieldContainsItems": "Required items in cart (optional)",
+      "containsItemsHint": "If set, the code only works when the cart contains at least one of these products.",
+      "filterProducts": "Filter products…",
+      "noProducts": "No products match.",
+      "fieldMinOrderAmount": "Minimum order amount (€, optional)",
+      "fieldMaxUses": "Max uses (optional)",
+      "fieldValidFrom": "Valid from (optional)",
+      "fieldValidUntil": "Valid until (optional)",
+      "fieldStatus": "Status",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "saving": "Saving…",
+      "update": "Update",
+      "colCode": "Code",
+      "colDiscount": "Discount",
+      "colQualifiers": "Qualifiers",
+      "colUses": "Uses",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "typeCartBadge": "Cart",
+      "typeItemBadge": "Item ({count})",
+      "qualContains": "requires {count} item(s)",
+      "qualMinAmount": "min €{amount}",
+      "qualFrom": "from {date}",
+      "qualUntil": "until {date}",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "confirmDelete": "Delete code {code}? Orders keep their history.",
+      "emptyCodes": "No discount codes yet."
     }
   },
   "pos": {

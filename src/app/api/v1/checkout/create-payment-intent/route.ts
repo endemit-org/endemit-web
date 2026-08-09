@@ -9,7 +9,7 @@ import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOn
 import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { isValidWalletCreditAmount } from "@/domain/checkout/businessRules";
-import { validatePromoCode } from "@/domain/checkout/operations/validatePromoCode";
+import { validateDiscountCode } from "@/domain/discount/operations/validateDiscountCode";
 import { getCheckoutTotals } from "@/domain/checkout/actions/getCheckoutTotals";
 import { processFullWalletPayment } from "@/domain/checkout/operations/processFullWalletPayment";
 import { stripe } from "@/lib/services/stripe";
@@ -44,20 +44,16 @@ export async function POST(request: Request) {
 
     if (body.promoCode) {
       try {
-        const { coupon, foundPromoCode } = await validatePromoCode(
-          body.promoCode,
-          subtotal
-        );
+        const { rule } = await validateDiscountCode(body.promoCode, {
+          items: checkoutItems,
+          subTotal: subtotal,
+          shippingCost,
+        });
         discount = {
+          ...rule,
           success: true,
-          promoCodeKey: body.promoCode,
-          promoCodeId: foundPromoCode.id,
-          coupon: {
-            id: coupon.id,
-            percent_off: coupon.percent_off ?? undefined,
-            amount_off: coupon.amount_off ?? undefined,
-          },
-          restrictions: foundPromoCode.restrictions,
+          promoCodeKey: rule.code,
+          promoCodeId: rule.id,
         };
       } catch {
         // Invalid promo code - continue without discount
@@ -70,6 +66,7 @@ export async function POST(request: Request) {
       subTotal: subtotal,
       discount,
       shippingCost,
+      items: checkoutItems,
     });
     discountAmount = totals.discountAmount;
 
@@ -154,6 +151,8 @@ export async function POST(request: Request) {
       subtotal,
       shippingCost,
       discountAmount,
+      discountCodeId: discount?.id,
+      discountCodeKey: discount?.code,
       walletAmountUsed: validatedWalletCredit,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,

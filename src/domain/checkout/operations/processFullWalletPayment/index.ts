@@ -10,6 +10,7 @@ import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms
 import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
 import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
 import { bustOnOrderStatusChanged } from "@/lib/services/cache";
+import { redeemDiscountCode } from "@/domain/discount/operations/redeemDiscountCode";
 import { ProductInOrder } from "@/domain/order/types/order";
 
 export const processFullWalletPayment = async (orderId: string) => {
@@ -60,6 +61,16 @@ export const processFullWalletPayment = async (orderId: string) => {
 
   // Bust order status cache
   await bustOnOrderStatusChanged(orderId, order.userId);
+
+  // Count the discount code redemption (non-blocking; the CREATED-status
+  // guard above makes this path run at most once per order)
+  if (updatedOrder.discountCodeId) {
+    try {
+      await redeemDiscountCode(updatedOrder.discountCodeId);
+    } catch (error) {
+      console.error("Failed to redeem discount code:", error);
+    }
+  }
 
   const items = updatedOrder.items as unknown as ProductInOrder[];
 

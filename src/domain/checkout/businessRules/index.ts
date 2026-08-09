@@ -5,15 +5,9 @@ import {
   isProductShippable,
   isProductTicket,
 } from "@/domain/product/businessLogic";
-import {
-  DiscountDetails,
-  ShippingAddress,
-} from "@/domain/checkout/types/checkout";
-import { transformPriceToStripe } from "@/domain/checkout/transformers/transformPriceToStripe";
+import { ShippingAddress } from "@/domain/checkout/types/checkout";
 import { CartItem } from "@/domain/checkout/types/cartItem";
-import Stripe from "stripe";
 import { Product } from "@/domain/product/types/product";
-import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
 
 export const includesShippableProduct = (cartItems: CartItem[]) => {
   return cartItems.some(item => isProductShippable(item));
@@ -76,20 +70,6 @@ export const canProceedToCheckout = (
   return isFormValid && hasItems && !isProcessing;
 };
 
-export const isPromoCodeValid = (
-  discount: DiscountDetails | undefined,
-  baseAmount: number
-) => {
-  if (!discount?.promoCodeKey || !discount?.restrictions?.minimum_amount) {
-    return true;
-  }
-
-  const minimumRequired = transformPriceFromStripe(
-    discount.restrictions.minimum_amount
-  );
-  return baseAmount >= minimumRequired;
-};
-
 export const shouldShowDonationCTA = (
   items: CartItem[],
   donationAmount: number,
@@ -110,24 +90,4 @@ export const shouldAddShippingToCheckout = (
   if (!shouldHaveShippingAddress) return false;
   if (!shippingAddress) return false;
   return includesShippableProduct(checkoutItems);
-};
-export const isValidMinimumAmount = (
-  restrictions: Stripe.PromotionCode.Restrictions | undefined,
-  subtotal: number
-) => {
-  const minimumAmount = restrictions?.minimum_amount;
-  if (!minimumAmount) return;
-
-  if (transformPriceToStripe(subtotal) < minimumAmount) {
-    throw new Error(
-      `Minimum order amount of €${transformPriceFromStripe(minimumAmount)} required`
-    );
-  }
-};
-export const isValidRedemptionLimit = (promoCode: Stripe.PromotionCode) => {
-  if (!promoCode.max_redemptions) return;
-
-  if (promoCode.times_redeemed >= promoCode.max_redemptions) {
-    throw new Error("Promo code has reached maximum redemptions");
-  }
 };

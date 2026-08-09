@@ -258,6 +258,9 @@
             },
             "sound_cloud": {
               "type": "SharedSlice"
+            },
+            "vfx": {
+              "type": "SharedSlice"
             }
           }
         }

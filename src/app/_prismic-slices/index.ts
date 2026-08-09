@@ -29,5 +29,6 @@ export const components = {
   text_column: dynamic(() => import("./TextColumns")),
   ticket_price_progress: dynamic(() => import("./TicketPriceProgress")),
   venue_list: dynamic(() => import("./VenueList")),
+  vfx: dynamic(() => import("./Vfx")),
   vinyl_promo_section: dynamic(() => import("./VinylPromoSection")),
 };

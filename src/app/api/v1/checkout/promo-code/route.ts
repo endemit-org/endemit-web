@@ -1,13 +1,16 @@
 import assert from "node:assert";
 import { NextResponse } from "next/server";
 import { CheckoutValidationService } from "@/lib/services/validation/validation.service";
-import { validatePromoCode } from "@/domain/checkout/operations/validatePromoCode";
+import { validateDiscountCode } from "@/domain/discount/operations/validateDiscountCode";
+import type { DiscountCartItem } from "@/domain/discount/types/discount";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const promoCode = body.promoCode as string;
-    const subtotal = body.subtotal as number; // Should be in euros
+    const subtotal = body.subtotal as number; // In euros
+    const shippingCost = (body.shippingCost as number) ?? 0; // In euros
+    const items = (body.items as DiscountCartItem[]) ?? [];
 
     assert(promoCode, "Promo code is required");
     assert(
@@ -19,23 +22,23 @@ export async function POST(request: Request) {
       "Cart subtotal value is required and must be greater than 0"
     );
 
-    const { foundPromoCode, coupon } = await validatePromoCode(
-      promoCode,
-      subtotal
-    );
+    const { rule } = await validateDiscountCode(promoCode, {
+      items: items.map(item => ({
+        uid: item.uid,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      subTotal: subtotal,
+      shippingCost,
+    });
 
     return NextResponse.json(
       {
         success: true,
         valid: true,
-        promoCodeId: foundPromoCode.id,
-        promoCodeKey: promoCode,
-        coupon: {
-          id: coupon.id,
-          percent_off: coupon.percent_off,
-          amount_off: coupon.amount_off,
-        },
-        restrictions: foundPromoCode.restrictions,
+        ...rule,
+        promoCodeId: rule.id,
+        promoCodeKey: rule.code,
       },
       { status: 200 }
     );
