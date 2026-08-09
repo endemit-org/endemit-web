@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+// import Image from "next/image"; // Flame gif removed for now
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import clsx from "clsx";
 import { Product, ProductCategory } from "@/domain/product/types/product";
@@ -147,7 +147,8 @@ export default function TopUpModal({
                     </p>
 
                     <div className="grid grid-cols-2 gap-2 mb-5">
-                      {currencyProducts.map((product, index) => (
+                      {/* re-add `index` to map params when restoring the flame gif */}
+                      {currencyProducts.map(product => (
                         <button
                           key={product.id}
                           onClick={() => setSelectedProduct(product)}
@@ -159,6 +160,7 @@ export default function TopUpModal({
                               : "border-neutral-800 bg-neutral-800/40 hover:border-neutral-600"
                           )}
                         >
+                          {/* Flame gif removed for now
                           {index === 1 && (
                             <Image
                               src="/images/flame.gif"
@@ -168,7 +170,7 @@ export default function TopUpModal({
                               className="absolute -top-2 -right-2 w-6 h-6"
                               unoptimized
                             />
-                          )}
+                          )} */}
                           <span className="text-2xl font-semibold text-white tabular-nums">
                             {formatTokens(product.price, 0)}
                           </span>

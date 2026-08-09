@@ -202,61 +202,66 @@ export default function Sidebar({
           hidden: !isMenuOpen,
         })}
       >
-        {/* Mobile-only promo slot floating left of the (right-aligned) nav.
-            The w-36 frame is the promo's max width; content height is its
-            own. Tapping a link inside closes the menu like nav items do. */}
-        {promo && (
-          <div
-            className="lg:hidden absolute left-4 top-8 w-36 max-w-full max-h-[50dvh] overflow-hidden"
-            onClickCapture={e => {
-              if ((e.target as HTMLElement).closest("a")) close();
-            }}
-          >
-            {promo}
-          </div>
-        )}
+        {/* Wrapper is the promo's anchor: the promo sits at the BOTTOM of
+            the nav region, left of the (right-aligned) items and just above
+            the pinned bars. */}
+        <div className="relative flex flex-col flex-1 min-h-0">
+          {/* Mobile-only promo slot. The w-36 frame is the promo's max
+              width; content height is its own. Tapping a link inside closes
+              the menu like nav items do. */}
+          {promo && (
+            <div
+              className="lg:hidden absolute left-4 bottom-3 w-36 max-w-full max-h-[50dvh] overflow-hidden"
+              onClickCapture={e => {
+                if ((e.target as HTMLElement).closest("a")) close();
+              }}
+            >
+              {promo}
+            </div>
+          )}
 
-        {/* Scrollable navigation area */}
-        {/* flex-1 pushes the pinned bottom section to the screen bottom and
+          {/* Scrollable navigation area */}
+          {/* flex-1 pushes the pinned bottom section to the screen bottom and
             keeps long menus scrollable within the viewport. */}
-        <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl max-sm:space-y-1 space-y-2 overflow-y-auto flex-1 min-h-0 font-heading tracking-widest">
-          {navigationItems.map((item, index) => {
-            const isActive = isItemActive(item, navigationItems);
+          <nav className="px-5 pb-7 pt-5 text-2xl lg:text-xl max-sm:space-y-1 space-y-2 overflow-y-auto flex-1 min-h-0 font-heading tracking-widest">
+            {navigationItems.map((item, index) => {
+              const isActive = isItemActive(item, navigationItems);
 
-            return (
-              <Link
-                key={index}
-                onClick={() => handleNavClick(item)}
-                href={item.href}
-                className={clsx(
-                  "block rounded-md px-3 py-2 text-right font-regular uppercase sm:pt-2 pt-4 transition-colors hover:underline underline-offset-4 decoration-dotted group",
-                  isActive && `${activeColor} cursor-default`,
-                  !isActive &&
-                    "text-neutral-200 hover:!text-gray-400 active:text-gray-600",
-                  !isActive &&
-                    item.type === "CTA" &&
-                    "!text-white animate-rave-125bmp-delay hover:[animation:none] "
-                )}
-              >
-                {!isActive && item.type === "CTA" && item.ctaText && (
-                  <span
-                    className={
-                      "p-0.5 px-1 text-sm bg-blue-500 leading-[0.6rem] pt-1.5 pr-0.5 text-neutral-100 rounded-sm mr-2 animate-rave-125bmp inline-block group-hover:[animation:none] relative -top-1"
-                    }
-                  >
-                    {item.ctaText}
-                  </span>
-                )}
-                {item.icon && (
-                  <span className="inline-block mr-2 align-middle">
-                    {item.icon}
-                  </span>
-                )}
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={index}
+                  onClick={() => handleNavClick(item)}
+                  href={item.href}
+                  className={clsx(
+                    "block rounded-md px-3 py-2 text-right font-regular uppercase sm:pt-2 pt-4 transition-colors hover:underline underline-offset-4 decoration-dotted group",
+                    isActive && `${activeColor} cursor-default`,
+                    !isActive &&
+                      "text-neutral-200 hover:!text-gray-400 active:text-gray-600",
+                    !isActive &&
+                      item.type === "CTA" &&
+                      "!text-white animate-rave-125bmp-delay hover:[animation:none] "
+                  )}
+                >
+                  {!isActive && item.type === "CTA" && item.ctaText && (
+                    <span
+                      className={
+                        "p-0.5 px-1 text-sm bg-blue-500 leading-[0.6rem] pt-1.5 pr-0.5 text-neutral-100 rounded-sm mr-2 animate-rave-125bmp inline-block group-hover:[animation:none] relative -top-1"
+                      }
+                    >
+                      {item.ctaText}
+                    </span>
+                  )}
+                  {item.icon && (
+                    <span className="inline-block mr-2 align-middle">
+                      {item.icon}
+                    </span>
+                  )}
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
         {/* Pinned bottom section - Profile, Cart and Social */}
         <div className="flex-shrink-0">

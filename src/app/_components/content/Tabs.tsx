@@ -13,7 +13,17 @@ export interface TabItem {
   hideTitle?: boolean;
   mobileOnly?: boolean;
   desktopOnly?: boolean;
+  /**
+   * Hash prefixes this tab also answers to, for deep links to content inside
+   * the tab (e.g. `artist-` so #artist-<uid> activates the lineup tab).
+   */
+  hashPrefixes?: string[];
 }
+
+const matchesHash = (item: TabItem, hash: string) =>
+  item.id === hash ||
+  (hash !== "" &&
+    (item.hashPrefixes?.some(prefix => hash.startsWith(prefix)) ?? false));
 
 export interface TabsProps {
   heading?: string;
@@ -39,8 +49,8 @@ export default function Tabs({
   }
 
   const initialTabId =
-    items.find(item => item.id === hashFromUrl && !item.mobileOnly)?.id ??
-    items[0]?.id;
+    items.find(item => matchesHash(item, hashFromUrl) && !item.mobileOnly)
+      ?.id ?? items[0]?.id;
 
   const desktopTabs = [...items].filter(item => !item.mobileOnly);
   const [activeTabId, setActiveTabId] = useState(initialTabId);
@@ -120,10 +130,26 @@ export default function Tabs({
     window.addEventListener("pointercancel", onUp);
   };
 
+  // On client-side navigations the URL hash is committed only around render,
+  // so the initial-render read above sees the previous page's hash (and
+  // pushState never fires `hashchange`). Re-check shortly after mount so deep
+  // links like #artist-<uid> select the right tab when arriving via <Link>.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return;
+      const tab = items.find(item => matchesHash(item, hash));
+      if (tab && tab.id !== activeTabId) setActiveTabId(tab.id);
+    }, 100);
+    return () => clearTimeout(timer);
+    // Mount-only: later hash updates are covered by the hashchange listener.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
-      const tab = items.find(item => item.id === hash);
+      const tab = items.find(item => matchesHash(item, hash));
       if (tab) {
         setIsScrolling(true);
         setActiveTabId(tab.id);
