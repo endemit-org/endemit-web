@@ -2,6 +2,7 @@ import { CountryCode } from "@/domain/checkout/types/country";
 import Stripe from "stripe";
 
 import { CartItem } from "@/domain/checkout/types/cartItem";
+import { DiscountRule } from "@/domain/discount/types/discount";
 
 export enum OrderStatus {
   PENDING = "PENDING",
@@ -36,16 +37,17 @@ export type ShippingAddress = {
   phone: string;
 };
 
-export type DiscountDetails = {
+/**
+ * An applied discount code as seen by the checkout: the full rule (so the
+ * client can re-evaluate/re-qualify it when the cart changes) plus the
+ * legacy promoCodeKey/promoCodeId aliases the checkout UI already uses.
+ */
+export type DiscountDetails = DiscountRule & {
   success: boolean;
+  /** Alias of `code`. */
   promoCodeKey: string;
+  /** Alias of `id`. */
   promoCodeId: string;
-  coupon: {
-    id: string;
-    percent_off?: number;
-    amount_off?: number;
-  };
-  restrictions?: Stripe.PromotionCode.Restrictions;
 };
 
 export interface CheckoutFormData extends ShippingAddress {

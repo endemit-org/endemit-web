@@ -24,6 +24,7 @@ interface ArtistLineupItem {
     url?: string | null;
     alt?: string | null;
   } | null;
+  link_override?: LinkField;
 }
 
 interface ArtistLineupSlice {
@@ -81,6 +82,10 @@ const ArtistLineup: FC<{
         artist,
         imageOverride,
         nameOverride: item.name_override ?? null,
+        // Per-card link beats the slice-level override.
+        itemLink: item.link_override
+          ? (asLink(item.link_override) ?? null)
+          : null,
       };
     })
   );
@@ -100,7 +105,7 @@ const ArtistLineup: FC<{
           lineupTitle || lineupDescription ? "mt-8" : "mt-0"
         )}
       >
-        {resolved.map(({ artist, imageOverride, nameOverride }, index) =>
+        {resolved.map(({ artist, imageOverride, nameOverride, itemLink }, index) =>
           artist ? (
             <ArtistCard
               key={artist.id}
@@ -109,7 +114,7 @@ const ArtistLineup: FC<{
               nameOverride={nameOverride}
               grayscale={false}
               showName={showNames}
-              linkOverride={linkOverride}
+              linkOverride={itemLink ?? linkOverride}
               showCrewBadge={false}
             />
           ) : (

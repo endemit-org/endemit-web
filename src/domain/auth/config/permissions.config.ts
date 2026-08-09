@@ -84,6 +84,10 @@ export const PERMISSIONS = {
   // Announcements
   ANNOUNCEMENTS_READ: "announcements:read",
   ANNOUNCEMENTS_WRITE: "announcements:write",
+
+  // Discount codes
+  DISCOUNTS_READ: "discounts:read",
+  DISCOUNTS_WRITE: "discounts:write",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -421,6 +425,20 @@ export const PERMISSION_METADATA: Record<
     name: "Manage Announcements",
     description: "Create, edit, and delete announcements",
     resource: "announcements",
+    action: "write",
+  },
+
+  // Discount codes
+  [PERMISSIONS.DISCOUNTS_READ]: {
+    name: "Read Discount Codes",
+    description: "View discount codes and their usage",
+    resource: "discounts",
+    action: "read",
+  },
+  [PERMISSIONS.DISCOUNTS_WRITE]: {
+    name: "Manage Discount Codes",
+    description: "Create, edit, and delete discount codes",
+    resource: "discounts",
     action: "write",
   },
 };

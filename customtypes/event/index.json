@@ -469,6 +469,9 @@
             },
             "ticket_price_progress": {
               "type": "SharedSlice"
+            },
+            "vfx": {
+              "type": "SharedSlice"
             }
           }
         }

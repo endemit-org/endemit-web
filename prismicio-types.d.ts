@@ -114,6 +114,7 @@ type ArtistDocumentDataSlicesSlice =
   | AccordionSlice
   | ImageGallerySlice
   | HeroSlice
+  | VfxSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -319,6 +320,7 @@ type ContentPageDocumentDataSlicesSlice =
   | AccordionSlice
   | ImageGallerySlice
   | HeroSlice
+  | VfxSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -598,6 +600,7 @@ type EventDocumentDataSlicesSlice =
   | SpacerSlice
   | HorizontalRuleSlice
   | HeroSlice
+  | VfxSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1036,6 +1039,7 @@ type HomePageDocumentDataSlicesSlice =
   | ProductListSlice
   | AccordionSlice
   | HeroSlice
+  | VfxSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
   | ContentSectionSlice
@@ -1127,6 +1131,7 @@ type InnerContentDocumentDataSlicesSlice =
   | ProductListSlice
   | PodcastListSlice
   | HeroSlice
+  | VfxSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1222,6 +1227,7 @@ export type InnerContentDocument<Lang extends string = string> =
   >;
 
 type MobileMenuPromoDocumentDataSlicesSlice =
+  | PromoCardSlice
   | VenueListSlice
   | SaveTheDateSlice
   | TabsSlice
@@ -1243,6 +1249,7 @@ type MobileMenuPromoDocumentDataSlicesSlice =
   | ProductListSlice
   | PodcastListSlice
   | HeroSlice
+  | VfxSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1683,6 +1690,7 @@ type ProductDocumentDataSlicesSlice =
   | BlurredBlobSlice
   | BannerSlice
   | HeroSlice
+  | VfxSlice
   | TextColumnSlice
   | VinylPromoSectionSlice
   | NewsletterSubscriptionSlice
@@ -2705,6 +2713,101 @@ type ArtistProfileListSliceVariation = ArtistProfileListSliceDefault;
 export type ArtistProfileListSlice = prismic.SharedSlice<
   "artist_profile_list",
   ArtistProfileListSliceVariation
+>;
+
+/**
+ * Primary content in *PromoCard → Default → Primary*
+ */
+export interface PromoCardSliceDefaultPrimary {
+  /**
+   * Image field in *PromoCard → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: promo_card.default.primary.image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
+   * Video field in *PromoCard → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Muted looping mp4
+   * - **API ID Path**: promo_card.default.primary.video
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * CTA field in *PromoCard → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. Get tickets
+   * - **API ID Path**: promo_card.default.primary.cta
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  cta: prismic.KeyTextField;
+
+  /**
+   * CTA (SL) field in *PromoCard → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: promo_card.default.primary.cta_sl
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  cta_sl: prismic.KeyTextField;
+
+  /**
+   * Link field in *PromoCard → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Where the card points
+   * - **API ID Path**: promo_card.default.primary.link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+  /**
+   * Countdown to (optional) field in *PromoCard → Default → Primary*
+   *
+   * - **Field Type**: Timestamp
+   * - **Placeholder**: Card shows a countdown and disappears at zero
+   * - **API ID Path**: promo_card.default.primary.countdown_to
+   * - **Documentation**: https://prismic.io/docs/fields/timestamp
+   */
+  countdown_to: prismic.TimestampField;
+}
+
+/**
+ * Default variation for PromoCard Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PromoCardSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<PromoCardSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *PromoCard*
+ */
+type PromoCardSliceVariation = PromoCardSliceDefault;
+
+/**
+ * PromoCard Shared Slice
+ *
+ * - **API ID**: `promo_card`
+ * - **Description**: PromoCard
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PromoCardSlice = prismic.SharedSlice<
+  "promo_card",
+  PromoCardSliceVariation
 >;
 
 /**
@@ -4922,6 +5025,99 @@ export type VenueListSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Vfx → Default → Primary*
+ */
+export interface VfxSliceDefaultPrimary {
+  /**
+   * VFX field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Rave On
+   * - **API ID Path**: vfx.default.primary.vfx
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  vfx: prismic.SelectField<"Rave On", "filled">;
+
+  /**
+   * Title field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Title (SL) field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.title_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title_sl: prismic.RichTextField;
+
+  /**
+   * Description field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Description (SL) field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.description_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_sl: prismic.RichTextField;
+
+  /**
+   * Link field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+}
+
+/**
+ * Default variation for Vfx Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VfxSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<VfxSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Vfx*
+ */
+type VfxSliceVariation = VfxSliceDefault;
+
+/**
+ * Vfx Shared Slice
+ *
+ * - **API ID**: `vfx`
+ * - **Description**: Full-width VFX section with a selectable WebGL effect, title, description and link
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VfxSlice = prismic.SharedSlice<"vfx", VfxSliceVariation>;
+
+/**
  * Primary content in *VinylPromoSection → Default → Primary*
  */
 export interface VinylPromoSectionSliceDefaultPrimary {
@@ -5084,6 +5280,10 @@ declare module "@prismicio/client" {
       BannerSliceDefaultPrimary,
       BannerSliceVariation,
       BannerSliceDefault,
+      PromoCardSlice,
+      PromoCardSliceDefaultPrimary,
+      PromoCardSliceVariation,
+      PromoCardSliceDefault,
       BlurredBlobSlice,
       BlurredBlobSliceDefaultPrimary,
       BlurredBlobSliceVariation,
@@ -5189,6 +5389,10 @@ declare module "@prismicio/client" {
       VenueListSliceDefaultPrimary,
       VenueListSliceVariation,
       VenueListSliceDefault,
+      VfxSlice,
+      VfxSliceDefaultPrimary,
+      VfxSliceVariation,
+      VfxSliceDefault,
       VinylPromoSectionSlice,
       VinylPromoSectionSliceDefaultPrimary,
       VinylPromoSectionSliceVariation,

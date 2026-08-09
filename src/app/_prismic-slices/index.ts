@@ -20,6 +20,7 @@ export const components = {
   podcast_list: dynamic(() => import("./PodcastList")),
   poem: dynamic(() => import("./EventIntro")),
   product_list: dynamic(() => import("./ProductList")),
+  promo_card: dynamic(() => import("./PromoCard")),
   save_the_date: dynamic(() => import("./SaveTheDate")),
   snowfall: dynamic(() => import("./Snowfall")),
   sound_cloud: dynamic(() => import("./SoundCloud")),
@@ -28,5 +29,6 @@ export const components = {
   text_column: dynamic(() => import("./TextColumns")),
   ticket_price_progress: dynamic(() => import("./TicketPriceProgress")),
   venue_list: dynamic(() => import("./VenueList")),
+  vfx: dynamic(() => import("./Vfx")),
   vinyl_promo_section: dynamic(() => import("./VinylPromoSection")),
 };
