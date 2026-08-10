@@ -1848,7 +1848,8 @@
       "each": "{amount} vsak",
       "clear": "Počisti",
       "creating": "Ustvarjam…",
-      "createOrder": "Ustvari naročilo"
+      "createOrder": "Ustvari naročilo",
+      "negativeTotal": "Znesek naročila ne more biti negativen"
     },
     "orders": {
       "yourTotalIs": "Skupaj <bold>{amount}</bold>",

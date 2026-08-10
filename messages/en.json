@@ -1848,7 +1848,8 @@
       "each": "{amount} each",
       "clear": "Clear",
       "creating": "Creating...",
-      "createOrder": "Create Order"
+      "createOrder": "Create Order",
+      "negativeTotal": "Order total cannot be negative"
     },
     "orders": {
       "yourTotalIs": "Your total is <bold>{amount}</bold>",
