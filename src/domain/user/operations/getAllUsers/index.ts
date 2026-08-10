@@ -13,16 +13,29 @@ import { CacheTags } from "@/lib/services/cache";
 interface GetAllUsersParams {
   page?: number;
   pageSize?: number;
+  search?: string;
 }
 
 const getAllUsersUncached = async ({
   page = 1,
   pageSize = DEFAULT_PAGE_SIZE,
+  search,
 }: GetAllUsersParams = {}): Promise<PaginatedUsers> => {
-  const totalCount = await prisma.user.count();
+  const where = search
+    ? {
+        OR: [
+          { username: { contains: search, mode: "insensitive" as const } },
+          { email: { contains: search, mode: "insensitive" as const } },
+          { name: { contains: search, mode: "insensitive" as const } },
+        ],
+      }
+    : undefined;
+
+  const totalCount = await prisma.user.count({ where });
   const pagination = calculatePagination(totalCount, page, pageSize);
 
   const users = await prisma.user.findMany({
+    where,
     skip: pagination.skip,
     take: pagination.take,
     orderBy: {
@@ -66,11 +79,11 @@ const getAllUsersUncached = async ({
 export const getAllUsers = (
   params: GetAllUsersParams = {}
 ): Promise<PaginatedUsers> => {
-  const { page = 1, pageSize = DEFAULT_PAGE_SIZE } = params;
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, search = "" } = params;
 
   return unstable_cache(
     () => getAllUsersUncached(params),
-    ["admin-users", String(page), String(pageSize)],
+    ["admin-users", String(page), String(pageSize), search],
     { tags: [CacheTags.admin.users.list()] }
   )();
 };
