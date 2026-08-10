@@ -1315,7 +1315,8 @@
         "colSold": "Prodano (30 dni)",
         "colActions": "Dejanja",
         "soldCount": "{count} prodano",
-        "emptyItems": "Še ni nobenga izdelka."
+        "emptyItems": "Še ni nobenga izdelka.",
+        "fieldColor": "Barva"
       },
       "orders": {
         "title": "POS naročila",

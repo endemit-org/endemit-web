@@ -1315,7 +1315,8 @@
         "colSold": "Sold (30d)",
         "colActions": "Actions",
         "soldCount": "{count} sold",
-        "emptyItems": "No items yet."
+        "emptyItems": "No items yet.",
+        "fieldColor": "Color"
       },
       "orders": {
         "title": "POS Orders",

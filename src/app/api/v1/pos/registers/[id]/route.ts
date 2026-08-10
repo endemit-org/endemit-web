@@ -79,6 +79,7 @@ export async function GET(
           description: ri.item.description,
           cost: ri.item.cost,
           direction: ri.item.direction,
+          color: ri.item.color,
         })),
         pendingOrders: register.orders.map(o => ({
           id: o.id,
