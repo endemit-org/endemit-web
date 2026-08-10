@@ -6,6 +6,7 @@ import {
   searchUsersAction,
   type UserSearchResult,
 } from "@/domain/user/actions/searchUsersAction";
+import type { Permission } from "@/domain/auth/config/permissions.config";
 
 interface UserAutocompleteProps {
   value: string;
@@ -13,6 +14,8 @@ interface UserAutocompleteProps {
   onUserSelect?: (user: UserSearchResult) => void;
   placeholder?: string;
   disabled?: boolean;
+  /** Only suggest users whose roles grant this permission. */
+  requirePermission?: Permission;
 }
 export default function UserAutocomplete({
   value,
@@ -20,6 +23,7 @@ export default function UserAutocomplete({
   onUserSelect,
   placeholder,
   disabled = false,
+  requirePermission,
 }: UserAutocompleteProps) {
   const t = useTranslations("admin.users");
   const [isOpen, setIsOpen] = useState(false);
@@ -32,20 +36,26 @@ export default function UserAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const searchUsers = useCallback(async (query: string) => {
-    if (query.length < 2) {
-      setUsers([]);
-      return;
-    }
+  const searchUsers = useCallback(
+    async (query: string) => {
+      if (query.length < 2) {
+        setUsers([]);
+        return;
+      }
 
-    setIsLoading(true);
-    const result = await searchUsersAction(query);
-    setIsLoading(false);
+      setIsLoading(true);
+      const result = await searchUsersAction(
+        query,
+        requirePermission ? { requirePermission } : undefined
+      );
+      setIsLoading(false);
 
-    if (result.success) {
-      setUsers(result.users);
-    }
-  }, []);
+      if (result.success) {
+        setUsers(result.users);
+      }
+    },
+    [requirePermission]
+  );
 
   useEffect(() => {
     if (debounceRef.current) {

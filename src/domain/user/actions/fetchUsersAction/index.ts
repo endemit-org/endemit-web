@@ -6,7 +6,10 @@ import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllUsers } from "@/domain/user/operations/getAllUsers";
 import type { PaginatedUsers } from "@/domain/user/types";
 
-export async function fetchUsers(page?: number): Promise<PaginatedUsers> {
+export async function fetchUsers(
+  page?: number,
+  search?: string
+): Promise<PaginatedUsers> {
   const user = await getCurrentUser();
   assert(user, "User not authenticated");
   assert(
@@ -14,5 +17,5 @@ export async function fetchUsers(page?: number): Promise<PaginatedUsers> {
     "User not authorized to read users"
   );
 
-  return await getAllUsers({ page });
+  return await getAllUsers({ page, search: search?.trim() || undefined });
 }

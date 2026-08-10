@@ -11,11 +11,13 @@ import { removeItemFromRegisterAction } from "@/domain/pos/actions/removeItemFro
 import { assignSellerToRegisterAction } from "@/domain/pos/actions/assignSellerToRegisterAction";
 import { removeSellerFromRegisterAction } from "@/domain/pos/actions/removeSellerFromRegisterAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
+import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
 interface Props {
   initialRegisters: PosRegisterWithRelations[];
   allItems: PosItem[];
-  allUsers: Array<{ id: string; name: string | null; email: string }>;
   canWrite: boolean;
 }
 
@@ -26,7 +28,6 @@ function formatPrice(cents: number): string {
 export default function PosRegistersDisplay({
   initialRegisters,
   allItems,
-  allUsers,
   canWrite,
 }: Props) {
   const t = useTranslations("admin.pos.registers");
@@ -37,6 +38,7 @@ export default function PosRegistersDisplay({
     useState<PosRegisterWithRelations | null>(null);
   const [managingRegister, setManagingRegister] =
     useState<PosRegisterWithRelations | null>(null);
+  const [sellerQuery, setSellerQuery] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const handleCreate = async (formData: FormData) => {
@@ -161,11 +163,13 @@ export default function PosRegistersDisplay({
     });
   };
 
-  const handleAssignSeller = async (registerId: string, userId: string) => {
+  const handleAssignSeller = async (
+    registerId: string,
+    user: UserSearchResult
+  ) => {
     startTransition(async () => {
-      await assignSellerToRegisterAction(registerId, userId);
-      const user = allUsers.find(u => u.id === userId);
-      if (user) {
+      await assignSellerToRegisterAction(registerId, user.id);
+      {
         setRegisters(prev =>
           prev.map(r =>
             r.id === registerId
@@ -339,9 +343,6 @@ export default function PosRegistersDisplay({
     );
 
     const assignedSellerIds = managingRegister.sellers.map(s => s.userId);
-    const availableUsers = allUsers.filter(
-      u => !assignedSellerIds.includes(u.id)
-    );
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -471,35 +472,23 @@ export default function PosRegistersDisplay({
                   <p className="text-gray-500 text-sm">{t("noSellersAssigned")}</p>
                 )}
               </div>
-              {canWrite && availableUsers.length > 0 && (
-                <div className="flex gap-2">
-                  <select
-                    id="addSeller"
-                    className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="">{t("selectUser")}</option>
-                    {availableUsers.map(user => (
-                      <option key={user.id} value={user.id}>
-                        {user.name || user.email} ({user.email})
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => {
-                      const select = document.getElementById(
-                        "addSeller"
-                      ) as HTMLSelectElement;
-                      if (select.value) {
-                        handleAssignSeller(managingRegister.id, select.value);
-                        select.value = "";
-                      }
-                    }}
-                    disabled={isPending}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {t("add")}
-                  </button>
-                </div>
+              {canWrite && (
+                // Remount after each assignment so the autocomplete's internal
+                // selection state resets alongside the cleared query.
+                <UserAutocomplete
+                  key={assignedSellerIds.length}
+                  value={sellerQuery}
+                  onChange={setSellerQuery}
+                  requirePermission={PERMISSIONS.POS_SELL}
+                  placeholder={t("selectUser")}
+                  disabled={isPending}
+                  onUserSelect={user => {
+                    if (!assignedSellerIds.includes(user.id)) {
+                      handleAssignSeller(managingRegister.id, user);
+                    }
+                    setSellerQuery("");
+                  }}
+                />
               )}
             </div>
           </div>

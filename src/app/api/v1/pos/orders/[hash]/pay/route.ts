@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { payPosOrder } from "@/domain/pos/operations/payPosOrder";
+import { PosError } from "@/domain/pos/types/posError";
 import { prisma } from "@/lib/services/prisma";
 
 export async function POST(
@@ -19,7 +20,10 @@ export async function POST(
     const { tipAmount = 0 } = body;
 
     if (typeof tipAmount !== "number" || tipAmount < 0) {
-      return NextResponse.json({ error: "Invalid tip amount" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid tip amount", errorCode: "INVALID_TIP" },
+        { status: 400 }
+      );
     }
 
     // When the seller triggers /pay (sticker-fallback flow), the order already
@@ -34,7 +38,7 @@ export async function POST(
     if (existingOrder && existingOrder.sellerId === user.id) {
       if (!existingOrder.customerId) {
         return NextResponse.json(
-          { error: "Order has not been scanned yet" },
+          { error: "Order has not been scanned yet", errorCode: "NOT_SCANNED" },
           { status: 400 }
         );
       }
@@ -62,6 +66,12 @@ export async function POST(
   } catch (error) {
     console.error("Pay POS order error:", error);
     const message = error instanceof Error ? error.message : "Failed to process payment";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: message,
+        errorCode: error instanceof PosError ? error.code : undefined,
+      },
+      { status: 400 }
+    );
   }
 }

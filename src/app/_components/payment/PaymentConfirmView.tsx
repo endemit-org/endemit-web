@@ -201,19 +201,23 @@ export function PaymentConfirmView({
         )}
         {tipAmount > 0 && !hasTopUp && (
           <div className="text-neutral-500 text-xs mt-1">
-            = {formatTokensFromCents(totalToPay)} total · tip included
+            {t("totalWithTip", { amount: formatTokensFromCents(totalToPay) })}
           </div>
         )}
       </div>
 
       <div className="flex justify-between text-xs text-neutral-500 mb-1 px-1">
-        <span>Balance: {formatTokensFromCents(customer.balance)}</span>
-        <span>After: {formatTokensFromCents(balanceAfter)}</span>
+        <span>
+          {t("balance")}: {formatTokensFromCents(customer.balance)}
+        </span>
+        <span>
+          {t("balanceAfter")}: {formatTokensFromCents(balanceAfter)}
+        </span>
       </div>
 
       {!canPay && (
         <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 mb-4 text-red-400 text-sm text-center">
-          Insufficient balance. Please top up your wallet.
+          {t("errors.insufficientBalance")}
         </div>
       )}
 

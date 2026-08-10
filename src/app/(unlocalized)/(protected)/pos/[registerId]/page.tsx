@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { prisma } from "@/lib/services/prisma";
 import type { Metadata } from "next";
 import { PosRegisterInterface } from "@/app/_components/pos/PosRegisterInterface";
@@ -76,14 +77,18 @@ export default async function PosRegisterPage({ params }: Props) {
     take: 10,
   });
 
-  const items = register.items.map(ri => ({
-    id: ri.item.id,
-    name: ri.item.name,
-    description: ri.item.description,
-    cost: ri.item.cost,
-    direction: ri.item.direction,
-    color: ri.item.color,
-  }));
+  // CREDIT items are wallet top-ups — hidden from sellers without pos:topup
+  const canSellTopUps = user.permissions.includes(PERMISSIONS.POS_TOPUP);
+  const items = register.items
+    .filter(ri => canSellTopUps || ri.item.direction !== "CREDIT")
+    .map(ri => ({
+      id: ri.item.id,
+      name: ri.item.name,
+      description: ri.item.description,
+      cost: ri.item.cost,
+      direction: ri.item.direction,
+      color: ri.item.color,
+    }));
 
   return (
     <PosRegisterInterface

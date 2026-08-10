@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { scanPosOrder } from "@/domain/pos/operations/scanPosOrder";
+import { PosError } from "@/domain/pos/types/posError";
 
 export async function POST(
   request: Request,
@@ -45,6 +46,12 @@ export async function POST(
   } catch (error) {
     console.error("Scan POS order error:", error);
     const message = error instanceof Error ? error.message : "Failed to scan order";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: message,
+        errorCode: error instanceof PosError ? error.code : undefined,
+      },
+      { status: 400 }
+    );
   }
 }

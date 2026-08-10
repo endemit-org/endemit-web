@@ -10,6 +10,7 @@ import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyO
 import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransactionEmail";
 import { bustOnPosOrderPaid } from "@/lib/services/cache";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
+import { PosError } from "@/domain/pos/types/posError";
 import type { WalletTransaction } from "@prisma/client";
 
 export async function payPosOrder(
@@ -39,23 +40,29 @@ export async function payPosOrder(
     ]);
 
     if (!order) {
-      throw new Error("Order not found");
+      throw new PosError("ORDER_NOT_FOUND", "Order not found");
     }
 
     if (order.status !== "PENDING") {
-      throw new Error(`Order is ${order.status.toLowerCase()}`);
+      throw new PosError(
+        "ORDER_NOT_PENDING",
+        `Order is ${order.status.toLowerCase()}`
+      );
     }
 
     if (new Date() > order.expiresAt) {
-      throw new Error("Order has expired");
+      throw new PosError("ORDER_EXPIRED", "Order has expired");
     }
 
     if (order.customerId && order.customerId !== customerId) {
-      throw new Error("Order belongs to another customer");
+      throw new PosError(
+        "ORDER_OTHER_CUSTOMER",
+        "Order belongs to another customer"
+      );
     }
 
     if (!wallet) {
-      throw new Error("Wallet not found");
+      throw new PosError("WALLET_NOT_FOUND", "Wallet not found");
     }
 
     // Separate items by direction and build descriptions
@@ -90,7 +97,7 @@ export async function payPosOrder(
     if (debitTotal > 0) {
       // Check if balance is sufficient for debit
       if (currentBalance < debitTotal) {
-        throw new Error("Insufficient balance");
+        throw new PosError("INSUFFICIENT_BALANCE", "Insufficient balance");
       }
 
       currentBalance -= debitTotal;

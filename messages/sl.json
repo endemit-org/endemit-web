@@ -664,7 +664,20 @@
       "totalToPay": "Za plačat",
       "processing": "Se procesira…",
       "topUpButton": "Napolni {amount}",
-      "payButton": "Plačaj {amount}"
+      "payButton": "Plačaj {amount}",
+      "balanceAfter": "Potem",
+      "totalWithTip": "= {amount} skupaj · napitnina vključena",
+      "errors": {
+        "orderNotFound": "Naročila ne najdem",
+        "orderNotPending": "Naročilo ni več aktivno",
+        "orderExpired": "Naročilo je poteklo",
+        "orderOtherCustomer": "Naročilo pripada drugemu kupcu",
+        "customerNotFound": "Kupca ne najdem",
+        "walletNotFound": "Denarnce ne najdem",
+        "insufficientBalance": "Premalo dnarja na denarnci. Najprej jo nafilaj.",
+        "notScanned": "Naročilo še ni bilo skenirano",
+        "invalidTip": "Napačen znesek napitnine"
+      }
     },
     "eventsAttended": {
       "title": "Moji eventi",
@@ -1457,7 +1470,8 @@
     "users": {
       "list": {
         "total": "Skupaj:",
-        "addUser": "Dodaj uporabnika"
+        "addUser": "Dodaj uporabnika",
+        "searchPlaceholder": "Išči po imenu, e-pošti, up. imenu…"
       },
       "create": {
         "title": "Ustvari uporabnika",

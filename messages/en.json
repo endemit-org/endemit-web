@@ -664,7 +664,20 @@
       "totalToPay": "Total to Pay",
       "processing": "Processing...",
       "topUpButton": "Top-up {amount}",
-      "payButton": "Pay {amount}"
+      "payButton": "Pay {amount}",
+      "balanceAfter": "After",
+      "totalWithTip": "= {amount} total · tip included",
+      "errors": {
+        "orderNotFound": "Order not found",
+        "orderNotPending": "Order is no longer active",
+        "orderExpired": "Order has expired",
+        "orderOtherCustomer": "Order belongs to another customer",
+        "customerNotFound": "Customer not found",
+        "walletNotFound": "Wallet not found",
+        "insufficientBalance": "Insufficient balance. Please top up your wallet.",
+        "notScanned": "Order has not been scanned yet",
+        "invalidTip": "Invalid tip amount"
+      }
     },
     "eventsAttended": {
       "title": "Events Attended",
@@ -1457,7 +1470,8 @@
     "users": {
       "list": {
         "total": "Total:",
-        "addUser": "Add User"
+        "addUser": "Add User",
+        "searchPlaceholder": "Search by name, email, username..."
       },
       "create": {
         "title": "Create User",
