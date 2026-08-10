@@ -36,6 +36,12 @@ export interface ProductInOrder {
   category: ProductCategory;
   relatedEvent: string | null;
   price: number;
+  /**
+   * Unit price actually paid after the order's discount was apportioned onto
+   * this line. Absent on undiscounted orders and orders predating discount
+   * apportionment — fall back to `price`.
+   */
+  paidPrice?: number;
   quantity: number;
   currency: string;
   checkoutDescription: string;

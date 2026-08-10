@@ -143,8 +143,10 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
         continue;
       }
 
-      // Divide price by number of ticket holders for bundles
-      const pricePerTicket = ticketItem.price / ticketHolders.length;
+      // Divide price by number of ticket holders for bundles; discounted
+      // orders carry the actually-paid unit price in paidPrice.
+      const pricePerTicket =
+        (ticketItem.paidPrice ?? ticketItem.price) / ticketHolders.length;
 
       ticketHolders.forEach(ticketHolderName => {
         queueTicketIssueAutomation({

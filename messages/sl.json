@@ -1874,13 +1874,14 @@
       "lowBalance": "Prenizko dobroimetje",
       "scanned": "Skenirano",
       "waitingForScanShort": "Čakam na sken",
-      "cancel": "Prekliči"
+      "cancel": "Prekliči",
+      "newBalance": "Novo stanje"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
-      "scanWristband": "Skeniraj zapestnco",
-      "instructions": "Skeniraj zapestnco ali vtipkaj 4-mestno kodo.",
-      "hint": "Skeniraj QR ali vtipkaj 4-mestno kodo zapestnce",
+      "scanWristband": "Skeniraj QR",
+      "instructions": "Skeniraj QR kodo ali vtipkaj 4-mestno kodo.",
+      "hint": "Skeniraj QR ali vtipkaj 4-mestno kodo",
       "backToQr": "← Nazaj na QR"
     },
     "header": {

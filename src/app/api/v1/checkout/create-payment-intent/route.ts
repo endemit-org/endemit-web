@@ -10,6 +10,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { isValidWalletCreditAmount } from "@/domain/checkout/businessRules";
 import { validateDiscountCode } from "@/domain/discount/operations/validateDiscountCode";
+import { apportionDiscountToItems } from "@/domain/discount/businessLogic/apportionDiscountToItems";
 import { getCheckoutTotals } from "@/domain/checkout/actions/getCheckoutTotals";
 import { processFullWalletPayment } from "@/domain/checkout/operations/processFullWalletPayment";
 import { stripe } from "@/lib/services/stripe";
@@ -143,6 +144,25 @@ export async function POST(request: Request) {
       paymentIntentId = paymentIntent.id;
     }
 
+    // Snapshot items; on discounted orders, stamp each line with the unit
+    // price actually paid so downstream consumers (tickets) show it.
+    const orderItems = checkoutItems.map(checkoutItem =>
+      transformToProductInOrder(checkoutItem, complementaryTicketData)
+    );
+    if (discount && discountAmount < 0) {
+      const paidByUid = apportionDiscountToItems(
+        discount,
+        checkoutItems,
+        subtotal,
+        shippingCost,
+        -discountAmount
+      );
+      for (const orderItem of orderItems) {
+        const paidPrice = paidByUid.get(orderItem.uid);
+        if (paidPrice != null) orderItem.paidPrice = paidPrice;
+      }
+    }
+
     // Create order with the PaymentIntent ID
     const { order } = await createOrder({
       stripeSessionId: paymentIntentId || `wallet_${Date.now()}`,
@@ -156,9 +176,7 @@ export async function POST(request: Request) {
       walletAmountUsed: validatedWalletCredit,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
-      orderItems: checkoutItems.map(checkoutItem =>
-        transformToProductInOrder(checkoutItem, complementaryTicketData)
-      ),
+      orderItems,
       userId: currentUser?.id,
       locale: body.locale === "en" ? "en" : "sl",
     });
