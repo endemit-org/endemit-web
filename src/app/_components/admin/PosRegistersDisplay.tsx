@@ -25,6 +25,44 @@ function formatPrice(cents: number): string {
   return formatTokensFromCents(cents);
 }
 
+/**
+ * Owns the search query locally so keystrokes don't re-render the parent —
+ * the modal is an inline component there, and a parent re-render would
+ * remount it and blur the input.
+ */
+function SellerAssignField({
+  assignedSellerIds,
+  disabled,
+  placeholder,
+  onSelect,
+}: {
+  assignedSellerIds: string[];
+  disabled: boolean;
+  placeholder: string;
+  onSelect: (user: UserSearchResult) => void;
+}) {
+  const [query, setQuery] = useState("");
+
+  return (
+    // Remount after each assignment so the autocomplete's internal
+    // selection state resets alongside the cleared query.
+    <UserAutocomplete
+      key={assignedSellerIds.length}
+      value={query}
+      onChange={setQuery}
+      requirePermission={PERMISSIONS.POS_SELL}
+      placeholder={placeholder}
+      disabled={disabled}
+      onUserSelect={user => {
+        if (!assignedSellerIds.includes(user.id)) {
+          onSelect(user);
+        }
+        setQuery("");
+      }}
+    />
+  );
+}
+
 export default function PosRegistersDisplay({
   initialRegisters,
   allItems,
@@ -38,7 +76,6 @@ export default function PosRegistersDisplay({
     useState<PosRegisterWithRelations | null>(null);
   const [managingRegister, setManagingRegister] =
     useState<PosRegisterWithRelations | null>(null);
-  const [sellerQuery, setSellerQuery] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const handleCreate = async (formData: FormData) => {
@@ -473,21 +510,13 @@ export default function PosRegistersDisplay({
                 )}
               </div>
               {canWrite && (
-                // Remount after each assignment so the autocomplete's internal
-                // selection state resets alongside the cleared query.
-                <UserAutocomplete
-                  key={assignedSellerIds.length}
-                  value={sellerQuery}
-                  onChange={setSellerQuery}
-                  requirePermission={PERMISSIONS.POS_SELL}
-                  placeholder={t("selectUser")}
+                <SellerAssignField
+                  assignedSellerIds={assignedSellerIds}
                   disabled={isPending}
-                  onUserSelect={user => {
-                    if (!assignedSellerIds.includes(user.id)) {
-                      handleAssignSeller(managingRegister.id, user);
-                    }
-                    setSellerQuery("");
-                  }}
+                  placeholder={t("selectUser")}
+                  onSelect={user =>
+                    handleAssignSeller(managingRegister.id, user)
+                  }
                 />
               )}
             </div>
