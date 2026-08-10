@@ -43,6 +43,12 @@ export function PosItemGrid({ items, onAddItem, disabledDirection }: Props) {
                 ? "bg-gray-100 border-gray-200 opacity-40 cursor-not-allowed"
                 : "bg-white border-gray-200 hover:border-blue-500 hover:shadow-md active:scale-95"
             }`}
+            style={
+              // #rrggbb + "14" alpha suffix ≈ 8% tint of the item color
+              !isDisabled && item.color
+                ? { backgroundColor: `${item.color}14` }
+                : undefined
+            }
           >
             {item.color && (
               <span
