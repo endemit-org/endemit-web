@@ -20,6 +20,8 @@ export interface CreatePosOrderInput {
     itemId: string;
     quantity: number;
   }>;
+  /** Whether the seller may sell CREDIT (top-up) items — pos:topup holders. */
+  allowCreditItems?: boolean;
 }
 
 export interface PosOrderWithDetails extends PosOrder {

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/services/prisma";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 import { bustOnPosOrderCreated } from "@/lib/services/cache";
 import type { ScanPosOrderResult } from "@/domain/pos/types";
+import { PosError } from "@/domain/pos/types/posError";
 
 export async function scanPosOrder(
   code: string,
@@ -48,11 +49,14 @@ export async function scanPosOrder(
   ]);
 
   if (!order) {
-    throw new Error("Order not found");
+    throw new PosError("ORDER_NOT_FOUND", "Order not found");
   }
 
   if (order.status !== "PENDING") {
-    throw new Error(`Order is ${order.status.toLowerCase()}`);
+    throw new PosError(
+      "ORDER_NOT_PENDING",
+      `Order is ${order.status.toLowerCase()}`
+    );
   }
 
   if (new Date() > order.expiresAt) {
@@ -65,11 +69,11 @@ export async function scanPosOrder(
         cancelReason: "expired",
       },
     });
-    throw new Error("Order has expired");
+    throw new PosError("ORDER_EXPIRED", "Order has expired");
   }
 
   if (!customer) {
-    throw new Error("Customer not found");
+    throw new PosError("CUSTOMER_NOT_FOUND", "Customer not found");
   }
 
   const balance = Number(customer.wallet?.balance ?? 0);
