@@ -140,10 +140,19 @@ export const sanitizeForFilename = (name: string): string => {
 };
 
 /**
+ * Checks if an email belongs to a prefilled card/wristband account
+ * (endemit+card.XXXX@endemit.org) — a synthetic address that can't
+ * receive mail.
+ */
+export const isCardAccountEmail = (email: string): boolean => {
+  return /^endemit\+card\.[^@]+@endemit\.org$/i.test(email.trim());
+};
+
+/**
  * Checks if an email is a placeholder/import email that shouldn't be displayed.
  */
 export const isPlaceholderEmail = (email: string): boolean => {
-  return email.endsWith("@import.endemit.org");
+  return email.endsWith("@import.endemit.org") || isCardAccountEmail(email);
 };
 
 /**

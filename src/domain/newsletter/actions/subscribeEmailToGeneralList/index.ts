@@ -2,6 +2,7 @@ import { EMAIL_NEWSLETTER_GENERAL_LIST_ID } from "@/lib/services/emailOctopus/em
 import { subscribeEmailToList } from "@/domain/newsletter/actions/subscribeEmailToList";
 import { getSubscriberFromList } from "@/domain/newsletter/actions/getSubscriberFromList";
 import { mergeEventsField } from "@/domain/newsletter/utils/determineSubscriberData";
+import { isPlaceholderEmail } from "@/lib/util/formatting";
 
 interface SubscribeToGeneralListOptions {
   tags?: string[];
@@ -26,6 +27,12 @@ export const subscribeEmailToGeneralList = async (
 ): Promise<{ success: boolean; isNew: boolean; error?: string }> => {
   const logPrefix = `[GeneralList:${email}]`;
   const listId = EMAIL_NEWSLETTER_GENERAL_LIST_ID;
+
+  // Skip synthetic addresses before the subscriber lookup even runs.
+  if (isPlaceholderEmail(email)) {
+    console.log(`${logPrefix} Skipping placeholder/card email`);
+    return { success: true, isNew: false };
+  }
 
   console.log(`${logPrefix} Starting subscription`, {
     hasEventName: !!options?.eventName,

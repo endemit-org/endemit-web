@@ -5,6 +5,7 @@ import {
   RESEND_KEY,
   DISPATCHER_EMAIL_ADDRESS,
 } from "@/lib/services/env/private";
+import { isCardAccountEmail } from "@/lib/util/formatting";
 
 export const resend = new Resend(RESEND_KEY);
 export const resendFromEmail = RESEND_FROM ?? "onboarding@resend.dev";
@@ -16,5 +17,5 @@ const BLOCKED_EMAIL_DOMAINS = ["import.endemit.org"];
 
 export const isBlockedEmail = (email: string): boolean => {
   const domain = email.split("@")[1]?.toLowerCase();
-  return BLOCKED_EMAIL_DOMAINS.includes(domain);
+  return BLOCKED_EMAIL_DOMAINS.includes(domain) || isCardAccountEmail(email);
 };
