@@ -15,6 +15,7 @@ interface PosItem {
   description: string | null;
   cost: number;
   direction: "CREDIT" | "DEBIT";
+  color: string | null;
 }
 
 interface PosOrderSummary {

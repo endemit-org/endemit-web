@@ -399,6 +399,7 @@ model PosItem {
   description String?
   cost        Int // In cents
   direction   PosItemDirection
+  color       String? // Hex color shown as an accent bar on the POS touch card
   status      PosItemStatus    @default(ACTIVE)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt

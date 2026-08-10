@@ -10,6 +10,7 @@ export interface UpdatePosItemInput {
   description?: string | null;
   cost?: number;
   direction?: PosItemDirection;
+  color?: string | null;
   status?: PosItemStatus;
 }
 
@@ -23,6 +24,7 @@ export async function updatePosItem(
       ...(input.description !== undefined && { description: input.description }),
       ...(input.cost !== undefined && { cost: input.cost }),
       ...(input.direction !== undefined && { direction: input.direction }),
+      ...(input.color !== undefined && { color: input.color }),
       ...(input.status !== undefined && { status: input.status }),
     },
   });
