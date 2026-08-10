@@ -114,7 +114,7 @@
     },
     "saveTheDate": {
       "secret": "Ne ne, tajna!",
-      "heading": "{count, plural, one {Nasledni datum} two {Naslednja datuma} few {Nasledni datumi} other {Nasledni datumi}}"
+      "heading": "{count, plural, one {Zacahni nasledni datum} two {Zacahni nasledna datuma} few {Zacahni nasledne datume} other {Zacahni nasledne datume}}"
     },
     "moreAnnouncedSoon": "Kmalo bo še več eventov",
     "detailsComingSoon": "Podrobnosti kmalo",
