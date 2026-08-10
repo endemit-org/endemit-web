@@ -170,6 +170,7 @@ export async function payPosOrder(
         total: result.order.total,
         tipAmount: result.order.tipAmount,
         paidAt: result.paidAt.toISOString(),
+        balanceAfter: result.transaction.balanceAfter,
       }
     );
 
@@ -182,6 +183,7 @@ export async function payPosOrder(
         total: result.order.total,
         tipAmount: result.order.tipAmount,
         paidAt: result.paidAt.toISOString(),
+        balanceAfter: result.transaction.balanceAfter,
       }
     );
 

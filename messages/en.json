@@ -1874,7 +1874,8 @@
       "lowBalance": "Low balance",
       "scanned": "Scanned",
       "waitingForScanShort": "Waiting for scan",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "newBalance": "New balance"
     },
     "sticker": {
       "resolving": "Resolving wristband...",

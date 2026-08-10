@@ -134,6 +134,7 @@ export function PosRegisterInterface({
                 status: "PAID",
                 tipAmount: payload.tipAmount,
                 paidAt: payload.paidAt,
+                customerBalance: payload.balanceAfter,
               }
             : null
         );

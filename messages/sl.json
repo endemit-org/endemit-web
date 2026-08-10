@@ -1874,7 +1874,8 @@
       "lowBalance": "Prenizko dobroimetje",
       "scanned": "Skenirano",
       "waitingForScanShort": "Čakam na sken",
-      "cancel": "Prekliči"
+      "cancel": "Prekliči",
+      "newBalance": "Novo stanje"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
