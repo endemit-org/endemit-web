@@ -170,6 +170,7 @@ export const transformEventObject = async (
     },
     cashTicketPrice:
       (event.data as { cash_ticket_price?: number }).cash_ticket_price ?? null,
+    incognito: (event.data as { incognito?: boolean }).incognito ?? false,
     hasCashlessPayments:
       (event.data as { has_cashless_payments?: boolean }).has_cashless_payments ??
       false,

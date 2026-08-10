@@ -49,13 +49,14 @@
       "location": "Plac",
       "about": "O eventu",
       "tickets": "Karte",
-      "more": "Več"
+      "more": "Več",
+      "info": "Info"
     },
     "concluded": "Ta event je že mimo",
     "getTickets": "Zbri karto",
-    "setTimes": "Cajti setov",
+    "setTimes": "Časovnca",
     "moreEventsToExplore": "Podobni eventi",
-    "pastEvent": "Pretekel",
+    "pastEvent": "Že mimo",
     "location": {
       "loadingMap": "Nalagam zmlevid…",
       "directions": "Poglej si v Google Maps",
@@ -67,8 +68,8 @@
       "goingFast": "Karte grejo hitro, ostalo:"
     },
     "miniCard": {
-      "wasOn": "Potekal {date}",
-      "happeningOn": "Kmalu, {date}"
+      "wasOn": "Že mimo - {date}",
+      "happeningOn": "Kmalo, {date}"
     },
     "ticketStatus": {
       "hot": "Vroče",
@@ -107,27 +108,33 @@
       "sortBy": "Razvrsti po:",
       "sort": {
         "default": "Privzeto",
-        "performanceTime": "Po času seta",
+        "performanceTime": "Po cajto seta",
         "alphabetical": "Po abecedi"
       }
     },
     "saveTheDate": {
       "secret": "Ne ne, tajna!",
-      "heading": "{count, plural, one {Naslednji datum} two {Naslednja datuma} few {Naslednji datumi} other {Naslednji datumi}}"
+      "heading": "{count, plural, one {Nasledni datum} two {Naslednja datuma} few {Nasledni datumi} other {Nasledni datumi}}"
     },
     "moreAnnouncedSoon": "Kmalo bo še več eventov",
     "detailsComingSoon": "Podrobnosti kmalo",
     "festivalTag": "Festival",
     "poster": {
-      "happenedOn": "Potekal",
-      "upcomingOn": "Poteka"
+      "happenedOn": "Že mimo",
+      "upcomingOn": ""
     },
-    "breadcrumb": "Eventi"
+    "breadcrumb": "Eventi",
+    "incognito": {
+      "badge": "Za člane društva",
+      "startsAt": "Začnemo ob {time}",
+      "closedToPublic": "Dogodek je zaprt za javnost, namenjen članom društva Endemit.",
+      "seeYouThere": "Se vidmo tm k vedno."
+    }
   },
   "artists": {
-    "appearsOn": "{name} igra na",
-    "exploreOther": "Poglej še druge talente",
-    "dontMissNextTime": "Ne zamud k {name} spet rola",
+    "appearsOn": "Artistovi eventi",
+    "exploreOther": "Počekiri še druge artiste",
+    "dontMissNextTime": "Hočm vedet, a bo {name} spt rolo",
     "subscribePrompt": "Naroči se, da te obvestimo o frišnih eventih",
     "setTimes": "Kdaj kdo igra",
     "profile": {
@@ -195,9 +202,9 @@
     },
     "success": {
       "title": "Naročilo je sprejeto!",
-      "thankYou": "Hvala za naročilo. Mejl s potrditvijo je odletel na",
+      "thankYou": "Hvala za naročilo. Mejl s potrditvijo je odleto na",
       "emailLabel": "Email",
-      "ticketsNote": "Karte za <strong>{names}</strong> pridejo na mejl kmalo, v naslednjih 30 minutah.",
+      "ticketsNote": "Karte za <strong>{names}</strong> pridejo na mejl kmalo, v naslednih 30 minutah.",
       "orderId": "Št. naročila",
       "metaTitle": "Naročilo potrjeno",
       "metaDescription": "Naročilo na endemit.org je uspešno potrjeno. Nadaljuj ali zapri to stran."
@@ -266,7 +273,7 @@
       "emailPlaceholder": "ime.priimek@endemit.org",
       "ticketHolder": {
         "title": "Podatki imetnika karte",
-        "description": "Če se karta zgubi al se ne da skenirat, vpiš ime vsakga imetnika karte:"
+        "description": "Če se karta zgubi al se ne da skenirat, za zihr vpiši še ime vsajga imetnika karte:"
       },
       "decreaseQuantity": "Manj",
       "increaseQuantity": "Več",
@@ -291,7 +298,7 @@
       "reachYou": "Dobimo te na {code} {phone}",
       "consent": {
         "terms": "Potrjujem naročilo in se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> in <withdrawal>pravico do odstopa</withdrawal>.",
-        "nonRefundable": "Razumem in sprejemam, da naročilo vsebuje izdelke, k se ne vračajo, tk kot piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
+        "nonRefundable": "Razumem in sprejemam, da naročilo vsebuje izdelke, ko se ne vračajo, tko piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
         "codeOfConduct": "Razumem, sprejemam in spoštujem <code>kodeks obnašanja</code> na Endemit eventu."
       }
     },
@@ -353,7 +360,7 @@
     },
     "cashless": {
       "title": "Event brez keša",
-      "description": "Ta event laufa brez keša. Nafilaj denarnco že zdej, da ne boš pol žejn/a.",
+      "description": "Ta event laufa brez keša. Nafili denarnco že zj, da nevš pol žejn/a.",
       "popular": "Popularno",
       "add": "+ Dodaj",
       "cashNote": "Denarnco lahko nafilaš tut s kešom na eventu"
@@ -515,7 +522,7 @@
       "swapDesc": "Če češ povezat {code}, najprej odjavi trenutno zapestnco v <editLink>Uredi profil</editLink> pa skeniraj spet.",
       "whatIsThis": "Kaj je to?",
       "showQr": "Pokaži QR",
-      "linkForOffline": "Poveži zapestnco za plačilo brez telefona",
+      "linkForOffline": "Poveži zapestnco in plačuj brez telefona",
       "infoText": "Tapni za QR, k ga prodajalci skenirajo na blagajni. Če povežeš zapestnco lahko plačaš tut brez telefona.",
       "stickerConflictOther": "Ta zapestnca je povezana z drugim računom.",
       "stickerSwapRequired": "Že maš povezano zapestnco {code}. Najprej jo odjavi.",
@@ -527,7 +534,7 @@
       "topUpWallet": "Nafilaj denarnco",
       "scanPosOrder": "Al skeniraj POS naročilo",
       "viewTickets": "Poglej karte",
-      "endePayNotice": "Denarnca poganja naše plačevanje brez keša, spet jo prižgemo pred festivalom v avgustu.",
+      "endePayNotice": "Denarnca poganja plačevanje z keša, na volo bo spt pred festivalom v avgustu.",
       "signOut": "Odjava",
       "signOutConfirmMessage": "Si zihr, da se češ odjavit iz računa?",
       "cancel": "Prekliči",
@@ -681,8 +688,8 @@
     },
     "eventsAttended": {
       "title": "Moji eventi",
-      "claimMissing": "Dodaj manjkajoč event",
-      "empty": "Brez obiskanih eventov. Če si karto kupil/a z drugim mailom al na eventu lahko dodaš manjkajoč event",
+      "claimMissing": "Dodaj pretekli event",
+      "empty": "Če si karto kupo/-la z drugim mailom al na eventu, lahko dodaš pretekli event",
       "countLabel": "{count, plural, one {# event} two {# eventa} few {# eventi} other {# eventov}}",
       "pendingClaims": "Čakajoče prjave",
       "artistsAtEvents": "Artisti na eventih",
@@ -694,7 +701,7 @@
       "submitClaim": "Oddaj prjavo"
     },
     "upcomingPromo": {
-      "title": "Prhajajoči eventi",
+      "title": "Nasledni eventi",
       "subtitle": "Omejeno število kart, ne čaki predovgo",
       "ticketsAvailable": "Karte na voljo"
     },
@@ -742,10 +749,10 @@
     "emailForm": {
       "createTitle": "Ustvari račun",
       "subtitle": "Vpiši email, da ti pošljemo kodo za prjavo. Brez gesel, brez registracij!",
-      "createSubtitle": "Računa še ne obstaja. Klikni spodej da ga ustvariš.",
+      "createSubtitle": "Račun še ne obstaja. Klinki spoda, da ga ustvariš.",
       "label": "Uporabniško ime al email",
       "placeholder": "Vpiš email",
-      "createConfirm": "Ustvaril ti bomo račun za {identifier} in ti poslal kodo za prjavo.",
+      "createConfirm": "Ustvarli ti bomo račun za {identifier} in ti poslali kodo za prjavo.",
       "signInWithPassword": "Prjav se z geslom",
       "creatingAccount": "Ustvarjam račun…",
       "checking": "Preverjam…",
@@ -823,7 +830,7 @@
       "orderNumber": "Naročilo #{id}",
       "confirmation": "Potrjujemo tvoje naročilo. Spodaj so podrobnosti nakupa.",
       "willShip": "Naročilo bomo na navedeni naslov odpremili v kratkem, običajno v 3–5 dneh.",
-      "ticketsInfo": "Karte ti pošljemo na email v naslednjih 10 minutah. Preveri nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka karta pride posebej</strong> s QR kodo, ki jo pokažeš ob vstopu na event.",
+      "ticketsInfo": "Karte ti pošljemo na email v naslednih 10 minutah. Preveri nabiralnik <i>(in mapo z neželeno pošto)</i>. <strong>Vsaka karta pride posebej</strong> s QR kodo, ki jo pokažeš ob vstopu na event.",
       "shippingAddress": "Naslov za dostavo",
       "phone": "Telefon: {phone}",
       "orderItems": "Izdelki v naročilu",
@@ -878,7 +885,7 @@
       "subjectMany": "Karte niso več veljavne",
       "heading": "{count, plural, one {karta razveljavljena} two {karti razveljavljeni} few {karte razveljavljene} other {karte razveljavljene}}",
       "importantNotice": "Pomembno obvestilo",
-      "warning": "{count, plural, one {Naslednja karta ni več veljavna in je ni mogoče uporabiti za vstop na event.} two {Naslednji karti nista več veljavni in ju ni mogoče uporabiti za vstop na event.} few {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.} other {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.}} Razlog je obdelan refund za povezano naročilo.",
+      "warning": "{count, plural, one {Naslednja karta ni več veljavna in je ni mogoče uporabiti za vstop na event.} two {Naslednj karti nista več veljavni in ju ni mogoče uporabiti za vstop na event.} few {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.} other {Te karte niso več veljavne in jih ni mogoče uporabiti za vstop na event.}} Razlog je obdelan refund za povezano naročilo.",
       "listHeading": "{count, plural, one {Razveljavljena karta} two {Razveljavljeni karti} few {Razveljavljene karte} other {Razveljavljene karte}}",
       "eventCol": "Event",
       "holderCol": "Imetnik karte",
@@ -910,8 +917,8 @@
     },
     "eventClaim": {
       "subject": "{eventName} je bil dodan v tvoj profil",
-      "heading": "Event je v tvojem profilu",
-      "body": "<strong>{eventName}</strong> je zdej na tvojem seznamu »Obiskani eventi«. Lepo, da si zravn.",
+      "heading": "Event je dodan na tvojem profilu",
+      "body": "<strong>{eventName}</strong> je zj na tvojem seznamu »Obiskani eventi«. Lepo, da si zravn.",
       "viewProfile": "Poglej svoj profil",
       "questions": "Vprašanja? Piši nam na <link>endemit@endemit.org</link>"
     },
@@ -1000,8 +1007,8 @@
       "or": "al",
       "buyDigital": "Kupi digitalni album",
       "clickToListen": "Klikni za poslušanje",
-      "playAlbum": "Zavrti album",
-      "playingAlbum": "Album se vrti"
+      "playAlbum": "Zaroli plato",
+      "playingAlbum": "Plata se roal"
     }
   },
   "newsletter": {
@@ -1977,7 +1984,7 @@
     "detailsHidden": "Podrobnosti skrite",
     "dateHidden": "Datum skrit",
     "ended": "Zaključeno",
-    "endedOn": "Končan {date}",
+    "endedOn": "Zmankavo {date}",
     "untilDate": "Do {date}",
     "availableNow": "Na voljo zdej",
     "startsOn": "Začne se {date}",

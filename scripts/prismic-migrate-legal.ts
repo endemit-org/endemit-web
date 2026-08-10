@@ -254,7 +254,7 @@ const PRIVACY: Blocks = [
   "razumevanje vzorcev uporabe spletne strani;",
   "izboljševanje naše platforme in storitev.",
   "4. Deljenje podatkov",
-  "Tvoje podatke delimo le v naslednjih primerih:",
+  "Tvoje podatke delimo le v naslednih primerih:",
   "4.1 Ponudniki storitev",
   "Stripe: obdelava plačil (transakcije s kreditnimi karticami);",
   "Email Octopus: upravljanje novic (samo če se naročiš);",
