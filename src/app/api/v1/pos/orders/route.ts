@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       registerId,
       sellerId: user.id,
       items,
+      allowCreditItems: user.permissions.includes(PERMISSIONS.POS_TOPUP),
     });
 
     return NextResponse.json({

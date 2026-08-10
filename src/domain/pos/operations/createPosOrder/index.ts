@@ -10,7 +10,7 @@ import { bustOnPosOrderCreated } from "@/lib/services/cache";
 const ORDER_EXPIRY_MINUTES = 15;
 
 export async function createPosOrder(input: CreatePosOrderInput) {
-  const { registerId, sellerId, items } = input;
+  const { registerId, sellerId, items, allowCreditItems = true } = input;
 
   const itemIds = items.map(i => i.itemId);
 
@@ -37,6 +37,7 @@ export async function createPosOrder(input: CreatePosOrderInput) {
             name: true,
             cost: true,
             status: true,
+            direction: true,
           },
         },
       },
@@ -73,6 +74,10 @@ export async function createPosOrder(input: CreatePosOrderInput) {
 
     if (item.status !== "ACTIVE") {
       throw new Error(`Item ${orderItem.itemId} is not active`);
+    }
+
+    if (item.direction === "CREDIT" && !allowCreditItems) {
+      throw new Error("Not authorized to sell top-up items");
     }
 
     const itemTotal = item.cost * orderItem.quantity;
