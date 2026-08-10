@@ -493,12 +493,14 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         {/* Actions */}
         {!isPaid && subView === "sticker-scan" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
+            {/* Hidden for now — sticker scan is the only offered flow.
             <button
               onClick={() => setSubView("qr")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
               {t("orders.showQr")}
             </button>
+            */}
             <button
               onClick={onCopyToCart}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"

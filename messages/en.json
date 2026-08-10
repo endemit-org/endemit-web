@@ -1878,9 +1878,9 @@
     },
     "sticker": {
       "resolving": "Resolving wristband...",
-      "scanWristband": "Scan wristband",
-      "instructions": "Point the camera at the customer's wristband, or type the 4-char code.",
-      "hint": "Scan QR or type the 4-character wristband code",
+      "scanWristband": "Scan QR",
+      "instructions": "Point the camera at the customer's QR, or type the 4-char code.",
+      "hint": "Scan QR or type the 4-character code",
       "backToQr": "← Back to QR"
     },
     "header": {
