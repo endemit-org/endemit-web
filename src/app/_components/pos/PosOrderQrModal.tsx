@@ -252,7 +252,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
               {/* Customer-facing (screen turned toward them): new balance,
                   rotated 180° so it reads upright from the other side. */}
               {order.customerBalance != null && (
-                <div className="rotate-180 mb-3 pb-3 border-b border-white/20">
+                <div className="rotate-180 mb-3 pt-3 border-t border-white/20">
                   <span className="block text-5xl font-bold leading-none text-white">
                     <AnimatedBalance
                       value={order.customerBalance}
