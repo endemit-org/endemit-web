@@ -21,6 +21,7 @@ import { isEventCompleted, isEventVisible } from "@/domain/event/businessLogic";
 import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
+import EventIncognitoCard from "@/app/_components/event/EventIncognitoCard";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
@@ -221,7 +222,18 @@ export default async function EventPage({
       label: t("tabs.about"),
       content: (
         <div>
-          <SliceDisplay slices={event.slices} locale={loc} theme={theme} />
+          <SliceDisplay
+            slices={
+              // Incognito events hide every public ticket mention
+              event.incognito
+                ? event.slices.filter(
+                    slice => slice.slice_type !== "ticket_price_progress"
+                  )
+                : event.slices
+            }
+            locale={loc}
+            theme={theme}
+          />
         </div>
       ),
       id: "overview",
@@ -230,7 +242,15 @@ export default async function EventPage({
     });
   }
 
-  if (!isPastEvent && event.tickets.shouldSellTickets) {
+  if (!isPastEvent && event.incognito) {
+    defaultContent.push({
+      label: t("tabs.info"),
+      content: <EventIncognitoCard event={event} />,
+      id: "tickets",
+      sortingWeight: 200,
+      mobileOnly: true,
+    });
+  } else if (!isPastEvent && event.tickets.shouldSellTickets) {
     defaultContent.push({
       label: t("tabs.tickets"),
       content: <EventTicketDisplay products={products} event={event} />,
@@ -384,7 +404,7 @@ export default async function EventPage({
             </div>
           </div>
         </div>
-        {!isPastEvent && event.tickets.shouldSellTickets ? (
+        {!isPastEvent && event.tickets.shouldSellTickets && !event.incognito ? (
           <div className={"lg:hidden mb-16 z-10 relative"}>
             <ActionButton
               href={"#tickets"}
@@ -459,7 +479,11 @@ export default async function EventPage({
                   // backgroundColor: event.colour,
                 }}
               >
-                <EventTicketDisplay products={products} event={event} />
+                {event.incognito ? (
+                  <EventIncognitoCard event={event} />
+                ) : (
+                  <EventTicketDisplay products={products} event={event} />
+                )}
               </div>
 
               <div className={"p4 text-center mt-10 "}>

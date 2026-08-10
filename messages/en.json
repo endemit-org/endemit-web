@@ -49,11 +49,12 @@
       "location": "Location",
       "about": "About",
       "tickets": "Tickets",
-      "more": "More"
+      "more": "More",
+      "info": "Info"
     },
     "concluded": "This event has concluded",
     "getTickets": "Get tickets",
-    "setTimes": "Set times",
+    "setTimes": "Timetable",
     "moreEventsToExplore": "More events to explore",
     "pastEvent": "Past event",
     "location": {
@@ -107,7 +108,7 @@
       "sortBy": "Sort by:",
       "sort": {
         "default": "Default",
-        "performanceTime": "Performance Time",
+        "performanceTime": "Timetable",
         "alphabetical": "Alphabetically"
       }
     },
@@ -122,14 +123,20 @@
       "happenedOn": "Happened on",
       "upcomingOn": "Upcoming on"
     },
-    "breadcrumb": "Events"
+    "breadcrumb": "Events",
+    "incognito": {
+      "badge": "Members only",
+      "startsAt": "We start at {time}",
+      "closedToPublic": "This event is closed to the public and intended for members of the Endemit association.",
+      "seeYouThere": "See you there, same as always."
+    }
   },
   "artists": {
     "appearsOn": "{name} appears on",
     "exploreOther": "Explore other artists",
     "dontMissNextTime": "Don't miss {name} next time",
     "subscribePrompt": "Subscribe and be notified about our events and lineups",
-    "setTimes": "Set times",
+    "setTimes": "Timetable",
     "profile": {
       "partOf": "Part of",
       "inquireBooking": "Inquire about booking",

@@ -149,9 +149,6 @@ export default async function ArtistProfile({
           )}
           {artist.links && artist.links.length > 0 && (
             <div className="gap-y-2 gap-x-6 flex mt-6 max-xl:flex-col">
-              <div className="text-neutral-300 text-sm">
-                {t("profile.findOn", { name })}
-              </div>
               {artist.links.map((link, index) => (
                 <div key={`artist-link-${index}`}>
                   <Link

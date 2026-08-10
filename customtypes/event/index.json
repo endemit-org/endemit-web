@@ -375,6 +375,15 @@
           "default_value": false
         }
       },
+      "incognito": {
+        "type": "Boolean",
+        "config": {
+          "label": "Incognito (hide all public ticket mentions)",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
       "has_cashless_payments": {
         "type": "Boolean",
         "config": {
