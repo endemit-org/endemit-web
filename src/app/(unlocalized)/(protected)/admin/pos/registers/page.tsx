@@ -5,7 +5,6 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllPosRegisters } from "@/domain/pos/operations/getAllPosRegisters";
 import { getAllPosItems } from "@/domain/pos/operations/getAllPosItems";
-import { prisma } from "@/lib/services/prisma";
 import PosRegistersDisplay from "@/app/_components/admin/PosRegistersDisplay";
 import { formatTokensFromCents } from "@/lib/util/currency";
 
@@ -30,21 +29,10 @@ export default async function AdminPosRegistersPage() {
 
   const t = await getTranslations("admin.pos.registers");
 
-  const [{ registers }, { items }, usersRaw] = await Promise.all([
+  const [{ registers }, { items }] = await Promise.all([
     getAllPosRegisters(),
     getAllPosItems(),
-    prisma.user.findMany({
-      where: { status: "ACTIVE", email: { not: null } },
-      select: { id: true, name: true, email: true },
-      orderBy: { name: "asc" },
-    }),
   ]);
-
-  // Filter users with valid emails
-  const users = usersRaw.filter(
-    (u): u is { id: string; name: string | null; email: string } =>
-      u.email !== null
-  );
 
   const canWrite = currentUser.permissions.includes(
     PERMISSIONS.POS_REGISTERS_WRITE
@@ -108,7 +96,6 @@ export default async function AdminPosRegistersPage() {
       <PosRegistersDisplay
         initialRegisters={registers}
         allItems={items}
-        allUsers={users}
         canWrite={canWrite}
       />
     </div>

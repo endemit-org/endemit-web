@@ -12,6 +12,7 @@ import { PaymentConfirmView } from "@/app/_components/payment/PaymentConfirmView
 import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
+import { posErrorMessageKey } from "@/domain/pos/types/posError";
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
@@ -58,6 +59,7 @@ type SubView = "qr" | "sticker-scan" | "customer-confirm";
 
 export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   const t = useTranslations("pos");
+  const tw = useTranslations("profile.walletPay");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
@@ -190,15 +192,16 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         );
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error || "Payment failed");
+          const key = posErrorMessageKey(data.errorCode);
+          throw new Error(key ? tw(`errors.${key}`) : tw("paymentFailed"));
         }
       } catch (err) {
-        setPayError(err instanceof Error ? err.message : "Payment failed");
+        setPayError(err instanceof Error ? err.message : tw("paymentFailed"));
       } finally {
         setIsPaying(false);
       }
     },
-    [stickerScan, isPaying]
+    [stickerScan, isPaying, tw]
   );
 
   return (

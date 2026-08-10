@@ -11,6 +11,7 @@ import {
   type PaymentConfirmOrder,
   type PaymentConfirmCustomer,
 } from "@/app/_components/payment/PaymentConfirmView";
+import { posErrorMessageKey } from "@/domain/pos/types/posError";
 
 interface ScanResult {
   order: PaymentConfirmOrder;
@@ -65,7 +66,8 @@ export function WalletPayScanner({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || t("scanFailed"));
+          const key = posErrorMessageKey(data.errorCode);
+          throw new Error(key ? t(`errors.${key}`) : t("scanFailed"));
         }
 
         setScanResult(data);
@@ -125,7 +127,8 @@ export function WalletPayScanner({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || t("paymentFailed"));
+          const key = posErrorMessageKey(data.errorCode);
+          throw new Error(key ? t(`errors.${key}`) : t("paymentFailed"));
         }
 
         setMode("success");
