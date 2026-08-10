@@ -87,6 +87,12 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     });
   }
 
+  // Negative-cost items act as manual discounts; they may reduce the order
+  // to exactly 0 (kept for tracking) but never below it.
+  if (subtotal < 0) {
+    throw new Error("Order total cannot be negative");
+  }
+
   const createdAt = new Date();
   const expiresAt = new Date(createdAt.getTime() + ORDER_EXPIRY_MINUTES * 60 * 1000);
 
