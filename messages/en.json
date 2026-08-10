@@ -1470,7 +1470,8 @@
     "users": {
       "list": {
         "total": "Total:",
-        "addUser": "Add User"
+        "addUser": "Add User",
+        "searchPlaceholder": "Search by name, email, username..."
       },
       "create": {
         "title": "Create User",

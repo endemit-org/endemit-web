@@ -1470,7 +1470,8 @@
     "users": {
       "list": {
         "total": "Skupaj:",
-        "addUser": "Dodaj uporabnika"
+        "addUser": "Dodaj uporabnika",
+        "searchPlaceholder": "Išči po imenu, e-pošti, up. imenu…"
       },
       "create": {
         "title": "Ustvari uporabnika",

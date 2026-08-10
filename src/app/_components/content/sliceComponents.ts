@@ -25,6 +25,7 @@ import TextColumns from "@/app/_prismic-slices/TextColumns";
 import TicketPriceProgress from "@/app/_prismic-slices/TicketPriceProgress";
 import TileGrid from "@/app/_prismic-slices/TileGrid";
 import VenueList from "@/app/_prismic-slices/VenueList";
+import Vfx from "@/app/_prismic-slices/Vfx";
 import VinylPromoSection from "@/app/_prismic-slices/VinylPromoSection";
 
 export const components = {
@@ -55,5 +56,6 @@ export const components = {
   text_column: TextColumns,
   ticket_price_progress: TicketPriceProgress,
   venue_list: VenueList,
+  vfx: Vfx,
   vinyl_promo_section: VinylPromoSection,
 };
