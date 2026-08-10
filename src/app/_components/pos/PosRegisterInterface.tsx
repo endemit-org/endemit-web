@@ -15,6 +15,7 @@ interface PosItem {
   description: string | null;
   cost: number;
   direction: "CREDIT" | "DEBIT";
+  color: string | null;
 }
 
 interface PosOrderSummary {
@@ -134,6 +135,7 @@ export function PosRegisterInterface({
                 status: "PAID",
                 tipAmount: payload.tipAmount,
                 paidAt: payload.paidAt,
+                customerBalance: payload.balanceAfter,
               }
             : null
         );

@@ -82,6 +82,7 @@ export default async function PosRegisterPage({ params }: Props) {
     description: ri.item.description,
     cost: ri.item.cost,
     direction: ri.item.direction,
+    color: ri.item.color,
   }));
 
   return (

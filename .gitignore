@@ -68,3 +68,6 @@ next-env.d.ts
 /.claude/worktrees/
 prismic-backup/
 content-review/
+
+# Card account import data (contains plaintext passwords)
+combination_list.csv

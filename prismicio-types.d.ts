@@ -114,6 +114,7 @@ type ArtistDocumentDataSlicesSlice =
   | AccordionSlice
   | ImageGallerySlice
   | HeroSlice
+  | VfxSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -319,6 +320,7 @@ type ContentPageDocumentDataSlicesSlice =
   | AccordionSlice
   | ImageGallerySlice
   | HeroSlice
+  | VfxSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -598,6 +600,7 @@ type EventDocumentDataSlicesSlice =
   | SpacerSlice
   | HorizontalRuleSlice
   | HeroSlice
+  | VfxSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1036,6 +1039,7 @@ type HomePageDocumentDataSlicesSlice =
   | ProductListSlice
   | AccordionSlice
   | HeroSlice
+  | VfxSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
   | ContentSectionSlice
@@ -1127,6 +1131,7 @@ type InnerContentDocumentDataSlicesSlice =
   | ProductListSlice
   | PodcastListSlice
   | HeroSlice
+  | VfxSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1244,6 +1249,7 @@ type MobileMenuPromoDocumentDataSlicesSlice =
   | ProductListSlice
   | PodcastListSlice
   | HeroSlice
+  | VfxSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1684,6 +1690,7 @@ type ProductDocumentDataSlicesSlice =
   | BlurredBlobSlice
   | BannerSlice
   | HeroSlice
+  | VfxSlice
   | TextColumnSlice
   | VinylPromoSectionSlice
   | NewsletterSubscriptionSlice
@@ -5018,6 +5025,99 @@ export type VenueListSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Vfx → Default → Primary*
+ */
+export interface VfxSliceDefaultPrimary {
+  /**
+   * VFX field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Rave On
+   * - **API ID Path**: vfx.default.primary.vfx
+   * - **Documentation**: https://prismic.io/docs/fields/select
+   */
+  vfx: prismic.SelectField<"Rave On", "filled">;
+
+  /**
+   * Title field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Title (SL) field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.title_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title_sl: prismic.RichTextField;
+
+  /**
+   * Description field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Description (SL) field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.description_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_sl: prismic.RichTextField;
+
+  /**
+   * Link field in *Vfx → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: vfx.default.primary.link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+}
+
+/**
+ * Default variation for Vfx Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VfxSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<VfxSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Vfx*
+ */
+type VfxSliceVariation = VfxSliceDefault;
+
+/**
+ * Vfx Shared Slice
+ *
+ * - **API ID**: `vfx`
+ * - **Description**: Full-width VFX section with a selectable WebGL effect, title, description and link
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VfxSlice = prismic.SharedSlice<"vfx", VfxSliceVariation>;
+
+/**
  * Primary content in *VinylPromoSection → Default → Primary*
  */
 export interface VinylPromoSectionSliceDefaultPrimary {
@@ -5289,6 +5389,10 @@ declare module "@prismicio/client" {
       VenueListSliceDefaultPrimary,
       VenueListSliceVariation,
       VenueListSliceDefault,
+      VfxSlice,
+      VfxSliceDefaultPrimary,
+      VfxSliceVariation,
+      VfxSliceDefault,
       VinylPromoSectionSlice,
       VinylPromoSectionSliceDefaultPrimary,
       VinylPromoSectionSliceVariation,

@@ -1315,7 +1315,8 @@
         "colSold": "Prodano (30 dni)",
         "colActions": "Dejanja",
         "soldCount": "{count} prodano",
-        "emptyItems": "Še ni nobenga izdelka."
+        "emptyItems": "Še ni nobenga izdelka.",
+        "fieldColor": "Barva"
       },
       "orders": {
         "title": "POS naročila",
@@ -1722,7 +1723,8 @@
       "posOfflineQrs": "POS offline QR-ji",
       "posOrders": "POS naročila",
       "posTerminal": "POS terminal",
-      "myProfile": "Moj profil"
+      "myProfile": "Moj profil",
+      "discounts": "Kode za popust"
     },
     "common": {
       "loading": "Se nalaga…",
@@ -1770,6 +1772,58 @@
         "PENDING_VERIFICATION": "Čaka potrditev",
         "DELETED": "Zbrisan"
       }
+    },
+    "discounts": {
+      "title": "Kode za popust",
+      "subtitle": "Ustvari in uredi kode za popust na blagajni štacune",
+      "stats": {
+        "total": "Vse kode",
+        "active": "Aktivne",
+        "redemptions": "Unovčitve"
+      },
+      "addCode": "Dodej kodo",
+      "newCode": "Frišna koda",
+      "editCode": "Uredi kodo",
+      "fieldCode": "Koda",
+      "fieldDescription": "Opis",
+      "fieldType": "Tip popusta",
+      "typeCart": "Cela košara (vmesni znesek + poštnina)",
+      "typeItem": "Določen izdelek/izdelki",
+      "fieldValueType": "Tip vrednosti",
+      "valuePercentage": "Odstotek (%)",
+      "valueAbsolute": "Znesek (€)",
+      "fieldValue": "Vrednost",
+      "fieldTargetProducts": "Izdelki s popustom",
+      "fieldContainsItems": "Zahtevani izdelki v košari (neobvezno)",
+      "containsItemsHint": "Če je nastavljeno, koda dela samo, ko je v košari vsaj eden od teh izdelkov.",
+      "filterProducts": "Filtriraj izdelke…",
+      "noProducts": "Noben izdelek se ne vjema.",
+      "fieldMinOrderAmount": "Najmanjši znesek naročila (€, neobvezno)",
+      "fieldMaxUses": "Največ unovčitev (neobvezno)",
+      "fieldValidFrom": "Velja od (neobvezno)",
+      "fieldValidUntil": "Velja do (neobvezno)",
+      "fieldStatus": "Status",
+      "statusActive": "Aktivna",
+      "statusInactive": "Neaktivna",
+      "saving": "Shranjujem…",
+      "update": "Posodobi",
+      "colCode": "Koda",
+      "colDiscount": "Popust",
+      "colQualifiers": "Pogoji",
+      "colUses": "Unovčitve",
+      "colStatus": "Status",
+      "colActions": "Dejanja",
+      "typeCartBadge": "Košara",
+      "typeItemBadge": "Izdelek ({count})",
+      "qualContains": "rabi {count} izdelk(ov)",
+      "qualMinAmount": "min €{amount}",
+      "qualFrom": "od {date}",
+      "qualUntil": "do {date}",
+      "activate": "Aktiviraj",
+      "deactivate": "Deaktiviraj",
+      "delete": "Zbriši",
+      "confirmDelete": "Zbrišem kodo {code}? Naročila obdržijo svojo zgodovino.",
+      "emptyCodes": "Še ni nobene kode za popust."
     }
   },
   "pos": {
@@ -1794,7 +1848,8 @@
       "each": "{amount} vsak",
       "clear": "Počisti",
       "creating": "Ustvarjam…",
-      "createOrder": "Ustvari naročilo"
+      "createOrder": "Ustvari naročilo",
+      "negativeTotal": "Znesek naročila ne more biti negativen"
     },
     "orders": {
       "yourTotalIs": "Skupaj <bold>{amount}</bold>",
@@ -1821,13 +1876,14 @@
       "lowBalance": "Prenizko dobroimetje",
       "scanned": "Skenirano",
       "waitingForScanShort": "Čakam na sken",
-      "cancel": "Prekliči"
+      "cancel": "Prekliči",
+      "newBalance": "Novo stanje"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
-      "scanWristband": "Skeniraj zapestnco",
-      "instructions": "Skeniraj zapestnco ali vtipkaj 4-mestno kodo.",
-      "hint": "Skeniraj QR ali vtipkaj 4-mestno kodo zapestnce",
+      "scanWristband": "Skeniraj QR",
+      "instructions": "Skeniraj QR kodo ali vtipkaj 4-mestno kodo.",
+      "hint": "Skeniraj QR ali vtipkaj 4-mestno kodo",
       "backToQr": "← Nazaj na QR"
     },
     "header": {

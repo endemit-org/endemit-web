@@ -43,6 +43,8 @@ export interface PosOrderPaidPayload {
   total: number;
   tipAmount: number;
   paidAt: string;
+  /** Customer's wallet balance in cents after the payment. */
+  balanceAfter: number;
 }
 
 export interface PosOrderCancelledPayload {

@@ -11,14 +11,35 @@ import { createTransaction } from "@/domain/wallet/operations/createTransaction"
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ProductCategory, ProductType } from "@/domain/product/types/product";
 import { OrderStatus } from "@prisma/client";
+import { prisma } from "@/lib/services/prisma";
+import { redeemDiscountCode } from "@/domain/discount/operations/redeemDiscountCode";
 import {
   bustOnOrderCreated,
   bustOnDonationReceived,
 } from "@/lib/services/cache";
 
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
+  // Status before the PAID update — webhook retries re-enter this function,
+  // and the discount redemption below must count only the first transition.
+  const priorOrder = await prisma.order.findUnique({
+    where: { stripeSession: paymentSessionId },
+    select: { status: true },
+  });
+  const wasAlreadyPaid =
+    priorOrder?.status === OrderStatus.PAID ||
+    priorOrder?.status === OrderStatus.COMPLETED;
+
   let order = await updateOrderStatusPaid(paymentSessionId);
   const items = order.items as unknown as ProductInOrder[];
+
+  // Count the discount code redemption (non-blocking)
+  if (order.discountCodeId && !wasAlreadyPaid) {
+    try {
+      await redeemDiscountCode(order.discountCodeId);
+    } catch (error) {
+      console.error("Failed to redeem discount code:", error);
+    }
+  }
 
   // Check if order has any physical items
   const hasPhysicalItems = items.some(item => item.type === ProductType.PHYSICAL);
@@ -122,8 +143,10 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
         continue;
       }
 
-      // Divide price by number of ticket holders for bundles
-      const pricePerTicket = ticketItem.price / ticketHolders.length;
+      // Divide price by number of ticket holders for bundles; discounted
+      // orders carry the actually-paid unit price in paidPrice.
+      const pricePerTicket =
+        (ticketItem.paidPrice ?? ticketItem.price) / ticketHolders.length;
 
       ticketHolders.forEach(ticketHolderName => {
         queueTicketIssueAutomation({

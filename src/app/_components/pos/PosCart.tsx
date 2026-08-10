@@ -85,16 +85,25 @@ export function PosCart({
           {t("cart.clear")}
         </button>
         <div className="flex items-center gap-4">
-          <span className="text-lg font-bold">{formatTokensFromCents(total)}</span>
+          <span
+            className={`text-lg font-bold ${total < 0 ? "text-red-600" : ""}`}
+          >
+            {formatTokensFromCents(total)}
+          </span>
           <button
             onClick={onCreateOrder}
-            disabled={isCreating}
+            disabled={isCreating || total < 0}
             className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? t("cart.creating") : t("cart.createOrder")}
           </button>
         </div>
       </div>
+      {total < 0 && (
+        <p className="mt-2 text-right text-sm text-red-600">
+          {t("cart.negativeTotal")}
+        </p>
+      )}
     </div>
   );
 }

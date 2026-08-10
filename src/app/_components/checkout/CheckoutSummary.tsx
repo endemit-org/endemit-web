@@ -81,23 +81,18 @@ export default function CheckoutSummary({
         </LineItem>
       )}
 
-      {discountObject && discountObject.coupon && (
+      {discountObject && (
         <LineItem label={t("discount")}>
-          {discountObject.coupon.percent_off && (
+          {loadingPromoCode ? (
+            <LineItemSpinner text={t("loading")} />
+          ) : (
             <>
-              <span className={"mr-6 italic text-neutral-400"}>
-                (-{discountObject.coupon.percent_off}%)
-              </span>
-              {formatDecimalPrice(discountAmount)}
-            </>
-          )}
-          {discountObject.coupon.amount_off && (
-            <>
-              {loadingPromoCode ? (
-                <LineItemSpinner text={t("loading")} />
-              ) : (
-                formatDecimalPrice(discountAmount)
+              {discountObject.valueType === "PERCENTAGE" && (
+                <span className={"mr-6 italic text-neutral-400"}>
+                  (-{discountObject.value}%)
+                </span>
               )}
+              {formatDecimalPrice(discountAmount)}
             </>
           )}
         </LineItem>

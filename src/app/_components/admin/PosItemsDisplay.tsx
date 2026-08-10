@@ -31,6 +31,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       description: (formData.get("description") as string) || undefined,
       cost: Math.round(parseFloat(formData.get("cost") as string) * 100),
       direction: formData.get("direction") as PosItemDirection,
+      color: (formData.get("color") as string) || null,
       status: formData.get("status") as PosItemStatus,
     };
 
@@ -50,6 +51,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       description: (formData.get("description") as string) || null,
       cost: Math.round(parseFloat(formData.get("cost") as string) * 100),
       direction: formData.get("direction") as PosItemDirection,
+      color: (formData.get("color") as string) || null,
       status: formData.get("status") as PosItemStatus,
     };
 
@@ -139,6 +141,18 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
           </select>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            {t("fieldColor")}
+          </label>
+          <input
+            name="color"
+            type="color"
+            defaultValue={item?.color ?? "#3b82f6"}
+            className="mt-1 block h-10 w-full rounded-md border border-gray-300 shadow-sm cursor-pointer"
+          />
+        </div>
+
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700">
             {t("fieldDescription")}
@@ -224,7 +238,13 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
             {items.map(item => (
               <tr key={item.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                    {item.color && (
+                      <span
+                        className="inline-block w-4 h-4 rounded-full border border-gray-200"
+                        style={{ backgroundColor: item.color }}
+                      />
+                    )}
                     {item.name}
                   </div>
                   {item.description && (

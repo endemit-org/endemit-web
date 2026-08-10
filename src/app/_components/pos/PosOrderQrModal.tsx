@@ -248,10 +248,25 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         {/* Content */}
         <div className="p-6">
           {isPaid ? (
-            <div className="text-center py-8">
-              <div className="w-20 h-20 mx-auto rounded-full bg-white flex items-center justify-center mb-4 shadow-lg">
+            <div className="text-center py-3">
+              {/* Customer-facing (screen turned toward them): new balance,
+                  rotated 180° so it reads upright from the other side. */}
+              {order.customerBalance != null && (
+                <div className="rotate-180 mb-3 pt-3 border-t border-white/20">
+                  <span className="block text-5xl font-bold leading-none text-white">
+                    <AnimatedBalance
+                      value={order.customerBalance}
+                      countFromZero
+                    />
+                  </span>
+                  <p className="text-xs uppercase tracking-widest text-white/70 mt-2">
+                    {t("orders.newBalance")}
+                  </p>
+                </div>
+              )}
+              <div className="w-14 h-14 mx-auto rounded-full bg-white flex items-center justify-center mb-2 shadow-lg">
                 <svg
-                  className="w-10 h-10 text-emerald-600"
+                  className="w-7 h-7 text-emerald-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -264,7 +279,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">
+              <h3 className="text-xl font-semibold text-white mb-3">
                 {t("orders.paymentReceived")}
               </h3>
               {hasTip ? (
@@ -493,12 +508,14 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         {/* Actions */}
         {!isPaid && subView === "sticker-scan" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
+            {/* Hidden for now — sticker scan is the only offered flow.
             <button
               onClick={() => setSubView("qr")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
             >
               {t("orders.showQr")}
             </button>
+            */}
             <button
               onClick={onCopyToCart}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
