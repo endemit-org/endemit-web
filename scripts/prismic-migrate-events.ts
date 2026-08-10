@@ -44,7 +44,7 @@ const EVENTS: Record<string, DocTranslations> = {
     const intro =
       "Sistem je bil nekoč skrojen po meri ljudi, tko kot so se sosedje navadli en na drugga utrip. Pozablen kraj se je lahk spremenu v prizorišče – živ pa brez meja, ko zvoki, ki pozdravlajo nov sončni vzhod.\n" +
       "Scena – ujeta med pravila obnašanja pa prosti trg – ne ponuja odrešitve.\n" +
-      "Odveza čaka ob zaklučku druge endemitske klubske sezone – za tiste, ki so prpravlen stopit nasproti naslednji nevihti pa vzet nazaj, kar je blo zgublen.\n" +
+      "Odveza čaka ob zaklučku druge endemitske klubske sezone – za tiste, ki so prpravlen stopit nasproti nasledni nevihti pa vzet nazaj, kar je blo zgublen.\n" +
       "Revolucija ne bo predvajana po televiziji – posneti bojo sam seti za rodove, ki šele pridejo.";
     return {
       type: "event",
@@ -243,7 +243,7 @@ const EVENTS: Record<string, DocTranslations> = {
     },
     bios: {
       tamorra:
-        "Človek vsrka okolje ali pa okolje vsrka človeka. Naslednji vodja je produkt slovenske Istre pa endemitskih bojnih vrst, ki je svoje talente osebno pa intenzivno vložu v obe pokrajini. Z obalnimi fanatiki jim je v samo nekaj letih uspelo iz suhe, zapuščene planjave sestavit par ducatov puščavskih krožnikov novga obalnga techno ekosistema.\n" +
+        "Človek vsrka okolje ali pa okolje vsrka človeka. Nasledni vodja je produkt slovenske Istre pa endemitskih bojnih vrst, ki je svoje talente osebno pa intenzivno vložu v obe pokrajini. Z obalnimi fanatiki jim je v samo nekaj letih uspelo iz suhe, zapuščene planjave sestavit par ducatov puščavskih krožnikov novga obalnga techno ekosistema.\n" +
         "Tamorra je s študijem terenov na prejšnjih endemitskih snidenjih v sebi prebudu prvinske instinkte usodne privlačnosti. Med njim pa nami, med glasbo pa umom, med intimnim ritualom pa osvoboditvijo od okovov zgodnje odraslosti. Če bi ta film snemali dons, bi bil Matija eden glavnih razlogov za disco. Čas je, da svoj kos položi na našo mizo.",
       inland:
         "Ljubljana se je zgubila v času. Zlata doba je konc, ostali so sam ostanki tega, kar je nekoč blo. Kljub našim trudom nas včasih vse odnese, zato se moramo podat v svet, kjer ostajajo zvesti svoji poti.\n" +
@@ -347,7 +347,7 @@ const EVENTS: Record<string, DocTranslations> = {
       "dj-labrana":
         "Labrana je tista redka, zvok zbirajoča zver, ki razume, da mora glasba nagovarjat um brez predsodkov. Pričakuj vzdigujočo dnevno selekcijo housa, disca pa leftfield čudakov. Igriva, a globoka, s pravo mero nepredvidljivosti v vzorcu.",
       "omnia-vox":
-        "Omnia Vox je kipar zvočnih pokrajin, ki dihajo pa z lahkoto pa naravnim tokom preusmerijo pozornost k naslednji postaji neraziskanga. Z rabo ambienta, drona pa organskih posnetkov so njegovi seti nujno potrebna dekompresija – platforma za refleksijo pa reset.",
+        "Omnia Vox je kipar zvočnih pokrajin, ki dihajo pa z lahkoto pa naravnim tokom preusmerijo pozornost k nasledni postaji neraziskanga. Z rabo ambienta, drona pa organskih posnetkov so njegovi seti nujno potrebna dekompresija – platforma za refleksijo pa reset.",
       "material-object":
         "Material Object je mojster zvočne arhitekture, ki gradi večdimenzionalno atmosfero iz abstraktnga techna, ambienta pa psihedeličnih komponent. Producent pa izvajalec, ki so ga vzeli za svojga občinstva pa založbe po vsem svetu, je svoj slog razvil skoz sodelovanja s sensejem elektronske glasbe Petetom Namlookom in svoj prepoznavni sound prinesu v prizorišča ko Berghain ali festival Labyrinth. Doma iz Avstralije, zdej postavla svoj novi hub v Sloveniji in debitira na Endemitu sred koroškga gozda.",
       beko:
@@ -395,7 +395,7 @@ const EVENTS: Record<string, DocTranslations> = {
       dvidevat:
         "Nekatere enačbe je težko rešit, druge so preproste. Združit dvidevat pa njene energične talente čez širok spekter elektronske glasbe z endemitskim občinstvom je lahka enačba. Zgodu se bo match, ustvarjen v nebesih.",
       inland:
-        "Britanec, ki je našo dom v Berlinu, je odkril svoj naslednji dom v Sloveniji. Potem ko je nabu energijo na Izviru, je pusto svoj naslednji pečat na našem ljublanskem občinstvu. Ed se med nami počuti ravno tko doma ko naše občinstvo v jedru njegovih odličnih ritmov iz samga srca berlinske pa svetovne elektronske scene.",
+        "Britanec, ki je našo dom v Berlinu, je odkril svoj nasledni dom v Sloveniji. Potem ko je nabu energijo na Izviru, je pusto svoj naslednji pečat na našem ljublanskem občinstvu. Ed se med nami počuti ravno tko doma ko naše občinstvo v jedru njegovih odličnih ritmov iz samga srca berlinske pa svetovne elektronske scene.",
       rotte:
         "Obalno-koroška povezava je vsak dan močnejša in spaja mediteransko svežino z vrhovi koroških gora. Rotte je glasnik novga primorskga vala drznih kuratorjev plesišča, ki v svoje stvaritve redno pakira neosvinčene atome underground zvokov.",
       meelo:

@@ -186,14 +186,25 @@
  */
 @supports selector(:has(*)) {
   body:has([data-theme="crt"]) .app-page-frame {
-    /* Slight frosted panel over the moving glitch: a hint of dark fill plus a
-     * backdrop blur so foreground text stays readable while the CRT background
-     * still reads through. The glitch stays sharp in the outer margins (outside
-     * this panel); inside the frame it's softened. */
+    background-color: transparent;
+    border: 12px solid #dbdc00;
+  }
+
+  /* Slight frosted panel over the moving glitch: a hint of dark fill plus a
+   * backdrop blur so foreground text stays readable while the CRT background
+   * still reads through. The glitch stays sharp in the outer margins (outside
+   * this panel); inside the frame it's softened.
+   * On a ::before overlay — NOT the frame itself — because backdrop-filter
+   * turns the element into the containing block for fixed descendants, which
+   * would pin the fixed mobile tab nav to the frame instead of the viewport. */
+  body:has([data-theme="crt"]) .app-page-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     background-color: rgba(38, 34, 35, 0.7);
     backdrop-filter: blur(11px);
     -webkit-backdrop-filter: blur(11px);
-    border: 12px solid #dbdc00;
   }
 
   /* Mobile: thinner frame border (⅓ of desktop) and extra top margin so the

@@ -65,6 +65,12 @@ export type Event = {
   };
   cashTicketPrice: number | null;
   hasCashlessPayments: boolean;
+  /**
+   * Members-only mode: all public ticket mentions (sidebar, badges, price
+   * progress) are hidden on public pages. Existing tickets/scanning and the
+   * event itself are unaffected.
+   */
+  incognito: boolean;
   annotation?: string;
   type: EventType;
   theme: EventPageTheme;

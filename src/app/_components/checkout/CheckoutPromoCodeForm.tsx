@@ -58,7 +58,7 @@ export default function CheckoutPromoCodeForm({
         <button
           onClick={() => setIsExpanded(true)}
           disabled={disabled}
-          className={`text-sm transition-colors ${disabled ? "text-neutral-600 cursor-not-allowed" : "text-neutral-400 hover:text-white"}`}
+          className={`text-sm transition-colors ${disabled ? "text-neutral-600 cursor-not-allowed" : "text-blue-400 hover:text-blue-300"}`}
         >
           {t("add")}
         </button>
