@@ -49,7 +49,7 @@ export default function EventLineUp({ artists, showArtistTimes = true }: Props) 
   const showSorter = hasAnyTimes && !isMoreThanThreeMonthsAgo;
 
   // For long lineups, swipe horizontally on mobile instead of a tall stack.
-  const isBigLineup = sortedArtists.length > 5;
+  const isBigLineup = sortedArtists.length > 2;
 
   // Deep-link support: /events/foo#artist-<uid> scrolls the lineup to that
   // card. In the mobile swiper the cards live in a horizontal scroller, so
