@@ -18,7 +18,7 @@ export default function ProfileButton({
   if (variant === "compact") {
     return (
       <Link
-        href={user ? "/profile" : "/signin"}
+        href={"/profile"}
         className="flex h-14 items-center px-3 text-gray-100 hover:text-gray-400"
         title={
           user
@@ -57,7 +57,7 @@ export default function ProfileButton({
   // Detailed variant (desktop sidebar)
   return (
     <Link
-      href={user ? "/profile" : "/signin"}
+      href={"/profile"}
       className="flex items-center justify-end gap-2 text-sm text-neutral-400 hover:text-white transition-colors px-3 py-2"
     >
       <span
