@@ -20,6 +20,7 @@ import {
   runStickerReplacedEmailAutomation,
 } from "@/domain/sticker/operations/runStickerEmailAutomation";
 import { runP2PTransferEmailAutomation } from "@/domain/wallet/operations/runP2PTransferEmailAutomation";
+import { runStaleUserCleanup } from "@/domain/user/operations/runStaleUserCleanup";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -42,5 +43,6 @@ export const { GET, POST, PUT } = serve({
     runStickerUnlinkedEmailAutomation,
     runStickerReplacedEmailAutomation,
     runP2PTransferEmailAutomation,
+    runStaleUserCleanup,
   ],
 });
