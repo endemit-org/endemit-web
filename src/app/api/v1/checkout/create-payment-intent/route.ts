@@ -111,6 +111,9 @@ export async function POST(request: Request) {
 
       // Build metadata for PaymentIntent
       const metadata: Record<string, string> = {
+        // Searchable in the Stripe dashboard without triggering Stripe's own
+        // receipt emails (receipt_email would send them regardless of settings).
+        customerEmail: email,
         requiresShipping: shippingAddress ? "true" : "false",
         includesTickets: ticketHolders ? "true" : "false",
         walletCreditAmount: validatedWalletCredit.toString(),
@@ -133,7 +136,6 @@ export async function POST(request: Request) {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountToCharge,
         currency: "eur",
-        receipt_email: email,
         description: transformToCheckoutDescription(shippingAddress, email),
         metadata,
         automatic_payment_methods: {

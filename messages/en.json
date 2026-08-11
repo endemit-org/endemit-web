@@ -1384,7 +1384,15 @@
         "itemsHeading": "Items",
         "subtotal": "Subtotal",
         "tip": "Tip",
-        "total": "Total"
+        "total": "Total",
+        "reverse": "Reverse order",
+        "delete": "Delete order",
+        "reverseConfirmText": "Refund the full amount (incl. tip) back to the customer's wallet and mark the order as cancelled?",
+        "deleteConfirmText": "Permanently delete this order and its transactions? A paid, unreversed order will first have its balance returned to the customer. This cannot be undone.",
+        "reverseConfirm": "Yes, reverse",
+        "deleteConfirm": "Yes, delete permanently",
+        "actionWorking": "Working…",
+        "actionCancel": "Cancel"
       },
       "registers": {
         "title": "POS Registers",

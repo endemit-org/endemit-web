@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import type { PosOrderStatus } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
+import { reversePosOrderAction } from "@/domain/pos/actions/reversePosOrderAction";
+import { deletePosOrderAction } from "@/domain/pos/actions/deletePosOrderAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { formatEmailForDisplay } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
@@ -15,6 +17,8 @@ interface Props {
   totalPages: number;
   totalCount: number;
   registers: Array<{ id: string; name: string }>;
+  /** Show reverse/delete actions (POS_ORDERS_REFUND permission). */
+  canManage?: boolean;
 }
 
 function formatPrice(cents: number): string {
@@ -33,6 +37,7 @@ export default function PosOrdersDisplay({
   totalPages: initialTotalPages,
   totalCount: initialTotalCount,
   registers,
+  canManage = false,
 }: Props) {
   const t = useTranslations("admin.pos.orders");
   const tt = useTranslations("common.table");
@@ -45,6 +50,41 @@ export default function PosOrdersDisplay({
   const [selectedOrder, setSelectedOrder] =
     useState<PosOrderWithRelations | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [confirmAction, setConfirmAction] = useState<
+    "reverse" | "delete" | null
+  >(null);
+  const [isActing, setIsActing] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const closeModal = () => {
+    setSelectedOrder(null);
+    setConfirmAction(null);
+    setActionError(null);
+  };
+
+  const handleOrderAction = async (action: "reverse" | "delete") => {
+    if (!selectedOrder) return;
+    setIsActing(true);
+    setActionError(null);
+    try {
+      const result =
+        action === "reverse"
+          ? await reversePosOrderAction({ orderId: selectedOrder.id })
+          : await deletePosOrderAction({ orderId: selectedOrder.id });
+      if (!result.success) {
+        setActionError(result.message);
+        setConfirmAction(null);
+        return;
+      }
+      closeModal();
+      loadOrders(page);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Action failed");
+      setConfirmAction(null);
+    } finally {
+      setIsActing(false);
+    }
+  };
 
   const loadOrders = (newPage: number) => {
     startTransition(async () => {
@@ -246,7 +286,7 @@ export default function PosOrdersDisplay({
                 {t("modalOrder", { code: selectedOrder.shortCode })}
               </h2>
               <button
-                onClick={() => setSelectedOrder(null)}
+                onClick={closeModal}
                 className="p-2 hover:bg-gray-100 rounded-full"
               >
                 <svg
@@ -362,6 +402,60 @@ export default function PosOrdersDisplay({
                   <span>{formatPrice(selectedOrder.total)}</span>
                 </div>
               </div>
+
+              {canManage && (
+                <div className="border-t pt-4 space-y-3">
+                  {actionError && (
+                    <p className="text-sm text-red-600">{actionError}</p>
+                  )}
+                  {confirmAction ? (
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600">
+                        {confirmAction === "reverse"
+                          ? t("reverseConfirmText")
+                          : t("deleteConfirmText")}
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleOrderAction(confirmAction)}
+                          disabled={isActing}
+                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isActing
+                            ? t("actionWorking")
+                            : confirmAction === "reverse"
+                              ? t("reverseConfirm")
+                              : t("deleteConfirm")}
+                        </button>
+                        <button
+                          onClick={() => setConfirmAction(null)}
+                          disabled={isActing}
+                          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded-lg transition-colors"
+                        >
+                          {t("actionCancel")}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      {selectedOrder.status === "PAID" && (
+                        <button
+                          onClick={() => setConfirmAction("reverse")}
+                          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors"
+                        >
+                          {t("reverse")}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setConfirmAction("delete")}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+                      >
+                        {t("delete")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

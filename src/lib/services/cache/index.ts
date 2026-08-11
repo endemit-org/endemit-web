@@ -75,6 +75,8 @@ export {
   // POS
   bustOnPosOrderCreated,
   bustOnPosOrderPaid,
+  bustOnPosOrderReversed,
+  bustOnPosOrderDeleted,
   bustOnPosTopUp,
   bustOnPosItemChanged,
   bustOnPosRegisterChanged,
