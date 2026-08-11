@@ -28,6 +28,7 @@ export async function GET(
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      include: { stickerCode: { select: { code: true } } },
     });
 
     if (!user) {
@@ -46,6 +47,7 @@ export async function GET(
       userId: user.id,
       userName: user.name ?? user.username,
       receiveCode: code,
+      stickerCode: user.stickerCode?.code ?? null,
     });
 
     // Convert Buffer to Uint8Array for NextResponse
