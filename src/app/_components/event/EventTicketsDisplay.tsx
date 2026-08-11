@@ -95,6 +95,11 @@ function TicketPurchaseDisplay({
       </div>
       <div className={"my-6 text-center"}>
         <h2 className={"text-2xl"}>{product.name}</h2>
+        {product.specialNotice && (
+          <p className="text-sm text-neutral-400 mt-px">
+            {product.specialNotice}
+          </p>
+        )}
         {showTicketQuantities && (
           <p className="text-neutral-600 text-sm">
             {includesTicketsLabel ??
