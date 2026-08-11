@@ -1384,7 +1384,15 @@
         "itemsHeading": "Izdelki",
         "subtotal": "Vmesni seštevek",
         "tip": "Napitnina",
-        "total": "Skupaj"
+        "total": "Skupaj",
+        "reverse": "Storniraj naročilo",
+        "delete": "Izbriši naročilo",
+        "reverseConfirmText": "Vrnem celoten znesek (vklj. z napitnino) nazaj v denarnico stranke in označim naročilo kot preklicano?",
+        "deleteConfirmText": "Trajno izbrišem to naročilo in njegove transakcije? Pri plačanem, nestorniranem naročilu se znesek najprej vrne stranki. Tega ni mogoče razveljaviti.",
+        "reverseConfirm": "Da, storniraj",
+        "deleteConfirm": "Da, trajno izbriši",
+        "actionWorking": "V teku…",
+        "actionCancel": "Prekliči"
       },
       "registers": {
         "title": "POS blagajne",

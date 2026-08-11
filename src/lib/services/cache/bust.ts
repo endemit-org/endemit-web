@@ -392,6 +392,46 @@ export async function bustOnPosTopUp(userId: string) {
 }
 
 /**
+ * Bust caches when a POS order is reversed (admin refund) or hard-deleted.
+ * Covers the order lists, admin transaction views/stats and — when the order
+ * had a customer/wallet — their balance and transaction views.
+ */
+export async function bustOnPosOrderReversed(
+  userId: string | null,
+  walletId: string | null
+) {
+  const tags: CacheTag[] = [
+    adminPosTags.orders(),
+    adminWalletTags.transactions(),
+    adminWalletTags.transactionStats(),
+    adminWalletTags.stats(),
+  ];
+
+  if (userId) {
+    tags.push(
+      userTags.wallet(userId),
+      userTags.transactions(userId),
+      userTags.transactionsLatest(userId)
+    );
+  }
+  if (walletId) {
+    tags.push(itemTags.walletTransactions(walletId));
+  }
+
+  await bustTags(tags);
+}
+
+/**
+ * Bust caches when a POS order is hard-deleted (same surface as a reversal).
+ */
+export async function bustOnPosOrderDeleted(
+  userId: string | null,
+  walletId: string | null
+) {
+  await bustOnPosOrderReversed(userId, walletId);
+}
+
+/**
  * Bust caches when POS item changes
  */
 export async function bustOnPosItemChanged() {

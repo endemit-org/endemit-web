@@ -31,6 +31,9 @@ export const createPaymentIntent = async ({
 }: CreatePaymentIntentParams): Promise<CreatePaymentIntentResult> => {
   const metadata: Stripe.MetadataParam = {
     orderId,
+    // Searchable in the Stripe dashboard without triggering Stripe's own
+    // receipt emails (receipt_email would send them regardless of settings).
+    customerEmail: email,
     requiresShipping: shippingAddress ? "true" : "false",
     includesTickets: ticketHolders ? "true" : "false",
     includesDonation: donationAmount && donationAmount > 0 ? "true" : "false",
@@ -55,7 +58,6 @@ export const createPaymentIntent = async ({
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amountInCents,
     currency: "eur",
-    receipt_email: email,
     description: transformToCheckoutDescription(shippingAddress, email),
     metadata,
     automatic_payment_methods: {
