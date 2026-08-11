@@ -61,8 +61,14 @@ export async function generateWalletApplePass(
 
   pass.secondaryFields.push({
     key: "holder",
-    label: "NAME",
+    label: "WALLET HOLDER",
     value: data.userName,
+  });
+
+  pass.secondaryFields.push({
+    key: "type",
+    label: "TYPE",
+    value: "Digital wallet",
   });
 
   pass.backFields.push({
