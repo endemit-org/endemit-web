@@ -9,20 +9,20 @@ import { TicketQueueEvent } from "@/domain/ticket/types/ticket";
 import { customAlphabet } from "nanoid";
 import type { DoorSaleTicketProcessData } from "@/domain/ticket/operations/runDoorSaleTicketAutomation";
 import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
-import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { ProductCategory } from "@/domain/product/types/product";
 import type { ProductInOrder } from "@/domain/order/types/order";
 
-interface AddDoorSaleTicketsInput {
+interface AddCashSaleTicketsInput {
   eventId: string;
   eventName: string;
-  quantity: number;
+  ticketHolders: Array<{ name: string }>;
+  /** Total cash received for all tickets together, in cents. */
   totalPrice: number;
   ticketHolderEmail?: string;
   sendEmail: boolean;
 }
 
-interface AddDoorSaleTicketsResult {
+interface AddCashSaleTicketsResult {
   success: boolean;
   tickets?: ReturnType<typeof serializeTicket>[];
   ticketCount?: number;
@@ -30,9 +30,13 @@ interface AddDoorSaleTicketsResult {
   error?: string;
 }
 
-export async function addDoorSaleTicketsAction(
-  input: AddDoorSaleTicketsInput
-): Promise<AddDoorSaleTicketsResult> {
+/**
+ * Admin cash sale: same backend as scanner door sales, but tickets always
+ * stay PENDING and each ticket carries an assigned holder name.
+ */
+export async function addCashSaleTicketsAction(
+  input: AddCashSaleTicketsInput
+): Promise<AddCashSaleTicketsResult> {
   try {
     const user = await getCurrentUser();
 
@@ -40,40 +44,38 @@ export async function addDoorSaleTicketsAction(
       return { success: false, error: "User not authenticated" };
     }
 
-    // Use tickets:scan permission for door sales
-    if (!user.permissions.includes(PERMISSIONS.TICKETS_SCAN)) {
-      return { success: false, error: "User not authorized for door sales" };
+    if (!user.permissions.includes(PERMISSIONS.TICKETS_CREATE)) {
+      return { success: false, error: "User not authorized to create tickets" };
     }
 
-    const { eventId, eventName, quantity, totalPrice, ticketHolderEmail, sendEmail } = input;
+    const { eventId, eventName, ticketHolders, totalPrice, ticketHolderEmail, sendEmail } = input;
 
-    if (!eventId || !eventName || quantity < 1 || totalPrice < 0) {
+    if (!eventId || !eventName || !ticketHolders.length || totalPrice < 0) {
       return { success: false, error: "Missing required fields" };
     }
 
-    // With ticket scanning enabled the door sale is scanned on the spot;
-    // otherwise the ticket stays PENDING like a regular issued ticket. On a
-    // CMS hiccup keep the long-standing scanned-immediately behavior.
-    const event = await fetchEventFromCmsById(eventId).catch(() => null);
-    const markScanned = event ? event.options.enabledTicketScanning : true;
+    for (const holder of ticketHolders) {
+      if (!holder.name.trim()) {
+        return { success: false, error: "All ticket holder names are required" };
+      }
+    }
 
-    // Create tickets in database
     const result = await createDoorSaleTickets({
       eventId,
       eventName,
-      quantity,
+      quantity: ticketHolders.length,
       totalPrice,
       ticketHolderEmail,
       createdByUserId: user.id,
-      markScanned,
+      markScanned: false,
+      ticketHolders,
     });
 
-    // Only send to Inngest if email is provided and sendEmail is true
-    if (sendEmail && ticketHolderEmail) {
-      const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 12);
-      const batchId = `batch_doorsale_${nanoid()}`;
-      const createdByUserName = user.username ?? user.email ?? "Unknown";
+    const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 12);
+    const batchId = `batch_cashsale_${nanoid()}`;
+    const createdByUserName = user.username ?? user.email ?? "Unknown";
 
+    if (sendEmail && ticketHolderEmail) {
       const events = result.tickets.map((ticket, index) => ({
         name: TicketQueueEvent.PROCESS_DOOR_SALE_TICKET,
         data: {
@@ -92,12 +94,7 @@ export async function addDoorSaleTicketsAction(
 
       await inngest.send(events);
     } else {
-      // Still send notification even without email
-      const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 12);
-      const batchId = `batch_doorsale_${nanoid()}`;
-      const createdByUserName = user.username ?? user.email ?? "Unknown";
-
-      // Send just one event for notification (no email)
+      // Still send one event for the Discord notification (no email)
       await inngest.send({
         name: TicketQueueEvent.PROCESS_DOOR_SALE_TICKET,
         data: {
@@ -115,17 +112,15 @@ export async function addDoorSaleTicketsAction(
       });
     }
 
-    // Same Email Octopus treatment as store ticket orders: create/update the
-    // subscriber and merge this event into their Events/LastEvent fields.
-    // The pipeline only reads `category` from items and skips placeholder
-    // emails on its own.
+    // Same Email Octopus treatment as store ticket orders (skips placeholders)
     if (ticketHolderEmail) {
       await queueOrderNewsletterSubscription({
         email: ticketHolderEmail,
         items: [{ category: ProductCategory.TICKETS } as ProductInOrder],
         ticketEventIds: [eventId],
+        customerName: ticketHolders[0]?.name ?? null,
       }).catch(error =>
-        console.error("Failed to queue door sale newsletter:", error)
+        console.error("Failed to queue cash sale newsletter:", error)
       );
     }
 
@@ -136,7 +131,7 @@ export async function addDoorSaleTicketsAction(
       totalAmount: result.totalAmount,
     };
   } catch (error) {
-    console.error("Error creating door sale tickets:", error);
+    console.error("Error creating cash sale tickets:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to create tickets",
