@@ -316,7 +316,14 @@ export async function bustOnUserUpdated(userId: string) {
  * Bust caches when role is assigned to user
  */
 export async function bustOnRoleAssigned(userId: string) {
-  const tags: CacheTag[] = [itemTags.user(userId), adminRoleTags.stats()];
+  const tags: CacheTag[] = [
+    itemTags.user(userId),
+    adminRoleTags.stats(),
+    // Roles list shows per-role member counts
+    adminRoleTags.list(),
+    // Users table shows each user's roles
+    adminUserTags.list(),
+  ];
 
   await bustTags(tags);
 }
@@ -463,7 +470,12 @@ export async function bustOnPosRegisterChanged() {
  * Bust caches when role changes
  */
 export async function bustOnRoleChanged(roleId?: string) {
-  const tags: CacheTag[] = [adminRoleTags.list(), adminRoleTags.stats()];
+  const tags: CacheTag[] = [
+    adminRoleTags.list(),
+    adminRoleTags.stats(),
+    // Users table shows role slugs per user — renames/deletes must propagate
+    adminUserTags.list(),
+  ];
 
   if (roleId) {
     tags.push(itemTags.role(roleId));

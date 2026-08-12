@@ -974,6 +974,11 @@
       "receiptNote": "To sporočilo velja kot potrdilo o tvoji transakciji. Če imaš vprašanja, nam piši na <link>endemit@endemit.org</link>",
       "intro": "Nakup na blagajni <strong>{registerName}</strong> je uspel. Podrobnosti spodaj.",
       "item": "Izdelek"
+    },
+    "walletAdjustment": {
+      "amountAdded": "Dodan znesek",
+      "amountRemoved": "Odstranjen znesek",
+      "walletBalance": "Dobroimetje denarnce"
     }
   },
   "music": {
@@ -1711,7 +1716,15 @@
         "balanceAfter": "Dobroimetje po",
         "note": "Opomba",
         "createdBy": "Ustvaril"
-      }
+      },
+      "directionLabel": "Smer",
+      "directionAdd": "Dodej žetone",
+      "directionRemove": "Odstrani žetone",
+      "sendEmailLabel": "Obvesti uporabnika po e-pošti (opomba postane sporočilo)",
+      "emailSubjectLabel": "Zadeva e-pošte",
+      "emailSubjectHint": "Predlog se prilagaja smeri, dokler ga ne urediš.",
+      "emailSubjectPresetAdd": "Žetoni dodani v tvojo Endemit denarnco",
+      "emailSubjectPresetRemove": "Žetoni odstranjeni s tvoje Endemit denarnce"
     },
     "transactions": {
       "title": "Transakcije",
