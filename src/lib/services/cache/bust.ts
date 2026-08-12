@@ -247,6 +247,8 @@ export async function bustOnTransactionCreated(
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
+    // Every transaction changes a balance shown in the admin wallets list
+    adminWalletTags.list(),
   ];
 
   await bustTags(tags);
@@ -262,6 +264,7 @@ export async function bustOnBalanceRewarded(userId: string, walletId: string) {
     userTags.transactions(userId),
     userTags.transactionsLatest(userId),
     adminWalletTags.stats(),
+    adminWalletTags.list(),
   ];
 
   await bustTags(tags);
@@ -366,6 +369,7 @@ export async function bustOnPosOrderPaid(userId: string) {
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
+    adminWalletTags.list(),
     userTags.wallet(userId),
     userTags.transactions(userId),
     userTags.transactionsLatest(userId),
@@ -383,6 +387,7 @@ export async function bustOnPosTopUp(userId: string) {
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
+    adminWalletTags.list(),
     userTags.wallet(userId),
     userTags.transactions(userId),
     userTags.transactionsLatest(userId),
@@ -405,6 +410,7 @@ export async function bustOnPosOrderReversed(
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
+    adminWalletTags.list(),
   ];
 
   if (userId) {
