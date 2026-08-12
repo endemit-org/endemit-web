@@ -1216,6 +1216,22 @@
         "createButton": "{count, plural, one {Create # Guest Ticket} other {Create # Guest Tickets}}",
         "successCreated": "{count, plural, one {# guest ticket created} other {# guest tickets created}}",
         "successCreatedWithEmail": "{count, plural, one {# guest ticket created and email sent} other {# guest tickets created and email sent}}"
+      },
+      "cashSaleForm": {
+        "addButton": "Cash sale",
+        "title": "Add cash sale tickets",
+        "numberOfTickets": "Number of tickets",
+        "holderNames": "Ticket holder names",
+        "holderNamePlaceholder": "Holder {number} name",
+        "totalPrice": "Total price (€)",
+        "totalPriceHint": "Cash received for all tickets together; split evenly per ticket.",
+        "emailLabel": "Email (optional)",
+        "emailPlaceholder": "Search user or type email…",
+        "emailHint": "Tickets are linked to this email; leave empty for anonymous cash sale.",
+        "sendViaEmail": "Send tickets via email",
+        "creating": "Creating…",
+        "createButton": "Create {count} ticket(s)",
+        "successCreated": "{count} cash sale ticket(s) created"
       }
     },
     "orders": {
