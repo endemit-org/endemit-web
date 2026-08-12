@@ -8,6 +8,9 @@ import { inngest } from "@/lib/services/inngest";
 import { TicketQueueEvent } from "@/domain/ticket/types/ticket";
 import { customAlphabet } from "nanoid";
 import type { GuestTicketProcessData } from "@/domain/ticket/operations/runGuestTicketAutomation";
+import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
+import { ProductCategory } from "@/domain/product/types/product";
+import type { ProductInOrder } from "@/domain/order/types/order";
 
 interface TicketHolder {
   name: string;
@@ -89,6 +92,19 @@ export async function addGuestTicketsAction(
     }));
 
     await inngest.send(events);
+
+    // Same Email Octopus treatment as store ticket orders: create/update the
+    // subscriber and merge this event into their Events/LastEvent fields.
+    // The pipeline only reads `category` from items and skips placeholder
+    // emails on its own.
+    await queueOrderNewsletterSubscription({
+      email: ticketHolderEmail,
+      items: [{ category: ProductCategory.TICKETS } as ProductInOrder],
+      ticketEventIds: [eventId],
+      customerName: ticketHolders[0]?.name ?? null,
+    }).catch(error =>
+      console.error("Failed to queue guest ticket newsletter:", error)
+    );
 
     return {
       success: true,
