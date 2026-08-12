@@ -1216,6 +1216,22 @@
         "createButton": "{count, plural, one {Ustvari # karto za gosta} two {Ustvari # karti za gosta} few {Ustvari # karte za gosta} other {Ustvari # karte za gosta}}",
         "successCreated": "{count, plural, one {# karta za gosta ustvarjena} two {# karti za gosta ustvarjeni} few {# karte za gosta ustvarjene} other {# kart za gosta ustvarjenih}}",
         "successCreatedWithEmail": "{count, plural, one {# karta za gosta ustvarjena in email poslan} two {# karti za gosta ustvarjeni in email poslan} few {# karte za gosta ustvarjene in email poslan} other {# kart za gosta ustvarjenih in email poslan}}"
+      },
+      "cashSaleForm": {
+        "addButton": "Prodaja z gotovino",
+        "title": "Dodej karte za gotovinsko prodajo",
+        "numberOfTickets": "Število kart",
+        "holderNames": "Imena imetnikov",
+        "holderNamePlaceholder": "Ime imetnika {number}",
+        "totalPrice": "Skupna cena (€)",
+        "totalPriceHint": "Prejeta gotovina za vse karte skupaj; razdeli se enakomerno po kartah.",
+        "emailLabel": "E-pošta (neobvezno)",
+        "emailPlaceholder": "Poišči uporabnika al vtipkaj e-pošto…",
+        "emailHint": "Karte se povežejo s to e-pošto; pusti prazno za anonimno prodajo.",
+        "sendViaEmail": "Pošlji karte po e-pošti",
+        "creating": "Ustvarjam…",
+        "createButton": "Ustvari {count} kart(o)",
+        "successCreated": "{count} kart(a) za gotovinsko prodajo ustvarjenih"
       }
     },
     "orders": {
