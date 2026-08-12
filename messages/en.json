@@ -974,6 +974,11 @@
       "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>",
       "intro": "Your purchase at <strong>{registerName}</strong> went through. Details below.",
       "item": "Item"
+    },
+    "walletAdjustment": {
+      "amountAdded": "Amount added",
+      "amountRemoved": "Amount removed",
+      "walletBalance": "Wallet Balance"
     }
   },
   "music": {
@@ -1711,7 +1716,15 @@
         "balanceAfter": "Balance After",
         "note": "Note",
         "createdBy": "Created By"
-      }
+      },
+      "directionLabel": "Direction",
+      "directionAdd": "Add tokens",
+      "directionRemove": "Remove tokens",
+      "sendEmailLabel": "Notify user by email (the note becomes the message)",
+      "emailSubjectLabel": "Email subject",
+      "emailSubjectHint": "Preset follows the direction until you edit it.",
+      "emailSubjectPresetAdd": "Tokens added to your Endemit wallet",
+      "emailSubjectPresetRemove": "Tokens removed from your Endemit wallet"
     },
     "transactions": {
       "title": "Transactions",
