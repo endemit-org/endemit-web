@@ -60,6 +60,19 @@ export function useVersionCheck() {
           data.deploymentId &&
           data.deploymentId !== BUNDLED_DEPLOYMENT_ID
         ) {
+          // Reload at most once per target deployment per session. A device
+          // that keeps serving a stale bundle after reload (old-iOS PWAs cache
+          // the start page outside our control) would otherwise reload every
+          // ~10s forever — losing form state mid-login each time.
+          try {
+            const key = "version-reloaded-for";
+            if (sessionStorage.getItem(key) === data.deploymentId) return;
+            sessionStorage.setItem(key, data.deploymentId);
+          } catch {
+            // sessionStorage unavailable (private mode) — reloading without a
+            // guard risks a loop, so don't auto-reload at all.
+            return;
+          }
           window.location.reload();
         }
       } catch {

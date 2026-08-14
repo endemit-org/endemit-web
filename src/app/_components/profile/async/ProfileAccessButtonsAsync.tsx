@@ -1,4 +1,6 @@
-import { Link } from "@/i18n/navigation";
+// Plain next/link: these routes live in the (unlocalized) group and must
+// never get a /en locale prefix.
+import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
