@@ -45,11 +45,10 @@ interface TipPreset {
 
 const BASE_TIP_PRESETS: TipPreset[] = [
   { label: "noTip", value: 0 },
-  { label: "12%", percent: 12 },
-  { label: "25%", percent: 25 },
+  { label: "5%", percent: 5 },
+  { label: "10%", percent: 10 },
+  { label: "15%", percent: 15 },
 ];
-
-const CUSTOM_TIP_PRESET: TipPreset = { label: "customTip", value: -1 };
 
 export function PaymentConfirmView({
   order,
@@ -91,10 +90,6 @@ export function PaymentConfirmView({
   const balanceAfter = customer.balance + creditTotal - totalToPay;
   const canPay = balanceAfter >= 0;
 
-  const tipPresets = allowCustomTip
-    ? [...BASE_TIP_PRESETS, CUSTOM_TIP_PRESET]
-    : BASE_TIP_PRESETS;
-
   const handlePay = useCallback(() => {
     if (!canPay || isProcessing) return;
     onPay(tipAmount);
@@ -117,65 +112,6 @@ export function PaymentConfirmView({
           </div>
         ))}
       </div>
-
-      {!hasTopUp && (
-        <div className="mb-4">
-          <div className="text-sm text-neutral-500 mb-2">{t("addTip")}</div>
-          <div
-            className={`grid gap-2 ${
-              tipPresets.length === 4 ? "grid-cols-4" : "grid-cols-3"
-            }`}
-          >
-            {tipPresets.map(preset => {
-              const isCustom = preset.value === -1;
-              const presetValue =
-                "percent" in preset && preset.percent !== undefined
-                  ? preset.percent
-                  : (preset.value ?? 0);
-              const isSelected = isCustom
-                ? showCustomTip
-                : !showCustomTip && selectedTip === presetValue;
-
-              return (
-                <button
-                  key={preset.label}
-                  onClick={() => {
-                    if (isCustom) {
-                      setShowCustomTip(true);
-                      setSelectedTip(0);
-                    } else {
-                      setShowCustomTip(false);
-                      setCustomTip("");
-                      setSelectedTip(presetValue);
-                    }
-                  }}
-                  className={`py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isSelected
-                      ? "bg-blue-600 text-white"
-                      : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
-                  }`}
-                >
-                  {preset.label === "noTip" || preset.label === "customTip"
-                    ? t(preset.label)
-                    : preset.label}
-                </button>
-              );
-            })}
-          </div>
-          {showCustomTip && allowCustomTip && (
-            <div className="mt-3">
-              <input
-                type="number"
-                placeholder={`Enter amount in ${TOKEN_CONFIG.symbol}`}
-                value={customTip}
-                onChange={e => setCustomTip(e.target.value)}
-                autoFocus
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-600 rounded-lg text-white text-center text-lg"
-              />
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="bg-neutral-800 rounded-xl p-3 mb-4 text-center">
         <div className="text-neutral-500 text-sm mb-1">
@@ -224,6 +160,62 @@ export function PaymentConfirmView({
       {error && (
         <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 mb-4 text-red-400 text-sm">
           {error}
+        </div>
+      )}
+
+      {!hasTopUp && (
+        <div className="bg-neutral-800/50 border border-neutral-700/50 rounded-xl p-3 mt-2">
+          <div className="text-sm text-neutral-300 mb-2">{t("addTip")}</div>
+          <div className="grid gap-2 grid-cols-4">
+            {BASE_TIP_PRESETS.map(preset => {
+              const presetValue =
+                "percent" in preset && preset.percent !== undefined
+                  ? preset.percent
+                  : (preset.value ?? 0);
+              const isSelected = !showCustomTip && selectedTip === presetValue;
+
+              return (
+                <button
+                  key={preset.label}
+                  onClick={() => {
+                    setShowCustomTip(false);
+                    setCustomTip("");
+                    setSelectedTip(presetValue);
+                  }}
+                  className={`py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isSelected
+                      ? "bg-blue-600 text-white"
+                      : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+                  }`}
+                >
+                  {preset.label === "noTip" ? t(preset.label) : preset.label}
+                </button>
+              );
+            })}
+          </div>
+          {allowCustomTip && !showCustomTip && (
+            <button
+              onClick={() => {
+                setShowCustomTip(true);
+                setSelectedTip(0);
+              }}
+              className="w-full mt-2 py-2 rounded-lg text-sm font-medium bg-neutral-800 text-neutral-300 hover:bg-neutral-700 transition-colors"
+            >
+              {t("customTip")}
+            </button>
+          )}
+          {showCustomTip && allowCustomTip && (
+            <div className="mt-2">
+              <input
+                type="number"
+                placeholder={`Enter amount in ${TOKEN_CONFIG.symbol}`}
+                value={customTip}
+                onChange={e => setCustomTip(e.target.value)}
+                autoFocus
+                className="w-full px-4 py-3 bg-neutral-800 border border-blue-500 rounded-lg text-white text-center text-lg"
+              />
+            </div>
+          )}
         </div>
       )}
 
