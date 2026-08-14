@@ -61,30 +61,13 @@ export default function ServiceWorkerRegistration() {
           registration.update();
         }, 60 * 1000);
 
-        // Handle updates
-        registration.addEventListener("updatefound", () => {
-          const newWorker = registration.installing;
-          if (!newWorker) return;
-
-          newWorker.addEventListener("statechange", () => {
-            if (
-              newWorker.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              // New version available - activate it immediately
-              newWorker.postMessage("skipWaiting");
-            }
-          });
-        });
-
-        // Reload page when new SW takes over
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener("controllerchange", () => {
-          if (refreshing) return;
-          refreshing = true;
-          window.location.reload();
-        });
-
+        // Deliberately NO skipWaiting/controllerchange-reload here: forcing
+        // the new SW to take over mid-session reloaded the page under the
+        // user (wiping login/checkout form state) and let the new SW purge
+        // the old deployment's caches while stale HTML still referenced its
+        // chunks (ChunkLoadError → white error page on old iOS). The new SW
+        // simply waits and activates on the next app start; VersionChecker
+        // handles bringing long-lived sessions forward.
         console.log("[SW] Registered successfully");
       } catch (error) {
         console.error("[SW] Registration failed:", error);
