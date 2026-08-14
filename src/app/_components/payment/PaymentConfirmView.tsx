@@ -164,8 +164,8 @@ export function PaymentConfirmView({
       )}
 
       {!hasTopUp && (
-        <div className="bg-neutral-800/50 border border-neutral-700/50 rounded-xl p-3 mt-2">
-          <div className="text-sm text-neutral-300 mb-2">{t("addTip")}</div>
+        <div className="bg-amber-500/[0.06] border border-amber-400/15 rounded-xl p-3 mt-2">
+          <div className="text-sm text-amber-200/80 mb-2">{t("addTip")}</div>
           <div className="grid gap-2 grid-cols-4">
             {BASE_TIP_PRESETS.map(preset => {
               const presetValue =
