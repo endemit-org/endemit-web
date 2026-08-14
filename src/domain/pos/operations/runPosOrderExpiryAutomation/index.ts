@@ -7,13 +7,13 @@ import { bustOnPosOrderCreated } from "@/lib/services/cache";
 
 /**
  * Scheduled function that expires pending POS orders that have passed their expiry time.
- * Runs once per day at 4am Ljubljana time.
+ * Runs every 10 minutes so stale orders leave the register queue promptly.
  */
 export const runPosOrderExpiryAutomation = inngest.createFunction(
   {
     id: "pos-order-expiry",
     retries: 3,
-    triggers: [{ cron: "TZ=Europe/Ljubljana 0 4 * * *" }], // Daily at 4am Ljubljana
+    triggers: [{ cron: "*/10 * * * *" }], // Every 10 minutes
   },
   async ({ step }) => {
     const expiredOrders = await step.run("find-expired-orders", async () => {
