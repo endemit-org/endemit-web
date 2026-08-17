@@ -51,6 +51,8 @@ export interface GetAllPosOrdersParams {
   pageSize?: number;
   status?: PosOrderStatus;
   registerId?: string;
+  /** Matches order short code, customer name or customer email (partial, case-insensitive). */
+  search?: string;
 }
 
 export interface GetAllPosOrdersResult {
@@ -66,10 +68,25 @@ async function getAllPosOrdersUncached({
   pageSize = DEFAULT_PAGE_SIZE,
   status,
   registerId,
+  search,
 }: GetAllPosOrdersParams = {}): Promise<GetAllPosOrdersResult> {
+  const searchTerm = search?.trim();
   const where = {
     ...(status && { status }),
     ...(registerId && { registerId }),
+    ...(searchTerm && {
+      OR: [
+        { shortCode: { contains: searchTerm, mode: "insensitive" as const } },
+        {
+          customer: {
+            OR: [
+              { name: { contains: searchTerm, mode: "insensitive" as const } },
+              { email: { contains: searchTerm, mode: "insensitive" as const } },
+            ],
+          },
+        },
+      ],
+    }),
   };
 
   const totalCount = await prisma.posOrder.count({ where });
@@ -148,11 +165,17 @@ async function getAllPosOrdersUncached({
 export function getAllPosOrders(
   params: GetAllPosOrdersParams = {}
 ): Promise<GetAllPosOrdersResult> {
-  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, status = "", registerId = "" } = params;
+  const {
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE,
+    status = "",
+    registerId = "",
+    search = "",
+  } = params;
 
   return unstable_cache(
     () => getAllPosOrdersUncached(params),
-    ["admin-pos-orders", String(page), String(pageSize), status, registerId],
+    ["admin-pos-orders", String(page), String(pageSize), status, registerId, search.trim().toLowerCase()],
     { tags: [CacheTags.admin.pos.orders()] }
   )();
 }
