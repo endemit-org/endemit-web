@@ -1679,6 +1679,7 @@
       "stats": {
         "totalBalance": "Total Balance",
         "wallets": "Wallets",
+        "walletsWithBalance": "{count} with balance over 0",
         "transactions": "Transactions"
       },
       "totalWallets": "Total Wallets:",

@@ -1679,6 +1679,7 @@
       "stats": {
         "totalBalance": "Skupno dobroimetje",
         "wallets": "Denarnce",
+        "walletsWithBalance": "{count} z dobroimetjem nad 0",
         "transactions": "Transakcije"
       },
       "totalWallets": "Skupaj denarnc:",
