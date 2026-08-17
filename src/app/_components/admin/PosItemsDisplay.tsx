@@ -37,7 +37,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
     startTransition(async () => {
       const item = await createPosItemAction(input);
-      setItems(prev => [...prev, { ...item, soldLast30Days: 0, revenueLast30Days: 0 }]);
+      setItems(prev => [...prev, { ...item, soldLast30Days: 0, revenueLast30Days: 0, soldAllTime: 0, revenueAllTime: 0 }]);
       setShowForm(false);
     });
   };
@@ -60,7 +60,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       setItems(prev =>
         prev.map(i =>
           i.id === updated.id
-            ? { ...updated, soldLast30Days: i.soldLast30Days, revenueLast30Days: i.revenueLast30Days }
+            ? { ...updated, soldLast30Days: i.soldLast30Days, revenueLast30Days: i.revenueLast30Days, soldAllTime: i.soldAllTime, revenueAllTime: i.revenueAllTime }
             : i
         )
       );
@@ -227,6 +227,9 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t("colSold")}
               </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {t("colSoldAllTime")}
+              </th>
               {canWrite && (
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t("colActions")}
@@ -282,6 +285,10 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                   <div className="text-gray-900">{t("soldCount", { count: item.soldLast30Days ?? 0 })}</div>
                   <div className="text-gray-500">{formatPrice(item.revenueLast30Days ?? 0)}</div>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <div className="text-gray-900">{t("soldCount", { count: item.soldAllTime ?? 0 })}</div>
+                  <div className="text-gray-500">{formatPrice(item.revenueAllTime ?? 0)}</div>
+                </td>
                 {canWrite && (
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <button
@@ -297,7 +304,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
             {items.length === 0 && (
               <tr>
                 <td
-                  colSpan={canWrite ? 6 : 5}
+                  colSpan={canWrite ? 7 : 6}
                   className="px-6 py-8 text-center text-gray-500"
                 >
                   {t("emptyItems")}
