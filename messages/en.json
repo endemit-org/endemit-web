@@ -1454,7 +1454,28 @@
         "cardTips": "Tips",
         "cardCashToCollect": "Cash to collect",
         "manage": "Manage",
-        "emptyRegisters": "No registers yet."
+        "reportButton": "Report",
+        "emptyRegisters": "No registers yet.",
+        "report": {
+          "title": "Report — {name}",
+          "loading": "Loading report…",
+          "statOrders": "Paid orders",
+          "statItemsSold": "Items sold",
+          "statRevenue": "Sales revenue",
+          "statTips": "Tips",
+          "statGross": "Gross (sales + tips)",
+          "statTopUps": "Top-ups processed",
+          "statLowestOrder": "Lowest order",
+          "statHighestOrder": "Highest order",
+          "statAvgOrder": "Average order",
+          "statHighestTip": "Highest tip",
+          "itemsHeading": "Items breakdown",
+          "noItems": "No items sold yet.",
+          "colItem": "Item",
+          "colQuantity": "Qty",
+          "colTotal": "Total",
+          "topUpBadge": "Top-up"
+        }
       },
       "stickers": {
         "title": "POS offline QRs",
