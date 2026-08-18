@@ -645,6 +645,11 @@
       "generating": "Generating...",
       "downloadImage": "Download Ticket Image"
     },
+    "accessButtons": {
+      "adminPanel": "Admin Panel",
+      "posRegisters": "POS Registers",
+      "scanTickets": "Scan Tickets"
+    },
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",

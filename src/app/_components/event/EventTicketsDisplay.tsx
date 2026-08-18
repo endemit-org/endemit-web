@@ -204,13 +204,14 @@ export default function EventTicketDisplay({
   if (!hasMultipleProducts && singleProduct) {
     return (
       <div className={"flex flex-col items-center text-neutral-200"}>
-        <div
-          className={"font-heading uppercase text-3xl text-neutral-400 mb-4"}
-        >
-          {singleProductAvailable
-            ? t("ticketsDisplay.availableNow")
-            : t("ticketsDisplay.notAvailableOnline")}
-        </div>
+        {/* With a single ticket there's nothing to choose, so no picker title */}
+        {!singleProductAvailable && (
+          <div
+            className={"font-heading uppercase text-3xl text-neutral-400 mb-4"}
+          >
+            {t("ticketsDisplay.notAvailableOnline")}
+          </div>
+        )}
         {TicketPurchaseDisplay({
           product: singleProduct,
           productAvailable: singleProductAvailable,

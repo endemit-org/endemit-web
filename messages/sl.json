@@ -645,6 +645,11 @@
       "generating": "Ustvarjam…",
       "downloadImage": "Prenesis kopijo karte"
     },
+    "accessButtons": {
+      "adminPanel": "Administracija",
+      "posRegisters": "POS blagajne",
+      "scanTickets": "Skeniranje kart"
+    },
     "walletPay": {
       "pay": "Plačaj",
       "balance": "Dobroimetje",
