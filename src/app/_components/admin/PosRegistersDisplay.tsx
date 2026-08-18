@@ -12,6 +12,7 @@ import { assignSellerToRegisterAction } from "@/domain/pos/actions/assignSellerT
 import { removeSellerFromRegisterAction } from "@/domain/pos/actions/removeSellerFromRegisterAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
+import PosRegisterReportModal from "@/app/_components/admin/PosRegisterReportModal";
 import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
@@ -75,6 +76,8 @@ export default function PosRegistersDisplay({
   const [editingRegister, setEditingRegister] =
     useState<PosRegisterWithRelations | null>(null);
   const [managingRegister, setManagingRegister] =
+    useState<PosRegisterWithRelations | null>(null);
+  const [reportRegister, setReportRegister] =
     useState<PosRegisterWithRelations | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -612,6 +615,12 @@ export default function PosRegistersDisplay({
               >
                 {t("manage")}
               </button>
+              <button
+                onClick={() => setReportRegister(register)}
+                className="flex-1 px-3 py-2 text-sm font-medium text-amber-700 hover:bg-amber-50 rounded-md"
+              >
+                {t("reportButton")}
+              </button>
               {canWrite && (
                 <button
                   onClick={() => setEditingRegister(register)}
@@ -632,6 +641,14 @@ export default function PosRegistersDisplay({
       </div>
 
       <ManageModal />
+
+      {reportRegister && (
+        <PosRegisterReportModal
+          registerId={reportRegister.id}
+          registerName={reportRegister.name}
+          onClose={() => setReportRegister(null)}
+        />
+      )}
     </div>
   );
 }

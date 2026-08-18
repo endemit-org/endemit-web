@@ -1454,7 +1454,28 @@
         "cardTips": "Napitnine",
         "cardCashToCollect": "Keš za pobrat",
         "manage": "Upravljaj",
-        "emptyRegisters": "Še ni nobene blagajne."
+        "reportButton": "Poročilo",
+        "emptyRegisters": "Še ni nobene blagajne.",
+        "report": {
+          "title": "Poročilo — {name}",
+          "loading": "Nalagam poročilo…",
+          "statOrders": "Plačana naročila",
+          "statItemsSold": "Prodani izdelki",
+          "statRevenue": "Prihodek od prodaje",
+          "statTips": "Napitnine",
+          "statGross": "Bruto (prodaja + napitnine)",
+          "statTopUps": "Obdelane polnitve",
+          "statLowestOrder": "Najnižje naročilo",
+          "statHighestOrder": "Najvišje naročilo",
+          "statAvgOrder": "Povprečno naročilo",
+          "statHighestTip": "Najvišja napitnina",
+          "itemsHeading": "Razčlenitev po izdelkih",
+          "noItems": "Še ni prodanih izdelkov.",
+          "colItem": "Izdelek",
+          "colQuantity": "Kol.",
+          "colTotal": "Skupaj",
+          "topUpBadge": "Polnitev"
+        }
       },
       "stickers": {
         "title": "POS offline QR-ji",
