@@ -53,6 +53,11 @@ export default async function AdminWalletsPage() {
           <div className="mt-1 text-2xl font-semibold text-gray-900">
             {stats.walletCount.toLocaleString()}
           </div>
+          <div className="mt-1 text-xs text-gray-500">
+            {t("stats.walletsWithBalance", {
+              count: stats.fundedWalletCount,
+            })}
+          </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm font-medium text-gray-500">

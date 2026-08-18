@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import type { PosOrderStatus } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
@@ -47,6 +47,8 @@ export default function PosOrdersDisplay({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [statusFilter, setStatusFilter] = useState<PosOrderStatus | "">("");
   const [registerFilter, setRegisterFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedOrder, setSelectedOrder] =
     useState<PosOrderWithRelations | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -86,12 +88,25 @@ export default function PosOrdersDisplay({
     }
   };
 
-  const loadOrders = (newPage: number) => {
+  // State setters don't update this render's closure, so filter changes must
+  // pass their new value explicitly instead of relying on the state variables.
+  const loadOrders = (
+    newPage: number,
+    overrides?: {
+      status?: PosOrderStatus | "";
+      registerId?: string;
+      search?: string;
+    }
+  ) => {
+    const status = overrides?.status ?? statusFilter;
+    const registerId = overrides?.registerId ?? registerFilter;
+    const search = overrides?.search ?? searchQuery;
     startTransition(async () => {
       const result = await fetchPosOrdersAction({
         page: newPage,
-        status: statusFilter || undefined,
-        registerId: registerFilter || undefined,
+        status: status || undefined,
+        registerId: registerId || undefined,
+        search: search.trim() || undefined,
       });
       setOrders(result.orders);
       setPage(result.page);
@@ -100,8 +115,13 @@ export default function PosOrdersDisplay({
     });
   };
 
-  const handleFilterChange = () => {
-    loadOrders(1);
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(
+      () => loadOrders(1, { search: value }),
+      350
+    );
   };
 
   return (
@@ -116,8 +136,9 @@ export default function PosOrdersDisplay({
             <select
               value={statusFilter}
               onChange={e => {
-                setStatusFilter(e.target.value as PosOrderStatus | "");
-                setTimeout(handleFilterChange, 0);
+                const value = e.target.value as PosOrderStatus | "";
+                setStatusFilter(value);
+                loadOrders(1, { status: value });
               }}
               className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
@@ -135,8 +156,9 @@ export default function PosOrdersDisplay({
             <select
               value={registerFilter}
               onChange={e => {
-                setRegisterFilter(e.target.value);
-                setTimeout(handleFilterChange, 0);
+                const value = e.target.value;
+                setRegisterFilter(value);
+                loadOrders(1, { registerId: value });
               }}
               className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
@@ -147,6 +169,19 @@ export default function PosOrdersDisplay({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("filterSearch")}
+            </label>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={e => handleSearchChange(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
           </div>
 
           <div className="text-sm text-gray-500">

@@ -1,6 +1,10 @@
 "use client";
 
 import type { SerializedWallet } from "@/domain/wallet/types";
+import type {
+  WalletSortBy,
+  WalletSortDir,
+} from "@/domain/wallet/operations/getAllWallets";
 import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
@@ -8,11 +12,17 @@ import ClientDate from "@/app/_components/ui/ClientDate";
 interface WalletsTableProps {
   wallets: SerializedWallet[];
   onRowClick?: (wallet: SerializedWallet) => void;
+  sortBy?: WalletSortBy;
+  sortDir?: WalletSortDir;
+  onSortChange?: (sortBy: WalletSortBy) => void;
 }
 
 export default function WalletsTable({
   wallets,
   onRowClick,
+  sortBy,
+  sortDir,
+  onSortChange,
 }: WalletsTableProps) {
   const t = useTranslations("admin.wallets");
   if (wallets.length === 0) {
@@ -34,7 +44,30 @@ export default function WalletsTable({
             {t("col.email")}
           </th>
           <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            {t("col.balance")}
+            {onSortChange ? (
+              <button
+                onClick={() => onSortChange("balance")}
+                className="uppercase tracking-wider hover:text-gray-700"
+              >
+                {t("col.balance")}
+                {sortBy === "balance" && (sortDir === "asc" ? " ▲" : " ▼")}
+              </button>
+            ) : (
+              t("col.balance")
+            )}
+          </th>
+          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            {onSortChange ? (
+              <button
+                onClick={() => onSortChange("transactions")}
+                className="uppercase tracking-wider hover:text-gray-700"
+              >
+                {t("col.transactions")}
+                {sortBy === "transactions" && (sortDir === "asc" ? " ▲" : " ▼")}
+              </button>
+            ) : (
+              t("col.transactions")
+            )}
           </th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             {t("col.lastUpdated")}
@@ -73,6 +106,9 @@ export default function WalletsTable({
               >
                 {formatTokensFromCents(wallet.balance)}
               </span>
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
+              {wallet.transactionCount ?? 0}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               <ClientDate date={wallet.updatedAt} />

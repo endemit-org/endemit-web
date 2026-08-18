@@ -73,7 +73,8 @@ export async function searchUsersAction(
     !user.permissions.includes(PERMISSIONS.TICKETS_CREATE) &&
     !user.permissions.includes(PERMISSIONS.EVENT_CLAIMS_MANAGE) &&
     !user.permissions.includes(PERMISSIONS.POS_STICKERS_MANAGE) &&
-    !user.permissions.includes(PERMISSIONS.POS_REGISTERS_WRITE)
+    !user.permissions.includes(PERMISSIONS.POS_REGISTERS_WRITE) &&
+    !user.permissions.includes(PERMISSIONS.WALLETS_MANAGE_BALANCE)
   ) {
     return { success: false, error: "Not authorized" };
   }
