@@ -648,6 +648,9 @@
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",
+      "cancelPaymentConfirm": "Cancel this payment?",
+      "cancelPaymentYes": "Yes, cancel payment",
+      "cancelPaymentNo": "Continue with payment",
       "handPhoneHint": "Hand your phone to the seller — they will scan this code to charge your wallet.",
       "scanTitle": "Scan to Pay",
       "confirmTitle": "Confirm Payment",
@@ -1918,6 +1921,18 @@
     }
   },
   "pos": {
+    "balanceCheck": {
+      "label": "Balance",
+      "title": "Check Balance",
+      "pointCamera": "Scan a wallet code or wristband",
+      "checking": "Checking balance…",
+      "checkFailed": "Could not check balance",
+      "balanceLabel": "Balance",
+      "lastTransactions": "Last transactions",
+      "noTransactions": "No transactions yet.",
+      "scanAnother": "Scan another",
+      "unknownCustomer": "Unknown customer"
+    },
     "register": {
       "metaTitle": "POS - Select Register",
       "selectRegister": "Select Register",

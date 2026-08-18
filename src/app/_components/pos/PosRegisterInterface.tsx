@@ -3,11 +3,21 @@
 import { useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { PosItemGrid } from "./PosItemGrid";
 import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
 import { PosOrderQrModal } from "./PosOrderQrModal";
+
+// Dynamic import: QR Scanner (~120KB) only loads when balance check is opened
+const PosBalanceCheckModal = dynamic(
+  () =>
+    import("./PosBalanceCheckModal").then(mod => ({
+      default: mod.PosBalanceCheckModal,
+    })),
+  { ssr: false }
+);
 
 interface PosItem {
   id: string;
@@ -69,6 +79,7 @@ export function PosRegisterInterface({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
 
   // Sort and filter items
   const sortedItems = useMemo(
@@ -319,6 +330,16 @@ export function PosRegisterInterface({
           )}
           <span className="font-medium text-gray-900 flex-1">{register.name}</span>
 
+          <button
+            onClick={() => setIsBalanceCheckOpen(true)}
+            className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2m10-18h2a2 2 0 012 2v2m-4 14h2a2 2 0 002-2v-2M7 12h10" />
+            </svg>
+            <span className="text-xs font-medium">{t("balanceCheck.label")}</span>
+          </button>
+
           {/* Desktop Search */}
           <div className="relative flex items-center">
             {isSearchOpen ? (
@@ -407,6 +428,15 @@ export function PosRegisterInterface({
                 <span className="font-medium text-gray-900">{register.name}</span>
               </div>
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setIsBalanceCheckOpen(true)}
+                  className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2m10-18h2a2 2 0 012 2v2m-4 14h2a2 2 0 002-2v-2M7 12h10" />
+                  </svg>
+                  <span className="text-xs font-medium">{t("balanceCheck.label")}</span>
+                </button>
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -515,6 +545,11 @@ export function PosRegisterInterface({
             />
           </div>
         </div>
+      )}
+
+      {/* Balance Check Modal */}
+      {isBalanceCheckOpen && (
+        <PosBalanceCheckModal onClose={() => setIsBalanceCheckOpen(false)} />
       )}
 
       {/* QR Modal */}
