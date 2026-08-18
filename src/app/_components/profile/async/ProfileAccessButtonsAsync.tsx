@@ -1,6 +1,7 @@
 // Plain next/link: these routes live in the (unlocalized) group and must
 // never get a /en locale prefix.
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
@@ -94,13 +95,15 @@ export default async function ProfileAccessButtonsAsync({
     return null;
   }
 
+  const t = await getTranslations("profile.accessButtons");
+
   const buttons: AccessButton[] = [];
 
   // Check for admin access
   if (user.permissions.includes(PERMISSIONS.ADMIN_ACCESS)) {
     buttons.push({
       href: "/admin",
-      label: "Admin Panel",
+      label: t("adminPanel"),
       icon: <ShieldIcon className="w-5 h-5" />,
       bgColor: "bg-purple-600",
       hoverColor: "hover:bg-purple-700",
@@ -111,7 +114,7 @@ export default async function ProfileAccessButtonsAsync({
   if (user.permissions.includes(PERMISSIONS.POS_ACCESS)) {
     buttons.push({
       href: "/pos",
-      label: "POS Registers",
+      label: t("posRegisters"),
       icon: <StoreIcon className="w-5 h-5" />,
       bgColor: "bg-emerald-600",
       hoverColor: "hover:bg-emerald-700",
@@ -122,7 +125,7 @@ export default async function ProfileAccessButtonsAsync({
   if (user.permissions.includes(PERMISSIONS.TICKETS_SCAN)) {
     buttons.push({
       href: "/scan",
-      label: "Scan Tickets",
+      label: t("scanTickets"),
       icon: <QrCodeIcon className="w-5 h-5" />,
       bgColor: "bg-blue-600",
       hoverColor: "hover:bg-blue-700",
