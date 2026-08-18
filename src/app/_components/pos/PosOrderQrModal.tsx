@@ -72,6 +72,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   const [isRotated, setIsRotated] = useState(true);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   const totalRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -170,6 +171,16 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
     }
   }, [isPaid]);
 
+  // Mid-payment the cross asks for confirmation instead of closing outright
+  const handleCloseRequest = useCallback(() => {
+    if (isPaying) return;
+    if (!isPaid && subView === "customer-confirm" && stickerScan) {
+      setShowCancelConfirm(true);
+      return;
+    }
+    onClose();
+  }, [isPaying, isPaid, subView, stickerScan, onClose]);
+
   const handleStickerScanned = useCallback((result: StickerScanResult) => {
     setStickerScan(result);
     setSubView("customer-confirm");
@@ -207,7 +218,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div
-        className={`rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transition-colors duration-300 ${
+        className={`relative rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transition-colors duration-300 ${
           isPaid
             ? "bg-gradient-to-br from-emerald-500 to-green-700 text-white"
             : "bg-white"
@@ -227,7 +238,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
           </div>
 
           <button
-            onClick={onClose}
+            onClick={handleCloseRequest}
             className={`p-2 rounded-full ${
               isPaid ? "hover:bg-white/10 text-white" : "hover:bg-gray-100"
             }`}
@@ -498,11 +509,6 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 isProcessing={isPaying}
                 error={payError}
                 onPay={handlePay}
-                onCancel={() => {
-                  setSubView("sticker-scan");
-                  setStickerScan(null);
-                  setPayError(null);
-                }}
               />
             </div>
           ) : null}
@@ -558,6 +564,33 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 {t("orders.closingIn", { count: autoCloseCountdown })}
               </p>
             )}
+          </div>
+        )}
+
+        {showCancelConfirm && (
+          <div className="absolute inset-0 z-30 bg-black/70 flex items-center justify-center p-6 rounded-2xl">
+            <div className="bg-white rounded-xl p-5 w-full max-w-xs shadow-xl">
+              <p className="text-gray-900 font-medium text-center mb-4">
+                {tw("cancelPaymentConfirm")}
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => setShowCancelConfirm(false)}
+                  className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
+                >
+                  {tw("cancelPaymentNo")}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCancelConfirm(false);
+                    onClose();
+                  }}
+                  className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg"
+                >
+                  {tw("cancelPaymentYes")}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

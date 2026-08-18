@@ -648,6 +648,9 @@
     "walletPay": {
       "pay": "Plačaj",
       "balance": "Dobroimetje",
+      "cancelPaymentConfirm": "A res prekličeš to plačilo?",
+      "cancelPaymentYes": "Ja, prekliči plačilo",
+      "cancelPaymentNo": "Nadaljuj s plačilom",
       "handPhoneHint": "Pokaž telefon prodajalcu, da skenira tvojo kodo.",
       "scanTitle": "Skeniraj in plačaj",
       "confirmTitle": "Potrdi plačilo",
@@ -1354,6 +1357,7 @@
         "colDirection": "Smer",
         "colStatus": "Status",
         "colSold": "Prodano (30 dni)",
+        "colSoldAllTime": "Prodano (skupaj)",
         "colActions": "Dejanja",
         "soldCount": "{count} prodano",
         "emptyItems": "Še ni nobenga izdelka.",
@@ -1376,6 +1380,8 @@
         "statusCancelled": "Preklicano",
         "filterRegister": "Blagajna",
         "allRegisters": "Vse blagajne",
+        "filterSearch": "Iskanje",
+        "searchPlaceholder": "Ime, e-pošta ali št. naročila",
         "ordersFound": "Najdenih naročil: {count}",
         "colOrder": "Naročilo",
         "colRegister": "Blagajna",
@@ -1451,7 +1457,28 @@
         "cardTips": "Napitnine",
         "cardCashToCollect": "Keš za pobrat",
         "manage": "Upravljaj",
-        "emptyRegisters": "Še ni nobene blagajne."
+        "reportButton": "Poročilo",
+        "emptyRegisters": "Še ni nobene blagajne.",
+        "report": {
+          "title": "Poročilo — {name}",
+          "loading": "Nalagam poročilo…",
+          "statOrders": "Plačana naročila",
+          "statItemsSold": "Prodani izdelki",
+          "statRevenue": "Prihodek od prodaje",
+          "statTips": "Napitnine",
+          "statGross": "Bruto (prodaja + napitnine)",
+          "statTopUps": "Obdelane polnitve",
+          "statLowestOrder": "Najnižje naročilo",
+          "statHighestOrder": "Najvišje naročilo",
+          "statAvgOrder": "Povprečno naročilo",
+          "statHighestTip": "Najvišja napitnina",
+          "itemsHeading": "Razčlenitev po izdelkih",
+          "noItems": "Še ni prodanih izdelkov.",
+          "colItem": "Izdelek",
+          "colQuantity": "Kol.",
+          "colTotal": "Skupaj",
+          "topUpBadge": "Polnitev"
+        }
       },
       "stickers": {
         "title": "POS offline QR-ji",
@@ -1676,6 +1703,7 @@
       "stats": {
         "totalBalance": "Skupno dobroimetje",
         "wallets": "Denarnce",
+        "walletsWithBalance": "{count} z dobroimetjem nad 0",
         "transactions": "Transakcije"
       },
       "totalWallets": "Skupaj denarnc:",
@@ -1691,6 +1719,13 @@
       "created": "Ustvarjeno:",
       "lastUpdatedLabel": "Zadnjič posodobljeno:",
       "manageBalance": "Upravljaj dobroimetje",
+      "transferFunds": "Prenos drugemu uporabniku",
+      "transferRecipientLabel": "Prejemnik",
+      "transferRecipientPlaceholder": "Išči po imenu, uporabniškem imenu al emailu",
+      "transferErrorNoRecipient": "Najprej zberi prejemnika",
+      "transferErrorSelf": "Ne moreš prenest istemu uporabniku",
+      "transferSuccess": "Preneseno {amount} → {name}",
+      "transferSubmit": "Prenesi sredstva",
       "transactionHistory": "Zgodovina transakcij ({count})",
       "errorInvalidAmount": "Vpiši veljaven pozitiven znesek",
       "errorDebitExceeds": "Ne moreš vzet več, kokr je trenutno dobroimetje ({balance})",
@@ -1709,6 +1744,7 @@
         "user": "Uporabnik",
         "email": "Email",
         "balance": "Dobroimetje",
+        "transactions": "Transakcije",
         "lastUpdated": "Zadnjič posodobljeno",
         "date": "Datum",
         "type": "Tip",
@@ -1885,6 +1921,18 @@
     }
   },
   "pos": {
+    "balanceCheck": {
+      "label": "Stanje",
+      "title": "Preveri stanje",
+      "pointCamera": "Skeniraj kodo denarnce al zapestnico",
+      "checking": "Preverjam stanje…",
+      "checkFailed": "Stanja ni blo mogoče preverit",
+      "balanceLabel": "Dobroimetje",
+      "lastTransactions": "Zadnje transakcije",
+      "noTransactions": "Še ni transakcij.",
+      "scanAnother": "Skeniraj še eno",
+      "unknownCustomer": "Neznan uporabnik"
+    },
     "register": {
       "metaTitle": "POS - Zbri blagajno",
       "selectRegister": "Zbri blagajno",

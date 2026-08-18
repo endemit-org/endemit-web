@@ -7,6 +7,10 @@ import WalletsTable from "@/app/_components/table/WalletsTable";
 import Pagination from "@/app/_components/table/Pagination";
 import { fetchWalletsAction } from "@/domain/wallet/actions/fetchWalletsAction";
 import type { PaginatedWallets, SerializedWallet } from "@/domain/wallet/types";
+import type {
+  WalletSortBy,
+  WalletSortDir,
+} from "@/domain/wallet/operations/getAllWallets";
 
 interface WalletsDisplayProps {
   initialData: PaginatedWallets;
@@ -22,31 +26,50 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
   const [totalCount, setTotalCount] = useState(initialData.totalCount);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<WalletSortBy>("updatedAt");
+  const [sortDir, setSortDir] = useState<WalletSortDir>("desc");
 
-  const loadPage = useCallback(async (page: number, searchQuery?: string) => {
-    setIsLoading(true);
-    try {
-      const data = await fetchWalletsAction(page, searchQuery);
-      setWallets(data.wallets);
-      setCurrentPage(data.page);
-      setTotalPages(data.totalPages);
-      setTotalCount(data.totalCount);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const loadPage = useCallback(
+    async (
+      page: number,
+      searchQuery?: string,
+      by: WalletSortBy = "updatedAt",
+      dir: WalletSortDir = "desc"
+    ) => {
+      setIsLoading(true);
+      try {
+        const data = await fetchWalletsAction(page, searchQuery, by, dir);
+        setWallets(data.wallets);
+        setCurrentPage(data.page);
+        setTotalPages(data.totalPages);
+        setTotalCount(data.totalCount);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   const handlePageChange = (page: number) => {
-    loadPage(page, search);
+    loadPage(page, search, sortBy, sortDir);
   };
 
   const handleRefresh = () => {
-    loadPage(currentPage, search);
+    loadPage(currentPage, search, sortBy, sortDir);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadPage(1, search);
+    loadPage(1, search, sortBy, sortDir);
+  };
+
+  const handleSortChange = (by: WalletSortBy) => {
+    // Same column toggles direction; new column starts descending.
+    const dir: WalletSortDir =
+      sortBy === by && sortDir === "desc" ? "asc" : "desc";
+    setSortBy(by);
+    setSortDir(dir);
+    loadPage(1, search, by, dir);
   };
 
   const handleWalletClick = (wallet: SerializedWallet) => {
@@ -90,7 +113,13 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <WalletsTable wallets={wallets} onRowClick={handleWalletClick} />
+        <WalletsTable
+          wallets={wallets}
+          onRowClick={handleWalletClick}
+          sortBy={sortBy}
+          sortDir={sortDir}
+          onSortChange={handleSortChange}
+        />
       </div>
 
       <Pagination

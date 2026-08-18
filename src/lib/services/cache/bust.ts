@@ -373,6 +373,8 @@ export async function bustOnPosOrderCreated() {
 export async function bustOnPosOrderPaid(userId: string) {
   const tags: CacheTag[] = [
     adminPosTags.orders(),
+    adminPosTags.registers(),
+    adminPosTags.items(),
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
@@ -391,6 +393,8 @@ export async function bustOnPosOrderPaid(userId: string) {
 export async function bustOnPosTopUp(userId: string) {
   const tags: CacheTag[] = [
     adminPosTags.orders(),
+    adminPosTags.registers(),
+    adminPosTags.items(),
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
@@ -414,6 +418,8 @@ export async function bustOnPosOrderReversed(
 ) {
   const tags: CacheTag[] = [
     adminPosTags.orders(),
+    adminPosTags.registers(),
+    adminPosTags.items(),
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),

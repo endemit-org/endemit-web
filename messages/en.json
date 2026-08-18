@@ -648,6 +648,9 @@
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",
+      "cancelPaymentConfirm": "Cancel this payment?",
+      "cancelPaymentYes": "Yes, cancel payment",
+      "cancelPaymentNo": "Continue with payment",
       "handPhoneHint": "Hand your phone to the seller — they will scan this code to charge your wallet.",
       "scanTitle": "Scan to Pay",
       "confirmTitle": "Confirm Payment",
@@ -1354,6 +1357,7 @@
         "colDirection": "Direction",
         "colStatus": "Status",
         "colSold": "Sold (30d)",
+        "colSoldAllTime": "Sold (all-time)",
         "colActions": "Actions",
         "soldCount": "{count} sold",
         "emptyItems": "No items yet.",
@@ -1376,6 +1380,8 @@
         "statusCancelled": "Cancelled",
         "filterRegister": "Register",
         "allRegisters": "All registers",
+        "filterSearch": "Search",
+        "searchPlaceholder": "Name, email or order #",
         "ordersFound": "{count} orders found",
         "colOrder": "Order",
         "colRegister": "Register",
@@ -1451,7 +1457,28 @@
         "cardTips": "Tips",
         "cardCashToCollect": "Cash to collect",
         "manage": "Manage",
-        "emptyRegisters": "No registers yet."
+        "reportButton": "Report",
+        "emptyRegisters": "No registers yet.",
+        "report": {
+          "title": "Report — {name}",
+          "loading": "Loading report…",
+          "statOrders": "Paid orders",
+          "statItemsSold": "Items sold",
+          "statRevenue": "Sales revenue",
+          "statTips": "Tips",
+          "statGross": "Gross (sales + tips)",
+          "statTopUps": "Top-ups processed",
+          "statLowestOrder": "Lowest order",
+          "statHighestOrder": "Highest order",
+          "statAvgOrder": "Average order",
+          "statHighestTip": "Highest tip",
+          "itemsHeading": "Items breakdown",
+          "noItems": "No items sold yet.",
+          "colItem": "Item",
+          "colQuantity": "Qty",
+          "colTotal": "Total",
+          "topUpBadge": "Top-up"
+        }
       },
       "stickers": {
         "title": "POS offline QRs",
@@ -1676,6 +1703,7 @@
       "stats": {
         "totalBalance": "Total Balance",
         "wallets": "Wallets",
+        "walletsWithBalance": "{count} with balance over 0",
         "transactions": "Transactions"
       },
       "totalWallets": "Total Wallets:",
@@ -1691,6 +1719,13 @@
       "created": "Created:",
       "lastUpdatedLabel": "Last Updated:",
       "manageBalance": "Manage Balance",
+      "transferFunds": "Transfer to Another User",
+      "transferRecipientLabel": "Recipient",
+      "transferRecipientPlaceholder": "Search by name, username or email",
+      "transferErrorNoRecipient": "Select a recipient first",
+      "transferErrorSelf": "Cannot transfer to the same user",
+      "transferSuccess": "Transferred {amount} to {name}",
+      "transferSubmit": "Transfer Funds",
       "transactionHistory": "Transaction History ({count})",
       "errorInvalidAmount": "Please enter a valid positive amount",
       "errorDebitExceeds": "Cannot debit more than current balance ({balance})",
@@ -1709,6 +1744,7 @@
         "user": "User",
         "email": "Email",
         "balance": "Balance",
+        "transactions": "Transactions",
         "lastUpdated": "Last Updated",
         "date": "Date",
         "type": "Type",
@@ -1885,6 +1921,18 @@
     }
   },
   "pos": {
+    "balanceCheck": {
+      "label": "Balance",
+      "title": "Check Balance",
+      "pointCamera": "Scan a wallet code or wristband",
+      "checking": "Checking balance…",
+      "checkFailed": "Could not check balance",
+      "balanceLabel": "Balance",
+      "lastTransactions": "Last transactions",
+      "noTransactions": "No transactions yet.",
+      "scanAnother": "Scan another",
+      "unknownCustomer": "Unknown customer"
+    },
     "register": {
       "metaTitle": "POS - Select Register",
       "selectRegister": "Select Register",

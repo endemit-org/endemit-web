@@ -4,6 +4,7 @@ export interface SerializedWallet {
   id: string;
   userId: string;
   balance: number;
+  transactionCount?: number;
   createdAt: string;
   updatedAt: string;
   user?: {
