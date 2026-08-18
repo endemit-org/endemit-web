@@ -34,7 +34,6 @@ interface Props {
   isProcessing: boolean;
   error: string | null;
   onPay: (tipAmount: number) => void;
-  onCancel: () => void;
 }
 
 interface TipPreset {
@@ -58,7 +57,6 @@ export function PaymentConfirmView({
   isProcessing,
   error,
   onPay,
-  onCancel,
 }: Props) {
   const t = useTranslations("profile.walletPay");
   const [selectedTip, setSelectedTip] = useState(0);
@@ -234,12 +232,6 @@ export function PaymentConfirmView({
             : hasTopUp
               ? t("topUpButton", { amount: formatTokensFromCents(creditTotal) })
               : t("payButton", { amount: formatTokensFromCents(totalToPay) })}
-        </button>
-        <button
-          onClick={onCancel}
-          className="text-neutral-500 hover:text-neutral-300 text-sm py-2 transition-colors"
-        >
-          Cancel
         </button>
       </div>
     </>

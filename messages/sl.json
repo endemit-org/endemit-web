@@ -648,6 +648,9 @@
     "walletPay": {
       "pay": "Plačaj",
       "balance": "Dobroimetje",
+      "cancelPaymentConfirm": "A res prekličeš to plačilo?",
+      "cancelPaymentYes": "Ja, prekliči plačilo",
+      "cancelPaymentNo": "Nadaljuj s plačilom",
       "handPhoneHint": "Pokaž telefon prodajalcu, da skenira tvojo kodo.",
       "scanTitle": "Skeniraj in plačaj",
       "confirmTitle": "Potrdi plačilo",
@@ -1918,6 +1921,18 @@
     }
   },
   "pos": {
+    "balanceCheck": {
+      "label": "Stanje",
+      "title": "Preveri stanje",
+      "pointCamera": "Skeniraj kodo denarnce al zapestnico",
+      "checking": "Preverjam stanje…",
+      "checkFailed": "Stanja ni blo mogoče preverit",
+      "balanceLabel": "Dobroimetje",
+      "lastTransactions": "Zadnje transakcije",
+      "noTransactions": "Še ni transakcij.",
+      "scanAnother": "Skeniraj še eno",
+      "unknownCustomer": "Neznan uporabnik"
+    },
     "register": {
       "metaTitle": "POS - Zbri blagajno",
       "selectRegister": "Zbri blagajno",
