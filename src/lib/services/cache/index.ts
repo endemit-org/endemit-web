@@ -80,6 +80,7 @@ export {
   bustOnPosTopUp,
   bustOnPosItemChanged,
   bustOnPosRegisterChanged,
+  bustOnPosPayout,
   // Roles & Announcements
   bustOnRoleChanged,
   bustOnAnnouncementChanged,

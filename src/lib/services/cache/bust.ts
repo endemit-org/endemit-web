@@ -451,6 +451,15 @@ export async function bustOnPosOrderDeleted(
 }
 
 /**
+ * Bust caches when a POS payout (tip payout / cash pickup) is recorded
+ */
+export async function bustOnPosPayout() {
+  const tags: CacheTag[] = [adminPosTags.registers()];
+
+  await bustTags(tags);
+}
+
+/**
  * Bust caches when POS item changes
  */
 export async function bustOnPosItemChanged() {
