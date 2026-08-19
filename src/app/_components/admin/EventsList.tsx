@@ -141,6 +141,41 @@ export default function EventsList({ initialData }: EventsListProps) {
                         </div>
                       </div>
 
+                      {stats && event.ticketGoal != null && event.ticketGoal > 0 && (
+                        <div className="mt-2">
+                          <div className="flex items-center justify-between text-xs mb-1">
+                            <span className="text-gray-500">
+                              {t("goal.label")}
+                            </span>
+                            <span
+                              className={`font-semibold ${
+                                stats.sold >= event.ticketGoal
+                                  ? "text-green-600"
+                                  : "text-gray-900"
+                              }`}
+                            >
+                              {stats.sold} / {event.ticketGoal} (
+                              {Math.round((stats.sold / event.ticketGoal) * 100)}
+                              %)
+                              {stats.sold > event.ticketGoal &&
+                                ` · ${t("goal.exceeded", { count: stats.sold - event.ticketGoal })}`}
+                            </span>
+                          </div>
+                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${
+                                stats.sold >= event.ticketGoal
+                                  ? "bg-green-500"
+                                  : "bg-blue-500"
+                              }`}
+                              style={{
+                                width: `${Math.min(100, (stats.sold / event.ticketGoal) * 100)}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
                       {stats && (
                         <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 text-xs sm:text-sm">
                           <div>
