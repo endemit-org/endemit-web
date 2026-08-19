@@ -54,13 +54,17 @@ function serializeEvent(event: Event): SerializedEventForAdmin {
     uid: event.uid,
     name: event.name,
     date_start: event.date_start?.toISOString() ?? null,
-    coverImage: event.coverImage
-      ? {
-          src: event.coverImage.src,
-          alt: event.coverImage.alt ?? "",
-          placeholder: event.coverImage.placeholder,
-        }
-      : null,
+    // Prefer the square promo image for the list; fall back to the cover.
+    coverImage: (() => {
+      const image = event.promoImage ?? event.coverImage;
+      return image
+        ? {
+            src: image.src,
+            alt: image.alt ?? "",
+            placeholder: image.placeholder,
+          }
+        : null;
+    })(),
     venue: event.venue
       ? {
           name: event.venue.name,
