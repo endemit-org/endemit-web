@@ -27,6 +27,7 @@ export interface SerializedEventForAdmin {
     name: string;
   } | null;
   isCompleted: boolean;
+  ticketGoal: number | null;
 }
 
 export interface PaginatedEventsForAdmin {
@@ -66,6 +67,7 @@ function serializeEvent(event: Event): SerializedEventForAdmin {
         }
       : null,
     isCompleted: isEventCompleted(event),
+    ticketGoal: event.ticketGoal,
   };
 }
 

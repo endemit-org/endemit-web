@@ -645,6 +645,11 @@
       "generating": "Generating...",
       "downloadImage": "Download Ticket Image"
     },
+    "accessButtons": {
+      "adminPanel": "Admin Panel",
+      "posRegisters": "POS Registers",
+      "scanTickets": "Scan Tickets"
+    },
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",
@@ -1159,6 +1164,10 @@
         "scanned": "scanned",
         "pending": "pending"
       },
+      "goal": {
+        "label": "Ticket goal",
+        "exceeded": "{count} over goal"
+      },
       "metrics": {
         "revenue": "Revenue",
         "sold": "Sold",
@@ -1458,7 +1467,32 @@
         "cardCashToCollect": "Cash to collect",
         "manage": "Manage",
         "reportButton": "Report",
+        "payoutButton": "Payout",
         "emptyRegisters": "No registers yet.",
+        "payout": {
+          "title": "Payout — {name}",
+          "loading": "Loading…",
+          "outstandingTips": "Tips outstanding",
+          "outstandingCash": "Cash to collect",
+          "amountLabel": "Amount ({symbol})",
+          "allButton": "All",
+          "noteLabel": "Note (optional)",
+          "notePlaceholder": "e.g. end of Friday shift, handed to Ana",
+          "recordTipsButton": "Record tip payout",
+          "recordCashButton": "Record cash pickup",
+          "confirmText": "Record {amount}?",
+          "confirmButton": "Confirm",
+          "cancelButton": "Cancel",
+          "recording": "Recording…",
+          "recorded": "Recorded {amount}.",
+          "errorInvalidAmount": "Enter a valid positive amount",
+          "errorExceedsOutstanding": "Amount exceeds outstanding ({outstanding})",
+          "errorGeneric": "Failed to record payout",
+          "historyHeading": "Payout history",
+          "noHistory": "No payouts recorded yet.",
+          "typeTips": "Tips",
+          "typeCash": "Cash"
+        },
         "report": {
           "title": "Report — {name}",
           "loading": "Loading report…",
@@ -1818,7 +1852,20 @@
       "posOrders": "POS Orders",
       "posTerminal": "POS Terminal",
       "myProfile": "My Profile",
-      "discounts": "Discount Codes"
+      "discounts": "Discount Codes",
+      "deploy": "Deploy Site"
+    },
+    "deploy": {
+      "title": "Deploy Site",
+      "subtitle": "Trigger a fresh Vercel build of the public site",
+      "explainer": "This starts a new production build on Vercel using the configured deploy hook. Use it after CMS or content changes that need a full rebuild. The build takes a few minutes to go live.",
+      "triggerButton": "Trigger deploy",
+      "confirmText": "Start a new production build now?",
+      "confirmButton": "Yes, start build",
+      "cancelButton": "Cancel",
+      "triggering": "Triggering…",
+      "triggered": "Build triggered at {time}. It will be live in a few minutes.",
+      "errorGeneric": "Failed to trigger the deploy"
     },
     "common": {
       "loading": "Loading...",
@@ -1921,6 +1968,14 @@
     }
   },
   "pos": {
+    "transactions": {
+      "title": "Last Transactions",
+      "loading": "Loading transactions…",
+      "loadFailed": "Could not load transactions",
+      "empty": "No transactions yet.",
+      "refresh": "Refresh",
+      "tipSuffix": "tip"
+    },
     "balanceCheck": {
       "label": "Balance",
       "title": "Check Balance",

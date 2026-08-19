@@ -645,6 +645,11 @@
       "generating": "Ustvarjam…",
       "downloadImage": "Prenesis kopijo karte"
     },
+    "accessButtons": {
+      "adminPanel": "Administracija",
+      "posRegisters": "POS blagajne",
+      "scanTickets": "Skeniranje kart"
+    },
     "walletPay": {
       "pay": "Plačaj",
       "balance": "Dobroimetje",
@@ -1159,6 +1164,10 @@
         "scanned": "skeniranih",
         "pending": "v čakanju"
       },
+      "goal": {
+        "label": "Cilj prodaje kart",
+        "exceeded": "{count} čez cilj"
+      },
       "metrics": {
         "revenue": "Prihodek",
         "sold": "Prodano",
@@ -1458,7 +1467,32 @@
         "cardCashToCollect": "Keš za pobrat",
         "manage": "Upravljaj",
         "reportButton": "Poročilo",
+        "payoutButton": "Izplačilo",
         "emptyRegisters": "Še ni nobene blagajne.",
+        "payout": {
+          "title": "Izplačilo — {name}",
+          "loading": "Nalagam…",
+          "outstandingTips": "Napitnine za izplačat",
+          "outstandingCash": "Gotovina za pobrat",
+          "amountLabel": "Znesek ({symbol})",
+          "allButton": "Vse",
+          "noteLabel": "Opomba (neobvezno)",
+          "notePlaceholder": "npr. konc petkove izmene, predano Ani",
+          "recordTipsButton": "Zabeleži izplačilo napitnin",
+          "recordCashButton": "Zabeleži pobrano gotovino",
+          "confirmText": "A zabeležim {amount}?",
+          "confirmButton": "Potrdi",
+          "cancelButton": "Prekliči",
+          "recording": "Beležim…",
+          "recorded": "Zabeleženo {amount}.",
+          "errorInvalidAmount": "Vpiši veljaven pozitiven znesek",
+          "errorExceedsOutstanding": "Znesek presega odprto stanje ({outstanding})",
+          "errorGeneric": "Izplačila ni blo mogoče zabeležit",
+          "historyHeading": "Zgodovina izplačil",
+          "noHistory": "Še ni zabeleženih izplačil.",
+          "typeTips": "Napitnine",
+          "typeCash": "Gotovina"
+        },
         "report": {
           "title": "Poročilo — {name}",
           "loading": "Nalagam poročilo…",
@@ -1818,7 +1852,20 @@
       "posOrders": "POS naročila",
       "posTerminal": "POS terminal",
       "myProfile": "Moj profil",
-      "discounts": "Kode za popust"
+      "discounts": "Kode za popust",
+      "deploy": "Deploy strani"
+    },
+    "deploy": {
+      "title": "Deploy strani",
+      "subtitle": "Sproži svež Vercel build javne strani",
+      "explainer": "S tem se na Vercelu zažene nov produkcijski build prek nastavljenga deploy hooka. Uporabi po spremembah v CMS-u al vsebini, k rabjo poln rebuild. Build rabi par minut, da gre v živo.",
+      "triggerButton": "Sproži deploy",
+      "confirmText": "A zaženem nov produkcijski build zdaj?",
+      "confirmButton": "Ja, zaženi build",
+      "cancelButton": "Prekliči",
+      "triggering": "Sprožam…",
+      "triggered": "Build sprožen ob {time}. V živo bo v parih minutah.",
+      "errorGeneric": "Deploya ni blo mogoče sprožit"
     },
     "common": {
       "loading": "Se nalaga…",
@@ -1921,6 +1968,14 @@
     }
   },
   "pos": {
+    "transactions": {
+      "title": "Zadnje transakcije",
+      "loading": "Nalagam transakcije…",
+      "loadFailed": "Transakcij ni blo mogoče naložit",
+      "empty": "Še ni transakcij.",
+      "refresh": "Osveži",
+      "tipSuffix": "napitnina"
+    },
     "balanceCheck": {
       "label": "Stanje",
       "title": "Preveri stanje",

@@ -62,6 +62,7 @@ export const WALLET_RECEIVE_SECRET = process.env.WALLET_RECEIVE_SECRET!;
 
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
+export const VERCEL_DEPLOY_HOOK_URL = process.env.VERCEL_DEPLOY_HOOK_URL;
 
 // Apple Wallet signing
 export const APPLE_PASS_CERTIFICATE = process.env.APPLE_PASS_CERTIFICATE!;

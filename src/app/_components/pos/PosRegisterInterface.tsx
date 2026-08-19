@@ -9,6 +9,7 @@ import { PosItemGrid } from "./PosItemGrid";
 import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
 import { PosOrderQrModal } from "./PosOrderQrModal";
+import { PosRecentTransactions } from "./PosRecentTransactions";
 
 // Dynamic import: QR Scanner (~120KB) only loads when balance check is opened
 const PosBalanceCheckModal = dynamic(
@@ -80,6 +81,7 @@ export function PosRegisterInterface({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
+  const [txRefreshKey, setTxRefreshKey] = useState(0);
 
   // Sort and filter items
   const sortedItems = useMemo(
@@ -138,6 +140,7 @@ export function PosRegisterInterface({
     event: "pos_order_paid",
     onMessage: payload => {
       setPendingOrders(prev => prev.filter(o => o.id !== payload.orderId));
+      setTxRefreshKey(k => k + 1);
       if (activeOrder?.id === payload.orderId) {
         setActiveOrder(prev =>
           prev
@@ -159,6 +162,7 @@ export function PosRegisterInterface({
     event: "pos_order_cancelled",
     onMessage: payload => {
       setPendingOrders(prev => prev.filter(o => o.id !== payload.orderId));
+      setTxRefreshKey(k => k + 1);
       if (activeOrder?.id === payload.orderId) {
         setActiveOrder(null);
       }
@@ -230,6 +234,7 @@ export function PosRegisterInterface({
       };
 
       setPendingOrders(prev => [newOrder, ...prev]);
+      setTxRefreshKey(k => k + 1);
       setActiveOrder(newOrder);
       clearCart();
     } catch (error) {
@@ -495,14 +500,22 @@ export function PosRegisterInterface({
         </div>
       </div>
 
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-80 border-l bg-white overflow-auto">
-        <PosOrderQueue
-          orders={pendingOrders}
-          onSelectOrder={setActiveOrder}
-          onCancelOrder={cancelOrder}
-          selectedOrderId={activeOrder?.id}
-        />
+      {/* Desktop Sidebar: pending orders on top, recent transactions below */}
+      <div className="hidden lg:flex flex-col w-80 border-l bg-white">
+        <div className="h-1/2 overflow-auto">
+          <PosOrderQueue
+            orders={pendingOrders}
+            onSelectOrder={setActiveOrder}
+            onCancelOrder={cancelOrder}
+            selectedOrderId={activeOrder?.id}
+          />
+        </div>
+        <div className="h-1/2 border-t">
+          <PosRecentTransactions
+            registerId={register.id}
+            refreshKey={txRefreshKey}
+          />
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -512,7 +525,7 @@ export function PosRegisterInterface({
             className="absolute inset-0 bg-black/50"
             onClick={() => setIsSidebarOpen(false)}
           />
-          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl overflow-auto">
+          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <span className="font-medium">{t("orders.pendingOrders")}</span>
               <button
@@ -534,15 +547,23 @@ export function PosRegisterInterface({
                 </svg>
               </button>
             </div>
-            <PosOrderQueue
-              orders={pendingOrders}
-              onSelectOrder={order => {
-                setActiveOrder(order);
-                setIsSidebarOpen(false);
-              }}
-              onCancelOrder={cancelOrder}
-              selectedOrderId={activeOrder?.id}
-            />
+            <div className="h-1/2 overflow-auto">
+              <PosOrderQueue
+                orders={pendingOrders}
+                onSelectOrder={order => {
+                  setActiveOrder(order);
+                  setIsSidebarOpen(false);
+                }}
+                onCancelOrder={cancelOrder}
+                selectedOrderId={activeOrder?.id}
+              />
+            </div>
+            <div className="flex-1 min-h-0 border-t">
+              <PosRecentTransactions
+                registerId={register.id}
+                refreshKey={txRefreshKey}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -551,6 +572,7 @@ export function PosRegisterInterface({
       {isBalanceCheckOpen && (
         <PosBalanceCheckModal onClose={() => setIsBalanceCheckOpen(false)} />
       )}
+
 
       {/* QR Modal */}
       {activeOrder && (

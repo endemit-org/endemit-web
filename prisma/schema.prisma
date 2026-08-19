@@ -79,6 +79,11 @@ enum PosOrderStatus {
   CANCELLED
 }
 
+enum PosPayoutType {
+  TIPS
+  CASH
+}
+
 enum AnnouncementType {
   INFO
   WARNING
@@ -253,6 +258,7 @@ model User {
   posRegisterAssignments PosRegisterSeller[]
   posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
   posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
+  posPayouts             PosPayout[]         @relation("PosPayoutCreator")
   stickerCode            StickerCode?
 
   // Announcements
@@ -423,8 +429,25 @@ model PosRegister {
   items   PosRegisterItem[]
   sellers PosRegisterSeller[]
   orders  PosOrder[]
+  payouts PosPayout[]
 
   @@index([status])
+}
+
+// Ledger of cash leaving a register: tip pool payouts and top-up cash pickups
+model PosPayout {
+  id          String        @id @default(cuid())
+  registerId  String
+  register    PosRegister   @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  type        PosPayoutType
+  amount      Int // cents
+  note        String?
+  createdById String
+  createdBy   User          @relation("PosPayoutCreator", fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+
+  @@index([registerId, createdAt])
+  @@index([registerId, type])
 }
 
 model PosRegisterItem {

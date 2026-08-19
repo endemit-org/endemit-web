@@ -6,9 +6,10 @@ import { CacheTags } from "@/lib/services/cache";
 
 export interface RegisterTrafficStats {
   salesRevenue: number; // DEBIT items total
-  topUpsProcessed: number; // CREDIT items total (cash to collect)
-  tipsCollected: number;
+  topUpsProcessed: number; // CREDIT items total (all-time)
+  tipsCollected: number; // all-time
   paidOrdersCount: number;
+  cashOutstanding: number; // top-ups minus recorded cash pickups
 }
 
 export interface PosRegisterWithRelations {
@@ -51,6 +52,15 @@ export interface GetAllPosRegistersResult {
 }
 
 async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
+  const cashPickups = await prisma.posPayout.groupBy({
+    by: ["registerId"],
+    _sum: { amount: true },
+    where: { type: "CASH" },
+  });
+  const cashPickupMap = new Map(
+    cashPickups.map(p => [p.registerId, p._sum.amount ?? 0])
+  );
+
   const registers = await prisma.posRegister.findMany({
     orderBy: [{ status: "asc" }, { name: "asc" }],
     include: {
@@ -109,6 +119,7 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
       topUpsProcessed: 0,
       tipsCollected: 0,
       paidOrdersCount: register.orders.length,
+      cashOutstanding: 0,
     };
 
     for (const order of register.orders) {
@@ -121,6 +132,8 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
         }
       }
     }
+    traffic.cashOutstanding =
+      traffic.topUpsProcessed - (cashPickupMap.get(register.id) ?? 0);
 
     // Remove orders from the returned data (we only needed them for stats)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
