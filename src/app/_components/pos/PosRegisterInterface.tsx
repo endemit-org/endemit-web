@@ -9,7 +9,7 @@ import { PosItemGrid } from "./PosItemGrid";
 import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
 import { PosOrderQrModal } from "./PosOrderQrModal";
-import { PosTransactionsModal } from "./PosTransactionsModal";
+import { PosRecentTransactions } from "./PosRecentTransactions";
 
 // Dynamic import: QR Scanner (~120KB) only loads when balance check is opened
 const PosBalanceCheckModal = dynamic(
@@ -81,7 +81,7 @@ export function PosRegisterInterface({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
-  const [isTransactionsOpen, setIsTransactionsOpen] = useState(false);
+  const [txRefreshKey, setTxRefreshKey] = useState(0);
 
   // Sort and filter items
   const sortedItems = useMemo(
@@ -140,6 +140,7 @@ export function PosRegisterInterface({
     event: "pos_order_paid",
     onMessage: payload => {
       setPendingOrders(prev => prev.filter(o => o.id !== payload.orderId));
+      setTxRefreshKey(k => k + 1);
       if (activeOrder?.id === payload.orderId) {
         setActiveOrder(prev =>
           prev
@@ -161,6 +162,7 @@ export function PosRegisterInterface({
     event: "pos_order_cancelled",
     onMessage: payload => {
       setPendingOrders(prev => prev.filter(o => o.id !== payload.orderId));
+      setTxRefreshKey(k => k + 1);
       if (activeOrder?.id === payload.orderId) {
         setActiveOrder(null);
       }
@@ -232,6 +234,7 @@ export function PosRegisterInterface({
       };
 
       setPendingOrders(prev => [newOrder, ...prev]);
+      setTxRefreshKey(k => k + 1);
       setActiveOrder(newOrder);
       clearCart();
     } catch (error) {
@@ -333,16 +336,6 @@ export function PosRegisterInterface({
           <span className="font-medium text-gray-900 flex-1">{register.name}</span>
 
           <button
-            onClick={() => setIsTransactionsOpen(true)}
-            className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-            <span className="text-xs font-medium">{t("transactions.label")}</span>
-          </button>
-
-          <button
             onClick={() => setIsBalanceCheckOpen(true)}
             className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >
@@ -441,14 +434,6 @@ export function PosRegisterInterface({
               </div>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setIsTransactionsOpen(true)}
-                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                </button>
-                <button
                   onClick={() => setIsBalanceCheckOpen(true)}
                   className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                 >
@@ -515,14 +500,22 @@ export function PosRegisterInterface({
         </div>
       </div>
 
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-80 border-l bg-white overflow-auto">
-        <PosOrderQueue
-          orders={pendingOrders}
-          onSelectOrder={setActiveOrder}
-          onCancelOrder={cancelOrder}
-          selectedOrderId={activeOrder?.id}
-        />
+      {/* Desktop Sidebar: pending orders on top, recent transactions below */}
+      <div className="hidden lg:flex flex-col w-80 border-l bg-white">
+        <div className="h-1/2 overflow-auto">
+          <PosOrderQueue
+            orders={pendingOrders}
+            onSelectOrder={setActiveOrder}
+            onCancelOrder={cancelOrder}
+            selectedOrderId={activeOrder?.id}
+          />
+        </div>
+        <div className="h-1/2 border-t">
+          <PosRecentTransactions
+            registerId={register.id}
+            refreshKey={txRefreshKey}
+          />
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -532,7 +525,7 @@ export function PosRegisterInterface({
             className="absolute inset-0 bg-black/50"
             onClick={() => setIsSidebarOpen(false)}
           />
-          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl overflow-auto">
+          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <span className="font-medium">{t("orders.pendingOrders")}</span>
               <button
@@ -554,15 +547,23 @@ export function PosRegisterInterface({
                 </svg>
               </button>
             </div>
-            <PosOrderQueue
-              orders={pendingOrders}
-              onSelectOrder={order => {
-                setActiveOrder(order);
-                setIsSidebarOpen(false);
-              }}
-              onCancelOrder={cancelOrder}
-              selectedOrderId={activeOrder?.id}
-            />
+            <div className="h-1/2 overflow-auto">
+              <PosOrderQueue
+                orders={pendingOrders}
+                onSelectOrder={order => {
+                  setActiveOrder(order);
+                  setIsSidebarOpen(false);
+                }}
+                onCancelOrder={cancelOrder}
+                selectedOrderId={activeOrder?.id}
+              />
+            </div>
+            <div className="flex-1 min-h-0 border-t">
+              <PosRecentTransactions
+                registerId={register.id}
+                refreshKey={txRefreshKey}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -572,13 +573,6 @@ export function PosRegisterInterface({
         <PosBalanceCheckModal onClose={() => setIsBalanceCheckOpen(false)} />
       )}
 
-      {/* Recent Transactions Modal */}
-      {isTransactionsOpen && (
-        <PosTransactionsModal
-          registerId={register.id}
-          onClose={() => setIsTransactionsOpen(false)}
-        />
-      )}
 
       {/* QR Modal */}
       {activeOrder && (

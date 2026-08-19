@@ -1965,7 +1965,6 @@
   },
   "pos": {
     "transactions": {
-      "label": "History",
       "title": "Last Transactions",
       "loading": "Loading transactions…",
       "loadFailed": "Could not load transactions",
