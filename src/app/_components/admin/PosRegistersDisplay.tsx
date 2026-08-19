@@ -13,6 +13,7 @@ import { removeSellerFromRegisterAction } from "@/domain/pos/actions/removeSelle
 import { formatTokensFromCents } from "@/lib/util/currency";
 import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
 import PosRegisterReportModal from "@/app/_components/admin/PosRegisterReportModal";
+import PosRegisterPayoutModal from "@/app/_components/admin/PosRegisterPayoutModal";
 import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
@@ -20,6 +21,7 @@ interface Props {
   initialRegisters: PosRegisterWithRelations[];
   allItems: PosItem[];
   canWrite: boolean;
+  canPayout?: boolean;
 }
 
 function formatPrice(cents: number): string {
@@ -68,6 +70,7 @@ export default function PosRegistersDisplay({
   initialRegisters,
   allItems,
   canWrite,
+  canPayout = false,
 }: Props) {
   const t = useTranslations("admin.pos.registers");
   const tc = useTranslations("admin.common");
@@ -78,6 +81,8 @@ export default function PosRegistersDisplay({
   const [managingRegister, setManagingRegister] =
     useState<PosRegisterWithRelations | null>(null);
   const [reportRegister, setReportRegister] =
+    useState<PosRegisterWithRelations | null>(null);
+  const [payoutRegister, setPayoutRegister] =
     useState<PosRegisterWithRelations | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -103,6 +108,7 @@ export default function PosRegistersDisplay({
             topUpsProcessed: 0,
             tipsCollected: 0,
             paidOrdersCount: 0,
+            cashOutstanding: 0,
           },
         },
       ]);
@@ -595,14 +601,14 @@ export default function PosRegistersDisplay({
               <div className="flex justify-between">
                 <span className="text-gray-500">{t("cardTips")}</span>
                 <span className="font-medium text-amber-600">
-                  {formatPrice(register.traffic.tipsCollected)}
+                  {formatPrice(register.tipPool)}
                 </span>
               </div>
               {register.canTopUp && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">{t("cardCashToCollect")}</span>
                   <span className="font-medium text-red-600">
-                    {formatPrice(register.traffic.topUpsProcessed)}
+                    {formatPrice(register.traffic.cashOutstanding)}
                   </span>
                 </div>
               )}
@@ -621,6 +627,14 @@ export default function PosRegistersDisplay({
               >
                 {t("reportButton")}
               </button>
+              {canPayout && (
+                <button
+                  onClick={() => setPayoutRegister(register)}
+                  className="flex-1 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 rounded-md"
+                >
+                  {t("payoutButton")}
+                </button>
+              )}
               {canWrite && (
                 <button
                   onClick={() => setEditingRegister(register)}
@@ -647,6 +661,30 @@ export default function PosRegistersDisplay({
           registerId={reportRegister.id}
           registerName={reportRegister.name}
           onClose={() => setReportRegister(null)}
+        />
+      )}
+
+      {payoutRegister && (
+        <PosRegisterPayoutModal
+          registerId={payoutRegister.id}
+          registerName={payoutRegister.name}
+          onClose={() => setPayoutRegister(null)}
+          onRecorded={({ outstandingTips, outstandingCash }) => {
+            setRegisters(prev =>
+              prev.map(r =>
+                r.id === payoutRegister.id
+                  ? {
+                      ...r,
+                      tipPool: outstandingTips,
+                      traffic: {
+                        ...r.traffic,
+                        cashOutstanding: outstandingCash,
+                      },
+                    }
+                  : r
+              )
+            );
+          }}
         />
       )}
     </div>
