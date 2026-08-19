@@ -4,7 +4,12 @@ import {
 } from "@/domain/cms/operations/fetchEventFromCms";
 import { notFound, redirect } from "next/navigation";
 import { getTicketsForEvent } from "@/domain/ticket/operations/getTicketsForEvent";
-import { formatEventDateAndTime } from "@/lib/util/formatting";
+import { fetchTicketStatsForEvent } from "@/domain/ticket/actions/fetchTicketStatsAction";
+import {
+  formatEventDateAndTime,
+  formatPrice,
+  formatDecimalPrice,
+} from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import EventTicketsDisplay from "@/app/_components/admin/EventTicketsDisplay";
 import { serializeTicket } from "@/domain/ticket/util";
@@ -63,7 +68,10 @@ export default async function AdminEventPage({
     notFound();
   }
 
-  const initialTickets = await getTicketsForEvent(event.id);
+  const [initialTickets, stats] = await Promise.all([
+    getTicketsForEvent(event.id),
+    fetchTicketStatsForEvent(event.id),
+  ]);
 
   const serializedTickets = initialTickets.map(ticket =>
     serializeTicket(ticket)
@@ -122,6 +130,62 @@ export default async function AdminEventPage({
               <p className="text-gray-400 text-sm mt-2 uppercase">
                 {event.artists.map(a => a.name).join(" • ")}
               </p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 text-sm">
+              <div>
+                <span className="font-bold text-gray-900">{stats.sold}</span>
+                <span className="text-gray-500 ml-1">
+                  {t("statLabels.sold")}
+                </span>
+              </div>
+              <div>
+                <span className="font-bold text-green-600">
+                  {formatPrice(stats.revenue)}
+                </span>
+              </div>
+              {stats.sold > 0 && (
+                <div>
+                  <span className="font-bold text-gray-900">
+                    {formatDecimalPrice(stats.revenue / stats.sold)}
+                  </span>
+                  <span className="text-gray-500 ml-1">
+                    {t("avgTicketPrice")}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {event.ticketGoal != null && event.ticketGoal > 0 && (
+              <div className="mt-3 max-w-md">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-gray-500">{t("goal.label")}</span>
+                  <span
+                    className={`font-semibold ${
+                      stats.sold >= event.ticketGoal
+                        ? "text-green-600"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    {stats.sold} / {event.ticketGoal} (
+                    {Math.round((stats.sold / event.ticketGoal) * 100)}%)
+                    {stats.sold > event.ticketGoal &&
+                      ` · ${t("goal.exceeded", { count: stats.sold - event.ticketGoal })}`}
+                  </span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${
+                      stats.sold >= event.ticketGoal
+                        ? "bg-green-500"
+                        : "bg-blue-500"
+                    }`}
+                    style={{
+                      width: `${Math.min(100, (stats.sold / event.ticketGoal) * 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>

@@ -1168,6 +1168,7 @@
         "label": "Cilj prodaje kart",
         "exceeded": "{count} čez cilj"
       },
+      "avgTicketPrice": "povpr. cena karte",
       "metrics": {
         "revenue": "Prihodek",
         "sold": "Prodano",

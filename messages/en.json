@@ -1168,6 +1168,7 @@
         "label": "Ticket goal",
         "exceeded": "{count} over goal"
       },
+      "avgTicketPrice": "avg. ticket price",
       "metrics": {
         "revenue": "Revenue",
         "sold": "Sold",
