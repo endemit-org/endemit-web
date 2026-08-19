@@ -1823,7 +1823,20 @@
       "posOrders": "POS Orders",
       "posTerminal": "POS Terminal",
       "myProfile": "My Profile",
-      "discounts": "Discount Codes"
+      "discounts": "Discount Codes",
+      "deploy": "Deploy Site"
+    },
+    "deploy": {
+      "title": "Deploy Site",
+      "subtitle": "Trigger a fresh Vercel build of the public site",
+      "explainer": "This starts a new production build on Vercel using the configured deploy hook. Use it after CMS or content changes that need a full rebuild. The build takes a few minutes to go live.",
+      "triggerButton": "Trigger deploy",
+      "confirmText": "Start a new production build now?",
+      "confirmButton": "Yes, start build",
+      "cancelButton": "Cancel",
+      "triggering": "Triggering…",
+      "triggered": "Build triggered at {time}. It will be live in a few minutes.",
+      "errorGeneric": "Failed to trigger the deploy"
     },
     "common": {
       "loading": "Loading...",
@@ -1926,6 +1939,15 @@
     }
   },
   "pos": {
+    "transactions": {
+      "label": "History",
+      "title": "Last Transactions",
+      "loading": "Loading transactions…",
+      "loadFailed": "Could not load transactions",
+      "empty": "No transactions yet.",
+      "refresh": "Refresh",
+      "tipSuffix": "tip"
+    },
     "balanceCheck": {
       "label": "Balance",
       "title": "Check Balance",

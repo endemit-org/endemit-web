@@ -1823,7 +1823,20 @@
       "posOrders": "POS naročila",
       "posTerminal": "POS terminal",
       "myProfile": "Moj profil",
-      "discounts": "Kode za popust"
+      "discounts": "Kode za popust",
+      "deploy": "Deploy strani"
+    },
+    "deploy": {
+      "title": "Deploy strani",
+      "subtitle": "Sproži svež Vercel build javne strani",
+      "explainer": "S tem se na Vercelu zažene nov produkcijski build prek nastavljenga deploy hooka. Uporabi po spremembah v CMS-u al vsebini, k rabjo poln rebuild. Build rabi par minut, da gre v živo.",
+      "triggerButton": "Sproži deploy",
+      "confirmText": "A zaženem nov produkcijski build zdaj?",
+      "confirmButton": "Ja, zaženi build",
+      "cancelButton": "Prekliči",
+      "triggering": "Sprožam…",
+      "triggered": "Build sprožen ob {time}. V živo bo v parih minutah.",
+      "errorGeneric": "Deploya ni blo mogoče sprožit"
     },
     "common": {
       "loading": "Se nalaga…",
@@ -1926,6 +1939,15 @@
     }
   },
   "pos": {
+    "transactions": {
+      "label": "Zgodovina",
+      "title": "Zadnje transakcije",
+      "loading": "Nalagam transakcije…",
+      "loadFailed": "Transakcij ni blo mogoče naložit",
+      "empty": "Še ni transakcij.",
+      "refresh": "Osveži",
+      "tipSuffix": "napitnina"
+    },
     "balanceCheck": {
       "label": "Stanje",
       "title": "Preveri stanje",
