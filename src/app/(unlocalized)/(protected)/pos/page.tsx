@@ -39,7 +39,6 @@ export default async function PosPage() {
           orders: {
             where: { status: "PAID" },
             select: {
-              tipAmount: true,
               items: {
                 select: {
                   total: true,
@@ -57,15 +56,27 @@ export default async function PosPage() {
     },
   });
 
+  // Recorded cash pickups per register — "to collect" and tips show what's
+  // currently outstanding, not the all-time totals.
+  const cashPickups = await prisma.posPayout.groupBy({
+    by: ["registerId"],
+    _sum: { amount: true },
+    where: {
+      type: "CASH",
+      registerId: { in: assignments.map(a => a.registerId) },
+    },
+  });
+  const cashPickupMap = new Map(
+    cashPickups.map(p => [p.registerId, p._sum.amount ?? 0])
+  );
+
   const registers = assignments
     .map(a => {
       const paidOrders = a.register.orders;
       let salesRevenue = 0;
       let topUpsProcessed = 0;
-      let totalTips = 0;
 
       for (const order of paidOrders) {
-        totalTips += order.tipAmount;
         for (const item of order.items) {
           if (item.item.direction === "DEBIT") {
             salesRevenue += item.total;
@@ -79,8 +90,9 @@ export default async function PosPage() {
         ...a.register,
         stats: {
           salesRevenue,
-          topUpsProcessed,
-          tips: totalTips,
+          topUpsProcessed:
+            topUpsProcessed - (cashPickupMap.get(a.registerId) ?? 0),
+          tips: a.register.tipPool,
           sales: paidOrders.length,
         },
       };
