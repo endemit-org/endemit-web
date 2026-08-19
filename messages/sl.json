@@ -1164,6 +1164,10 @@
         "scanned": "skeniranih",
         "pending": "v čakanju"
       },
+      "goal": {
+        "label": "Cilj prodaje kart",
+        "exceeded": "{count} čez cilj"
+      },
       "metrics": {
         "revenue": "Prihodek",
         "sold": "Prodano",

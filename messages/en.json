@@ -1164,6 +1164,10 @@
         "scanned": "scanned",
         "pending": "pending"
       },
+      "goal": {
+        "label": "Ticket goal",
+        "exceeded": "{count} over goal"
+      },
       "metrics": {
         "revenue": "Revenue",
         "sold": "Sold",

@@ -64,6 +64,8 @@ export type Event = {
     productIds: string[];
   };
   cashTicketPrice: number | null;
+  /** Admin-only sales target; sales may exceed it. */
+  ticketGoal: number | null;
   hasCashlessPayments: boolean;
   /**
    * Members-only mode: all public ticket mentions (sidebar, badges, price
