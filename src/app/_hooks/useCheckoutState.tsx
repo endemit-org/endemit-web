@@ -232,18 +232,20 @@ export function useCheckoutState() {
     clearCart,
   ]);
 
-  // Check if this is a full wallet payment (no card needed)
+  // Check if this is a full wallet payment (no card needed).
+  // Compare against the pre-wallet total: `total` already has the credit
+  // subtracted, so subtracting again would hide the card form too early.
   const isFullWalletPayment = useMemo(() => {
     if (!walletCredit.canUseWallet || !walletCredit.isUsingWallet) return false;
-    const totalInCents = Math.round(total * 100);
+    const totalInCents = Math.round(totalBeforeWallet * 100);
     return walletCredit.walletCreditAmount >= totalInCents;
-  }, [walletCredit.canUseWallet, walletCredit.isUsingWallet, walletCredit.walletCreditAmount, total]);
+  }, [walletCredit.canUseWallet, walletCredit.isUsingWallet, walletCredit.walletCreditAmount, totalBeforeWallet]);
 
   // Amount to charge via Stripe (in cents)
   const amountToCharge = useMemo(() => {
-    const totalInCents = Math.round(total * 100);
+    const totalInCents = Math.round(totalBeforeWallet * 100);
     return Math.max(0, totalInCents - walletCredit.walletCreditAmount);
-  }, [total, walletCredit.walletCreditAmount]);
+  }, [totalBeforeWallet, walletCredit.walletCreditAmount]);
 
   return {
     items,

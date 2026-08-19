@@ -91,7 +91,7 @@ export default function CheckoutWalletCredit({
                 type="range"
                 min={100}
                 max={maxWalletCredit}
-                step={100}
+                step={1}
                 value={walletCreditAmount || 100}
                 onChange={handleSliderChange}
                 disabled={disabled}
