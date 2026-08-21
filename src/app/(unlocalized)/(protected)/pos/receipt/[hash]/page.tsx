@@ -144,6 +144,16 @@ export default async function PosReceiptPage({
           <div className="w-[45mm] mx-auto mb-2 text-black">
             <EndemitLogo />
           </div>
+          <div className="text-[9px] leading-tight mb-2">
+            <div>Kulturno društvo Endemit</div>
+            <div>Čečovje 4</div>
+            <div>2390 Ravne na Koroškem</div>
+            {FURS_TAX_NUMBER && (
+              <div>
+                {t("taxNumber")}: {FURS_TAX_NUMBER}
+              </div>
+            )}
+          </div>
           <div>{order.register.name}</div>
           {fiscalInvoice ? (
             <div className="font-bold mt-2">
@@ -209,32 +219,24 @@ export default async function PosReceiptPage({
         {fiscalInvoice && (
           <>
             <div className="border-t border-dashed border-black my-2" />
-            {FURS_TAX_NUMBER && (
-              <div className="flex justify-between">
-                <span>{t("taxNumber")}</span>
-                <span>{FURS_TAX_NUMBER}</span>
+            <div className="text-[9px] leading-tight mt-1">
+              <div className="break-all">ZOI: {fiscalInvoice.zoi}</div>
+              <div className="break-all">
+                EOR: {fiscalInvoice.eor ?? t("eorPending")}
               </div>
-            )}
-            <div className="flex items-center gap-2 mt-1">
-              <div className="flex-1 min-w-0 text-[9px] leading-tight">
-                <div className="break-all">ZOI: {fiscalInvoice.zoi}</div>
-                <div className="break-all">
-                  EOR: {fiscalInvoice.eor ?? t("eorPending")}
-                </div>
-              </div>
-              {fiscalQrDataUrl && (
-                /* Legal minimum for the printed FURS QR is 2×2 cm — keep it
-                   just above that */
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={fiscalQrDataUrl}
-                  alt="FURS QR"
-                  className="w-[22mm] h-[22mm] flex-shrink-0"
-                  width={160}
-                  height={160}
-                />
-              )}
             </div>
+            {fiscalQrDataUrl && (
+              /* 16mm — deliberately below the 2cm ZDavPR minimum, per the
+                 owner's call on slip aesthetics */
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={fiscalQrDataUrl}
+                alt="FURS QR"
+                className="w-[16mm] h-[16mm] mx-auto mt-2"
+                width={160}
+                height={160}
+              />
+            )}
             {/* Legally required VAT-exemption clause (mali davčni zavezanec) —
                 fixed statutory wording, always in both languages */}
             <div className="mt-2 text-[10px] text-center">
