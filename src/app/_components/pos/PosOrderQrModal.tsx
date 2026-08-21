@@ -505,7 +505,6 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 order={stickerScan.order}
                 customer={stickerScan.customer}
                 isRotated={isRotated}
-                allowCustomTip={!isRotated}
                 isProcessing={isPaying}
                 error={payError}
                 onPay={handlePay}

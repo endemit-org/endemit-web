@@ -653,6 +653,8 @@
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",
+      "tipPlus": "Add tip",
+      "tipMinus": "Reduce tip",
       "cancelPaymentConfirm": "Cancel this payment?",
       "cancelPaymentYes": "Yes, cancel payment",
       "cancelPaymentNo": "Continue with payment",

@@ -653,6 +653,8 @@
     "walletPay": {
       "pay": "Plačaj",
       "balance": "Dobroimetje",
+      "tipPlus": "Dodaj napitnino",
+      "tipMinus": "Zmanjšaj napitnino",
       "cancelPaymentConfirm": "A res prekličeš to plačilo?",
       "cancelPaymentYes": "Ja, prekliči plačilo",
       "cancelPaymentNo": "Nadaljuj s plačilom",
