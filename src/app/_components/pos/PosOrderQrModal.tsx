@@ -617,6 +617,8 @@ export function PosOrderQrModal({
               items={order.items}
               subtotal={order.subtotal}
               showEmailField={hasTicketItems}
+              isRotated={isRotated}
+              onToggleRotation={() => setIsRotated(r => !r)}
               isProcessing={isPaying}
               error={payError}
               onConfirm={(tipAmount, buyerEmail) =>

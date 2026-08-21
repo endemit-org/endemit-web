@@ -18,6 +18,9 @@ interface Props {
   subtotal: number;
   /** Show the optional buyer-email input (ticket-linked orders). */
   showEmailField?: boolean;
+  /** Rotate the content 180° toward the customer (tip entry). */
+  isRotated?: boolean;
+  onToggleRotation?: () => void;
   isProcessing: boolean;
   error: string | null;
   onConfirm: (tipAmount: number, buyerEmail?: string) => void;
@@ -34,6 +37,8 @@ export function PosMethodConfirmView({
   items,
   subtotal,
   showEmailField = false,
+  isRotated = false,
+  onToggleRotation,
   isProcessing,
   error,
   onConfirm,
@@ -53,8 +58,8 @@ export function PosMethodConfirmView({
   );
   const total = subtotal + tipAmount;
 
-  return (
-    <div className="relative -mx-6 -my-6 px-6 py-6 bg-neutral-900 text-white rounded-b-2xl">
+  const content = (
+    <>
       <div className="bg-neutral-800/50 rounded-lg divide-y divide-neutral-700/50 mb-4">
         {items.map((item, i) => (
           <div key={i} className="px-4 py-3 flex justify-between text-sm">
@@ -175,6 +180,36 @@ export function PosMethodConfirmView({
           {t("back")}
         </button>
       </div>
+    </>
+  );
+
+  return (
+    <div className="relative -mx-6 -my-6 px-6 py-6 bg-neutral-900 text-white rounded-b-2xl">
+      {onToggleRotation && (
+        <button
+          onClick={onToggleRotation}
+          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 4v5h5M20 20v-5h-5M4 20a9 9 0 0015-6.7M20 4a9 9 0 00-15 6.7"
+            />
+          </svg>
+        </button>
+      )}
+      {isRotated ? (
+        <div style={{ transform: "rotate(180deg)" }}>{content}</div>
+      ) : (
+        content
+      )}
     </div>
   );
 }
