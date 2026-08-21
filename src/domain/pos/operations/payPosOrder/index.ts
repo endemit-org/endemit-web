@@ -117,6 +117,13 @@ export async function payPosOrder(
       });
     }
 
+    // A wallet payment with nothing to debit is a broken order (zero-priced
+    // items and no tip) — fail loudly here instead of crashing downstream
+    // where the transaction record is assumed to exist.
+    if (!lastTransaction) {
+      throw new PosError("ORDER_NOT_FOUND", "Order has no payable amount");
+    }
+
     // Update wallet balance
     await tx.wallet.update({
       where: { id: wallet.id },
@@ -152,7 +159,7 @@ export async function payPosOrder(
 
     return {
       order: updatedOrder,
-      transaction: lastTransaction!,
+      transaction: lastTransaction,
       wallet: { ...wallet, balance: currentBalance },
       paidAt,
       debitTotal,

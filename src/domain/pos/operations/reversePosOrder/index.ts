@@ -123,12 +123,14 @@ export async function reversePosOrder(orderId: string, adminUserId: string) {
 
   // Broadcasts + cache busting after the response is sent.
   after(async () => {
+    // Consts narrow properly inside the closure — no non-null assertions
+    const { customerId, walletId } = result;
     const walletBroadcasts =
-      result.customerId && result.walletId
+      customerId && walletId
         ? result.refunds.map(refund =>
-            broadcastToUser(result.customerId!, "wallet_transaction_created", {
+            broadcastToUser(customerId, "wallet_transaction_created", {
               transactionId: refund.id,
-              walletId: result.walletId!,
+              walletId,
               type: refund.type,
               amount: refund.amount,
               balanceAfter: refund.balanceAfter,
