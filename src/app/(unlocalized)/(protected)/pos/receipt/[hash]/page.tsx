@@ -215,25 +215,26 @@ export default async function PosReceiptPage({
                 <span>{FURS_TAX_NUMBER}</span>
               </div>
             )}
-            <div className="break-all">
-              <span>ZOI: {fiscalInvoice.zoi}</span>
-            </div>
-            <div className="break-all">
-              <span>
-                EOR: {fiscalInvoice.eor ?? t("eorPending")}
-              </span>
-            </div>
-            {fiscalQrDataUrl && (
-              <div className="flex justify-center mt-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div className="flex items-center gap-2 mt-1">
+              <div className="flex-1 min-w-0 text-[9px] leading-tight">
+                <div className="break-all">ZOI: {fiscalInvoice.zoi}</div>
+                <div className="break-all">
+                  EOR: {fiscalInvoice.eor ?? t("eorPending")}
+                </div>
+              </div>
+              {fiscalQrDataUrl && (
+                /* Legal minimum for the printed FURS QR is 2×2 cm — keep it
+                   just above that */
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={fiscalQrDataUrl}
                   alt="FURS QR"
-                  width={130}
-                  height={130}
+                  className="w-[22mm] h-[22mm] flex-shrink-0"
+                  width={160}
+                  height={160}
                 />
-              </div>
-            )}
+              )}
+            </div>
             {/* Legally required VAT-exemption clause (mali davčni zavezanec) —
                 fixed statutory wording, always in both languages */}
             <div className="mt-2 text-[10px] text-center">
