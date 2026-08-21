@@ -653,6 +653,8 @@
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",
+      "tipPlus": "Add tip",
+      "tipMinus": "Reduce tip",
       "cancelPaymentConfirm": "Cancel this payment?",
       "cancelPaymentYes": "Yes, cancel payment",
       "cancelPaymentNo": "Continue with payment",
@@ -1168,6 +1170,7 @@
         "label": "Ticket goal",
         "exceeded": "{count} over goal"
       },
+      "avgTicketPrice": "avg. ticket price",
       "metrics": {
         "revenue": "Revenue",
         "sold": "Sold",
@@ -1853,7 +1856,40 @@
       "posTerminal": "POS Terminal",
       "myProfile": "My Profile",
       "discounts": "Discount Codes",
-      "deploy": "Deploy Site"
+      "deploy": "Deploy Site",
+      "translations": "Translations"
+    },
+    "translations": {
+      "title": "Translations",
+      "subtitle": "Edit UI strings; changes are staged here until the files are downloaded and committed",
+      "stats": {
+        "keys": "Keys",
+        "incomplete": "Incomplete",
+        "edited": "Edited"
+      },
+      "downloadEn": "Download en.json",
+      "downloadSl": "Download sl.json",
+      "orphansNotice": "{count, plural, one {# stored entry no longer matches} other {# stored entries no longer match}} any key in the language files.",
+      "pruneOrphans": "Remove orphans",
+      "pruning": "Removing…",
+      "searchPlaceholder": "Search keys or text…",
+      "filterIncomplete": "Only incomplete",
+      "filterEdited": "Only edited",
+      "groupCount": "{count} keys",
+      "groupIncomplete": "{count} incomplete",
+      "emptyFiltered": "No keys match the current filters.",
+      "complete": "Complete",
+      "editedBadge": "Edited",
+      "missingBadge": "Missing",
+      "invalidSyntax": "Invalid syntax",
+      "missingPlaceholders": "Missing from this text: {parts}",
+      "previewLabel": "Preview",
+      "pluralSampleHint": "Change the number to see the different plural forms",
+      "resetToFile": "Reset to file",
+      "discard": "Discard",
+      "save": "Save",
+      "saving": "Saving…",
+      "saveFailed": "Failed to save"
     },
     "deploy": {
       "title": "Deploy Site",
@@ -1968,6 +2004,9 @@
     }
   },
   "pos": {
+    "stats": {
+      "label": "Stats"
+    },
     "transactions": {
       "title": "Last Transactions",
       "loading": "Loading transactions…",

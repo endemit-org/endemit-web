@@ -10,6 +10,7 @@ import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
 import { PosOrderQrModal } from "./PosOrderQrModal";
 import { PosRecentTransactions } from "./PosRecentTransactions";
+import { PosRegisterStatsModal } from "./PosRegisterStatsModal";
 
 // Dynamic import: QR Scanner (~120KB) only loads when balance check is opened
 const PosBalanceCheckModal = dynamic(
@@ -81,6 +82,7 @@ export function PosRegisterInterface({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [txRefreshKey, setTxRefreshKey] = useState(0);
 
   // Sort and filter items
@@ -502,7 +504,16 @@ export function PosRegisterInterface({
 
       {/* Desktop Sidebar: pending orders on top, recent transactions below */}
       <div className="hidden lg:flex flex-col w-80 border-l bg-white">
-        <div className="h-1/2 overflow-auto">
+        <button
+          onClick={() => setIsStatsOpen(true)}
+          className="flex items-center justify-center gap-2 px-4 py-2 border-b text-sm font-medium text-gray-600 hover:bg-gray-50"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          {t("stats.label")}
+        </button>
+        <div className="flex-1 min-h-0 overflow-auto">
           <PosOrderQueue
             orders={pendingOrders}
             onSelectOrder={setActiveOrder}
@@ -528,10 +539,20 @@ export function PosRegisterInterface({
           <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <span className="font-medium">{t("orders.pendingOrders")}</span>
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setIsStatsOpen(true)}
+                  className="p-2 hover:bg-gray-100 rounded-full text-gray-600"
+                  title={t("stats.label")}
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -545,7 +566,8 @@ export function PosRegisterInterface({
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
-              </button>
+                </button>
+              </div>
             </div>
             <div className="h-1/2 overflow-auto">
               <PosOrderQueue
@@ -571,6 +593,15 @@ export function PosRegisterInterface({
       {/* Balance Check Modal */}
       {isBalanceCheckOpen && (
         <PosBalanceCheckModal onClose={() => setIsBalanceCheckOpen(false)} />
+      )}
+
+      {/* Register Stats Modal */}
+      {isStatsOpen && (
+        <PosRegisterStatsModal
+          registerId={register.id}
+          registerName={register.name}
+          onClose={() => setIsStatsOpen(false)}
+        />
       )}
 
 

@@ -259,6 +259,7 @@ model User {
   posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
   posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
   posPayouts             PosPayout[]         @relation("PosPayoutCreator")
+  translationEdits       TranslationEntry[]  @relation("TranslationEditor")
   stickerCode            StickerCode?
 
   // Announcements
@@ -432,6 +433,23 @@ model PosRegister {
   payouts PosPayout[]
 
   @@index([status])
+}
+
+// Staged translation edits from the admin translation interface.
+// Only overrides live here — the messages/*.json files stay the runtime
+// source of truth until edits are downloaded and committed.
+model TranslationEntry {
+  id          String   @id @default(cuid())
+  locale      String // "en" | "sl"
+  key         String // dotted path, e.g. "admin.pos.registers.payout.title"
+  value       String? // override text; null = row exists only for the flag
+  complete    Boolean  @default(false)
+  updatedById String?
+  updatedBy   User?    @relation("TranslationEditor", fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt
+
+  @@unique([locale, key])
+  @@index([complete])
 }
 
 // Ledger of cash leaving a register: tip pool payouts and top-up cash pickups
