@@ -256,7 +256,6 @@ export function WalletPayScanner({
               <PaymentConfirmView
                 order={scanResult.order}
                 customer={scanResult.customer}
-                allowCustomTip
                 isProcessing={isProcessing}
                 error={error}
                 onPay={handlePay}

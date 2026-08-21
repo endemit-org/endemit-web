@@ -653,6 +653,8 @@
     "walletPay": {
       "pay": "Plačaj",
       "balance": "Dobroimetje",
+      "tipPlus": "Dodaj napitnino",
+      "tipMinus": "Zmanjšaj napitnino",
       "cancelPaymentConfirm": "A res prekličeš to plačilo?",
       "cancelPaymentYes": "Ja, prekliči plačilo",
       "cancelPaymentNo": "Nadaljuj s plačilom",
@@ -1854,7 +1856,40 @@
       "posTerminal": "POS terminal",
       "myProfile": "Moj profil",
       "discounts": "Kode za popust",
-      "deploy": "Deploy strani"
+      "deploy": "Deploy strani",
+      "translations": "Prevodi"
+    },
+    "translations": {
+      "title": "Prevodi",
+      "subtitle": "Urejanje besedil vmesnika; spremembe so shranjene tukaj, dokler datotek ne preneseš in commitaš",
+      "stats": {
+        "keys": "Ključi",
+        "incomplete": "Nedokončani",
+        "edited": "Urejeni"
+      },
+      "downloadEn": "Prenesi en.json",
+      "downloadSl": "Prenesi sl.json",
+      "orphansNotice": "{count, plural, one {# shranjen vnos se ne ujema} two {# shranjena vnosa se ne ujemata} few {# shranjeni vnosi se ne ujemajo} other {# shranjenih vnosov se ne ujema}} z nobenim ključem v jezikovnih datotekah.",
+      "pruneOrphans": "Odstrani osirotele",
+      "pruning": "Odstranjujem…",
+      "searchPlaceholder": "Išči ključe al besedilo…",
+      "filterIncomplete": "Sam nedokončani",
+      "filterEdited": "Sam urejeni",
+      "groupCount": "{count} ključev",
+      "groupIncomplete": "{count} nedokončanih",
+      "emptyFiltered": "Noben ključ ne ustreza filtrom.",
+      "complete": "Dokončano",
+      "editedBadge": "Urejeno",
+      "missingBadge": "Manjka",
+      "invalidSyntax": "Neveljavna sintaksa",
+      "missingPlaceholders": "V tem besedilu manjka: {parts}",
+      "previewLabel": "Predogled",
+      "pluralSampleHint": "Spremeni številko, da vidiš različne oblike množine",
+      "resetToFile": "Ponastavi na datoteko",
+      "discard": "Zavrzi",
+      "save": "Shrani",
+      "saving": "Shranjujem…",
+      "saveFailed": "Shranjevanje ni uspelo"
     },
     "deploy": {
       "title": "Deploy strani",
@@ -1969,6 +2004,9 @@
     }
   },
   "pos": {
+    "stats": {
+      "label": "Statistika"
+    },
     "transactions": {
       "title": "Zadnje transakcije",
       "loading": "Nalagam transakcije…",
