@@ -44,6 +44,7 @@ export default async function PosReceiptPage({
         select: {
           id: true,
           shortId: true,
+          eventId: true,
           eventName: true,
           qrContent: true,
         },
