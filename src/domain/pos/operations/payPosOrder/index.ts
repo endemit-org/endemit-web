@@ -65,11 +65,26 @@ export async function payPosOrder(
       throw new PosError("WALLET_NOT_FOUND", "Wallet not found");
     }
 
-    // Separate items by direction and build descriptions
-    const creditItems = order.items.filter(i => i.item.direction === "CREDIT");
-    const debitItems = order.items.filter(i => i.item.direction === "DEBIT");
+    if (!order.register.acceptsWallet) {
+      throw new PosError(
+        "METHOD_NOT_ACCEPTED",
+        "This register does not accept wallet payments"
+      );
+    }
 
-    const creditTotal = creditItems.reduce((sum, i) => sum + i.total, 0);
+    // Top-up orders must be funded with physical tender (cash/card) — a
+    // wallet cannot fund its own top-up.
+    const hasCreditItems = order.items.some(
+      i => i.item.direction === "CREDIT"
+    );
+    if (hasCreditItems) {
+      throw new PosError(
+        "TOPUP_NOT_WALLET_PAYABLE",
+        "Top-up orders cannot be paid from the wallet"
+      );
+    }
+
+    const debitItems = order.items.filter(i => i.item.direction === "DEBIT");
     const debitTotal = debitItems.reduce((sum, i) => sum + i.total, 0) + tipAmount;
 
     const formatItemsDescription = (items: typeof order.items) =>
@@ -77,21 +92,6 @@ export async function payPosOrder(
 
     let currentBalance = wallet.balance;
     let lastTransaction: WalletTransaction | null = null;
-
-    // Process CREDIT items first (if any)
-    if (creditTotal > 0) {
-      currentBalance += creditTotal;
-      lastTransaction = await tx.walletTransaction.create({
-        data: {
-          walletId: wallet.id,
-          type: "CREDIT",
-          amount: creditTotal,
-          balanceAfter: currentBalance,
-          note: formatItemsDescription(creditItems),
-          posOrderId: order.id,
-        },
-      });
-    }
 
     // Process DEBIT items (if any)
     if (debitTotal > 0) {
@@ -135,19 +135,17 @@ export async function payPosOrder(
       });
     }
 
-    // Calculate total for the order record
-    const total = debitTotal - creditTotal;
-
     // Update order
     const paidAt = new Date();
     const updatedOrder = await tx.posOrder.update({
       where: { id: order.id },
       data: {
         status: "PAID",
+        paymentMethod: "WALLET",
         customerId,
         walletId: wallet.id,
         tipAmount,
-        total,
+        total: debitTotal,
         paidAt,
       },
     });
@@ -176,6 +174,7 @@ export async function payPosOrder(
         shortCode: result.order.shortCode,
         total: result.order.total,
         tipAmount: result.order.tipAmount,
+        paymentMethod: "WALLET",
         paidAt: result.paidAt.toISOString(),
         balanceAfter: result.transaction.balanceAfter,
       }
@@ -189,6 +188,7 @@ export async function payPosOrder(
         shortCode: result.order.shortCode,
         total: result.order.total,
         tipAmount: result.order.tipAmount,
+        paymentMethod: "WALLET",
         paidAt: result.paidAt.toISOString(),
         balanceAfter: result.transaction.balanceAfter,
       }

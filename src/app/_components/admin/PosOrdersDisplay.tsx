@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import type { PosOrderStatus } from "@prisma/client";
+import type { PosOrderStatus, PosPaymentMethod } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
 import { reversePosOrderAction } from "@/domain/pos/actions/reversePosOrderAction";
@@ -47,6 +47,7 @@ export default function PosOrdersDisplay({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [statusFilter, setStatusFilter] = useState<PosOrderStatus | "">("");
   const [registerFilter, setRegisterFilter] = useState("");
+  const [methodFilter, setMethodFilter] = useState<PosPaymentMethod | "">("");
   const [searchQuery, setSearchQuery] = useState("");
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedOrder, setSelectedOrder] =
@@ -95,17 +96,20 @@ export default function PosOrdersDisplay({
     overrides?: {
       status?: PosOrderStatus | "";
       registerId?: string;
+      paymentMethod?: PosPaymentMethod | "";
       search?: string;
     }
   ) => {
     const status = overrides?.status ?? statusFilter;
     const registerId = overrides?.registerId ?? registerFilter;
+    const paymentMethod = overrides?.paymentMethod ?? methodFilter;
     const search = overrides?.search ?? searchQuery;
     startTransition(async () => {
       const result = await fetchPosOrdersAction({
         page: newPage,
         status: status || undefined,
         registerId: registerId || undefined,
+        paymentMethod: paymentMethod || undefined,
         search: search.trim() || undefined,
       });
       setOrders(result.orders);
@@ -168,6 +172,26 @@ export default function PosOrdersDisplay({
                   {r.name}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("filterMethod")}
+            </label>
+            <select
+              value={methodFilter}
+              onChange={e => {
+                const value = e.target.value as PosPaymentMethod | "";
+                setMethodFilter(value);
+                loadOrders(1, { paymentMethod: value });
+              }}
+              className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="">{t("allMethods")}</option>
+              <option value="WALLET">{t("methodWallet")}</option>
+              <option value="CASH">{t("methodCash")}</option>
+              <option value="CARD">{t("methodCard")}</option>
             </select>
           </div>
 
@@ -257,13 +281,32 @@ export default function PosOrdersDisplay({
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      statusStyles[order.status]
-                    }`}
-                  >
-                    {order.status}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        statusStyles[order.status]
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                    {order.paymentMethod && (
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          order.paymentMethod === "WALLET"
+                            ? "bg-blue-100 text-blue-700"
+                            : order.paymentMethod === "CASH"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {order.paymentMethod === "WALLET"
+                          ? t("methodWallet")
+                          : order.paymentMethod === "CASH"
+                            ? t("methodCash")
+                            : t("methodCard")}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <ClientDate date={order.createdAt} />

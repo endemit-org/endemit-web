@@ -84,6 +84,18 @@ enum PosPayoutType {
   CASH
 }
 
+enum PosPaymentMethod {
+  WALLET
+  CASH
+  CARD
+}
+
+enum FiscalInvoiceStatus {
+  PENDING
+  SUBMITTED
+  FAILED
+}
+
 enum AnnouncementType {
   INFO
   WARNING
@@ -241,6 +253,9 @@ model User {
   status        UserStatus @default(ACTIVE)
   signInType    SignInType @default(PASSWORD)
   locale        String     @default("sl")
+  // Operator tax number for ZDavPR fiscal invoices (optional; falls back to
+  // the company tax number)
+  taxNumber     String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   lastLoginAt   DateTime?
@@ -424,6 +439,14 @@ model PosRegister {
   status      PosRegisterStatus @default(ACTIVE)
   canTopUp    Boolean           @default(false)
   tipPool     Int               @default(0) // Accumulated tips in cents
+
+  // Payment methods accepted at this register; defaults keep existing
+  // registers wallet-only.
+  acceptsWallet Boolean @default(true)
+  acceptsCash   Boolean @default(false)
+  acceptsCard   Boolean @default(false)
+  // Cash/card payments at this register produce ZDavPR fiscal invoices
+  fiscalizeInvoices Boolean @default(false)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
@@ -509,6 +532,7 @@ model PosOrder {
   tipAmount    Int            @default(0)
   total        Int // subtotal + tipAmount
   status       PosOrderStatus @default(PENDING)
+  paymentMethod PosPaymentMethod? // null while PENDING / cancelled before pay
   scannedAt    DateTime?
   paidAt       DateTime?
   cancelledAt  DateTime?
@@ -518,8 +542,9 @@ model PosOrder {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
-  items        PosOrderItem[]
-  transactions WalletTransaction[]
+  items         PosOrderItem[]
+  transactions  WalletTransaction[]
+  fiscalInvoices FiscalInvoice[]
 
   @@index([orderHash])
   @@index([shortCode])
@@ -529,6 +554,43 @@ model PosOrder {
   @@index([status])
   @@index([expiresAt])
   @@index([status, expiresAt])
+  @@index([registerId, status, paymentMethod])
+}
+
+// ZDavPR fiscal invoice issued for a cash/card POS payment. ZOI is computed
+// offline at issue time; EOR arrives from FURS via the submission queue
+// (legally within 2 working days).
+model FiscalInvoice {
+  id                 String              @id @default(cuid())
+  posOrderId         String
+  posOrder           PosOrder            @relation(fields: [posOrderId], references: [id])
+  invoiceNumber      Int // global sequence (NumberingStructure "C")
+  businessPremiseId  String
+  electronicDeviceId String
+  issuedAt           DateTime
+  amount             Int // cents; negative for storno
+  zoi                String
+  eor                String?
+  status             FiscalInvoiceStatus @default(PENDING)
+  attempts           Int                 @default(0)
+  lastError          String?
+  isStorno           Boolean             @default(false)
+  referenceInvoiceId String?
+  referenceInvoice   FiscalInvoice?      @relation("FiscalStorno", fields: [referenceInvoiceId], references: [id])
+  stornos            FiscalInvoice[]     @relation("FiscalStorno")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@unique([posOrderId, isStorno])
+  @@index([status])
+  @@index([invoiceNumber])
+}
+
+// Single-row strictly sequential invoice counter (incremented in the payment
+// transaction).
+model FiscalCounter {
+  id         Int @id @default(1)
+  lastNumber Int @default(0)
 }
 
 model PosOrderItem {

@@ -10,6 +10,7 @@ import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutom
 import { runSupabaseKeepalive } from "@/domain/supabase/operations/runSupabaseKeepalive";
 import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrderExpiryAutomation";
 import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPosTransactionEmailAutomation";
+import { runFiscalSubmissionAutomation } from "@/domain/pos/operations/runFiscalSubmissionAutomation";
 import { runEventReminderAutomation } from "@/domain/email/operations/runEventReminderAutomation";
 import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
 import { runOrderNewsletterAutomation } from "@/domain/newsletter/operations/runOrderNewsletterAutomation";
@@ -35,6 +36,7 @@ export const { GET, POST, PUT } = serve({
     runSupabaseKeepalive,
     runPosOrderExpiryAutomation,
     runPosTransactionEmailAutomation,
+    runFiscalSubmissionAutomation,
     runEventReminderAutomation,
     runSingleEventReminderAutomation,
     runOrderNewsletterAutomation,

@@ -12,6 +12,13 @@ export interface PosRegisterReportItem {
   total: number;
 }
 
+export interface PosRegisterReportMethodStats {
+  method: "WALLET" | "CASH" | "CARD";
+  orders: number;
+  revenue: number;
+  tips: number;
+}
+
 export interface PosRegisterReport {
   registerId: string;
   paidOrdersCount: number;
@@ -25,13 +32,14 @@ export interface PosRegisterReport {
   highestOrderTotal: number;
   averageOrderTotal: number;
   highestTip: number;
+  byMethod: PosRegisterReportMethodStats[];
   items: PosRegisterReportItem[];
 }
 
 async function getPosRegisterReportUncached(
   registerId: string
 ): Promise<PosRegisterReport> {
-  const [orderAgg, itemGroups] = await Promise.all([
+  const [orderAgg, methodGroups, itemGroups] = await Promise.all([
     prisma.posOrder.aggregate({
       where: { registerId, status: "PAID" },
       _count: true,
@@ -39,6 +47,12 @@ async function getPosRegisterReportUncached(
       _min: { total: true },
       _max: { total: true, tipAmount: true },
       _avg: { total: true },
+    }),
+    prisma.posOrder.groupBy({
+      by: ["paymentMethod"],
+      _count: true,
+      _sum: { total: true, tipAmount: true },
+      where: { registerId, status: "PAID" },
     }),
     prisma.posOrderItem.groupBy({
       by: ["itemId"],
@@ -91,6 +105,15 @@ async function getPosRegisterReportUncached(
     highestOrderTotal: orderAgg._max.total ?? 0,
     averageOrderTotal: Math.round(orderAgg._avg.total ?? 0),
     highestTip: orderAgg._max.tipAmount ?? 0,
+    byMethod: methodGroups
+      .filter(g => g.paymentMethod !== null)
+      .map(g => ({
+        method: g.paymentMethod as "WALLET" | "CASH" | "CARD",
+        orders: g._count,
+        revenue: g._sum.total ?? 0,
+        tips: g._sum.tipAmount ?? 0,
+      }))
+      .sort((a, b) => b.revenue - a.revenue),
     items,
   };
 }

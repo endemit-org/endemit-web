@@ -43,9 +43,11 @@ interface PosOrderPaidPayload {
   shortCode: string;
   total: number;
   tipAmount: number;
+  paymentMethod?: "WALLET" | "CASH" | "CARD";
   paidAt: string;
-  /** Customer's wallet balance in cents after the payment. */
-  balanceAfter: number;
+  /** Customer's wallet balance in cents after the payment (wallet-linked
+   * orders only; anonymous cash/card sales have none). */
+  balanceAfter?: number;
 }
 
 interface PosOrderCancelledPayload {

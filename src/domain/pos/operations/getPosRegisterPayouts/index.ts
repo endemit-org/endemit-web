@@ -32,11 +32,12 @@ export async function getPosRegisterPayouts(
       where: { id: registerId },
       select: { tipPool: true },
     }),
+    // Everything paid in physical cash lands in the drawer: cash-funded
+    // top-ups AND cash sales (tips excluded — they live in tipPool)
     prisma.posOrderItem.aggregate({
       _sum: { total: true },
       where: {
-        order: { registerId, status: "PAID" },
-        item: { direction: "CREDIT" },
+        order: { registerId, status: "PAID", paymentMethod: "CASH" },
       },
     }),
     prisma.posPayout.aggregate({

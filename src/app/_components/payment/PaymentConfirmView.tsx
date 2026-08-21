@@ -1,11 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { formatTokensFromCents } from "@/lib/util/currency";
-import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
-import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
-import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
+import { TipStepper, TIP_STEP } from "@/app/_components/payment/TipStepper";
 
 export interface PaymentConfirmOrder {
   id: string;
@@ -38,8 +36,6 @@ interface Props {
   onPay: (tipAmount: number) => void;
 }
 
-const TIP_STEP = 10; // cents
-
 export function PaymentConfirmView({
   order,
   customer,
@@ -50,8 +46,6 @@ export function PaymentConfirmView({
 }: Props) {
   const t = useTranslations("profile.walletPay");
   const [tipAmount, setTipAmount] = useState(0);
-  const tipRef = useRef<HTMLSpanElement>(null);
-  const tipAnim = useWalletAnimation();
 
   const { creditTotal, debitTotal } = useMemo(() => {
     let credit = 0;
@@ -74,16 +68,6 @@ export function PaymentConfirmView({
     if (!canPay || isProcessing) return;
     onPay(tipAmount);
   }, [canPay, isProcessing, onPay, tipAmount]);
-
-  const handleTipStep = useCallback(
-    (direction: 1 | -1) => {
-      const next = Math.max(0, tipAmount + direction * TIP_STEP);
-      if (next === tipAmount) return;
-      setTipAmount(next);
-      tipAnim.triggerAnimation(direction === 1 ? "in" : "out", tipRef.current);
-    },
-    [tipAmount, tipAnim]
-  );
 
   const content = (
     <>
@@ -154,44 +138,12 @@ export function PaymentConfirmView({
       )}
 
       {!hasTopUp && (
-        <div className="bg-amber-500/[0.06] border border-amber-400/15 rounded-xl p-3 mt-2">
-          <div className="text-sm text-amber-200/80 mb-2 text-center">
-            {t("addTip")}
-          </div>
-          <div className="flex items-center justify-center gap-5">
-            <button
-              onClick={() => handleTipStep(-1)}
-              disabled={tipAmount <= 0 || isProcessing}
-              aria-label={t("tipMinus")}
-              className="w-12 h-12 rounded-full bg-neutral-800 text-neutral-300 hover:bg-neutral-700 text-2xl font-semibold leading-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              −
-            </button>
-            <WalletAnimationRenderer
-              animations={tipAnim.animations}
-              showGlow={tipAnim.showGlow}
-              glowDirection={tipAnim.glowDirection}
-              onAnimationComplete={tipAnim.removeAnimation}
-            >
-              <span
-                ref={tipRef}
-                className={`block min-w-[6rem] text-center text-2xl font-bold leading-none ${
-                  tipAmount > 0 ? "text-amber-300" : "text-neutral-500"
-                }`}
-              >
-                <AnimatedBalance value={tipAmount} />
-              </span>
-            </WalletAnimationRenderer>
-            <button
-              onClick={() => handleTipStep(1)}
-              disabled={!canAddTip || isProcessing}
-              aria-label={t("tipPlus")}
-              className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-2xl font-semibold leading-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              +
-            </button>
-          </div>
-        </div>
+        <TipStepper
+          tipAmount={tipAmount}
+          onChange={setTipAmount}
+          canAdd={canAddTip}
+          disabled={isProcessing}
+        />
       )}
 
       <div className="flex flex-col gap-3 pt-2">

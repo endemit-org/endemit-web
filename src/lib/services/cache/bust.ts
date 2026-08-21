@@ -370,7 +370,7 @@ export async function bustOnPosOrderCreated() {
 /**
  * Bust caches when POS order is paid
  */
-export async function bustOnPosOrderPaid(userId: string) {
+export async function bustOnPosOrderPaid(userId: string | null) {
   const tags: CacheTag[] = [
     adminPosTags.orders(),
     adminPosTags.registers(),
@@ -379,10 +379,16 @@ export async function bustOnPosOrderPaid(userId: string) {
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
     adminWalletTags.list(),
-    userTags.wallet(userId),
-    userTags.transactions(userId),
-    userTags.transactionsLatest(userId),
   ];
+
+  // Anonymous cash/card sales have no customer to bust
+  if (userId) {
+    tags.push(
+      userTags.wallet(userId),
+      userTags.transactions(userId),
+      userTags.transactionsLatest(userId)
+    );
+  }
 
   await bustTags(tags);
 }

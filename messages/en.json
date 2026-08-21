@@ -693,7 +693,10 @@
         "walletNotFound": "Wallet not found",
         "insufficientBalance": "Insufficient balance. Please top up your wallet.",
         "notScanned": "Order has not been scanned yet",
-        "invalidTip": "Invalid tip amount"
+        "invalidTip": "Invalid tip amount",
+        "methodNotAccepted": "This register does not accept this payment method",
+        "topupNotWalletPayable": "Top-ups must be paid in cash or by card",
+        "fiscalNotConfigured": "Fiscalization is not configured — contact an administrator"
       }
     },
     "eventsAttended": {
@@ -1431,7 +1434,12 @@
         "reverseConfirm": "Yes, reverse",
         "deleteConfirm": "Yes, delete permanently",
         "actionWorking": "Working…",
-        "actionCancel": "Cancel"
+        "actionCancel": "Cancel",
+        "filterMethod": "Method",
+        "allMethods": "All methods",
+        "methodWallet": "Wallet",
+        "methodCash": "Cash",
+        "methodCard": "Card"
       },
       "registers": {
         "title": "POS Registers",
@@ -1514,8 +1522,23 @@
           "colItem": "Item",
           "colQuantity": "Qty",
           "colTotal": "Total",
-          "topUpBadge": "Top-up"
-        }
+          "topUpBadge": "Top-up",
+          "byMethodHeading": "By payment method",
+          "methodWALLET": "Wallet",
+          "methodCASH": "Cash",
+          "methodCARD": "Card",
+          "methodOrders": "{count, plural, one {# order} other {# orders}}"
+        },
+        "paymentMethods": "Payment methods",
+        "acceptsWallet": "Wallet",
+        "acceptsCash": "Cash",
+        "acceptsCard": "Card terminal",
+        "fiscalizeInvoices": "Fiscalize invoices (cash/card sales get FURS invoices)",
+        "atLeastOneMethod": "At least one payment method must be enabled",
+        "methodWallet": "Wallet",
+        "methodCash": "Cash",
+        "methodCard": "Card",
+        "fiscalBadge": "Fiscal"
       },
       "stickers": {
         "title": "POS offline QRs",
@@ -2007,13 +2030,52 @@
     "stats": {
       "label": "Stats"
     },
+    "methods": {
+      "selectPrompt": "How is the customer paying?",
+      "wallet": "Wallet",
+      "cash": "Cash",
+      "card": "Card terminal"
+    },
+    "methodConfirm": {
+      "cashDue": "Cash due",
+      "cardCharge": "Charge on terminal",
+      "totalWithTip": "Total with tip: {amount}",
+      "topUpNote": "Top-up — the amount will be credited to the customer's wallet",
+      "processing": "Processing…",
+      "cashReceived": "Cash received — {amount}",
+      "cardInstruction": "Charge {amount} on the card terminal, then continue.",
+      "chargedOnTerminal": "Charged on terminal",
+      "confirmApproved": "Did the terminal approve the {amount} charge?",
+      "chargeApproved": "Charge approved — mark paid",
+      "backToAmount": "Back to amount",
+      "back": "Back"
+    },
+    "receipt": {
+      "printButton": "Print",
+      "fiscalTitle": "Invoice no. {number}",
+      "informalTitle": "Purchase slip",
+      "order": "Order",
+      "date": "Date",
+      "operator": "Served by",
+      "tip": "Tip",
+      "total": "TOTAL",
+      "paymentMethod": "Payment",
+      "methodWallet": "Wallet",
+      "methodCash": "Cash",
+      "methodCard": "Card",
+      "taxNumber": "Tax no.",
+      "eorPending": "pending confirmation",
+      "disclaimer": "This is not a fiscal receipt. / To ni davčno potrjen račun.",
+      "thanks": "Thank you!"
+    },
     "transactions": {
       "title": "Last Transactions",
       "loading": "Loading transactions…",
       "loadFailed": "Could not load transactions",
       "empty": "No transactions yet.",
       "refresh": "Refresh",
-      "tipSuffix": "tip"
+      "tipSuffix": "tip",
+      "print": "Print"
     },
     "balanceCheck": {
       "label": "Balance",
@@ -2077,7 +2139,8 @@
       "scanned": "Scanned",
       "waitingForScanShort": "Waiting for scan",
       "cancel": "Cancel",
-      "newBalance": "New balance"
+      "newBalance": "New balance",
+      "printReceipt": "Print receipt"
     },
     "sticker": {
       "resolving": "Resolving wristband...",
