@@ -16,9 +16,11 @@ interface Props {
   method: "CASH" | "CARD";
   items: OrderItem[];
   subtotal: number;
+  /** Show the optional buyer-email input (ticket-linked orders). */
+  showEmailField?: boolean;
   isProcessing: boolean;
   error: string | null;
-  onConfirm: (tipAmount: number) => void;
+  onConfirm: (tipAmount: number, buyerEmail?: string) => void;
   onBack: () => void;
 }
 
@@ -31,6 +33,7 @@ export function PosMethodConfirmView({
   method,
   items,
   subtotal,
+  showEmailField = false,
   isProcessing,
   error,
   onConfirm,
@@ -39,6 +42,10 @@ export function PosMethodConfirmView({
   const t = useTranslations("pos.methodConfirm");
   const [tipAmount, setTipAmount] = useState(0);
   const [cardCharged, setCardCharged] = useState(false);
+  const [buyerEmail, setBuyerEmail] = useState("");
+
+  const confirm = () =>
+    onConfirm(tipAmount, buyerEmail.trim() || undefined);
 
   const hasTopUp = useMemo(
     () => items.some(item => item.direction === "CREDIT"),
@@ -99,10 +106,26 @@ export function PosMethodConfirmView({
         />
       )}
 
+      {showEmailField && (
+        <div className="mt-3">
+          <label className="block text-xs text-neutral-400 mb-1">
+            {t("buyerEmailLabel")}
+          </label>
+          <input
+            type="email"
+            value={buyerEmail}
+            onChange={e => setBuyerEmail(e.target.value)}
+            placeholder={t("buyerEmailPlaceholder")}
+            disabled={isProcessing}
+            className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-sm placeholder-neutral-500 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+          />
+        </div>
+      )}
+
       <div className="flex flex-col gap-3 pt-4">
         {method === "CASH" ? (
           <button
-            onClick={() => onConfirm(tipAmount)}
+            onClick={confirm}
             disabled={isProcessing}
             className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
@@ -129,7 +152,7 @@ export function PosMethodConfirmView({
               {t("confirmApproved", { amount: formatTokensFromCents(total) })}
             </p>
             <button
-              onClick={() => onConfirm(tipAmount)}
+              onClick={confirm}
               disabled={isProcessing}
               className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >

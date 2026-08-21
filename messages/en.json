@@ -1376,7 +1376,11 @@
         "colActions": "Actions",
         "soldCount": "{count} sold",
         "emptyItems": "No items yet.",
-        "fieldColor": "Color"
+        "fieldColor": "Color",
+        "fieldTicketEvent": "Event ticket item",
+        "ticketEventNone": "Not a ticket item",
+        "ticketEventHint": "When set, selling this item issues real tickets for the selected event (they count toward its ticket stats and goal).",
+        "ticketBadge": "Ticket"
       },
       "orders": {
         "title": "POS Orders",
@@ -2048,7 +2052,9 @@
       "confirmApproved": "Did the terminal approve the {amount} charge?",
       "chargeApproved": "Charge approved — mark paid",
       "backToAmount": "Back to amount",
-      "back": "Back"
+      "back": "Back",
+      "buyerEmailLabel": "Buyer email for digital tickets (optional)",
+      "buyerEmailPlaceholder": "email@example.com"
     },
     "receipt": {
       "printButton": "Print",
@@ -2066,7 +2072,9 @@
       "taxNumber": "Tax no.",
       "eorPending": "pending confirmation",
       "disclaimer": "This is not a fiscal receipt. / To ni davčno potrjen račun.",
-      "thanks": "Thank you!"
+      "thanks": "Thank you!",
+      "ticketsHeading": "Entry tickets",
+      "ticketsHint": "Show this QR code at the entrance."
     },
     "transactions": {
       "title": "Last Transactions",

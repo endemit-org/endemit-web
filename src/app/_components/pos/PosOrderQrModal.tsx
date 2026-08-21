@@ -39,6 +39,7 @@ interface PosOrderSummary {
     quantity: number;
     total: number;
     direction?: "CREDIT" | "DEBIT";
+    isTicket?: boolean;
   }>;
   customerName?: string;
   customerFirstName?: string | null;
@@ -89,6 +90,7 @@ export function PosOrderQrModal({
   // Top-up orders always scan first (wallet to credit); sales go straight
   // into their single enabled method, or to the method chooser.
   const hasTopUpItems = order.items.some(i => i.direction === "CREDIT");
+  const hasTicketItems = order.items.some(i => i.isTicket);
   const saleMethods: Array<"WALLET" | "CASH" | "CARD"> = [
     ...(register.acceptsWallet ? (["WALLET"] as const) : []),
     ...(register.acceptsCash ? (["CASH"] as const) : []),
@@ -250,7 +252,7 @@ export function PosOrderQrModal({
   );
 
   const handleMarkPaid = useCallback(
-    async (method: "CASH" | "CARD", tipAmount: number) => {
+    async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
       if (isPaying) return;
       setIsPaying(true);
       setPayError(null);
@@ -260,7 +262,7 @@ export function PosOrderQrModal({
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ method, tipAmount }),
+            body: JSON.stringify({ method, tipAmount, buyerEmail }),
           }
         );
         const data = await response.json();
@@ -614,12 +616,14 @@ export function PosOrderQrModal({
               method={subView === "cash-confirm" ? "CASH" : "CARD"}
               items={order.items}
               subtotal={order.subtotal}
+              showEmailField={hasTicketItems}
               isProcessing={isPaying}
               error={payError}
-              onConfirm={tipAmount =>
+              onConfirm={(tipAmount, buyerEmail) =>
                 handleMarkPaid(
                   subView === "cash-confirm" ? "CASH" : "CARD",
-                  tipAmount
+                  tipAmount,
+                  buyerEmail
                 )
               }
               onBack={() => {

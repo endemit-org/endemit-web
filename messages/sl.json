@@ -1376,7 +1376,11 @@
         "colActions": "Dejanja",
         "soldCount": "{count} prodano",
         "emptyItems": "Še ni nobenga izdelka.",
-        "fieldColor": "Barva"
+        "fieldColor": "Barva",
+        "fieldTicketEvent": "Izdelek je karta za event",
+        "ticketEventNone": "Ni karta",
+        "ticketEventHint": "Če je nastavljeno, se ob prodaji tega izdelka izdajo prave karte za izbran event (štejejo v statistiko in cilj prodaje).",
+        "ticketBadge": "Karta"
       },
       "orders": {
         "title": "POS naročila",
@@ -2048,7 +2052,9 @@
       "confirmApproved": "A je terminal odobru plačilo {amount}?",
       "chargeApproved": "Plačilo odobreno — označi kot plačano",
       "backToAmount": "Nazaj na znesek",
-      "back": "Nazaj"
+      "back": "Nazaj",
+      "buyerEmailLabel": "Email kupca za digitalne karte (neobvezno)",
+      "buyerEmailPlaceholder": "email@example.com"
     },
     "receipt": {
       "printButton": "Natisni",
@@ -2066,7 +2072,9 @@
       "taxNumber": "Davčna št.",
       "eorPending": "v potrjevanju",
       "disclaimer": "To ni davčno potrjen račun.",
-      "thanks": "Hvala!"
+      "thanks": "Hvala!",
+      "ticketsHeading": "Vstopnice",
+      "ticketsHint": "Pokaži to QR kodo na vhodu."
     },
     "transactions": {
       "title": "Zadnje transakcije",

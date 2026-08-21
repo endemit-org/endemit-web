@@ -9,6 +9,7 @@ import {
 import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyOnPosTransaction";
 import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransactionEmail";
 import { bustOnPosOrderPaid } from "@/lib/services/cache";
+import { inngest } from "@/lib/services/inngest";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import { PosError } from "@/domain/pos/types/posError";
 import type { WalletTransaction } from "@prisma/client";
@@ -166,6 +167,7 @@ export async function payPosOrder(
       userName: wallet.user.name,
       userEmail: wallet.user.email,
       registerName: order.register.name,
+      hasTicketItems: order.items.some(i => i.item.ticketEventId),
     };
   });
 
@@ -232,12 +234,23 @@ export async function payPosOrder(
       orderId: result.order.id,
     }).catch(() => {});
 
+    // Ticket-linked items → durable ticket issuance to the buyer's account
+    const ticketIssue = result.hasTicketItems
+      ? inngest
+          .send({
+            name: "pos/tickets.issue",
+            data: { posOrderId: result.order.id },
+          })
+          .catch(() => {})
+      : Promise.resolve();
+
     await Promise.all([
       sellerBroadcast,
       customerBroadcast,
       walletBroadcast,
       discord,
       email,
+      ticketIssue,
       bustOnPosOrderPaid(customerId),
     ]);
   });

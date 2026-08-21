@@ -36,6 +36,15 @@ export default async function PosReceiptPage({
         where: { isStorno: false },
         take: 1,
       },
+      tickets: {
+        where: { status: { notIn: ["CANCELLED", "REFUNDED"] } },
+        select: {
+          id: true,
+          shortId: true,
+          eventName: true,
+          qrContent: true,
+        },
+      },
     },
   });
 
@@ -74,6 +83,22 @@ export default async function PosReceiptPage({
       margin: 0,
     });
   }
+
+  // The slip doubles as the entry ticket for anonymous sales; wallet buyers
+  // carry their tickets in their profile.
+  const ticketQrs =
+    order.customerId === null
+      ? await Promise.all(
+          order.tickets.map(async ticket => ({
+            shortId: ticket.shortId,
+            eventName: ticket.eventName,
+            dataUrl: await QRCode.toDataURL(JSON.stringify(ticket.qrContent), {
+              width: 180,
+              margin: 0,
+            }),
+          }))
+        )
+      : [];
 
   const methodLabel =
     order.paymentMethod === "WALLET"
@@ -188,6 +213,32 @@ export default async function PosReceiptPage({
           <>
             <div className="border-t border-dashed border-black my-2" />
             <div className="text-center text-[10px]">{t("disclaimer")}</div>
+          </>
+        )}
+
+        {ticketQrs.length > 0 && (
+          <>
+            <div className="border-t border-dashed border-black my-2" />
+            <div className="text-center font-bold uppercase text-[11px] mb-2">
+              {t("ticketsHeading")}
+            </div>
+            {ticketQrs.map(ticket => (
+              <div key={ticket.shortId} className="text-center mb-3">
+                <div className="text-[11px] mb-1">{ticket.eventName}</div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={ticket.dataUrl}
+                  alt={`Ticket ${ticket.shortId}`}
+                  width={150}
+                  height={150}
+                  className="mx-auto"
+                />
+                <div className="font-bold tracking-widest text-[11px] mt-1">
+                  {ticket.shortId}
+                </div>
+              </div>
+            ))}
+            <div className="text-center text-[10px]">{t("ticketsHint")}</div>
           </>
         )}
 

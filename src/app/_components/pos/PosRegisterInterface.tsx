@@ -28,6 +28,7 @@ interface PosItem {
   cost: number;
   direction: "CREDIT" | "DEBIT";
   color: string | null;
+  isTicket?: boolean;
 }
 
 interface PosOrderSummary {
@@ -46,6 +47,7 @@ interface PosOrderSummary {
     quantity: number;
     total: number;
     direction?: "CREDIT" | "DEBIT";
+    isTicket?: boolean;
   }>;
   customerName?: string;
   customerFirstName?: string | null;
@@ -243,8 +245,9 @@ export function PosRegisterInterface({
           name: i.name,
           quantity: i.quantity,
           total: i.total,
-          // API response has no direction — the cart does
+          // API response has no direction/ticket flag — the cart does
           direction: cart.find(c => c.item.id === i.itemId)?.item.direction,
+          isTicket: cart.find(c => c.item.id === i.itemId)?.item.isTicket,
         })),
       };
 

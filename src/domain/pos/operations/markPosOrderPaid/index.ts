@@ -25,6 +25,8 @@ export interface MarkPosOrderPaidInput {
   method: "CASH" | "CARD";
   tipAmount: number;
   sellerUserId: string;
+  /** Optional buyer email for digital delivery of ticket-linked items. */
+  buyerEmail?: string;
 }
 
 export interface MarkPosOrderPaidResult {
@@ -42,7 +44,7 @@ export interface MarkPosOrderPaidResult {
 export async function markPosOrderPaid(
   input: MarkPosOrderPaidInput
 ): Promise<MarkPosOrderPaidResult> {
-  const { orderHash, method, tipAmount, sellerUserId } = input;
+  const { orderHash, method, tipAmount, sellerUserId, buyerEmail } = input;
 
   if (!Number.isInteger(tipAmount) || tipAmount < 0) {
     throw new PosError("INVALID_TIP", "Invalid tip amount");
@@ -165,6 +167,7 @@ export async function markPosOrderPaid(
       balanceAfter,
       paidAt,
       fiscalInvoiceId,
+      hasTicketItems: order.items.some(i => i.item.ticketEventId),
     };
   });
 
@@ -225,6 +228,19 @@ export async function markPosOrderPaid(
           .send({
             name: "pos/fiscal.invoice.created",
             data: { fiscalInvoiceId: result.fiscalInvoiceId },
+          })
+          .catch(() => {})
+      );
+    }
+
+    // Ticket-linked items → durable ticket issuance (anonymous door tickets,
+    // optionally emailed to the captured buyer address)
+    if (result.hasTicketItems) {
+      broadcasts.push(
+        inngest
+          .send({
+            name: "pos/tickets.issue",
+            data: { posOrderId: result.order.id, buyerEmail },
           })
           .catch(() => {})
       );

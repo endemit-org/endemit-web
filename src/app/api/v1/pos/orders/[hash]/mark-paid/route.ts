@@ -24,6 +24,10 @@ export async function POST(
     const body = await request.json();
     const method = body?.method;
     const tipAmount = Number(body?.tipAmount ?? 0);
+    const buyerEmail =
+      typeof body?.buyerEmail === "string" && body.buyerEmail.includes("@")
+        ? body.buyerEmail.trim()
+        : undefined;
 
     if (method !== "CASH" && method !== "CARD") {
       return NextResponse.json(
@@ -58,6 +62,7 @@ export async function POST(
       method,
       tipAmount,
       sellerUserId: user.id,
+      buyerEmail,
     });
 
     return NextResponse.json({

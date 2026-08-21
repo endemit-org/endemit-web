@@ -228,12 +228,16 @@ model Ticket {
   attended         Boolean      @default(false)
   isGuestList      Boolean      @default(false)
   isDoorSale       Boolean      @default(false)
+  // Set when the ticket was sold through a POS register order
+  posOrderId       String?
+  posOrder         PosOrder?    @relation(fields: [posOrderId], references: [id])
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
   ScanLog          ScanLog[]
 
   @@index([ticketHash])
+  @@index([posOrderId])
   @@index([eventId])
   @@index([ticketPayerEmail])
   @@index([orderId])
@@ -422,6 +426,8 @@ model PosItem {
   cost        Int // In cents
   direction   PosItemDirection
   color       String? // Hex color shown as an accent bar on the POS touch card
+  // When set, selling this item issues real tickets for the linked CMS event
+  ticketEventId String?
   status      PosItemStatus    @default(ACTIVE)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -545,6 +551,7 @@ model PosOrder {
   items         PosOrderItem[]
   transactions  WalletTransaction[]
   fiscalInvoices FiscalInvoice[]
+  tickets        Ticket[]
 
   @@index([orderHash])
   @@index([shortCode])

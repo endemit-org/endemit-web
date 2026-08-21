@@ -72,7 +72,9 @@ export default async function PosRegisterPage({ params }: Props) {
     },
     include: {
       items: {
-        include: { item: { select: { direction: true } } },
+        include: {
+          item: { select: { direction: true, ticketEventId: true } },
+        },
       },
     },
     orderBy: { createdAt: "desc" },
@@ -93,6 +95,7 @@ export default async function PosRegisterPage({ params }: Props) {
       cost: ri.item.cost,
       direction: ri.item.direction,
       color: ri.item.color,
+      isTicket: Boolean(ri.item.ticketEventId),
     }));
 
   return (
@@ -123,6 +126,7 @@ export default async function PosRegisterPage({ params }: Props) {
           quantity: i.quantity,
           total: i.total,
           direction: i.item.direction,
+          isTicket: Boolean(i.item.ticketEventId),
         })),
       }))}
     />

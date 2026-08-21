@@ -3,7 +3,7 @@ import "server-only";
 import { after } from "next/server";
 import { prisma } from "@/lib/services/prisma";
 import { broadcastToUser } from "@/lib/services/supabase/broadcast";
-import { bustOnPosOrderReversed } from "@/lib/services/cache";
+import { bustOnPosOrderReversed, bustOnTicketIssued } from "@/lib/services/cache";
 import { inngest } from "@/lib/services/inngest";
 
 /**
@@ -21,6 +21,9 @@ export async function reversePosOrder(orderId: string, adminUserId: string) {
       include: {
         transactions: true,
         fiscalInvoices: { where: { isStorno: false } },
+        tickets: {
+          select: { id: true, status: true, scanCount: true, eventId: true },
+        },
       },
     });
 
@@ -32,6 +35,23 @@ export async function reversePosOrder(orderId: string, adminUserId: string) {
     }
     if (order.transactions.some(t => t.type === "REFUND")) {
       throw new Error("Order was already reversed");
+    }
+
+    // Tickets sold on this order: cancel them with the reversal, but a
+    // ticket already scanned at the door needs manual judgment — block.
+    const activeTickets = order.tickets.filter(
+      t => t.status !== "CANCELLED" && t.status !== "REFUNDED"
+    );
+    if (activeTickets.some(t => t.scanCount > 0 || t.status === "SCANNED")) {
+      throw new Error(
+        "Order has tickets that were already scanned — handle the refund manually"
+      );
+    }
+    if (activeTickets.length > 0) {
+      await tx.ticket.updateMany({
+        where: { id: { in: activeTickets.map(t => t.id) } },
+        data: { status: "CANCELLED" },
+      });
     }
 
     let walletId: string | null = null;
@@ -118,6 +138,10 @@ export async function reversePosOrder(orderId: string, adminUserId: string) {
       customerId: order.customerId,
       refunds,
       stornoInvoiceId,
+      cancelledTickets: activeTickets.map(t => ({
+        id: t.id,
+        eventId: t.eventId,
+      })),
     };
   });
 
@@ -149,8 +173,16 @@ export async function reversePosOrder(orderId: string, adminUserId: string) {
           .catch(() => {})
       : Promise.resolve();
 
+    // Cancelled tickets change event stats — bust their ticket caches
+    const ticketBusts = result.cancelledTickets.map(ticket =>
+      bustOnTicketIssued(ticket.id, result.customerId, ticket.eventId).catch(
+        () => {}
+      )
+    );
+
     await Promise.all([
       ...walletBroadcasts,
+      ...ticketBusts,
       stornoSubmission,
       bustOnPosOrderReversed(result.customerId, result.walletId),
     ]);
