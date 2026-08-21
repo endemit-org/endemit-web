@@ -74,7 +74,9 @@ export async function searchUsersAction(
     !user.permissions.includes(PERMISSIONS.EVENT_CLAIMS_MANAGE) &&
     !user.permissions.includes(PERMISSIONS.POS_STICKERS_MANAGE) &&
     !user.permissions.includes(PERMISSIONS.POS_REGISTERS_WRITE) &&
-    !user.permissions.includes(PERMISSIONS.WALLETS_MANAGE_BALANCE)
+    !user.permissions.includes(PERMISSIONS.WALLETS_MANAGE_BALANCE) &&
+    // Sellers use the autocomplete for ticket buyer emails at the register
+    !user.permissions.includes(PERMISSIONS.POS_SELL)
   ) {
     return { success: false, error: "Not authorized" };
   }
