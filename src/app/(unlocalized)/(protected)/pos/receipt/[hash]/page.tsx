@@ -9,6 +9,9 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import { buildFiscalQrValue } from "@/lib/services/furs/zoi";
 import { FURS_TAX_NUMBER } from "@/lib/services/env/private";
 import ReceiptPrintButton from "@/app/_components/pos/ReceiptPrintButton";
+import EndemitLogo from "@/app/_components/icon/EndemitLogo";
+import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
+import { formatEventDateAndTime } from "@/lib/util/formatting";
 
 export const metadata: Metadata = {
   title: "Receipt",
@@ -85,18 +88,40 @@ export default async function PosReceiptPage({
   }
 
   // The slip doubles as the entry ticket for anonymous sales; wallet buyers
-  // carry their tickets in their profile.
+  // carry their tickets in their profile. Event date/venue enrich the slip.
+  const ticketEventIds = [...new Set(order.tickets.map(t => t.eventId))];
+  const ticketEvents = new Map(
+    (
+      await Promise.all(
+        ticketEventIds.map(async id => ({
+          id,
+          event: await fetchEventFromCmsById(id).catch(() => null),
+        }))
+      )
+    ).map(({ id, event }) => [id, event])
+  );
+
   const ticketQrs =
     order.customerId === null
       ? await Promise.all(
-          order.tickets.map(async ticket => ({
-            shortId: ticket.shortId,
-            eventName: ticket.eventName,
-            dataUrl: await QRCode.toDataURL(JSON.stringify(ticket.qrContent), {
-              width: 180,
-              margin: 0,
-            }),
-          }))
+          order.tickets.map(async ticket => {
+            const cmsEvent = ticketEvents.get(ticket.eventId) ?? null;
+            return {
+              shortId: ticket.shortId,
+              eventName: ticket.eventName,
+              eventDate: cmsEvent?.date_start
+                ? formatEventDateAndTime(cmsEvent.date_start)
+                : null,
+              venueName: cmsEvent?.venue?.name ?? null,
+              dataUrl: await QRCode.toDataURL(
+                JSON.stringify(ticket.qrContent),
+                {
+                  width: 200,
+                  margin: 0,
+                }
+              ),
+            };
+          })
         )
       : [];
 
@@ -115,7 +140,9 @@ export default async function PosReceiptPage({
         style={{ width: "80mm" }}
       >
         <div className="text-center mb-3">
-          <div className="font-bold text-[14px] uppercase">Endemit</div>
+          <div className="w-[45mm] mx-auto mb-2 text-black">
+            <EndemitLogo />
+          </div>
           <div>{order.register.name}</div>
           {fiscalInvoice ? (
             <div className="font-bold mt-2">
@@ -227,27 +254,37 @@ export default async function PosReceiptPage({
 
         {ticketQrs.length > 0 && (
           <>
-            <div className="border-t border-dashed border-black my-2" />
-            <div className="text-center font-bold uppercase text-[11px] mb-2">
+            <div className="border-t border-dashed border-black mt-4 mb-3" />
+            <div className="text-center font-bold uppercase text-[12px] mb-4">
               {t("ticketsHeading")}
             </div>
             {ticketQrs.map(ticket => (
-              <div key={ticket.shortId} className="text-center mb-3">
-                <div className="text-[11px] mb-1">{ticket.eventName}</div>
+              <div key={ticket.shortId} className="text-center mb-6">
+                <div className="font-bold text-[13px] uppercase mb-1">
+                  {ticket.eventName}
+                </div>
+                {ticket.eventDate && (
+                  <div className="text-[11px]">{ticket.eventDate}</div>
+                )}
+                {ticket.venueName && (
+                  <div className="text-[11px] mb-2">{ticket.venueName}</div>
+                )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={ticket.dataUrl}
                   alt={`Ticket ${ticket.shortId}`}
-                  width={150}
-                  height={150}
-                  className="mx-auto"
+                  width={170}
+                  height={170}
+                  className="mx-auto my-3"
                 />
-                <div className="font-bold tracking-widest text-[11px] mt-1">
+                <div className="font-bold tracking-widest text-[12px]">
                   {ticket.shortId}
                 </div>
               </div>
             ))}
-            <div className="text-center text-[10px]">{t("ticketsHint")}</div>
+            <div className="text-center text-[10px] mb-2">
+              {t("ticketsHint")}
+            </div>
           </>
         )}
 
