@@ -73,6 +73,9 @@ export async function GET(
         name: register.name,
         description: register.description,
         canTopUp: register.canTopUp,
+        acceptsWallet: register.acceptsWallet,
+        acceptsCash: register.acceptsCash,
+        acceptsCard: register.acceptsCard,
         // CREDIT items are wallet top-ups — hidden without pos:topup
         items: register.items
           .filter(

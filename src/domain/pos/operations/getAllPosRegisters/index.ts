@@ -18,6 +18,10 @@ export interface PosRegisterWithRelations {
   description: string | null;
   status: "ACTIVE" | "INACTIVE";
   canTopUp: boolean;
+  acceptsWallet: boolean;
+  acceptsCash: boolean;
+  acceptsCard: boolean;
+  fiscalizeInvoices: boolean;
   tipPool: number;
   createdAt: Date;
   updatedAt: Date;
@@ -97,6 +101,7 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
         where: { status: "PAID" },
         select: {
           tipAmount: true,
+          paymentMethod: true,
           items: {
             select: {
               total: true,
@@ -122,6 +127,7 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
       cashOutstanding: 0,
     };
 
+    let cashIn = 0;
     for (const order of register.orders) {
       traffic.tipsCollected += order.tipAmount;
       for (const orderItem of order.items) {
@@ -130,10 +136,13 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
         } else {
           traffic.topUpsProcessed += orderItem.total;
         }
+        // Drawer: all items paid in physical cash (sales + top-up funding)
+        if (order.paymentMethod === "CASH") {
+          cashIn += orderItem.total;
+        }
       }
     }
-    traffic.cashOutstanding =
-      traffic.topUpsProcessed - (cashPickupMap.get(register.id) ?? 0);
+    traffic.cashOutstanding = cashIn - (cashPickupMap.get(register.id) ?? 0);
 
     // Remove orders from the returned data (we only needed them for stats)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

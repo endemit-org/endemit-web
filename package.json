@@ -53,6 +53,7 @@
     "dotenv": "^17.4.0",
     "framer-motion": "^12.38.0",
     "inngest": "^4.2.4",
+    "jose": "^6.2.9",
     "nanoid": "^5.1.6",
     "next": "15.4.8",
     "next-intl": "^4.13.1",

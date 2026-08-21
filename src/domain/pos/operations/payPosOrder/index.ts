@@ -9,6 +9,7 @@ import {
 import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyOnPosTransaction";
 import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransactionEmail";
 import { bustOnPosOrderPaid } from "@/lib/services/cache";
+import { inngest } from "@/lib/services/inngest";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import { PosError } from "@/domain/pos/types/posError";
 import type { WalletTransaction } from "@prisma/client";
@@ -65,11 +66,26 @@ export async function payPosOrder(
       throw new PosError("WALLET_NOT_FOUND", "Wallet not found");
     }
 
-    // Separate items by direction and build descriptions
-    const creditItems = order.items.filter(i => i.item.direction === "CREDIT");
-    const debitItems = order.items.filter(i => i.item.direction === "DEBIT");
+    if (!order.register.acceptsWallet) {
+      throw new PosError(
+        "METHOD_NOT_ACCEPTED",
+        "This register does not accept wallet payments"
+      );
+    }
 
-    const creditTotal = creditItems.reduce((sum, i) => sum + i.total, 0);
+    // Top-up orders must be funded with physical tender (cash/card) — a
+    // wallet cannot fund its own top-up.
+    const hasCreditItems = order.items.some(
+      i => i.item.direction === "CREDIT"
+    );
+    if (hasCreditItems) {
+      throw new PosError(
+        "TOPUP_NOT_WALLET_PAYABLE",
+        "Top-up orders cannot be paid from the wallet"
+      );
+    }
+
+    const debitItems = order.items.filter(i => i.item.direction === "DEBIT");
     const debitTotal = debitItems.reduce((sum, i) => sum + i.total, 0) + tipAmount;
 
     const formatItemsDescription = (items: typeof order.items) =>
@@ -77,21 +93,6 @@ export async function payPosOrder(
 
     let currentBalance = wallet.balance;
     let lastTransaction: WalletTransaction | null = null;
-
-    // Process CREDIT items first (if any)
-    if (creditTotal > 0) {
-      currentBalance += creditTotal;
-      lastTransaction = await tx.walletTransaction.create({
-        data: {
-          walletId: wallet.id,
-          type: "CREDIT",
-          amount: creditTotal,
-          balanceAfter: currentBalance,
-          note: formatItemsDescription(creditItems),
-          posOrderId: order.id,
-        },
-      });
-    }
 
     // Process DEBIT items (if any)
     if (debitTotal > 0) {
@@ -117,6 +118,13 @@ export async function payPosOrder(
       });
     }
 
+    // A wallet payment with nothing to debit is a broken order (zero-priced
+    // items and no tip) — fail loudly here instead of crashing downstream
+    // where the transaction record is assumed to exist.
+    if (!lastTransaction) {
+      throw new PosError("ORDER_NOT_FOUND", "Order has no payable amount");
+    }
+
     // Update wallet balance
     await tx.wallet.update({
       where: { id: wallet.id },
@@ -135,32 +143,31 @@ export async function payPosOrder(
       });
     }
 
-    // Calculate total for the order record
-    const total = debitTotal - creditTotal;
-
     // Update order
     const paidAt = new Date();
     const updatedOrder = await tx.posOrder.update({
       where: { id: order.id },
       data: {
         status: "PAID",
+        paymentMethod: "WALLET",
         customerId,
         walletId: wallet.id,
         tipAmount,
-        total,
+        total: debitTotal,
         paidAt,
       },
     });
 
     return {
       order: updatedOrder,
-      transaction: lastTransaction!,
+      transaction: lastTransaction,
       wallet: { ...wallet, balance: currentBalance },
       paidAt,
       debitTotal,
       userName: wallet.user.name,
       userEmail: wallet.user.email,
       registerName: order.register.name,
+      hasTicketItems: order.items.some(i => i.item.ticketEventId),
     };
   });
 
@@ -176,6 +183,7 @@ export async function payPosOrder(
         shortCode: result.order.shortCode,
         total: result.order.total,
         tipAmount: result.order.tipAmount,
+        paymentMethod: "WALLET",
         paidAt: result.paidAt.toISOString(),
         balanceAfter: result.transaction.balanceAfter,
       }
@@ -189,6 +197,7 @@ export async function payPosOrder(
         shortCode: result.order.shortCode,
         total: result.order.total,
         tipAmount: result.order.tipAmount,
+        paymentMethod: "WALLET",
         paidAt: result.paidAt.toISOString(),
         balanceAfter: result.transaction.balanceAfter,
       }
@@ -225,12 +234,23 @@ export async function payPosOrder(
       orderId: result.order.id,
     }).catch(() => {});
 
+    // Ticket-linked items → durable ticket issuance to the buyer's account
+    const ticketIssue = result.hasTicketItems
+      ? inngest
+          .send({
+            name: "pos/tickets.issue",
+            data: { posOrderId: result.order.id },
+          })
+          .catch(() => {})
+      : Promise.resolve();
+
     await Promise.all([
       sellerBroadcast,
       customerBroadcast,
       walletBroadcast,
       discord,
       email,
+      ticketIssue,
       bustOnPosOrderPaid(customerId),
     ]);
   });

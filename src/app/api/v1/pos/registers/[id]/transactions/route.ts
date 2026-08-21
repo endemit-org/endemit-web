@@ -60,8 +60,10 @@ export async function GET(
     return NextResponse.json({
       transactions: orders.map(order => ({
         id: order.id,
+        orderHash: order.orderHash,
         shortCode: order.shortCode,
         status: order.status,
+        paymentMethod: order.paymentMethod,
         subtotal: order.subtotal,
         tipAmount: order.tipAmount,
         total: order.total,

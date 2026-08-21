@@ -2,7 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/services/prisma";
-import type { PosOrderStatus } from "@prisma/client";
+import type { PosOrderStatus, PosPaymentMethod } from "@prisma/client";
 import {
   DEFAULT_PAGE_SIZE,
   calculatePagination,
@@ -17,6 +17,7 @@ export interface PosOrderWithRelations {
   tipAmount: number;
   total: number;
   status: PosOrderStatus;
+  paymentMethod: PosPaymentMethod | null;
   scannedAt: string | null;
   paidAt: string | null;
   cancelledAt: string | null;
@@ -51,6 +52,7 @@ export interface GetAllPosOrdersParams {
   pageSize?: number;
   status?: PosOrderStatus;
   registerId?: string;
+  paymentMethod?: PosPaymentMethod;
   /** Matches order short code, customer name or customer email (partial, case-insensitive). */
   search?: string;
 }
@@ -68,12 +70,14 @@ async function getAllPosOrdersUncached({
   pageSize = DEFAULT_PAGE_SIZE,
   status,
   registerId,
+  paymentMethod,
   search,
 }: GetAllPosOrdersParams = {}): Promise<GetAllPosOrdersResult> {
   const searchTerm = search?.trim();
   const where = {
     ...(status && { status }),
     ...(registerId && { registerId }),
+    ...(paymentMethod && { paymentMethod }),
     ...(searchTerm && {
       OR: [
         { shortCode: { contains: searchTerm, mode: "insensitive" as const } },
@@ -138,6 +142,7 @@ async function getAllPosOrdersUncached({
     tipAmount: order.tipAmount,
     total: order.total,
     status: order.status,
+    paymentMethod: order.paymentMethod,
     scannedAt: order.scannedAt?.toISOString() ?? null,
     paidAt: order.paidAt?.toISOString() ?? null,
     cancelledAt: order.cancelledAt?.toISOString() ?? null,
@@ -170,12 +175,13 @@ export function getAllPosOrders(
     pageSize = DEFAULT_PAGE_SIZE,
     status = "",
     registerId = "",
+    paymentMethod = "",
     search = "",
   } = params;
 
   return unstable_cache(
     () => getAllPosOrdersUncached(params),
-    ["admin-pos-orders", String(page), String(pageSize), status, registerId, search.trim().toLowerCase()],
+    ["admin-pos-orders", String(page), String(pageSize), status, registerId, paymentMethod, search.trim().toLowerCase()],
     { tags: [CacheTags.admin.pos.orders()] }
   )();
 }

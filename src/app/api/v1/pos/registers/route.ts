@@ -43,6 +43,9 @@ export async function GET() {
         name: r.name,
         description: r.description,
         canTopUp: r.canTopUp,
+        acceptsWallet: r.acceptsWallet,
+        acceptsCash: r.acceptsCash,
+        acceptsCard: r.acceptsCard,
         itemCount: r.items.length,
         pendingOrders: r._count.orders,
       }));

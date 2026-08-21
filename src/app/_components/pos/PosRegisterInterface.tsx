@@ -28,6 +28,7 @@ interface PosItem {
   cost: number;
   direction: "CREDIT" | "DEBIT";
   color: string | null;
+  isTicket?: boolean;
 }
 
 interface PosOrderSummary {
@@ -40,13 +41,21 @@ interface PosOrderSummary {
   scannedAt: string | null;
   expiresAt: string;
   createdAt: string;
-  items: Array<{ itemId: string; name: string; quantity: number; total: number }>;
+  items: Array<{
+    itemId: string;
+    name: string;
+    quantity: number;
+    total: number;
+    direction?: "CREDIT" | "DEBIT";
+    isTicket?: boolean;
+  }>;
   customerName?: string;
   customerFirstName?: string | null;
   customerImage?: string | null;
   customerBalance?: number;
   hasEnoughBalance?: boolean;
   tipAmount?: number;
+  paymentMethod?: "WALLET" | "CASH" | "CARD";
   paidAt?: string;
 }
 
@@ -60,6 +69,9 @@ interface Props {
     id: string;
     name: string;
     canTopUp: boolean;
+    acceptsWallet: boolean;
+    acceptsCash: boolean;
+    acceptsCard: boolean;
   };
   items: PosItem[];
   initialPendingOrders: PosOrderSummary[];
@@ -150,6 +162,7 @@ export function PosRegisterInterface({
                 ...prev,
                 status: "PAID",
                 tipAmount: payload.tipAmount,
+                paymentMethod: payload.paymentMethod,
                 paidAt: payload.paidAt,
                 customerBalance: payload.balanceAfter,
               }
@@ -232,6 +245,9 @@ export function PosRegisterInterface({
           name: i.name,
           quantity: i.quantity,
           total: i.total,
+          // API response has no direction/ticket flag — the cart does
+          direction: cart.find(c => c.item.id === i.itemId)?.item.direction,
+          isTicket: cart.find(c => c.item.id === i.itemId)?.item.isTicket,
         })),
       };
 
@@ -607,6 +623,7 @@ export function PosRegisterInterface({
       {activeOrder && (
         <PosOrderQrModal
           order={activeOrder}
+          register={register}
           onClose={() => setActiveOrder(null)}
           onCopyToCart={() => copyToCart(activeOrder)}
         />

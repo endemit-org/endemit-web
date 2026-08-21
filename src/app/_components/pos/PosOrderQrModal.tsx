@@ -9,6 +9,7 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import Image from "next/image";
 import { type StickerScanResult } from "./PosStickerScanView";
 import { PaymentConfirmView } from "@/app/_components/payment/PaymentConfirmView";
+import { PosMethodConfirmView } from "./PosMethodConfirmView";
 import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
@@ -37,6 +38,8 @@ interface PosOrderSummary {
     name: string;
     quantity: number;
     total: number;
+    direction?: "CREDIT" | "DEBIT";
+    isTicket?: boolean;
   }>;
   customerName?: string;
   customerFirstName?: string | null;
@@ -44,20 +47,39 @@ interface PosOrderSummary {
   customerBalance?: number;
   hasEnoughBalance?: boolean;
   tipAmount?: number;
+  paymentMethod?: "WALLET" | "CASH" | "CARD";
   paidAt?: string;
+}
+
+interface RegisterConfig {
+  acceptsWallet: boolean;
+  acceptsCash: boolean;
+  acceptsCard: boolean;
 }
 
 interface Props {
   order: PosOrderSummary;
+  register: RegisterConfig;
   onClose: () => void;
   onCopyToCart: () => void;
 }
 
 const AUTO_CLOSE_SECONDS = 30;
 
-type SubView = "qr" | "sticker-scan" | "customer-confirm";
+type SubView =
+  | "qr"
+  | "sticker-scan"
+  | "customer-confirm"
+  | "method-select"
+  | "cash-confirm"
+  | "card-confirm";
 
-export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
+export function PosOrderQrModal({
+  order,
+  register,
+  onClose,
+  onCopyToCart,
+}: Props) {
   const t = useTranslations("pos");
   const tw = useTranslations("profile.walletPay");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -65,7 +87,30 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
     null
   );
-  const [subView, setSubView] = useState<SubView>("sticker-scan");
+  // Top-up orders always scan first (wallet to credit); sales go straight
+  // into their single enabled method, or to the method chooser.
+  const hasTopUpItems = order.items.some(i => i.direction === "CREDIT");
+  const hasTicketItems = order.items.some(i => i.isTicket);
+  const saleMethods: Array<"WALLET" | "CASH" | "CARD"> = [
+    ...(register.acceptsWallet ? (["WALLET"] as const) : []),
+    ...(register.acceptsCash ? (["CASH"] as const) : []),
+    ...(register.acceptsCard ? (["CARD"] as const) : []),
+  ];
+  const fundingMethods: Array<"CASH" | "CARD"> = [
+    ...(register.acceptsCash ? (["CASH"] as const) : []),
+    ...(register.acceptsCard ? (["CARD"] as const) : []),
+  ];
+
+  const initialSubView = (): SubView => {
+    if (hasTopUpItems) return "sticker-scan";
+    if (saleMethods.length === 1) {
+      if (saleMethods[0] === "WALLET") return "sticker-scan";
+      return saleMethods[0] === "CASH" ? "cash-confirm" : "card-confirm";
+    }
+    return "method-select";
+  };
+
+  const [subView, setSubView] = useState<SubView>(initialSubView);
   const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
     null
   );
@@ -174,18 +219,66 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
   // Mid-payment the cross asks for confirmation instead of closing outright
   const handleCloseRequest = useCallback(() => {
     if (isPaying) return;
-    if (!isPaid && subView === "customer-confirm" && stickerScan) {
+    const inPaymentStep =
+      (subView === "customer-confirm" && stickerScan) ||
+      subView === "cash-confirm" ||
+      subView === "card-confirm";
+    if (!isPaid && inPaymentStep) {
       setShowCancelConfirm(true);
       return;
     }
     onClose();
   }, [isPaying, isPaid, subView, stickerScan, onClose]);
 
-  const handleStickerScanned = useCallback((result: StickerScanResult) => {
-    setStickerScan(result);
-    setSubView("customer-confirm");
-    setPayError(null);
-  }, []);
+  const handleStickerScanned = useCallback(
+    (result: StickerScanResult) => {
+      setStickerScan(result);
+      setPayError(null);
+      if (hasTopUpItems) {
+        // Wallet identified — now pick the physical tender funding the top-up
+        if (fundingMethods.length === 1) {
+          setSubView(
+            fundingMethods[0] === "CASH" ? "cash-confirm" : "card-confirm"
+          );
+        } else {
+          setSubView("method-select");
+        }
+      } else {
+        setSubView("customer-confirm");
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [hasTopUpItems, register.acceptsCash, register.acceptsCard]
+  );
+
+  const handleMarkPaid = useCallback(
+    async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
+      if (isPaying) return;
+      setIsPaying(true);
+      setPayError(null);
+      try {
+        const response = await fetch(
+          `/api/v1/pos/orders/${order.orderHash}/mark-paid`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ method, tipAmount, buyerEmail }),
+          }
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          const key = posErrorMessageKey(data.errorCode);
+          throw new Error(key ? tw(`errors.${key}`) : tw("paymentFailed"));
+        }
+        // The pos_order_paid broadcast flips the modal to the paid screen
+      } catch (err) {
+        setPayError(err instanceof Error ? err.message : tw("paymentFailed"));
+      } finally {
+        setIsPaying(false);
+      }
+    },
+    [order.orderHash, isPaying, tw]
+  );
 
   const handlePay = useCallback(
     async (tipAmount: number) => {
@@ -293,9 +386,18 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3">
+              <h3 className="text-xl font-semibold text-white mb-1">
                 {t("orders.paymentReceived")}
               </h3>
+              {order.paymentMethod && (
+                <p className="text-xs uppercase tracking-widest text-white/70 mb-3">
+                  {order.paymentMethod === "WALLET"
+                    ? t("methods.wallet")
+                    : order.paymentMethod === "CASH"
+                      ? t("methods.cash")
+                      : t("methods.card")}
+                </p>
+              )}
               {hasTip ? (
                 <div className="flex items-end justify-center gap-4">
                   <div className="text-center">
@@ -474,6 +576,65 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
                 ))}
               </div>
             </div>
+          ) : subView === "method-select" ? (
+            <div className="py-2">
+              <p className="text-center text-sm text-gray-500 mb-4">
+                {t("methods.selectPrompt")}
+              </p>
+              <div className="space-y-3">
+                {!hasTopUpItems && register.acceptsWallet && (
+                  <button
+                    onClick={() => setSubView("sticker-scan")}
+                    className="w-full flex items-center gap-3 px-4 py-4 rounded-xl border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-800 font-semibold"
+                  >
+                    <span className="text-2xl">📱</span>
+                    {t("methods.wallet")}
+                  </button>
+                )}
+                {register.acceptsCash && (
+                  <button
+                    onClick={() => setSubView("cash-confirm")}
+                    className="w-full flex items-center gap-3 px-4 py-4 rounded-xl border-2 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold"
+                  >
+                    <span className="text-2xl">💶</span>
+                    {t("methods.cash")}
+                  </button>
+                )}
+                {register.acceptsCard && (
+                  <button
+                    onClick={() => setSubView("card-confirm")}
+                    className="w-full flex items-center gap-3 px-4 py-4 rounded-xl border-2 border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-800 font-semibold"
+                  >
+                    <span className="text-2xl">💳</span>
+                    {t("methods.card")}
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : subView === "cash-confirm" || subView === "card-confirm" ? (
+            <PosMethodConfirmView
+              method={subView === "cash-confirm" ? "CASH" : "CARD"}
+              items={order.items}
+              subtotal={order.subtotal}
+              showEmailField={hasTicketItems}
+              isProcessing={isPaying}
+              error={payError}
+              onConfirm={(tipAmount, buyerEmail) =>
+                handleMarkPaid(
+                  subView === "cash-confirm" ? "CASH" : "CARD",
+                  tipAmount,
+                  buyerEmail
+                )
+              }
+              onBack={() => {
+                setPayError(null);
+                const choices = hasTopUpItems
+                  ? fundingMethods.length
+                  : saleMethods.length;
+                if (choices > 1) setSubView("method-select");
+                else onClose();
+              }}
+            />
           ) : subView === "sticker-scan" ? (
             <PosStickerScanView
               orderHash={order.orderHash}
@@ -514,7 +675,7 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         </div>
 
         {/* Actions */}
-        {!isPaid && subView === "sticker-scan" && (
+        {!isPaid && (subView === "sticker-scan" || subView === "method-select") && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
             {/* Hidden for now — sticker scan is the only offered flow.
             <button
@@ -551,13 +712,21 @@ export function PosOrderQrModal({ order, onClose, onCopyToCart }: Props) {
         )}
 
         {isPaid && (
-          <div className="px-6 py-4 border-t border-white/20">
+          <div className="px-6 py-4 border-t border-white/20 space-y-2">
             <button
               onClick={onClose}
               className="w-full px-4 py-2 bg-white text-emerald-700 font-semibold rounded-lg hover:bg-white/90"
             >
               {t("orders.continue")}
             </button>
+            <a
+              href={`/pos/receipt/${order.orderHash}`}
+              target="_blank"
+              rel="noopener"
+              className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10"
+            >
+              {t("orders.printReceipt")}
+            </a>
             {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
               <p className="text-center text-sm text-white/70 mt-2">
                 {t("orders.closingIn", { count: autoCloseCountdown })}

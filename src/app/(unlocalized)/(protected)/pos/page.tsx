@@ -39,6 +39,7 @@ export default async function PosPage() {
           orders: {
             where: { status: "PAID" },
             select: {
+              paymentMethod: true,
               items: {
                 select: {
                   total: true,
@@ -74,14 +75,16 @@ export default async function PosPage() {
     .map(a => {
       const paidOrders = a.register.orders;
       let salesRevenue = 0;
-      let topUpsProcessed = 0;
+      let cashIn = 0;
 
       for (const order of paidOrders) {
         for (const item of order.items) {
           if (item.item.direction === "DEBIT") {
             salesRevenue += item.total;
-          } else {
-            topUpsProcessed += item.total;
+          }
+          // Drawer: everything paid in physical cash (sales + top-ups)
+          if (order.paymentMethod === "CASH") {
+            cashIn += item.total;
           }
         }
       }
@@ -90,8 +93,7 @@ export default async function PosPage() {
         ...a.register,
         stats: {
           salesRevenue,
-          topUpsProcessed:
-            topUpsProcessed - (cashPickupMap.get(a.registerId) ?? 0),
+          topUpsProcessed: cashIn - (cashPickupMap.get(a.registerId) ?? 0),
           tips: a.register.tipPool,
           sales: paidOrders.length,
         },

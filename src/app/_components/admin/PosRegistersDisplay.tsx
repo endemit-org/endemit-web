@@ -92,7 +92,16 @@ export default function PosRegistersDisplay({
       description: (formData.get("description") as string) || undefined,
       status: formData.get("status") as PosRegisterStatus,
       canTopUp: formData.get("canTopUp") === "true",
+      acceptsWallet: formData.get("acceptsWallet") === "true",
+      acceptsCash: formData.get("acceptsCash") === "true",
+      acceptsCard: formData.get("acceptsCard") === "true",
+      fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
     };
+
+    if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
+      window.alert(t("atLeastOneMethod"));
+      return;
+    }
 
     startTransition(async () => {
       const register = await createPosRegisterAction(input);
@@ -125,7 +134,16 @@ export default function PosRegistersDisplay({
       description: (formData.get("description") as string) || null,
       status: formData.get("status") as PosRegisterStatus,
       canTopUp: formData.get("canTopUp") === "true",
+      acceptsWallet: formData.get("acceptsWallet") === "true",
+      acceptsCash: formData.get("acceptsCash") === "true",
+      acceptsCard: formData.get("acceptsCard") === "true",
+      fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
     };
+
+    if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
+      window.alert(t("atLeastOneMethod"));
+      return;
+    }
 
     startTransition(async () => {
       const updated = await updatePosRegisterAction(input);
@@ -359,6 +377,56 @@ export default function PosRegistersDisplay({
             </span>
           </label>
         </div>
+
+        <div className="sm:col-span-2 border-t pt-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            {t("paymentMethods")}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                name="acceptsWallet"
+                type="checkbox"
+                value="true"
+                defaultChecked={register ? register.acceptsWallet : true}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">{t("acceptsWallet")}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                name="acceptsCash"
+                type="checkbox"
+                value="true"
+                defaultChecked={register?.acceptsCash}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">{t("acceptsCash")}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                name="acceptsCard"
+                type="checkbox"
+                value="true"
+                defaultChecked={register?.acceptsCard}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">{t("acceptsCard")}</span>
+            </label>
+          </div>
+          <label className="flex items-center gap-2 mt-3">
+            <input
+              name="fiscalizeInvoices"
+              type="checkbox"
+              value="true"
+              defaultChecked={register?.fiscalizeInvoices}
+              className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+            />
+            <span className="text-sm text-gray-700">
+              {t("fiscalizeInvoices")}
+            </span>
+          </label>
+        </div>
       </div>
 
       <div className="flex justify-end gap-3">
@@ -586,6 +654,28 @@ export default function PosRegistersDisplay({
             </div>
 
             <div className="p-4 space-y-3 text-sm">
+              <div className="flex flex-wrap gap-1">
+                {register.acceptsWallet && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                    {t("methodWallet")}
+                  </span>
+                )}
+                {register.acceptsCash && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                    {t("methodCash")}
+                  </span>
+                )}
+                {register.acceptsCard && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+                    {t("methodCard")}
+                  </span>
+                )}
+                {register.fiscalizeInvoices && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">
+                    {t("fiscalBadge")}
+                  </span>
+                )}
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">{t("cardItemsSellers")}</span>
                 <span className="font-medium">

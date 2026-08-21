@@ -43,11 +43,12 @@ export async function createPosPayout(
       outstanding = register.tipPool;
     } else {
       const [topUpAgg, pickupAgg] = await Promise.all([
+        // Drawer contents: all CASH-method order items (top-ups + sales,
+        // tips excluded — they live in tipPool)
         tx.posOrderItem.aggregate({
           _sum: { total: true },
           where: {
-            order: { registerId, status: "PAID" },
-            item: { direction: "CREDIT" },
+            order: { registerId, status: "PAID", paymentMethod: "CASH" },
           },
         }),
         tx.posPayout.aggregate({

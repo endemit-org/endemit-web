@@ -7,8 +7,10 @@ import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface PosTransaction {
   id: string;
+  orderHash: string;
   shortCode: string;
   status: "PENDING" | "PAID" | "CANCELLED";
+  paymentMethod: "WALLET" | "CASH" | "CARD" | null;
   subtotal: number;
   tipAmount: number;
   total: number;
@@ -124,6 +126,19 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                     >
                       {tx.status}
                     </span>
+                    {tx.paymentMethod && (
+                      <span
+                        className={`inline-flex px-1.5 py-0.5 text-[10px] font-semibold rounded-full ${
+                          tx.paymentMethod === "WALLET"
+                            ? "bg-blue-100 text-blue-700"
+                            : tx.paymentMethod === "CASH"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {tx.paymentMethod}
+                      </span>
+                    )}
                   </div>
                   <div className="text-right whitespace-nowrap">
                     <span className="font-semibold text-gray-900">
@@ -145,10 +160,22 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                   {tx.sellerName && <span>{tx.sellerName}</span>}
                 </div>
 
-                <div className="text-gray-600">
-                  {tx.items
-                    .map(item => `${item.quantity}x ${item.name}`)
-                    .join(", ")}
+                <div className="flex items-end justify-between gap-2">
+                  <div className="text-gray-600">
+                    {tx.items
+                      .map(item => `${item.quantity}x ${item.name}`)
+                      .join(", ")}
+                  </div>
+                  {tx.status === "PAID" && (
+                    <a
+                      href={`/pos/receipt/${tx.orderHash}`}
+                      target="_blank"
+                      rel="noopener"
+                      className="text-blue-600 hover:text-blue-800 whitespace-nowrap"
+                    >
+                      {t("print")}
+                    </a>
+                  )}
                 </div>
               </div>
             ))}

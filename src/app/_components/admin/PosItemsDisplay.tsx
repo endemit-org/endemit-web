@@ -11,13 +11,18 @@ import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 interface Props {
   initialItems: PosItemWithSalesCount[];
   canWrite: boolean;
+  eventOptions: Array<{ id: string; name: string }>;
 }
 
 function formatPrice(cents: number | undefined | null): string {
   return formatTokensFromCents(cents ?? 0);
 }
 
-export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
+export default function PosItemsDisplay({
+  initialItems,
+  canWrite,
+  eventOptions,
+}: Props) {
   const t = useTranslations("admin.pos.items");
   const tc = useTranslations("admin.common");
   const [items, setItems] = useState<PosItemWithSalesCount[]>(initialItems);
@@ -32,6 +37,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       cost: Math.round(parseFloat(formData.get("cost") as string) * 100),
       direction: formData.get("direction") as PosItemDirection,
       color: (formData.get("color") as string) || null,
+      ticketEventId: (formData.get("ticketEventId") as string) || null,
       status: formData.get("status") as PosItemStatus,
     };
 
@@ -52,6 +58,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       cost: Math.round(parseFloat(formData.get("cost") as string) * 100),
       direction: formData.get("direction") as PosItemDirection,
       color: (formData.get("color") as string) || null,
+      ticketEventId: (formData.get("ticketEventId") as string) || null,
       status: formData.get("status") as PosItemStatus,
     };
 
@@ -155,6 +162,25 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
 
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700">
+            {t("fieldTicketEvent")}
+          </label>
+          <select
+            name="ticketEventId"
+            defaultValue={item?.ticketEventId ?? ""}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">{t("ticketEventNone")}</option>
+            {eventOptions.map(event => (
+              <option key={event.id} value={event.id}>
+                {event.name}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">{t("ticketEventHint")}</p>
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium text-gray-700">
             {t("fieldDescription")}
           </label>
           <input
@@ -249,6 +275,13 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                       />
                     )}
                     {item.name}
+                    {item.ticketEventId && (
+                      <span className="inline-flex px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700">
+                        🎫{" "}
+                        {eventOptions.find(e => e.id === item.ticketEventId)
+                          ?.name ?? t("ticketBadge")}
+                      </span>
+                    )}
                   </div>
                   {item.description && (
                     <div className="text-sm text-gray-500">
