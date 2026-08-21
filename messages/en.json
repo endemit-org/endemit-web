@@ -2004,6 +2004,9 @@
     }
   },
   "pos": {
+    "stats": {
+      "label": "Stats"
+    },
     "transactions": {
       "title": "Last Transactions",
       "loading": "Loading transactions…",
