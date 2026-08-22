@@ -2089,7 +2089,19 @@
       "tipSuffix": "napitnina",
       "print": "Natisni",
       "printQueued": "Poslano ✓",
-      "slip": "Potrdilo"
+      "slip": "Potrdilo",
+      "loadMore": "Naloži več",
+      "detail": {
+        "paidBy": "Plačal/a",
+        "unknownCustomer": "Neznana stranka",
+        "method": "Način plačila",
+        "seller": "Prodajalec",
+        "created": "Ustvarjeno",
+        "paid": "Plačano",
+        "cancelled": "Preklicano",
+        "tip": "Napitnina",
+        "total": "Skupaj"
+      }
     },
     "balanceCheck": {
       "label": "Stanje",

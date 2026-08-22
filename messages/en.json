@@ -2089,7 +2089,19 @@
       "tipSuffix": "tip",
       "print": "Print",
       "printQueued": "Sent ✓",
-      "slip": "Slip"
+      "slip": "Slip",
+      "loadMore": "Load more",
+      "detail": {
+        "paidBy": "Paid by",
+        "unknownCustomer": "Unknown customer",
+        "method": "Payment method",
+        "seller": "Seller",
+        "created": "Created",
+        "paid": "Paid",
+        "cancelled": "Cancelled",
+        "tip": "Tip",
+        "total": "Total"
+      }
     },
     "balanceCheck": {
       "label": "Balance",

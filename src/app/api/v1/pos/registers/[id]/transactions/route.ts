@@ -23,6 +23,7 @@ export async function GET(
     }
 
     const { id } = await params;
+    const cursor = new URL(request.url).searchParams.get("cursor");
 
     const assignment = await prisma.posRegisterSeller.findUnique({
       where: {
@@ -42,8 +43,11 @@ export async function GET(
 
     const orders = await prisma.posOrder.findMany({
       where: { registerId: id },
-      orderBy: { createdAt: "desc" },
-      take: TRANSACTIONS_SHOWN,
+      // Stable tiebreaker so cursor pagination can't skip/duplicate rows
+      // created in the same millisecond.
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: TRANSACTIONS_SHOWN + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       include: {
         items: {
           select: { name: true, quantity: true, total: true },
@@ -57,8 +61,12 @@ export async function GET(
       },
     });
 
+    const hasMore = orders.length > TRANSACTIONS_SHOWN;
+    const pageOrders = hasMore ? orders.slice(0, TRANSACTIONS_SHOWN) : orders;
+
     return NextResponse.json({
-      transactions: orders.map(order => ({
+      nextCursor: hasMore ? pageOrders[pageOrders.length - 1].id : null,
+      transactions: pageOrders.map(order => ({
         id: order.id,
         orderHash: order.orderHash,
         shortCode: order.shortCode,
