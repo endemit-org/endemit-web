@@ -2076,7 +2076,8 @@
       "disclaimer": "To ni davčno potrjen račun.",
       "thanks": "Hvala!",
       "ticketsHeading": "Vstopnice",
-      "ticketsHint": "Pokaži to QR kodo na vhodu."
+      "ticketsHint": "Pokaži to QR kodo na vhodu.",
+      "vatClause": "DDV ni obračunan na podlagi 1. odstavka 94. člena ZDDV-1."
     },
     "transactions": {
       "title": "Zadnje transakcije",

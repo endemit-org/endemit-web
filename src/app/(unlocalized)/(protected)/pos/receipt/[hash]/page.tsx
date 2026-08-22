@@ -242,14 +242,9 @@ export default async function PosReceiptPage({
                 height={160}
               />
             )}
-            {/* Legally required VAT-exemption clause (mali davčni zavezanec) —
-                fixed statutory wording, always in both languages */}
+            {/* Legally required VAT-exemption clause (mali davčni zavezanec) */}
             <div className="mt-2 text-[10px] text-center">
-              DDV ni obračunan na podlagi 1. odstavka 94. člena ZDDV-1.
-            </div>
-            <div className="text-[10px] text-center">
-              VAT not charged pursuant to Article 94(1) of the Slovenian VAT
-              Act (ZDDV-1).
+              {t("vatClause")}
             </div>
           </>
         )}

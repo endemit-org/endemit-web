@@ -29,6 +29,22 @@ function divider(): string {
   return "-".repeat(COLS);
 }
 
+/** Word-wrap text to the column width. */
+function wrap(content: string): string[] {
+  const lines: string[] = [];
+  let current = "";
+  for (const word of content.split(/\s+/)) {
+    if (current.length + word.length + 1 > COLS && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = current ? `${current} ${word}` : word;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
 export interface EposReceiptData {
   registerName: string;
   queueNumber?: number | null;
@@ -55,6 +71,7 @@ export interface EposReceiptData {
     disclaimer: string;
     thanks: string;
     ticketsHint: string;
+    vatClause: string;
   };
   fiscal?: {
     zoi: string;
@@ -146,10 +163,9 @@ export function buildReceiptEposXml(data: EposReceiptData): string {
     parts.push(qrSymbol(data.fiscal.qrValue, 4));
     parts.push(`<feed unit="8"/>`);
     if (data.vatClause) {
-      parts.push(text("DDV ni obračunan na podlagi 1. odstavka"));
-      parts.push(text("94. člena ZDDV-1."));
-      parts.push(text("VAT not charged pursuant to Article 94(1)"));
-      parts.push(text("of the Slovenian VAT Act (ZDDV-1)."));
+      for (const clauseLine of wrap(data.labels.vatClause)) {
+        parts.push(text(clauseLine));
+      }
     }
     parts.push(`<text align="left"/>`);
   } else {

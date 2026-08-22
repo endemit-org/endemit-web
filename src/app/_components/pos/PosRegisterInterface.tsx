@@ -552,14 +552,18 @@ export function PosRegisterInterface({
           </svg>
           {t("stats.label")}
         </button>
-        <div className="flex-1 min-h-0 overflow-auto">
-          <PosOrderQueue
-            orders={pendingOrders}
-            onSelectOrder={setActiveOrder}
-            onCancelOrder={cancelOrder}
-            selectedOrderId={activeOrder?.id}
-          />
-        </div>
+        {/* Empty pending queue hides entirely — space goes to the other
+            sections */}
+        {pendingOrders.length > 0 && (
+          <div className="flex-1 min-h-0 overflow-auto">
+            <PosOrderQueue
+              orders={pendingOrders}
+              onSelectOrder={setActiveOrder}
+              onCancelOrder={cancelOrder}
+              selectedOrderId={activeOrder?.id}
+            />
+          </div>
+        )}
         {register.trackFulfillment && (
           <div className="flex-1 min-h-0 border-t flex flex-col">
             <div className="px-4 py-2 bg-orange-50 border-b text-sm font-medium text-orange-800">
@@ -574,9 +578,7 @@ export function PosRegisterInterface({
             </div>
           </div>
         )}
-        <div
-          className={`border-t ${register.trackFulfillment ? "flex-1 min-h-0" : "h-1/2"}`}
-        >
+        <div className="flex-1 min-h-0 border-t">
           <PosRecentTransactions
             registerId={register.id}
             refreshKey={txRefreshKey}
@@ -622,19 +624,19 @@ export function PosRegisterInterface({
               </svg>
               {t("stats.label")}
             </button>
-            <div
-              className={`overflow-auto ${register.trackFulfillment ? "flex-1 min-h-0" : "h-1/2"}`}
-            >
-              <PosOrderQueue
-                orders={pendingOrders}
-                onSelectOrder={order => {
-                  setActiveOrder(order);
-                  setIsSidebarOpen(false);
-                }}
-                onCancelOrder={cancelOrder}
-                selectedOrderId={activeOrder?.id}
-              />
-            </div>
+            {pendingOrders.length > 0 && (
+              <div className="flex-1 min-h-0 overflow-auto">
+                <PosOrderQueue
+                  orders={pendingOrders}
+                  onSelectOrder={order => {
+                    setActiveOrder(order);
+                    setIsSidebarOpen(false);
+                  }}
+                  onCancelOrder={cancelOrder}
+                  selectedOrderId={activeOrder?.id}
+                />
+              </div>
+            )}
             {register.trackFulfillment && (
               <div className="flex-1 min-h-0 border-t flex flex-col">
                 <div className="px-4 py-2 bg-orange-50 border-b text-sm font-medium text-orange-800">

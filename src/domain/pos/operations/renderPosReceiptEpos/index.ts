@@ -122,6 +122,7 @@ export async function renderPosReceiptEpos(
       disclaimer: t("disclaimer"),
       thanks: t("thanks"),
       ticketsHint: t("ticketsHint"),
+      vatClause: t("vatClause"),
     },
     fiscal:
       fiscalInvoice && FURS_TAX_NUMBER
