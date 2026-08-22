@@ -312,12 +312,24 @@ export default function PosOrdersDisplay({
                   <ClientDate date={order.createdAt} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <button
-                    onClick={() => setSelectedOrder(order)}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    {t("details")}
-                  </button>
+                  <div className="flex items-center justify-end gap-3">
+                    {order.status === "PAID" && (
+                      <a
+                        href={`/pos/receipt/${order.orderHash}`}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-gray-500 hover:text-gray-800"
+                      >
+                        {t("receipt")}
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      {t("details")}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -480,6 +492,17 @@ export default function PosOrdersDisplay({
                   <span>{formatPrice(selectedOrder.total)}</span>
                 </div>
               </div>
+
+              {selectedOrder.status === "PAID" && (
+                <a
+                  href={`/pos/receipt/${selectedOrder.orderHash}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="block w-full px-4 py-2 text-center border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
+                >
+                  {t("receipt")}
+                </a>
+              )}
 
               {canManage && (
                 <div className="border-t pt-4 space-y-3">

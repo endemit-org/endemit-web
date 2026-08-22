@@ -1444,7 +1444,8 @@
         "allMethods": "Vsi načini",
         "methodWallet": "Denarnca",
         "methodCash": "Gotovina",
-        "methodCard": "Kartica"
+        "methodCard": "Kartica",
+        "receipt": "Račun"
       },
       "registers": {
         "title": "POS blagajne",

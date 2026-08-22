@@ -1444,7 +1444,8 @@
         "allMethods": "All methods",
         "methodWallet": "Wallet",
         "methodCash": "Cash",
-        "methodCard": "Card"
+        "methodCard": "Card",
+        "receipt": "Receipt"
       },
       "registers": {
         "title": "POS Registers",
