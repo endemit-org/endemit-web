@@ -1182,7 +1182,8 @@
         "guest": "Gost"
       },
       "pendingTickets": "Karte v čakanju ({count})",
-      "scannedTickets": "Skenirane karte ({count})"
+      "scannedTickets": "Skenirane karte ({count})",
+      "pastEvents": "Pretekli eventi"
     },
     "tickets": {
       "backToEvent": "Nazaj na event",

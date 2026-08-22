@@ -1182,7 +1182,8 @@
         "guest": "Guest"
       },
       "pendingTickets": "Pending Tickets ({count})",
-      "scannedTickets": "Scanned Tickets ({count})"
+      "scannedTickets": "Scanned Tickets ({count})",
+      "pastEvents": "Past events"
     },
     "tickets": {
       "backToEvent": "Back to Event",
