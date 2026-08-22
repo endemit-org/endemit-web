@@ -84,40 +84,37 @@ const DiscordBanner: FC<DiscordBannerProps> = ({ slice, context }) => {
         href={inviteUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="group relative block overflow-hidden rounded-xl bg-gradient-to-br from-[#5865F2] to-[#3c45b5] p-6 sm:p-8 transition-transform duration-300 hover:scale-[1.01]"
+        className="group relative block overflow-hidden rounded-lg border border-[#5865F2]/25 bg-neutral-900/80 p-6 sm:p-8 transition-colors hover:border-[#5865F2]/50"
       >
         {/* Oversized faded mark bleeding off the right edge */}
-        <DiscordMark className="pointer-events-none absolute -right-8 -bottom-10 w-48 sm:w-64 text-white/10 rotate-[-8deg] transition-transform duration-500 group-hover:rotate-0" />
+        <DiscordMark className="pointer-events-none absolute -right-8 -bottom-10 w-48 sm:w-64 text-[#5865F2]/[0.07]" />
 
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <DiscordMark className="w-8 h-8 text-white flex-shrink-0" />
+              <DiscordMark className="w-7 h-7 text-[#8a94f5] flex-shrink-0" />
               {title && (
-                <h2 className="text-2xl sm:text-3xl font-heading uppercase tracking-wider text-white">
+                <h2 className="text-xl sm:text-2xl font-heading uppercase tracking-wider text-neutral-200">
                   {title}
                 </h2>
               )}
             </div>
             {description && (
-              <p className="text-white/80 text-sm sm:text-base max-w-xl">
+              <p className="text-neutral-400 text-sm sm:text-base max-w-xl">
                 {description}
               </p>
             )}
             {onlineCount !== null && (
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-black/25 px-3 py-1 text-xs font-medium text-white">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
-                </span>
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-neutral-800/80 px-3 py-1 text-xs font-medium text-neutral-300">
+                <span className="inline-flex h-2 w-2 rounded-full bg-green-500/80" />
                 {t("onlineNow", { count: onlineCount })}
               </div>
             )}
           </div>
 
           <div className="flex-shrink-0">
-            <span className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-[#5865F2] shadow-lg transition-colors group-hover:bg-neutral-100">
-              <DiscordMark className="w-5 h-5" />
+            <span className="inline-flex items-center gap-2 rounded-lg bg-[#5865F2]/70 px-5 py-2.5 text-sm font-medium text-white transition-colors group-hover:bg-[#5865F2]/90">
+              <DiscordMark className="w-4 h-4" />
               {t("join")}
             </span>
           </div>
