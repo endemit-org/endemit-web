@@ -31,6 +31,15 @@ interface CreateDoorSaleTicketsInput {
    * the door-sale placeholder name.
    */
   ticketHolders?: Array<{ name: string }>;
+  /**
+   * POS register sales: link the backing order to a user account (wallet
+   * buyers see the tickets in their profile) and stamp the POS order id on
+   * each ticket (reversal + receipt QR rendering).
+   */
+  userId?: string;
+  posOrderId?: string;
+  /** Holder name for all tickets when ticketHolders is not used. */
+  holderName?: string;
 }
 
 export const createDoorSaleTickets = async ({
@@ -42,6 +51,9 @@ export const createDoorSaleTickets = async ({
   createdByUserId,
   markScanned = true,
   ticketHolders,
+  userId,
+  posOrderId,
+  holderName: defaultHolderName,
 }: CreateDoorSaleTicketsInput) => {
   const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 16);
   const doorSaleSessionId = `doorsale_${nanoid()}`;
@@ -57,6 +69,7 @@ export const createDoorSaleTickets = async ({
         stripeSession: doorSaleSessionId,
         name: `Door Sale x${ticketCount}`,
         email,
+        ...(userId && { userId }),
         subtotal: totalAmount / 100,
         totalAmount: totalAmount / 100,
         shippingAmount: 0,
@@ -78,7 +91,9 @@ export const createDoorSaleTickets = async ({
 
     for (let i = 0; i < ticketCount; i++) {
       const holderName =
-        ticketHolders?.[i]?.name?.trim() || DOOR_SALE_PLACEHOLDER_NAME;
+        ticketHolders?.[i]?.name?.trim() ||
+        defaultHolderName?.trim() ||
+        DOOR_SALE_PLACEHOLDER_NAME;
       const shortId = await generateShortId();
       const ticketPayload: TicketPayload = {
         eventId,
@@ -106,12 +121,14 @@ export const createDoorSaleTickets = async ({
           qrContent: JSON.parse(JSON.stringify(qrContent)),
           isGuestList: false,
           isDoorSale: true,
+          ...(posOrderId && { posOrderId }),
           status: markScanned ? "SCANNED" : "PENDING",
           scanCount: markScanned ? 1 : 0,
           attended: markScanned,
           metadata: {
             createdByUserId,
             isDoorSale: true,
+            ...(posOrderId && { posOrderId }),
           },
         },
       });

@@ -64,6 +64,19 @@ export const WALLET_RECEIVE_SECRET = process.env.WALLET_RECEIVE_SECRET!;
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
 export const VERCEL_DEPLOY_HOOK_URL = process.env.VERCEL_DEPLOY_HOOK_URL;
 
+// FURS fiscal verification (ZDavPR) — all optional until fiscalization is
+// enabled on a register
+export const FURS_CERT_P12_BASE64 = process.env.FURS_CERT_P12_BASE64;
+export const FURS_CERT_PASSPHRASE = process.env.FURS_CERT_PASSPHRASE;
+export const FURS_TAX_NUMBER = process.env.FURS_TAX_NUMBER;
+export const FURS_PREMISE_ID = process.env.FURS_PREMISE_ID;
+export const FURS_DEVICE_ID = process.env.FURS_DEVICE_ID;
+export const FURS_ENV = process.env.FURS_ENV; // "test" | "prod"
+export const FURS_TLS_CA_BASE64 = process.env.FURS_TLS_CA_BASE64;
+
+// Shared secret in the Epson Server Direct Print poll URL
+export const POS_PRINT_TOKEN = process.env.POS_PRINT_TOKEN;
+
 // Apple Wallet signing
 export const APPLE_PASS_CERTIFICATE = process.env.APPLE_PASS_CERTIFICATE!;
 export const APPLE_PASS_CERTIFICATE_PASSWORD =

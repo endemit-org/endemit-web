@@ -12,7 +12,10 @@ export type PosErrorCode =
   | "WALLET_NOT_FOUND"
   | "INSUFFICIENT_BALANCE"
   | "NOT_SCANNED"
-  | "INVALID_TIP";
+  | "INVALID_TIP"
+  | "METHOD_NOT_ACCEPTED"
+  | "TOPUP_NOT_WALLET_PAYABLE"
+  | "FISCAL_NOT_CONFIGURED";
 
 export class PosError extends Error {
   constructor(
@@ -34,7 +37,10 @@ export type PosErrorMessageKey =
   | "walletNotFound"
   | "insufficientBalance"
   | "notScanned"
-  | "invalidTip";
+  | "invalidTip"
+  | "methodNotAccepted"
+  | "topupNotWalletPayable"
+  | "fiscalNotConfigured";
 
 export const POS_ERROR_MESSAGE_KEYS: Record<PosErrorCode, PosErrorMessageKey> = {
   ORDER_NOT_FOUND: "orderNotFound",
@@ -46,6 +52,9 @@ export const POS_ERROR_MESSAGE_KEYS: Record<PosErrorCode, PosErrorMessageKey> = 
   INSUFFICIENT_BALANCE: "insufficientBalance",
   NOT_SCANNED: "notScanned",
   INVALID_TIP: "invalidTip",
+  METHOD_NOT_ACCEPTED: "methodNotAccepted",
+  TOPUP_NOT_WALLET_PAYABLE: "topupNotWalletPayable",
+  FISCAL_NOT_CONFIGURED: "fiscalNotConfigured",
 };
 
 /** Resolves a broadcast/API errorCode to its walletPay.errors key, if known. */

@@ -177,6 +177,45 @@ export function PosRegisterStatsModal({
                 />
               </div>
 
+              {data.report.byMethod.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900 mb-3">
+                    {t("byMethodHeading")}
+                  </h3>
+                  <div className="border rounded-lg divide-y text-sm">
+                    {data.report.byMethod.map(row => (
+                      <div
+                        key={row.method}
+                        className="px-4 py-2 flex items-center justify-between"
+                      >
+                        <span
+                          className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                            row.method === "WALLET"
+                              ? "bg-blue-100 text-blue-700"
+                              : row.method === "CASH"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-purple-100 text-purple-700"
+                          }`}
+                        >
+                          {t(`method${row.method}`)}
+                        </span>
+                        <span className="text-gray-500">
+                          {t("methodOrders", { count: row.orders })}
+                        </span>
+                        <span className="font-medium text-gray-900">
+                          {formatTokensFromCents(row.revenue)}
+                          {row.tips > 0 && (
+                            <span className="text-amber-600 ml-1 text-xs">
+                              +{formatTokensFromCents(row.tips)}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <h3 className="text-sm font-medium text-gray-900 mb-3">
                   {t("itemsHeading")}

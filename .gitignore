@@ -71,3 +71,7 @@ content-review/
 
 # Card account import data (contains plaintext passwords)
 combination_list.csv
+
+# Certificates — never commit
+*.p12
+*.pfx

@@ -7,8 +7,10 @@ import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface PosTransaction {
   id: string;
+  orderHash: string;
   shortCode: string;
   status: "PENDING" | "PAID" | "CANCELLED";
+  paymentMethod: "WALLET" | "CASH" | "CARD" | null;
   subtotal: number;
   tipAmount: number;
   total: number;
@@ -39,6 +41,7 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [queuedIds, setQueuedIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -124,6 +127,19 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                     >
                       {tx.status}
                     </span>
+                    {tx.paymentMethod && (
+                      <span
+                        className={`inline-flex px-1.5 py-0.5 text-[10px] font-semibold rounded-full ${
+                          tx.paymentMethod === "WALLET"
+                            ? "bg-blue-100 text-blue-700"
+                            : tx.paymentMethod === "CASH"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {tx.paymentMethod}
+                      </span>
+                    )}
                   </div>
                   <div className="text-right whitespace-nowrap">
                     <span className="font-semibold text-gray-900">
@@ -145,10 +161,36 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                   {tx.sellerName && <span>{tx.sellerName}</span>}
                 </div>
 
-                <div className="text-gray-600">
-                  {tx.items
-                    .map(item => `${item.quantity}x ${item.name}`)
-                    .join(", ")}
+                <div className="flex items-end justify-between gap-2">
+                  <div className="text-gray-600">
+                    {tx.items
+                      .map(item => `${item.quantity}x ${item.name}`)
+                      .join(", ")}
+                  </div>
+                  {tx.status === "PAID" && (
+                    <span className="flex items-center gap-2 whitespace-nowrap">
+                      <button
+                        onClick={async () => {
+                          setQueuedIds(prev => new Set(prev).add(tx.id));
+                          await fetch(
+                            `/api/v1/pos/orders/${tx.orderHash}/print`,
+                            { method: "POST" }
+                          ).catch(() => {});
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        {queuedIds.has(tx.id) ? t("printQueued") : t("print")}
+                      </button>
+                      <a
+                        href={`/pos/receipt/${tx.orderHash}`}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        {t("slip")}
+                      </a>
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

@@ -9,6 +9,7 @@ export type BroadcastEvent =
   | "wallet_transaction_created"
   | "pos_order_scanned"
   | "pos_order_paid"
+  | "pos_order_fulfilled"
   | "pos_order_cancelled"
   | "ticket_scanned"
   | "ticket_scan_reverted"
@@ -42,9 +43,20 @@ export interface PosOrderPaidPayload {
   shortCode: string;
   total: number;
   tipAmount: number;
+  paymentMethod?: "WALLET" | "CASH" | "CARD";
   paidAt: string;
-  /** Customer's wallet balance in cents after the payment. */
-  balanceAfter: number;
+  /** Fulfillment-tracked registers (food stands) */
+  queueNumber?: number;
+  note?: string;
+  fulfillmentStatus?: "OPEN" | "COMPLETED";
+  /** Customer's wallet balance in cents after the payment (wallet-linked
+   * orders only; anonymous cash/card sales have none). */
+  balanceAfter?: number;
+}
+
+export interface PosOrderFulfilledPayload {
+  orderId: string;
+  queueNumber: number | null;
 }
 
 export interface PosOrderCancelledPayload {
@@ -86,6 +98,7 @@ export interface BroadcastPayload {
   pos_order_scanned: PosOrderScannedPayload;
   pos_order_paid: PosOrderPaidPayload;
   pos_order_cancelled: PosOrderCancelledPayload;
+  pos_order_fulfilled: PosOrderFulfilledPayload;
   ticket_scanned: TicketScannedPayload;
   ticket_scan_reverted: TicketScanRevertedPayload;
   announcement_created: AnnouncementPayload;

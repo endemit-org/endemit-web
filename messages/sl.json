@@ -643,7 +643,7 @@
       "failed": "Karte ni ratalo ustvarit",
       "noResponse": "Strežnik ne odgovarja",
       "generating": "Ustvarjam…",
-      "downloadImage": "Prenesis kopijo karte"
+      "downloadImage": "Prenesi kopijo karte"
     },
     "accessButtons": {
       "adminPanel": "Administracija",
@@ -693,7 +693,10 @@
         "walletNotFound": "Denarnce ne najdem",
         "insufficientBalance": "Premalo dnarja na denarnci. Najprej jo nafilaj.",
         "notScanned": "Naročilo še ni bilo skenirano",
-        "invalidTip": "Napačen znesek napitnine"
+        "invalidTip": "Napačen znesek napitnine",
+        "methodNotAccepted": "Ta blagajna ne sprejema tega načina plačila",
+        "topupNotWalletPayable": "Polnitve se plačajo z gotovino al kartico",
+        "fiscalNotConfigured": "Davčno potrjevanje ni nastavljeno — kontaktiraj administratorja"
       }
     },
     "eventsAttended": {
@@ -1373,7 +1376,11 @@
         "colActions": "Dejanja",
         "soldCount": "{count} prodano",
         "emptyItems": "Še ni nobenga izdelka.",
-        "fieldColor": "Barva"
+        "fieldColor": "Barva",
+        "fieldTicketEvent": "Izdelek je karta za event",
+        "ticketEventNone": "Ni karta",
+        "ticketEventHint": "Če je nastavljeno, se ob prodaji tega izdelka izdajo prave karte za izbran event (štejejo v statistiko in cilj prodaje).",
+        "ticketBadge": "Karta"
       },
       "orders": {
         "title": "POS naročila",
@@ -1431,7 +1438,12 @@
         "reverseConfirm": "Da, storniraj",
         "deleteConfirm": "Da, trajno izbriši",
         "actionWorking": "V teku…",
-        "actionCancel": "Prekliči"
+        "actionCancel": "Prekliči",
+        "filterMethod": "Način",
+        "allMethods": "Vsi načini",
+        "methodWallet": "Denarnca",
+        "methodCash": "Gotovina",
+        "methodCard": "Kartica"
       },
       "registers": {
         "title": "POS blagajne",
@@ -1514,8 +1526,25 @@
           "colItem": "Izdelek",
           "colQuantity": "Kol.",
           "colTotal": "Skupaj",
-          "topUpBadge": "Polnitev"
-        }
+          "topUpBadge": "Polnitev",
+          "byMethodHeading": "Po načinu plačila",
+          "methodWALLET": "Denarnca",
+          "methodCASH": "Gotovina",
+          "methodCARD": "Kartica",
+          "methodOrders": "{count, plural, one {# naročilo} two {# naročili} few {# naročila} other {# naročil}}"
+        },
+        "paymentMethods": "Načini plačila",
+        "acceptsWallet": "Denarnca",
+        "acceptsCash": "Gotovina",
+        "acceptsCard": "Kartični terminal",
+        "fiscalizeInvoices": "Davčno potrjuj račune (gotovina/kartica dobita FURS račune)",
+        "atLeastOneMethod": "Vklopljen mora bit vsaj en način plačila",
+        "methodWallet": "Denarnca",
+        "methodCash": "Gotovina",
+        "methodCard": "Kartica",
+        "fiscalBadge": "Davčno",
+        "trackFulfillment": "Sledenje strežbi (stojnica s hrano: naročila ostanejo odprta do postrežbe, s številkami vrste)",
+        "fulfillmentBadge": "Strežba"
       },
       "stickers": {
         "title": "POS offline QR-ji",
@@ -2007,13 +2036,59 @@
     "stats": {
       "label": "Statistika"
     },
+    "methods": {
+      "selectPrompt": "Kako plača kupec?",
+      "wallet": "Denarnca",
+      "cash": "Gotovina",
+      "card": "Kartični terminal"
+    },
+    "methodConfirm": {
+      "cashDue": "Za plačat z gotovino",
+      "cardCharge": "Za obračunat na terminalu",
+      "totalWithTip": "Skupaj z napitnino: {amount}",
+      "topUpNote": "Polnitev — znesek se naloži na kupčevo denarnco",
+      "processing": "Obdelujem…",
+      "cashReceived": "Gotovina prejeta — {amount}",
+      "cardInstruction": "Obračunaj {amount} na kartičnem terminalu, pol nadaljuj.",
+      "chargedOnTerminal": "Obračunano na terminalu",
+      "confirmApproved": "A je terminal odobru plačilo {amount}?",
+      "chargeApproved": "Plačilo odobreno — označi kot plačano",
+      "backToAmount": "Nazaj na znesek",
+      "back": "Nazaj",
+      "buyerEmailLabel": "Email kupca za digitalne karte (neobvezno)",
+      "buyerEmailPlaceholder": "email@example.com"
+    },
+    "receipt": {
+      "printButton": "Natisni",
+      "fiscalTitle": "Račun št. {number}",
+      "informalTitle": "Potrdilo o nakupu",
+      "order": "Naročilo",
+      "date": "Datum",
+      "operator": "Postregu",
+      "tip": "Napitnina",
+      "total": "SKUPAJ",
+      "paymentMethod": "Plačilo",
+      "methodWallet": "Denarnca",
+      "methodCash": "Gotovina",
+      "methodCard": "Kartica",
+      "taxNumber": "Davčna št.",
+      "eorPending": "v potrjevanju",
+      "disclaimer": "To ni davčno potrjen račun.",
+      "thanks": "Hvala!",
+      "ticketsHeading": "Vstopnice",
+      "ticketsHint": "Pokaži to QR kodo na vhodu.",
+      "vatClause": "DDV ni obračunan na podlagi 1. odstavka 94. člena ZDDV-1."
+    },
     "transactions": {
       "title": "Zadnje transakcije",
       "loading": "Nalagam transakcije…",
       "loadFailed": "Transakcij ni blo mogoče naložit",
       "empty": "Še ni transakcij.",
       "refresh": "Osveži",
-      "tipSuffix": "napitnina"
+      "tipSuffix": "napitnina",
+      "print": "Natisni",
+      "printQueued": "Poslano ✓",
+      "slip": "Potrdilo"
     },
     "balanceCheck": {
       "label": "Stanje",
@@ -2049,7 +2124,8 @@
       "clear": "Počisti",
       "creating": "Ustvarjam…",
       "createOrder": "Ustvari naročilo",
-      "negativeTotal": "Znesek naročila ne more biti negativen"
+      "negativeTotal": "Znesek naročila ne more biti negativen",
+      "notePlaceholder": "Opomba k naročilu (npr. brez čebule, modra jakna)…"
     },
     "orders": {
       "yourTotalIs": "Skupaj <bold>{amount}</bold>",
@@ -2077,7 +2153,11 @@
       "scanned": "Skenirano",
       "waitingForScanShort": "Čakam na sken",
       "cancel": "Prekliči",
-      "newBalance": "Novo stanje"
+      "newBalance": "Novo stanje",
+      "printReceipt": "Natisni račun",
+      "printQueued": "Poslano na tiskalnik ✓",
+      "printFailed": "Tiskanje ni uspelo — poskusi znova",
+      "openSlip": "Odpri potrdilo v brskalniku"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
@@ -2088,6 +2168,17 @@
     },
     "header": {
       "title": "Prodajno mesto"
+    },
+    "toServe": {
+      "heading": "Za postrečt ({count})",
+      "empty": "Nič za postrečt.",
+      "complete": "Postreženo ✓",
+      "completing": "Zaključujem…"
+    },
+    "kitchen": {
+      "title": "Kuhinja — {name}",
+      "openCount": "{count} odprtih",
+      "empty": "Vse postreženo 🎉"
     }
   },
   "scan": {

@@ -9,17 +9,34 @@ export interface CreatePosRegisterInput {
   description?: string;
   status?: PosRegisterStatus;
   canTopUp?: boolean;
+  acceptsWallet?: boolean;
+  acceptsCash?: boolean;
+  acceptsCard?: boolean;
+  fiscalizeInvoices?: boolean;
+  trackFulfillment?: boolean;
 }
 
 export async function createPosRegister(
   input: CreatePosRegisterInput
 ): Promise<PosRegister> {
+  const acceptsWallet = input.acceptsWallet ?? true;
+  const acceptsCash = input.acceptsCash ?? false;
+  const acceptsCard = input.acceptsCard ?? false;
+  if (!acceptsWallet && !acceptsCash && !acceptsCard) {
+    throw new Error("Register must accept at least one payment method");
+  }
+
   const register = await prisma.posRegister.create({
     data: {
       name: input.name,
       description: input.description,
       status: input.status ?? "ACTIVE",
       canTopUp: input.canTopUp ?? false,
+      acceptsWallet,
+      acceptsCash,
+      acceptsCard,
+      fiscalizeInvoices: input.fiscalizeInvoices ?? false,
+      trackFulfillment: input.trackFulfillment ?? false,
     },
   });
 

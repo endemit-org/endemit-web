@@ -693,7 +693,10 @@
         "walletNotFound": "Wallet not found",
         "insufficientBalance": "Insufficient balance. Please top up your wallet.",
         "notScanned": "Order has not been scanned yet",
-        "invalidTip": "Invalid tip amount"
+        "invalidTip": "Invalid tip amount",
+        "methodNotAccepted": "This register does not accept this payment method",
+        "topupNotWalletPayable": "Top-ups must be paid in cash or by card",
+        "fiscalNotConfigured": "Fiscalization is not configured — contact an administrator"
       }
     },
     "eventsAttended": {
@@ -1373,7 +1376,11 @@
         "colActions": "Actions",
         "soldCount": "{count} sold",
         "emptyItems": "No items yet.",
-        "fieldColor": "Color"
+        "fieldColor": "Color",
+        "fieldTicketEvent": "Event ticket item",
+        "ticketEventNone": "Not a ticket item",
+        "ticketEventHint": "When set, selling this item issues real tickets for the selected event (they count toward its ticket stats and goal).",
+        "ticketBadge": "Ticket"
       },
       "orders": {
         "title": "POS Orders",
@@ -1431,7 +1438,12 @@
         "reverseConfirm": "Yes, reverse",
         "deleteConfirm": "Yes, delete permanently",
         "actionWorking": "Working…",
-        "actionCancel": "Cancel"
+        "actionCancel": "Cancel",
+        "filterMethod": "Method",
+        "allMethods": "All methods",
+        "methodWallet": "Wallet",
+        "methodCash": "Cash",
+        "methodCard": "Card"
       },
       "registers": {
         "title": "POS Registers",
@@ -1514,8 +1526,25 @@
           "colItem": "Item",
           "colQuantity": "Qty",
           "colTotal": "Total",
-          "topUpBadge": "Top-up"
-        }
+          "topUpBadge": "Top-up",
+          "byMethodHeading": "By payment method",
+          "methodWALLET": "Wallet",
+          "methodCASH": "Cash",
+          "methodCARD": "Card",
+          "methodOrders": "{count, plural, one {# order} other {# orders}}"
+        },
+        "paymentMethods": "Payment methods",
+        "acceptsWallet": "Wallet",
+        "acceptsCash": "Cash",
+        "acceptsCard": "Card terminal",
+        "fiscalizeInvoices": "Fiscalize invoices (cash/card sales get FURS invoices)",
+        "atLeastOneMethod": "At least one payment method must be enabled",
+        "methodWallet": "Wallet",
+        "methodCash": "Cash",
+        "methodCard": "Card",
+        "fiscalBadge": "Fiscal",
+        "trackFulfillment": "Track fulfillment (food-stand: orders stay open until served, with queue numbers)",
+        "fulfillmentBadge": "Fulfillment"
       },
       "stickers": {
         "title": "POS offline QRs",
@@ -2007,13 +2036,59 @@
     "stats": {
       "label": "Stats"
     },
+    "methods": {
+      "selectPrompt": "How is the customer paying?",
+      "wallet": "Wallet",
+      "cash": "Cash",
+      "card": "Card terminal"
+    },
+    "methodConfirm": {
+      "cashDue": "Cash due",
+      "cardCharge": "Charge on terminal",
+      "totalWithTip": "Total with tip: {amount}",
+      "topUpNote": "Top-up — the amount will be credited to the customer's wallet",
+      "processing": "Processing…",
+      "cashReceived": "Cash received — {amount}",
+      "cardInstruction": "Charge {amount} on the card terminal, then continue.",
+      "chargedOnTerminal": "Charged on terminal",
+      "confirmApproved": "Did the terminal approve the {amount} charge?",
+      "chargeApproved": "Charge approved — mark paid",
+      "backToAmount": "Back to amount",
+      "back": "Back",
+      "buyerEmailLabel": "Buyer email for digital tickets (optional)",
+      "buyerEmailPlaceholder": "email@example.com"
+    },
+    "receipt": {
+      "printButton": "Print",
+      "fiscalTitle": "Invoice no. {number}",
+      "informalTitle": "Purchase slip",
+      "order": "Order",
+      "date": "Date",
+      "operator": "Served by",
+      "tip": "Tip",
+      "total": "TOTAL",
+      "paymentMethod": "Payment",
+      "methodWallet": "Wallet",
+      "methodCash": "Cash",
+      "methodCard": "Card",
+      "taxNumber": "Tax no.",
+      "eorPending": "pending confirmation",
+      "disclaimer": "This is not a fiscal receipt. / To ni davčno potrjen račun.",
+      "thanks": "Thank you!",
+      "ticketsHeading": "Entry tickets",
+      "ticketsHint": "Show this QR code at the entrance.",
+      "vatClause": "VAT not charged pursuant to Article 94(1) of the Slovenian VAT Act (ZDDV-1)."
+    },
     "transactions": {
       "title": "Last Transactions",
       "loading": "Loading transactions…",
       "loadFailed": "Could not load transactions",
       "empty": "No transactions yet.",
       "refresh": "Refresh",
-      "tipSuffix": "tip"
+      "tipSuffix": "tip",
+      "print": "Print",
+      "printQueued": "Sent ✓",
+      "slip": "Slip"
     },
     "balanceCheck": {
       "label": "Balance",
@@ -2049,7 +2124,8 @@
       "clear": "Clear",
       "creating": "Creating...",
       "createOrder": "Create Order",
-      "negativeTotal": "Order total cannot be negative"
+      "negativeTotal": "Order total cannot be negative",
+      "notePlaceholder": "Order note (e.g. no onions, blue jacket)…"
     },
     "orders": {
       "yourTotalIs": "Your total is <bold>{amount}</bold>",
@@ -2077,7 +2153,11 @@
       "scanned": "Scanned",
       "waitingForScanShort": "Waiting for scan",
       "cancel": "Cancel",
-      "newBalance": "New balance"
+      "newBalance": "New balance",
+      "printReceipt": "Print receipt",
+      "printQueued": "Sent to printer ✓",
+      "printFailed": "Print failed — try again",
+      "openSlip": "Open slip in browser"
     },
     "sticker": {
       "resolving": "Resolving wristband...",
@@ -2088,6 +2168,17 @@
     },
     "header": {
       "title": "Point of Sale"
+    },
+    "toServe": {
+      "heading": "To serve ({count})",
+      "empty": "Nothing to serve.",
+      "complete": "Served ✓",
+      "completing": "Completing…"
+    },
+    "kitchen": {
+      "title": "Kitchen — {name}",
+      "openCount": "{count} open",
+      "empty": "All caught up 🎉"
     }
   },
   "scan": {
