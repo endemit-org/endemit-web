@@ -48,6 +48,7 @@ interface PosOrderSummary {
   hasEnoughBalance?: boolean;
   tipAmount?: number;
   paymentMethod?: "WALLET" | "CASH" | "CARD";
+  queueNumber?: number;
   paidAt?: string;
 }
 
@@ -405,6 +406,11 @@ export function PosOrderQrModal({
               <h3 className="text-xl font-semibold text-white mb-1">
                 {t("orders.paymentReceived")}
               </h3>
+              {order.queueNumber != null && (
+                <p className="text-4xl font-bold text-white mb-1">
+                  #{order.queueNumber}
+                </p>
+              )}
               {order.paymentMethod && (
                 <p className="text-xs uppercase tracking-widest text-white/70 mb-3">
                   {order.paymentMethod === "WALLET"

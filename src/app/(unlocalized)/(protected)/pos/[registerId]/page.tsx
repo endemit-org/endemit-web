@@ -107,6 +107,7 @@ export default async function PosRegisterPage({ params }: Props) {
         acceptsWallet: register.acceptsWallet,
         acceptsCash: register.acceptsCash,
         acceptsCard: register.acceptsCard,
+        trackFulfillment: register.trackFulfillment,
       }}
       items={items}
       showBackButton={userRegisterCount > 1}

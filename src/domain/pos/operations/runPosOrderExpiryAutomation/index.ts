@@ -33,8 +33,24 @@ export const runPosOrderExpiryAutomation = inngest.createFunction(
       });
     });
 
+    // Forgotten "to serve" orders auto-complete after 6h so the boards
+    // never clog — runs every sweep regardless of expirations
+    const autoCompleted = await step.run("auto-complete-stale", async () => {
+      const result = await prisma.posOrder.updateMany({
+        where: {
+          fulfillmentStatus: "OPEN",
+          paidAt: { lt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+        },
+        data: {
+          fulfillmentStatus: "COMPLETED",
+          fulfilledAt: new Date(),
+        },
+      });
+      return result.count;
+    });
+
     if (expiredOrders.length === 0) {
-      return { expired: 0 };
+      return { expired: 0, autoCompleted };
     }
 
     await step.run("expire-orders", async () => {
@@ -82,6 +98,6 @@ export const runPosOrderExpiryAutomation = inngest.createFunction(
       await bustOnPosOrderCreated();
     });
 
-    return { expired: expiredOrders.length };
+    return { expired: expiredOrders.length, autoCompleted };
   }
 );

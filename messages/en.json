@@ -1542,7 +1542,9 @@
         "methodWallet": "Wallet",
         "methodCash": "Cash",
         "methodCard": "Card",
-        "fiscalBadge": "Fiscal"
+        "fiscalBadge": "Fiscal",
+        "trackFulfillment": "Track fulfillment (food-stand: orders stay open until served, with queue numbers)",
+        "fulfillmentBadge": "Fulfillment"
       },
       "stickers": {
         "title": "POS offline QRs",
@@ -2121,7 +2123,8 @@
       "clear": "Clear",
       "creating": "Creating...",
       "createOrder": "Create Order",
-      "negativeTotal": "Order total cannot be negative"
+      "negativeTotal": "Order total cannot be negative",
+      "notePlaceholder": "Order note (e.g. no onions, blue jacket)…"
     },
     "orders": {
       "yourTotalIs": "Your total is <bold>{amount}</bold>",
@@ -2164,6 +2167,17 @@
     },
     "header": {
       "title": "Point of Sale"
+    },
+    "toServe": {
+      "heading": "To serve ({count})",
+      "empty": "Nothing to serve.",
+      "complete": "Served ✓",
+      "completing": "Completing…"
+    },
+    "kitchen": {
+      "title": "Kitchen — {name}",
+      "openCount": "{count} open",
+      "empty": "All caught up 🎉"
     }
   },
   "scan": {

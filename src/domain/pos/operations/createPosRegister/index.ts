@@ -13,6 +13,7 @@ export interface CreatePosRegisterInput {
   acceptsCash?: boolean;
   acceptsCard?: boolean;
   fiscalizeInvoices?: boolean;
+  trackFulfillment?: boolean;
 }
 
 export async function createPosRegister(
@@ -35,6 +36,7 @@ export async function createPosRegister(
       acceptsCash,
       acceptsCard,
       fiscalizeInvoices: input.fiscalizeInvoices ?? false,
+      trackFulfillment: input.trackFulfillment ?? false,
     },
   });
 

@@ -162,6 +162,11 @@ export default async function PosReceiptPage({
           ) : (
             <div className="font-bold mt-2">{t("informalTitle")}</div>
           )}
+          {order.queueNumber !== null && (
+            <div className="text-[28px] font-bold mt-1">
+              #{order.queueNumber}
+            </div>
+          )}
         </div>
 
         <div className="border-t border-dashed border-black my-2" />

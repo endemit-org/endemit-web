@@ -92,6 +92,7 @@ export async function renderPosReceiptEpos(
 
   return buildReceiptEposXml({
     registerName: order.register.name,
+    queueNumber: order.queueNumber,
     companyLines: COMPANY_LINES,
     taxNumber: FURS_TAX_NUMBER,
     shortCode: order.shortCode,

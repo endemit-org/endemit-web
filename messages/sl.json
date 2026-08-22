@@ -1542,7 +1542,9 @@
         "methodWallet": "Denarnca",
         "methodCash": "Gotovina",
         "methodCard": "Kartica",
-        "fiscalBadge": "Davčno"
+        "fiscalBadge": "Davčno",
+        "trackFulfillment": "Sledenje strežbi (stojnica s hrano: naročila ostanejo odprta do postrežbe, s številkami vrste)",
+        "fulfillmentBadge": "Strežba"
       },
       "stickers": {
         "title": "POS offline QR-ji",
@@ -2121,7 +2123,8 @@
       "clear": "Počisti",
       "creating": "Ustvarjam…",
       "createOrder": "Ustvari naročilo",
-      "negativeTotal": "Znesek naročila ne more biti negativen"
+      "negativeTotal": "Znesek naročila ne more biti negativen",
+      "notePlaceholder": "Opomba k naročilu (npr. brez čebule, modra jakna)…"
     },
     "orders": {
       "yourTotalIs": "Skupaj <bold>{amount}</bold>",
@@ -2164,6 +2167,17 @@
     },
     "header": {
       "title": "Prodajno mesto"
+    },
+    "toServe": {
+      "heading": "Za postrečt ({count})",
+      "empty": "Nič za postrečt.",
+      "complete": "Postreženo ✓",
+      "completing": "Zaključujem…"
+    },
+    "kitchen": {
+      "title": "Kuhinja — {name}",
+      "openCount": "{count} odprtih",
+      "empty": "Vse postreženo 🎉"
     }
   },
   "scan": {

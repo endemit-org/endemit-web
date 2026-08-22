@@ -10,6 +10,7 @@ import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
 import { PosOrderQrModal } from "./PosOrderQrModal";
 import { PosRecentTransactions } from "./PosRecentTransactions";
+import { PosToServeList } from "./PosToServeList";
 import { PosRegisterStatsModal } from "./PosRegisterStatsModal";
 
 // Dynamic import: QR Scanner (~120KB) only loads when balance check is opened
@@ -56,6 +57,7 @@ interface PosOrderSummary {
   hasEnoughBalance?: boolean;
   tipAmount?: number;
   paymentMethod?: "WALLET" | "CASH" | "CARD";
+  queueNumber?: number;
   paidAt?: string;
 }
 
@@ -72,6 +74,7 @@ interface Props {
     acceptsWallet: boolean;
     acceptsCash: boolean;
     acceptsCard: boolean;
+    trackFulfillment: boolean;
   };
   items: PosItem[];
   initialPendingOrders: PosOrderSummary[];
@@ -96,6 +99,9 @@ export function PosRegisterInterface({
   const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [txRefreshKey, setTxRefreshKey] = useState(0);
+  const [orderNote, setOrderNote] = useState("");
+  const [toServeRefreshKey, setToServeRefreshKey] = useState(0);
+  const [toServeCount, setToServeCount] = useState(0);
 
   // Sort and filter items
   const sortedItems = useMemo(
@@ -155,6 +161,9 @@ export function PosRegisterInterface({
     onMessage: payload => {
       setPendingOrders(prev => prev.filter(o => o.id !== payload.orderId));
       setTxRefreshKey(k => k + 1);
+      if (payload.fulfillmentStatus === "OPEN") {
+        setToServeRefreshKey(k => k + 1);
+      }
       if (activeOrder?.id === payload.orderId) {
         setActiveOrder(prev =>
           prev
@@ -163,6 +172,7 @@ export function PosRegisterInterface({
                 status: "PAID",
                 tipAmount: payload.tipAmount,
                 paymentMethod: payload.paymentMethod,
+                queueNumber: payload.queueNumber,
                 paidAt: payload.paidAt,
                 customerBalance: payload.balanceAfter,
               }
@@ -181,6 +191,14 @@ export function PosRegisterInterface({
       if (activeOrder?.id === payload.orderId) {
         setActiveOrder(null);
       }
+    },
+  });
+
+  useRealtimeChannel({
+    channelName: `pos:register:${register.id}`,
+    event: "pos_order_fulfilled",
+    onMessage: () => {
+      setToServeRefreshKey(k => k + 1);
     },
   });
 
@@ -221,6 +239,7 @@ export function PosRegisterInterface({
         body: JSON.stringify({
           registerId: register.id,
           items: cart.map(c => ({ itemId: c.item.id, quantity: c.quantity })),
+          note: orderNote.trim() || undefined,
         }),
       });
 
@@ -255,13 +274,14 @@ export function PosRegisterInterface({
       setTxRefreshKey(k => k + 1);
       setActiveOrder(newOrder);
       clearCart();
+      setOrderNote("");
     } catch (error) {
       console.error("Failed to create order:", error);
       alert(error instanceof Error ? error.message : "Failed to create order");
     } finally {
       setIsCreating(false);
     }
-  }, [cart, register.id, isCreating, clearCart]);
+  }, [cart, register.id, isCreating, clearCart, orderNote]);
 
   const cancelOrder = useCallback(async (orderHash: string) => {
     try {
@@ -514,6 +534,9 @@ export function PosRegisterInterface({
             onClear={clearCart}
             onCreateOrder={createOrder}
             isCreating={isCreating}
+            showNote={register.trackFulfillment}
+            note={orderNote}
+            onNoteChange={setOrderNote}
           />
         </div>
       </div>
@@ -537,7 +560,23 @@ export function PosRegisterInterface({
             selectedOrderId={activeOrder?.id}
           />
         </div>
-        <div className="h-1/2 border-t">
+        {register.trackFulfillment && (
+          <div className="flex-1 min-h-0 border-t flex flex-col">
+            <div className="px-4 py-2 bg-orange-50 border-b text-sm font-medium text-orange-800">
+              {t("toServe.heading", { count: toServeCount })}
+            </div>
+            <div className="flex-1 min-h-0 overflow-auto">
+              <PosToServeList
+                registerId={register.id}
+                refreshKey={toServeRefreshKey}
+                onCountChange={setToServeCount}
+              />
+            </div>
+          </div>
+        )}
+        <div
+          className={`border-t ${register.trackFulfillment ? "flex-1 min-h-0" : "h-1/2"}`}
+        >
           <PosRecentTransactions
             registerId={register.id}
             refreshKey={txRefreshKey}
@@ -583,7 +622,9 @@ export function PosRegisterInterface({
               </svg>
               {t("stats.label")}
             </button>
-            <div className="h-1/2 overflow-auto">
+            <div
+              className={`overflow-auto ${register.trackFulfillment ? "flex-1 min-h-0" : "h-1/2"}`}
+            >
               <PosOrderQueue
                 orders={pendingOrders}
                 onSelectOrder={order => {
@@ -594,6 +635,20 @@ export function PosRegisterInterface({
                 selectedOrderId={activeOrder?.id}
               />
             </div>
+            {register.trackFulfillment && (
+              <div className="flex-1 min-h-0 border-t flex flex-col">
+                <div className="px-4 py-2 bg-orange-50 border-b text-sm font-medium text-orange-800">
+                  {t("toServe.heading", { count: toServeCount })}
+                </div>
+                <div className="flex-1 min-h-0 overflow-auto">
+                  <PosToServeList
+                    registerId={register.id}
+                    refreshKey={toServeRefreshKey}
+                    onCountChange={setToServeCount}
+                  />
+                </div>
+              </div>
+            )}
             <div className="flex-1 min-h-0 border-t">
               <PosRecentTransactions
                 registerId={register.id}

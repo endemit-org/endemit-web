@@ -31,6 +31,7 @@ function divider(): string {
 
 export interface EposReceiptData {
   registerName: string;
+  queueNumber?: number | null;
   companyLines: string[];
   taxNumber?: string | null;
   shortCode: string;
@@ -96,6 +97,11 @@ export function buildReceiptEposXml(data: EposReceiptData): string {
   parts.push(`<text em="true"/>`);
   parts.push(text(data.fiscal ? data.labels.fiscalTitle! : data.labels.informalTitle));
   parts.push(`<text em="false"/>`);
+  if (data.queueNumber != null) {
+    parts.push(`<text dw="true" dh="true" em="true"/>`);
+    parts.push(text(`#${data.queueNumber}`));
+    parts.push(`<text dw="false" dh="false" em="false"/>`);
+  }
   parts.push(`<text align="left"/>`);
   parts.push(text(divider()));
 

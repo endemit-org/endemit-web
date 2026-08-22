@@ -11,6 +11,7 @@ type BroadcastEvent =
   | "wallet_transaction_created"
   | "pos_order_scanned"
   | "pos_order_paid"
+  | "pos_order_fulfilled"
   | "pos_order_cancelled"
   | "ticket_scanned"
   | "announcement_created"
@@ -45,9 +46,18 @@ interface PosOrderPaidPayload {
   tipAmount: number;
   paymentMethod?: "WALLET" | "CASH" | "CARD";
   paidAt: string;
+  /** Fulfillment-tracked registers (food stands) */
+  queueNumber?: number;
+  note?: string;
+  fulfillmentStatus?: "OPEN" | "COMPLETED";
   /** Customer's wallet balance in cents after the payment (wallet-linked
    * orders only; anonymous cash/card sales have none). */
   balanceAfter?: number;
+}
+
+interface PosOrderFulfilledPayload {
+  orderId: string;
+  queueNumber: number | null;
 }
 
 interface PosOrderCancelledPayload {
@@ -82,6 +92,7 @@ interface BroadcastPayload {
   pos_order_scanned: PosOrderScannedPayload;
   pos_order_paid: PosOrderPaidPayload;
   pos_order_cancelled: PosOrderCancelledPayload;
+  pos_order_fulfilled: PosOrderFulfilledPayload;
   ticket_scanned: TicketScannedPayload;
   announcement_created: AnnouncementPayload;
   announcement_updated: AnnouncementPayload;

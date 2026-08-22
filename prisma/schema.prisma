@@ -453,6 +453,9 @@ model PosRegister {
   acceptsCard   Boolean @default(false)
   // Cash/card payments at this register produce ZDavPR fiscal invoices
   fiscalizeInvoices Boolean @default(false)
+  // Food-stand mode: paid orders stay "to serve" until completed, with a
+  // daily queue number for recall
+  trackFulfillment Boolean @default(false)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
@@ -539,6 +542,13 @@ model PosOrder {
   total        Int // subtotal + tipAmount
   status       PosOrderStatus @default(PENDING)
   paymentMethod PosPaymentMethod? // null while PENDING / cancelled before pay
+  // Seller note for serving ("no onions, blue jacket")
+  note         String?
+  // Fulfillment tracking (registers with trackFulfillment): set at payment
+  fulfillmentStatus PosFulfillmentStatus?
+  fulfilledAt       DateTime?
+  // Daily per-register queue number for recall at pickup
+  queueNumber       Int?
   scannedAt    DateTime?
   paidAt       DateTime?
   cancelledAt  DateTime?
@@ -563,6 +573,7 @@ model PosOrder {
   @@index([expiresAt])
   @@index([status, expiresAt])
   @@index([registerId, status, paymentMethod])
+  @@index([registerId, fulfillmentStatus])
 }
 
 // ZDavPR fiscal invoice issued for a cash/card POS payment. ZOI is computed
@@ -599,6 +610,11 @@ model FiscalInvoice {
 model FiscalCounter {
   id         Int @id @default(1)
   lastNumber Int @default(0)
+}
+
+enum PosFulfillmentStatus {
+  OPEN
+  COMPLETED
 }
 
 enum PosPrintJobStatus {
