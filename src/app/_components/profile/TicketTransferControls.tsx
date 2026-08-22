@@ -66,7 +66,7 @@ export default function TicketTransferControls({
 
   if (pendingTransfer) {
     return (
-      <div className="mt-6 bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+      <div className="max-w-lg mx-auto mt-6 bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
         <p className="text-sm text-amber-300 mb-1">
           {t("pendingTo", { email: pendingTransfer.recipientEmail })}
         </p>
@@ -83,17 +83,23 @@ export default function TicketTransferControls({
     );
   }
 
-  return (
-    <div className="mt-6 bg-neutral-800/50 border border-neutral-700 rounded-lg p-4">
-      {!isOpen ? (
+  // Closed state: a bare link, no frame — the box appears once opened
+  if (!isOpen) {
+    return (
+      <div className="max-w-lg mx-auto mt-6 text-center">
         <button
           onClick={() => setIsOpen(true)}
-          className="text-sm font-medium text-blue-400 hover:text-blue-300"
+          className="text-sm font-medium text-blue-400 hover:text-blue-300 underline underline-offset-4"
         >
           {t("transferButton")}
         </button>
-      ) : (
-        <div className="space-y-3">
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-lg mx-auto mt-6 bg-neutral-800/50 border border-neutral-700 rounded-lg p-4">
+      <div className="space-y-3">
           <p className="text-sm text-neutral-300">{t("prompt")}</p>
           <input
             type="email"
@@ -125,8 +131,7 @@ export default function TicketTransferControls({
             </button>
           </div>
           <p className="text-xs text-neutral-500">{t("hint")}</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
