@@ -741,19 +741,6 @@ export function PosRegisterInterface({
           register={register}
           onClose={() => setActiveOrder(null)}
           onCopyToCart={() => copyToCart(activeOrder)}
-          onDetachCustomer={() => {
-            const clear = (o: PosOrderSummary): PosOrderSummary => ({
-              ...o,
-              attachedCustomer: null,
-              scannedAt: null,
-              customerName: undefined,
-              customerBalance: undefined,
-            });
-            setActiveOrder(prev => (prev ? clear(prev) : null));
-            setPendingOrders(prev =>
-              prev.map(o => (o.id === activeOrder.id ? clear(o) : o))
-            );
-          }}
         />
       )}
     </div>

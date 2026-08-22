@@ -697,8 +697,7 @@
         "methodNotAccepted": "Ta blagajna ne sprejema tega načina plačila",
         "topupNotWalletPayable": "Polnitve se plačajo z gotovino al kartico",
         "fiscalNotConfigured": "Davčno potrjevanje ni nastavljeno — kontaktiraj administratorja"
-      },
-      "payDifferently": "Plačaj drugače"
+      }
     },
     "eventsAttended": {
       "title": "Moji eventi",

@@ -70,7 +70,6 @@ interface Props {
   register: RegisterConfig;
   onClose: () => void;
   onCopyToCart: () => void;
-  onDetachCustomer?: () => void;
 }
 
 const AUTO_CLOSE_SECONDS = 30;
@@ -88,7 +87,6 @@ export function PosOrderQrModal({
   register,
   onClose,
   onCopyToCart,
-  onDetachCustomer,
 }: Props) {
   const t = useTranslations("pos");
   const tw = useTranslations("profile.walletPay");
@@ -315,22 +313,6 @@ export function PosOrderQrModal({
       setPrintState("error");
     }
   }, [order.orderHash]);
-
-  const handlePayDifferently = useCallback(async () => {
-    if (isPaying) return;
-    try {
-      await fetch(`/api/v1/pos/orders/${order.orderHash}/detach-customer`, {
-        method: "POST",
-      });
-    } catch {
-      // fall through — worst case the wallet path still works
-    }
-    onDetachCustomer?.();
-    setStickerScan(null);
-    setPayError(null);
-    setSubView(computeEntryView(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order.orderHash, isPaying, onDetachCustomer]);
 
   const handleMarkPaid = useCallback(
     async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
@@ -757,9 +739,6 @@ export function PosOrderQrModal({
                 isProcessing={isPaying}
                 error={payError}
                 onPay={handlePay}
-                onPayDifferently={
-                  order.attachedCustomer ? handlePayDifferently : undefined
-                }
               />
             </div>
           ) : null}

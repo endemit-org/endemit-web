@@ -697,8 +697,7 @@
         "methodNotAccepted": "This register does not accept this payment method",
         "topupNotWalletPayable": "Top-ups must be paid in cash or by card",
         "fiscalNotConfigured": "Fiscalization is not configured — contact an administrator"
-      },
-      "payDifferently": "Pay differently"
+      }
     },
     "eventsAttended": {
       "title": "Events Attended",
