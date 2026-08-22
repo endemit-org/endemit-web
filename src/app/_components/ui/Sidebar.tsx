@@ -353,9 +353,9 @@ export default function Sidebar({
                     <Image
                       src={social.iconSrc}
                       alt={social.alt}
-                      width={social.width || 28}
-                      height={social.height || 28}
-                      className="mx-2"
+                      width={social.width || 25}
+                      height={social.height || 25}
+                      className="mx-1"
                     />
                   </a>
                 ))}
