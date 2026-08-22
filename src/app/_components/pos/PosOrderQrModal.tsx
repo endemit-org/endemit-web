@@ -65,6 +65,12 @@ interface RegisterConfig {
   acceptsCard: boolean;
 }
 
+interface RegisterConfig {
+  acceptsWallet: boolean;
+  acceptsCash: boolean;
+  acceptsCard: boolean;
+}
+
 interface Props {
   order: PosOrderSummary;
   register: RegisterConfig;
