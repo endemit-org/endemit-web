@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { TipStepper } from "@/app/_components/payment/TipStepper";
+import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
 
 interface OrderItem {
   name: string;
@@ -116,13 +117,14 @@ export function PosMethodConfirmView({
           <label className="block text-xs text-neutral-400 mb-1">
             {t("buyerEmailLabel")}
           </label>
-          <input
-            type="email"
+          {/* Same member autocomplete as the admin guest-ticket form; free
+              text stays valid for non-member emails */}
+          <UserAutocomplete
             value={buyerEmail}
-            onChange={e => setBuyerEmail(e.target.value)}
+            onChange={setBuyerEmail}
+            onUserSelect={user => setBuyerEmail(user.email ?? "")}
             placeholder={t("buyerEmailPlaceholder")}
             disabled={isProcessing}
-            className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white text-sm placeholder-neutral-500 focus:outline-none focus:border-blue-500 disabled:opacity-50"
           />
         </div>
       )}

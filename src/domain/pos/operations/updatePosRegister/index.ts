@@ -14,6 +14,7 @@ export interface UpdatePosRegisterInput {
   acceptsCash?: boolean;
   acceptsCard?: boolean;
   fiscalizeInvoices?: boolean;
+  trackFulfillment?: boolean;
 }
 
 export async function updatePosRegister(
@@ -38,6 +39,7 @@ export async function updatePosRegister(
       ...(input.acceptsCash !== undefined && { acceptsCash: input.acceptsCash }),
       ...(input.acceptsCard !== undefined && { acceptsCard: input.acceptsCard }),
       ...(input.fiscalizeInvoices !== undefined && { fiscalizeInvoices: input.fiscalizeInvoices }),
+      ...(input.trackFulfillment !== undefined && { trackFulfillment: input.trackFulfillment }),
     },
   });
 

@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { registerId, items } = body;
+    const { registerId, items, note } = body;
 
     if (!registerId || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
@@ -27,6 +27,7 @@ export async function POST(request: Request) {
 
     const order = await createPosOrder({
       registerId,
+      note: typeof note === "string" ? note : undefined,
       sellerId: user.id,
       items,
       allowCreditItems: user.permissions.includes(PERMISSIONS.POS_TOPUP),

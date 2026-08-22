@@ -11,6 +11,7 @@ import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransa
 import { bustOnPosOrderPaid } from "@/lib/services/cache";
 import { inngest } from "@/lib/services/inngest";
 import { PosError } from "@/domain/pos/types/posError";
+import { nextQueueNumber } from "@/domain/pos/util/fulfillment";
 import { computeZoi } from "@/lib/services/furs/zoi";
 import { isFursConfigured } from "@/lib/services/furs/cert";
 import {
@@ -135,6 +136,11 @@ export async function markPosOrderPaid(
     const paidAt = new Date();
     const total = order.subtotal + tipAmount;
 
+    // Food-stand registers: order stays "to serve" with a daily queue number
+    const queueNumber = order.register.trackFulfillment
+      ? await nextQueueNumber(tx, order.registerId)
+      : null;
+
     const updatedOrder = await tx.posOrder.update({
       where: { id: order.id },
       data: {
@@ -144,6 +150,10 @@ export async function markPosOrderPaid(
         total,
         paidAt,
         ...(walletId && { walletId }),
+        ...(queueNumber !== null && {
+          fulfillmentStatus: "OPEN",
+          queueNumber,
+        }),
       },
     });
 
@@ -182,6 +192,9 @@ export async function markPosOrderPaid(
       ...(result.balanceAfter !== null && {
         balanceAfter: result.balanceAfter,
       }),
+      queueNumber: result.order.queueNumber ?? undefined,
+      note: result.order.note ?? undefined,
+      fulfillmentStatus: result.order.fulfillmentStatus ?? undefined,
     };
 
     const broadcasts: Promise<unknown>[] = [

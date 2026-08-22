@@ -10,6 +10,7 @@ import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyO
 import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransactionEmail";
 import { bustOnPosOrderPaid } from "@/lib/services/cache";
 import { inngest } from "@/lib/services/inngest";
+import { nextQueueNumber } from "@/domain/pos/util/fulfillment";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import { PosError } from "@/domain/pos/types/posError";
 import type { WalletTransaction } from "@prisma/client";
@@ -143,6 +144,11 @@ export async function payPosOrder(
       });
     }
 
+    // Food-stand registers: order stays "to serve" with a daily queue number
+    const queueNumber = order.register.trackFulfillment
+      ? await nextQueueNumber(tx, order.registerId)
+      : null;
+
     // Update order
     const paidAt = new Date();
     const updatedOrder = await tx.posOrder.update({
@@ -155,6 +161,10 @@ export async function payPosOrder(
         tipAmount,
         total: debitTotal,
         paidAt,
+        ...(queueNumber !== null && {
+          fulfillmentStatus: "OPEN",
+          queueNumber,
+        }),
       },
     });
 
@@ -186,6 +196,9 @@ export async function payPosOrder(
         paymentMethod: "WALLET",
         paidAt: result.paidAt.toISOString(),
         balanceAfter: result.transaction.balanceAfter,
+        queueNumber: result.order.queueNumber ?? undefined,
+        note: result.order.note ?? undefined,
+        fulfillmentStatus: result.order.fulfillmentStatus ?? undefined,
       }
     );
 

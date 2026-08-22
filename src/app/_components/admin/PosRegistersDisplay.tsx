@@ -96,6 +96,7 @@ export default function PosRegistersDisplay({
       acceptsCash: formData.get("acceptsCash") === "true",
       acceptsCard: formData.get("acceptsCard") === "true",
       fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
+      trackFulfillment: formData.get("trackFulfillment") === "true",
     };
 
     if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
@@ -138,6 +139,7 @@ export default function PosRegistersDisplay({
       acceptsCash: formData.get("acceptsCash") === "true",
       acceptsCard: formData.get("acceptsCard") === "true",
       fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
+      trackFulfillment: formData.get("trackFulfillment") === "true",
     };
 
     if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
@@ -426,6 +428,18 @@ export default function PosRegistersDisplay({
               {t("fiscalizeInvoices")}
             </span>
           </label>
+          <label className="flex items-center gap-2 mt-3">
+            <input
+              name="trackFulfillment"
+              type="checkbox"
+              value="true"
+              defaultChecked={register?.trackFulfillment}
+              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+            />
+            <span className="text-sm text-gray-700">
+              {t("trackFulfillment")}
+            </span>
+          </label>
         </div>
       </div>
 
@@ -673,6 +687,11 @@ export default function PosRegistersDisplay({
                 {register.fiscalizeInvoices && (
                   <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">
                     {t("fiscalBadge")}
+                  </span>
+                )}
+                {register.trackFulfillment && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-700">
+                    {t("fulfillmentBadge")}
                   </span>
                 )}
               </div>

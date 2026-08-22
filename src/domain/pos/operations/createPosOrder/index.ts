@@ -10,7 +10,7 @@ import { bustOnPosOrderCreated } from "@/lib/services/cache";
 const ORDER_EXPIRY_MINUTES = 15;
 
 export async function createPosOrder(input: CreatePosOrderInput) {
-  const { registerId, sellerId, items, allowCreditItems = true } = input;
+  const { registerId, sellerId, items, allowCreditItems = true, note } = input;
 
   const itemIds = items.map(i => i.itemId);
 
@@ -118,6 +118,7 @@ export async function createPosOrder(input: CreatePosOrderInput) {
       sellerId,
       subtotal,
       total: subtotal,
+      note: note?.trim() || null,
       expiresAt,
       items: {
         create: itemsToAdd,
