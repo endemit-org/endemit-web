@@ -249,13 +249,6 @@ export default async function PosReceiptPage({
           </>
         )}
 
-        {!fiscalInvoice && (
-          <>
-            <div className="border-t border-dashed border-black my-2" />
-            <div className="text-center text-[10px]">{t("disclaimer")}</div>
-          </>
-        )}
-
         {ticketQrs.length > 0 && (
           <>
             <div className="border-t border-dashed border-black mt-4 mb-3" />

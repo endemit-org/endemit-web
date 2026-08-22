@@ -119,7 +119,6 @@ export async function renderPosReceiptEpos(
       paymentMethod: t("paymentMethod"),
       taxNumber: t("taxNumber"),
       eorPending: t("eorPending"),
-      disclaimer: t("disclaimer"),
       thanks: t("thanks"),
       ticketsHint: t("ticketsHint"),
       vatClause: t("vatClause"),
