@@ -66,7 +66,8 @@ export const subscribeEmailToList = async (
       if (options.fields.LastName) {
         payload.fields.LastName = options.fields.LastName;
       }
-      if (options.fields.Events) {
+      // Empty string is a valid write — clearing the last event on removal
+      if (options.fields.Events !== undefined) {
         payload.fields.Events = options.fields.Events;
       }
       if (options.fields.LastEvent) {

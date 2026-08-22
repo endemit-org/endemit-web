@@ -19,6 +19,10 @@ import { sendTicketEmail } from "@/domain/email/operations/sendTicketEmail";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
 import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
+import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
+import { removeEventFromSubscriber } from "@/domain/newsletter/operations/removeEventFromSubscriber";
+import { ProductCategory } from "@/domain/product/types/product";
+import type { ProductInOrder } from "@/domain/order/types/order";
 import type { TicketPayload } from "@/domain/ticket/types/ticket";
 
 const TRANSFER_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -346,6 +350,38 @@ export async function acceptTicketTransfer(
       }
     } catch (error) {
       console.error("Failed to send transferred ticket email:", error);
+    }
+
+    // EmailOctopus: the recipient now verifiably holds a ticket — same
+    // pipeline as ticket buyers (subscriber upsert + Events/LastEvent merge)
+    await queueOrderNewsletterSubscription({
+      email: acceptor.email!,
+      items: [{ category: ProductCategory.TICKETS } as ProductInOrder],
+      ticketEventIds: [ticket.eventId],
+    }).catch(error =>
+      console.error("Failed to queue transfer newsletter update:", error)
+    );
+
+    // Sender: drop the event from their Events field ONLY when no usable
+    // ticket for this event remains across any of their orders
+    if (transfer.sender.email) {
+      try {
+        const remainingTickets = await prisma.ticket.count({
+          where: {
+            eventId: ticket.eventId,
+            status: { in: ["PENDING", "VALIDATED", "SCANNED"] },
+            order: { userId: transfer.senderUserId },
+          },
+        });
+        if (remainingTickets === 0) {
+          await removeEventFromSubscriber(
+            transfer.sender.email,
+            ticket.eventName
+          );
+        }
+      } catch (error) {
+        console.error("Failed to update sender newsletter fields:", error);
+      }
     }
 
     // Acceptance confirmation to the sender
