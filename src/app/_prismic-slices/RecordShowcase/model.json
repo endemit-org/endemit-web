@@ -1,0 +1,80 @@
+{
+  "id": "record_showcase",
+  "type": "SharedSlice",
+  "name": "RecordShowcase",
+  "description": "Label / založba record showcase — repeatable products with spinning vinyl covers linking to the product page",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "e.g. Label"
+          }
+        },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": "e.g. Založba"
+          }
+        },
+        "description": {
+          "type": "Text",
+          "config": {
+            "label": "Description (optional)",
+            "placeholder": ""
+          }
+        },
+        "description_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Description (SL, optional)",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {
+        "product": {
+          "type": "Link",
+          "config": {
+            "label": "Product",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              {
+                "id": "product",
+                "fields": [
+                  "title"
+                ]
+              }
+            ]
+          }
+        },
+        "cover_image": {
+          "type": "Image",
+          "config": {
+            "label": "Cover image (square, optional — falls back to product image / Issun-bōshi art)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "record_image": {
+          "type": "Image",
+          "config": {
+            "label": "Record image (spinning vinyl, optional — falls back to Issun-bōshi record)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      }
+    }
+  ]
+}

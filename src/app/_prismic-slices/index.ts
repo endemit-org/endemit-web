@@ -22,6 +22,7 @@ export const components = {
   poem: dynamic(() => import("./EventIntro")),
   product_list: dynamic(() => import("./ProductList")),
   promo_card: dynamic(() => import("./PromoCard")),
+  record_showcase: dynamic(() => import("./RecordShowcase")),
   save_the_date: dynamic(() => import("./SaveTheDate")),
   snowfall: dynamic(() => import("./Snowfall")),
   sound_cloud: dynamic(() => import("./SoundCloud")),

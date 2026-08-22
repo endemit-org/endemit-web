@@ -116,6 +116,7 @@ type ArtistDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -323,6 +324,7 @@ type ContentPageDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -604,6 +606,7 @@ type EventDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1044,6 +1047,7 @@ type HomePageDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
   | ContentSectionSlice
@@ -1137,6 +1141,7 @@ type InnerContentDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1256,6 +1261,7 @@ type MobileMenuPromoDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1698,6 +1704,7 @@ type ProductDocumentDataSlicesSlice =
   | HeroSlice
   | VfxSlice
   | DiscordBannerSlice
+  | RecordShowcaseSlice
   | TextColumnSlice
   | VinylPromoSectionSlice
   | NewsletterSubscriptionSlice
@@ -5127,6 +5134,104 @@ export type DiscordBannerSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *RecordShowcase → Default → Primary*
+ */
+export interface RecordShowcaseSliceDefaultPrimary {
+  /**
+   * Title field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.title
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Title (SL) field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.title_sl
+   */
+  title_sl: prismic.KeyTextField;
+
+  /**
+   * Description field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.description
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Description (SL) field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.description_sl
+   */
+  description_sl: prismic.KeyTextField;
+}
+
+/**
+ * Item in *RecordShowcase → Default → Items*
+ */
+export interface RecordShowcaseSliceDefaultItem {
+  /**
+   * Product field in *RecordShowcase → Default → Items*
+   *
+   * - **Field Type**: Content Relationship
+   * - **API ID Path**: record_showcase.default.items[].product
+   */
+  product: ContentRelationshipFieldWithData<
+    [{ id: "product"; fields: ["title"] }]
+  >;
+
+  /**
+   * Cover image field in *RecordShowcase → Default → Items*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: record_showcase.default.items[].cover_image
+   */
+  cover_image: prismic.ImageField<never>;
+
+  /**
+   * Record image field in *RecordShowcase → Default → Items*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: record_showcase.default.items[].record_image
+   */
+  record_image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for RecordShowcase Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type RecordShowcaseSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<RecordShowcaseSliceDefaultPrimary>,
+  Simplify<RecordShowcaseSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *RecordShowcase*
+ */
+type RecordShowcaseSliceVariation = RecordShowcaseSliceDefault;
+
+/**
+ * RecordShowcase Shared Slice
+ *
+ * - **API ID**: `record_showcase`
+ * - **Description**: Label / založba record showcase
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type RecordShowcaseSlice = prismic.SharedSlice<
+  "record_showcase",
+  RecordShowcaseSliceVariation
+>;
+
+/**
  * Primary content in *Vfx → Default → Primary*
  */
 export interface VfxSliceDefaultPrimary {
@@ -5596,6 +5701,11 @@ declare module "@prismicio/client" {
       DiscordBannerSliceDefaultPrimary,
       DiscordBannerSliceVariation,
       DiscordBannerSliceDefault,
+      RecordShowcaseSlice,
+      RecordShowcaseSliceDefaultPrimary,
+      RecordShowcaseSliceDefaultItem,
+      RecordShowcaseSliceVariation,
+      RecordShowcaseSliceDefault,
       VfxSlice,
       VfxSliceDefaultPrimary,
       VfxSliceVariation,
