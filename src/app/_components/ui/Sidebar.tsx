@@ -96,7 +96,7 @@ export default function Sidebar({
     },
     {
       id: "discord",
-      href: "https://discord.gg/endemit",
+      href: "https://discord.gg/uqdheYzyk3",
       iconSrc: "/images/discord.png",
       alt: "Discord",
     },
