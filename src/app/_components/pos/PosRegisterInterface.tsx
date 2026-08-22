@@ -241,6 +241,14 @@ export function PosRegisterInterface({
 
   const createOrder = useCallback(async () => {
     if (cart.length === 0 || isCreating) return;
+    const orderTotal = cart.reduce(
+      (sum, entry) => sum + entry.item.cost * entry.quantity,
+      0
+    );
+    if (attachedCustomer && orderTotal > attachedCustomer.balance) {
+      alert(t("attachedCustomer.insufficient"));
+      return;
+    }
 
     setIsCreating(true);
     try {
@@ -295,7 +303,7 @@ export function PosRegisterInterface({
     } finally {
       setIsCreating(false);
     }
-  }, [cart, register.id, isCreating, clearCart, orderNote, attachedCustomer]);
+  }, [cart, register.id, isCreating, clearCart, orderNote, attachedCustomer, t]);
 
   const cancelOrder = useCallback(async (orderHash: string) => {
     try {
@@ -542,12 +550,26 @@ export function PosRegisterInterface({
         {/* Cart */}
         <div className="border-t bg-white">
           {attachedCustomer && (
-            <div className="flex items-center justify-between px-4 py-2 bg-blue-50 border-b border-blue-200 text-sm">
-              <span className="text-blue-800">
+            <div
+              className={`flex items-center justify-between px-4 py-2 border-b text-sm ${
+                cartTotal > attachedCustomer.balance
+                  ? "bg-red-50 border-red-200"
+                  : "bg-blue-50 border-blue-200"
+              }`}
+            >
+              <span
+                className={
+                  cartTotal > attachedCustomer.balance
+                    ? "text-red-700"
+                    : "text-blue-800"
+                }
+              >
                 {t("attachedCustomer.paying", {
                   name: attachedCustomer.name ?? "?",
                   balance: formatTokensFromCents(attachedCustomer.balance),
                 })}
+                {cartTotal > attachedCustomer.balance &&
+                  ` — ${t("attachedCustomer.insufficient")}`}
               </span>
               <button
                 onClick={() => setAttachedCustomer(null)}

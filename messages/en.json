@@ -2195,7 +2195,8 @@
       "empty": "All caught up 🎉"
     },
     "attachedCustomer": {
-      "paying": "Paying: {name} — {balance}"
+      "paying": "Paying: {name} — {balance}",
+      "insufficient": "insufficient balance"
     }
   },
   "scan": {

@@ -2195,7 +2195,8 @@
       "empty": "Vse postreženo 🎉"
     },
     "attachedCustomer": {
-      "paying": "Plača: {name} — {balance}"
+      "paying": "Plača: {name} — {balance}",
+      "insufficient": "premalo dobroimetja"
     }
   },
   "scan": {

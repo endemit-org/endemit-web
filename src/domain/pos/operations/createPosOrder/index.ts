@@ -125,6 +125,10 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     if (!wallet) {
       throw new Error("Attached customer has no wallet");
     }
+    // Predefined wallet payment: never create an order the wallet can't cover
+    if (wallet.balance < subtotal) {
+      throw new Error("Order total exceeds the customer's wallet balance");
+    }
     attachedCustomer = {
       id: wallet.user.id,
       name: wallet.user.name,
