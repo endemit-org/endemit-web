@@ -10,6 +10,8 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import TicketContent from "@/app/_components/profile/TicketContent";
+import TicketTransferControls from "@/app/_components/profile/TicketTransferControls";
+import { prisma } from "@/lib/services/prisma";
 
 export async function generateMetadata({
   params,
@@ -82,6 +84,18 @@ export default async function ProfileTicketPage({
   } else {
     isEventPassed = false;
   }
+
+  // Pending outgoing transfer for this ticket (transfer UI state)
+  const pendingTransfer = await prisma.ticketTransfer.findFirst({
+    where: {
+      ticketId: ticket.id,
+      status: "PENDING",
+      expiresAt: { gt: new Date() },
+    },
+    select: { id: true, recipientEmail: true, expiresAt: true },
+  });
+  const canTransfer =
+    ticket.status === "PENDING" && !ticket.isGuestList && !isEventPassed;
 
   // Get initial scannedAt from ScanLog
   const initialScannedAt =
@@ -159,6 +173,21 @@ export default async function ProfileTicketPage({
           }
           isEventPassed={isEventPassed}
         />
+
+        {(canTransfer || pendingTransfer) && (
+          <TicketTransferControls
+            ticketId={ticket.id}
+            pendingTransfer={
+              pendingTransfer
+                ? {
+                    id: pendingTransfer.id,
+                    recipientEmail: pendingTransfer.recipientEmail,
+                    expiresAt: pendingTransfer.expiresAt.toISOString(),
+                  }
+                : null
+            }
+          />
+        )}
       </InnerPage>
     </OuterPage>
   );

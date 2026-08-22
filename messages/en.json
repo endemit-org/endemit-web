@@ -743,6 +743,32 @@
         "title": "Orders",
         "description": "View your order history"
       }
+    },
+    "ticketTransfer": {
+      "transferButton": "Transfer this ticket to a friend",
+      "prompt": "Enter your friend's email — they'll get a link to accept the ticket.",
+      "emailPlaceholder": "friend@example.com",
+      "invalidEmail": "Enter a valid email address",
+      "send": "Send transfer",
+      "cancel": "Cancel",
+      "working": "Working…",
+      "hint": "Your ticket stays valid until they accept. On acceptance it moves to their account and your QR code stops working.",
+      "pendingTo": "Transfer pending — awaiting acceptance by {email}",
+      "pendingNote": "Your ticket remains valid until the transfer is accepted. The offer expires automatically.",
+      "revoke": "Revoke transfer",
+      "accept": "Accept ticket",
+      "acceptTitle": "Ticket transfer",
+      "offerHeading": "A ticket for {event} is waiting for you",
+      "offerFrom": "Sent by {sender}",
+      "offerExpiry": "Valid until {date}",
+      "acceptNote": "Accepting moves the ticket into this account with a fresh QR code.",
+      "alreadyAccepted": "This ticket was already accepted",
+      "revoked": "This transfer was revoked by the sender",
+      "expired": "This transfer offer has expired",
+      "closedNote": "The offer for {event} is no longer available.",
+      "incomingHeading": "Ticket offers for you",
+      "incomingFrom": "Sent by {sender}",
+      "pendingBadge": "transfer pending"
     }
   },
   "signin": {
@@ -992,6 +1018,18 @@
       "amountAdded": "Amount added",
       "amountRemoved": "Amount removed",
       "walletBalance": "Wallet Balance"
+    },
+    "ticketTransferOffer": {
+      "title": "You've been sent a ticket for {event}",
+      "body": "{sender} is transferring their ticket for {event} to you. Accept it below to move it into your Endemit account — you'll receive a fresh ticket with your own QR code.",
+      "acceptButton": "Accept ticket",
+      "expiry": "This offer is valid until {date}.",
+      "ignoreHint": "If you weren't expecting this, you can safely ignore this email."
+    },
+    "ticketTransferAccepted": {
+      "title": "Your ticket was accepted",
+      "body": "{recipient} accepted your ticket for {event}. It now lives in their account.",
+      "voidNote": "Your copy of the ticket (email, QR code, wallet pass) is no longer valid for entry."
     }
   },
   "music": {

@@ -743,6 +743,32 @@
         "title": "Naročila",
         "description": "Poglej zgodovino naročil"
       }
+    },
+    "ticketTransfer": {
+      "transferButton": "Prenesi karto kolegu",
+      "prompt": "Vpiši email kolega — dobil bo povezavo za prevzem karte.",
+      "emailPlaceholder": "kolega@primer.si",
+      "invalidEmail": "Vpiši veljaven email",
+      "send": "Pošlji prenos",
+      "cancel": "Prekliči",
+      "working": "V teku…",
+      "hint": "Tvoja karta velja, dokler je ne sprejme. Ob sprejemu se preseli v njihov račun in tvoja QR koda neha veljat.",
+      "pendingTo": "Prenos v teku — čaka na sprejem: {email}",
+      "pendingNote": "Tvoja karta velja, dokler prenos ni sprejet. Ponudba poteče samodejno.",
+      "revoke": "Prekliči prenos",
+      "accept": "Sprejmi karto",
+      "acceptTitle": "Prenos karte",
+      "offerHeading": "Čaka te karta za {event}",
+      "offerFrom": "Pošilja {sender}",
+      "offerExpiry": "Velja do {date}",
+      "acceptNote": "S sprejemom se karta preseli v ta račun z novo QR kodo.",
+      "alreadyAccepted": "Ta karta je bila že sprejeta",
+      "revoked": "Pošiljatelj je prenos preklical",
+      "expired": "Ponudba za prenos je potekla",
+      "closedNote": "Ponudba za {event} ni več na voljo.",
+      "incomingHeading": "Karte, ki te čakajo",
+      "incomingFrom": "Pošilja {sender}",
+      "pendingBadge": "prenos v teku"
     }
   },
   "signin": {
@@ -992,6 +1018,18 @@
       "amountAdded": "Dodan znesek",
       "amountRemoved": "Odstranjen znesek",
       "walletBalance": "Dobroimetje denarnce"
+    },
+    "ticketTransferOffer": {
+      "title": "Nekdo ti pošilja karto za {event}",
+      "body": "{sender} ti prenaša svojo karto za {event}. Sprejmi jo spodaj in preselila se bo v tvoj Endemit račun — dobiš svežo karto s svojo QR kodo.",
+      "acceptButton": "Sprejmi karto",
+      "expiry": "Ponudba velja do {date}.",
+      "ignoreHint": "Če tega nisi pričakoval/a, lahko email mirno ignoriraš."
+    },
+    "ticketTransferAccepted": {
+      "title": "Tvoja karta je bila sprejeta",
+      "body": "{recipient} je sprejel/a tvojo karto za {event}. Zdaj je v njihovem računu.",
+      "voidNote": "Tvoja kopija karte (email, QR koda, wallet pass) za vstop ne velja več."
     }
   },
   "music": {
