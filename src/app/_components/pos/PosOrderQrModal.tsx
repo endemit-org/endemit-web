@@ -165,6 +165,7 @@ export function PosOrderQrModal({
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [liveTip, setLiveTip] = useState(0);
   const [printState, setPrintState] = useState<"idle" | "queued" | "error">(
     "idle"
   );
@@ -388,7 +389,10 @@ export function PosOrderQrModal({
         >
           <div className="text-xl text-center w-full">
             {t.rich("orders.yourTotalIs", {
-              amount: formatTokensFromCents(order.total),
+              amount:
+                !isPaid && liveTip > 0
+                  ? `${formatTokensFromCents(order.subtotal)} + ${formatTokensFromCents(liveTip)}`
+                  : formatTokensFromCents(order.total),
               bold: chunks => <span className="font-bold">{chunks}</span>,
             })}
           </div>
@@ -696,6 +700,7 @@ export function PosOrderQrModal({
                   buyerEmail
                 )
               }
+              onTipChange={setLiveTip}
               onBack={() => {
                 setPayError(null);
                 const choices = hasTopUpItems
@@ -739,6 +744,7 @@ export function PosOrderQrModal({
                 isProcessing={isPaying}
                 error={payError}
                 onPay={handlePay}
+                onTipChange={setLiveTip}
               />
             </div>
           ) : null}

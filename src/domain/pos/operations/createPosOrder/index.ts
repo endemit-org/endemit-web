@@ -64,6 +64,7 @@ export async function createPosOrder(input: CreatePosOrderInput) {
   }> = [];
 
   let subtotal = 0;
+  let debitSubtotal = 0;
 
   for (const orderItem of items) {
     const item = itemByItemId.get(orderItem.itemId);
@@ -82,6 +83,9 @@ export async function createPosOrder(input: CreatePosOrderInput) {
 
     const itemTotal = item.cost * orderItem.quantity;
     subtotal += itemTotal;
+    if (item.direction === "DEBIT") {
+      debitSubtotal += itemTotal;
+    }
 
     itemsToAdd.push({
       itemId: item.id,
@@ -125,8 +129,10 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     if (!wallet) {
       throw new Error("Attached customer has no wallet");
     }
-    // Predefined wallet payment: never create an order the wallet can't cover
-    if (wallet.balance < subtotal) {
+    // Predefined wallet payment: never create an order the wallet can't
+    // cover. Only DEBIT items charge the wallet — CREDIT items are top-ups
+    // funded by cash/card and ADD balance, so they don't count.
+    if (wallet.balance < debitSubtotal) {
       throw new Error("Order total exceeds the customer's wallet balance");
     }
     attachedCustomer = {

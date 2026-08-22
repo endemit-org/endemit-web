@@ -241,14 +241,6 @@ export function PosRegisterInterface({
 
   const createOrder = useCallback(async () => {
     if (cart.length === 0 || isCreating) return;
-    const orderTotal = cart.reduce(
-      (sum, entry) => sum + entry.item.cost * entry.quantity,
-      0
-    );
-    if (attachedCustomer && orderTotal > attachedCustomer.balance) {
-      alert(t("attachedCustomer.insufficient"));
-      return;
-    }
 
     setIsCreating(true);
     try {
@@ -303,7 +295,7 @@ export function PosRegisterInterface({
     } finally {
       setIsCreating(false);
     }
-  }, [cart, register.id, isCreating, clearCart, orderNote, attachedCustomer, t]);
+  }, [cart, register.id, isCreating, clearCart, orderNote, attachedCustomer]);
 
   const cancelOrder = useCallback(async (orderHash: string) => {
     try {
@@ -352,6 +344,14 @@ export function PosRegisterInterface({
     [sortedItems]
   );
 
+  // Only DEBIT items charge an attached wallet; top-ups add funds
+  const cartDebitTotal = cart.reduce(
+    (sum, entry) =>
+      entry.item.direction === "DEBIT"
+        ? sum + entry.item.cost * entry.quantity
+        : sum,
+    0
+  );
   const cartTotal = cart.reduce(
     (sum, c) => sum + c.item.cost * c.quantity,
     0
@@ -552,14 +552,14 @@ export function PosRegisterInterface({
           {attachedCustomer && (
             <div
               className={`flex items-center justify-between px-4 py-2 border-b text-sm ${
-                cartTotal > attachedCustomer.balance
+                cartDebitTotal > attachedCustomer.balance
                   ? "bg-red-50 border-red-200"
                   : "bg-blue-50 border-blue-200"
               }`}
             >
               <span
                 className={
-                  cartTotal > attachedCustomer.balance
+                  cartDebitTotal > attachedCustomer.balance
                     ? "text-red-700"
                     : "text-blue-800"
                 }
@@ -568,7 +568,7 @@ export function PosRegisterInterface({
                   name: attachedCustomer.name ?? "?",
                   balance: formatTokensFromCents(attachedCustomer.balance),
                 })}
-                {cartTotal > attachedCustomer.balance &&
+                {cartDebitTotal > attachedCustomer.balance &&
                   ` — ${t("attachedCustomer.insufficient")}`}
               </span>
               <button
@@ -590,6 +590,10 @@ export function PosRegisterInterface({
             showNote={register.trackFulfillment}
             note={orderNote}
             onNoteChange={setOrderNote}
+            checkoutBlocked={
+              attachedCustomer !== null &&
+              cartDebitTotal > attachedCustomer.balance
+            }
           />
         </div>
       </div>

@@ -25,6 +25,8 @@ interface Props {
   note?: string;
   onNoteChange?: (note: string) => void;
   showNote?: boolean;
+  /** Hard-block checkout (e.g. attached wallet can't cover the cart). */
+  checkoutBlocked?: boolean;
 }
 
 export function PosCart({
@@ -37,6 +39,7 @@ export function PosCart({
   note = "",
   onNoteChange,
   showNote = false,
+  checkoutBlocked = false,
 }: Props) {
   const t = useTranslations("pos");
 
@@ -110,7 +113,7 @@ export function PosCart({
           </span>
           <button
             onClick={onCreateOrder}
-            disabled={isCreating || total < 0}
+            disabled={isCreating || total < 0 || checkoutBlocked}
             className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? t("cart.creating") : t("cart.createOrder")}
