@@ -10,6 +10,7 @@ export const components = {
   blurred_blob: dynamic(() => import("./BlurredBlob")),
   collab_promo: dynamic(() => import("./CollabPromo")),
   content_section: dynamic(() => import("./TextBlock")),
+  discord_banner: dynamic(() => import("./DiscordBanner")),
   embed_block: dynamic(() => import("./EmbedBlock")),
   event_list: dynamic(() => import("./EventList")),
   grid_tile: dynamic(() => import("./TileGrid")),

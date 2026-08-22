@@ -115,6 +115,7 @@ type ArtistDocumentDataSlicesSlice =
   | ImageGallerySlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -321,6 +322,7 @@ type ContentPageDocumentDataSlicesSlice =
   | ImageGallerySlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -601,6 +603,7 @@ type EventDocumentDataSlicesSlice =
   | HorizontalRuleSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1040,6 +1043,7 @@ type HomePageDocumentDataSlicesSlice =
   | AccordionSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
   | ContentSectionSlice
@@ -1132,6 +1136,7 @@ type InnerContentDocumentDataSlicesSlice =
   | PodcastListSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1250,6 +1255,7 @@ type MobileMenuPromoDocumentDataSlicesSlice =
   | PodcastListSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1691,6 +1697,7 @@ type ProductDocumentDataSlicesSlice =
   | BannerSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
   | TextColumnSlice
   | VinylPromoSectionSlice
   | NewsletterSubscriptionSlice
@@ -5025,6 +5032,101 @@ export type VenueListSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *DiscordBanner → Default → Primary*
+ */
+export interface DiscordBannerSliceDefaultPrimary {
+  /**
+   * Title field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Title (SL) field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.title_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title_sl: prismic.RichTextField;
+
+  /**
+   * Description field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Description (SL) field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.description_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_sl: prismic.RichTextField;
+
+  /**
+   * Invite link field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: https://discord.gg/…
+   * - **API ID Path**: discord_banner.default.primary.invite_link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  invite_link: prismic.LinkField;
+
+  /**
+   * Server ID field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 1234567890123456789
+   * - **API ID Path**: discord_banner.default.primary.server_id
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  server_id: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for DiscordBanner Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type DiscordBannerSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<DiscordBannerSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *DiscordBanner*
+ */
+type DiscordBannerSliceVariation = DiscordBannerSliceDefault;
+
+/**
+ * DiscordBanner Shared Slice
+ *
+ * - **API ID**: `discord_banner`
+ * - **Description**: Discord community banner with invite link and live online count
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type DiscordBannerSlice = prismic.SharedSlice<
+  "discord_banner",
+  DiscordBannerSliceVariation
+>;
+
+/**
  * Primary content in *Vfx → Default → Primary*
  */
 export interface VfxSliceDefaultPrimary {
@@ -5389,6 +5491,10 @@ declare module "@prismicio/client" {
       VenueListSliceDefaultPrimary,
       VenueListSliceVariation,
       VenueListSliceDefault,
+      DiscordBannerSlice,
+      DiscordBannerSliceDefaultPrimary,
+      DiscordBannerSliceVariation,
+      DiscordBannerSliceDefault,
       VfxSlice,
       VfxSliceDefaultPrimary,
       VfxSliceVariation,

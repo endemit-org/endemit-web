@@ -32,7 +32,7 @@ interface SocialLink {
   alt: string;
   width?: number;
   height?: number;
-  id: "facebook" | "email" | "instagram" | "soundcloud" | "ra";
+  id: "facebook" | "email" | "instagram" | "soundcloud" | "ra" | "discord";
 }
 
 interface FooterInfo {
@@ -93,6 +93,12 @@ export default function Sidebar({
       href: "https://instagram.com/ende.mit",
       iconSrc: "/images/instagram.png",
       alt: "Instagram",
+    },
+    {
+      id: "discord",
+      href: "https://discord.gg/endemit",
+      iconSrc: "/images/discord.png",
+      alt: "Discord",
     },
     {
       id: "email",

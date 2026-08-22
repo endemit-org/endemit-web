@@ -137,6 +137,9 @@
             },
             "vfx": {
               "type": "SharedSlice"
+            },
+            "discord_banner": {
+              "type": "SharedSlice"
             }
           }
         }

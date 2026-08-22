@@ -2277,5 +2277,9 @@
     "availableNow": "Available now",
     "startsOn": "Starts {date}",
     "step": "Step {number}"
+  },
+  "discordBanner": {
+    "join": "Join our Discord",
+    "onlineNow": "{count} online now"
   }
 }

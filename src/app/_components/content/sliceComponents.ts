@@ -5,6 +5,7 @@ import ArtistProfileList from "@/app/_prismic-slices/ArtistProfileList";
 import Banner from "@/app/_prismic-slices/Banner";
 import BlurredBlob from "@/app/_prismic-slices/BlurredBlob";
 import CollabPromo from "@/app/_prismic-slices/CollabPromo";
+import DiscordBanner from "@/app/_prismic-slices/DiscordBanner";
 import EmbedBlock from "@/app/_prismic-slices/EmbedBlock";
 import EventIntro from "@/app/_prismic-slices/EventIntro";
 import EventList from "@/app/_prismic-slices/EventList";
@@ -37,6 +38,7 @@ export const components = {
   blurred_blob: BlurredBlob,
   collab_promo: CollabPromo,
   content_section: TextBlock,
+  discord_banner: DiscordBanner,
   embed_block: EmbedBlock,
   event_list: EventList,
   grid_tile: TileGrid,

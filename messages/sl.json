@@ -2277,5 +2277,9 @@
     "availableNow": "Na voljo zdej",
     "startsOn": "Začne se {date}",
     "step": "Korak {number}"
+  },
+  "discordBanner": {
+    "join": "Pridruži se Discordu",
+    "onlineNow": "{count} zdaj online"
   }
 }
