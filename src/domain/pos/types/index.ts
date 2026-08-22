@@ -24,6 +24,8 @@ export interface CreatePosOrderInput {
   allowCreditItems?: boolean;
   /** Serving note ("no onions, blue jacket") shown on the to-serve card. */
   note?: string;
+  /** Pre-attach a scanned wallet customer (balance-check "use for order"). */
+  attachedCustomerId?: string;
 }
 
 export interface PosOrderWithDetails extends PosOrder {

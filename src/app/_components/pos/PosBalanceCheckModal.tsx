@@ -8,7 +8,7 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface BalanceCheckResult {
-  customer: { name: string | null };
+  customer: { id: string; name: string | null };
   balance: number;
   transactions: Array<{
     id: string;
@@ -21,9 +21,15 @@ interface BalanceCheckResult {
 
 interface Props {
   onClose: () => void;
+  /** Attach the scanned wallet to the next order (wallet-accepting registers). */
+  onUseForOrder?: (customer: {
+    id: string;
+    name: string | null;
+    balance: number;
+  }) => void;
 }
 
-export function PosBalanceCheckModal({ onClose }: Props) {
+export function PosBalanceCheckModal({ onClose, onUseForOrder }: Props) {
   const t = useTranslations("pos.balanceCheck");
   const [result, setResult] = useState<BalanceCheckResult | null>(null);
   const [isChecking, setIsChecking] = useState(false);
@@ -207,6 +213,21 @@ export function PosBalanceCheckModal({ onClose }: Props) {
                   </div>
                 )}
 
+                {onUseForOrder && (
+                  <button
+                    onClick={() => {
+                      onUseForOrder({
+                        id: result.customer.id,
+                        name: result.customer.name,
+                        balance: result.balance,
+                      });
+                      onClose();
+                    }}
+                    className="w-full px-4 py-3 mb-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+                  >
+                    {t("useForOrder")}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setResult(null);

@@ -697,7 +697,8 @@
         "methodNotAccepted": "Ta blagajna ne sprejema tega načina plačila",
         "topupNotWalletPayable": "Polnitve se plačajo z gotovino al kartico",
         "fiscalNotConfigured": "Davčno potrjevanje ni nastavljeno — kontaktiraj administratorja"
-      }
+      },
+      "payDifferently": "Plačaj drugače"
     },
     "eventsAttended": {
       "title": "Moji eventi",
@@ -2100,7 +2101,8 @@
       "lastTransactions": "Zadnje transakcije",
       "noTransactions": "Še ni transakcij.",
       "scanAnother": "Skeniraj še eno",
-      "unknownCustomer": "Neznan uporabnik"
+      "unknownCustomer": "Neznan uporabnik",
+      "useForOrder": "Uporabi za naslednje naročilo"
     },
     "register": {
       "metaTitle": "POS - Zbri blagajno",
@@ -2179,6 +2181,9 @@
       "title": "Kuhinja — {name}",
       "openCount": "{count} odprtih",
       "empty": "Vse postreženo 🎉"
+    },
+    "attachedCustomer": {
+      "paying": "Plača: {name} — {balance}"
     }
   },
   "scan": {

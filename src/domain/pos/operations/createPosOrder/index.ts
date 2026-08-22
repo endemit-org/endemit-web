@@ -10,7 +10,7 @@ import { bustOnPosOrderCreated } from "@/lib/services/cache";
 const ORDER_EXPIRY_MINUTES = 15;
 
 export async function createPosOrder(input: CreatePosOrderInput) {
-  const { registerId, sellerId, items, allowCreditItems = true, note } = input;
+  const { registerId, sellerId, items, allowCreditItems = true, note, attachedCustomerId } = input;
 
   const itemIds = items.map(i => i.itemId);
 
@@ -110,6 +110,28 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     createdAt: createdAt.toISOString(),
   });
 
+  // Pre-attached wallet customer (balance-check "use for order"): the order
+  // is created already scanned, so payment can go straight to wallet confirm
+  let attachedCustomer: {
+    id: string;
+    name: string | null;
+    balance: number;
+  } | null = null;
+  if (attachedCustomerId) {
+    const wallet = await prisma.wallet.findUnique({
+      where: { userId: attachedCustomerId },
+      include: { user: { select: { id: true, name: true } } },
+    });
+    if (!wallet) {
+      throw new Error("Attached customer has no wallet");
+    }
+    attachedCustomer = {
+      id: wallet.user.id,
+      name: wallet.user.name,
+      balance: wallet.balance,
+    };
+  }
+
   const order = await prisma.posOrder.create({
     data: {
       shortCode,
@@ -120,6 +142,10 @@ export async function createPosOrder(input: CreatePosOrderInput) {
       total: subtotal,
       note: note?.trim() || null,
       expiresAt,
+      ...(attachedCustomer && {
+        customerId: attachedCustomer.id,
+        scannedAt: createdAt,
+      }),
       items: {
         create: itemsToAdd,
       },
@@ -134,5 +160,5 @@ export async function createPosOrder(input: CreatePosOrderInput) {
 
   after(() => bustOnPosOrderCreated());
 
-  return order;
+  return { ...order, attachedCustomer };
 }

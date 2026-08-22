@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
+import { formatTokensFromCents } from "@/lib/util/currency";
 import { PosItemGrid } from "./PosItemGrid";
 import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
@@ -59,6 +60,11 @@ interface PosOrderSummary {
   paymentMethod?: "WALLET" | "CASH" | "CARD";
   queueNumber?: number;
   paidAt?: string;
+  attachedCustomer?: {
+    id: string;
+    name: string | null;
+    balance: number;
+  } | null;
 }
 
 interface CartItem {
@@ -100,6 +106,11 @@ export function PosRegisterInterface({
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [txRefreshKey, setTxRefreshKey] = useState(0);
   const [orderNote, setOrderNote] = useState("");
+  const [attachedCustomer, setAttachedCustomer] = useState<{
+    id: string;
+    name: string | null;
+    balance: number;
+  } | null>(null);
   const [toServeRefreshKey, setToServeRefreshKey] = useState(0);
   const [toServeCount, setToServeCount] = useState(0);
 
@@ -240,6 +251,7 @@ export function PosRegisterInterface({
           registerId: register.id,
           items: cart.map(c => ({ itemId: c.item.id, quantity: c.quantity })),
           note: orderNote.trim() || undefined,
+          attachedCustomerId: attachedCustomer?.id,
         }),
       });
 
@@ -256,9 +268,10 @@ export function PosRegisterInterface({
         subtotal: data.order.subtotal,
         total: data.order.total,
         status: data.order.status,
-        scannedAt: null,
         expiresAt: data.order.expiresAt,
         createdAt: new Date().toISOString(),
+        attachedCustomer: data.order.attachedCustomer ?? null,
+        scannedAt: data.order.attachedCustomer ? new Date().toISOString() : null,
         items: data.order.items.map((i: { itemId: string; name: string; quantity: number; total: number }) => ({
           itemId: i.itemId,
           name: i.name,
@@ -275,13 +288,14 @@ export function PosRegisterInterface({
       setActiveOrder(newOrder);
       clearCart();
       setOrderNote("");
+      setAttachedCustomer(null);
     } catch (error) {
       console.error("Failed to create order:", error);
       alert(error instanceof Error ? error.message : "Failed to create order");
     } finally {
       setIsCreating(false);
     }
-  }, [cart, register.id, isCreating, clearCart, orderNote]);
+  }, [cart, register.id, isCreating, clearCart, orderNote, attachedCustomer]);
 
   const cancelOrder = useCallback(async (orderHash: string) => {
     try {
@@ -527,6 +541,23 @@ export function PosRegisterInterface({
 
         {/* Cart */}
         <div className="border-t bg-white">
+          {attachedCustomer && (
+            <div className="flex items-center justify-between px-4 py-2 bg-blue-50 border-b border-blue-200 text-sm">
+              <span className="text-blue-800">
+                {t("attachedCustomer.paying", {
+                  name: attachedCustomer.name ?? "?",
+                  balance: formatTokensFromCents(attachedCustomer.balance),
+                })}
+              </span>
+              <button
+                onClick={() => setAttachedCustomer(null)}
+                className="p-1 text-blue-500 hover:text-blue-800"
+                aria-label="detach"
+              >
+                ✕
+              </button>
+            </div>
+          )}
           <PosCart
             items={cart}
             total={cartTotal}
@@ -663,7 +694,12 @@ export function PosRegisterInterface({
 
       {/* Balance Check Modal */}
       {isBalanceCheckOpen && (
-        <PosBalanceCheckModal onClose={() => setIsBalanceCheckOpen(false)} />
+        <PosBalanceCheckModal
+          onClose={() => setIsBalanceCheckOpen(false)}
+          onUseForOrder={
+            register.acceptsWallet ? setAttachedCustomer : undefined
+          }
+        />
       )}
 
       {/* Register Stats Modal */}
@@ -683,6 +719,19 @@ export function PosRegisterInterface({
           register={register}
           onClose={() => setActiveOrder(null)}
           onCopyToCart={() => copyToCart(activeOrder)}
+          onDetachCustomer={() => {
+            const clear = (o: PosOrderSummary): PosOrderSummary => ({
+              ...o,
+              attachedCustomer: null,
+              scannedAt: null,
+              customerName: undefined,
+              customerBalance: undefined,
+            });
+            setActiveOrder(prev => (prev ? clear(prev) : null));
+            setPendingOrders(prev =>
+              prev.map(o => (o.id === activeOrder.id ? clear(o) : o))
+            );
+          }}
         />
       )}
     </div>

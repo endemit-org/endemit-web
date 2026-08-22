@@ -50,9 +50,16 @@ interface PosOrderSummary {
   paymentMethod?: "WALLET" | "CASH" | "CARD";
   queueNumber?: number;
   paidAt?: string;
+  attachedCustomer?: {
+    id: string;
+    name: string | null;
+    balance: number;
+  } | null;
 }
 
 interface RegisterConfig {
+  id: string;
+  name: string;
   acceptsWallet: boolean;
   acceptsCash: boolean;
   acceptsCard: boolean;
@@ -63,6 +70,7 @@ interface Props {
   register: RegisterConfig;
   onClose: () => void;
   onCopyToCart: () => void;
+  onDetachCustomer?: () => void;
 }
 
 const AUTO_CLOSE_SECONDS = 30;
@@ -80,6 +88,7 @@ export function PosOrderQrModal({
   register,
   onClose,
   onCopyToCart,
+  onDetachCustomer,
 }: Props) {
   const t = useTranslations("pos");
   const tw = useTranslations("profile.walletPay");
@@ -102,8 +111,18 @@ export function PosOrderQrModal({
     ...(register.acceptsCard ? (["CARD"] as const) : []),
   ];
 
-  const initialSubView = (): SubView => {
-    if (hasTopUpItems) return "sticker-scan";
+  const computeEntryView = (attached: boolean): SubView => {
+    if (hasTopUpItems) {
+      // Pre-attached customers already count as scanned — go to funding
+      if (attached) {
+        if (fundingMethods.length === 1) {
+          return fundingMethods[0] === "CASH" ? "cash-confirm" : "card-confirm";
+        }
+        return "method-select";
+      }
+      return "sticker-scan";
+    }
+    if (attached && register.acceptsWallet) return "customer-confirm";
     if (saleMethods.length === 1) {
       if (saleMethods[0] === "WALLET") return "sticker-scan";
       return saleMethods[0] === "CASH" ? "cash-confirm" : "card-confirm";
@@ -111,9 +130,38 @@ export function PosOrderQrModal({
     return "method-select";
   };
 
-  const [subView, setSubView] = useState<SubView>(initialSubView);
+  const buildAttachedScan = (): StickerScanResult | null => {
+    if (!order.attachedCustomer || hasTopUpItems) return null;
+    return {
+      order: {
+        id: order.id,
+        shortCode: order.shortCode,
+        orderHash: order.orderHash,
+        subtotal: order.subtotal,
+        total: order.total,
+        status: order.status,
+        items: order.items.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          total: item.total,
+          direction: item.direction ?? "DEBIT",
+        })),
+        register: { id: register.id, name: register.name },
+      },
+      customer: {
+        id: order.attachedCustomer.id,
+        name: order.attachedCustomer.name,
+        balance: order.attachedCustomer.balance,
+      },
+      hasEnoughBalance: order.attachedCustomer.balance >= order.total,
+    };
+  };
+
+  const [subView, setSubView] = useState<SubView>(() =>
+    computeEntryView(Boolean(order.attachedCustomer))
+  );
   const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
-    null
+    buildAttachedScan
   );
   const [isRotated, setIsRotated] = useState(true);
   const [isPaying, setIsPaying] = useState(false);
@@ -267,6 +315,22 @@ export function PosOrderQrModal({
       setPrintState("error");
     }
   }, [order.orderHash]);
+
+  const handlePayDifferently = useCallback(async () => {
+    if (isPaying) return;
+    try {
+      await fetch(`/api/v1/pos/orders/${order.orderHash}/detach-customer`, {
+        method: "POST",
+      });
+    } catch {
+      // fall through — worst case the wallet path still works
+    }
+    onDetachCustomer?.();
+    setStickerScan(null);
+    setPayError(null);
+    setSubView(computeEntryView(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order.orderHash, isPaying, onDetachCustomer]);
 
   const handleMarkPaid = useCallback(
     async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
@@ -693,6 +757,9 @@ export function PosOrderQrModal({
                 isProcessing={isPaying}
                 error={payError}
                 onPay={handlePay}
+                onPayDifferently={
+                  order.attachedCustomer ? handlePayDifferently : undefined
+                }
               />
             </div>
           ) : null}

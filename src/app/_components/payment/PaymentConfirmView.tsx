@@ -34,6 +34,8 @@ interface Props {
   isProcessing: boolean;
   error: string | null;
   onPay: (tipAmount: number) => void;
+  /** Pre-attached wallet orders: detach and pick another payment method. */
+  onPayDifferently?: () => void;
 }
 
 export function PaymentConfirmView({
@@ -43,6 +45,7 @@ export function PaymentConfirmView({
   isProcessing,
   error,
   onPay,
+  onPayDifferently,
 }: Props) {
   const t = useTranslations("profile.walletPay");
   const [tipAmount, setTipAmount] = useState(0);
@@ -162,6 +165,15 @@ export function PaymentConfirmView({
               ? t("topUpButton", { amount: formatTokensFromCents(creditTotal) })
               : t("payButton", { amount: formatTokensFromCents(totalToPay) })}
         </button>
+        {onPayDifferently && (
+          <button
+            onClick={onPayDifferently}
+            disabled={isProcessing}
+            className="w-full px-4 py-2 border border-neutral-600 text-neutral-300 text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
+          >
+            {t("payDifferently")}
+          </button>
+        )}
       </div>
     </>
   );

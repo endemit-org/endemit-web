@@ -697,7 +697,8 @@
         "methodNotAccepted": "This register does not accept this payment method",
         "topupNotWalletPayable": "Top-ups must be paid in cash or by card",
         "fiscalNotConfigured": "Fiscalization is not configured — contact an administrator"
-      }
+      },
+      "payDifferently": "Pay differently"
     },
     "eventsAttended": {
       "title": "Events Attended",
@@ -2100,7 +2101,8 @@
       "lastTransactions": "Last transactions",
       "noTransactions": "No transactions yet.",
       "scanAnother": "Scan another",
-      "unknownCustomer": "Unknown customer"
+      "unknownCustomer": "Unknown customer",
+      "useForOrder": "Use for next order"
     },
     "register": {
       "metaTitle": "POS - Select Register",
@@ -2179,6 +2181,9 @@
       "title": "Kitchen — {name}",
       "openCount": "{count} open",
       "empty": "All caught up 🎉"
+    },
+    "attachedCustomer": {
+      "paying": "Paying: {name} — {balance}"
     }
   },
   "scan": {
