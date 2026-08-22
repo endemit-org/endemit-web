@@ -8,7 +8,7 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 
 interface BalanceCheckResult {
-  customer: { name: string | null };
+  customer: { id: string; name: string | null };
   balance: number;
   transactions: Array<{
     id: string;
@@ -21,13 +21,20 @@ interface BalanceCheckResult {
 
 interface Props {
   onClose: () => void;
+  /** Attach the scanned wallet to the next order (wallet-accepting registers). */
+  onUseForOrder?: (customer: {
+    id: string;
+    name: string | null;
+    balance: number;
+  }) => void;
 }
 
-export function PosBalanceCheckModal({ onClose }: Props) {
+export function PosBalanceCheckModal({ onClose, onUseForOrder }: Props) {
   const t = useTranslations("pos.balanceCheck");
   const [result, setResult] = useState<BalanceCheckResult | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRotated, setIsRotated] = useState(true);
 
   const submitCode = useCallback(
     async (rawCode: string) => {
@@ -80,7 +87,35 @@ export function PosBalanceCheckModal({ onClose }: Props) {
           )}
 
           <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">{t("title")}</h2>
+            <h2 className="text-lg font-semibold text-white">
+              {t("title")}
+              {result && (
+                <span className="ml-2 text-emerald-400">
+                  {formatTokensFromCents(result.balance)}
+                </span>
+              )}
+            </h2>
+            <div className="flex items-center gap-1">
+            {result && (
+              <button
+                onClick={() => setIsRotated(r => !r)}
+                className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h5M20 20v-5h-5M4 20a9 9 0 0015-6.7M20 4a9 9 0 00-15 6.7"
+                  />
+                </svg>
+              </button>
+            )}
             <button
               onClick={onClose}
               className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
@@ -99,6 +134,7 @@ export function PosBalanceCheckModal({ onClose }: Props) {
                 />
               </svg>
             </button>
+            </div>
           </div>
 
           <div className="p-6">
@@ -153,6 +189,7 @@ export function PosBalanceCheckModal({ onClose }: Props) {
               </div>
             ) : (
               <div>
+                <div style={isRotated ? { transform: "rotate(180deg)" } : undefined}>
                 <div className="text-center mb-4">
                   <p className="text-neutral-400 text-sm">
                     {result.customer.name || t("unknownCustomer")}
@@ -207,6 +244,22 @@ export function PosBalanceCheckModal({ onClose }: Props) {
                   </div>
                 )}
 
+                </div>
+                {onUseForOrder && (
+                  <button
+                    onClick={() => {
+                      onUseForOrder({
+                        id: result.customer.id,
+                        name: result.customer.name,
+                        balance: result.balance,
+                      });
+                      onClose();
+                    }}
+                    className="w-full px-4 py-3 mb-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+                  >
+                    {t("useForOrder")}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setResult(null);

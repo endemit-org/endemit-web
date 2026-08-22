@@ -50,6 +50,19 @@ interface PosOrderSummary {
   paymentMethod?: "WALLET" | "CASH" | "CARD";
   queueNumber?: number;
   paidAt?: string;
+  attachedCustomer?: {
+    id: string;
+    name: string | null;
+    balance: number;
+  } | null;
+}
+
+interface RegisterConfig {
+  id: string;
+  name: string;
+  acceptsWallet: boolean;
+  acceptsCash: boolean;
+  acceptsCard: boolean;
 }
 
 interface RegisterConfig {
@@ -102,8 +115,18 @@ export function PosOrderQrModal({
     ...(register.acceptsCard ? (["CARD"] as const) : []),
   ];
 
-  const initialSubView = (): SubView => {
-    if (hasTopUpItems) return "sticker-scan";
+  const computeEntryView = (attached: boolean): SubView => {
+    if (hasTopUpItems) {
+      // Pre-attached customers already count as scanned — go to funding
+      if (attached) {
+        if (fundingMethods.length === 1) {
+          return fundingMethods[0] === "CASH" ? "cash-confirm" : "card-confirm";
+        }
+        return "method-select";
+      }
+      return "sticker-scan";
+    }
+    if (attached && register.acceptsWallet) return "customer-confirm";
     if (saleMethods.length === 1) {
       if (saleMethods[0] === "WALLET") return "sticker-scan";
       return saleMethods[0] === "CASH" ? "cash-confirm" : "card-confirm";
@@ -111,14 +134,44 @@ export function PosOrderQrModal({
     return "method-select";
   };
 
-  const [subView, setSubView] = useState<SubView>(initialSubView);
+  const buildAttachedScan = (): StickerScanResult | null => {
+    if (!order.attachedCustomer || hasTopUpItems) return null;
+    return {
+      order: {
+        id: order.id,
+        shortCode: order.shortCode,
+        orderHash: order.orderHash,
+        subtotal: order.subtotal,
+        total: order.total,
+        status: order.status,
+        items: order.items.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          total: item.total,
+          direction: item.direction ?? "DEBIT",
+        })),
+        register: { id: register.id, name: register.name },
+      },
+      customer: {
+        id: order.attachedCustomer.id,
+        name: order.attachedCustomer.name,
+        balance: order.attachedCustomer.balance,
+      },
+      hasEnoughBalance: order.attachedCustomer.balance >= order.total,
+    };
+  };
+
+  const [subView, setSubView] = useState<SubView>(() =>
+    computeEntryView(Boolean(order.attachedCustomer))
+  );
   const [stickerScan, setStickerScan] = useState<StickerScanResult | null>(
-    null
+    buildAttachedScan
   );
   const [isRotated, setIsRotated] = useState(true);
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [liveTip, setLiveTip] = useState(0);
   const [printState, setPrintState] = useState<"idle" | "queued" | "error">(
     "idle"
   );
@@ -342,7 +395,10 @@ export function PosOrderQrModal({
         >
           <div className="text-xl text-center w-full">
             {t.rich("orders.yourTotalIs", {
-              amount: formatTokensFromCents(order.total),
+              amount:
+                !isPaid && liveTip > 0
+                  ? `${formatTokensFromCents(order.subtotal)} + ${formatTokensFromCents(liveTip)}`
+                  : formatTokensFromCents(order.total),
               bold: chunks => <span className="font-bold">{chunks}</span>,
             })}
           </div>
@@ -650,6 +706,7 @@ export function PosOrderQrModal({
                   buyerEmail
                 )
               }
+              onTipChange={setLiveTip}
               onBack={() => {
                 setPayError(null);
                 const choices = hasTopUpItems
@@ -693,6 +750,7 @@ export function PosOrderQrModal({
                 isProcessing={isPaying}
                 error={payError}
                 onPay={handlePay}
+                onTipChange={setLiveTip}
               />
             </div>
           ) : null}

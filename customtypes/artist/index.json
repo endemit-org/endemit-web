@@ -164,6 +164,12 @@
             },
             "vfx": {
               "type": "SharedSlice"
+            },
+            "discord_banner": {
+              "type": "SharedSlice"
+            },
+            "record_showcase": {
+              "type": "SharedSlice"
             }
           }
         }

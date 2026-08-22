@@ -26,6 +26,8 @@ interface Props {
   error: string | null;
   onConfirm: (tipAmount: number, buyerEmail?: string) => void;
   onBack: () => void;
+  /** Live tip updates (e.g. the modal title mirrors the running total). */
+  onTipChange?: (tipAmount: number) => void;
 }
 
 /**
@@ -44,6 +46,7 @@ export function PosMethodConfirmView({
   error,
   onConfirm,
   onBack,
+  onTipChange,
 }: Props) {
   const t = useTranslations("pos.methodConfirm");
   const [tipAmount, setTipAmount] = useState(0);
@@ -107,7 +110,10 @@ export function PosMethodConfirmView({
       {!hasTopUp && (
         <TipStepper
           tipAmount={tipAmount}
-          onChange={setTipAmount}
+          onChange={value => {
+            setTipAmount(value);
+            onTipChange?.(value);
+          }}
           disabled={isProcessing || (method === "CARD" && cardCharged)}
         />
       )}

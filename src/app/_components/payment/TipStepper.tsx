@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useCallback, useRef } from "react";
+import { motion } from "framer-motion";
 import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
@@ -38,7 +39,18 @@ export function TipStepper({
   );
 
   return (
-    <div className="bg-amber-500/[0.06] border border-amber-400/15 rounded-xl p-3 mt-2">
+    // Brief glow on appearance — a subtle nudge toward the tip option
+    <motion.div
+      initial={{
+        backgroundColor: "rgba(245, 158, 11, 0.22)",
+        borderColor: "rgba(251, 191, 36, 0.45)",
+      }}
+      animate={{
+        backgroundColor: "rgba(245, 158, 11, 0.06)",
+        borderColor: "rgba(251, 191, 36, 0.15)",
+      }}
+      transition={{ duration: 1.6, delay: 0.5, ease: "easeOut" }}
+      className="border rounded-xl p-3 mt-2">
       <div className="text-sm text-amber-200/80 mb-2 text-center">
         {t("addTip")}
       </div>
@@ -75,6 +87,6 @@ export function TipStepper({
           +
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

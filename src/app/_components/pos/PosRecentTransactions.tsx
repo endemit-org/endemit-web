@@ -39,9 +39,12 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
   const [transactions, setTransactions] = useState<PosTransaction[] | null>(
     null
   );
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [queuedIds, setQueuedIds] = useState<Set<string>>(new Set());
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -56,12 +59,41 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
         throw new Error(data.error || t("loadFailed"));
       }
       setTransactions(data.transactions);
+      setNextCursor(data.nextCursor ?? null);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("loadFailed"));
     } finally {
       setIsLoading(false);
     }
   }, [registerId, t]);
+
+  const loadMore = useCallback(async () => {
+    if (!nextCursor || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const response = await fetch(
+        `/api/v1/pos/registers/${registerId}/transactions?cursor=${encodeURIComponent(nextCursor)}`,
+        { cache: "no-store" }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || t("loadFailed"));
+      }
+      setTransactions(prev => {
+        // A realtime refresh may have re-fetched page 1 meanwhile — dedupe.
+        const seen = new Set((prev ?? []).map(tx => tx.id));
+        const fresh = (data.transactions as PosTransaction[]).filter(
+          tx => !seen.has(tx.id)
+        );
+        return [...(prev ?? []), ...fresh];
+      });
+      setNextCursor(data.nextCursor ?? null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("loadFailed"));
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [registerId, nextCursor, isLoadingMore, t]);
 
   useEffect(() => {
     load();
@@ -115,7 +147,12 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
             {transactions.map(tx => (
               <div
                 key={tx.id}
-                className="border rounded-lg px-3 py-2 text-xs space-y-1"
+                onClick={() =>
+                  setExpandedId(prev => (prev === tx.id ? null : tx.id))
+                }
+                className={`border rounded-lg px-3 py-2 text-xs space-y-1 cursor-pointer transition-colors ${
+                  expandedId === tx.id ? "bg-gray-50" : "hover:bg-gray-50"
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
@@ -170,7 +207,8 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                   {tx.status === "PAID" && (
                     <span className="flex items-center gap-2 whitespace-nowrap">
                       <button
-                        onClick={async () => {
+                        onClick={async e => {
+                          e.stopPropagation();
                           setQueuedIds(prev => new Set(prev).add(tx.id));
                           await fetch(
                             `/api/v1/pos/orders/${tx.orderHash}/print`,
@@ -185,6 +223,7 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                         href={`/pos/receipt/${tx.orderHash}`}
                         target="_blank"
                         rel="noopener"
+                        onClick={e => e.stopPropagation()}
                         className="text-gray-400 hover:text-gray-600"
                       >
                         {t("slip")}
@@ -192,8 +231,94 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                     </span>
                   )}
                 </div>
+
+                {expandedId === tx.id && (
+                  <div className="border-t border-dashed pt-2 mt-1 space-y-1.5">
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                      <span className="text-gray-500">{t("detail.paidBy")}</span>
+                      <span className="text-gray-900 text-right">
+                        {tx.customerName ?? t("detail.unknownCustomer")}
+                      </span>
+                      <span className="text-gray-500">{t("detail.method")}</span>
+                      <span className="text-gray-900 text-right">
+                        {tx.paymentMethod ?? "—"}
+                      </span>
+                      <span className="text-gray-500">{t("detail.seller")}</span>
+                      <span className="text-gray-900 text-right">
+                        {tx.sellerName ?? "—"}
+                      </span>
+                      <span className="text-gray-500">
+                        {t("detail.created")}
+                      </span>
+                      <span className="text-gray-900 text-right">
+                        <ClientDate date={tx.createdAt} />
+                      </span>
+                      {tx.paidAt && (
+                        <>
+                          <span className="text-gray-500">
+                            {t("detail.paid")}
+                          </span>
+                          <span className="text-gray-900 text-right">
+                            <ClientDate date={tx.paidAt} />
+                          </span>
+                        </>
+                      )}
+                      {tx.cancelledAt && (
+                        <>
+                          <span className="text-gray-500">
+                            {t("detail.cancelled")}
+                          </span>
+                          <span className="text-red-600 text-right">
+                            <ClientDate date={tx.cancelledAt} />
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="border-t pt-1.5 space-y-0.5">
+                      {tx.items.map((item, i) => (
+                        <div key={i} className="flex justify-between">
+                          <span className="text-gray-600">
+                            {item.quantity}x {item.name}
+                          </span>
+                          <span className="text-gray-900">
+                            {formatTokensFromCents(item.total)}
+                          </span>
+                        </div>
+                      ))}
+                      {tx.tipAmount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            {t("detail.tip")}
+                          </span>
+                          <span className="text-amber-600">
+                            {formatTokensFromCents(tx.tipAmount)}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-gray-700">
+                          {t("detail.total")}
+                        </span>
+                        <span className="text-gray-900">
+                          {formatTokensFromCents(tx.total)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
+
+            {nextCursor && (
+              <button
+                onClick={loadMore}
+                disabled={isLoadingMore}
+                className="w-full py-2 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-gray-50 border border-dashed rounded-lg disabled:opacity-50"
+              >
+                {isLoadingMore ? t("loading") : t("loadMore")}
+              </button>
+            )}
           </div>
         )}
       </div>

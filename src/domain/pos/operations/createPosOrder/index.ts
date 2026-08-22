@@ -10,7 +10,7 @@ import { bustOnPosOrderCreated } from "@/lib/services/cache";
 const ORDER_EXPIRY_MINUTES = 15;
 
 export async function createPosOrder(input: CreatePosOrderInput) {
-  const { registerId, sellerId, items, allowCreditItems = true, note } = input;
+  const { registerId, sellerId, items, allowCreditItems = true, note, attachedCustomerId } = input;
 
   const itemIds = items.map(i => i.itemId);
 
@@ -64,6 +64,7 @@ export async function createPosOrder(input: CreatePosOrderInput) {
   }> = [];
 
   let subtotal = 0;
+  let debitSubtotal = 0;
 
   for (const orderItem of items) {
     const item = itemByItemId.get(orderItem.itemId);
@@ -82,6 +83,9 @@ export async function createPosOrder(input: CreatePosOrderInput) {
 
     const itemTotal = item.cost * orderItem.quantity;
     subtotal += itemTotal;
+    if (item.direction === "DEBIT") {
+      debitSubtotal += itemTotal;
+    }
 
     itemsToAdd.push({
       itemId: item.id,
@@ -110,6 +114,34 @@ export async function createPosOrder(input: CreatePosOrderInput) {
     createdAt: createdAt.toISOString(),
   });
 
+  // Pre-attached wallet customer (balance-check "use for order"): the order
+  // is created already scanned, so payment can go straight to wallet confirm
+  let attachedCustomer: {
+    id: string;
+    name: string | null;
+    balance: number;
+  } | null = null;
+  if (attachedCustomerId) {
+    const wallet = await prisma.wallet.findUnique({
+      where: { userId: attachedCustomerId },
+      include: { user: { select: { id: true, name: true } } },
+    });
+    if (!wallet) {
+      throw new Error("Attached customer has no wallet");
+    }
+    // Predefined wallet payment: never create an order the wallet can't
+    // cover. Only DEBIT items charge the wallet — CREDIT items are top-ups
+    // funded by cash/card and ADD balance, so they don't count.
+    if (wallet.balance < debitSubtotal) {
+      throw new Error("Order total exceeds the customer's wallet balance");
+    }
+    attachedCustomer = {
+      id: wallet.user.id,
+      name: wallet.user.name,
+      balance: wallet.balance,
+    };
+  }
+
   const order = await prisma.posOrder.create({
     data: {
       shortCode,
@@ -120,6 +152,10 @@ export async function createPosOrder(input: CreatePosOrderInput) {
       total: subtotal,
       note: note?.trim() || null,
       expiresAt,
+      ...(attachedCustomer && {
+        customerId: attachedCustomer.id,
+        scannedAt: createdAt,
+      }),
       items: {
         create: itemsToAdd,
       },
@@ -134,5 +170,5 @@ export async function createPosOrder(input: CreatePosOrderInput) {
 
   after(() => bustOnPosOrderCreated());
 
-  return order;
+  return { ...order, attachedCustomer };
 }

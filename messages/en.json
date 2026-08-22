@@ -743,6 +743,32 @@
         "title": "Orders",
         "description": "View your order history"
       }
+    },
+    "ticketTransfer": {
+      "transferButton": "Transfer this ticket to a friend",
+      "prompt": "Enter your friend's email — they'll get a link to accept the ticket.",
+      "emailPlaceholder": "friend@example.com",
+      "invalidEmail": "Enter a valid email address",
+      "send": "Send transfer",
+      "cancel": "Cancel",
+      "working": "Working…",
+      "hint": "Your ticket stays valid until they accept. On acceptance it moves to their account and your QR code stops working.",
+      "pendingTo": "Transfer pending — awaiting acceptance by {email}",
+      "pendingNote": "Your ticket remains valid until the transfer is accepted. The offer expires automatically.",
+      "revoke": "Revoke transfer",
+      "accept": "Accept ticket",
+      "acceptTitle": "Ticket transfer",
+      "offerHeading": "A ticket for {event} is waiting for you",
+      "offerFrom": "Sent by {sender}",
+      "offerExpiry": "Valid until {date}",
+      "acceptNote": "Accepting moves the ticket into this account with a fresh QR code.",
+      "alreadyAccepted": "This ticket was already accepted",
+      "revoked": "This transfer was revoked by the sender",
+      "expired": "This transfer offer has expired",
+      "closedNote": "The offer for {event} is no longer available.",
+      "incomingHeading": "Ticket offers for you",
+      "incomingFrom": "Sent by {sender}",
+      "pendingBadge": "transfer pending"
     }
   },
   "signin": {
@@ -992,6 +1018,18 @@
       "amountAdded": "Amount added",
       "amountRemoved": "Amount removed",
       "walletBalance": "Wallet Balance"
+    },
+    "ticketTransferOffer": {
+      "title": "You've been sent a ticket for {event}",
+      "body": "{sender} is transferring their ticket for {event} to you. Accept it below to move it into your Endemit account — you'll receive a fresh ticket with your own QR code.",
+      "acceptButton": "Accept ticket",
+      "expiry": "This offer is valid until {date}.",
+      "ignoreHint": "If you weren't expecting this, you can safely ignore this email."
+    },
+    "ticketTransferAccepted": {
+      "title": "Your ticket was accepted",
+      "body": "{recipient} accepted your ticket for {event}. It now lives in their account.",
+      "voidNote": "Your copy of the ticket (email, QR code, wallet pass) is no longer valid for entry."
     }
   },
   "music": {
@@ -1023,7 +1061,7 @@
     "breadcrumb": "Music",
     "vinylPromo": {
       "or": "or",
-      "buyDigital": "Buy digital album",
+      "buyDigital": "Buy digital edition",
       "clickToListen": "Click here to listen",
       "playAlbum": "Play album",
       "playingAlbum": "Playing album"
@@ -1182,7 +1220,8 @@
         "guest": "Guest"
       },
       "pendingTickets": "Pending Tickets ({count})",
-      "scannedTickets": "Scanned Tickets ({count})"
+      "scannedTickets": "Scanned Tickets ({count})",
+      "pastEvents": "Past events"
     },
     "tickets": {
       "backToEvent": "Back to Event",
@@ -1443,7 +1482,8 @@
         "allMethods": "All methods",
         "methodWallet": "Wallet",
         "methodCash": "Cash",
-        "methodCard": "Card"
+        "methodCard": "Card",
+        "receipt": "Receipt"
       },
       "registers": {
         "title": "POS Registers",
@@ -1593,7 +1633,11 @@
           "Festival26Red": "Festival 26 Red",
           "Festival26Blue": "Festival 26 Blue"
         },
-        "propertyUpdateFailed": "Failed to update property."
+        "propertyUpdateFailed": "Failed to update property.",
+        "createCardAccounts": "Create card accounts (@CODE, pre-linked)",
+        "cardAccountsMax": "Max 200 codes per batch when creating card accounts",
+        "confirmGenerateWithAccounts": "Generate {count} codes AND create a temporary card account (with wallet) for each?",
+        "createdCodesWithAccounts": "Created {created} codes with {accounts} card accounts. Pool total: {total}."
       }
     },
     "users": {
@@ -2073,7 +2117,6 @@
       "methodCard": "Card",
       "taxNumber": "Tax no.",
       "eorPending": "pending confirmation",
-      "disclaimer": "This is not a fiscal receipt. / To ni davčno potrjen račun.",
       "thanks": "Thank you!",
       "ticketsHeading": "Entry tickets",
       "ticketsHint": "Show this QR code at the entrance.",
@@ -2088,7 +2131,19 @@
       "tipSuffix": "tip",
       "print": "Print",
       "printQueued": "Sent ✓",
-      "slip": "Slip"
+      "slip": "Slip",
+      "loadMore": "Load more",
+      "detail": {
+        "paidBy": "Paid by",
+        "unknownCustomer": "Unknown customer",
+        "method": "Payment method",
+        "seller": "Seller",
+        "created": "Created",
+        "paid": "Paid",
+        "cancelled": "Cancelled",
+        "tip": "Tip",
+        "total": "Total"
+      }
     },
     "balanceCheck": {
       "label": "Balance",
@@ -2100,7 +2155,8 @@
       "lastTransactions": "Last transactions",
       "noTransactions": "No transactions yet.",
       "scanAnother": "Scan another",
-      "unknownCustomer": "Unknown customer"
+      "unknownCustomer": "Unknown customer",
+      "useForOrder": "Use for next order"
     },
     "register": {
       "metaTitle": "POS - Select Register",
@@ -2179,6 +2235,10 @@
       "title": "Kitchen — {name}",
       "openCount": "{count} open",
       "empty": "All caught up 🎉"
+    },
+    "attachedCustomer": {
+      "paying": "Paying: {name} — {balance}",
+      "insufficient": "insufficient balance"
     }
   },
   "scan": {
@@ -2259,5 +2319,9 @@
     "availableNow": "Available now",
     "startsOn": "Starts {date}",
     "step": "Step {number}"
+  },
+  "discordBanner": {
+    "join": "Join our Discord",
+    "onlineNow": "{count} online now"
   }
 }

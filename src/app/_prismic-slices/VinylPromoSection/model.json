@@ -2,7 +2,7 @@
   "id": "vinyl_promo_section",
   "type": "SharedSlice",
   "name": "VinylPromoSection",
-  "description": "VinylPromoSection",
+  "description": "Album promo — per-album graphics, product-driven availability, optional track previews",
   "variations": [
     {
       "id": "default",
@@ -40,6 +40,42 @@
             "placeholder": ""
           }
         },
+        "artist_name": {
+          "type": "Text",
+          "config": {
+            "label": "Artist name",
+            "placeholder": "e.g. MMali"
+          }
+        },
+        "album_title": {
+          "type": "Text",
+          "config": {
+            "label": "Album title",
+            "placeholder": "e.g. Issun-bōshi"
+          }
+        },
+        "cover_image": {
+          "type": "Image",
+          "config": {
+            "label": "Cover image (square)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "record_image": {
+          "type": "Image",
+          "config": {
+            "label": "Record image (spinning vinyl, optional)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "background_color": {
+          "type": "Color",
+          "config": {
+            "label": "Background color"
+          }
+        },
         "product": {
           "type": "Link",
           "config": {
@@ -64,9 +100,46 @@
             "placeholder_true": "true",
             "default_value": false
           }
+        },
+        "digital_link": {
+          "type": "Link",
+          "config": {
+            "label": "Buy digital link (e.g. Bandcamp, optional)",
+            "placeholder": "https://…bandcamp.com/album/…",
+            "select": null
+          }
+        },
+        "soundcloud_playlist_url": {
+          "type": "Text",
+          "config": {
+            "label": "SoundCloud playlist URL (optional — enables Play album)",
+            "placeholder": "https://soundcloud.com/…/sets/…"
+          }
         }
       },
-      "items": {}
+      "items": {
+        "track_title": {
+          "type": "Text",
+          "config": {
+            "label": "Track title",
+            "placeholder": ""
+          }
+        },
+        "track_artist": {
+          "type": "Text",
+          "config": {
+            "label": "Track artist",
+            "placeholder": ""
+          }
+        },
+        "track_url": {
+          "type": "Text",
+          "config": {
+            "label": "SoundCloud track URL",
+            "placeholder": "https://soundcloud.com/…"
+          }
+        }
+      }
     }
   ]
 }

@@ -76,27 +76,46 @@ export default function EventsList({ initialData }: EventsListProps) {
         </button>
       </div>
 
-      <div className="bg-white shadow overflow-hidden rounded-lg">
-        {events.length > 0 ? (
-          <div className="divide-y divide-gray-200">
-            {events.map(event => {
-              const stats = ticketStats[event.id];
+      {(() => {
+        const renderEvent = (event: SerializedEventForAdmin) => {
+          const stats = ticketStats[event.id];
 
-              return (
+          return (
                 <Link
                   key={event.id}
                   href={`/admin/events/${event.uid}`}
                   className="block p-4 hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-start gap-4">
-                    <ImageWithFallback
-                      src={event.coverImage?.src}
-                      alt={event.coverImage?.alt ?? ""}
-                      placeholder={event.coverImage?.placeholder}
-                      width={80}
-                      height={80}
-                      className="aspect-square object-cover rounded-lg w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0"
-                    />
+                    <div className="relative flex-shrink-0">
+                      <ImageWithFallback
+                        src={event.coverImage?.src}
+                        alt={event.coverImage?.alt ?? ""}
+                        placeholder={event.coverImage?.placeholder}
+                        width={80}
+                        height={80}
+                        className="aspect-square object-cover rounded-lg w-16 h-16 sm:w-20 sm:h-20"
+                      />
+                      {event.isCompleted && (
+                        <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center">
+                          <div className="bg-green-500 rounded-full p-1.5">
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
@@ -116,15 +135,6 @@ export default function EventsList({ initialData }: EventsListProps) {
                           )}
                         </div>
                         <div className="flex items-center gap-1 flex-shrink-0">
-                          {event.isCompleted ? (
-                            <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded">
-                              {t("pastEvent")}
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
-                              {t("upcoming")}
-                            </span>
-                          )}
                           <svg
                             className="w-5 h-5 text-gray-400 hidden sm:block"
                             fill="none"
@@ -206,15 +216,45 @@ export default function EventsList({ initialData }: EventsListProps) {
                     </div>
                   </div>
                 </Link>
-              );
-            })}
+          );
+        };
+
+        if (events.length === 0) {
+          return (
+            <div className="bg-white shadow overflow-hidden rounded-lg p-8 text-center text-gray-500">
+              {t("empty")}
+            </div>
+          );
+        }
+
+        const upcoming = events.filter(e => !e.isCompleted);
+        const past = events.filter(e => e.isCompleted);
+
+        return (
+          <div className="space-y-6">
+            {upcoming.length > 0 && (
+              <div>
+                <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  {t("upcoming")}
+                </h2>
+                <div className="bg-white shadow overflow-hidden rounded-lg divide-y divide-gray-200">
+                  {upcoming.map(renderEvent)}
+                </div>
+              </div>
+            )}
+            {past.length > 0 && (
+              <div>
+                <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  {t("pastEvents")}
+                </h2>
+                <div className="bg-white shadow overflow-hidden rounded-lg divide-y divide-gray-200">
+                  {past.map(renderEvent)}
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="p-8 text-center text-gray-500">
-            {t("empty")}
-          </div>
-        )}
-      </div>
+        );
+      })()}
 
       <Pagination
         currentPage={currentPage}

@@ -44,7 +44,6 @@ export default async function PosLayout({
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <CookieLanguageSwitcher className="text-sm text-gray-600 hover:text-gray-900" />
               <ContextMenu
                 trigger={
                   <button className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none">
@@ -70,6 +69,10 @@ export default async function PosLayout({
                   <div className="text-xs text-gray-500 mt-1">
                     {user.roles.join(", ")}
                   </div>
+                </ContextMenuLabel>
+                <ContextMenuDivider />
+                <ContextMenuLabel>
+                  <CookieLanguageSwitcher className="text-sm text-gray-600 hover:text-gray-900" />
                 </ContextMenuLabel>
                 <ContextMenuDivider />
                 <ContextMenuLabel>

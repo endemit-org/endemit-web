@@ -38,6 +38,16 @@ export async function notifyOnNewOrder(order: Order) {
           value: createOrderItemsValues.join("\n\n"),
           inline: false,
         },
+        // Discount amounts are stored negative; show the code + saved amount
+        ...(order.discountCodeKey && Number(order.discountAmount ?? 0) !== 0
+          ? [
+              {
+                name: "Discount code",
+                value: `\`${order.discountCodeKey}\` (−${formatDecimalPrice(Math.abs(Number(order.discountAmount)))})`,
+                inline: false,
+              },
+            ]
+          : []),
         {
           name: "Total order amount",
           value: `\`${totalOrderAmount}\``,

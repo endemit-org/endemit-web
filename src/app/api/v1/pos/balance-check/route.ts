@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       customer: {
+        id: userId,
         name: wallet.user?.name || wallet.user?.username || null,
       },
       balance: wallet.balance,

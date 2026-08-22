@@ -20,7 +20,11 @@ export async function POST(request: Request) {
       ? body.property
       : null;
 
-    const result = await bulkGenerateStickers(count, property);
+    const result = await bulkGenerateStickers(
+      count,
+      property,
+      body?.createCardAccounts === true
+    );
     return NextResponse.json(result);
   } catch (error) {
     const message =

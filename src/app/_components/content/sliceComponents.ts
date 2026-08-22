@@ -5,6 +5,7 @@ import ArtistProfileList from "@/app/_prismic-slices/ArtistProfileList";
 import Banner from "@/app/_prismic-slices/Banner";
 import BlurredBlob from "@/app/_prismic-slices/BlurredBlob";
 import CollabPromo from "@/app/_prismic-slices/CollabPromo";
+import DiscordBanner from "@/app/_prismic-slices/DiscordBanner";
 import EmbedBlock from "@/app/_prismic-slices/EmbedBlock";
 import EventIntro from "@/app/_prismic-slices/EventIntro";
 import EventList from "@/app/_prismic-slices/EventList";
@@ -15,6 +16,7 @@ import Newsletter from "@/app/_prismic-slices/Newsletter";
 import PodcastList from "@/app/_prismic-slices/PodcastList";
 import ProductList from "@/app/_prismic-slices/ProductList";
 import PromoCard from "@/app/_prismic-slices/PromoCard";
+import RecordShowcase from "@/app/_prismic-slices/RecordShowcase";
 import SaveTheDate from "@/app/_prismic-slices/SaveTheDate";
 import Snowfall from "@/app/_prismic-slices/Snowfall";
 import SoundCloud from "@/app/_prismic-slices/SoundCloud";
@@ -37,6 +39,7 @@ export const components = {
   blurred_blob: BlurredBlob,
   collab_promo: CollabPromo,
   content_section: TextBlock,
+  discord_banner: DiscordBanner,
   embed_block: EmbedBlock,
   event_list: EventList,
   grid_tile: TileGrid,
@@ -48,6 +51,7 @@ export const components = {
   poem: EventIntro,
   product_list: ProductList,
   promo_card: PromoCard,
+  record_showcase: RecordShowcase,
   save_the_date: SaveTheDate,
   snowfall: Snowfall,
   sound_cloud: SoundCloud,

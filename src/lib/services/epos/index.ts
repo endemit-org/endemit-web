@@ -68,7 +68,6 @@ export interface EposReceiptData {
     paymentMethod: string;
     taxNumber: string;
     eorPending: string;
-    disclaimer: string;
     thanks: string;
     ticketsHint: string;
     vatClause: string;
@@ -167,11 +166,6 @@ export function buildReceiptEposXml(data: EposReceiptData): string {
         parts.push(text(clauseLine));
       }
     }
-    parts.push(`<text align="left"/>`);
-  } else {
-    parts.push(text(divider()));
-    parts.push(`<text align="center"/>`);
-    parts.push(text(data.labels.disclaimer));
     parts.push(`<text align="left"/>`);
   }
 

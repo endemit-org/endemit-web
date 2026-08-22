@@ -34,6 +34,8 @@ interface Props {
   isProcessing: boolean;
   error: string | null;
   onPay: (tipAmount: number) => void;
+  /** Live tip updates (e.g. the modal title mirrors the running total). */
+  onTipChange?: (tipAmount: number) => void;
 }
 
 export function PaymentConfirmView({
@@ -43,6 +45,7 @@ export function PaymentConfirmView({
   isProcessing,
   error,
   onPay,
+  onTipChange,
 }: Props) {
   const t = useTranslations("profile.walletPay");
   const [tipAmount, setTipAmount] = useState(0);
@@ -140,7 +143,10 @@ export function PaymentConfirmView({
       {!hasTopUp && (
         <TipStepper
           tipAmount={tipAmount}
-          onChange={setTipAmount}
+          onChange={value => {
+            setTipAmount(value);
+            onTipChange?.(value);
+          }}
           canAdd={canAddTip}
           disabled={isProcessing}
         />
