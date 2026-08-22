@@ -1595,7 +1595,11 @@
           "Festival26Red": "Festival 26 rdeča",
           "Festival26Blue": "Festival 26 modra"
         },
-        "propertyUpdateFailed": "Lastnosti ni uspelo spremenit."
+        "propertyUpdateFailed": "Lastnosti ni uspelo spremenit.",
+        "createCardAccounts": "Ustvari kartične račune (@KODA, povezano vnaprej)",
+        "cardAccountsMax": "Največ 200 kod na paket pri ustvarjanju kartičnih računov",
+        "confirmGenerateWithAccounts": "A generiram {count} kod IN za vsako ustvarim začasen kartični račun (z denarnco)?",
+        "createdCodesWithAccounts": "Ustvarjenih {created} kod s {accounts} kartičnimi računi. Skupaj v bazenu: {total}."
       }
     },
     "users": {

@@ -1595,7 +1595,11 @@
           "Festival26Red": "Festival 26 Red",
           "Festival26Blue": "Festival 26 Blue"
         },
-        "propertyUpdateFailed": "Failed to update property."
+        "propertyUpdateFailed": "Failed to update property.",
+        "createCardAccounts": "Create card accounts (@CODE, pre-linked)",
+        "cardAccountsMax": "Max 200 codes per batch when creating card accounts",
+        "confirmGenerateWithAccounts": "Generate {count} codes AND create a temporary card account (with wallet) for each?",
+        "createdCodesWithAccounts": "Created {created} codes with {accounts} card accounts. Pool total: {total}."
       }
     },
     "users": {
