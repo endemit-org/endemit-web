@@ -5265,6 +5265,107 @@ export interface VinylPromoSectionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   display_add_to_cart: prismic.BooleanField;
+
+  /**
+   * Headline (SL) field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.headline_sl
+   */
+  headline_sl: prismic.KeyTextField;
+
+  /**
+   * Description (SL) field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.description_sl
+   */
+  description_sl: prismic.KeyTextField;
+
+  /**
+   * Artist name field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.artist_name
+   */
+  artist_name: prismic.KeyTextField;
+
+  /**
+   * Album title field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.album_title
+   */
+  album_title: prismic.KeyTextField;
+
+  /**
+   * Cover image field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: vinyl_promo_section.default.primary.cover_image
+   */
+  cover_image: prismic.ImageField<never>;
+
+  /**
+   * Record image field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: vinyl_promo_section.default.primary.record_image
+   */
+  record_image: prismic.ImageField<never>;
+
+  /**
+   * Background color field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **API ID Path**: vinyl_promo_section.default.primary.background_color
+   */
+  background_color: prismic.ColorField;
+
+  /**
+   * Buy digital link field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **API ID Path**: vinyl_promo_section.default.primary.digital_link
+   */
+  digital_link: prismic.LinkField;
+
+  /**
+   * SoundCloud playlist URL field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.soundcloud_playlist_url
+   */
+  soundcloud_playlist_url: prismic.KeyTextField;
+}
+
+/**
+ * Item in *VinylPromoSection → Default → Items*
+ */
+export interface VinylPromoSectionSliceDefaultItem {
+  /**
+   * Track title field in *VinylPromoSection → Default → Items*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.items[].track_title
+   */
+  track_title: prismic.KeyTextField;
+
+  /**
+   * Track artist field in *VinylPromoSection → Default → Items*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.items[].track_artist
+   */
+  track_artist: prismic.KeyTextField;
+
+  /**
+   * SoundCloud track URL field in *VinylPromoSection → Default → Items*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.items[].track_url
+   */
+  track_url: prismic.KeyTextField;
 }
 
 /**
@@ -5277,7 +5378,7 @@ export interface VinylPromoSectionSliceDefaultPrimary {
 export type VinylPromoSectionSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<VinylPromoSectionSliceDefaultPrimary>,
-  never
+  Simplify<VinylPromoSectionSliceDefaultItem>
 >;
 
 /**
@@ -5501,6 +5602,7 @@ declare module "@prismicio/client" {
       VfxSliceDefault,
       VinylPromoSectionSlice,
       VinylPromoSectionSliceDefaultPrimary,
+      VinylPromoSectionSliceDefaultItem,
       VinylPromoSectionSliceVariation,
       VinylPromoSectionSliceDefault,
     };
