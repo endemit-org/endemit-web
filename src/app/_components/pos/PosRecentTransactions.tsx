@@ -41,6 +41,7 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [queuedIds, setQueuedIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -167,14 +168,28 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                       .join(", ")}
                   </div>
                   {tx.status === "PAID" && (
-                    <a
-                      href={`/pos/receipt/${tx.orderHash}`}
-                      target="_blank"
-                      rel="noopener"
-                      className="text-blue-600 hover:text-blue-800 whitespace-nowrap"
-                    >
-                      {t("print")}
-                    </a>
+                    <span className="flex items-center gap-2 whitespace-nowrap">
+                      <button
+                        onClick={async () => {
+                          setQueuedIds(prev => new Set(prev).add(tx.id));
+                          await fetch(
+                            `/api/v1/pos/orders/${tx.orderHash}/print`,
+                            { method: "POST" }
+                          ).catch(() => {});
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        {queuedIds.has(tx.id) ? t("printQueued") : t("print")}
+                      </button>
+                      <a
+                        href={`/pos/receipt/${tx.orderHash}`}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        {t("slip")}
+                      </a>
+                    </span>
                   )}
                 </div>
               </div>

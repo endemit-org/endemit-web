@@ -552,6 +552,7 @@ model PosOrder {
   transactions  WalletTransaction[]
   fiscalInvoices FiscalInvoice[]
   tickets        Ticket[]
+  printJobs      PosPrintJob[]
 
   @@index([orderHash])
   @@index([shortCode])
@@ -598,6 +599,27 @@ model FiscalInvoice {
 model FiscalCounter {
   id         Int @id @default(1)
   lastNumber Int @default(0)
+}
+
+enum PosPrintJobStatus {
+  PENDING
+  PRINTED
+  FAILED
+}
+
+// Print queue for Epson Server Direct Print: the receipt printer polls our
+// server for jobs, so phones never need to reach the printer directly.
+model PosPrintJob {
+  id         String            @id @default(cuid())
+  posOrderId String
+  posOrder   PosOrder          @relation(fields: [posOrderId], references: [id], onDelete: Cascade)
+  status     PosPrintJobStatus @default(PENDING)
+  attempts   Int               @default(0)
+  lastError  String?
+  createdAt  DateTime          @default(now())
+  printedAt  DateTime?
+
+  @@index([status, createdAt])
 }
 
 model PosOrderItem {

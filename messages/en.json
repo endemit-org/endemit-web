@@ -2083,7 +2083,9 @@
       "empty": "No transactions yet.",
       "refresh": "Refresh",
       "tipSuffix": "tip",
-      "print": "Print"
+      "print": "Print",
+      "printQueued": "Sent ✓",
+      "slip": "Slip"
     },
     "balanceCheck": {
       "label": "Balance",
@@ -2148,7 +2150,10 @@
       "waitingForScanShort": "Waiting for scan",
       "cancel": "Cancel",
       "newBalance": "New balance",
-      "printReceipt": "Print receipt"
+      "printReceipt": "Print receipt",
+      "printQueued": "Sent to printer ✓",
+      "printFailed": "Print failed — try again",
+      "openSlip": "Open slip in browser"
     },
     "sticker": {
       "resolving": "Resolving wristband...",

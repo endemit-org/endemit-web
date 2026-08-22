@@ -74,6 +74,9 @@ export const FURS_DEVICE_ID = process.env.FURS_DEVICE_ID;
 export const FURS_ENV = process.env.FURS_ENV; // "test" | "prod"
 export const FURS_TLS_CA_BASE64 = process.env.FURS_TLS_CA_BASE64;
 
+// Shared secret in the Epson Server Direct Print poll URL
+export const POS_PRINT_TOKEN = process.env.POS_PRINT_TOKEN;
+
 // Apple Wallet signing
 export const APPLE_PASS_CERTIFICATE = process.env.APPLE_PASS_CERTIFICATE!;
 export const APPLE_PASS_CERTIFICATE_PASSWORD =

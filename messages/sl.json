@@ -2083,7 +2083,9 @@
       "empty": "Še ni transakcij.",
       "refresh": "Osveži",
       "tipSuffix": "napitnina",
-      "print": "Natisni"
+      "print": "Natisni",
+      "printQueued": "Poslano ✓",
+      "slip": "Potrdilo"
     },
     "balanceCheck": {
       "label": "Stanje",
@@ -2148,7 +2150,10 @@
       "waitingForScanShort": "Čakam na sken",
       "cancel": "Prekliči",
       "newBalance": "Novo stanje",
-      "printReceipt": "Natisni račun"
+      "printReceipt": "Natisni račun",
+      "printQueued": "Poslano na tiskalnik ✓",
+      "printFailed": "Tiskanje ni uspelo — poskusi znova",
+      "openSlip": "Odpri potrdilo v brskalniku"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",

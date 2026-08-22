@@ -118,6 +118,9 @@ export function PosOrderQrModal({
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [printState, setPrintState] = useState<"idle" | "queued" | "error">(
+    "idle"
+  );
 
   const totalRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -250,6 +253,19 @@ export function PosOrderQrModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [hasTopUpItems, register.acceptsCash, register.acceptsCard]
   );
+
+  const handleQueuePrint = useCallback(async () => {
+    setPrintState("idle");
+    try {
+      const response = await fetch(
+        `/api/v1/pos/orders/${order.orderHash}/print`,
+        { method: "POST" }
+      );
+      setPrintState(response.ok ? "queued" : "error");
+    } catch {
+      setPrintState("error");
+    }
+  }, [order.orderHash]);
 
   const handleMarkPaid = useCallback(
     async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
@@ -721,13 +737,23 @@ export function PosOrderQrModal({
             >
               {t("orders.continue")}
             </button>
+            <button
+              onClick={handleQueuePrint}
+              className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10"
+            >
+              {printState === "queued"
+                ? t("orders.printQueued")
+                : printState === "error"
+                  ? t("orders.printFailed")
+                  : t("orders.printReceipt")}
+            </button>
             <a
               href={`/pos/receipt/${order.orderHash}`}
               target="_blank"
               rel="noopener"
-              className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10"
+              className="block w-full text-center text-white/70 text-xs underline hover:text-white"
             >
-              {t("orders.printReceipt")}
+              {t("orders.openSlip")}
             </a>
             {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
               <p className="text-center text-sm text-white/70 mt-2">
