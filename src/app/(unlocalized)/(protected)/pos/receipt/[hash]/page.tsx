@@ -263,7 +263,12 @@ export default async function PosReceiptPage({
               {t("ticketsHeading")}
             </div>
             {ticketQrs.map(ticket => (
-              <div key={ticket.shortId} className="text-center mb-6">
+              // New print page per ticket — roll printers with an auto-cutter
+              // cut at page boundaries, so each ticket comes off separately
+              <div
+                key={ticket.shortId}
+                className="text-center mb-6 print:break-before-page print:pt-4"
+              >
                 <div className="font-bold text-[13px] uppercase mb-1">
                   {ticket.eventName}
                 </div>
@@ -284,11 +289,9 @@ export default async function PosReceiptPage({
                 <div className="font-bold tracking-widest text-[12px]">
                   {ticket.shortId}
                 </div>
+                <div className="text-[10px] mt-1">{t("ticketsHint")}</div>
               </div>
             ))}
-            <div className="text-center text-[10px] mb-2">
-              {t("ticketsHint")}
-            </div>
           </>
         )}
 
