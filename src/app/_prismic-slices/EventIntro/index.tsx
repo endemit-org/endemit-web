@@ -31,7 +31,7 @@ const Poem: FC<PoemProps> = ({ slice, context }) => {
     >
       <div
         className={
-          "text-center font-light flex flex-col gap-4 text-mg md:text-lg bg-gradient-to-b items-center from-neutral-600 to-neutral-100 bg-clip-text text-transparent px-12 lg:px-20 xl:px-36 py-6 lg:py-20 xl:py-36 animate-unblur-text-in"
+          "gradient-clip-text text-center font-light flex flex-col gap-4 text-mg md:text-lg bg-gradient-to-b items-center from-neutral-600 to-neutral-100 bg-clip-text text-transparent px-12 lg:px-20 xl:px-36 py-6 lg:py-20 xl:py-36 animate-unblur-text-in"
         }
       >
         <RichTextDisplay

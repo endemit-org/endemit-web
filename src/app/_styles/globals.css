@@ -38,6 +38,20 @@
   color-scheme: dark;
 }
 
+/* Samsung Internet's "website dark theme" recolors pages with its own
+   heuristics and has NO opt-out (it ignores color-scheme, unlike Chrome's
+   auto-dark). Gradient-clipped text is its worst victim: the gradient gets
+   darkened as a "background" while the text color stays transparent, leaving
+   near-invisible text. `.ua-samsung` is set on <html> by an inline script in
+   RootShell; in dark mode we swap gradient-clipped text for solid neutral-300.
+   Tag visible `bg-clip-text text-transparent` text with .gradient-clip-text. */
+@media (prefers-color-scheme: dark) {
+  html.ua-samsung .gradient-clip-text {
+    background-image: none;
+    color: #d4d4d4;
+  }
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
