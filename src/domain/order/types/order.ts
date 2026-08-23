@@ -37,6 +37,12 @@ export interface ProductInOrder {
   relatedEvent: string | null;
   price: number;
   /**
+   * Original (pre-sale) unit price when the product was bought while on a CMS
+   * sale — `price` then holds the discounted selling price. Absent when the
+   * product was not on sale.
+   */
+  compareAtPrice?: number;
+  /**
    * Unit price actually paid after the order's discount was apportioned onto
    * this line. Absent on undiscounted orders and orders predating discount
    * apportionment — fall back to `price`.

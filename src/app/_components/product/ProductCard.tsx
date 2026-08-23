@@ -23,6 +23,7 @@ interface ProductCardProps {
   image?: ProductImage;
   name: string;
   price: number;
+  compareAtPrice?: number | null;
   uid: string;
   category: ProductCategory;
   status: ProductStatus;
@@ -36,6 +37,7 @@ export default function ProductCard({
   category,
   uid,
   price,
+  compareAtPrice,
   name,
   image,
   video,
@@ -102,6 +104,11 @@ export default function ProductCard({
             </p>
           </div>
           <div className={"pl-2 flex flex-col items-end"}>
+            {compareAtPrice != null && (
+              <p className="text-sm text-gray-600 line-through">
+                {formatPrice(compareAtPrice)}
+              </p>
+            )}
             <p className="text-lg font-medium text-gray-500">
               {formatPrice(price)}
             </p>

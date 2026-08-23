@@ -31,6 +31,13 @@
   border-width: 2px;
 }
 
+/* The whole site is dark. Declaring it stops browsers with forced-dark
+   features (notably Samsung Internet) from re-darkening our colors, and gives
+   dark-native form controls/scrollbars. */
+:root {
+  color-scheme: dark;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

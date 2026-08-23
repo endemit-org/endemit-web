@@ -11,6 +11,26 @@ import { getBlurDataURL } from "@/lib/util/util";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
 import type { AppLocale } from "@/i18n/routing";
 
+/**
+ * A discounted price only takes effect when it is a positive number strictly
+ * lower than the regular price — otherwise it is ignored and the product is
+ * not on sale.
+ */
+const resolveSalePricing = (
+  price: number | null | undefined,
+  discountedPrice: number | null | undefined
+) => {
+  const onSale =
+    typeof price === "number" &&
+    typeof discountedPrice === "number" &&
+    discountedPrice > 0 &&
+    discountedPrice < price;
+  return {
+    price: onSale ? discountedPrice : price,
+    compareAtPrice: onSale ? price : null,
+  };
+};
+
 export const transformProductObject = async (
   product: ProductDocument,
   locale: AppLocale = "sl"
@@ -84,7 +104,10 @@ export const transformProductObject = async (
         status: relatedProduct.data.product_status as ProductStatus,
         visibility: relatedProduct.data.product_visibility,
         images,
-        price: relatedProduct.data.price,
+        ...resolveSalePricing(
+          relatedProduct.data.price,
+          relatedProduct.data.discounted_price
+        ),
         sortingWeight: relatedProduct.data.sorting_weight ?? 0,
         callToAction: pickLocalized(rp, "call_to_action", locale),
       });
@@ -98,7 +121,7 @@ export const transformProductObject = async (
     description: pickLocalized(product.data, "description", locale),
     images,
     video: asLink(product.data.video) ?? null,
-    price: product.data.price,
+    ...resolveSalePricing(product.data.price, product.data.discounted_price),
     currency: "eur",
     type: product.data.product_type,
     status: product.data.product_status as ProductStatus,

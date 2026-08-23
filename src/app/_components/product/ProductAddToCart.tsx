@@ -53,13 +53,20 @@ export default function ProductAddToCart({ product }: Props) {
     <>
       {" "}
       <div>{t("product.price")}</div>
-      <div
-        className={clsx(
-          "text-4xl font-heading mb-6",
-          !isSellableObject.isSellable && "line-through"
+      <div className={"mb-6"}>
+        {product.compareAtPrice != null && (
+          <div className={"text-xl font-heading text-neutral-500 line-through"}>
+            {formatPrice(product.compareAtPrice)}
+          </div>
         )}
-      >
-        {formatPrice(product.price)}
+        <div
+          className={clsx(
+            "text-4xl font-heading",
+            !isSellableObject.isSellable && "line-through"
+          )}
+        >
+          {formatPrice(product.price)}
+        </div>
       </div>
       <ProductConfigure product={product} />
       {!isSellableObject.isSellable &&
