@@ -34,6 +34,9 @@ export const transformToProductInOrder = (
     name: cartItem.name,
     image: cartItem.images[0],
     price: cartItem.price,
+    ...(cartItem.compareAtPrice != null && {
+      compareAtPrice: cartItem.compareAtPrice,
+    }),
     quantity: cartItem.quantity,
     currency: cartItem.currency,
     category: cartItem.category,

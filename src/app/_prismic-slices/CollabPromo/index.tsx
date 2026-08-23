@@ -160,6 +160,7 @@ const CollabPromo: FC<CollabPromoProps> = async ({ slice, context }) => {
                 name={product.name}
                 uid={product.uid}
                 price={product.price}
+                compareAtPrice={product.compareAtPrice}
                 category={product.category}
               />
             ))}

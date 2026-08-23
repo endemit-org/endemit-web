@@ -213,7 +213,21 @@ function NewOrderToCustomerTemplate({ order, locale = "sl" }: Props) {
                         padding: "8px",
                       }}
                     >
-                      <Text>{formatDecimalPrice(item.price)}</Text>
+                      <Text>
+                        {item.compareAtPrice != null && (
+                          <>
+                            <span
+                              style={{
+                                textDecoration: "line-through",
+                                color: "#9ca3af",
+                              }}
+                            >
+                              {formatDecimalPrice(item.compareAtPrice)}
+                            </span>{" "}
+                          </>
+                        )}
+                        {formatDecimalPrice(item.price)}
+                      </Text>
                     </td>
                     <td
                       align="center"
