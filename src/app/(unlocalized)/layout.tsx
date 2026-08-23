@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import RootShell from "@/app/_components/RootShell";
@@ -10,6 +10,12 @@ import { buildRootMetadata } from "@/lib/util/rootMetadata";
 // src/i18n/request.ts). `getLocale()` makes every route under this layout
 // dynamic, which is fine: they are all auth-protected / dev-only already.
 export const metadata: Metadata = buildRootMetadata("en_US");
+
+// Emitted as <meta name="color-scheme" content="dark"> — tells forced-dark
+// browsers (Samsung Internet) not to re-darken our already-dark palette.
+export const viewport: Viewport = {
+  colorScheme: "dark",
+};
 
 export default async function UnlocalizedLayout({
   children,
