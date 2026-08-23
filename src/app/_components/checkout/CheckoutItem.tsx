@@ -65,6 +65,11 @@ export default function CheckoutItem({
               {item.name}
             </Link>
             <div className={"text-neutral-400"}>
+              {item.compareAtPrice != null && (
+                <span className={"line-through text-neutral-500 mr-2"}>
+                  {formatDecimalPrice(item.compareAtPrice * item.quantity)}
+                </span>
+              )}
               {formatDecimalPrice(item.price * item.quantity)}
             </div>
             {editable && (

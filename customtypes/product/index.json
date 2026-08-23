@@ -106,6 +106,7 @@
                         ]
                       },
                       "price",
+                      "discounted_price",
                       "product_category",
                       "product_type",
                       "sorting_weight",
@@ -299,6 +300,13 @@
         "config": {
           "label": "Price (EUR)",
           "placeholder": "Price of the product in EUR"
+        }
+      },
+      "discounted_price": {
+        "type": "Number",
+        "config": {
+          "label": "Discounted price (EUR)",
+          "placeholder": "Optional sale price — must be lower than the regular price to take effect"
         }
       },
       "weight": {

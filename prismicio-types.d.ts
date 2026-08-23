@@ -1656,6 +1656,7 @@ export interface ProductDocumentDataRelatedProductsItem {
           "title",
           { id: "images"; fields: ["image"] },
           "price",
+          "discounted_price",
           "product_category",
           "product_type",
           "sorting_weight",
@@ -1928,6 +1929,17 @@ interface ProductDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/number
    */
   price: prismic.NumberField;
+
+  /**
+   * Discounted price (EUR) field in *Product*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: Optional sale price — must be lower than the regular price to take effect
+   * - **API ID Path**: product.discounted_price
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  discounted_price: prismic.NumberField;
 
   /**
    * Weight (g) field in *Product*
