@@ -73,13 +73,24 @@ export async function GET(
         name: register.name,
         description: register.description,
         canTopUp: register.canTopUp,
-        items: register.items.map(ri => ({
-          id: ri.item.id,
-          name: ri.item.name,
-          description: ri.item.description,
-          cost: ri.item.cost,
-          direction: ri.item.direction,
-        })),
+        acceptsWallet: register.acceptsWallet,
+        acceptsCash: register.acceptsCash,
+        acceptsCard: register.acceptsCard,
+        // CREDIT items are wallet top-ups — hidden without pos:topup
+        items: register.items
+          .filter(
+            ri =>
+              user.permissions.includes(PERMISSIONS.POS_TOPUP) ||
+              ri.item.direction !== "CREDIT"
+          )
+          .map(ri => ({
+            id: ri.item.id,
+            name: ri.item.name,
+            description: ri.item.description,
+            cost: ri.item.cost,
+            direction: ri.item.direction,
+            color: ri.item.color,
+          })),
         pendingOrders: register.orders.map(o => ({
           id: o.id,
           shortCode: o.shortCode,

@@ -300,7 +300,7 @@ const ARTISTS: ArtistDoc[] = [
     uid: "tamorra",
     internalName: "Tamorra",
     paragraphs: [
-      "Človek vpija okolje ali pa okolje vpija človeka. Naslednji vodja je produkt slovenske Istre pa endemitskih bojnih vrst, ki je svoje talente osebno pa intenzivno vložil v obe pokrajini. S primorskimi fanatiki jim je v samo nekaj letih uspelo iz suhe, zapuščene ravnine sestavit par ducatov puščavskih krožnikov novga primorskga techno ekosistema.",
+      "Človek vpija okolje ali pa okolje vpija človeka. Nasledni vodja je produkt slovenske Istre pa endemitskih bojnih vrst, ki je svoje talente osebno pa intenzivno vložil v obe pokrajini. S primorskimi fanatiki jim je v samo nekaj letih uspelo iz suhe, zapuščene ravnine sestavit par ducatov puščavskih krožnikov novga primorskga techno ekosistema.",
       "Tamorra je skoz preučevanje terenov na prejšnjih endemitskih snidenjih v sebi prebudil prvinske instinkte usodne privlačnosti. Med njim pa nami, med glasbo pa umom, med intimnim ritualom pa osvoboditvijo od omejitev zgodnje odraslosti. Če bi ta film snemali danes, bi bil Matija eden glavnih razlogov za disco. Cajt je, da svoj kos položi na našo mizo.",
     ],
   },

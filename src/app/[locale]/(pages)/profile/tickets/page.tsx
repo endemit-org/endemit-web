@@ -4,6 +4,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTicketsByUserId } from "@/domain/ticket/operations/getTicketsByUserId";
+import {
+  getIncomingTicketTransfers,
+  getOutgoingTicketTransfers,
+} from "@/domain/ticket/operations/ticketTransfers";
+import TransferAcceptButton from "@/app/_components/profile/TransferAcceptButton";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import PageHeadline from "@/app/_components/ui/PageHeadline";
 import InnerPage from "@/app/_components/ui/InnerPage";
@@ -59,7 +64,14 @@ export default async function ProfileTicketsPage({
     redirect("/signin");
   }
 
-  const tickets = await getTicketsByUserId(user.id, { upcomingOnly: true });
+  const [tickets, incomingTransfers, outgoingTransfers] = await Promise.all([
+    getTicketsByUserId(user.id, { upcomingOnly: true }),
+    user.email ? getIncomingTicketTransfers(user.email) : Promise.resolve([]),
+    getOutgoingTicketTransfers(user.id),
+  ]);
+  const pendingByTicketId = new Map(
+    outgoingTransfers.map(transfer => [transfer.ticketId, transfer])
+  );
 
   return (
     <OuterPage>
@@ -94,6 +106,35 @@ export default async function ProfileTicketsPage({
             {t("nav.backToProfile")}
           </Link>
         </div>
+
+        {incomingTransfers.length > 0 && (
+          <div className="mb-8 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+            <h2 className="text-sm font-semibold text-blue-300 mb-3">
+              {t("ticketTransfer.incomingHeading")}
+            </h2>
+            <div className="space-y-3">
+              {incomingTransfers.map(transfer => (
+                <div
+                  key={transfer.id}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-900/60 rounded-lg p-3"
+                >
+                  <div>
+                    <div className="text-neutral-200 font-medium">
+                      {transfer.ticket.eventName}
+                    </div>
+                    <div className="text-xs text-neutral-500">
+                      {t("ticketTransfer.incomingFrom", {
+                        sender:
+                          transfer.sender.name || transfer.sender.username,
+                      })}
+                    </div>
+                  </div>
+                  <TransferAcceptButton transferId={transfer.id} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <ProfileTable
           title={t("tickets.upcomingTitle")}
@@ -137,6 +178,11 @@ export default async function ProfileTicketsPage({
                       {ticket.isGuestList && (
                         <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0 bg-purple-500/20 text-purple-400">
                           {t("status.guest")}
+                        </span>
+                      )}
+                      {pendingByTicketId.has(ticket.id) && (
+                        <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0 bg-amber-500/20 text-amber-400">
+                          {t("ticketTransfer.pendingBadge")}
                         </span>
                       )}
                     </div>

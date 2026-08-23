@@ -1,0 +1,62 @@
+{
+  "id": "discord_banner",
+  "type": "SharedSlice",
+  "name": "DiscordBanner",
+  "description": "Discord community banner with invite link and live online count",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "single": "heading2"
+          }
+        },
+        "title_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title (SL)",
+            "single": "heading2"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "single": "paragraph"
+          }
+        },
+        "description_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description (SL)",
+            "single": "paragraph"
+          }
+        },
+        "invite_link": {
+          "type": "Link",
+          "config": {
+            "label": "Invite link",
+            "placeholder": "https://discord.gg/…",
+            "select": null
+          }
+        },
+        "server_id": {
+          "type": "Text",
+          "config": {
+            "label": "Server ID (for live online count — requires Server Widget enabled)",
+            "placeholder": "e.g. 1234567890123456789"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

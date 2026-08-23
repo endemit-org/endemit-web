@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import type { PosOrderStatus } from "@prisma/client";
+import type { PosOrderStatus, PosPaymentMethod } from "@prisma/client";
 import type { PosOrderWithRelations } from "@/domain/pos/operations/getAllPosOrders";
 import { fetchPosOrdersAction } from "@/domain/pos/actions/fetchPosOrdersAction";
+import { reversePosOrderAction } from "@/domain/pos/actions/reversePosOrderAction";
+import { deletePosOrderAction } from "@/domain/pos/actions/deletePosOrderAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { formatEmailForDisplay } from "@/lib/util/formatting";
 import ClientDate from "@/app/_components/ui/ClientDate";
@@ -15,6 +17,8 @@ interface Props {
   totalPages: number;
   totalCount: number;
   registers: Array<{ id: string; name: string }>;
+  /** Show reverse/delete actions (POS_ORDERS_REFUND permission). */
+  canManage?: boolean;
 }
 
 function formatPrice(cents: number): string {
@@ -33,6 +37,7 @@ export default function PosOrdersDisplay({
   totalPages: initialTotalPages,
   totalCount: initialTotalCount,
   registers,
+  canManage = false,
 }: Props) {
   const t = useTranslations("admin.pos.orders");
   const tt = useTranslations("common.table");
@@ -42,16 +47,70 @@ export default function PosOrdersDisplay({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [statusFilter, setStatusFilter] = useState<PosOrderStatus | "">("");
   const [registerFilter, setRegisterFilter] = useState("");
+  const [methodFilter, setMethodFilter] = useState<PosPaymentMethod | "">("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedOrder, setSelectedOrder] =
     useState<PosOrderWithRelations | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [confirmAction, setConfirmAction] = useState<
+    "reverse" | "delete" | null
+  >(null);
+  const [isActing, setIsActing] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const loadOrders = (newPage: number) => {
+  const closeModal = () => {
+    setSelectedOrder(null);
+    setConfirmAction(null);
+    setActionError(null);
+  };
+
+  const handleOrderAction = async (action: "reverse" | "delete") => {
+    if (!selectedOrder) return;
+    setIsActing(true);
+    setActionError(null);
+    try {
+      const result =
+        action === "reverse"
+          ? await reversePosOrderAction({ orderId: selectedOrder.id })
+          : await deletePosOrderAction({ orderId: selectedOrder.id });
+      if (!result.success) {
+        setActionError(result.message);
+        setConfirmAction(null);
+        return;
+      }
+      closeModal();
+      loadOrders(page);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Action failed");
+      setConfirmAction(null);
+    } finally {
+      setIsActing(false);
+    }
+  };
+
+  // State setters don't update this render's closure, so filter changes must
+  // pass their new value explicitly instead of relying on the state variables.
+  const loadOrders = (
+    newPage: number,
+    overrides?: {
+      status?: PosOrderStatus | "";
+      registerId?: string;
+      paymentMethod?: PosPaymentMethod | "";
+      search?: string;
+    }
+  ) => {
+    const status = overrides?.status ?? statusFilter;
+    const registerId = overrides?.registerId ?? registerFilter;
+    const paymentMethod = overrides?.paymentMethod ?? methodFilter;
+    const search = overrides?.search ?? searchQuery;
     startTransition(async () => {
       const result = await fetchPosOrdersAction({
         page: newPage,
-        status: statusFilter || undefined,
-        registerId: registerFilter || undefined,
+        status: status || undefined,
+        registerId: registerId || undefined,
+        paymentMethod: paymentMethod || undefined,
+        search: search.trim() || undefined,
       });
       setOrders(result.orders);
       setPage(result.page);
@@ -60,8 +119,13 @@ export default function PosOrdersDisplay({
     });
   };
 
-  const handleFilterChange = () => {
-    loadOrders(1);
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(
+      () => loadOrders(1, { search: value }),
+      350
+    );
   };
 
   return (
@@ -76,8 +140,9 @@ export default function PosOrdersDisplay({
             <select
               value={statusFilter}
               onChange={e => {
-                setStatusFilter(e.target.value as PosOrderStatus | "");
-                setTimeout(handleFilterChange, 0);
+                const value = e.target.value as PosOrderStatus | "";
+                setStatusFilter(value);
+                loadOrders(1, { status: value });
               }}
               className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
@@ -95,8 +160,9 @@ export default function PosOrdersDisplay({
             <select
               value={registerFilter}
               onChange={e => {
-                setRegisterFilter(e.target.value);
-                setTimeout(handleFilterChange, 0);
+                const value = e.target.value;
+                setRegisterFilter(value);
+                loadOrders(1, { registerId: value });
               }}
               className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
@@ -107,6 +173,39 @@ export default function PosOrdersDisplay({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("filterMethod")}
+            </label>
+            <select
+              value={methodFilter}
+              onChange={e => {
+                const value = e.target.value as PosPaymentMethod | "";
+                setMethodFilter(value);
+                loadOrders(1, { paymentMethod: value });
+              }}
+              className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="">{t("allMethods")}</option>
+              <option value="WALLET">{t("methodWallet")}</option>
+              <option value="CASH">{t("methodCash")}</option>
+              <option value="CARD">{t("methodCard")}</option>
+            </select>
+          </div>
+
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("filterSearch")}
+            </label>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={e => handleSearchChange(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
           </div>
 
           <div className="text-sm text-gray-500">
@@ -182,24 +281,55 @@ export default function PosOrdersDisplay({
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      statusStyles[order.status]
-                    }`}
-                  >
-                    {order.status}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        statusStyles[order.status]
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                    {order.paymentMethod && (
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          order.paymentMethod === "WALLET"
+                            ? "bg-blue-100 text-blue-700"
+                            : order.paymentMethod === "CASH"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {order.paymentMethod === "WALLET"
+                          ? t("methodWallet")
+                          : order.paymentMethod === "CASH"
+                            ? t("methodCash")
+                            : t("methodCard")}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <ClientDate date={order.createdAt} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <button
-                    onClick={() => setSelectedOrder(order)}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    {t("details")}
-                  </button>
+                  <div className="flex items-center justify-end gap-3">
+                    {order.status === "PAID" && (
+                      <a
+                        href={`/pos/receipt/${order.orderHash}`}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-gray-500 hover:text-gray-800"
+                      >
+                        {t("receipt")}
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      {t("details")}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -246,7 +376,7 @@ export default function PosOrdersDisplay({
                 {t("modalOrder", { code: selectedOrder.shortCode })}
               </h2>
               <button
-                onClick={() => setSelectedOrder(null)}
+                onClick={closeModal}
                 className="p-2 hover:bg-gray-100 rounded-full"
               >
                 <svg
@@ -362,6 +492,71 @@ export default function PosOrdersDisplay({
                   <span>{formatPrice(selectedOrder.total)}</span>
                 </div>
               </div>
+
+              {selectedOrder.status === "PAID" && (
+                <a
+                  href={`/pos/receipt/${selectedOrder.orderHash}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="block w-full px-4 py-2 text-center border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
+                >
+                  {t("receipt")}
+                </a>
+              )}
+
+              {canManage && (
+                <div className="border-t pt-4 space-y-3">
+                  {actionError && (
+                    <p className="text-sm text-red-600">{actionError}</p>
+                  )}
+                  {confirmAction ? (
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600">
+                        {confirmAction === "reverse"
+                          ? t("reverseConfirmText")
+                          : t("deleteConfirmText")}
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleOrderAction(confirmAction)}
+                          disabled={isActing}
+                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isActing
+                            ? t("actionWorking")
+                            : confirmAction === "reverse"
+                              ? t("reverseConfirm")
+                              : t("deleteConfirm")}
+                        </button>
+                        <button
+                          onClick={() => setConfirmAction(null)}
+                          disabled={isActing}
+                          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded-lg transition-colors"
+                        >
+                          {t("actionCancel")}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      {selectedOrder.status === "PAID" && (
+                        <button
+                          onClick={() => setConfirmAction("reverse")}
+                          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors"
+                        >
+                          {t("reverse")}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setConfirmAction("delete")}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+                      >
+                        {t("delete")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -94,7 +94,7 @@ const PODCASTS: PodcastDoc[] = [
     uid: "emit-004-unknown-texture",
     internalName: "Emit 004 - Unknown Texture",
     paragraphs: [
-      "Slovenska techno scena se še naprej razvija, in Unknown Texture predstavla njen naslednji val. Znan obraz na EMIT dogodkih, zdej zavzame svoje mesto za pultom s setom, zakoreninjenim v analogni pa modularni sintezi — hipnotični ritmi, sub-bas frekvence pa abstraktne zvočne teksture, ki te z vsakim prehodom potegnejo globje.",
+      "Slovenska techno scena se še naprej razvija, in Unknown Texture predstavla njen nasledni val. Znan obraz na EMIT dogodkih, zdej zavzame svoje mesto za pultom s setom, zakoreninjenim v analogni pa modularni sintezi — hipnotični ritmi, sub-bas frekvence pa abstraktne zvočne teksture, ki te z vsakim prehodom potegnejo globje.",
       "Njegov pristop k temu miksu: »Včasih najdeš tam, ko si neho iskat«. To je filozofija, ki odmeva skoz izbor — potrpežliv, raziskovalen pa brezkompromisen. Od nebeškga otvoritvenga kosa 18 Figures do zaklučne intenzivnosti Anthonyja Linella, to je techno, ki zahteva pozornost pa jo nagradi.",
     ],
   },

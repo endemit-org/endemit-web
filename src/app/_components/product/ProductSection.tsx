@@ -53,6 +53,7 @@ export default function ProductSection({
             name={product.name}
             uid={product.uid}
             price={product.price}
+            compareAtPrice={product.compareAtPrice}
             category={product.category}
             quickAddToCart={quickAddToCart}
             product={product}

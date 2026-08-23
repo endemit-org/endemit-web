@@ -184,8 +184,9 @@ async function staleWhileRevalidate(request, cacheName) {
 
 // Install event
 self.addEventListener("install", () => {
-  // Activate immediately
-  self.skipWaiting();
+  // No skipWaiting: taking over mid-session purges the previous deployment's
+  // caches while already-open pages still reference its chunks. The new SW
+  // waits until the old pages are gone (next app start / navigation).
 });
 
 // Activate event - clean up old caches

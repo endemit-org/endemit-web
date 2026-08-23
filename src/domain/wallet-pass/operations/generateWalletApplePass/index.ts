@@ -8,6 +8,8 @@ export interface ApplePassWalletData {
   userId: string;
   userName: string;
   receiveCode: string;
+  /** Linked wristband/sticker short code (e.g. BF24), if any. */
+  stickerCode?: string | null;
 }
 
 export async function generateWalletApplePass(
@@ -57,13 +59,29 @@ export async function generateWalletApplePass(
     format: "PKBarcodeFormatQR",
     message: data.receiveCode,
     messageEncoding: "utf-8",
+    // Short code under the QR — same code the register accepts as typed input
+    ...(data.stickerCode && { altText: data.stickerCode }),
   });
 
   pass.secondaryFields.push({
     key: "holder",
-    label: "NAME",
+    label: "WALLET HOLDER",
     value: data.userName,
   });
+
+  pass.secondaryFields.push({
+    key: "type",
+    label: "TYPE",
+    value: "Digital wallet",
+  });
+
+  if (data.stickerCode) {
+    pass.secondaryFields.push({
+      key: "code",
+      label: "QR CODE",
+      value: data.stickerCode,
+    });
+  }
 
   pass.backFields.push({
     key: "howToUse",

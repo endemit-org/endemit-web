@@ -132,6 +132,9 @@ export default async function AdminPosOrdersPage() {
         totalPages={ordersResult.totalPages}
         totalCount={ordersResult.totalCount}
         registers={registers}
+        canManage={currentUser.permissions.includes(
+          PERMISSIONS.POS_ORDERS_REFUND
+        )}
       />
     </div>
   );

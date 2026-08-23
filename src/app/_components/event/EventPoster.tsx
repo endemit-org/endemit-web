@@ -48,7 +48,7 @@ export default function EventPoster({ event, compact = false }: EventProps) {
             <div className="relative aspect-square  w-full overflow-hidden">
               <div className="absolute left-0 top-0 right-0 w-full bottom-0 border-[20px] z-20 border-neutral-100 scale-125 group-hover:scale-100 transition-transform duration-300 pointer-events-none" />
 
-              {event.tickets.available && (
+              {event.tickets.available && !event.incognito && (
                 <EventTicketAvailableStatus
                   className={
                     "group-hover:translate-x-4 group-hover:translate-y-4 transition-transform duration-500"

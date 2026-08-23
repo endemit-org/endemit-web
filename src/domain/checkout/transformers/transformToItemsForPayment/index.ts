@@ -17,6 +17,7 @@ export const transformToItemsForPayment = (
             ? product.limits.quantityLimit
             : item.quantity,
         price: product.price,
+        compareAtPrice: product.compareAtPrice,
         type: item.type,
       });
     } else {

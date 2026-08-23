@@ -21,6 +21,12 @@ interface Props {
   onClear: () => void;
   onCreateOrder: () => void;
   isCreating: boolean;
+  /** Fulfillment-tracked registers: serving note ("no onions, blue jacket") */
+  note?: string;
+  onNoteChange?: (note: string) => void;
+  showNote?: boolean;
+  /** Hard-block checkout (e.g. attached wallet can't cover the cart). */
+  checkoutBlocked?: boolean;
 }
 
 export function PosCart({
@@ -30,6 +36,10 @@ export function PosCart({
   onClear,
   onCreateOrder,
   isCreating,
+  note = "",
+  onNoteChange,
+  showNote = false,
+  checkoutBlocked = false,
 }: Props) {
   const t = useTranslations("pos");
 
@@ -77,6 +87,17 @@ export function PosCart({
         ))}
       </div>
 
+      {showNote && onNoteChange && (
+        <input
+          type="text"
+          value={note}
+          onChange={e => onNoteChange(e.target.value)}
+          placeholder={t("cart.notePlaceholder")}
+          disabled={isCreating}
+          className="w-full mb-3 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+        />
+      )}
+
       <div className="flex items-center justify-between border-t pt-4 gap-3">
         <button
           onClick={onClear}
@@ -85,16 +106,25 @@ export function PosCart({
           {t("cart.clear")}
         </button>
         <div className="flex items-center gap-4">
-          <span className="text-lg font-bold">{formatTokensFromCents(total)}</span>
+          <span
+            className={`text-lg font-bold ${total < 0 ? "text-red-600" : ""}`}
+          >
+            {formatTokensFromCents(total)}
+          </span>
           <button
             onClick={onCreateOrder}
-            disabled={isCreating}
+            disabled={isCreating || total < 0 || checkoutBlocked}
             className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? t("cart.creating") : t("cart.createOrder")}
           </button>
         </div>
       </div>
+      {total < 0 && (
+        <p className="mt-2 text-right text-sm text-red-600">
+          {t("cart.negativeTotal")}
+        </p>
+      )}
     </div>
   );
 }

@@ -143,8 +143,13 @@ export const onOrderPaymentComplete = async (paymentSessionId: string) => {
         continue;
       }
 
-      // Divide price by number of ticket holders for bundles
-      const pricePerTicket = ticketItem.price / ticketHolders.length;
+      // Per-ticket price = line total / all holders on the line. Holders
+      // number quantity × ticketQuantity, while price/paidPrice are per-unit
+      // (paidPrice on discounted orders), so multiply by quantity first —
+      // dividing the unit price alone halves the ticket price at quantity 2.
+      const pricePerTicket =
+        ((ticketItem.paidPrice ?? ticketItem.price) * ticketItem.quantity) /
+        ticketHolders.length;
 
       ticketHolders.forEach(ticketHolderName => {
         queueTicketIssueAutomation({

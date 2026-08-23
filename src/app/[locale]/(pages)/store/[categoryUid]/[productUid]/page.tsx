@@ -205,6 +205,7 @@ export default async function ProductPage({
                   name={relatedProduct.title}
                   uid={relatedProduct.uid}
                   price={relatedProduct.price}
+                  compareAtPrice={relatedProduct.compareAtPrice}
                   category={relatedProduct.category}
                   callToAction={relatedProduct.callToAction}
                 />

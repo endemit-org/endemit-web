@@ -20,6 +20,12 @@ export interface CreatePosOrderInput {
     itemId: string;
     quantity: number;
   }>;
+  /** Whether the seller may sell CREDIT (top-up) items — pos:topup holders. */
+  allowCreditItems?: boolean;
+  /** Serving note ("no onions, blue jacket") shown on the to-serve card. */
+  note?: string;
+  /** Pre-attach a scanned wallet customer (balance-check "use for order"). */
+  attachedCustomerId?: string;
 }
 
 export interface PosOrderWithDetails extends PosOrder {

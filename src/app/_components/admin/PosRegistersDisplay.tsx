@@ -11,23 +11,66 @@ import { removeItemFromRegisterAction } from "@/domain/pos/actions/removeItemFro
 import { assignSellerToRegisterAction } from "@/domain/pos/actions/assignSellerToRegisterAction";
 import { removeSellerFromRegisterAction } from "@/domain/pos/actions/removeSellerFromRegisterAction";
 import { formatTokensFromCents } from "@/lib/util/currency";
+import UserAutocomplete from "@/app/_components/admin/UserAutocomplete";
+import PosRegisterReportModal from "@/app/_components/admin/PosRegisterReportModal";
+import PosRegisterPayoutModal from "@/app/_components/admin/PosRegisterPayoutModal";
+import type { UserSearchResult } from "@/domain/user/actions/searchUsersAction";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 
 interface Props {
   initialRegisters: PosRegisterWithRelations[];
   allItems: PosItem[];
-  allUsers: Array<{ id: string; name: string | null; email: string }>;
   canWrite: boolean;
+  canPayout?: boolean;
 }
 
 function formatPrice(cents: number): string {
   return formatTokensFromCents(cents);
 }
 
+/**
+ * Owns the search query locally so keystrokes don't re-render the parent —
+ * the modal is an inline component there, and a parent re-render would
+ * remount it and blur the input.
+ */
+function SellerAssignField({
+  assignedSellerIds,
+  disabled,
+  placeholder,
+  onSelect,
+}: {
+  assignedSellerIds: string[];
+  disabled: boolean;
+  placeholder: string;
+  onSelect: (user: UserSearchResult) => void;
+}) {
+  const [query, setQuery] = useState("");
+
+  return (
+    // Remount after each assignment so the autocomplete's internal
+    // selection state resets alongside the cleared query.
+    <UserAutocomplete
+      key={assignedSellerIds.length}
+      value={query}
+      onChange={setQuery}
+      requirePermission={PERMISSIONS.POS_SELL}
+      placeholder={placeholder}
+      disabled={disabled}
+      onUserSelect={user => {
+        if (!assignedSellerIds.includes(user.id)) {
+          onSelect(user);
+        }
+        setQuery("");
+      }}
+    />
+  );
+}
+
 export default function PosRegistersDisplay({
   initialRegisters,
   allItems,
-  allUsers,
   canWrite,
+  canPayout = false,
 }: Props) {
   const t = useTranslations("admin.pos.registers");
   const tc = useTranslations("admin.common");
@@ -37,6 +80,10 @@ export default function PosRegistersDisplay({
     useState<PosRegisterWithRelations | null>(null);
   const [managingRegister, setManagingRegister] =
     useState<PosRegisterWithRelations | null>(null);
+  const [reportRegister, setReportRegister] =
+    useState<PosRegisterWithRelations | null>(null);
+  const [payoutRegister, setPayoutRegister] =
+    useState<PosRegisterWithRelations | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleCreate = async (formData: FormData) => {
@@ -45,7 +92,17 @@ export default function PosRegistersDisplay({
       description: (formData.get("description") as string) || undefined,
       status: formData.get("status") as PosRegisterStatus,
       canTopUp: formData.get("canTopUp") === "true",
+      acceptsWallet: formData.get("acceptsWallet") === "true",
+      acceptsCash: formData.get("acceptsCash") === "true",
+      acceptsCard: formData.get("acceptsCard") === "true",
+      fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
+      trackFulfillment: formData.get("trackFulfillment") === "true",
     };
+
+    if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
+      window.alert(t("atLeastOneMethod"));
+      return;
+    }
 
     startTransition(async () => {
       const register = await createPosRegisterAction(input);
@@ -61,6 +118,7 @@ export default function PosRegistersDisplay({
             topUpsProcessed: 0,
             tipsCollected: 0,
             paidOrdersCount: 0,
+            cashOutstanding: 0,
           },
         },
       ]);
@@ -77,7 +135,17 @@ export default function PosRegistersDisplay({
       description: (formData.get("description") as string) || null,
       status: formData.get("status") as PosRegisterStatus,
       canTopUp: formData.get("canTopUp") === "true",
+      acceptsWallet: formData.get("acceptsWallet") === "true",
+      acceptsCash: formData.get("acceptsCash") === "true",
+      acceptsCard: formData.get("acceptsCard") === "true",
+      fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
+      trackFulfillment: formData.get("trackFulfillment") === "true",
     };
+
+    if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
+      window.alert(t("atLeastOneMethod"));
+      return;
+    }
 
     startTransition(async () => {
       const updated = await updatePosRegisterAction(input);
@@ -161,11 +229,13 @@ export default function PosRegistersDisplay({
     });
   };
 
-  const handleAssignSeller = async (registerId: string, userId: string) => {
+  const handleAssignSeller = async (
+    registerId: string,
+    user: UserSearchResult
+  ) => {
     startTransition(async () => {
-      await assignSellerToRegisterAction(registerId, userId);
-      const user = allUsers.find(u => u.id === userId);
-      if (user) {
+      await assignSellerToRegisterAction(registerId, user.id);
+      {
         setRegisters(prev =>
           prev.map(r =>
             r.id === registerId
@@ -309,6 +379,68 @@ export default function PosRegistersDisplay({
             </span>
           </label>
         </div>
+
+        <div className="sm:col-span-2 border-t pt-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            {t("paymentMethods")}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                name="acceptsWallet"
+                type="checkbox"
+                value="true"
+                defaultChecked={register ? register.acceptsWallet : true}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">{t("acceptsWallet")}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                name="acceptsCash"
+                type="checkbox"
+                value="true"
+                defaultChecked={register?.acceptsCash}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">{t("acceptsCash")}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                name="acceptsCard"
+                type="checkbox"
+                value="true"
+                defaultChecked={register?.acceptsCard}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">{t("acceptsCard")}</span>
+            </label>
+          </div>
+          <label className="flex items-center gap-2 mt-3">
+            <input
+              name="fiscalizeInvoices"
+              type="checkbox"
+              value="true"
+              defaultChecked={register?.fiscalizeInvoices}
+              className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+            />
+            <span className="text-sm text-gray-700">
+              {t("fiscalizeInvoices")}
+            </span>
+          </label>
+          <label className="flex items-center gap-2 mt-3">
+            <input
+              name="trackFulfillment"
+              type="checkbox"
+              value="true"
+              defaultChecked={register?.trackFulfillment}
+              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+            />
+            <span className="text-sm text-gray-700">
+              {t("trackFulfillment")}
+            </span>
+          </label>
+        </div>
       </div>
 
       <div className="flex justify-end gap-3">
@@ -339,9 +471,6 @@ export default function PosRegistersDisplay({
     );
 
     const assignedSellerIds = managingRegister.sellers.map(s => s.userId);
-    const availableUsers = allUsers.filter(
-      u => !assignedSellerIds.includes(u.id)
-    );
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -471,35 +600,15 @@ export default function PosRegistersDisplay({
                   <p className="text-gray-500 text-sm">{t("noSellersAssigned")}</p>
                 )}
               </div>
-              {canWrite && availableUsers.length > 0 && (
-                <div className="flex gap-2">
-                  <select
-                    id="addSeller"
-                    className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="">{t("selectUser")}</option>
-                    {availableUsers.map(user => (
-                      <option key={user.id} value={user.id}>
-                        {user.name || user.email} ({user.email})
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => {
-                      const select = document.getElementById(
-                        "addSeller"
-                      ) as HTMLSelectElement;
-                      if (select.value) {
-                        handleAssignSeller(managingRegister.id, select.value);
-                        select.value = "";
-                      }
-                    }}
-                    disabled={isPending}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {t("add")}
-                  </button>
-                </div>
+              {canWrite && (
+                <SellerAssignField
+                  assignedSellerIds={assignedSellerIds}
+                  disabled={isPending}
+                  placeholder={t("selectUser")}
+                  onSelect={user =>
+                    handleAssignSeller(managingRegister.id, user)
+                  }
+                />
               )}
             </div>
           </div>
@@ -559,6 +668,33 @@ export default function PosRegistersDisplay({
             </div>
 
             <div className="p-4 space-y-3 text-sm">
+              <div className="flex flex-wrap gap-1">
+                {register.acceptsWallet && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                    {t("methodWallet")}
+                  </span>
+                )}
+                {register.acceptsCash && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                    {t("methodCash")}
+                  </span>
+                )}
+                {register.acceptsCard && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+                    {t("methodCard")}
+                  </span>
+                )}
+                {register.fiscalizeInvoices && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">
+                    {t("fiscalBadge")}
+                  </span>
+                )}
+                {register.trackFulfillment && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-700">
+                    {t("fulfillmentBadge")}
+                  </span>
+                )}
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">{t("cardItemsSellers")}</span>
                 <span className="font-medium">
@@ -574,14 +710,14 @@ export default function PosRegistersDisplay({
               <div className="flex justify-between">
                 <span className="text-gray-500">{t("cardTips")}</span>
                 <span className="font-medium text-amber-600">
-                  {formatPrice(register.traffic.tipsCollected)}
+                  {formatPrice(register.tipPool)}
                 </span>
               </div>
               {register.canTopUp && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">{t("cardCashToCollect")}</span>
                   <span className="font-medium text-red-600">
-                    {formatPrice(register.traffic.topUpsProcessed)}
+                    {formatPrice(register.traffic.cashOutstanding)}
                   </span>
                 </div>
               )}
@@ -594,6 +730,20 @@ export default function PosRegistersDisplay({
               >
                 {t("manage")}
               </button>
+              <button
+                onClick={() => setReportRegister(register)}
+                className="flex-1 px-3 py-2 text-sm font-medium text-amber-700 hover:bg-amber-50 rounded-md"
+              >
+                {t("reportButton")}
+              </button>
+              {canPayout && (
+                <button
+                  onClick={() => setPayoutRegister(register)}
+                  className="flex-1 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 rounded-md"
+                >
+                  {t("payoutButton")}
+                </button>
+              )}
               {canWrite && (
                 <button
                   onClick={() => setEditingRegister(register)}
@@ -614,6 +764,38 @@ export default function PosRegistersDisplay({
       </div>
 
       <ManageModal />
+
+      {reportRegister && (
+        <PosRegisterReportModal
+          registerId={reportRegister.id}
+          registerName={reportRegister.name}
+          onClose={() => setReportRegister(null)}
+        />
+      )}
+
+      {payoutRegister && (
+        <PosRegisterPayoutModal
+          registerId={payoutRegister.id}
+          registerName={payoutRegister.name}
+          onClose={() => setPayoutRegister(null)}
+          onRecorded={({ outstandingTips, outstandingCash }) => {
+            setRegisters(prev =>
+              prev.map(r =>
+                r.id === payoutRegister.id
+                  ? {
+                      ...r,
+                      tipPool: outstandingTips,
+                      traffic: {
+                        ...r.traffic,
+                        cashOutstanding: outstandingCash,
+                      },
+                    }
+                  : r
+              )
+            );
+          }}
+        />
+      )}
     </div>
   );
 }

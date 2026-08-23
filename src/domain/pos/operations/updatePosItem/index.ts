@@ -10,6 +10,8 @@ export interface UpdatePosItemInput {
   description?: string | null;
   cost?: number;
   direction?: PosItemDirection;
+  color?: string | null;
+  ticketEventId?: string | null;
   status?: PosItemStatus;
 }
 
@@ -23,6 +25,8 @@ export async function updatePosItem(
       ...(input.description !== undefined && { description: input.description }),
       ...(input.cost !== undefined && { cost: input.cost }),
       ...(input.direction !== undefined && { direction: input.direction }),
+      ...(input.color !== undefined && { color: input.color }),
+      ...(input.ticketEventId !== undefined && { ticketEventId: input.ticketEventId }),
       ...(input.status !== undefined && { status: input.status }),
     },
   });

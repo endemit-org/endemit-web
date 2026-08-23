@@ -10,6 +10,8 @@ import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutom
 import { runSupabaseKeepalive } from "@/domain/supabase/operations/runSupabaseKeepalive";
 import { runPosOrderExpiryAutomation } from "@/domain/pos/operations/runPosOrderExpiryAutomation";
 import { runPosTransactionEmailAutomation } from "@/domain/pos/operations/runPosTransactionEmailAutomation";
+import { runFiscalSubmissionAutomation } from "@/domain/pos/operations/runFiscalSubmissionAutomation";
+import { runPosTicketIssueAutomation } from "@/domain/pos/operations/runPosTicketIssueAutomation";
 import { runEventReminderAutomation } from "@/domain/email/operations/runEventReminderAutomation";
 import { runSingleEventReminderAutomation } from "@/domain/email/operations/runSingleEventReminderAutomation";
 import { runOrderNewsletterAutomation } from "@/domain/newsletter/operations/runOrderNewsletterAutomation";
@@ -20,6 +22,7 @@ import {
   runStickerReplacedEmailAutomation,
 } from "@/domain/sticker/operations/runStickerEmailAutomation";
 import { runP2PTransferEmailAutomation } from "@/domain/wallet/operations/runP2PTransferEmailAutomation";
+import { runStaleUserCleanup } from "@/domain/user/operations/runStaleUserCleanup";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -34,6 +37,8 @@ export const { GET, POST, PUT } = serve({
     runSupabaseKeepalive,
     runPosOrderExpiryAutomation,
     runPosTransactionEmailAutomation,
+    runFiscalSubmissionAutomation,
+    runPosTicketIssueAutomation,
     runEventReminderAutomation,
     runSingleEventReminderAutomation,
     runOrderNewsletterAutomation,
@@ -42,5 +47,6 @@ export const { GET, POST, PUT } = serve({
     runStickerUnlinkedEmailAutomation,
     runStickerReplacedEmailAutomation,
     runP2PTransferEmailAutomation,
+    runStaleUserCleanup,
   ],
 });

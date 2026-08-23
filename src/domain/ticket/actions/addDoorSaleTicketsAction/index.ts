@@ -8,6 +8,10 @@ import { inngest } from "@/lib/services/inngest";
 import { TicketQueueEvent } from "@/domain/ticket/types/ticket";
 import { customAlphabet } from "nanoid";
 import type { DoorSaleTicketProcessData } from "@/domain/ticket/operations/runDoorSaleTicketAutomation";
+import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
+import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
+import { ProductCategory } from "@/domain/product/types/product";
+import type { ProductInOrder } from "@/domain/order/types/order";
 
 interface AddDoorSaleTicketsInput {
   eventId: string;
@@ -47,6 +51,12 @@ export async function addDoorSaleTicketsAction(
       return { success: false, error: "Missing required fields" };
     }
 
+    // With ticket scanning enabled the door sale is scanned on the spot;
+    // otherwise the ticket stays PENDING like a regular issued ticket. On a
+    // CMS hiccup keep the long-standing scanned-immediately behavior.
+    const event = await fetchEventFromCmsById(eventId).catch(() => null);
+    const markScanned = event ? event.options.enabledTicketScanning : true;
+
     // Create tickets in database
     const result = await createDoorSaleTickets({
       eventId,
@@ -55,6 +65,7 @@ export async function addDoorSaleTicketsAction(
       totalPrice,
       ticketHolderEmail,
       createdByUserId: user.id,
+      markScanned,
     });
 
     // Only send to Inngest if email is provided and sendEmail is true
@@ -102,6 +113,20 @@ export async function addDoorSaleTicketsAction(
           createdByUserName,
         } satisfies DoorSaleTicketProcessData,
       });
+    }
+
+    // Same Email Octopus treatment as store ticket orders: create/update the
+    // subscriber and merge this event into their Events/LastEvent fields.
+    // The pipeline only reads `category` from items and skips placeholder
+    // emails on its own.
+    if (ticketHolderEmail) {
+      await queueOrderNewsletterSubscription({
+        email: ticketHolderEmail,
+        items: [{ category: ProductCategory.TICKETS } as ProductInOrder],
+        ticketEventIds: [eventId],
+      }).catch(error =>
+        console.error("Failed to queue door sale newsletter:", error)
+      );
     }
 
     return {

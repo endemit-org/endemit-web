@@ -63,6 +63,12 @@ export const PERMISSIONS = {
   SYSTEM_SETTINGS: "system:settings",
   SYSTEM_LOGS: "system:logs",
 
+  // Deployments
+  DEPLOY_TRIGGER: "deploy:trigger",
+
+  // Translations
+  TRANSLATIONS_MANAGE: "translations:manage",
+
   // POS - Seller access
   POS_ACCESS: "pos:access",
   POS_SELL: "pos:sell",
@@ -329,6 +335,18 @@ export const PERMISSION_METADATA: Record<
     description: "Manage system settings",
     resource: "system",
     action: "settings",
+  },
+  [PERMISSIONS.DEPLOY_TRIGGER]: {
+    name: "Trigger Deploys",
+    description: "Trigger a Vercel page rebuild/deployment",
+    resource: "deploy",
+    action: "trigger",
+  },
+  [PERMISSIONS.TRANSLATIONS_MANAGE]: {
+    name: "Manage Translations",
+    description: "Edit UI translation strings in the admin translation interface",
+    resource: "translations",
+    action: "manage",
   },
   [PERMISSIONS.SYSTEM_LOGS]: {
     name: "System Logs",

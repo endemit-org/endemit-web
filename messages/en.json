@@ -49,11 +49,12 @@
       "location": "Location",
       "about": "About",
       "tickets": "Tickets",
-      "more": "More"
+      "more": "More",
+      "info": "Info"
     },
     "concluded": "This event has concluded",
     "getTickets": "Get tickets",
-    "setTimes": "Set times",
+    "setTimes": "Timetable",
     "moreEventsToExplore": "More events to explore",
     "pastEvent": "Past event",
     "location": {
@@ -107,7 +108,7 @@
       "sortBy": "Sort by:",
       "sort": {
         "default": "Default",
-        "performanceTime": "Performance Time",
+        "performanceTime": "Timetable",
         "alphabetical": "Alphabetically"
       }
     },
@@ -122,14 +123,20 @@
       "happenedOn": "Happened on",
       "upcomingOn": "Upcoming on"
     },
-    "breadcrumb": "Events"
+    "breadcrumb": "Events",
+    "incognito": {
+      "badge": "Members only",
+      "startsAt": "We start at {time}",
+      "closedToPublic": "This event is closed to the public and intended for members of the Endemit association.",
+      "seeYouThere": "See you there, same as always."
+    }
   },
   "artists": {
     "appearsOn": "{name} appears on",
     "exploreOther": "Explore other artists",
     "dontMissNextTime": "Don't miss {name} next time",
     "subscribePrompt": "Subscribe and be notified about our events and lineups",
-    "setTimes": "Set times",
+    "setTimes": "Timetable",
     "profile": {
       "partOf": "Part of",
       "inquireBooking": "Inquire about booking",
@@ -638,9 +645,19 @@
       "generating": "Generating...",
       "downloadImage": "Download Ticket Image"
     },
+    "accessButtons": {
+      "adminPanel": "Admin Panel",
+      "posRegisters": "POS Registers",
+      "scanTickets": "Scan Tickets"
+    },
     "walletPay": {
       "pay": "Pay",
       "balance": "Balance",
+      "tipPlus": "Add tip",
+      "tipMinus": "Reduce tip",
+      "cancelPaymentConfirm": "Cancel this payment?",
+      "cancelPaymentYes": "Yes, cancel payment",
+      "cancelPaymentNo": "Continue with payment",
       "handPhoneHint": "Hand your phone to the seller — they will scan this code to charge your wallet.",
       "scanTitle": "Scan to Pay",
       "confirmTitle": "Confirm Payment",
@@ -664,7 +681,23 @@
       "totalToPay": "Total to Pay",
       "processing": "Processing...",
       "topUpButton": "Top-up {amount}",
-      "payButton": "Pay {amount}"
+      "payButton": "Pay {amount}",
+      "balanceAfter": "After",
+      "totalWithTip": "= {amount} total · tip included",
+      "errors": {
+        "orderNotFound": "Order not found",
+        "orderNotPending": "Order is no longer active",
+        "orderExpired": "Order has expired",
+        "orderOtherCustomer": "Order belongs to another customer",
+        "customerNotFound": "Customer not found",
+        "walletNotFound": "Wallet not found",
+        "insufficientBalance": "Insufficient balance. Please top up your wallet.",
+        "notScanned": "Order has not been scanned yet",
+        "invalidTip": "Invalid tip amount",
+        "methodNotAccepted": "This register does not accept this payment method",
+        "topupNotWalletPayable": "Top-ups must be paid in cash or by card",
+        "fiscalNotConfigured": "Fiscalization is not configured — contact an administrator"
+      }
     },
     "eventsAttended": {
       "title": "Events Attended",
@@ -710,6 +743,32 @@
         "title": "Orders",
         "description": "View your order history"
       }
+    },
+    "ticketTransfer": {
+      "transferButton": "Transfer this ticket to a friend",
+      "prompt": "Enter your friend's email — they'll get a link to accept the ticket.",
+      "emailPlaceholder": "friend@example.com",
+      "invalidEmail": "Enter a valid email address",
+      "send": "Send transfer",
+      "cancel": "Cancel",
+      "working": "Working…",
+      "hint": "Your ticket stays valid until they accept. On acceptance it moves to their account and your QR code stops working.",
+      "pendingTo": "Transfer pending — awaiting acceptance by {email}",
+      "pendingNote": "Your ticket remains valid until the transfer is accepted. The offer expires automatically.",
+      "revoke": "Revoke transfer",
+      "accept": "Accept ticket",
+      "acceptTitle": "Ticket transfer",
+      "offerHeading": "A ticket for {event} is waiting for you",
+      "offerFrom": "Sent by {sender}",
+      "offerExpiry": "Valid until {date}",
+      "acceptNote": "Accepting moves the ticket into this account with a fresh QR code.",
+      "alreadyAccepted": "This ticket was already accepted",
+      "revoked": "This transfer was revoked by the sender",
+      "expired": "This transfer offer has expired",
+      "closedNote": "The offer for {event} is no longer available.",
+      "incomingHeading": "Ticket offers for you",
+      "incomingFrom": "Sent by {sender}",
+      "pendingBadge": "transfer pending"
     }
   },
   "signin": {
@@ -954,6 +1013,23 @@
       "receiptNote": "This email serves as a receipt for your transaction. If you have any questions, please contact us at <link>endemit@endemit.org</link>",
       "intro": "Your purchase at <strong>{registerName}</strong> went through. Details below.",
       "item": "Item"
+    },
+    "walletAdjustment": {
+      "amountAdded": "Amount added",
+      "amountRemoved": "Amount removed",
+      "walletBalance": "Wallet Balance"
+    },
+    "ticketTransferOffer": {
+      "title": "You've been sent a ticket for {event}",
+      "body": "{sender} is transferring their ticket for {event} to you. Accept it below to move it into your Endemit account — you'll receive a fresh ticket with your own QR code.",
+      "acceptButton": "Accept ticket",
+      "expiry": "This offer is valid until {date}.",
+      "ignoreHint": "If you weren't expecting this, you can safely ignore this email."
+    },
+    "ticketTransferAccepted": {
+      "title": "Your ticket was accepted",
+      "body": "{recipient} accepted your ticket for {event}. It now lives in their account.",
+      "voidNote": "Your copy of the ticket (email, QR code, wallet pass) is no longer valid for entry."
     }
   },
   "music": {
@@ -985,7 +1061,7 @@
     "breadcrumb": "Music",
     "vinylPromo": {
       "or": "or",
-      "buyDigital": "Buy digital album",
+      "buyDigital": "Buy digital edition",
       "clickToListen": "Click here to listen",
       "playAlbum": "Play album",
       "playingAlbum": "Playing album"
@@ -1131,6 +1207,11 @@
         "scanned": "scanned",
         "pending": "pending"
       },
+      "goal": {
+        "label": "Ticket goal",
+        "exceeded": "{count} over goal"
+      },
+      "avgTicketPrice": "avg. ticket price",
       "metrics": {
         "revenue": "Revenue",
         "sold": "Sold",
@@ -1139,7 +1220,8 @@
         "guest": "Guest"
       },
       "pendingTickets": "Pending Tickets ({count})",
-      "scannedTickets": "Scanned Tickets ({count})"
+      "scannedTickets": "Scanned Tickets ({count})",
+      "pastEvents": "Past events"
     },
     "tickets": {
       "backToEvent": "Back to Event",
@@ -1196,6 +1278,22 @@
         "createButton": "{count, plural, one {Create # Guest Ticket} other {Create # Guest Tickets}}",
         "successCreated": "{count, plural, one {# guest ticket created} other {# guest tickets created}}",
         "successCreatedWithEmail": "{count, plural, one {# guest ticket created and email sent} other {# guest tickets created and email sent}}"
+      },
+      "cashSaleForm": {
+        "addButton": "Cash sale",
+        "title": "Add cash sale tickets",
+        "numberOfTickets": "Number of tickets",
+        "holderNames": "Ticket holder names",
+        "holderNamePlaceholder": "Holder {number} name",
+        "totalPrice": "Total price (€)",
+        "totalPriceHint": "Cash received for all tickets together; split evenly per ticket.",
+        "emailLabel": "Email (optional)",
+        "emailPlaceholder": "Search user or type email…",
+        "emailHint": "Tickets are linked to this email; leave empty for anonymous cash sale.",
+        "sendViaEmail": "Send tickets via email",
+        "creating": "Creating…",
+        "createButton": "Create {count} ticket(s)",
+        "successCreated": "{count} cash sale ticket(s) created"
       }
     },
     "orders": {
@@ -1313,9 +1411,15 @@
         "colDirection": "Direction",
         "colStatus": "Status",
         "colSold": "Sold (30d)",
+        "colSoldAllTime": "Sold (all-time)",
         "colActions": "Actions",
         "soldCount": "{count} sold",
-        "emptyItems": "No items yet."
+        "emptyItems": "No items yet.",
+        "fieldColor": "Color",
+        "fieldTicketEvent": "Event ticket item",
+        "ticketEventNone": "Not a ticket item",
+        "ticketEventHint": "When set, selling this item issues real tickets for the selected event (they count toward its ticket stats and goal).",
+        "ticketBadge": "Ticket"
       },
       "orders": {
         "title": "POS Orders",
@@ -1334,6 +1438,8 @@
         "statusCancelled": "Cancelled",
         "filterRegister": "Register",
         "allRegisters": "All registers",
+        "filterSearch": "Search",
+        "searchPlaceholder": "Name, email or order #",
         "ordersFound": "{count} orders found",
         "colOrder": "Order",
         "colRegister": "Register",
@@ -1363,7 +1469,21 @@
         "itemsHeading": "Items",
         "subtotal": "Subtotal",
         "tip": "Tip",
-        "total": "Total"
+        "total": "Total",
+        "reverse": "Reverse order",
+        "delete": "Delete order",
+        "reverseConfirmText": "Refund the full amount (incl. tip) back to the customer's wallet and mark the order as cancelled?",
+        "deleteConfirmText": "Permanently delete this order and its transactions? A paid, unreversed order will first have its balance returned to the customer. This cannot be undone.",
+        "reverseConfirm": "Yes, reverse",
+        "deleteConfirm": "Yes, delete permanently",
+        "actionWorking": "Working…",
+        "actionCancel": "Cancel",
+        "filterMethod": "Method",
+        "allMethods": "All methods",
+        "methodWallet": "Wallet",
+        "methodCash": "Cash",
+        "methodCard": "Card",
+        "receipt": "Receipt"
       },
       "registers": {
         "title": "POS Registers",
@@ -1401,7 +1521,70 @@
         "cardTips": "Tips",
         "cardCashToCollect": "Cash to collect",
         "manage": "Manage",
-        "emptyRegisters": "No registers yet."
+        "reportButton": "Report",
+        "payoutButton": "Payout",
+        "emptyRegisters": "No registers yet.",
+        "payout": {
+          "title": "Payout — {name}",
+          "loading": "Loading…",
+          "outstandingTips": "Tips outstanding",
+          "outstandingCash": "Cash to collect",
+          "amountLabel": "Amount ({symbol})",
+          "allButton": "All",
+          "noteLabel": "Note (optional)",
+          "notePlaceholder": "e.g. end of Friday shift, handed to Ana",
+          "recordTipsButton": "Record tip payout",
+          "recordCashButton": "Record cash pickup",
+          "confirmText": "Record {amount}?",
+          "confirmButton": "Confirm",
+          "cancelButton": "Cancel",
+          "recording": "Recording…",
+          "recorded": "Recorded {amount}.",
+          "errorInvalidAmount": "Enter a valid positive amount",
+          "errorExceedsOutstanding": "Amount exceeds outstanding ({outstanding})",
+          "errorGeneric": "Failed to record payout",
+          "historyHeading": "Payout history",
+          "noHistory": "No payouts recorded yet.",
+          "typeTips": "Tips",
+          "typeCash": "Cash"
+        },
+        "report": {
+          "title": "Report — {name}",
+          "loading": "Loading report…",
+          "statOrders": "Paid orders",
+          "statItemsSold": "Items sold",
+          "statRevenue": "Sales revenue",
+          "statTips": "Tips",
+          "statGross": "Gross (sales + tips)",
+          "statTopUps": "Top-ups processed",
+          "statLowestOrder": "Lowest order",
+          "statHighestOrder": "Highest order",
+          "statAvgOrder": "Average order",
+          "statHighestTip": "Highest tip",
+          "itemsHeading": "Items breakdown",
+          "noItems": "No items sold yet.",
+          "colItem": "Item",
+          "colQuantity": "Qty",
+          "colTotal": "Total",
+          "topUpBadge": "Top-up",
+          "byMethodHeading": "By payment method",
+          "methodWALLET": "Wallet",
+          "methodCASH": "Cash",
+          "methodCARD": "Card",
+          "methodOrders": "{count, plural, one {# order} other {# orders}}"
+        },
+        "paymentMethods": "Payment methods",
+        "acceptsWallet": "Wallet",
+        "acceptsCash": "Cash",
+        "acceptsCard": "Card terminal",
+        "fiscalizeInvoices": "Fiscalize invoices (cash/card sales get FURS invoices)",
+        "atLeastOneMethod": "At least one payment method must be enabled",
+        "methodWallet": "Wallet",
+        "methodCash": "Cash",
+        "methodCard": "Card",
+        "fiscalBadge": "Fiscal",
+        "trackFulfillment": "Track fulfillment (food-stand: orders stay open until served, with queue numbers)",
+        "fulfillmentBadge": "Fulfillment"
       },
       "stickers": {
         "title": "POS offline QRs",
@@ -1450,13 +1633,18 @@
           "Festival26Red": "Festival 26 Red",
           "Festival26Blue": "Festival 26 Blue"
         },
-        "propertyUpdateFailed": "Failed to update property."
+        "propertyUpdateFailed": "Failed to update property.",
+        "createCardAccounts": "Create card accounts (@CODE, pre-linked)",
+        "cardAccountsMax": "Max 200 codes per batch when creating card accounts",
+        "confirmGenerateWithAccounts": "Generate {count} codes AND create a temporary card account (with wallet) for each?",
+        "createdCodesWithAccounts": "Created {created} codes with {accounts} card accounts. Pool total: {total}."
       }
     },
     "users": {
       "list": {
         "total": "Total:",
-        "addUser": "Add User"
+        "addUser": "Add User",
+        "searchPlaceholder": "Search by name, email, username..."
       },
       "create": {
         "title": "Create User",
@@ -1625,6 +1813,7 @@
       "stats": {
         "totalBalance": "Total Balance",
         "wallets": "Wallets",
+        "walletsWithBalance": "{count} with balance over 0",
         "transactions": "Transactions"
       },
       "totalWallets": "Total Wallets:",
@@ -1640,6 +1829,13 @@
       "created": "Created:",
       "lastUpdatedLabel": "Last Updated:",
       "manageBalance": "Manage Balance",
+      "transferFunds": "Transfer to Another User",
+      "transferRecipientLabel": "Recipient",
+      "transferRecipientPlaceholder": "Search by name, username or email",
+      "transferErrorNoRecipient": "Select a recipient first",
+      "transferErrorSelf": "Cannot transfer to the same user",
+      "transferSuccess": "Transferred {amount} to {name}",
+      "transferSubmit": "Transfer Funds",
       "transactionHistory": "Transaction History ({count})",
       "errorInvalidAmount": "Please enter a valid positive amount",
       "errorDebitExceeds": "Cannot debit more than current balance ({balance})",
@@ -1658,6 +1854,7 @@
         "user": "User",
         "email": "Email",
         "balance": "Balance",
+        "transactions": "Transactions",
         "lastUpdated": "Last Updated",
         "date": "Date",
         "type": "Type",
@@ -1665,7 +1862,15 @@
         "balanceAfter": "Balance After",
         "note": "Note",
         "createdBy": "Created By"
-      }
+      },
+      "directionLabel": "Direction",
+      "directionAdd": "Add tokens",
+      "directionRemove": "Remove tokens",
+      "sendEmailLabel": "Notify user by email (the note becomes the message)",
+      "emailSubjectLabel": "Email subject",
+      "emailSubjectHint": "Preset follows the direction until you edit it.",
+      "emailSubjectPresetAdd": "Tokens added to your Endemit wallet",
+      "emailSubjectPresetRemove": "Tokens removed from your Endemit wallet"
     },
     "transactions": {
       "title": "Transactions",
@@ -1723,7 +1928,53 @@
       "posOrders": "POS Orders",
       "posTerminal": "POS Terminal",
       "myProfile": "My Profile",
-      "discounts": "Discount Codes"
+      "discounts": "Discount Codes",
+      "deploy": "Deploy Site",
+      "translations": "Translations"
+    },
+    "translations": {
+      "title": "Translations",
+      "subtitle": "Edit UI strings; changes are staged here until the files are downloaded and committed",
+      "stats": {
+        "keys": "Keys",
+        "incomplete": "Incomplete",
+        "edited": "Edited"
+      },
+      "downloadEn": "Download en.json",
+      "downloadSl": "Download sl.json",
+      "orphansNotice": "{count, plural, one {# stored entry no longer matches} other {# stored entries no longer match}} any key in the language files.",
+      "pruneOrphans": "Remove orphans",
+      "pruning": "Removing…",
+      "searchPlaceholder": "Search keys or text…",
+      "filterIncomplete": "Only incomplete",
+      "filterEdited": "Only edited",
+      "groupCount": "{count} keys",
+      "groupIncomplete": "{count} incomplete",
+      "emptyFiltered": "No keys match the current filters.",
+      "complete": "Complete",
+      "editedBadge": "Edited",
+      "missingBadge": "Missing",
+      "invalidSyntax": "Invalid syntax",
+      "missingPlaceholders": "Missing from this text: {parts}",
+      "previewLabel": "Preview",
+      "pluralSampleHint": "Change the number to see the different plural forms",
+      "resetToFile": "Reset to file",
+      "discard": "Discard",
+      "save": "Save",
+      "saving": "Saving…",
+      "saveFailed": "Failed to save"
+    },
+    "deploy": {
+      "title": "Deploy Site",
+      "subtitle": "Trigger a fresh Vercel build of the public site",
+      "explainer": "This starts a new production build on Vercel using the configured deploy hook. Use it after CMS or content changes that need a full rebuild. The build takes a few minutes to go live.",
+      "triggerButton": "Trigger deploy",
+      "confirmText": "Start a new production build now?",
+      "confirmButton": "Yes, start build",
+      "cancelButton": "Cancel",
+      "triggering": "Triggering…",
+      "triggered": "Build triggered at {time}. It will be live in a few minutes.",
+      "errorGeneric": "Failed to trigger the deploy"
     },
     "common": {
       "loading": "Loading...",
@@ -1826,6 +2077,87 @@
     }
   },
   "pos": {
+    "stats": {
+      "label": "Stats"
+    },
+    "methods": {
+      "selectPrompt": "How is the customer paying?",
+      "wallet": "Wallet",
+      "cash": "Cash",
+      "card": "Card terminal"
+    },
+    "methodConfirm": {
+      "cashDue": "Cash due",
+      "cardCharge": "Charge on terminal",
+      "totalWithTip": "Total with tip: {amount}",
+      "topUpNote": "Top-up — the amount will be credited to the customer's wallet",
+      "processing": "Processing…",
+      "cashReceived": "Cash received — {amount}",
+      "cardInstruction": "Charge {amount} on the card terminal, then continue.",
+      "chargedOnTerminal": "Charged on terminal",
+      "confirmApproved": "Did the terminal approve the {amount} charge?",
+      "chargeApproved": "Charge approved — mark paid",
+      "backToAmount": "Back to amount",
+      "back": "Back",
+      "buyerEmailLabel": "Buyer email for digital tickets (optional)",
+      "buyerEmailPlaceholder": "email@example.com"
+    },
+    "receipt": {
+      "printButton": "Print",
+      "fiscalTitle": "Invoice no. {number}",
+      "informalTitle": "Purchase slip",
+      "order": "Order",
+      "date": "Date",
+      "operator": "Served by",
+      "tip": "Tip",
+      "total": "TOTAL",
+      "paymentMethod": "Payment",
+      "methodWallet": "Wallet",
+      "methodCash": "Cash",
+      "methodCard": "Card",
+      "taxNumber": "Tax no.",
+      "eorPending": "pending confirmation",
+      "thanks": "Thank you!",
+      "ticketsHeading": "Entry tickets",
+      "ticketsHint": "Show this QR code at the entrance.",
+      "vatClause": "VAT not charged pursuant to Article 94(1) of the Slovenian VAT Act (ZDDV-1)."
+    },
+    "transactions": {
+      "title": "Last Transactions",
+      "loading": "Loading transactions…",
+      "loadFailed": "Could not load transactions",
+      "empty": "No transactions yet.",
+      "refresh": "Refresh",
+      "tipSuffix": "tip",
+      "print": "Print",
+      "printQueued": "Sent ✓",
+      "slip": "Slip",
+      "loadMore": "Load more",
+      "detail": {
+        "paidBy": "Paid by",
+        "unknownCustomer": "Unknown customer",
+        "method": "Payment method",
+        "seller": "Seller",
+        "created": "Created",
+        "paid": "Paid",
+        "cancelled": "Cancelled",
+        "tip": "Tip",
+        "total": "Total"
+      }
+    },
+    "balanceCheck": {
+      "label": "Balance",
+      "title": "Check Balance",
+      "pointCamera": "Scan a wallet code or wristband",
+      "checking": "Checking balance…",
+      "checkFailed": "Could not check balance",
+      "balanceLabel": "Balance",
+      "lastTransactions": "Last transactions",
+      "noTransactions": "No transactions yet.",
+      "scanAnother": "Scan another",
+      "unknownCustomer": "Unknown customer",
+      "useForOrder": "Use for next order"
+    },
     "register": {
       "metaTitle": "POS - Select Register",
       "selectRegister": "Select Register",
@@ -1847,7 +2179,9 @@
       "each": "{amount} each",
       "clear": "Clear",
       "creating": "Creating...",
-      "createOrder": "Create Order"
+      "createOrder": "Create Order",
+      "negativeTotal": "Order total cannot be negative",
+      "notePlaceholder": "Order note (e.g. no onions, blue jacket)…"
     },
     "orders": {
       "yourTotalIs": "Your total is <bold>{amount}</bold>",
@@ -1874,17 +2208,37 @@
       "lowBalance": "Low balance",
       "scanned": "Scanned",
       "waitingForScanShort": "Waiting for scan",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "newBalance": "New balance",
+      "printReceipt": "Print receipt",
+      "printQueued": "Sent to printer ✓",
+      "printFailed": "Print failed — try again",
+      "openSlip": "Open slip in browser"
     },
     "sticker": {
       "resolving": "Resolving wristband...",
-      "scanWristband": "Scan wristband",
-      "instructions": "Point the camera at the customer's wristband, or type the 4-char code.",
-      "hint": "Scan QR or type the 4-character wristband code",
+      "scanWristband": "Scan QR",
+      "instructions": "Point the camera at the customer's QR, or type the 4-char code.",
+      "hint": "Scan QR or type the 4-character code",
       "backToQr": "← Back to QR"
     },
     "header": {
       "title": "Point of Sale"
+    },
+    "toServe": {
+      "heading": "To serve ({count})",
+      "empty": "Nothing to serve.",
+      "complete": "Served ✓",
+      "completing": "Completing…"
+    },
+    "kitchen": {
+      "title": "Kitchen — {name}",
+      "openCount": "{count} open",
+      "empty": "All caught up 🎉"
+    },
+    "attachedCustomer": {
+      "paying": "Paying: {name} — {balance}",
+      "insufficient": "insufficient balance"
     }
   },
   "scan": {
@@ -1965,5 +2319,9 @@
     "availableNow": "Available now",
     "startsOn": "Starts {date}",
     "step": "Step {number}"
+  },
+  "discordBanner": {
+    "join": "Join our Discord",
+    "onlineNow": "{count} online now"
   }
 }

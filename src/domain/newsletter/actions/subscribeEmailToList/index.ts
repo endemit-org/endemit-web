@@ -1,4 +1,5 @@
 import { EMAIL_NEWSLETTER_API_KEY } from "@/lib/services/emailOctopus/emailOctopus";
+import { isPlaceholderEmail } from "@/lib/util/formatting";
 
 interface SubscribeOptions {
   tags?: string[];
@@ -35,6 +36,13 @@ export const subscribeEmailToList = async (
 ) => {
   const logPrefix = `[EmailOctopus:${email}]`;
 
+  // Synthetic addresses (card accounts, import placeholders) never reach a
+  // real inbox — keep them out of the newsletter lists.
+  if (isPlaceholderEmail(email)) {
+    console.log(`${logPrefix} Skipping placeholder/card email`);
+    return { success: true };
+  }
+
   try {
     const payload: UpsertPayload = {
       email_address: email,
@@ -58,7 +66,8 @@ export const subscribeEmailToList = async (
       if (options.fields.LastName) {
         payload.fields.LastName = options.fields.LastName;
       }
-      if (options.fields.Events) {
+      // Empty string is a valid write — clearing the last event on removal
+      if (options.fields.Events !== undefined) {
         payload.fields.Events = options.fields.Events;
       }
       if (options.fields.LastEvent) {

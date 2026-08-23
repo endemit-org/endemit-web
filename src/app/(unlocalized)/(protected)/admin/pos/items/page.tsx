@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllPosItems } from "@/domain/pos/operations/getAllPosItems";
+import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import PosItemsDisplay from "@/app/_components/admin/PosItemsDisplay";
 
 export const metadata: Metadata = {
@@ -23,8 +24,25 @@ export default async function AdminPosItemsPage() {
 
   const t = await getTranslations("admin.pos.items");
 
-  const { items } = await getAllPosItems();
+  const [{ items }, cmsEvents] = await Promise.all([
+    getAllPosItems(),
+    fetchEventsFromCms({}).catch(() => null),
+  ]);
   const canWrite = currentUser.permissions.includes(PERMISSIONS.POS_ITEMS_WRITE);
+
+  // Upcoming events first, then most recent past — for the ticket-item picker
+  const now = Date.now();
+  const eventOptions = (cmsEvents ?? [])
+    .filter(event => event.date_start)
+    .sort((a, b) => {
+      const aTime = a.date_start!.getTime();
+      const bTime = b.date_start!.getTime();
+      const aUpcoming = aTime >= now;
+      const bUpcoming = bTime >= now;
+      if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+      return aUpcoming ? aTime - bTime : bTime - aTime;
+    })
+    .map(event => ({ id: event.id, name: event.name }));
 
   return (
     <div>
@@ -60,7 +78,11 @@ export default async function AdminPosItemsPage() {
         </div>
       </div>
 
-      <PosItemsDisplay initialItems={items} canWrite={canWrite} />
+      <PosItemsDisplay
+        initialItems={items}
+        canWrite={canWrite}
+        eventOptions={eventOptions}
+      />
     </div>
   );
 }

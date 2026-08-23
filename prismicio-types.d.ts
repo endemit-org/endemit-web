@@ -115,6 +115,8 @@ type ArtistDocumentDataSlicesSlice =
   | ImageGallerySlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -321,6 +323,8 @@ type ContentPageDocumentDataSlicesSlice =
   | ImageGallerySlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | PodcastListSlice
   | ProductListSlice
   | TextColumnSlice
@@ -601,6 +605,8 @@ type EventDocumentDataSlicesSlice =
   | HorizontalRuleSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1040,6 +1046,8 @@ type HomePageDocumentDataSlicesSlice =
   | AccordionSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
   | ContentSectionSlice
@@ -1132,6 +1140,8 @@ type InnerContentDocumentDataSlicesSlice =
   | PodcastListSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1250,6 +1260,8 @@ type MobileMenuPromoDocumentDataSlicesSlice =
   | PodcastListSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | GridTileSlice
   | ImageGallerySlice
   | NewsletterSubscriptionSlice
@@ -1656,6 +1668,7 @@ export interface ProductDocumentDataRelatedProductsItem {
           "title",
           { id: "images"; fields: ["image"] },
           "price",
+          "discounted_price",
           "product_category",
           "product_type",
           "sorting_weight",
@@ -1691,6 +1704,8 @@ type ProductDocumentDataSlicesSlice =
   | BannerSlice
   | HeroSlice
   | VfxSlice
+  | DiscordBannerSlice
+  | RecordShowcaseSlice
   | TextColumnSlice
   | VinylPromoSectionSlice
   | NewsletterSubscriptionSlice
@@ -1928,6 +1943,17 @@ interface ProductDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/number
    */
   price: prismic.NumberField;
+
+  /**
+   * Discounted price (EUR) field in *Product*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: Optional sale price — must be lower than the regular price to take effect
+   * - **API ID Path**: product.discounted_price
+   * - **Tab**: Attributes
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  discounted_price: prismic.NumberField;
 
   /**
    * Weight (g) field in *Product*
@@ -5025,6 +5051,199 @@ export type VenueListSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *DiscordBanner → Default → Primary*
+ */
+export interface DiscordBannerSliceDefaultPrimary {
+  /**
+   * Title field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Title (SL) field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.title_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  title_sl: prismic.RichTextField;
+
+  /**
+   * Description field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Description (SL) field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: discord_banner.default.primary.description_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_sl: prismic.RichTextField;
+
+  /**
+   * Invite link field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: https://discord.gg/…
+   * - **API ID Path**: discord_banner.default.primary.invite_link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  invite_link: prismic.LinkField;
+
+  /**
+   * Server ID field in *DiscordBanner → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 1234567890123456789
+   * - **API ID Path**: discord_banner.default.primary.server_id
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  server_id: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for DiscordBanner Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type DiscordBannerSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<DiscordBannerSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *DiscordBanner*
+ */
+type DiscordBannerSliceVariation = DiscordBannerSliceDefault;
+
+/**
+ * DiscordBanner Shared Slice
+ *
+ * - **API ID**: `discord_banner`
+ * - **Description**: Discord community banner with invite link and live online count
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type DiscordBannerSlice = prismic.SharedSlice<
+  "discord_banner",
+  DiscordBannerSliceVariation
+>;
+
+/**
+ * Primary content in *RecordShowcase → Default → Primary*
+ */
+export interface RecordShowcaseSliceDefaultPrimary {
+  /**
+   * Title field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.title
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Title (SL) field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.title_sl
+   */
+  title_sl: prismic.KeyTextField;
+
+  /**
+   * Description field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.description
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Description (SL) field in *RecordShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: record_showcase.default.primary.description_sl
+   */
+  description_sl: prismic.KeyTextField;
+}
+
+/**
+ * Item in *RecordShowcase → Default → Items*
+ */
+export interface RecordShowcaseSliceDefaultItem {
+  /**
+   * Product field in *RecordShowcase → Default → Items*
+   *
+   * - **Field Type**: Content Relationship
+   * - **API ID Path**: record_showcase.default.items[].product
+   */
+  product: ContentRelationshipFieldWithData<
+    [{ id: "product"; fields: ["title"] }]
+  >;
+
+  /**
+   * Cover image field in *RecordShowcase → Default → Items*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: record_showcase.default.items[].cover_image
+   */
+  cover_image: prismic.ImageField<never>;
+
+  /**
+   * Record image field in *RecordShowcase → Default → Items*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: record_showcase.default.items[].record_image
+   */
+  record_image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for RecordShowcase Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type RecordShowcaseSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<RecordShowcaseSliceDefaultPrimary>,
+  Simplify<RecordShowcaseSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *RecordShowcase*
+ */
+type RecordShowcaseSliceVariation = RecordShowcaseSliceDefault;
+
+/**
+ * RecordShowcase Shared Slice
+ *
+ * - **API ID**: `record_showcase`
+ * - **Description**: Label / založba record showcase
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type RecordShowcaseSlice = prismic.SharedSlice<
+  "record_showcase",
+  RecordShowcaseSliceVariation
+>;
+
+/**
  * Primary content in *Vfx → Default → Primary*
  */
 export interface VfxSliceDefaultPrimary {
@@ -5163,6 +5382,107 @@ export interface VinylPromoSectionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
   display_add_to_cart: prismic.BooleanField;
+
+  /**
+   * Headline (SL) field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.headline_sl
+   */
+  headline_sl: prismic.KeyTextField;
+
+  /**
+   * Description (SL) field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.description_sl
+   */
+  description_sl: prismic.KeyTextField;
+
+  /**
+   * Artist name field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.artist_name
+   */
+  artist_name: prismic.KeyTextField;
+
+  /**
+   * Album title field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.album_title
+   */
+  album_title: prismic.KeyTextField;
+
+  /**
+   * Cover image field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: vinyl_promo_section.default.primary.cover_image
+   */
+  cover_image: prismic.ImageField<never>;
+
+  /**
+   * Record image field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **API ID Path**: vinyl_promo_section.default.primary.record_image
+   */
+  record_image: prismic.ImageField<never>;
+
+  /**
+   * Background color field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **API ID Path**: vinyl_promo_section.default.primary.background_color
+   */
+  background_color: prismic.ColorField;
+
+  /**
+   * Buy digital link field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **API ID Path**: vinyl_promo_section.default.primary.digital_link
+   */
+  digital_link: prismic.LinkField;
+
+  /**
+   * SoundCloud playlist URL field in *VinylPromoSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.primary.soundcloud_playlist_url
+   */
+  soundcloud_playlist_url: prismic.KeyTextField;
+}
+
+/**
+ * Item in *VinylPromoSection → Default → Items*
+ */
+export interface VinylPromoSectionSliceDefaultItem {
+  /**
+   * Track title field in *VinylPromoSection → Default → Items*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.items[].track_title
+   */
+  track_title: prismic.KeyTextField;
+
+  /**
+   * Track artist field in *VinylPromoSection → Default → Items*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.items[].track_artist
+   */
+  track_artist: prismic.KeyTextField;
+
+  /**
+   * SoundCloud track URL field in *VinylPromoSection → Default → Items*
+   *
+   * - **Field Type**: Text
+   * - **API ID Path**: vinyl_promo_section.default.items[].track_url
+   */
+  track_url: prismic.KeyTextField;
 }
 
 /**
@@ -5175,7 +5495,7 @@ export interface VinylPromoSectionSliceDefaultPrimary {
 export type VinylPromoSectionSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<VinylPromoSectionSliceDefaultPrimary>,
-  never
+  Simplify<VinylPromoSectionSliceDefaultItem>
 >;
 
 /**
@@ -5389,12 +5709,22 @@ declare module "@prismicio/client" {
       VenueListSliceDefaultPrimary,
       VenueListSliceVariation,
       VenueListSliceDefault,
+      DiscordBannerSlice,
+      DiscordBannerSliceDefaultPrimary,
+      DiscordBannerSliceVariation,
+      DiscordBannerSliceDefault,
+      RecordShowcaseSlice,
+      RecordShowcaseSliceDefaultPrimary,
+      RecordShowcaseSliceDefaultItem,
+      RecordShowcaseSliceVariation,
+      RecordShowcaseSliceDefault,
       VfxSlice,
       VfxSliceDefaultPrimary,
       VfxSliceVariation,
       VfxSliceDefault,
       VinylPromoSectionSlice,
       VinylPromoSectionSliceDefaultPrimary,
+      VinylPromoSectionSliceDefaultItem,
       VinylPromoSectionSliceVariation,
       VinylPromoSectionSliceDefault,
     };

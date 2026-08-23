@@ -8,51 +8,44 @@ import PlayIcon from "@/app/_components/icon/PlayIcon";
 import { usePlayerStore } from "@/app/_stores/PlayerStore";
 import ActionButton from "@/app/_components/form/ActionButton";
 
-type Props = {
-  placeholder: string;
+export type PromoTrack = {
+  title: string;
+  artist: string;
+  url: string;
 };
 
-export default function InnerClientToggle({ placeholder }: Props) {
+type Props = {
+  coverImage: string;
+  coverAlt: string;
+  artistName: string;
+  albumTitle: string;
+  /** SoundCloud set URL — enables the "Play album" button when present. */
+  playlistUrl?: string | null;
+  tracks: PromoTrack[];
+  placeholder?: string;
+};
+
+export default function InnerClientToggle({
+  coverImage,
+  coverAlt,
+  artistName,
+  albumTitle,
+  playlistUrl,
+  tracks,
+  placeholder,
+}: Props) {
   const t = useTranslations("music.vinylPromo");
   const [isClicked, setIsClicked] = useState(false);
   const loadTrack = usePlayerStore(state => state.loadTrack);
   const loadedTrack = usePlayerStore(state => state.currentTrack);
-  const albumTrack = "https://soundcloud.com/ende-mit/sets/mmali-issun-boshi";
-  const coverImage = "/images/album-promo/issun-boshi-cover.webp";
-  const isAlbumLoaded = loadedTrack?.title && loadedTrack?.url === albumTrack;
-
-  const trackList = [
-    {
-      title: "Inori 祈り",
-      artist: "MMali",
-      cover: coverImage,
-      url: "https://soundcloud.com/ende-mit/mmali-inori?in=ende-mit/sets/mmali-issun-boshi",
-    },
-    {
-      title: "Gensō 幻想",
-      artist: "MMali",
-      cover: coverImage,
-      url: "https://soundcloud.com/ende-mit/mmali-genso?in=ende-mit/sets/mmali-issun-boshi",
-    },
-    {
-      title: "Matsuri 祭 (Inland Endemit Dub)",
-      artist: "MMali, Inland",
-      cover: coverImage,
-      url: "https://soundcloud.com/ende-mit/mmali-matsuri-inland-endemit-dub?in=ende-mit/sets/mmali-issun-boshi",
-    },
-    {
-      title: "Matsuri 祭",
-      artist: "MMali",
-      cover: coverImage,
-      url: "https://soundcloud.com/ende-mit/mmali-matsuri?in=ende-mit/sets/mmali-issun-boshi",
-    },
-  ];
+  const isAlbumLoaded =
+    playlistUrl && loadedTrack?.title && loadedTrack?.url === playlistUrl;
 
   return (
     <div className="relative overflow-hidden z-20">
       <ImageWithFallback
         src={coverImage}
-        alt="Issun-bōshi Vinyl release"
+        alt={coverAlt}
         width={400}
         height={400}
         className="z-10 relative "
@@ -90,11 +83,11 @@ export default function InnerClientToggle({ placeholder }: Props) {
           </div>
           <div
             className={
-              "h-[300px] bg-neutral-200/90 backdrop-blur-lg rounded-lg "
+              "h-[300px] bg-neutral-200/90 backdrop-blur-lg rounded-lg overflow-y-auto"
             }
           >
             <div className={"w-full flex flex-col gap-y-3 p-4"}>
-              {trackList.map(track => {
+              {tracks.map(track => {
                 const isCurrentTrackLoaded =
                   loadedTrack?.title && loadedTrack?.url === track.url;
 
@@ -109,7 +102,7 @@ export default function InnerClientToggle({ placeholder }: Props) {
                         url: track.url,
                         title: track.title,
                         type: "track",
-                        image: track.cover,
+                        image: coverImage,
                         artist: track.artist,
                       })
                     }
@@ -123,7 +116,7 @@ export default function InnerClientToggle({ placeholder }: Props) {
                       />
                     </div>
                     <ImageWithFallback
-                      src={track.cover}
+                      src={coverImage}
                       alt={track.title}
                       width={30}
                       height={30}
@@ -139,27 +132,29 @@ export default function InnerClientToggle({ placeholder }: Props) {
                 );
               })}
             </div>
-            <div className={"px-4"}>
-              <ActionButton
-                size={"sm"}
-                onClick={() =>
-                  loadTrack({
-                    url: albumTrack,
-                    title: "Issun-bōshi",
-                    type: "track",
-                    image: coverImage,
-                    artist: "MMali",
-                  })
-                }
-                disabled={!!isAlbumLoaded}
-              >
-                <PlayIcon
-                  fill
-                  className={`text-white size-5 mr-2 ${isAlbumLoaded ? "animate-pulse" : ""}`}
-                />
-                {isAlbumLoaded ? t("playingAlbum") : t("playAlbum")}
-              </ActionButton>
-            </div>
+            {playlistUrl && (
+              <div className={"px-4 pb-4"}>
+                <ActionButton
+                  size={"sm"}
+                  onClick={() =>
+                    loadTrack({
+                      url: playlistUrl,
+                      title: albumTitle,
+                      type: "track",
+                      image: coverImage,
+                      artist: artistName,
+                    })
+                  }
+                  disabled={!!isAlbumLoaded}
+                >
+                  <PlayIcon
+                    fill
+                    className={`text-white size-5 mr-2 ${isAlbumLoaded ? "animate-pulse" : ""}`}
+                  />
+                  {isAlbumLoaded ? t("playingAlbum") : t("playAlbum")}
+                </ActionButton>
+              </div>
+            )}
           </div>
         </div>
       </div>

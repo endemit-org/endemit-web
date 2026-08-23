@@ -11,6 +11,7 @@ import {
   type PaymentConfirmOrder,
   type PaymentConfirmCustomer,
 } from "@/app/_components/payment/PaymentConfirmView";
+import { posErrorMessageKey } from "@/domain/pos/types/posError";
 
 interface ScanResult {
   order: PaymentConfirmOrder;
@@ -38,6 +39,7 @@ export function WalletPayScanner({
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCancelled, setIsCancelled] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   useRealtimeChannel({
     channelName: scanResult ? `pos:order:${scanResult.order.id}` : "",
@@ -65,7 +67,8 @@ export function WalletPayScanner({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || t("scanFailed"));
+          const key = posErrorMessageKey(data.errorCode);
+          throw new Error(key ? t(`errors.${key}`) : t("scanFailed"));
         }
 
         setScanResult(data);
@@ -98,12 +101,23 @@ export function WalletPayScanner({
     setError(null);
     setIsCancelled(false);
     setIsScanning(false);
+    setShowCancelConfirm(false);
   }, []);
 
   const handleClose = useCallback(() => {
     reset();
     onClose();
   }, [reset, onClose]);
+
+  // Mid-payment the cross asks for confirmation instead of closing outright
+  const handleCloseRequest = useCallback(() => {
+    if (mode === "confirm" && !isProcessing) {
+      setShowCancelConfirm(true);
+      return;
+    }
+    if (isProcessing) return;
+    handleClose();
+  }, [mode, isProcessing, handleClose]);
 
   const handlePay = useCallback(
     async (tipAmount: number) => {
@@ -125,7 +139,8 @@ export function WalletPayScanner({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || t("paymentFailed"));
+          const key = posErrorMessageKey(data.errorCode);
+          throw new Error(key ? t(`errors.${key}`) : t("paymentFailed"));
         }
 
         setMode("success");
@@ -170,7 +185,7 @@ export function WalletPayScanner({
               {mode === "error" && t("errorTitle")}
             </h2>
             <button
-              onClick={handleClose}
+              onClick={handleCloseRequest}
               className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400"
             >
               <svg
@@ -241,11 +256,9 @@ export function WalletPayScanner({
               <PaymentConfirmView
                 order={scanResult.order}
                 customer={scanResult.customer}
-                allowCustomTip
                 isProcessing={isProcessing}
                 error={error}
                 onPay={handlePay}
-                onCancel={reset}
               />
             )}
 
@@ -332,6 +345,30 @@ export function WalletPayScanner({
               >
                 {t("tryAgain")}
               </button>
+            </div>
+          )}
+
+          {showCancelConfirm && (
+            <div className="absolute inset-0 z-20 bg-black/70 flex items-center justify-center p-6">
+              <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-5 w-full">
+                <p className="text-white font-medium text-center mb-4">
+                  {t("cancelPaymentConfirm")}
+                </p>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => setShowCancelConfirm(false)}
+                    className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
+                  >
+                    {t("cancelPaymentNo")}
+                  </button>
+                  <button
+                    onClick={handleClose}
+                    className="w-full px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg"
+                  >
+                    {t("cancelPaymentYes")}
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

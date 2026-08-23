@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
-import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
+import { formatTokensFromCents } from "@/lib/util/currency";
+import { TipStepper, TIP_STEP } from "@/app/_components/payment/TipStepper";
 
 export interface PaymentConfirmOrder {
   id: string;
@@ -30,41 +31,24 @@ interface Props {
   order: PaymentConfirmOrder;
   customer: PaymentConfirmCustomer;
   isRotated?: boolean;
-  allowCustomTip?: boolean;
   isProcessing: boolean;
   error: string | null;
   onPay: (tipAmount: number) => void;
-  onCancel: () => void;
+  /** Live tip updates (e.g. the modal title mirrors the running total). */
+  onTipChange?: (tipAmount: number) => void;
 }
-
-interface TipPreset {
-  label: string;
-  value?: number;
-  percent?: number;
-}
-
-const BASE_TIP_PRESETS: TipPreset[] = [
-  { label: "noTip", value: 0 },
-  { label: "12%", percent: 12 },
-  { label: "25%", percent: 25 },
-];
-
-const CUSTOM_TIP_PRESET: TipPreset = { label: "customTip", value: -1 };
 
 export function PaymentConfirmView({
   order,
   customer,
   isRotated = false,
-  allowCustomTip = true,
   isProcessing,
   error,
   onPay,
-  onCancel,
+  onTipChange,
 }: Props) {
   const t = useTranslations("profile.walletPay");
-  const [selectedTip, setSelectedTip] = useState(0);
-  const [customTip, setCustomTip] = useState("");
-  const [showCustomTip, setShowCustomTip] = useState(false);
+  const [tipAmount, setTipAmount] = useState(0);
 
   const { creditTotal, debitTotal } = useMemo(() => {
     let credit = 0;
@@ -78,22 +62,10 @@ export function PaymentConfirmView({
 
   const hasTopUp = creditTotal > 0;
 
-  const tipAmount = useMemo(() => {
-    if (hasTopUp) return 0;
-    if (showCustomTip && customTip) {
-      return Math.round(parseFloat(customTip) * 100) || 0;
-    }
-    if (selectedTip <= 0) return 0;
-    return Math.round((debitTotal * selectedTip) / 100);
-  }, [hasTopUp, showCustomTip, customTip, selectedTip, debitTotal]);
-
   const totalToPay = debitTotal + tipAmount;
   const balanceAfter = customer.balance + creditTotal - totalToPay;
   const canPay = balanceAfter >= 0;
-
-  const tipPresets = allowCustomTip
-    ? [...BASE_TIP_PRESETS, CUSTOM_TIP_PRESET]
-    : BASE_TIP_PRESETS;
+  const canAddTip = balanceAfter >= TIP_STEP;
 
   const handlePay = useCallback(() => {
     if (!canPay || isProcessing) return;
@@ -117,65 +89,6 @@ export function PaymentConfirmView({
           </div>
         ))}
       </div>
-
-      {!hasTopUp && (
-        <div className="mb-4">
-          <div className="text-sm text-neutral-500 mb-2">{t("addTip")}</div>
-          <div
-            className={`grid gap-2 ${
-              tipPresets.length === 4 ? "grid-cols-4" : "grid-cols-3"
-            }`}
-          >
-            {tipPresets.map(preset => {
-              const isCustom = preset.value === -1;
-              const presetValue =
-                "percent" in preset && preset.percent !== undefined
-                  ? preset.percent
-                  : (preset.value ?? 0);
-              const isSelected = isCustom
-                ? showCustomTip
-                : !showCustomTip && selectedTip === presetValue;
-
-              return (
-                <button
-                  key={preset.label}
-                  onClick={() => {
-                    if (isCustom) {
-                      setShowCustomTip(true);
-                      setSelectedTip(0);
-                    } else {
-                      setShowCustomTip(false);
-                      setCustomTip("");
-                      setSelectedTip(presetValue);
-                    }
-                  }}
-                  className={`py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isSelected
-                      ? "bg-blue-600 text-white"
-                      : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
-                  }`}
-                >
-                  {preset.label === "noTip" || preset.label === "customTip"
-                    ? t(preset.label)
-                    : preset.label}
-                </button>
-              );
-            })}
-          </div>
-          {showCustomTip && allowCustomTip && (
-            <div className="mt-3">
-              <input
-                type="number"
-                placeholder={`Enter amount in ${TOKEN_CONFIG.symbol}`}
-                value={customTip}
-                onChange={e => setCustomTip(e.target.value)}
-                autoFocus
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-600 rounded-lg text-white text-center text-lg"
-              />
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="bg-neutral-800 rounded-xl p-3 mb-4 text-center">
         <div className="text-neutral-500 text-sm mb-1">
@@ -201,19 +114,23 @@ export function PaymentConfirmView({
         )}
         {tipAmount > 0 && !hasTopUp && (
           <div className="text-neutral-500 text-xs mt-1">
-            = {formatTokensFromCents(totalToPay)} total · tip included
+            {t("totalWithTip", { amount: formatTokensFromCents(totalToPay) })}
           </div>
         )}
       </div>
 
       <div className="flex justify-between text-xs text-neutral-500 mb-1 px-1">
-        <span>Balance: {formatTokensFromCents(customer.balance)}</span>
-        <span>After: {formatTokensFromCents(balanceAfter)}</span>
+        <span>
+          {t("balance")}: {formatTokensFromCents(customer.balance)}
+        </span>
+        <span>
+          {t("balanceAfter")}: {formatTokensFromCents(balanceAfter)}
+        </span>
       </div>
 
       {!canPay && (
         <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 mb-4 text-red-400 text-sm text-center">
-          Insufficient balance. Please top up your wallet.
+          {t("errors.insufficientBalance")}
         </div>
       )}
 
@@ -221,6 +138,18 @@ export function PaymentConfirmView({
         <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 mb-4 text-red-400 text-sm">
           {error}
         </div>
+      )}
+
+      {!hasTopUp && (
+        <TipStepper
+          tipAmount={tipAmount}
+          onChange={value => {
+            setTipAmount(value);
+            onTipChange?.(value);
+          }}
+          canAdd={canAddTip}
+          disabled={isProcessing}
+        />
       )}
 
       <div className="flex flex-col gap-3 pt-2">
@@ -238,12 +167,6 @@ export function PaymentConfirmView({
             : hasTopUp
               ? t("topUpButton", { amount: formatTokensFromCents(creditTotal) })
               : t("payButton", { amount: formatTokensFromCents(totalToPay) })}
-        </button>
-        <button
-          onClick={onCancel}
-          className="text-neutral-500 hover:text-neutral-300 text-sm py-2 transition-colors"
-        >
-          Cancel
         </button>
       </div>
     </>

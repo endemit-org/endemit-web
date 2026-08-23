@@ -79,6 +79,23 @@ enum PosOrderStatus {
   CANCELLED
 }
 
+enum PosPayoutType {
+  TIPS
+  CASH
+}
+
+enum PosPaymentMethod {
+  WALLET
+  CASH
+  CARD
+}
+
+enum FiscalInvoiceStatus {
+  PENDING
+  SUBMITTED
+  FAILED
+}
+
 enum AnnouncementType {
   INFO
   WARNING
@@ -211,12 +228,17 @@ model Ticket {
   attended         Boolean      @default(false)
   isGuestList      Boolean      @default(false)
   isDoorSale       Boolean      @default(false)
+  // Set when the ticket was sold through a POS register order
+  posOrderId       String?
+  posOrder         PosOrder?    @relation(fields: [posOrderId], references: [id])
   status           TicketStatus @default(PENDING)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
   ScanLog          ScanLog[]
+  transfers        TicketTransfer[]
 
   @@index([ticketHash])
+  @@index([posOrderId])
   @@index([eventId])
   @@index([ticketPayerEmail])
   @@index([orderId])
@@ -236,6 +258,9 @@ model User {
   status        UserStatus @default(ACTIVE)
   signInType    SignInType @default(PASSWORD)
   locale        String     @default("sl")
+  // Operator tax number for ZDavPR fiscal invoices (optional; falls back to
+  // the company tax number)
+  taxNumber     String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   lastLoginAt   DateTime?
@@ -253,6 +278,9 @@ model User {
   posRegisterAssignments PosRegisterSeller[]
   posOrdersAsSeller      PosOrder[]          @relation("PosOrderSeller")
   posOrdersAsCustomer    PosOrder[]          @relation("PosOrderCustomer")
+  posPayouts             PosPayout[]         @relation("PosPayoutCreator")
+  ticketTransfersSent    TicketTransfer[]    @relation("TicketTransferSender")
+  translationEdits       TranslationEntry[]  @relation("TranslationEditor")
   stickerCode            StickerCode?
 
   // Announcements
@@ -399,6 +427,9 @@ model PosItem {
   description String?
   cost        Int // In cents
   direction   PosItemDirection
+  color       String? // Hex color shown as an accent bar on the POS touch card
+  // When set, selling this item issues real tickets for the linked CMS event
+  ticketEventId String?
   status      PosItemStatus    @default(ACTIVE)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -416,14 +447,59 @@ model PosRegister {
   status      PosRegisterStatus @default(ACTIVE)
   canTopUp    Boolean           @default(false)
   tipPool     Int               @default(0) // Accumulated tips in cents
+
+  // Payment methods accepted at this register; defaults keep existing
+  // registers wallet-only.
+  acceptsWallet Boolean @default(true)
+  acceptsCash   Boolean @default(false)
+  acceptsCard   Boolean @default(false)
+  // Cash/card payments at this register produce ZDavPR fiscal invoices
+  fiscalizeInvoices Boolean @default(false)
+  // Food-stand mode: paid orders stay "to serve" until completed, with a
+  // daily queue number for recall
+  trackFulfillment Boolean @default(false)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
   items   PosRegisterItem[]
   sellers PosRegisterSeller[]
   orders  PosOrder[]
+  payouts PosPayout[]
 
   @@index([status])
+}
+
+// Staged translation edits from the admin translation interface.
+// Only overrides live here — the messages/*.json files stay the runtime
+// source of truth until edits are downloaded and committed.
+model TranslationEntry {
+  id          String   @id @default(cuid())
+  locale      String // "en" | "sl"
+  key         String // dotted path, e.g. "admin.pos.registers.payout.title"
+  value       String? // override text; null = row exists only for the flag
+  complete    Boolean  @default(false)
+  updatedById String?
+  updatedBy   User?    @relation("TranslationEditor", fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt
+
+  @@unique([locale, key])
+  @@index([complete])
+}
+
+// Ledger of cash leaving a register: tip pool payouts and top-up cash pickups
+model PosPayout {
+  id          String        @id @default(cuid())
+  registerId  String
+  register    PosRegister   @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  type        PosPayoutType
+  amount      Int // cents
+  note        String?
+  createdById String
+  createdBy   User          @relation("PosPayoutCreator", fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+
+  @@index([registerId, createdAt])
+  @@index([registerId, type])
 }
 
 model PosRegisterItem {
@@ -467,6 +543,14 @@ model PosOrder {
   tipAmount    Int            @default(0)
   total        Int // subtotal + tipAmount
   status       PosOrderStatus @default(PENDING)
+  paymentMethod PosPaymentMethod? // null while PENDING / cancelled before pay
+  // Seller note for serving ("no onions, blue jacket")
+  note         String?
+  // Fulfillment tracking (registers with trackFulfillment): set at payment
+  fulfillmentStatus PosFulfillmentStatus?
+  fulfilledAt       DateTime?
+  // Daily per-register queue number for recall at pickup
+  queueNumber       Int?
   scannedAt    DateTime?
   paidAt       DateTime?
   cancelledAt  DateTime?
@@ -476,8 +560,11 @@ model PosOrder {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
-  items        PosOrderItem[]
-  transactions WalletTransaction[]
+  items         PosOrderItem[]
+  transactions  WalletTransaction[]
+  fiscalInvoices FiscalInvoice[]
+  tickets        Ticket[]
+  printJobs      PosPrintJob[]
 
   @@index([orderHash])
   @@index([shortCode])
@@ -487,6 +574,100 @@ model PosOrder {
   @@index([status])
   @@index([expiresAt])
   @@index([status, expiresAt])
+  @@index([registerId, status, paymentMethod])
+  @@index([registerId, fulfillmentStatus])
+}
+
+// ZDavPR fiscal invoice issued for a cash/card POS payment. ZOI is computed
+// offline at issue time; EOR arrives from FURS via the submission queue
+// (legally within 2 working days).
+model FiscalInvoice {
+  id                 String              @id @default(cuid())
+  posOrderId         String
+  posOrder           PosOrder            @relation(fields: [posOrderId], references: [id])
+  invoiceNumber      Int // global sequence (NumberingStructure "C")
+  businessPremiseId  String
+  electronicDeviceId String
+  issuedAt           DateTime
+  amount             Int // cents; negative for storno
+  zoi                String
+  eor                String?
+  status             FiscalInvoiceStatus @default(PENDING)
+  attempts           Int                 @default(0)
+  lastError          String?
+  isStorno           Boolean             @default(false)
+  referenceInvoiceId String?
+  referenceInvoice   FiscalInvoice?      @relation("FiscalStorno", fields: [referenceInvoiceId], references: [id])
+  stornos            FiscalInvoice[]     @relation("FiscalStorno")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@unique([posOrderId, isStorno])
+  @@index([status])
+  @@index([invoiceNumber])
+}
+
+// Single-row strictly sequential invoice counter (incremented in the payment
+// transaction).
+model FiscalCounter {
+  id         Int @id @default(1)
+  lastNumber Int @default(0)
+}
+
+enum TicketTransferStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+}
+
+// Ticket handover to another person: sender initiates with a free-text
+// email, recipient accepts via a tokenized link (account required). The
+// ticket stays fully usable by the sender until acceptance, which moves it
+// and regenerates the QR (voiding the sender's copy).
+model TicketTransfer {
+  id               String               @id @default(cuid())
+  ticketId         String
+  ticket           Ticket               @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderUserId     String
+  sender           User                 @relation("TicketTransferSender", fields: [senderUserId], references: [id], onDelete: Cascade)
+  recipientEmail   String
+  token            String               @unique
+  status           TicketTransferStatus @default(PENDING)
+  expiresAt        DateTime
+  acceptedByUserId String?
+  acceptedAt       DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([ticketId, status])
+  @@index([recipientEmail, status])
+}
+
+enum PosFulfillmentStatus {
+  OPEN
+  COMPLETED
+}
+
+enum PosPrintJobStatus {
+  PENDING
+  PRINTED
+  FAILED
+}
+
+// Print queue for Epson Server Direct Print: the receipt printer polls our
+// server for jobs, so phones never need to reach the printer directly.
+model PosPrintJob {
+  id         String            @id @default(cuid())
+  posOrderId String
+  posOrder   PosOrder          @relation(fields: [posOrderId], references: [id], onDelete: Cascade)
+  status     PosPrintJobStatus @default(PENDING)
+  attempts   Int               @default(0)
+  lastError  String?
+  createdAt  DateTime          @default(now())
+  printedAt  DateTime?
+
+  @@index([status, createdAt])
 }
 
 model PosOrderItem {

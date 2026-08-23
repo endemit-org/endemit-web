@@ -4,9 +4,9 @@
   "organizationName": "Endemit",
   "description": "Endemit Wallet",
   "formatVersion": 1,
-  "backgroundColor": "rgb(10, 10, 10)",
+  "backgroundColor": "rgb(61, 78, 216)",
   "foregroundColor": "rgb(255, 255, 255)",
-  "labelColor": "rgb(180, 180, 180)",
+  "labelColor": "rgb(199, 210, 254)",
   "storeCard": {
     "headerFields": [],
     "primaryFields": [],

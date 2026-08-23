@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { createTransaction } from "@/domain/wallet/operations/createTransaction";
 import { notifyOnPosTransaction } from "@/domain/notification/operations/notifyOnPosTransaction";
+import { sendWalletAdjustmentEmail } from "@/domain/email/operations/sendWalletAdjustmentEmail";
 import { prisma } from "@/lib/services/prisma";
 import type { SerializedWalletTransaction } from "@/domain/wallet/types";
 
@@ -12,6 +13,9 @@ interface AddWalletCreditInput {
   walletId: string;
   amount: number;
   note?: string;
+  /** Notify the wallet owner by email; `note` becomes the email message. */
+  sendEmail?: boolean;
+  emailSubject?: string;
 }
 
 export async function addWalletCreditAction(
@@ -50,6 +54,21 @@ export async function addWalletCreditAction(
     userEmail: wallet?.user.email,
     adminName: user.name || user.username,
   }).catch(() => {}); // Fire and forget
+
+  // Optional email to the wallet owner (fire and forget)
+  if (input.sendEmail && input.emailSubject && wallet?.user.email) {
+    sendWalletAdjustmentEmail({
+      customerEmail: wallet.user.email,
+      direction: "credit",
+      amount: input.amount,
+      balanceAfter: transaction.balanceAfter,
+      subject: input.emailSubject,
+      message: input.note || null,
+      occurredAt: new Date(),
+    }).catch(error =>
+      console.error("Failed to send wallet adjustment email:", error)
+    );
+  }
 
   return transaction;
 }

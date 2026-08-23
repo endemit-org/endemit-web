@@ -482,7 +482,7 @@ SL = {
             "title": "Naročilo je noter!",
             "thankYou": "Hvala za naročilo. Mejl s potrditvijo je odletel na",
             "emailLabel": "Email",
-            "ticketsNote": "Karte za <strong>{names}</strong> ti pridejo na mejl kmalu, v naslednjih 30 minutah.",
+            "ticketsNote": "Karte za <strong>{names}</strong> ti pridejo na mejl kmalu, v naslednih 30 minutah.",
             "orderId": "Št. naročila",
         },
         "interrupted": {

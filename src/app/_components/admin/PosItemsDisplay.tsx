@@ -11,13 +11,18 @@ import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 interface Props {
   initialItems: PosItemWithSalesCount[];
   canWrite: boolean;
+  eventOptions: Array<{ id: string; name: string }>;
 }
 
 function formatPrice(cents: number | undefined | null): string {
   return formatTokensFromCents(cents ?? 0);
 }
 
-export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
+export default function PosItemsDisplay({
+  initialItems,
+  canWrite,
+  eventOptions,
+}: Props) {
   const t = useTranslations("admin.pos.items");
   const tc = useTranslations("admin.common");
   const [items, setItems] = useState<PosItemWithSalesCount[]>(initialItems);
@@ -31,12 +36,14 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       description: (formData.get("description") as string) || undefined,
       cost: Math.round(parseFloat(formData.get("cost") as string) * 100),
       direction: formData.get("direction") as PosItemDirection,
+      color: (formData.get("color") as string) || null,
+      ticketEventId: (formData.get("ticketEventId") as string) || null,
       status: formData.get("status") as PosItemStatus,
     };
 
     startTransition(async () => {
       const item = await createPosItemAction(input);
-      setItems(prev => [...prev, { ...item, soldLast30Days: 0, revenueLast30Days: 0 }]);
+      setItems(prev => [...prev, { ...item, soldLast30Days: 0, revenueLast30Days: 0, soldAllTime: 0, revenueAllTime: 0 }]);
       setShowForm(false);
     });
   };
@@ -50,6 +57,8 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       description: (formData.get("description") as string) || null,
       cost: Math.round(parseFloat(formData.get("cost") as string) * 100),
       direction: formData.get("direction") as PosItemDirection,
+      color: (formData.get("color") as string) || null,
+      ticketEventId: (formData.get("ticketEventId") as string) || null,
       status: formData.get("status") as PosItemStatus,
     };
 
@@ -58,7 +67,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
       setItems(prev =>
         prev.map(i =>
           i.id === updated.id
-            ? { ...updated, soldLast30Days: i.soldLast30Days, revenueLast30Days: i.revenueLast30Days }
+            ? { ...updated, soldLast30Days: i.soldLast30Days, revenueLast30Days: i.revenueLast30Days, soldAllTime: i.soldAllTime, revenueAllTime: i.revenueAllTime }
             : i
         )
       );
@@ -139,6 +148,37 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
           </select>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            {t("fieldColor")}
+          </label>
+          <input
+            name="color"
+            type="color"
+            defaultValue={item?.color ?? "#3b82f6"}
+            className="mt-1 block h-10 w-full rounded-md border border-gray-300 shadow-sm cursor-pointer"
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium text-gray-700">
+            {t("fieldTicketEvent")}
+          </label>
+          <select
+            name="ticketEventId"
+            defaultValue={item?.ticketEventId ?? ""}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">{t("ticketEventNone")}</option>
+            {eventOptions.map(event => (
+              <option key={event.id} value={event.id}>
+                {event.name}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">{t("ticketEventHint")}</p>
+        </div>
+
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700">
             {t("fieldDescription")}
@@ -213,6 +253,9 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t("colSold")}
               </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {t("colSoldAllTime")}
+              </th>
               {canWrite && (
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t("colActions")}
@@ -224,8 +267,21 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
             {items.map(item => (
               <tr key={item.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                    {item.color && (
+                      <span
+                        className="inline-block w-4 h-4 rounded-full border border-gray-200"
+                        style={{ backgroundColor: item.color }}
+                      />
+                    )}
                     {item.name}
+                    {item.ticketEventId && (
+                      <span className="inline-flex px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700">
+                        🎫{" "}
+                        {eventOptions.find(e => e.id === item.ticketEventId)
+                          ?.name ?? t("ticketBadge")}
+                      </span>
+                    )}
                   </div>
                   {item.description && (
                     <div className="text-sm text-gray-500">
@@ -262,6 +318,10 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
                   <div className="text-gray-900">{t("soldCount", { count: item.soldLast30Days ?? 0 })}</div>
                   <div className="text-gray-500">{formatPrice(item.revenueLast30Days ?? 0)}</div>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <div className="text-gray-900">{t("soldCount", { count: item.soldAllTime ?? 0 })}</div>
+                  <div className="text-gray-500">{formatPrice(item.revenueAllTime ?? 0)}</div>
+                </td>
                 {canWrite && (
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <button
@@ -277,7 +337,7 @@ export default function PosItemsDisplay({ initialItems, canWrite }: Props) {
             {items.length === 0 && (
               <tr>
                 <td
-                  colSpan={canWrite ? 6 : 5}
+                  colSpan={canWrite ? 7 : 6}
                   className="px-6 py-8 text-center text-gray-500"
                 >
                   {t("emptyItems")}

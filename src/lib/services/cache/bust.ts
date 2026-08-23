@@ -247,6 +247,8 @@ export async function bustOnTransactionCreated(
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
+    // Every transaction changes a balance shown in the admin wallets list
+    adminWalletTags.list(),
   ];
 
   await bustTags(tags);
@@ -262,6 +264,7 @@ export async function bustOnBalanceRewarded(userId: string, walletId: string) {
     userTags.transactions(userId),
     userTags.transactionsLatest(userId),
     adminWalletTags.stats(),
+    adminWalletTags.list(),
   ];
 
   await bustTags(tags);
@@ -313,7 +316,14 @@ export async function bustOnUserUpdated(userId: string) {
  * Bust caches when role is assigned to user
  */
 export async function bustOnRoleAssigned(userId: string) {
-  const tags: CacheTag[] = [itemTags.user(userId), adminRoleTags.stats()];
+  const tags: CacheTag[] = [
+    itemTags.user(userId),
+    adminRoleTags.stats(),
+    // Roles list shows per-role member counts
+    adminRoleTags.list(),
+    // Users table shows each user's roles
+    adminUserTags.list(),
+  ];
 
   await bustTags(tags);
 }
@@ -360,16 +370,25 @@ export async function bustOnPosOrderCreated() {
 /**
  * Bust caches when POS order is paid
  */
-export async function bustOnPosOrderPaid(userId: string) {
+export async function bustOnPosOrderPaid(userId: string | null) {
   const tags: CacheTag[] = [
     adminPosTags.orders(),
+    adminPosTags.registers(),
+    adminPosTags.items(),
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
-    userTags.wallet(userId),
-    userTags.transactions(userId),
-    userTags.transactionsLatest(userId),
+    adminWalletTags.list(),
   ];
+
+  // Anonymous cash/card sales have no customer to bust
+  if (userId) {
+    tags.push(
+      userTags.wallet(userId),
+      userTags.transactions(userId),
+      userTags.transactionsLatest(userId)
+    );
+  }
 
   await bustTags(tags);
 }
@@ -380,13 +399,68 @@ export async function bustOnPosOrderPaid(userId: string) {
 export async function bustOnPosTopUp(userId: string) {
   const tags: CacheTag[] = [
     adminPosTags.orders(),
+    adminPosTags.registers(),
+    adminPosTags.items(),
     adminWalletTags.transactions(),
     adminWalletTags.transactionStats(),
     adminWalletTags.stats(),
+    adminWalletTags.list(),
     userTags.wallet(userId),
     userTags.transactions(userId),
     userTags.transactionsLatest(userId),
   ];
+
+  await bustTags(tags);
+}
+
+/**
+ * Bust caches when a POS order is reversed (admin refund) or hard-deleted.
+ * Covers the order lists, admin transaction views/stats and — when the order
+ * had a customer/wallet — their balance and transaction views.
+ */
+export async function bustOnPosOrderReversed(
+  userId: string | null,
+  walletId: string | null
+) {
+  const tags: CacheTag[] = [
+    adminPosTags.orders(),
+    adminPosTags.registers(),
+    adminPosTags.items(),
+    adminWalletTags.transactions(),
+    adminWalletTags.transactionStats(),
+    adminWalletTags.stats(),
+    adminWalletTags.list(),
+  ];
+
+  if (userId) {
+    tags.push(
+      userTags.wallet(userId),
+      userTags.transactions(userId),
+      userTags.transactionsLatest(userId)
+    );
+  }
+  if (walletId) {
+    tags.push(itemTags.walletTransactions(walletId));
+  }
+
+  await bustTags(tags);
+}
+
+/**
+ * Bust caches when a POS order is hard-deleted (same surface as a reversal).
+ */
+export async function bustOnPosOrderDeleted(
+  userId: string | null,
+  walletId: string | null
+) {
+  await bustOnPosOrderReversed(userId, walletId);
+}
+
+/**
+ * Bust caches when a POS payout (tip payout / cash pickup) is recorded
+ */
+export async function bustOnPosPayout() {
+  const tags: CacheTag[] = [adminPosTags.registers()];
 
   await bustTags(tags);
 }
@@ -417,7 +491,12 @@ export async function bustOnPosRegisterChanged() {
  * Bust caches when role changes
  */
 export async function bustOnRoleChanged(roleId?: string) {
-  const tags: CacheTag[] = [adminRoleTags.list(), adminRoleTags.stats()];
+  const tags: CacheTag[] = [
+    adminRoleTags.list(),
+    adminRoleTags.stats(),
+    // Users table shows role slugs per user — renames/deletes must propagate
+    adminUserTags.list(),
+  ];
 
   if (roleId) {
     tags.push(itemTags.role(roleId));

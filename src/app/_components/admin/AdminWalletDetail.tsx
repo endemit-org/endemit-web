@@ -8,6 +8,7 @@ import { useRealtimeChannel } from "@/app/_hooks/useRealtimeChannel";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import WalletTransactionForm from "./WalletTransactionForm";
+import AdminWalletTransferForm from "./AdminWalletTransferForm";
 import WalletTransactionsTable from "./WalletTransactionsTable";
 
 interface AdminWalletDetailProps {
@@ -141,6 +142,21 @@ export default function AdminWalletDetail({
             <div className="bg-gray-50 rounded-lg p-4">
               <WalletTransactionForm
                 walletId={initialWallet.id}
+                currentBalance={balance}
+              />
+            </div>
+          </section>
+        )}
+
+        {/* Transfer to another user */}
+        {canManageBalance && (
+          <section>
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+              {t("transferFunds")}
+            </h2>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <AdminWalletTransferForm
+                senderUserId={initialWallet.userId}
                 currentBalance={balance}
               />
             </div>

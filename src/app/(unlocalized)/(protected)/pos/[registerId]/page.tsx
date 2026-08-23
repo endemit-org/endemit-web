@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
+import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { prisma } from "@/lib/services/prisma";
 import type { Metadata } from "next";
 import { PosRegisterInterface } from "@/app/_components/pos/PosRegisterInterface";
@@ -70,19 +71,32 @@ export default async function PosRegisterPage({ params }: Props) {
       status: "PENDING",
     },
     include: {
-      items: true,
+      items: {
+        include: {
+          item: { select: { direction: true, ticketEventId: true } },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 10,
   });
 
-  const items = register.items.map(ri => ({
-    id: ri.item.id,
-    name: ri.item.name,
-    description: ri.item.description,
-    cost: ri.item.cost,
-    direction: ri.item.direction,
-  }));
+  // CREDIT items are wallet top-ups — hidden from sellers without pos:topup,
+  // and unsellable without a physical tender method to fund them
+  const canSellTopUps =
+    user.permissions.includes(PERMISSIONS.POS_TOPUP) &&
+    (register.acceptsCash || register.acceptsCard);
+  const items = register.items
+    .filter(ri => canSellTopUps || ri.item.direction !== "CREDIT")
+    .map(ri => ({
+      id: ri.item.id,
+      name: ri.item.name,
+      description: ri.item.description,
+      cost: ri.item.cost,
+      direction: ri.item.direction,
+      color: ri.item.color,
+      isTicket: Boolean(ri.item.ticketEventId),
+    }));
 
   return (
     <PosRegisterInterface
@@ -90,6 +104,10 @@ export default async function PosRegisterPage({ params }: Props) {
         id: register.id,
         name: register.name,
         canTopUp: register.canTopUp,
+        acceptsWallet: register.acceptsWallet,
+        acceptsCash: register.acceptsCash,
+        acceptsCard: register.acceptsCard,
+        trackFulfillment: register.trackFulfillment,
       }}
       items={items}
       showBackButton={userRegisterCount > 1}
@@ -108,6 +126,8 @@ export default async function PosRegisterPage({ params }: Props) {
           name: i.name,
           quantity: i.quantity,
           total: i.total,
+          direction: i.item.direction,
+          isTicket: Boolean(i.item.ticketEventId),
         })),
       }))}
     />

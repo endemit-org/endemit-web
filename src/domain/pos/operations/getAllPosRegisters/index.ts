@@ -6,9 +6,10 @@ import { CacheTags } from "@/lib/services/cache";
 
 export interface RegisterTrafficStats {
   salesRevenue: number; // DEBIT items total
-  topUpsProcessed: number; // CREDIT items total (cash to collect)
-  tipsCollected: number;
+  topUpsProcessed: number; // CREDIT items total (all-time)
+  tipsCollected: number; // all-time
   paidOrdersCount: number;
+  cashOutstanding: number; // top-ups minus recorded cash pickups
 }
 
 export interface PosRegisterWithRelations {
@@ -17,6 +18,11 @@ export interface PosRegisterWithRelations {
   description: string | null;
   status: "ACTIVE" | "INACTIVE";
   canTopUp: boolean;
+  acceptsWallet: boolean;
+  acceptsCash: boolean;
+  acceptsCard: boolean;
+  fiscalizeInvoices: boolean;
+  trackFulfillment: boolean;
   tipPool: number;
   createdAt: Date;
   updatedAt: Date;
@@ -51,6 +57,15 @@ export interface GetAllPosRegistersResult {
 }
 
 async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
+  const cashPickups = await prisma.posPayout.groupBy({
+    by: ["registerId"],
+    _sum: { amount: true },
+    where: { type: "CASH" },
+  });
+  const cashPickupMap = new Map(
+    cashPickups.map(p => [p.registerId, p._sum.amount ?? 0])
+  );
+
   const registers = await prisma.posRegister.findMany({
     orderBy: [{ status: "asc" }, { name: "asc" }],
     include: {
@@ -87,6 +102,7 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
         where: { status: "PAID" },
         select: {
           tipAmount: true,
+          paymentMethod: true,
           items: {
             select: {
               total: true,
@@ -109,8 +125,10 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
       topUpsProcessed: 0,
       tipsCollected: 0,
       paidOrdersCount: register.orders.length,
+      cashOutstanding: 0,
     };
 
+    let cashIn = 0;
     for (const order of register.orders) {
       traffic.tipsCollected += order.tipAmount;
       for (const orderItem of order.items) {
@@ -119,8 +137,13 @@ async function getAllPosRegistersUncached(): Promise<GetAllPosRegistersResult> {
         } else {
           traffic.topUpsProcessed += orderItem.total;
         }
+        // Drawer: all items paid in physical cash (sales + top-up funding)
+        if (order.paymentMethod === "CASH") {
+          cashIn += orderItem.total;
+        }
       }
     }
+    traffic.cashOutstanding = cashIn - (cashPickupMap.get(register.id) ?? 0);
 
     // Remove orders from the returned data (we only needed them for stats)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

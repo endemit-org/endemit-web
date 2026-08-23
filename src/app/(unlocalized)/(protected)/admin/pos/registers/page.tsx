@@ -5,7 +5,6 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { getAllPosRegisters } from "@/domain/pos/operations/getAllPosRegisters";
 import { getAllPosItems } from "@/domain/pos/operations/getAllPosItems";
-import { prisma } from "@/lib/services/prisma";
 import PosRegistersDisplay from "@/app/_components/admin/PosRegistersDisplay";
 import { formatTokensFromCents } from "@/lib/util/currency";
 
@@ -30,30 +29,27 @@ export default async function AdminPosRegistersPage() {
 
   const t = await getTranslations("admin.pos.registers");
 
-  const [{ registers }, { items }, usersRaw] = await Promise.all([
+  const [{ registers }, { items }] = await Promise.all([
     getAllPosRegisters(),
     getAllPosItems(),
-    prisma.user.findMany({
-      where: { status: "ACTIVE", email: { not: null } },
-      select: { id: true, name: true, email: true },
-      orderBy: { name: "asc" },
-    }),
   ]);
-
-  // Filter users with valid emails
-  const users = usersRaw.filter(
-    (u): u is { id: string; name: string | null; email: string } =>
-      u.email !== null
-  );
 
   const canWrite = currentUser.permissions.includes(
     PERMISSIONS.POS_REGISTERS_WRITE
   );
+  const canPayout = currentUser.permissions.includes(
+    PERMISSIONS.POS_TIPS_WITHDRAW
+  );
 
-  const totalTips = registers.reduce((sum, r) => sum + r.traffic.tipsCollected, 0);
+  // Tips and cash show what's currently outstanding (payouts deducted);
+  // all-time figures live in the per-register report.
+  const totalTips = registers.reduce((sum, r) => sum + r.tipPool, 0);
   const totalOrders = registers.reduce((sum, r) => sum + r.traffic.paidOrdersCount, 0);
   const totalSales = registers.reduce((sum, r) => sum + r.traffic.salesRevenue, 0);
-  const totalTopUps = registers.reduce((sum, r) => sum + r.traffic.topUpsProcessed, 0);
+  const totalCashOutstanding = registers.reduce(
+    (sum, r) => sum + r.traffic.cashOutstanding,
+    0
+  );
 
   return (
     <div>
@@ -100,7 +96,7 @@ export default async function AdminPosRegistersPage() {
             {t("stats.cashToCollect")}
           </div>
           <div className="mt-1 text-2xl font-semibold text-red-600">
-            {formatPrice(totalTopUps)}
+            {formatPrice(totalCashOutstanding)}
           </div>
         </div>
       </div>
@@ -108,8 +104,8 @@ export default async function AdminPosRegistersPage() {
       <PosRegistersDisplay
         initialRegisters={registers}
         allItems={items}
-        allUsers={users}
         canWrite={canWrite}
+        canPayout={canPayout}
       />
     </div>
   );

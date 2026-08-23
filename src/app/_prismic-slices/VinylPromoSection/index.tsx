@@ -1,9 +1,10 @@
 import React, { FC } from "react";
-import { Content } from "@prismicio/client";
+import { Content, isFilled } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { fetchProductFromCmsById } from "@/domain/cms/operations/fetchProductFromCms";
 import { isProductVisible } from "@/domain/product/businessLogic";
+import { getProductLink } from "@/domain/product/actions/getProductLink";
 import InnerPage from "@/app/_components/ui/InnerPage";
 import { Link } from "@/i18n/navigation";
 import ActionButton from "@/app/_components/form/ActionButton";
@@ -22,7 +23,48 @@ export type VinylPromoSectionProps = SliceComponentProps<
 >;
 
 /**
- * Component for "VinylPromoSection" Slices.
+ * Legacy defaults — the slice predates the per-album fields and the live
+ * Issun-bōshi document doesn't have them filled yet. Any slice with an empty
+ * cover image falls back to this bundle so nothing breaks mid-migration.
+ * Remove once the Prismic doc carries its own graphics/tracks.
+ */
+const LEGACY_ISSUN_BOSHI = {
+  artistName: "MMali",
+  albumTitle: "Issun-bōshi",
+  coverImage: "/images/album-promo/issun-boshi-cover.webp",
+  recordImage: "/images/album-promo/issun-boshi-record.webp",
+  backgroundColor: "#d3532c",
+  digitalLink: "https://endemit.bandcamp.com/album/issun-boshi",
+  playlistUrl: "https://soundcloud.com/ende-mit/sets/mmali-issun-boshi",
+  tracks: [
+    {
+      title: "Inori 祈り",
+      artist: "MMali",
+      url: "https://soundcloud.com/ende-mit/mmali-inori?in=ende-mit/sets/mmali-issun-boshi",
+    },
+    {
+      title: "Gensō 幻想",
+      artist: "MMali",
+      url: "https://soundcloud.com/ende-mit/mmali-genso?in=ende-mit/sets/mmali-issun-boshi",
+    },
+    {
+      title: "Matsuri 祭 (Inland Endemit Dub)",
+      artist: "MMali, Inland",
+      url: "https://soundcloud.com/ende-mit/mmali-matsuri-inland-endemit-dub?in=ende-mit/sets/mmali-issun-boshi",
+    },
+    {
+      title: "Matsuri 祭",
+      artist: "MMali",
+      url: "https://soundcloud.com/ende-mit/mmali-matsuri?in=ende-mit/sets/mmali-issun-boshi",
+    },
+  ],
+};
+
+/**
+ * Component for "VinylPromoSection" Slices: per-album promo driven entirely by
+ * Prismic content. Availability (pre-order / sold out / …) comes from the
+ * linked product via ProductAddToCart; track previews are optional — with no
+ * tracks and no playlist the cover renders statically without the listen UI.
  */
 const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
   slice,
@@ -44,8 +86,48 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
     return;
   }
 
-  const bluredCoverPlaceholder = `data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDggNSc+CiAgICAgIDxmaWx0ZXIgaWQ9J2InIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0nc1JHQic+CiAgICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0nMScgLz4KICAgICAgPC9maWx0ZXI+CgogICAgICA8aW1hZ2UgcHJlc2VydmVBc3BlY3RSYXRpbz0nbm9uZScgZmlsdGVyPSd1cmwoI2IpJyB4PScwJyB5PScwJyBoZWlnaHQ9JzEwMCUnIHdpZHRoPScxMDAlJwogICAgICBocmVmPSdkYXRhOmltYWdlL2F2aWY7YmFzZTY0LFVrbEdScmdDQUFCWFJVSlFWbEE0V0FvQUFBQVFBQUFBTVFBQU1RQUFRVXhRU0NjQUFBQUJKeUFRU1B5aFA0MklDQmJNQkV3Q1dzQVFOS0IvdndYd2lPai9CS1Q0Q0Yvc25vekJsT0lBVmxBNElHb0NBQUNRRFFDZEFTb3lBRElBUG8wMGxVZWxJcUloTWZqc2tLQVJpV3dBeUJmQ3hUZkc4ZXI3WjREYnBlWUQ5ZFBXeDlEZThsN3pQL21YNkVab1hVdHkzM0oxUCtMN1VFNHJVL0F5MndxS1NVL3UwcWh5MmtidHpzano1N1AxcEtiTlZENFJFejBMU2dmRy9RYit6elR5N1U3di84bFNkNEFBL3U3QWRKWnlJM3pvZ1YrNGl4QlZTLy84L00vWi91bVhhNnNUYnYvOGxQb2hydWZVMThQVGx3eGhTTjVKaGFpOFMvN0E5ZHFndlRGM2thd0tTR2dRdWV1VHQzM2oyaUJ3N1orNVpiM2puaEJva3RaMmFHOTJtNmxNai9JTWpnSE94TnNyTmsvR2llQ2FTWXFUUXhyaS85TWRRUU15ZmJNbnUwbGdXQzZJR1NRbXlBUmNYaEIrdTRoUFh6MGp0WXZnYy9mRlM3YWJ2UmY0WHdPU2lRYmdFWG9NSnVFTVgwZ0M4RDBWOExwMm1XN0paa3Btd1B0VnJtY3dKQmlZbjFLdWJ5ei9hVHgzSTh6UElhNnFEeGNOZUtxeENaTk15NDREWlV4bjloZWRtQ3VQcXdGYTdpeFF5ZVhmYzgvNDJvdEUrSUQ5T0NqLytUL2hHVWp6MW5sb0x0RWN6VHRmVmZNRTBCdWRFaUk3SjlMWDhzSVZMRlJqeGdoVUg1SW1hcTUrTFZlZytkcGJrSmg5aUcvd2RoaTZxUGZ4M2UwSnZydGlEUk50TUZKTTBIZ0RGa1lQYW9oNi9Eb0dXTm1yQVJOTFpNZUdyM1FFOXZDSkRvQ0lHVjJrdUNha1U1TjZKcko0ZWlJb1hNOWM0aDQ2SENwTTJBOERvK3V2RDI2dGdSMHZiQVFzTmk1b1ErajdZSzV4emV0TzVnYythcTI0NjJ4ZnJtU1RUZ3ZGV24zaXZFN0Fod1JyZzZzVG1jR2hveTVJc2hpZXJlaHpRUWc3QzE4UUFoYVVYNDFzL3hFdU1VY1hWTWRoK2J4dkl0cmx6R295WE1rUExxVTd5Q3Q2UllpZlBVbjl2MDBQZTJOMlFqOUVDRXJVZzY2QUFBQT0nIC8+CiAgICA8L3N2Zz4KICA=`;
-  const bluredRecordPlaceholder = `data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDggNSc+CiAgICAgIDxmaWx0ZXIgaWQ9J2InIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0nc1JHQic+CiAgICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0nMScgLz4KICAgICAgPC9maWx0ZXI+CgogICAgICA8aW1hZ2UgcHJlc2VydmVBc3BlY3RSYXRpbz0nbm9uZScgZmlsdGVyPSd1cmwoI2IpJyB4PScwJyB5PScwJyBoZWlnaHQ9JzEwMCUnIHdpZHRoPScxMDAlJwogICAgICBocmVmPSdkYXRhOmltYWdlL2F2aWY7YmFzZTY0LFVrbEdSdW9DQUFCWFJVSlFWbEE0V0FvQUFBQVFBQUFBTVFBQU1RQUFRVXhRU0hFQkFBQUJnS050MjJIbnY2NlprOUpXYWR0Y2gxR3ljNVl3Vld5amNpb2ZZd214Y1d3amZ6ei9mTE9CaUdEZ3RwR2laSThacDI5QTdBWVhkeTdKbjh3ZWovVkZ0ZFpiRm9xNFN1WDBDVFYrL0k5K25YU2trT1kwVnJXZ3hnVHExdW9GeENTUEd6R2hscmtNTXVqR1M4ekJ1NDRnQXNJWUIrYWthenlTbGJndHpObWRKTGJ1RUFONDlIOEwyOElnYnYrM2tHWXdrS09DdnpRNm9IQzEvWDMrbHhqTW0vVGZiOWc0Qm5TRy9xSEtDSW01OW1lNGdFRmRvUkhLVmNPaXpVZW9Id003aElLRlJIejgyUk1SNHBCaURla1krWWkydE5OUDFIRnEvdTVsRE82S25HakljYUI4eHVDK21PR3h1SW1SaUlqeGtDTTZJNGVIQ2ZNelBNODg3RWpPdzV1enhNUGIyUW4vQldpSzRiOHlZVEQ4bDl5SFVJNGFGblVPL0I5cGdRTC82eGtyNGYrczR4VDQzL3NpR2J4Q09CcmdxeEJEZzFlNnJURHdhbm9RQjE2eHQrS2dVNEdEQ1lOT0hoY05OSEM2TVk0bkF5Y285VUlsQlpyU05NSytITll4OGlUb2RwdWY1RXVkeGNHSVZRUUFWbEE0SUZJQkFBQ1FDQUNkQVNveUFESUFQcEZHbkV1bG82S3NvZ29oa0JJSlpRQUQ1ZTV2b3JSYjZXZVpPaGhjRGxJRlU0U2hVSWkrdERMTmpsd0k4Q3pJVG9VZUlHa0Y5QUhMODNhSGJnVXI0S0NjaUFEKys4ZGsvbGk4S1NESUtXS1lrOEdPOFdWdUtuc3JsQ2c0VS9XdlVhTmVFOWEzMjNMNzVkdTEvdjZtb1gvOXlqUC9lK0lES1VkV2JTYk94TWRjbDhwZ0g3ZTZiYnNqeU1waHBid1E1eFlFamQwNHhjQXZWZzVDVjhFNDlIclpvM1NsR2tJbXM5MjcyTkNoMFYwZXhVZHpYOFMzczBGenNwTy8vNUQxcUZlN2FmMi9icUpvaWNLZlBjbys5SUdhdi8xNUxKamRkVlMvaDRILzNzZjZnaWxqM25WYU5HUXNuZkNmVTFSenJKM21wcS8ydDdDckZYV0NSeStUeHphaU1iNlFTc1RkRzJZbVFWdnd6enNYcmpnM0RKQy90eHo4SnVYYlBYMEVRK0lSYWo1ZVVoVVQrazZVSDN0Z0VnbUN4T2wxSzVQL1hodi9CK2UvbFU4L0IvL1hnQUFBQUE9PScgLz4KICAgIDwvc3ZnPgogIA==`;
+  const useLegacy = !isFilled.image(slice.primary.cover_image);
+
+  const artistName = useLegacy
+    ? LEGACY_ISSUN_BOSHI.artistName
+    : (slice.primary.artist_name ?? "");
+  const albumTitle = useLegacy
+    ? LEGACY_ISSUN_BOSHI.albumTitle
+    : (slice.primary.album_title ?? "");
+  const coverImage = useLegacy
+    ? LEGACY_ISSUN_BOSHI.coverImage
+    : slice.primary.cover_image.url!;
+  const recordImage = useLegacy
+    ? LEGACY_ISSUN_BOSHI.recordImage
+    : isFilled.image(slice.primary.record_image)
+      ? slice.primary.record_image.url!
+      : null;
+  const backgroundColor =
+    (useLegacy ? null : slice.primary.background_color) ??
+    LEGACY_ISSUN_BOSHI.backgroundColor;
+  const digitalLink = useLegacy
+    ? LEGACY_ISSUN_BOSHI.digitalLink
+    : isFilled.link(slice.primary.digital_link)
+      ? slice.primary.digital_link.url
+      : null;
+  const playlistUrl = useLegacy
+    ? LEGACY_ISSUN_BOSHI.playlistUrl
+    : isFilled.keyText(slice.primary.soundcloud_playlist_url)
+      ? slice.primary.soundcloud_playlist_url.trim()
+      : null;
+  const tracks = useLegacy
+    ? LEGACY_ISSUN_BOSHI.tracks
+    : slice.items
+        .filter(item => item.track_title && item.track_url)
+        .map(item => ({
+          title: item.track_title!,
+          artist: item.track_artist || artistName,
+          url: item.track_url!,
+        }));
+
+  const hasPreviews = tracks.length > 0 || Boolean(playlistUrl);
+  const productLink = getProductLink(product.uid, product.category);
+  const albumAlt = `${artistName} • ${albumTitle}`;
 
   return (
     <section
@@ -54,63 +136,89 @@ const VinylPromoSection: FC<VinylPromoSectionProps> = async ({
     >
       <InnerPage
         className={
-          "flex overflow-hidden gap-x-20 !bg-[#d3532c] justify-evenly max-lg:flex-col max-lg:gap-y-10 items-center"
+          "flex overflow-hidden gap-x-20 justify-evenly max-lg:flex-col max-lg:gap-y-10 items-center"
         }
+        style={{ backgroundColor }}
       >
-        <div className="absolute bottom-0  right-0 scale-[200%]">
+        <div className="absolute bottom-0 right-0 scale-[200%]">
           <ImageWithFallback
-            src="/images/album-promo/issun-boshi-cover.webp"
-            alt="Issun-bōshi Vinyl release"
+            src={coverImage}
+            alt={albumAlt}
             width={400}
             height={400}
             quality={50}
             className="blur-2xl animate-blurred-backdrop"
-            placeholder={bluredCoverPlaceholder}
           />
         </div>
 
-        <div className="relative z-10 group pt-[20%]  group">
-          <InnerClientToggle placeholder={bluredCoverPlaceholder} />
-          <div className="absolute top-0">
-            <ImageWithFallback
-              src="/images/album-promo/issun-boshi-record.webp"
-              alt="Issun-bōshi Vinyl release EP"
-              width={600}
-              height={600}
-              quality={100}
-              className="animate-slow-spin rounded-full"
-              placeholder={bluredRecordPlaceholder}
+        <div className="relative z-10 group pt-[20%] group">
+          {hasPreviews ? (
+            <InnerClientToggle
+              coverImage={coverImage}
+              coverAlt={albumAlt}
+              artistName={artistName}
+              albumTitle={albumTitle}
+              playlistUrl={playlistUrl}
+              tracks={tracks}
             />
-          </div>
+          ) : (
+            <div className="relative overflow-hidden z-20">
+              <ImageWithFallback
+                src={coverImage}
+                alt={albumAlt}
+                width={400}
+                height={400}
+                className="z-10 relative"
+              />
+            </div>
+          )}
+          {recordImage && (
+            <div className="absolute top-0">
+              <ImageWithFallback
+                src={recordImage}
+                alt={`${albumAlt} vinyl`}
+                width={600}
+                height={600}
+                quality={100}
+                className="animate-slow-spin rounded-full"
+              />
+            </div>
+          )}
         </div>
         {slice.primary.display_add_to_cart && (
           <div className="relative z-10 text-center max-w-md">
             <h2 className={"text-4xl mt-6"}>
               <Link
-                href={"/store/albums/issun-boshi-vinyl-ep"}
+                href={productLink}
                 className={"link text-neutral-200 hover:text-neutral-300"}
               >
                 {pickLocalized(slice.primary, "headline", locale)}
               </Link>
             </h2>
-            <div className={"font-light pt-0 text-lg"}>MMali • Issun-bōshi</div>
+            {(artistName || albumTitle) && (
+              <div className={"font-light pt-0 text-lg"}>
+                {[artistName, albumTitle].filter(Boolean).join(" • ")}
+              </div>
+            )}
             <div className={"text-xl my-6 font-thin"}>
               {pickLocalized(slice.primary, "description", locale)}
             </div>
             <ProductAddToCart product={product} />
-            <div className={"mt-3 gap-y-3 flex flex-col  items-center"}>
-              <div>{t("or")}</div>
-              <div className={"w-fit"}>
-                <ActionButton
-                  variant={"secondary"}
-                  openInNewTab={true}
-                  size={"sm"}
-                  href={"https://endemit.bandcamp.com/album/issun-boshi"}
-                >
-                  {t("buyDigital")}
-                </ActionButton>
+            {digitalLink && (
+              <div className={"mt-3 gap-y-3 flex flex-col items-center"}>
+                <div>{t("or")}</div>
+                <div className={"w-fit"}>
+                  <ActionButton
+                    variant={"secondary"}
+                    openInNewTab={true}
+                    size={"sm"}
+                    href={digitalLink}
+                  >
+                    {t("buyDigital")}
+                  </ActionButton>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </InnerPage>

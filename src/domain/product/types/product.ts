@@ -87,6 +87,12 @@ export interface Product {
   images: ProductImage[];
   video: string | null;
   price: number;
+  /**
+   * Original (pre-sale) price when the product has a valid discounted price in
+   * the CMS — `price` then holds the discounted selling price. Null when the
+   * product is not on sale.
+   */
+  compareAtPrice: number | null;
   currency: string;
   composition: ProductCompositionType;
   type: ProductType;
@@ -119,6 +125,7 @@ export interface Product {
     visibility: ProductVisibility;
     images: ProductImage[];
     price: number;
+    compareAtPrice: number | null;
     sortingWeight: number;
     callToAction: string;
   }> | null;

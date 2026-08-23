@@ -375,6 +375,15 @@
           "default_value": false
         }
       },
+      "incognito": {
+        "type": "Boolean",
+        "config": {
+          "label": "Incognito (hide all public ticket mentions)",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": false
+        }
+      },
       "has_cashless_payments": {
         "type": "Boolean",
         "config": {
@@ -388,6 +397,13 @@
         "type": "Number",
         "config": {
           "label": "Cash ticket price (at doors)",
+          "placeholder": ""
+        }
+      },
+      "ticket_goal": {
+        "type": "Number",
+        "config": {
+          "label": "Ticket goal (admin-only sales target)",
           "placeholder": ""
         }
       }
@@ -471,6 +487,12 @@
               "type": "SharedSlice"
             },
             "vfx": {
+              "type": "SharedSlice"
+            },
+            "discord_banner": {
+              "type": "SharedSlice"
+            },
+            "record_showcase": {
               "type": "SharedSlice"
             }
           }

@@ -7,21 +7,24 @@ import { CacheTags } from "@/lib/services/cache";
 export interface WalletStats {
   totalBalance: number;
   walletCount: number;
+  fundedWalletCount: number;
   transactionCount: number;
 }
 
 const getWalletStatsUncached = async (): Promise<WalletStats> => {
-  const [balanceAgg, transactionCount] = await Promise.all([
+  const [balanceAgg, fundedWalletCount, transactionCount] = await Promise.all([
     prisma.wallet.aggregate({
       _sum: { balance: true },
       _count: true,
     }),
+    prisma.wallet.count({ where: { balance: { gt: 0 } } }),
     prisma.walletTransaction.count(),
   ]);
 
   return {
     totalBalance: balanceAgg._sum.balance ?? 0,
     walletCount: balanceAgg._count,
+    fundedWalletCount,
     transactionCount,
   };
 };

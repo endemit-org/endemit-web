@@ -9,6 +9,8 @@ export interface CreatePosItemInput {
   description?: string;
   cost: number;
   direction: PosItemDirection;
+  color?: string | null;
+  ticketEventId?: string | null;
   status?: PosItemStatus;
 }
 
@@ -21,6 +23,8 @@ export async function createPosItem(
       description: input.description,
       cost: input.cost,
       direction: input.direction,
+      color: input.color ?? null,
+      ticketEventId: input.ticketEventId ?? null,
       status: input.status ?? "ACTIVE",
     },
   });

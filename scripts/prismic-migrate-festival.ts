@@ -107,7 +107,7 @@ const SLICE_SL: Record<number, { primary?: Record<string, unknown>; items?: Reco
   },
   15: {
     primary: {
-      override_title_sl: "Bodi na tekočem o naslednji rundi",
+      override_title_sl: "Bodi na tekočem o nasledni rundi",
       override_description_sl:
         "Naroč se pa bodi med prvimi, ki jih zbudimo, ko pade naslednja runda kart.",
     },

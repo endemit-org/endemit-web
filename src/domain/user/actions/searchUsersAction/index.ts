@@ -2,7 +2,10 @@
 
 import { unstable_cache } from "next/cache";
 import { getCurrentUser } from "@/lib/services/auth";
-import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import {
+  PERMISSIONS,
+  type Permission,
+} from "@/domain/auth/config/permissions.config";
 import { prisma } from "@/lib/services/prisma";
 
 export interface UserSearchResult {
@@ -12,7 +15,10 @@ export interface UserSearchResult {
   username: string;
 }
 
-const searchUsersInDb = async (query: string): Promise<UserSearchResult[]> => {
+const searchUsersInDb = async (
+  query: string,
+  requirePermission?: Permission
+): Promise<UserSearchResult[]> => {
   if (!query || query.length < 2) {
     return [];
   }
@@ -25,6 +31,12 @@ const searchUsersInDb = async (query: string): Promise<UserSearchResult[]> => {
         { username: { contains: query, mode: "insensitive" } },
       ],
       status: "ACTIVE",
+      // Optionally only users whose roles grant a specific permission
+      ...(requirePermission && {
+        userRoles: {
+          some: { role: { permissions: { has: requirePermission } } },
+        },
+      }),
     },
     select: {
       id: true,
@@ -39,6 +51,8 @@ const searchUsersInDb = async (query: string): Promise<UserSearchResult[]> => {
   return users;
 };
 
+// unstable_cache keys on the serialized arguments, so permission-filtered
+// searches cache separately from unfiltered ones.
 const getCachedSearchUsers = unstable_cache(
   searchUsersInDb,
   ["search-users"],
@@ -46,7 +60,8 @@ const getCachedSearchUsers = unstable_cache(
 );
 
 export async function searchUsersAction(
-  query: string
+  query: string,
+  options?: { requirePermission?: Permission }
 ): Promise<{ success: true; users: UserSearchResult[] } | { success: false; error: string }> {
   const user = await getCurrentUser();
 
@@ -57,13 +72,20 @@ export async function searchUsersAction(
   if (
     !user.permissions.includes(PERMISSIONS.TICKETS_CREATE) &&
     !user.permissions.includes(PERMISSIONS.EVENT_CLAIMS_MANAGE) &&
-    !user.permissions.includes(PERMISSIONS.POS_STICKERS_MANAGE)
+    !user.permissions.includes(PERMISSIONS.POS_STICKERS_MANAGE) &&
+    !user.permissions.includes(PERMISSIONS.POS_REGISTERS_WRITE) &&
+    !user.permissions.includes(PERMISSIONS.WALLETS_MANAGE_BALANCE) &&
+    // Sellers use the autocomplete for ticket buyer emails at the register
+    !user.permissions.includes(PERMISSIONS.POS_SELL)
   ) {
     return { success: false, error: "Not authorized" };
   }
 
   try {
-    const users = await getCachedSearchUsers(query.toLowerCase().trim());
+    const users = await getCachedSearchUsers(
+      query.toLowerCase().trim(),
+      options?.requirePermission
+    );
     return { success: true, users };
   } catch (error) {
     console.error("Error searching users:", error);

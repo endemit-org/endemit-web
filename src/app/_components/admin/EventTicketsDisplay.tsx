@@ -14,6 +14,7 @@ import { fetchTicketsForEvent } from "@/domain/ticket/actions/getTicketsForEvent
 import { convertSecondsToMs } from "@/lib/util/converters";
 import { SerializedTicket } from "@/domain/ticket/types/ticket";
 import AddGuestTicketForm from "@/app/_components/admin/AddGuestTicketForm";
+import AddCashSaleForm from "@/app/_components/admin/AddCashSaleForm";
 
 interface EventTicketsDisplayProps {
   eventId: string;
@@ -128,8 +129,13 @@ export default function EventTicketsDisplay({
       </div>
 
       {canCreateTickets && (
-        <div className="mb-4">
+        <div className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-start">
           <AddGuestTicketForm
+            eventId={eventId}
+            eventName={eventName}
+            onTicketAdded={refreshTickets}
+          />
+          <AddCashSaleForm
             eventId={eventId}
             eventName={eventName}
             onTicketAdded={refreshTickets}

@@ -27,11 +27,12 @@ export default function UsersDisplay({
   const [totalCount, setTotalCount] = useState(initialData.totalCount);
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [search, setSearch] = useState("");
 
-  const loadPage = useCallback(async (page: number) => {
+  const loadPage = useCallback(async (page: number, searchQuery?: string) => {
     setIsLoading(true);
     try {
-      const data = await fetchUsers(page);
+      const data = await fetchUsers(page, searchQuery);
       setUsers(data.users);
       setCurrentPage(data.page);
       setTotalPages(data.totalPages);
@@ -42,11 +43,16 @@ export default function UsersDisplay({
   }, []);
 
   const handlePageChange = (page: number) => {
-    loadPage(page);
+    loadPage(page, search);
   };
 
   const handleRefresh = () => {
-    loadPage(currentPage);
+    loadPage(currentPage, search);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    loadPage(1, search);
   };
 
   const handleUserClick = (user: SerializedUser) => {
@@ -67,6 +73,22 @@ export default function UsersDisplay({
           </div>
         </div>
         <div className="flex gap-2">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder={t("list.searchPlaceholder")}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50"
+            >
+              {tc("search")}
+            </button>
+          </form>
           {canCreateUsers && (
             <button
               onClick={() => setShowCreateForm(true)}

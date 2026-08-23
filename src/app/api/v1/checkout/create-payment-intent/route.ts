@@ -10,6 +10,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { isValidWalletCreditAmount } from "@/domain/checkout/businessRules";
 import { validateDiscountCode } from "@/domain/discount/operations/validateDiscountCode";
+import { apportionDiscountToItems } from "@/domain/discount/businessLogic/apportionDiscountToItems";
 import { getCheckoutTotals } from "@/domain/checkout/actions/getCheckoutTotals";
 import { processFullWalletPayment } from "@/domain/checkout/operations/processFullWalletPayment";
 import { stripe } from "@/lib/services/stripe";
@@ -110,6 +111,9 @@ export async function POST(request: Request) {
 
       // Build metadata for PaymentIntent
       const metadata: Record<string, string> = {
+        // Searchable in the Stripe dashboard without triggering Stripe's own
+        // receipt emails (receipt_email would send them regardless of settings).
+        customerEmail: email,
         requiresShipping: shippingAddress ? "true" : "false",
         includesTickets: ticketHolders ? "true" : "false",
         walletCreditAmount: validatedWalletCredit.toString(),
@@ -132,7 +136,6 @@ export async function POST(request: Request) {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountToCharge,
         currency: "eur",
-        receipt_email: email,
         description: transformToCheckoutDescription(shippingAddress, email),
         metadata,
         automatic_payment_methods: {
@@ -141,6 +144,25 @@ export async function POST(request: Request) {
       });
 
       paymentIntentId = paymentIntent.id;
+    }
+
+    // Snapshot items; on discounted orders, stamp each line with the unit
+    // price actually paid so downstream consumers (tickets) show it.
+    const orderItems = checkoutItems.map(checkoutItem =>
+      transformToProductInOrder(checkoutItem, complementaryTicketData)
+    );
+    if (discount && discountAmount < 0) {
+      const paidByUid = apportionDiscountToItems(
+        discount,
+        checkoutItems,
+        subtotal,
+        shippingCost,
+        -discountAmount
+      );
+      for (const orderItem of orderItems) {
+        const paidPrice = paidByUid.get(orderItem.uid);
+        if (paidPrice != null) orderItem.paidPrice = paidPrice;
+      }
     }
 
     // Create order with the PaymentIntent ID
@@ -156,9 +178,7 @@ export async function POST(request: Request) {
       walletAmountUsed: validatedWalletCredit,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
-      orderItems: checkoutItems.map(checkoutItem =>
-        transformToProductInOrder(checkoutItem, complementaryTicketData)
-      ),
+      orderItems,
       userId: currentUser?.id,
       locale: body.locale === "en" ? "en" : "sl",
     });

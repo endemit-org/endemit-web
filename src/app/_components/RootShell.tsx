@@ -37,6 +37,15 @@ export default function RootShell({
       className={`${headlineFont.variable} ${bodyFont.variable}`}
     >
       <head>
+        {/* Samsung Internet's "website dark theme" force-recolors pages and
+            ignores the color-scheme declaration, breaking gradient-clipped
+            text (see .gradient-clip-text in globals.css). Flag the browser on
+            <html> before first paint so CSS can apply solid-color fallbacks. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if(navigator.userAgent.indexOf('SamsungBrowser')>-1)document.documentElement.classList.add('ua-samsung')`,
+          }}
+        />
         <link rel="preconnect" href="https://player.vimeo.com" />
         <link rel="preconnect" href="https://f.vimeocdn.com" crossOrigin="" />
         <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />

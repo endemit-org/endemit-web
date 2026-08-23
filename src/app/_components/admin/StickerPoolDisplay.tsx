@@ -55,6 +55,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
   const [generateCount, setGenerateCount] = useState("1000");
   const [generateProperty, setGenerateProperty] = useState<string>("");
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [createCardAccounts, setCreateCardAccounts] = useState(false);
   const [assignCode, setAssignCode] = useState<string | null>(null);
   const [savingPropertyCode, setSavingPropertyCode] = useState<string | null>(
     null
@@ -96,7 +97,18 @@ export default function StickerPoolDisplay({ initial }: Props) {
       setGenerateError(t("enterPositive"));
       return;
     }
-    if (!confirm(t("confirmGenerate", { count }))) return;
+    if (createCardAccounts && count > 200) {
+      setGenerateError(t("cardAccountsMax"));
+      return;
+    }
+    if (
+      !confirm(
+        createCardAccounts
+          ? t("confirmGenerateWithAccounts", { count })
+          : t("confirmGenerate", { count })
+      )
+    )
+      return;
 
     setIsGenerating(true);
     setGenerateError(null);
@@ -107,13 +119,22 @@ export default function StickerPoolDisplay({ initial }: Props) {
         body: JSON.stringify({
           count,
           property: generateProperty || null,
+          createCardAccounts,
         }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || t("generateFailed"));
       }
-      alert(t("createdCodes", { created: data.created, total: data.totalInPool }));
+      alert(
+        data.cardAccountsCreated !== undefined
+          ? t("createdCodesWithAccounts", {
+              created: data.created,
+              accounts: data.cardAccountsCreated,
+              total: data.totalInPool,
+            })
+          : t("createdCodes", { created: data.created, total: data.totalInPool })
+      );
       router.refresh();
     } catch (err) {
       setGenerateError(
@@ -122,7 +143,7 @@ export default function StickerPoolDisplay({ initial }: Props) {
     } finally {
       setIsGenerating(false);
     }
-  }, [generateCount, generateProperty, router, t]);
+  }, [generateCount, generateProperty, createCardAccounts, router, t]);
 
   const onPropertyChange = useCallback(
     async (code: string, property: string) => {
@@ -217,6 +238,15 @@ export default function StickerPoolDisplay({ initial }: Props) {
             </option>
           ))}
         </select>
+        <label className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={createCardAccounts}
+            onChange={e => setCreateCardAccounts(e.target.checked)}
+            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+          />
+          {t("createCardAccounts")}
+        </label>
         <button
           onClick={onBulkGenerate}
           disabled={isGenerating}

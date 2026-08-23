@@ -14,6 +14,8 @@ export interface TransferFundsInput {
   amount: number;
   idempotencyKey: string;
   note?: string;
+  /** Who recorded the transfer (e.g. an admin); defaults to the sender. */
+  createdById?: string;
 }
 
 export interface TransferFundsResult {
@@ -25,7 +27,14 @@ export interface TransferFundsResult {
 export async function transferFunds(
   input: TransferFundsInput
 ): Promise<TransferFundsResult> {
-  const { senderUserId, recipientUserId, amount, idempotencyKey, note } = input;
+  const {
+    senderUserId,
+    recipientUserId,
+    amount,
+    idempotencyKey,
+    note,
+    createdById = senderUserId,
+  } = input;
 
   if (!Number.isInteger(amount) || amount <= 0) {
     throw new Error("Amount must be a positive integer (cents)");
@@ -78,7 +87,7 @@ export async function transferFunds(
         amount: -amount,
         balanceAfter: senderBalanceAfter,
         note: note || null,
-        createdById: senderUserId,
+        createdById,
         idempotencyKey,
       },
     });
@@ -90,7 +99,7 @@ export async function transferFunds(
         amount,
         balanceAfter: recipientBalanceAfter,
         note: note || null,
-        createdById: senderUserId,
+        createdById,
         relatedTransactionId: debit.id,
       },
     });
