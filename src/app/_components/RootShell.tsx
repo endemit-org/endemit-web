@@ -61,8 +61,12 @@ export default function RootShell({
           />
         )}
       </head>
+      {/* text-white makes the dark site's base text color explicit instead of
+          relying on the UA default that color-scheme: dark happens to pick.
+          Light surfaces (admin, POS, scan navs) must set their own dark text
+          color at their root — see those layouts. */}
       <body
-        className="m-auto overflow-y-scroll"
+        className="m-auto overflow-y-scroll text-white"
         style={{
           backgroundImage: "url('/images/endemit-pattern.svg')",
           backgroundSize: "110px",

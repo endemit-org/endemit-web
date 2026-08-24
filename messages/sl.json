@@ -1310,7 +1310,9 @@
       "list": {
         "paidNotComplete": "Plačano, ni zaključeno:",
         "ordersLabel": "Naročila:",
-        "showingLabel": "Prikazano:"
+        "showingLabel": "Prikazano:",
+        "searchPlaceholder": "Išči po e-pošti, imenu ali ID naročila…",
+        "allStatuses": "Vsi statusi"
       },
       "table": {
         "orderId": "ID naročila",

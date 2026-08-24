@@ -25,7 +25,10 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-dvh bg-gray-100">
+    // text-gray-900 is load-bearing: :root declares color-scheme: dark and no
+    // global text color is set, so the browser default is white — any admin
+    // text without an explicit color class would render white-on-light.
+    <div className="flex min-h-dvh bg-gray-100 text-gray-900">
       <AdminSidebar permissions={user.permissions} />
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader

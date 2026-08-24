@@ -44,7 +44,7 @@ export default function ProtectedEnvironmentLogin() {
   };
 
   return (
-    <div className="max-w-md w-full space-y-8 p-8 bg-neutral-200 rounded-lg shadow">
+    <div className="max-w-md w-full space-y-8 p-8 bg-neutral-200 text-gray-900 rounded-lg shadow">
       <div>
         <h2 className="text-3xl font-bold text-center text-gray-900">
           {t("heading")}
@@ -61,7 +61,7 @@ export default function ProtectedEnvironmentLogin() {
           onChange={e => setPassword(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("passwordPlaceholder")}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
           disabled={loading}
         />
 

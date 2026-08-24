@@ -12,6 +12,7 @@ export interface SerializedOrder {
   totalAmount: number;
   shippingAmount: number | null;
   discountAmount: number | null;
+  discountCodeKey: string | null;
   shippingRequired: boolean;
   shippingAddress: Record<string, unknown> | null;
   items: ProductInOrder[];
@@ -39,6 +40,7 @@ export function serializeOrder(
     totalAmount: Number(order.totalAmount),
     shippingAmount: order.shippingAmount ? Number(order.shippingAmount) : null,
     discountAmount: order.discountAmount ? Number(order.discountAmount) : null,
+    discountCodeKey: order.discountCodeKey,
     shippingRequired: order.shippingRequired,
     shippingAddress: order.shippingAddress as Record<string, unknown> | null,
     items: order.items as unknown as ProductInOrder[],
@@ -63,6 +65,7 @@ export function serializeOrderWithTickets(
     totalAmount: Number(order.totalAmount),
     shippingAmount: order.shippingAmount ? Number(order.shippingAmount) : null,
     discountAmount: order.discountAmount ? Number(order.discountAmount) : null,
+    discountCodeKey: order.discountCodeKey,
     shippingRequired: order.shippingRequired,
     shippingAddress: order.shippingAddress as Record<string, unknown> | null,
     items: order.items as unknown as ProductInOrder[],

@@ -166,10 +166,22 @@ export default async function AdminOrderDetailPage({
                 <span className="text-gray-600">{t("detail.subtotal")}</span>
                 <span>{formatPrice(order.subtotal)}</span>
               </div>
-              {order.discountAmount != null && order.discountAmount > 0 && (
+              {(order.discountCodeKey ||
+                (order.discountAmount != null && order.discountAmount > 0)) && (
                 <div className="flex justify-between text-green-600">
-                  <span>{t("detail.discount")}</span>
-                  <span>-{formatPrice(order.discountAmount)}</span>
+                  <span>
+                    {t("detail.discount")}
+                    {order.discountCodeKey && (
+                      <span className="ml-2 rounded bg-green-100 px-1.5 py-0.5 font-mono text-xs uppercase">
+                        {order.discountCodeKey}
+                      </span>
+                    )}
+                  </span>
+                  <span>
+                    {order.discountAmount != null &&
+                      order.discountAmount > 0 &&
+                      `-${formatPrice(order.discountAmount)}`}
+                  </span>
                 </div>
               )}
               {order.shippingAmount != null && order.shippingAmount > 0 && (

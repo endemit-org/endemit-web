@@ -32,7 +32,10 @@ export default async function ScanLayout({
 
   return (
     <>
-      <nav className="bg-white shadow-sm sticky top-0">
+      {/* Explicit text color is load-bearing: :root declares color-scheme:
+          dark, so text without a color class would default to white on this
+          light surface. */}
+      <nav className="bg-white text-gray-900 shadow-sm sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">

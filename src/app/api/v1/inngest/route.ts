@@ -4,6 +4,7 @@ import { runTicketIssueAutomation } from "@/domain/ticket/operations/runTicketIs
 import { runGuestTicketAutomation } from "@/domain/ticket/operations/runGuestTicketAutomation";
 import { runDoorSaleTicketAutomation } from "@/domain/ticket/operations/runDoorSaleTicketAutomation";
 import { runNewOrderAutomation } from "@/domain/order/operations/runNewOrderAutomation";
+import { runOrderPaymentProcessing } from "@/domain/order/operations/runOrderPaymentProcessing";
 import { runOrderCleanupAutomation } from "@/domain/order/operations/runOrderCleanupAutomation";
 import { runRefundEmailAutomation } from "@/domain/order/operations/runRefundEmailAutomation";
 import { runOtcEmailAutomation } from "@/domain/auth/operations/runOtcEmailAutomation";
@@ -31,6 +32,7 @@ export const { GET, POST, PUT } = serve({
     runGuestTicketAutomation,
     runDoorSaleTicketAutomation,
     runNewOrderAutomation,
+    runOrderPaymentProcessing,
     runOrderCleanupAutomation,
     runRefundEmailAutomation,
     runOtcEmailAutomation,
