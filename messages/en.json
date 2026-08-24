@@ -1310,7 +1310,9 @@
       "list": {
         "paidNotComplete": "Paid, not complete:",
         "ordersLabel": "Orders:",
-        "showingLabel": "Showing:"
+        "showingLabel": "Showing:",
+        "searchPlaceholder": "Search by email, name or order ID…",
+        "allStatuses": "All statuses"
       },
       "table": {
         "orderId": "Order ID",
