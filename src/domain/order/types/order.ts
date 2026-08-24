@@ -7,7 +7,12 @@ import {
 export enum OrderQueueEvent {
   NOTIFY_ON_ORDER = "notify-on-order",
   NOTIFY_ON_REFUND = "notify-on-refund",
+  PROCESS_ORDER_PAYMENT = "process-order-payment",
 }
+
+export type OrderPaymentProcessingData = {
+  orderId: string;
+};
 
 export type OrderNotificationData = {
   orderId: string;

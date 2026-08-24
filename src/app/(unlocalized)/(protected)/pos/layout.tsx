@@ -30,7 +30,10 @@ export default async function PosLayout({
 
   return (
     <>
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      {/* Explicit text color is load-bearing: :root declares color-scheme:
+          dark, so text without a color class would default to white on this
+          light surface. */}
+      <nav className="bg-white text-gray-900 shadow-sm sticky top-0 z-50">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-6">
@@ -83,7 +86,9 @@ export default async function PosLayout({
           </div>
         </div>
       </nav>
-      <main className="min-h-[calc(100dvh-4rem)] bg-gray-50">{children}</main>
+      <main className="min-h-[calc(100dvh-4rem)] bg-gray-50 text-gray-900">
+        {children}
+      </main>
     </>
   );
 }

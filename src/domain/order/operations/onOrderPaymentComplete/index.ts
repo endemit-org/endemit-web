@@ -1,194 +1,49 @@
 import "server-only";
 
-import { queueNewOrderAutomation } from "@/domain/order/operations/queueNewOrderAutomation";
-import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
-import { updateOrderStatusPaid, updateOrderStatusById } from "@/domain/order/operations/updateOrderStatus";
-import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
-import { queueOrderNewsletterSubscription } from "@/domain/newsletter/operations/queueOrderNewsletterSubscription";
-import { queueTicketIssueAutomation } from "@/domain/ticket/operations/queueTicketIssueAutomation";
-import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
-import { createTransaction } from "@/domain/wallet/operations/createTransaction";
-import { ProductInOrder } from "@/domain/order/types/order";
-import { ProductCategory, ProductType } from "@/domain/product/types/product";
-import { OrderStatus } from "@prisma/client";
+import { inngest } from "@/lib/services/inngest";
 import { prisma } from "@/lib/services/prisma";
-import { redeemDiscountCode } from "@/domain/discount/operations/redeemDiscountCode";
+import { OrderStatus } from "@prisma/client";
+import { updateOrderStatusPaid } from "@/domain/order/operations/updateOrderStatus";
 import {
-  bustOnOrderCreated,
-  bustOnDonationReceived,
-} from "@/lib/services/cache";
+  OrderPaymentProcessingData,
+  OrderQueueEvent,
+} from "@/domain/order/types/order";
 
+/**
+ * Called from the Stripe webhook for `checkout.session.completed` and
+ * `payment_intent.succeeded`. Kept deliberately tiny — Stripe redelivers the
+ * event when the response is slow or non-2xx, so this only marks the order
+ * PAID and hands every other side effect (emails, tickets, wallet, newsletter)
+ * to the process-order-payment Inngest function.
+ *
+ * The Inngest event id makes redeliveries a no-op, while still re-arming
+ * processing if an earlier delivery died between the status update and the
+ * send. Re-sending on an already-PAID order is safe for the same reason, and
+ * skipping the status update then also stops retries from downgrading a
+ * digital order that already moved on to COMPLETED.
+ */
 export const onOrderPaymentComplete = async (paymentSessionId: string) => {
-  // Status before the PAID update — webhook retries re-enter this function,
-  // and the discount redemption below must count only the first transition.
-  const priorOrder = await prisma.order.findUnique({
+  const order = await prisma.order.findUnique({
     where: { stripeSession: paymentSessionId },
-    select: { status: true },
   });
+
+  if (!order) {
+    throw new Error(`Order not found for payment session: ${paymentSessionId}`);
+  }
+
   const wasAlreadyPaid =
-    priorOrder?.status === OrderStatus.PAID ||
-    priorOrder?.status === OrderStatus.COMPLETED;
+    order.status === OrderStatus.PAID ||
+    order.status === OrderStatus.COMPLETED;
 
-  let order = await updateOrderStatusPaid(paymentSessionId);
-  const items = order.items as unknown as ProductInOrder[];
+  const updatedOrder = wasAlreadyPaid
+    ? order
+    : await updateOrderStatusPaid(paymentSessionId);
 
-  // Count the discount code redemption (non-blocking)
-  if (order.discountCodeId && !wasAlreadyPaid) {
-    try {
-      await redeemDiscountCode(order.discountCodeId);
-    } catch (error) {
-      console.error("Failed to redeem discount code:", error);
-    }
-  }
-
-  // Check if order has any physical items
-  const hasPhysicalItems = items.some(item => item.type === ProductType.PHYSICAL);
-
-  // Digital-only orders go straight to COMPLETED
-  if (!hasPhysicalItems) {
-    order = await updateOrderStatusById(order.id, OrderStatus.COMPLETED);
-  }
-
-  // Process wallet transactions (non-blocking)
-  // Use fresh wallet data for transaction processing (not cached)
-  if (order.userId) {
-    try {
-      const wallet = await getWalletByUserIdFresh(order.userId);
-      if (!wallet) {
-        console.error("User has no wallet:", order.userId);
-      } else {
-
-        // Deduct wallet credit if used for purchase
-        if (order.walletAmountUsed > 0) {
-          await createTransaction({
-            walletId: wallet.id,
-            type: "PURCHASE",
-            amount: -order.walletAmountUsed,
-            note: `Order #${order.id}`,
-          });
-        }
-
-        // Credit wallet for currency product purchases
-        const currencyTotal = items
-          .filter(item => item.category === ProductCategory.CURRENCIES)
-          .reduce(
-            (sum, item) => sum + Math.round(item.price * 100) * item.quantity,
-            0
-          );
-
-        if (currencyTotal > 0) {
-          await createTransaction({
-            walletId: wallet.id,
-            type: "CREDIT",
-            amount: currencyTotal,
-            note: `Wallet top-up from Order #${order.id}`,
-          });
-        }
-
-        // Credit wallet for top-up rewards from products
-        const rewardTotal = items
-          .filter(item => item.walletTopupReward && item.walletTopupReward > 0)
-          .reduce(
-            (sum, item) =>
-              sum + Math.round(item.walletTopupReward! * 100) * item.quantity,
-            0
-          );
-
-        if (rewardTotal > 0) {
-          await createTransaction({
-            walletId: wallet.id,
-            type: "CREDIT",
-            amount: rewardTotal,
-            note: `Top up reward from Order #${order.id}`,
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Failed to process wallet transactions:", error);
-      // Continue with order processing even if wallet transactions fail
-    }
-  }
-
-  await queueNewOrderAutomation({ orderId: order.id });
-
-  // Transform and process ticket items
-  const ticketItems = transformTicketsFromOrder(order);
-
-  // Collect event IDs from ticket items for newsletter subscription
-  const ticketEventIds: string[] = [];
-
-  if (ticketItems) {
-    for (const ticketItem of ticketItems) {
-      const ticketHolders = ticketItem.metadata?.ticketHolders as string[];
-      const relatedEvent = ticketItem.relatedEvent;
-
-      if (!relatedEvent) {
-        console.error("Missing related event for ticket item", {
-          paymentSessionId,
-          ticketItem,
-        });
-        continue;
-      }
-
-      // Collect event ID for newsletter subscription
-      ticketEventIds.push(relatedEvent);
-
-      const eventData = await fetchEventFromCmsById(relatedEvent);
-      if (!ticketHolders || !eventData) {
-        console.error("Missing ticket holders or event data", {
-          paymentSessionId,
-          ticketHolders,
-          eventData,
-        });
-        continue;
-      }
-
-      // Per-ticket price = line total / all holders on the line. Holders
-      // number quantity × ticketQuantity, while price/paidPrice are per-unit
-      // (paidPrice on discounted orders), so multiply by quantity first —
-      // dividing the unit price alone halves the ticket price at quantity 2.
-      const pricePerTicket =
-        ((ticketItem.paidPrice ?? ticketItem.price) * ticketItem.quantity) /
-        ticketHolders.length;
-
-      ticketHolders.forEach(ticketHolderName => {
-        queueTicketIssueAutomation({
-          eventId: eventData.id,
-          eventName: eventData.name,
-          ticketHolderName,
-          ticketPayerEmail: order.email,
-          price: pricePerTicket,
-          orderId: order.id,
-          locale: order.locale,
-          metadata: {
-            productName: ticketItem.name ?? "Default",
-            eventUid: eventData.uid,
-          },
-        });
-      });
-    }
-  }
-
-  // Queue newsletter subscription with tags based on order items
-  // This handles: category-based tags, festival tags, Events/LastEvent fields
-  // Using queue to avoid race condition with checkout's basic subscription
-  await queueOrderNewsletterSubscription({
-    email: order.email,
-    items,
-    ticketEventIds,
-    customerName: order.name,
+  await inngest.send({
+    id: `process-order-payment-${order.id}`,
+    name: OrderQueueEvent.PROCESS_ORDER_PAYMENT,
+    data: { orderId: order.id } satisfies OrderPaymentProcessingData,
   });
 
-  // Bust caches for order and user data
-  await bustOnOrderCreated(order.id, order.userId);
-
-  // Check if order has donations and bust donation caches
-  const hasDonations = items.some(
-    item => item.category === ProductCategory.DONATIONS
-  );
-  if (hasDonations) {
-    await bustOnDonationReceived();
-  }
-
-  return order;
+  return updatedOrder;
 };
