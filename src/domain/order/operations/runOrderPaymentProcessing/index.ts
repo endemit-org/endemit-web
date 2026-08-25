@@ -163,7 +163,9 @@ export const runOrderPaymentProcessing = inngest.createFunction(
       name: NewsletterQueueEvent.SUBSCRIBE_ORDER,
       data: {
         email: order.email,
-        items,
+        // Category-only projection: full items carry image placeholders that
+        // can push the event past Inngest's 256KB limit.
+        items: items.map(({ category }) => ({ category })),
         ticketEventIds: preparedTickets.ticketEventIds,
         customerName: order.name,
       },

@@ -27,6 +27,11 @@ interface RefundLimitResult {
   walletBalance: number | null;
   totalOrderAmount: number;
   totalAlreadyRefunded: number;
+  split: {
+    walletAmount: number;
+    stripeAmount: number;
+    walletUnavailableAmount: number;
+  };
   orderHasShipping: boolean;
   shippingAmountCents: number;
 }
@@ -370,6 +375,37 @@ export default function RefundDialog({
                   {isLoadingLimit ? "..." : formatPrice(refundLimit.maxRefundAmount / 100)}
                 </span>
               </div>
+              {!isLoadingLimit && refundLimit.split && refundLimit.split.walletAmount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">{t("refund.toWallet")}</span>
+                  <span className="font-medium">
+                    {formatPrice(refundLimit.split.walletAmount / 100)}
+                  </span>
+                </div>
+              )}
+              {!isLoadingLimit &&
+                refundLimit.split &&
+                refundLimit.split.stripeAmount > 0 &&
+                (refundLimit.split.walletAmount > 0 ||
+                  refundLimit.split.walletUnavailableAmount > 0) && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">{t("refund.toCard")}</span>
+                    <span className="font-medium">
+                      {formatPrice(refundLimit.split.stripeAmount / 100)}
+                    </span>
+                  </div>
+                )}
+              {!isLoadingLimit &&
+                refundLimit.split &&
+                refundLimit.split.walletUnavailableAmount > 0 && (
+                  <p className="text-xs text-amber-600">
+                    {t("refund.walletUnavailable", {
+                      amount: formatPrice(
+                        refundLimit.split.walletUnavailableAmount / 100
+                      ),
+                    })}
+                  </p>
+                )}
               {refundLimit.limitedBy === "wallet_balance" && (
                 <p className="text-xs text-amber-600">
                   {t("refund.limitedByWallet", {
@@ -421,7 +457,9 @@ export default function RefundDialog({
               isProcessing ||
               (selectedItems.size === 0 && !includeShipping) ||
               !refundLimit ||
-              refundLimit.maxRefundAmount <= 0
+              refundLimit.maxRefundAmount <= 0 ||
+              (refundLimit.split &&
+                refundLimit.split.walletAmount + refundLimit.split.stripeAmount <= 0)
             }
           >
             {isProcessing ? t("actions.processing") : t("refund.title")}

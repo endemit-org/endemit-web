@@ -61,7 +61,23 @@ export const getResizedPrismicImage = (
 ) => {
   // Unfilled CMS image fields would otherwise produce "undefined&w=..." URLs.
   if (!url) return "";
-  return `${url}&w=${options?.width ?? 500}&q=${options?.quality ?? 85}&fm=${options?.format ?? "webp"}&dpr=${options?.dpr ?? 1}`;
+  // Cropped Prismic URLs already carry w/h (e.g. "&rect=...&w=4000&h=4000");
+  // imgix honors the FIRST occurrence of a duplicated param, so appending
+  // "&w=40" would be ignored and the full-size image served. Set params via
+  // the URL API so ours replace the baked-in ones, and drop h so the
+  // requested width controls the output size (aspect comes from rect).
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return url;
+  }
+  parsed.searchParams.set("w", String(options?.width ?? 500));
+  parsed.searchParams.delete("h");
+  parsed.searchParams.set("q", String(options?.quality ?? 85));
+  parsed.searchParams.set("fm", options?.format ?? "webp");
+  parsed.searchParams.set("dpr", String(options?.dpr ?? 1));
+  return parsed.toString();
 };
 
 export const getBlurDataURL = async (imageUrl: string) => {

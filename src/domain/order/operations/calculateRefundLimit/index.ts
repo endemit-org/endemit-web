@@ -237,3 +237,63 @@ export function calculateMaxRefundForOrder(
 function formatCents(cents: number): string {
   return `€${(cents / 100).toFixed(2)}`;
 }
+
+export interface RefundSplit {
+  walletAmount: number; // Cents credited back to the wallet
+  stripeAmount: number; // Cents refunded via Stripe
+  walletUnavailableAmount: number; // Wallet-owed cents that cannot be returned (wallet gone)
+}
+
+interface CalculateRefundSplitInput {
+  refundAmount: number; // Cents to refund now
+  totalOrderAmount: number; // Cents
+  walletAmountUsed: number; // Cents paid from wallet at checkout
+  refundedAmount: number; // Cents already refunded (all destinations)
+  walletRefundedAmount: number; // Cents already refunded to wallet
+  hasWallet: boolean;
+}
+
+/**
+ * Split a refund between wallet credit and Stripe, proportionally to how the
+ * order was originally paid. Each side is capped by what was paid there and
+ * not yet refunded there, so cumulative refunds across multiple partial
+ * refunds can never over-refund either payment source.
+ */
+export function calculateRefundSplit(
+  input: CalculateRefundSplitInput
+): RefundSplit {
+  const {
+    refundAmount,
+    totalOrderAmount,
+    walletAmountUsed,
+    refundedAmount,
+    walletRefundedAmount,
+    hasWallet,
+  } = input;
+
+  const stripePaid = Math.max(0, totalOrderAmount - walletAmountUsed);
+  const stripeRefunded = Math.max(0, refundedAmount - walletRefundedAmount);
+  const remainingWallet = Math.max(0, walletAmountUsed - walletRefundedAmount);
+  const remainingStripe = Math.max(0, stripePaid - stripeRefunded);
+
+  let walletAmount =
+    walletAmountUsed > 0 && totalOrderAmount > 0
+      ? Math.round((refundAmount * walletAmountUsed) / totalOrderAmount)
+      : 0;
+
+  // The card side can only absorb what was actually charged there
+  walletAmount = Math.max(walletAmount, refundAmount - remainingStripe);
+  walletAmount = Math.min(walletAmount, remainingWallet, refundAmount);
+
+  const stripeAmount = Math.min(refundAmount - walletAmount, remainingStripe);
+
+  if (!hasWallet && walletAmount > 0) {
+    return {
+      walletAmount: 0,
+      stripeAmount,
+      walletUnavailableAmount: walletAmount,
+    };
+  }
+
+  return { walletAmount, stripeAmount, walletUnavailableAmount: 0 };
+}

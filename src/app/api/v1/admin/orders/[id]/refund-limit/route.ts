@@ -4,6 +4,7 @@ import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { prisma } from "@/lib/services/prisma";
 import {
   calculateRefundLimit,
+  calculateRefundSplit,
   RefundItemSelection,
 } from "@/domain/order/operations/calculateRefundLimit";
 
@@ -58,6 +59,16 @@ export async function POST(
       includeShipping,
     });
 
+    // Preview how the refund would split between wallet credit and Stripe
+    const split = calculateRefundSplit({
+      refundAmount: result.maxRefundAmount,
+      totalOrderAmount: Math.round(Number(order.totalAmount) * 100),
+      walletAmountUsed: order.walletAmountUsed,
+      refundedAmount: order.refundedAmount,
+      walletRefundedAmount: order.walletRefundedAmount,
+      hasWallet: !!wallet,
+    });
+
     // Include shipping info for the UI
     const shippingAmountCents = order.shippingAmount
       ? Math.round(Number(order.shippingAmount) * 100)
@@ -65,6 +76,7 @@ export async function POST(
 
     return NextResponse.json({
       ...result,
+      split,
       orderHasShipping: shippingAmountCents > 0,
       shippingAmountCents,
     });
