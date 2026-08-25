@@ -11,6 +11,11 @@ export const queueOrderNewsletterSubscription = async (
 ) => {
   return await inngest.send({
     name: NewsletterQueueEvent.SUBSCRIBE_ORDER,
-    data,
+    data: {
+      ...data,
+      // Callers pass full order items; keep only the category so image
+      // placeholders and other bulk never hit Inngest's 256KB event limit.
+      items: data.items.map(({ category }) => ({ category })),
+    },
   });
 };

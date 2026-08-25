@@ -9,7 +9,7 @@ import {
   determineSubscriberData,
   mergeEventsField,
 } from "@/domain/newsletter/utils/determineSubscriberData";
-import { ProductInOrder } from "@/domain/order/types/order";
+import { NewsletterOrderItem } from "@/domain/newsletter/types/newsletter";
 import { EventType } from "@/domain/event/types/event";
 
 interface EventData {
@@ -59,7 +59,7 @@ function parseFullName(fullName: string): { firstName: string; lastName: string 
  */
 export async function subscribeOrderToNewsletter(
   email: string,
-  items: ProductInOrder[],
+  items: NewsletterOrderItem[],
   ticketEventIds?: string[],
   customerName?: string | null
 ): Promise<{ success: boolean; isNew?: boolean }> {
