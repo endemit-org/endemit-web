@@ -39,7 +39,7 @@ export default function PosRegisterReportModal({
     return () => {
       cancelled = true;
     };
-  }, [registerId]);
+  }, [registerId, terr]);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {

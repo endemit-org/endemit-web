@@ -47,7 +47,7 @@ export default function PosRegisterPayoutModal({
       setLoadError(err instanceof Error ? err.message : terr("loadFailed"));
       return null;
     }
-  }, [registerId]);
+  }, [registerId, terr]);
 
   useEffect(() => {
     load();

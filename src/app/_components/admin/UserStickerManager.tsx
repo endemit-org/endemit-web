@@ -66,7 +66,7 @@ export default function UserStickerManager({
         setIsBusy(false);
       }
     },
-    [isBusy, router, userId, t]
+    [isBusy, router, userId, t, terr]
   );
 
   const handleUnlink = useCallback(async () => {
@@ -87,7 +87,7 @@ export default function UserStickerManager({
     } finally {
       setIsBusy(false);
     }
-  }, [router, userId, t]);
+  }, [router, userId, t, terr]);
 
   return (
     <div className="space-y-3">
