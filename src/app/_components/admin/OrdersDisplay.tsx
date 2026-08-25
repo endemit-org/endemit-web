@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import OrdersTable from "@/app/_components/table/OrdersTable";
 import Pagination from "@/app/_components/table/Pagination";
 import { fetchOrders } from "@/domain/order/actions/fetchOrdersAction";
 import { formatPrice } from "@/lib/util/formatting";
-import type {
-  PaginatedOrders,
-  SerializedOrder,
-} from "@/domain/order/types/serialized";
+import type { PaginatedOrders } from "@/domain/order/types/serialized";
 
 interface OrdersDisplayProps {
   initialData: PaginatedOrders;
@@ -34,7 +30,6 @@ const ORDER_STATUSES = [
 const SEARCH_DEBOUNCE_MS = 350;
 
 export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
-  const router = useRouter();
   const t = useTranslations("admin.orders");
   const tc = useTranslations("admin.common");
   const ts = useTranslations("admin.status.order");
@@ -95,10 +90,6 @@ export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
     loadPage(currentPage, search, statusFilter);
   };
 
-  const handleOrderClick = (order: SerializedOrder) => {
-    router.push(`/admin/orders/${order.id}`);
-  };
-
   return (
     <>
       <div className="flex flex-col gap-3 mb-4 bg-white p-4 rounded-lg shadow">
@@ -151,7 +142,10 @@ export default function OrdersDisplay({ initialData }: OrdersDisplayProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <OrdersTable orders={orders} onRowClick={handleOrderClick} />
+        <OrdersTable
+          orders={orders}
+          rowHref={order => `/admin/orders/${order.id}`}
+        />
       </div>
 
       <Pagination

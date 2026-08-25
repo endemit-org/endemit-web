@@ -24,6 +24,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
   const router = useRouter();
   const t = useTranslations("admin.users");
   const ts = useTranslations("admin.status.user");
+  const terr = useTranslations("admin.common.errors");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -49,7 +50,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
       setSuccess(true);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update user");
+      setError(err instanceof Error ? err.message : terr("updateUserFailed"));
     } finally {
       setIsLoading(false);
     }

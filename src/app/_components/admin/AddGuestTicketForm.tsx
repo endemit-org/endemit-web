@@ -21,6 +21,7 @@ export default function AddGuestTicketForm({
 }: AddGuestTicketFormProps) {
   const t = useTranslations("admin.tickets.guestForm");
   const tc = useTranslations("admin.common");
+  const terr = useTranslations("admin.common.errors");
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
@@ -71,7 +72,7 @@ export default function AddGuestTicketForm({
       });
 
       if (!result.success) {
-        setError(result.error || "Failed to create tickets");
+        setError(result.error || terr("createTicketsFailed"));
         return;
       }
 
@@ -91,7 +92,7 @@ export default function AddGuestTicketForm({
         setSuccess(null);
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : terr("generic"));
     } finally {
       setIsSubmitting(false);
     }

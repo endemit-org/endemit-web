@@ -31,6 +31,7 @@ export default function UserSessionsTable({
 }: UserSessionsTableProps) {
   const router = useRouter();
   const t = useTranslations("admin.users");
+  const terr = useTranslations("admin.common.errors");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +45,7 @@ export default function UserSessionsTable({
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to terminate session"
+        err instanceof Error ? err.message : terr("terminateSessionFailed")
       );
     } finally {
       setLoadingSessionId(null);
@@ -60,7 +61,7 @@ export default function UserSessionsTable({
       router.refresh();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to terminate sessions"
+        err instanceof Error ? err.message : terr("terminateSessionsFailed")
       );
     } finally {
       setIsLoading(false);

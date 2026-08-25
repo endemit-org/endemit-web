@@ -97,6 +97,7 @@ export default function DiscountCodesDisplay({
 }: Props) {
   const t = useTranslations("admin.discounts");
   const tc = useTranslations("admin.common");
+  const terr = useTranslations("admin.common.errors");
   const [codes, setCodes] = useState<DiscountRule[]>(initialCodes);
   const [showForm, setShowForm] = useState(false);
   const [editingCode, setEditingCode] = useState<DiscountRule | null>(null);
@@ -138,7 +139,7 @@ export default function DiscountCodesDisplay({
         setCodes(prev => [created, ...prev]);
         setShowForm(false);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to save");
+        setError(err instanceof Error ? err.message : terr("saveFailed"));
       }
     });
   };
@@ -157,7 +158,7 @@ export default function DiscountCodesDisplay({
         );
         setEditingCode(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to save");
+        setError(err instanceof Error ? err.message : terr("saveFailed"));
       }
     });
   };

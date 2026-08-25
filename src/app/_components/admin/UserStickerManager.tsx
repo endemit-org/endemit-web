@@ -18,6 +18,7 @@ export default function UserStickerManager({
   const router = useRouter();
   const t = useTranslations("admin.users");
   const tc = useTranslations("admin.common");
+  const terr = useTranslations("admin.common.errors");
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,19 +54,19 @@ export default function UserStickerManager({
         });
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error || "Failed to assign QR code");
+          throw new Error(data.error || terr("assignQrFailed"));
         }
         setIsModalOpen(false);
         router.refresh();
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to assign QR code"
+          err instanceof Error ? err.message : terr("assignQrFailed")
         );
       } finally {
         setIsBusy(false);
       }
     },
-    [isBusy, router, userId, t]
+    [isBusy, router, userId, t, terr]
   );
 
   const handleUnlink = useCallback(async () => {
@@ -78,15 +79,15 @@ export default function UserStickerManager({
       });
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to unlink QR code");
+        throw new Error(data.error || terr("unlinkQrFailed"));
       }
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to unlink QR code");
+      setError(err instanceof Error ? err.message : terr("unlinkQrFailed"));
     } finally {
       setIsBusy(false);
     }
-  }, [router, userId, t]);
+  }, [router, userId, t, terr]);
 
   return (
     <div className="space-y-3">

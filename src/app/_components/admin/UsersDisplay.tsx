@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import UsersTable from "@/app/_components/table/UsersTable";
 import Pagination from "@/app/_components/table/Pagination";
 import UserCreateForm from "@/app/_components/admin/UserCreateForm";
 import { fetchUsers } from "@/domain/user/actions/fetchUsersAction";
-import type { PaginatedUsers, SerializedUser } from "@/domain/user/types";
+import type { PaginatedUsers } from "@/domain/user/types";
 
 interface UsersDisplayProps {
   initialData: PaginatedUsers;
@@ -18,7 +17,6 @@ export default function UsersDisplay({
   initialData,
   canCreateUsers = false,
 }: UsersDisplayProps) {
-  const router = useRouter();
   const t = useTranslations("admin.users");
   const tc = useTranslations("admin.common");
   const [users, setUsers] = useState(initialData.users);
@@ -53,10 +51,6 @@ export default function UsersDisplay({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     loadPage(1, search);
-  };
-
-  const handleUserClick = (user: SerializedUser) => {
-    router.push(`/admin/users/${user.id}`);
   };
 
   return (
@@ -108,7 +102,7 @@ export default function UsersDisplay({
       </div>
 
       <div className="overflow-x-auto">
-        <UsersTable users={users} onRowClick={handleUserClick} />
+        <UsersTable users={users} rowHref={user => `/admin/users/${user.id}`} />
       </div>
 
       <Pagination

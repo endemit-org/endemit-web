@@ -145,6 +145,8 @@ function ActionButton({
 }: ActionButtonProps) {
   const t = useTranslations("admin.orders");
   const tc = useTranslations("admin.common");
+  // config.label/description/emailCheckboxLabel are i18n keys (getOrderActions).
+  const ta = useTranslations("admin.orders.orderActions");
   const buttonClasses = clsx(
     "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -161,7 +163,7 @@ function ActionButton({
   if (showConfirmation) {
     return (
       <div className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
-        <span className="text-sm text-gray-600">{config.description}</span>
+        <span className="text-sm text-gray-600">{ta(config.description)}</span>
         <button
           className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded"
           onClick={onConfirm}
@@ -186,9 +188,9 @@ function ActionButton({
         className={buttonClasses}
         onClick={config.requiresConfirmation ? onRequestConfirmation : onConfirm}
         disabled={disabled}
-        title={config.description}
+        title={ta(config.description)}
       >
-        {isLoading ? t("actions.processing") : config.label}
+        {isLoading ? t("actions.processing") : ta(config.label)}
       </button>
       {config.showEmailCheckbox && (
         <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
@@ -199,7 +201,7 @@ function ActionButton({
             disabled={disabled}
             className="rounded border-gray-300"
           />
-          {config.emailCheckboxLabel}
+          {config.emailCheckboxLabel && ta(config.emailCheckboxLabel)}
         </label>
       )}
     </div>

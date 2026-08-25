@@ -22,9 +22,11 @@ const statusColors: Record<string, string> = {
 export default function OrdersTable({
   orders,
   onRowClick,
+  rowHref,
 }: {
   orders: SerializedOrder[];
   onRowClick?: (row: SerializedOrder) => void;
+  rowHref?: (row: SerializedOrder) => string;
 }) {
   const t = useTranslations("admin.orders");
   const tt = useTranslations("common.table");
@@ -100,6 +102,7 @@ export default function OrdersTable({
       data={orders}
       columns={columns}
       onRowClick={onRowClick}
+      rowHref={rowHref}
       emptyMessage={tt("noOrders")}
       maxHeight="calc(100dvh - 400px)"
     />

@@ -63,6 +63,16 @@ export const WALLET_RECEIVE_SECRET = process.env.WALLET_RECEIVE_SECRET!;
 // Vercel
 export const VERCEL_OIDC_TOKEN = process.env.VERCEL_OIDC_TOKEN!;
 export const VERCEL_DEPLOY_HOOK_URL = process.env.VERCEL_DEPLOY_HOOK_URL;
+// REST API access for the admin deploy dashboard (deployment listing).
+// Create a token at vercel.com/account/tokens; all three optional — the
+// dashboard shows a "not configured" notice without them.
+export const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN;
+export const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
+export const VERCEL_TEAM_ID = process.env.VERCEL_TEAM_ID;
+// System env var injected by Vercel: the git branch this deployment was built
+// from (e.g. "main" in production, "staging" on the staging env). Undefined
+// in local dev.
+export const VERCEL_GIT_COMMIT_REF = process.env.VERCEL_GIT_COMMIT_REF;
 
 // FURS fiscal verification (ZDavPR) — all optional until fiscalization is
 // enabled on a register

@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import WalletsTable from "@/app/_components/table/WalletsTable";
 import Pagination from "@/app/_components/table/Pagination";
 import { fetchWalletsAction } from "@/domain/wallet/actions/fetchWalletsAction";
-import type { PaginatedWallets, SerializedWallet } from "@/domain/wallet/types";
+import type { PaginatedWallets } from "@/domain/wallet/types";
 import type {
   WalletSortBy,
   WalletSortDir,
@@ -17,7 +16,6 @@ interface WalletsDisplayProps {
 }
 
 export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
-  const router = useRouter();
   const t = useTranslations("admin.wallets");
   const tc = useTranslations("admin.common");
   const [wallets, setWallets] = useState(initialData.wallets);
@@ -72,10 +70,6 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
     loadPage(1, search, by, dir);
   };
 
-  const handleWalletClick = (wallet: SerializedWallet) => {
-    router.push(`/admin/wallets/${wallet.id}`);
-  };
-
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-lg shadow">
@@ -115,7 +109,7 @@ export default function WalletsDisplay({ initialData }: WalletsDisplayProps) {
       <div className="overflow-x-auto">
         <WalletsTable
           wallets={wallets}
-          onRowClick={handleWalletClick}
+          rowHref={wallet => `/admin/wallets/${wallet.id}`}
           sortBy={sortBy}
           sortDir={sortDir}
           onSortChange={handleSortChange}

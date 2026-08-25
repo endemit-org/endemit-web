@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import DeployTriggerDisplay from "@/app/_components/admin/DeployTriggerDisplay";
+import DeploymentsDisplay from "@/app/_components/admin/DeploymentsDisplay";
 
 export const metadata: Metadata = {
   title: "Deploy  •  Admin",
@@ -30,6 +31,7 @@ export default async function AdminDeployPage() {
       </div>
 
       <DeployTriggerDisplay />
+      <DeploymentsDisplay />
     </div>
   );
 }

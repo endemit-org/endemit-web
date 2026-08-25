@@ -1383,6 +1383,28 @@
         "calcLimitFailed": "Ni bilo mogoče izračunati omejitve vračila",
         "calcFailed": "Ni bilo mogoče izračunati vračila",
         "failed": "Refund ni uspel"
+      },
+      "orderActions": {
+        "cancelOrder": "Prekliči naročilo",
+        "cancelOrderDesc": "Prekliči to neplačano naročilo",
+        "startPreparing": "Začni pripravo",
+        "startPreparingDesc": "Označi naročilo kot v pripravi za pošiljanje",
+        "markCompleted": "Označi kot zaključeno",
+        "markCompletedDesc": "Označi naročilo kot zaključeno",
+        "markCompletedPartialDesc": "Označi naročilo kot zaključeno kljub delnemu vračilu",
+        "initiateRefund": "Začni vračilo",
+        "initiateRefundDesc": "Začni postopek vračila za to naročilo",
+        "markShipped": "Označi kot poslano",
+        "markShippedDesc": "Naročilo je bilo poslano",
+        "sendShippingEmail": "Pošlji e-pošto z obvestilom o pošiljanju",
+        "markDelivered": "Označi kot dostavljeno",
+        "markDeliveredDesc": "Naročilo je bilo dostavljeno",
+        "processRefund": "Izvedi vračilo",
+        "processRefundDesc": "Izvedi vračilo prek Stripa",
+        "denyRefund": "Zavrni vračilo",
+        "denyRefundDesc": "Zavrni vračilo in povrni prejšnji status naročila",
+        "refundMoreItems": "Vrni več artiklov",
+        "refundMoreItemsDesc": "Izvedi dodatna vračila za preostale artikle"
       }
     },
     "pos": {
@@ -1976,7 +1998,32 @@
       "cancelButton": "Prekliči",
       "triggering": "Sprožam…",
       "triggered": "Build sprožen ob {time}. V živo bo v parih minutah.",
-      "errorGeneric": "Deploya ni blo mogoče sprožit"
+      "errorGeneric": "Deploya ni blo mogoče sprožit",
+      "list": {
+        "title": "Zadnji deployi",
+        "subtitle": "Zadnji buildi tega projekta na Vercelu",
+        "subtitleBranch": "Buildi veje tega okolja ({branch}) na Vercelu",
+        "notConfigured": "Vercel API ni nastavljen. Nastavi VERCEL_API_TOKEN, VERCEL_PROJECT_ID pa VERCEL_TEAM_ID, da se tukaj pokažejo deployi.",
+        "loading": "Nalagam deploye…",
+        "empty": "Ni najdenih deployev",
+        "loadError": "Deployev z Vercela ni blo mogoče naložit",
+        "refresh": "Osveži",
+        "refreshing": "Se osvežuje…",
+        "production": "Produkcija",
+        "preview": "Predogled",
+        "visit": "Odpri",
+        "inspect": "Preglej",
+        "col": {
+          "status": "Status",
+          "environment": "Okolje",
+          "branch": "Veja",
+          "commit": "Commit",
+          "creator": "Kdo",
+          "age": "Ustvarjen",
+          "duration": "Čas builda",
+          "links": "Povezave"
+        }
+      }
     },
     "common": {
       "loading": "Se nalaga…",
@@ -1991,7 +2038,26 @@
       "showing": "Prikazano:",
       "na": "N/A",
       "back": "Nazaj",
-      "autoRefresh": "Samodejno osveževanje:"
+      "autoRefresh": "Samodejno osveževanje:",
+      "errors": {
+        "generic": "Prišlo je do napake",
+        "actionFailed": "Dejanje ni uspelo",
+        "saveFailed": "Shranjevanje ni uspelo",
+        "loadFailed": "Nalaganje ni uspelo",
+        "noServerResponse": "Ni odgovora strežnika",
+        "generateTicketFailed": "Ustvarjanje vstopnice ni uspelo",
+        "revertScanFailed": "Razveljavitev skena vstopnice ni uspela",
+        "createTicketsFailed": "Ustvarjanje vstopnic ni uspelo",
+        "createUserFailed": "Ustvarjanje uporabnika ni uspelo",
+        "updateUserFailed": "Posodobitev uporabnika ni uspela",
+        "setPasswordFailed": "Nastavitev gesla ni uspela",
+        "addRoleFailed": "Dodajanje vloge ni uspelo",
+        "removeRoleFailed": "Odstranitev vloge ni uspela",
+        "assignQrFailed": "Dodelitev QR kode ni uspela",
+        "unlinkQrFailed": "Odstranitev QR kode ni uspela",
+        "terminateSessionFailed": "Prekinitev seje ni uspela",
+        "terminateSessionsFailed": "Prekinitev sej ni uspela"
+      }
     },
     "status": {
       "order": {

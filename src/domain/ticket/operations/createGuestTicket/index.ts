@@ -49,7 +49,9 @@ export const createGuestTickets = async ({
           createdByUserId,
           ticketCount: ticketHolders.length,
         },
-        status: "PAID", // Guest list tickets are already "paid" (free)
+        // Free guest-list order needs no payment or fulfillment — issue it
+        // directly as COMPLETED so it doesn't linger in the paid-open queue.
+        status: "COMPLETED",
       },
     });
 

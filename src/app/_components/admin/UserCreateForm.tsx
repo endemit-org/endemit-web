@@ -30,6 +30,7 @@ export default function UserCreateForm({
   const t = useTranslations("admin.users");
   const tc = useTranslations("admin.common");
   const ts = useTranslations("admin.status.user");
+  const terr = useTranslations("admin.common.errors");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,7 +74,7 @@ export default function UserCreateForm({
       onSuccess?.();
       router.push(`/admin/users/${newUser.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create user");
+      setError(err instanceof Error ? err.message : terr("createUserFailed"));
     } finally {
       setIsLoading(false);
     }

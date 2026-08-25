@@ -25,6 +25,7 @@ export default function AdminTicketDetailsDialog({
 }: AdminTicketDetailsDialogProps) {
   const t = useTranslations("admin.tickets");
   const ts = useTranslations("admin.status.ticket");
+  const terr = useTranslations("admin.common.errors");
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
@@ -38,12 +39,12 @@ export default function AdminTicketDetailsDialog({
       const result = await generateTicketImageAction(ticket.id);
 
       if (!result) {
-        setDownloadError("No response from server");
+        setDownloadError(terr("noServerResponse"));
         return;
       }
 
       if (!result.success || !result.image) {
-        setDownloadError(result.error || "Failed to generate ticket");
+        setDownloadError(result.error || terr("generateTicketFailed"));
         return;
       }
 
@@ -67,7 +68,7 @@ export default function AdminTicketDetailsDialog({
     } catch (error) {
       console.error("Download error:", error);
       setDownloadError(
-        error instanceof Error ? error.message : "Failed to generate ticket"
+        error instanceof Error ? error.message : terr("generateTicketFailed")
       );
     } finally {
       setIsGenerating(false);

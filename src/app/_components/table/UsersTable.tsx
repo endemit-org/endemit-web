@@ -16,9 +16,11 @@ const roleColors: Record<string, string> = {
 export default function UsersTable({
   users,
   onRowClick,
+  rowHref,
 }: {
   users: SerializedUser[];
   onRowClick?: (row: SerializedUser) => void;
+  rowHref?: (row: SerializedUser) => string;
 }) {
   const t = useTranslations("admin.users");
   const columns: Column<SerializedUser>[] = [
@@ -88,6 +90,7 @@ export default function UsersTable({
       data={users}
       columns={columns}
       onRowClick={onRowClick}
+      rowHref={rowHref}
       emptyMessage={t("table.empty")}
       maxHeight="calc(100dvh - 400px)"
     />
