@@ -11,6 +11,7 @@ interface UserPasswordFormProps {
 
 export default function UserPasswordForm({ userId }: UserPasswordFormProps) {
   const t = useTranslations("admin.users");
+  const terr = useTranslations("admin.common.errors");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -27,7 +28,7 @@ export default function UserPasswordForm({ userId }: UserPasswordFormProps) {
       setSuccess(true);
       setPassword("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to set password");
+      setError(err instanceof Error ? err.message : terr("setPasswordFailed"));
     } finally {
       setIsLoading(false);
     }

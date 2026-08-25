@@ -26,6 +26,7 @@ export default function PosRegisterPayoutModal({
   onRecorded,
 }: Props) {
   const t = useTranslations("admin.pos.registers.payout");
+  const terr = useTranslations("admin.common.errors");
   const [data, setData] = useState<PosRegisterPayoutsResult | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [type, setType] = useState<PosPayoutType>("TIPS");
@@ -43,7 +44,7 @@ export default function PosRegisterPayoutModal({
       setLoadError(null);
       return result;
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Failed to load");
+      setLoadError(err instanceof Error ? err.message : terr("loadFailed"));
       return null;
     }
   }, [registerId]);

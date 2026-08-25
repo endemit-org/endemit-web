@@ -17,6 +17,7 @@ export default function TicketDownloadButton({
   holderName,
 }: TicketDownloadButtonProps) {
   const t = useTranslations("admin.tickets");
+  const terr = useTranslations("admin.common.errors");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,12 +29,12 @@ export default function TicketDownloadButton({
       const result = await generateTicketImageAction(ticketId);
 
       if (!result) {
-        setError("No response from server");
+        setError(terr("noServerResponse"));
         return;
       }
 
       if (!result.success || !result.image) {
-        setError(result.error || "Failed to generate ticket");
+        setError(result.error || terr("generateTicketFailed"));
         return;
       }
 
@@ -56,7 +57,7 @@ export default function TicketDownloadButton({
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download error:", err);
-      setError(err instanceof Error ? err.message : "Failed to generate ticket");
+      setError(err instanceof Error ? err.message : terr("generateTicketFailed"));
     } finally {
       setIsGenerating(false);
     }

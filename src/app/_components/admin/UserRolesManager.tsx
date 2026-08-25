@@ -50,6 +50,7 @@ export default function UserRolesManager({
 }: UserRolesManagerProps) {
   const router = useRouter();
   const t = useTranslations("admin.users");
+  const terr = useTranslations("admin.common.errors");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,7 +85,7 @@ export default function UserRolesManager({
       await assignRoleAction(userId, roleSlug);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add role");
+      setError(err instanceof Error ? err.message : terr("addRoleFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +99,7 @@ export default function UserRolesManager({
       await removeRoleAction(userId, roleSlug);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove role");
+      setError(err instanceof Error ? err.message : terr("removeRoleFailed"));
     } finally {
       setIsLoading(false);
     }

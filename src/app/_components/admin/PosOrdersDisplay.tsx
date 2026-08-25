@@ -41,6 +41,7 @@ export default function PosOrdersDisplay({
 }: Props) {
   const t = useTranslations("admin.pos.orders");
   const tt = useTranslations("common.table");
+  const terr = useTranslations("admin.common.errors");
   const [orders, setOrders] = useState(initialOrders);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
@@ -82,7 +83,7 @@ export default function PosOrdersDisplay({
       closeModal();
       loadOrders(page);
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Action failed");
+      setActionError(err instanceof Error ? err.message : terr("actionFailed"));
       setConfirmAction(null);
     } finally {
       setIsActing(false);

@@ -15,6 +15,7 @@ export default function RevertTicketScanButton({
   const router = useRouter();
   const t = useTranslations("admin.tickets.revert");
   const tc = useTranslations("admin.common");
+  const terr = useTranslations("admin.common.errors");
   const [isReverting, setIsReverting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -38,7 +39,7 @@ export default function RevertTicketScanButton({
     } catch (err) {
       console.error("Revert error:", err);
       setError(
-        err instanceof Error ? err.message : "Failed to revert ticket scan"
+        err instanceof Error ? err.message : terr("revertScanFailed")
       );
       setShowConfirm(false);
     } finally {

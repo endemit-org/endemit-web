@@ -13,15 +13,38 @@ export type OrderAction =
 
 export type ActionVariant = "default" | "destructive" | "warning";
 
+/** i18n keys under `admin.orders.orderActions` — translated at render time. */
+export type OrderActionMessageKey =
+  | "cancelOrder"
+  | "cancelOrderDesc"
+  | "startPreparing"
+  | "startPreparingDesc"
+  | "markCompleted"
+  | "markCompletedDesc"
+  | "markCompletedPartialDesc"
+  | "initiateRefund"
+  | "initiateRefundDesc"
+  | "markShipped"
+  | "markShippedDesc"
+  | "sendShippingEmail"
+  | "markDelivered"
+  | "markDeliveredDesc"
+  | "processRefund"
+  | "processRefundDesc"
+  | "denyRefund"
+  | "denyRefundDesc"
+  | "refundMoreItems"
+  | "refundMoreItemsDesc";
+
 export interface OrderActionConfig {
   action: OrderAction;
-  label: string;
-  description: string;
+  label: OrderActionMessageKey;
+  description: OrderActionMessageKey;
   requiresConfirmation: boolean;
   variant: ActionVariant;
   permission?: string;
   showEmailCheckbox?: boolean;
-  emailCheckboxLabel?: string;
+  emailCheckboxLabel?: OrderActionMessageKey;
 }
 
 export interface OrderContext {
@@ -71,8 +94,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       // Unpaid orders can only be cancelled
       actions.push({
         action: "cancel_order",
-        label: "Cancel Order",
-        description: "Cancel this unpaid order",
+        label: "cancelOrder",
+        description: "cancelOrderDesc",
         requiresConfirmation: true,
         variant: "destructive",
       });
@@ -84,8 +107,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
         // Physical items need to go through preparation
         actions.push({
           action: "mark_preparing",
-          label: "Start Preparing",
-          description: "Mark order as being prepared for shipping",
+          label: "startPreparing",
+          description: "startPreparingDesc",
           requiresConfirmation: false,
           variant: "default",
         });
@@ -93,8 +116,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
         // Digital-only orders can go straight to completed
         actions.push({
           action: "mark_completed",
-          label: "Mark Completed",
-          description: "Mark order as completed",
+          label: "markCompleted",
+          description: "markCompletedDesc",
           requiresConfirmation: false,
           variant: "default",
         });
@@ -102,8 +125,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
 
       actions.push({
         action: "request_refund",
-        label: "Initiate Refund",
-        description: "Start refund process for this order",
+        label: "initiateRefund",
+        description: "initiateRefundDesc",
         requiresConfirmation: true,
         variant: "warning",
         permission: "orders:refund",
@@ -114,18 +137,18 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       // Order is being prepared, can be shipped or refunded
       actions.push({
         action: "mark_in_delivery",
-        label: "Mark Shipped",
-        description: "Order has been shipped",
+        label: "markShipped",
+        description: "markShippedDesc",
         requiresConfirmation: false,
         variant: "default",
         showEmailCheckbox: true,
-        emailCheckboxLabel: "Send shipping notification email",
+        emailCheckboxLabel: "sendShippingEmail",
       });
 
       actions.push({
         action: "request_refund",
-        label: "Initiate Refund",
-        description: "Start refund process",
+        label: "initiateRefund",
+        description: "initiateRefundDesc",
         requiresConfirmation: true,
         variant: "warning",
         permission: "orders:refund",
@@ -136,8 +159,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       // Order is in delivery, can be marked as completed
       actions.push({
         action: "mark_completed",
-        label: "Mark Delivered",
-        description: "Order has been delivered",
+        label: "markDelivered",
+        description: "markDeliveredDesc",
         requiresConfirmation: false,
         variant: "default",
       });
@@ -147,8 +170,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       // Completed orders can still be refunded
       actions.push({
         action: "request_refund",
-        label: "Initiate Refund",
-        description: "Start refund process for completed order",
+        label: "initiateRefund",
+        description: "initiateRefundDesc",
         requiresConfirmation: true,
         variant: "warning",
         permission: "orders:refund",
@@ -159,8 +182,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       // Pending refund can be processed or cancelled
       actions.push({
         action: "process_refund",
-        label: "Process Refund",
-        description: "Execute refund via Stripe",
+        label: "processRefund",
+        description: "processRefundDesc",
         requiresConfirmation: true,
         variant: "destructive",
         permission: "orders:refund",
@@ -168,8 +191,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
 
       actions.push({
         action: "cancel_refund_request",
-        label: "Deny Refund",
-        description: "Deny refund and restore previous order status",
+        label: "denyRefund",
+        description: "denyRefundDesc",
         requiresConfirmation: true,
         variant: "default",
       });
@@ -179,8 +202,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       // Partially refunded orders can have more items refunded or be completed
       actions.push({
         action: "request_refund",
-        label: "Refund More Items",
-        description: "Process additional refunds for remaining items",
+        label: "refundMoreItems",
+        description: "refundMoreItemsDesc",
         requiresConfirmation: true,
         variant: "warning",
         permission: "orders:refund",
@@ -189,8 +212,8 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       if (context.hasPhysicalItems) {
         actions.push({
           action: "mark_completed",
-          label: "Mark Completed",
-          description: "Mark order as completed despite partial refund",
+          label: "markCompleted",
+          description: "markCompletedPartialDesc",
           requiresConfirmation: false,
           variant: "default",
         });

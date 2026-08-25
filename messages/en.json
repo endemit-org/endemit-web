@@ -1383,6 +1383,28 @@
         "calcLimitFailed": "Failed to calculate refund limit",
         "calcFailed": "Failed to calculate refund",
         "failed": "Refund failed"
+      },
+      "orderActions": {
+        "cancelOrder": "Cancel order",
+        "cancelOrderDesc": "Cancel this unpaid order",
+        "startPreparing": "Start preparing",
+        "startPreparingDesc": "Mark order as being prepared for shipping",
+        "markCompleted": "Mark completed",
+        "markCompletedDesc": "Mark order as completed",
+        "markCompletedPartialDesc": "Mark order as completed despite partial refund",
+        "initiateRefund": "Initiate refund",
+        "initiateRefundDesc": "Start the refund process for this order",
+        "markShipped": "Mark shipped",
+        "markShippedDesc": "Order has been shipped",
+        "sendShippingEmail": "Send shipping notification email",
+        "markDelivered": "Mark delivered",
+        "markDeliveredDesc": "Order has been delivered",
+        "processRefund": "Process refund",
+        "processRefundDesc": "Execute refund via Stripe",
+        "denyRefund": "Deny refund",
+        "denyRefundDesc": "Deny refund and restore previous order status",
+        "refundMoreItems": "Refund more items",
+        "refundMoreItemsDesc": "Process additional refunds for remaining items"
       }
     },
     "pos": {
@@ -1976,7 +1998,32 @@
       "cancelButton": "Cancel",
       "triggering": "Triggering…",
       "triggered": "Build triggered at {time}. It will be live in a few minutes.",
-      "errorGeneric": "Failed to trigger the deploy"
+      "errorGeneric": "Failed to trigger the deploy",
+      "list": {
+        "title": "Recent deployments",
+        "subtitle": "Latest builds of this project on Vercel",
+        "subtitleBranch": "Builds of this environment's branch ({branch}) on Vercel",
+        "notConfigured": "Vercel API is not configured. Set VERCEL_API_TOKEN, VERCEL_PROJECT_ID and VERCEL_TEAM_ID to list deployments here.",
+        "loading": "Loading deployments…",
+        "empty": "No deployments found",
+        "loadError": "Failed to load deployments from Vercel",
+        "refresh": "Refresh",
+        "refreshing": "Refreshing…",
+        "production": "Production",
+        "preview": "Preview",
+        "visit": "Visit",
+        "inspect": "Inspect",
+        "col": {
+          "status": "Status",
+          "environment": "Env",
+          "branch": "Branch",
+          "commit": "Commit",
+          "creator": "By",
+          "age": "Created",
+          "duration": "Build time",
+          "links": "Links"
+        }
+      }
     },
     "common": {
       "loading": "Loading...",
@@ -1991,7 +2038,26 @@
       "showing": "Showing:",
       "na": "N/A",
       "back": "Back",
-      "autoRefresh": "Auto-refresh:"
+      "autoRefresh": "Auto-refresh:",
+      "errors": {
+        "generic": "An error occurred",
+        "actionFailed": "Action failed",
+        "saveFailed": "Failed to save",
+        "loadFailed": "Failed to load",
+        "noServerResponse": "No response from server",
+        "generateTicketFailed": "Failed to generate ticket",
+        "revertScanFailed": "Failed to revert ticket scan",
+        "createTicketsFailed": "Failed to create tickets",
+        "createUserFailed": "Failed to create user",
+        "updateUserFailed": "Failed to update user",
+        "setPasswordFailed": "Failed to set password",
+        "addRoleFailed": "Failed to add role",
+        "removeRoleFailed": "Failed to remove role",
+        "assignQrFailed": "Failed to assign QR code",
+        "unlinkQrFailed": "Failed to unlink QR code",
+        "terminateSessionFailed": "Failed to terminate session",
+        "terminateSessionsFailed": "Failed to terminate sessions"
+      }
     },
     "status": {
       "order": {

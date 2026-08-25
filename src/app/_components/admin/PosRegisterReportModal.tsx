@@ -20,6 +20,7 @@ export default function PosRegisterReportModal({
   onClose,
 }: Props) {
   const t = useTranslations("admin.pos.registers.report");
+  const terr = useTranslations("admin.common.errors");
   const [report, setReport] = useState<PosRegisterReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>("quantity");
@@ -33,7 +34,7 @@ export default function PosRegisterReportModal({
       })
       .catch(err => {
         if (!cancelled)
-          setError(err instanceof Error ? err.message : "Failed to load");
+          setError(err instanceof Error ? err.message : terr("loadFailed"));
       });
     return () => {
       cancelled = true;

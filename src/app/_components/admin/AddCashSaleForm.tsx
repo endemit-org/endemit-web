@@ -23,6 +23,7 @@ export default function AddCashSaleForm({
 }: AddCashSaleFormProps) {
   const t = useTranslations("admin.tickets.cashSaleForm");
   const tc = useTranslations("admin.common");
+  const terr = useTranslations("admin.common.errors");
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
@@ -67,7 +68,7 @@ export default function AddCashSaleForm({
       });
 
       if (!result.success) {
-        setError(result.error || "Failed to create tickets");
+        setError(result.error || terr("createTicketsFailed"));
         return;
       }
 
@@ -83,7 +84,7 @@ export default function AddCashSaleForm({
         setSuccess(null);
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : terr("generic"));
     } finally {
       setIsSubmitting(false);
     }
