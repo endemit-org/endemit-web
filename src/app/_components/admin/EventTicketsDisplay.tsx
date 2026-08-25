@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import TicketsTable from "@/app/_components/table/TicketsTable";
 import { formatNumber, formatPrice } from "@/lib/util/formatting";
 import {
@@ -33,7 +32,6 @@ export default function EventTicketsDisplay({
   refreshInterval = 30,
   canCreateTickets = false,
 }: EventTicketsDisplayProps) {
-  const router = useRouter();
   const t = useTranslations("admin.events");
   const tc = useTranslations("admin.common");
   const [tickets, setTickets] = useState(initialTickets);
@@ -78,10 +76,6 @@ export default function EventTicketsDisplay({
 
   // Revenue only from sold tickets (not guest list)
   const totalRevenue = ticketsSold.reduce((sum, ticket) => sum + ticket.price, 0);
-
-  const handleTicketDetails = (ticket: SerializedTicket) => {
-    router.push(`/admin/tickets/${ticket.id}`);
-  };
 
   return (
     <>
@@ -153,7 +147,7 @@ export default function EventTicketsDisplay({
           <div className="overflow-x-auto">
             <TicketsTable
               tickets={ticketsRemaining}
-              onRowClick={handleTicketDetails}
+              rowHref={ticket => `/admin/tickets/${ticket.id}`}
             />
           </div>
         </div>
@@ -166,7 +160,7 @@ export default function EventTicketsDisplay({
           <div className="overflow-x-auto">
             <TicketsTable
               tickets={ticketsScanned}
-              onRowClick={handleTicketDetails}
+              rowHref={ticket => `/admin/tickets/${ticket.id}`}
             />
           </div>
         </div>

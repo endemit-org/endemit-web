@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 export interface Column<T> {
   key: string;
@@ -17,6 +18,12 @@ interface TableProps<T> {
   className?: string;
   emptyMessage?: string;
   onRowClick?: (row: T) => void;
+  /**
+   * When set, every cell renders as a real anchor to this URL, so rows
+   * support middle-click / ctrl+click / shift+click into a new tab or
+   * window. Prefer this over onRowClick for navigation.
+   */
+  rowHref?: (row: T) => string;
   maxHeight?: string;
 }
 
@@ -33,6 +40,7 @@ export function Table<T>({
   className = "",
   emptyMessage,
   onRowClick,
+  rowHref,
   maxHeight = "600px",
 }: TableProps<T>) {
   const t = useTranslations("common.table");
@@ -183,17 +191,36 @@ export function Table<T>({
             {sortedData.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className={`${rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"} ${onRowClick ? "cursor-pointer hover:bg-gray-200" : "hover:bg-gray-100"}`}
-                onClick={() => onRowClick?.(row)}
+                className={`${rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"} ${onRowClick || rowHref ? "cursor-pointer hover:bg-gray-200" : "hover:bg-gray-100"}`}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                {columns.map(column => (
-                  <td
-                    key={column.key}
-                    className="whitespace-nowrap px-6 py-4 text-sm text-gray-900"
-                  >
-                    {getCellValue(row, column)}
-                  </td>
-                ))}
+                {columns.map((column, columnIndex) =>
+                  rowHref ? (
+                    // An <a> can't wrap a <tr>, so each cell carries its own
+                    // full-size anchor to keep the whole row clickable. Only
+                    // the first cell is tabbable so keyboard users get one
+                    // stop per row instead of one per cell.
+                    <td
+                      key={column.key}
+                      className="whitespace-nowrap text-sm text-gray-900"
+                    >
+                      <Link
+                        href={rowHref(row)}
+                        className="block px-6 py-4"
+                        tabIndex={columnIndex === 0 ? undefined : -1}
+                      >
+                        {getCellValue(row, column)}
+                      </Link>
+                    </td>
+                  ) : (
+                    <td
+                      key={column.key}
+                      className="whitespace-nowrap px-6 py-4 text-sm text-gray-900"
+                    >
+                      {getCellValue(row, column)}
+                    </td>
+                  )
+                )}
               </tr>
             ))}
           </tbody>

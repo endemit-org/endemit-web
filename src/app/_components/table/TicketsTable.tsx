@@ -7,9 +7,11 @@ import { SerializedTicket } from "@/domain/ticket/types/ticket";
 export default function TicketsTable({
   tickets,
   onRowClick,
+  rowHref,
 }: {
   tickets: SerializedTicket[];
   onRowClick?: (row: SerializedTicket) => void;
+  rowHref?: (row: SerializedTicket) => string;
 }) {
   const t = useTranslations("admin.tickets.table");
   const ts = useTranslations("admin.status.ticket");
@@ -57,5 +59,12 @@ export default function TicketsTable({
     },
   ];
 
-  return <Table data={tickets} columns={columns} onRowClick={onRowClick} />;
+  return (
+    <Table
+      data={tickets}
+      columns={columns}
+      onRowClick={onRowClick}
+      rowHref={rowHref}
+    />
+  );
 }
