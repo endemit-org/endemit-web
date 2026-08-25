@@ -11,6 +11,8 @@ interface SendRefundConfirmationEmailInput {
   orderId: string;
   orderEmail: string;
   refundedAmount: number;
+  walletRefundAmount?: number;
+  stripeRefundAmount?: number;
   refundedItems: RefundedItem[];
   orderDate: Date | string;
   paymentMethodHint?: string;
@@ -36,6 +38,8 @@ export const sendRefundConfirmationEmail = async (
       orderId: input.orderId,
       orderEmail: input.orderEmail,
       refundedAmount: input.refundedAmount,
+      walletRefundAmount: input.walletRefundAmount,
+      stripeRefundAmount: input.stripeRefundAmount,
       refundedItems: input.refundedItems,
       orderDate: input.orderDate,
       paymentMethodHint: input.paymentMethodHint,

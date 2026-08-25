@@ -153,6 +153,7 @@ model Order {
 
   // Refund tracking
   refundedAmount Int       @default(0) // Total cents refunded
+  walletRefundedAmount Int @default(0) // Cents refunded back as wallet credit (subset of refundedAmount)
   refundedAt     DateTime?
   refundedBy     String? // Admin user ID who processed the refund
   refundReason   String?

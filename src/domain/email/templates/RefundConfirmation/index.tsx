@@ -14,6 +14,8 @@ interface Props {
   orderId: string;
   orderEmail: string;
   refundedAmount: number; // In cents
+  walletRefundAmount?: number; // In cents, returned as wallet credit
+  stripeRefundAmount?: number; // In cents, returned to the card
   refundedItems: RefundedItem[];
   orderDate: Date | string;
   paymentMethodHint?: string; // e.g., "Visa ending in 4242"
@@ -36,6 +38,8 @@ function formatDate(date: Date | string, locale: "sl" | "en"): string {
 function RefundConfirmationTemplate({
   orderId,
   refundedAmount,
+  walletRefundAmount,
+  stripeRefundAmount,
   refundedItems,
   orderDate,
   paymentMethodHint,
@@ -44,11 +48,22 @@ function RefundConfirmationTemplate({
 }: Props) {
   const t = getEmailTranslator(locale, "emails.refund");
   const loc: "sl" | "en" = locale === "en" ? "en" : "sl";
+  const walletPart = walletRefundAmount ?? 0;
+  const cardPart = stripeRefundAmount ?? 0;
+  const intro =
+    walletPart > 0 && cardPart > 0
+      ? t("introMixed", {
+          wallet: formatCents(walletPart),
+          card: formatCents(cardPart),
+        })
+      : walletPart > 0
+        ? t("introWallet")
+        : t("intro");
   return (
     <MasterTemplate>
       <div>
         <h1 className="text-2xl font-bold mb-2">{t("heading")}</h1>
-        <Text className="text-gray-600 mb-6">{t("intro")}</Text>
+        <Text className="text-gray-600 mb-6">{intro}</Text>
 
         {/* Refund Amount */}
         <div
@@ -72,7 +87,17 @@ function RefundConfirmationTemplate({
           >
             {formatCents(refundedAmount)}
           </Text>
-          {paymentMethodHint && (
+          {walletPart > 0 && (
+            <Text className="text-gray-500 text-sm mt-2">
+              {t("refundedToWallet", { amount: formatCents(walletPart) })}
+            </Text>
+          )}
+          {cardPart > 0 && walletPart > 0 && (
+            <Text className="text-gray-500 text-sm mt-2">
+              {t("refundedToCard", { amount: formatCents(cardPart) })}
+            </Text>
+          )}
+          {walletPart === 0 && paymentMethodHint && (
             <Text className="text-gray-500 text-sm mt-2">
               {t("refundedTo", { method: paymentMethodHint })}
             </Text>

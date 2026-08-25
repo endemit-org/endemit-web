@@ -22,6 +22,8 @@ export type OrderNotificationData = {
 export type RefundNotificationData = {
   orderId: string;
   refundedAmount: number;
+  walletRefundAmount?: number; // Cents returned as wallet credit
+  stripeRefundAmount?: number; // Cents returned to the card via Stripe
   refundedItems: {
     itemIndex: number;
     itemName: string;

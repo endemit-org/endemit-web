@@ -24,6 +24,8 @@ export const runRefundEmailAutomation = inngest.createFunction(
     const {
       orderId,
       refundedAmount,
+      walletRefundAmount,
+      stripeRefundAmount,
       refundedItems,
       shippingRefunded,
       ticketsRefunded,
@@ -86,6 +88,8 @@ export const runRefundEmailAutomation = inngest.createFunction(
         orderId: order.id,
         orderEmail: order.email,
         refundedAmount,
+        walletRefundAmount,
+        stripeRefundAmount,
         refundedItems: refundedItems.map((item) => ({
           itemName: item.itemName,
           quantity: item.quantity,
