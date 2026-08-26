@@ -32,10 +32,11 @@ export default async function ScanLayout({
 
   return (
     <>
-      {/* Explicit text color is load-bearing: :root declares color-scheme:
-          dark, so text without a color class would default to white on this
-          light surface. */}
-      <nav className="bg-white text-gray-900 shadow-sm sticky top-0">
+      {/* Explicit text color and light-scheme are load-bearing: :root
+          declares color-scheme: dark, so text without a color class would
+          default to white and UA-native form controls would render dark on
+          this light surface. */}
+      <nav className="light-scheme bg-white text-gray-900 shadow-sm sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
@@ -82,7 +83,7 @@ export default async function ScanLayout({
           </div>
         </div>
       </nav>
-      <main className="py-10 p-4 lg:p-12">
+      <main className="light-scheme py-10 p-4 lg:p-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">{children}</div>
       </main>
     </>
