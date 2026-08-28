@@ -22,8 +22,7 @@ import ArtistCarousel from "@/app/_components/artist/ArtistCarousel";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
 import EventIncognitoCard from "@/app/_components/event/EventIncognitoCard";
-import ActionButton from "@/app/_components/form/ActionButton";
-import TicketIcon from "@/app/_components/icon/TicketIcon";
+import EventTicketBuyModal from "@/app/_components/event/EventTicketBuyModal";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import EventInnerContentLinks from "@/app/_components/event/EventInnerContentLinks";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
@@ -404,17 +403,11 @@ export default async function EventPage({
             </div>
           </div>
         </div>
+        {/* Renders the mobile "Get tickets" CTA and the #ticketbuy dialog
+            (all viewports). Gated here so #ticketbuy silently no-ops on
+            past/incognito/non-selling events. */}
         {!isPastEvent && event.tickets.shouldSellTickets && !event.incognito ? (
-          <div className={"lg:hidden mb-16 z-10 relative"}>
-            <ActionButton
-              href={"#tickets"}
-              variant="primary"
-              className={"flex gap-x-2"}
-            >
-              <TicketIcon />
-              {t("getTickets")}
-            </ActionButton>
-          </div>
+          <EventTicketBuyModal products={products} event={event} />
         ) : (
           ""
         )}

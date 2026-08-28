@@ -146,6 +146,59 @@ export default function Tabs({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Mobile deep links (#tickets etc.): the browser's native anchor scroll
+  // runs before hydration and late content settle — slice images/embeds
+  // loading in, or client components like ArtistCarousel hiding themselves
+  // after mount, move the target after the scroll already happened and strand
+  // the viewport off-target. Re-pin the section whenever the page reflows
+  // during the first few seconds, and back off the moment the user scrolls.
+  useEffect(() => {
+    if (window.innerWidth >= 1024) return;
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    const tab = items.find(item => matchesHash(item, hash));
+    if (!tab) return;
+
+    let done = false;
+    const stop = () => {
+      done = true;
+    };
+    window.addEventListener("wheel", stop, { passive: true });
+    window.addEventListener("touchstart", stop, { passive: true });
+
+    const pin = () => {
+      if (done) return;
+      // Prefer an inner anchor (e.g. #artist-<uid>) over the section itself
+      const el =
+        document.getElementById(hash) ??
+        document.querySelector(`[data-tab-id="${tab.id}"]`);
+      // "instant", not "auto": html sets scroll-behavior: smooth, and auto
+      // would animate every corrective pin
+      el?.scrollIntoView({ behavior: "instant", block: "start" });
+    };
+
+    pin();
+    // Re-pin on every reflow of the page body while settling
+    const ro = new ResizeObserver(pin);
+    ro.observe(document.body);
+    // Catch-alls: after full load and a final pass, then stop correcting
+    if (document.readyState !== "complete") {
+      window.addEventListener("load", pin, { once: true });
+    }
+    const endTimer = setTimeout(stop, 3000);
+
+    return () => {
+      stop();
+      ro.disconnect();
+      clearTimeout(endTimer);
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchstart", stop);
+      window.removeEventListener("load", pin);
+    };
+    // Mount-only: corrects the initial deep-link landing position.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
