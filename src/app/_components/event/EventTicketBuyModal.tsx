@@ -58,6 +58,14 @@ export default function EventTicketBuyModal({ products, event }: Props) {
     };
   }, [isOpen]);
 
+  // Open via state, not href: an href would render a Next Link whose
+  // client-side pushState never fires `hashchange` (so the modal wouldn't
+  // open) and which scrolls to top when the hash has no matching element.
+  const open = () => {
+    setIsOpen(true);
+    window.history.pushState(null, "", `#${TICKET_BUY_HASH}`);
+  };
+
   const close = () => {
     setIsOpen(false);
     if (window.location.hash.slice(1) === TICKET_BUY_HASH) {
@@ -73,7 +81,7 @@ export default function EventTicketBuyModal({ products, event }: Props) {
     <>
       <div className={"lg:hidden mb-16 z-10 relative"}>
         <ActionButton
-          href={`#${TICKET_BUY_HASH}`}
+          onClick={open}
           variant="primary"
           className={"flex gap-x-2"}
         >
