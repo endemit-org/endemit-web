@@ -113,7 +113,11 @@ export default function EventTicketBuyModal({ products, event }: Props) {
                 {tc("close")}
               </button>
             </div>
-            <EventTicketDisplay products={products} event={event} />
+            <EventTicketDisplay
+              products={products}
+              event={event}
+              autoExpandTicket={false}
+            />
           </div>
         </div>
       )}
