@@ -20,6 +20,9 @@ import { useTranslations } from "next-intl";
 interface EventTicketDisplayProps {
   products: Product[];
   event: Event;
+  /** Auto-expand the highlighted ticket when scrolled into view (default).
+   *  Off in the #ticketbuy dialog, where nothing should pre-open. */
+  autoExpandTicket?: boolean;
 }
 
 export function formatTicketTitle(
@@ -115,6 +118,7 @@ function TicketPurchaseDisplay({
 export default function EventTicketDisplay({
   products,
   event,
+  autoExpandTicket = true,
 }: EventTicketDisplayProps) {
   const t = useTranslations("events");
   // Defensive: never crash the whole page if an event somehow arrives undefined.
@@ -268,7 +272,7 @@ export default function EventTicketDisplay({
           items={accordionItems}
           allowMultiple={false}
           compact={true}
-          autoExpandIndexOnView={middleIndex}
+          autoExpandIndexOnView={autoExpandTicket ? middleIndex : undefined}
           autoExpandDelay={500}
         />
       )}
