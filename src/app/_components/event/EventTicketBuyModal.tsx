@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import EventTicketDisplay from "@/app/_components/event/EventTicketsDisplay";
+import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import ActionButton from "@/app/_components/form/ActionButton";
 import TicketIcon from "@/app/_components/icon/TicketIcon";
 import { Product } from "@/domain/product/types/product";
@@ -113,6 +114,34 @@ export default function EventTicketBuyModal({ products, event }: Props) {
                 {tc("close")}
               </button>
             </div>
+            {/* Square event art above the listing: video when present,
+                promo image as fallback */}
+            {event.video ? (
+              <div className="w-full max-w-[280px] mx-auto mb-6 rounded-lg overflow-hidden">
+                <video
+                  src={event.video}
+                  loop={true}
+                  muted={true}
+                  autoPlay={true}
+                  playsInline={true}
+                  className="aspect-square w-full object-cover"
+                />
+              </div>
+            ) : (
+              event.promoImage?.src && (
+                <div className="w-full max-w-[280px] mx-auto mb-6 rounded-lg overflow-hidden">
+                  <ImageWithFallback
+                    src={event.promoImage.src}
+                    alt={event.promoImage.alt ?? event.name}
+                    width={400}
+                    height={400}
+                    quality={85}
+                    className="aspect-square w-full object-cover"
+                    placeholder={event.promoImage.placeholder}
+                  />
+                </div>
+              )
+            )}
             <EventTicketDisplay
               products={products}
               event={event}
