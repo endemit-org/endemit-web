@@ -2299,7 +2299,8 @@
       "openSlip": "Odpri potrdilo v brskalniku",
       "printing": "Tiskam ...",
       "paperTicketsForCustomer": "Natisni tudi karte na papir (kupec jih ima v profilu)",
-      "printTickets": "Natisni karte"
+      "printTickets": "Natisni karte",
+      "ticketsPending": "Karte se še izdajajo — poskusi še enkrat čez trenutek"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",

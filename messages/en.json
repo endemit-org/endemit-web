@@ -2299,7 +2299,8 @@
       "openSlip": "Open slip in browser",
       "printing": "Printing…",
       "paperTicketsForCustomer": "Also print paper tickets (customer has them in their profile)",
-      "printTickets": "Print tickets"
+      "printTickets": "Print tickets",
+      "ticketsPending": "Tickets are still being issued — try again in a moment"
     },
     "sticker": {
       "resolving": "Resolving wristband...",

@@ -109,9 +109,14 @@ export async function POST(
         },
       });
       if (issued === 0) {
+        // Issuance is async (Inngest) — a sale with ticket items whose
+        // tickets haven't landed yet is "pending", not "none"
         return NextResponse.json(
-          { error: "Order has no tickets" },
-          { status: 400 }
+          {
+            error:
+              ticketableCount > 0 ? "TICKETS_PENDING" : "Order has no tickets",
+          },
+          { status: ticketableCount > 0 ? 409 : 400 }
         );
       }
     }

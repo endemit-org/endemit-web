@@ -11,6 +11,7 @@ export type BroadcastEvent =
   | "pos_order_paid"
   | "pos_order_fulfilled"
   | "pos_order_cancelled"
+  | "pos_tickets_issued"
   | "ticket_scanned"
   | "ticket_scan_reverted"
   | "announcement_created"
@@ -59,6 +60,12 @@ export interface PosOrderFulfilledPayload {
   queueNumber: number | null;
 }
 
+/** Tickets for a paid POS order have been issued (async, after payment). */
+export interface PosTicketsIssuedPayload {
+  orderId: string;
+  ticketCount: number;
+}
+
 export interface PosOrderCancelledPayload {
   orderId: string;
   shortCode: string;
@@ -99,6 +106,7 @@ export interface BroadcastPayload {
   pos_order_paid: PosOrderPaidPayload;
   pos_order_cancelled: PosOrderCancelledPayload;
   pos_order_fulfilled: PosOrderFulfilledPayload;
+  pos_tickets_issued: PosTicketsIssuedPayload;
   ticket_scanned: TicketScannedPayload;
   ticket_scan_reverted: TicketScanRevertedPayload;
   announcement_created: AnnouncementPayload;

@@ -14,7 +14,13 @@ import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
 import { posErrorMessageKey } from "@/domain/pos/types/posError";
-import { printOrderReceipt, type PrintParts } from "./eposBrowserPrint";
+import { printOrderReceipt } from "./eposBrowserPrint";
+
+/** Auto-print of ticket slips, owned by the register (outlives this modal). */
+export interface TicketSlipPrintState {
+  state: "waiting" | "printed" | "error";
+  error?: string;
+}
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
@@ -78,6 +84,12 @@ interface Props {
   register: RegisterConfig;
   onClose: () => void;
   onCopyToCart: () => void;
+  /**
+   * Tickets are issued async after payment; the register waits for them and
+   * prints the slips even if this modal has been closed by then.
+   */
+  onQueueTicketSlips?: (order: { id: string; orderHash: string }) => void;
+  ticketSlipState?: TicketSlipPrintState;
 }
 
 const AUTO_CLOSE_SECONDS = 30;
@@ -95,6 +107,8 @@ export function PosOrderQrModal({
   register,
   onClose,
   onCopyToCart,
+  onQueueTicketSlips,
+  ticketSlipState,
 }: Props) {
   const t = useTranslations("pos");
   const tw = useTranslations("profile.walletPay");
@@ -177,9 +191,12 @@ export function PosOrderQrModal({
   type PrintState = "idle" | "printing" | "printed" | "error";
   const [printState, setPrintState] = useState<PrintState>("idle");
   const [ticketPrintState, setTicketPrintState] = useState<PrintState>("idle");
-  // Known customers carry tickets in their profile, so slips are skipped by
-  // default — the seller can opt in so nobody has to log in for paper.
-  const [paperTickets, setPaperTickets] = useState(false);
+  const [printError, setPrintError] = useState<string | null>(null);
+  const [ticketPrintError, setTicketPrintError] = useState<string | null>(null);
+  // Ticket slips print with the receipt by default, also for known customers
+  // (who additionally carry tickets in their profile) — the seller can untick
+  // to save paper when the customer will use their profile QR.
+  const [paperTickets, setPaperTickets] = useState(true);
 
   const totalRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -316,34 +333,76 @@ export function PosOrderQrModal({
   const handlePrint = useCallback(async () => {
     if (!register.printerUrl) return;
     setPrintState("printing");
-    const parts: PrintParts = paperTickets ? "all" : "full";
+    setPrintError(null);
     const result = await printOrderReceipt(
       order.orderHash,
       register.printerUrl,
-      parts
+      "receipt"
     );
     setPrintState(result.success ? "printed" : "error");
-  }, [order.orderHash, register.printerUrl, paperTickets]);
+    if (!result.success) setPrintError(result.error ?? null);
+  }, [order.orderHash, register.printerUrl]);
 
   const handlePrintTickets = useCallback(async () => {
     if (!register.printerUrl) return;
     setTicketPrintState("printing");
+    setTicketPrintError(null);
     const result = await printOrderReceipt(
       order.orderHash,
       register.printerUrl,
       "tickets"
     );
     setTicketPrintState(result.success ? "printed" : "error");
-  }, [order.orderHash, register.printerUrl]);
+    if (!result.success) {
+      setTicketPrintError(
+        result.error === "TICKETS_PENDING"
+          ? t("orders.ticketsPending")
+          : (result.error ?? null)
+      );
+    }
+  }, [order.orderHash, register.printerUrl, t]);
 
   // Receipt prints automatically the moment the order flips to paid; the
-  // button stays for reprints.
+  // buttons stay for reprints.
   const hasAutoPrintedRef = useRef(false);
+  const autoPrintTickets = Boolean(
+    register.printerUrl && hasTicketItems && paperTickets
+  );
   useEffect(() => {
     if (!isPaid || !register.printerUrl || hasAutoPrintedRef.current) return;
     hasAutoPrintedRef.current = true;
-    void handlePrint();
-  }, [isPaid, register.printerUrl, handlePrint]);
+    // Receipt right away; ticket slips follow once the tickets exist
+    setPrintState("printing");
+    void printOrderReceipt(
+      order.orderHash,
+      register.printerUrl,
+      "receipt"
+    ).then(result => {
+      setPrintState(result.success ? "printed" : "error");
+      if (!result.success) setPrintError(result.error ?? null);
+    });
+    if (autoPrintTickets) {
+      onQueueTicketSlips?.({ id: order.id, orderHash: order.orderHash });
+    }
+  }, [
+    isPaid,
+    register.printerUrl,
+    order.id,
+    order.orderHash,
+    autoPrintTickets,
+    onQueueTicketSlips,
+  ]);
+
+  // Ticket button reflects the register-owned auto-print until the seller
+  // presses it themselves
+  const shownTicketState: PrintState =
+    ticketPrintState !== "idle" || !ticketSlipState
+      ? ticketPrintState
+      : ticketSlipState.state === "waiting"
+        ? "printing"
+        : ticketSlipState.state;
+  const shownTicketError =
+    ticketPrintState !== "idle" ? ticketPrintError : ticketSlipState?.error;
 
   const handleMarkPaid = useCallback(
     async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
@@ -858,20 +917,28 @@ export function PosOrderQrModal({
                       : t("orders.printReceipt")}
               </button>
             )}
+            {printState === "error" && printError && (
+              <p className="text-center text-white/80 text-xs">{printError}</p>
+            )}
             {register.printerUrl && hasTicketItems && (
               <button
                 onClick={handlePrintTickets}
-                disabled={ticketPrintState === "printing"}
+                disabled={shownTicketState === "printing"}
                 className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10 disabled:opacity-60"
               >
-                {ticketPrintState === "printing"
+                {shownTicketState === "printing"
                   ? t("orders.printing")
-                  : ticketPrintState === "printed"
+                  : shownTicketState === "printed"
                     ? t("orders.printQueued")
-                    : ticketPrintState === "error"
+                    : shownTicketState === "error"
                       ? t("orders.printFailed")
                       : t("orders.printTickets")}
               </button>
+            )}
+            {shownTicketState === "error" && shownTicketError && (
+              <p className="text-center text-white/80 text-xs">
+                {shownTicketError}
+              </p>
             )}
             <a
               href={`/pos/receipt/${order.orderHash}`}

@@ -2,6 +2,7 @@ import "server-only";
 
 import { inngest } from "@/lib/services/inngest";
 import { prisma } from "@/lib/services/prisma";
+import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 import { customAlphabet } from "nanoid";
 import { createDoorSaleTickets } from "@/domain/ticket/operations/createDoorSaleTickets";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
@@ -116,6 +117,24 @@ export const runPosTicketIssueAutomation = inngest.createFunction(
 
       issued += tickets.length;
     }
+
+    // Tell the register (auto-prints ticket slips) and the order's customer
+    // that paper/profile tickets now exist
+    await step.run("broadcast-tickets-issued", async () => {
+      const payload = { orderId: order.id, ticketCount: issued };
+      await Promise.all([
+        broadcastToChannel(
+          `pos:register:${order.registerId}`,
+          "pos_tickets_issued",
+          payload
+        ),
+        broadcastToChannel(
+          `pos:order:${order.id}`,
+          "pos_tickets_issued",
+          payload
+        ),
+      ]);
+    });
 
     return { issued };
   }

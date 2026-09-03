@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -9,7 +9,13 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import { PosItemGrid } from "./PosItemGrid";
 import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
-import { PosOrderQrModal } from "./PosOrderQrModal";
+import { PosOrderQrModal, type TicketSlipPrintState } from "./PosOrderQrModal";
+import { printOrderReceipt } from "./eposBrowserPrint";
+
+// Tickets are issued async after payment (Inngest). The register prints the
+// slips when the "pos_tickets_issued" broadcast lands; if it never does, it
+// falls back to asking the print route, which itself waits a few seconds.
+const TICKET_SLIP_FALLBACK_MS = 20_000;
 import { PosRecentTransactions } from "./PosRecentTransactions";
 import { PosPrinterStatus } from "./PosPrinterStatus";
 import { PosToServeList } from "./PosToServeList";
@@ -107,6 +113,70 @@ export function PosRegisterInterface({
   const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [txRefreshKey, setTxRefreshKey] = useState(0);
+
+  // Ticket slips pending print, keyed by order id — only orders this device
+  // sold (other sellers on the same register get the broadcast too and must
+  // not print duplicates)
+  const ticketSlipQueueRef = useRef(
+    new Map<string, { orderHash: string; timer: number }>()
+  );
+  const [ticketSlipStates, setTicketSlipStates] = useState<
+    Record<string, TicketSlipPrintState>
+  >({});
+
+  const printTicketSlips = useCallback(
+    async (orderId: string) => {
+      const entry = ticketSlipQueueRef.current.get(orderId);
+      if (!entry || !register.printerUrl) return;
+      ticketSlipQueueRef.current.delete(orderId);
+      window.clearTimeout(entry.timer);
+      const result = await printOrderReceipt(
+        entry.orderHash,
+        register.printerUrl,
+        "tickets"
+      );
+      setTicketSlipStates(prev => ({
+        ...prev,
+        [orderId]: result.success
+          ? { state: "printed" }
+          : {
+              state: "error",
+              error:
+                result.error === "TICKETS_PENDING"
+                  ? t("orders.ticketsPending")
+                  : result.error,
+            },
+      }));
+    },
+    [register.printerUrl, t]
+  );
+
+  const queueTicketSlips = useCallback(
+    (order: { id: string; orderHash: string }) => {
+      if (ticketSlipQueueRef.current.has(order.id)) return;
+      const timer = window.setTimeout(
+        () => void printTicketSlips(order.id),
+        TICKET_SLIP_FALLBACK_MS
+      );
+      ticketSlipQueueRef.current.set(order.id, {
+        orderHash: order.orderHash,
+        timer,
+      });
+      setTicketSlipStates(prev => ({
+        ...prev,
+        [order.id]: { state: "waiting" },
+      }));
+    },
+    [printTicketSlips]
+  );
+
+  useRealtimeChannel({
+    channelName: `pos:register:${register.id}`,
+    event: "pos_tickets_issued",
+    onMessage: payload => {
+      void printTicketSlips(payload.orderId);
+    },
+  });
   const [orderNote, setOrderNote] = useState("");
   const [attachedCustomer, setAttachedCustomer] = useState<{
     id: string;
@@ -755,6 +825,8 @@ export function PosRegisterInterface({
           register={register}
           onClose={() => setActiveOrder(null)}
           onCopyToCart={() => copyToCart(activeOrder)}
+          onQueueTicketSlips={queueTicketSlips}
+          ticketSlipState={ticketSlipStates[activeOrder.id]}
         />
       )}
     </div>
