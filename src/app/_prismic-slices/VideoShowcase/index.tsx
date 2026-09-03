@@ -41,7 +41,8 @@ async function getVimeoThumbnail(videoId: string): Promise<string | null> {
  * Component for "VideoShowcase" Slices: a vertical 9:16 Vimeo video, Hero
  * style — the whole slice links to the CTA target, with the white hover
  * frame. Desktop shows text beside the video over a blurred video ambilight;
- * mobile overlays the text on the video and plays in a fullscreen modal.
+ * mobile overlays the text on the video (tapping it follows the link) and
+ * play runs inline on every viewport.
  */
 const VideoShowcase: FC<VideoShowcaseProps> = async ({ slice, context }) => {
   const { primary } = slice;
@@ -121,7 +122,7 @@ const VideoShowcase: FC<VideoShowcaseProps> = async ({ slice, context }) => {
   // badge, same treatment as the Hero's marker.
   const ctaCue =
     href && isFilled.keyText(ctaLabel) ? (
-      <span className="self-start pointer-events-auto backdrop-blur-lg py-1 px-3 w-fit text-neutral-300 text-sm uppercase font-bold border border-neutral-700">
+      <span className="self-start backdrop-blur-lg py-1 px-3 w-fit text-neutral-300 text-sm uppercase font-bold border border-neutral-700">
         {ctaLabel}
       </span>
     ) : null;

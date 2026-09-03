@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { printOrderReceipt, type PrintParts } from "./eposBrowserPrint";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 
@@ -19,11 +20,18 @@ interface PosTransaction {
   cancelledAt: string | null;
   sellerName: string | null;
   customerName: string | null;
-  items: Array<{ name: string; quantity: number; total: number }>;
+  items: Array<{
+    name: string;
+    quantity: number;
+    total: number;
+    isTicket?: boolean;
+  }>;
 }
 
 interface Props {
   registerId: string;
+  /** Local ePOS printer of the register; print buttons hide without it. */
+  printerUrl?: string | null;
   /** Bump to refetch (e.g. when a realtime order event arrives). */
   refreshKey?: number;
 }
@@ -34,7 +42,11 @@ const statusStyles: Record<PosTransaction["status"], string> = {
   CANCELLED: "bg-red-100 text-red-800",
 };
 
-export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
+export function PosRecentTransactions({
+  registerId,
+  printerUrl,
+  refreshKey = 0,
+}: Props) {
   const t = useTranslations("pos.transactions");
   const [transactions, setTransactions] = useState<PosTransaction[] | null>(
     null
@@ -43,7 +55,34 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [queuedIds, setQueuedIds] = useState<Set<string>>(new Set());
+  // Per-order print outcome of the last action (parts chosen + result)
+  const [printStates, setPrintStates] = useState<
+    Record<string, { parts: PrintParts; state: "printing" | "ok" | "error" }>
+  >({});
+
+  const handlePrint = async (
+    e: React.MouseEvent,
+    orderHash: string,
+    id: string,
+    parts: PrintParts
+  ) => {
+    e.stopPropagation();
+    if (!printerUrl) return;
+    setPrintStates(prev => ({ ...prev, [id]: { parts, state: "printing" } }));
+    const result = await printOrderReceipt(orderHash, printerUrl, parts);
+    setPrintStates(prev => ({
+      ...prev,
+      [id]: { parts, state: result.success ? "ok" : "error" },
+    }));
+  };
+
+  const printLabel = (id: string, parts: PrintParts, idle: string) => {
+    const current = printStates[id];
+    if (!current || current.parts !== parts) return idle;
+    if (current.state === "printing") return t("printing");
+    if (current.state === "ok") return t("printQueued");
+    return t("printFailed");
+  };
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -206,19 +245,37 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                   </div>
                   {tx.status === "PAID" && (
                     <span className="flex items-center gap-2 whitespace-nowrap">
-                      <button
-                        onClick={async e => {
-                          e.stopPropagation();
-                          setQueuedIds(prev => new Set(prev).add(tx.id));
-                          await fetch(
-                            `/api/v1/pos/orders/${tx.orderHash}/print`,
-                            { method: "POST" }
-                          ).catch(() => {});
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        {queuedIds.has(tx.id) ? t("printQueued") : t("print")}
-                      </button>
+                      {printerUrl && (
+                        <>
+                          <button
+                            onClick={e =>
+                              handlePrint(e, tx.orderHash, tx.id, "full")
+                            }
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            {printLabel(tx.id, "full", t("print"))}
+                          </button>
+                          {/* Partial reprints when a print half-failed */}
+                          <button
+                            onClick={e =>
+                              handlePrint(e, tx.orderHash, tx.id, "receipt")
+                            }
+                            className="text-gray-500 hover:text-gray-700"
+                          >
+                            {printLabel(tx.id, "receipt", t("printReceiptOnly"))}
+                          </button>
+                          {tx.items.some(item => item.isTicket) && (
+                            <button
+                              onClick={e =>
+                                handlePrint(e, tx.orderHash, tx.id, "tickets")
+                              }
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              {printLabel(tx.id, "tickets", t("printTicketsOnly"))}
+                            </button>
+                          )}
+                        </>
+                      )}
                       <a
                         href={`/pos/receipt/${tx.orderHash}`}
                         target="_blank"

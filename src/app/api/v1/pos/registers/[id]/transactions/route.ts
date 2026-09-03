@@ -50,7 +50,12 @@ export async function GET(
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       include: {
         items: {
-          select: { name: true, quantity: true, total: true },
+          select: {
+            name: true,
+            quantity: true,
+            total: true,
+            item: { select: { ticketEventId: true } },
+          },
         },
         seller: {
           select: { name: true },
@@ -80,7 +85,12 @@ export async function GET(
         cancelledAt: order.cancelledAt?.toISOString() ?? null,
         sellerName: order.seller.name,
         customerName: order.customer?.name ?? null,
-        items: order.items,
+        items: order.items.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          total: item.total,
+          isTicket: Boolean(item.item.ticketEventId),
+        })),
       })),
     });
   } catch (error) {

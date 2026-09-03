@@ -1617,7 +1617,9 @@
         "methodCard": "Kartica",
         "fiscalBadge": "Davčno",
         "trackFulfillment": "Sledenje strežbi (stojnica s hrano: naročila ostanejo odprta do postrežbe, s številkami vrste)",
-        "fulfillmentBadge": "Strežba"
+        "fulfillmentBadge": "Strežba",
+        "printerUrl": "Naslov tiskalnika za račune (ePOS)",
+        "printerUrlHint": "Lokalni naslov Epson tiskalnika, npr. https://EPSONC78511.local — naprave prodajalcev tiskajo nanj direktno prek lokalnega omrežja. Pusti prazno, če blagajna nima tiskalnika."
       },
       "stickers": {
         "title": "POS offline QR-ji",
@@ -2220,7 +2222,11 @@
         "cancelled": "Preklicano",
         "tip": "Napitnina",
         "total": "Skupaj"
-      }
+      },
+      "printing": "Tiskam ...",
+      "printFailed": "Ni uspelo ✗",
+      "printReceiptOnly": "Račun",
+      "printTicketsOnly": "Karte"
     },
     "balanceCheck": {
       "label": "Stanje",
@@ -2290,7 +2296,10 @@
       "printReceipt": "Natisni račun",
       "printQueued": "Poslano na tiskalnik ✓",
       "printFailed": "Tiskanje ni uspelo — poskusi znova",
-      "openSlip": "Odpri potrdilo v brskalniku"
+      "openSlip": "Odpri potrdilo v brskalniku",
+      "printing": "Tiskam ...",
+      "paperTicketsForCustomer": "Natisni tudi karte na papir (kupec jih ima v profilu)",
+      "printTickets": "Natisni karte"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
@@ -2316,6 +2325,14 @@
     "attachedCustomer": {
       "paying": "Plača: {name} — {balance}",
       "insufficient": "premalo dobroimetja"
+    },
+    "printer": {
+      "test": "Testni izpis",
+      "testing": "Tiskam ...",
+      "testOk": "Tiskalnik OK ✓",
+      "testFailed": "Ni uspelo",
+      "testSlip": "Testni izpis blagajne",
+      "certHint": "Odpri naslov tiskalnika v brskalniku in potrdi certifikat (Advanced → Proceed), potem poskusi še enkrat."
     }
   },
   "scan": {

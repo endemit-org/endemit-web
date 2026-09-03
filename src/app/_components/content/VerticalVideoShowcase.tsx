@@ -3,7 +3,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import ModalPortal from "@/app/_components/ui/ModalPortal";
 
 interface VerticalVideoShowcaseProps {
   vimeoVideoId: string;
@@ -13,7 +12,11 @@ interface VerticalVideoShowcaseProps {
   href?: string | null;
   /** Server-rendered text column, shown beside the video on desktop. */
   children?: ReactNode;
-  /** Server-rendered text overlaid on the video's bottom edge on mobile. */
+  /**
+   * Server-rendered text overlaid on the video's bottom edge on mobile; it
+   * navigates to `href` when tapped. Once the inline player is running it
+   * moves below the video so it neither covers the controls nor disappears.
+   */
   overlay?: ReactNode;
 }
 
@@ -35,9 +38,9 @@ function playerSrc(id: string, params: Record<string, string>) {
  * Vertical 9:16 Vimeo showcase. The video previews as a muted, controls-free
  * loop once the slice nears the viewport. On desktop the loop also feeds a
  * blurred, scaled "ambilight" layer behind the whole slice, and clicking play
- * swaps the preview for the real player (sound + controls) in place. On
- * mobile, play opens a fullscreen modal player instead — 9:16 inline is too
- * cramped there — and the text overlays the video like the Hero.
+ * swaps the preview for the real player (sound + controls) in place — on
+ * every viewport. On mobile the text overlays the video like the Hero and
+ * links to the CTA target.
  */
 export default function VerticalVideoShowcase({
   vimeoVideoId,
@@ -52,7 +55,6 @@ export default function VerticalVideoShowcase({
   const [isDesktop, setIsDesktop] = useState(false);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [inlinePlayer, setInlinePlayer] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const previewSrc = playerSrc(vimeoVideoId, {
     controls: "0",
@@ -94,29 +96,11 @@ export default function VerticalVideoShowcase({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  useEffect(() => {
-    if (!modalOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setModalOpen(false);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [modalOpen]);
-
   const handlePlay = (e: React.MouseEvent) => {
     // The slice may be one big link — playing must not navigate.
     e.preventDefault();
     e.stopPropagation();
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      setInlinePlayer(true);
-    } else {
-      setModalOpen(true);
-    }
+    setInlinePlayer(true);
   };
 
   const showAmbilight = isDesktop && inView;
@@ -189,11 +173,12 @@ export default function VerticalVideoShowcase({
                   tabIndex={-1}
                 />
               )}
-              {/* Sits above the play-capture button so the CTA cue (the only
-                  pointer-events-auto child) navigates instead of playing. */}
+              {/* Sits above the play-capture button: the gradient lets taps
+                  through to play, the text block itself navigates (it is
+                  inside the slice link). */}
               {overlay && (
                 <div className="md:hidden absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-neutral-950/90 via-neutral-950/50 to-transparent px-4 pb-4 pt-16 pointer-events-none">
-                  {overlay}
+                  <div className="pointer-events-auto">{overlay}</div>
                 </div>
               )}
               <button
@@ -217,6 +202,12 @@ export default function VerticalVideoShowcase({
             </>
           )}
         </div>
+
+        {/* Mobile, while playing: the overlay would cover the player's
+            controls, so the text moves under the video instead. */}
+        {inlinePlayer && overlay && (
+          <div className="md:hidden w-full max-w-sm mx-auto">{overlay}</div>
+        )}
       </div>
     </>
   );
@@ -232,36 +223,6 @@ export default function VerticalVideoShowcase({
         </Link>
       ) : (
         <div className={rootClassName}>{inner}</div>
-      )}
-
-      {modalOpen && (
-        <ModalPortal>
-          <div
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
-            onClick={() => setModalOpen(false)}
-          >
-            <button
-              type="button"
-              className="absolute top-4 right-4 z-10 text-neutral-200 text-4xl hover:text-gray-300 transition-colors"
-              onClick={() => setModalOpen(false)}
-              aria-label={t("a11y.closeVideo")}
-            >
-              &times;
-            </button>
-            <div
-              className="relative aspect-[9/16] h-full max-h-[calc(100dvh-4rem)] max-w-full"
-              onClick={e => e.stopPropagation()}
-            >
-              <iframe
-                src={watchSrc}
-                className="absolute inset-0 w-full h-full"
-                style={{ border: 0 }}
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        </ModalPortal>
       )}
     </div>
   );

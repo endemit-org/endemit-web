@@ -4,9 +4,10 @@ import { createTranslator } from "next-intl";
 import { prisma } from "@/lib/services/prisma";
 import slMessages from "../../../../../messages/sl.json";
 import { buildReceiptEposXml } from "@/lib/services/epos";
+import { getReceiptLogo } from "@/lib/services/epos/logo";
 import { buildFiscalQrValue } from "@/lib/services/furs/zoi";
 import { FURS_TAX_NUMBER } from "@/lib/services/env/private";
-import { formatTokensFromCents } from "@/lib/util/currency";
+import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 
@@ -21,8 +22,26 @@ const COMPANY_LINES = [
  * HTML receipt page (fiscal data, VAT clause, cut-separated ticket slips).
  * Paper receipts print in Slovenian.
  */
+export interface RenderPosReceiptOptions {
+  /** Skip the receipt block, printing only ticket slips. Default true. */
+  includeReceipt?: boolean;
+  /**
+   * "auto" (default): ticket slips only for anonymous sales — wallet buyers
+   * carry tickets in their profile. "always" overrides that for manual
+   * prints; "never" prints the receipt alone.
+   */
+  ticketMode?: "auto" | "always" | "never";
+}
+
+// Thermal codepages have no token-symbol glyphs (they print as ??) — paper
+// amounts read EUR, matching the fiscal invoice currency.
+function formatAmountForPaper(cents: number): string {
+  return formatTokensFromCents(cents).replace(TOKEN_CONFIG.symbol, "EUR");
+}
+
 export async function renderPosReceiptEpos(
-  posOrderId: string
+  posOrderId: string,
+  options?: RenderPosReceiptOptions
 ): Promise<string | null> {
   const order = await prisma.posOrder.findUnique({
     where: { id: posOrderId },
@@ -67,8 +86,12 @@ export async function renderPosReceiptEpos(
     ).map(({ id, event }) => [id, event])
   );
 
+  const ticketMode = options?.ticketMode ?? "auto";
+  const includeTickets =
+    ticketMode === "always" ||
+    (ticketMode === "auto" && order.customerId === null);
   const tickets =
-    order.customerId === null
+    includeTickets
       ? order.tickets.map(ticket => {
           const cmsEvent = ticketEvents.get(ticket.eventId) ?? null;
           return {
@@ -91,6 +114,8 @@ export async function renderPosReceiptEpos(
         : t("methodCard");
 
   return buildReceiptEposXml({
+    includeReceipt: options?.includeReceipt ?? true,
+    logo: await getReceiptLogo().catch(() => null),
     registerName: order.register.name,
     queueNumber: order.queueNumber,
     companyLines: COMPANY_LINES,
@@ -101,10 +126,10 @@ export async function renderPosReceiptEpos(
     items: order.items.map(item => ({
       quantity: item.quantity,
       name: item.name,
-      total: formatTokensFromCents(item.total),
+      total: formatAmountForPaper(item.total),
     })),
-    tipLabel: order.tipAmount > 0 ? formatTokensFromCents(order.tipAmount) : null,
-    totalFormatted: formatTokensFromCents(order.total),
+    tipLabel: order.tipAmount > 0 ? formatAmountForPaper(order.tipAmount) : null,
+    totalFormatted: formatAmountForPaper(order.total),
     methodLabel,
     labels: {
       fiscalTitle: fiscalInvoice

@@ -1,9 +1,11 @@
 import "server-only";
 
 /**
- * ePOS-Print XML rendering for Epson receipt printers (TM-P80II et al.)
- * used via Server Direct Print: the printer polls our server and prints
- * the returned XML. 80mm @ 203dpi = 48 columns in font A.
+ * ePOS-Print XML rendering for Epson receipt printers (TM-P80II et al.).
+ * Two transports consume this XML: the seller's browser POSTs it straight
+ * to the printer on the LAN (TM-P80II has no Server Direct Print — see
+ * eposBrowserPrint.ts), and the Server Direct Print poll endpoint remains
+ * for printers that support it. 80mm @ 203dpi = 48 columns in font A.
  */
 
 const COLS = 48;
@@ -46,6 +48,10 @@ function wrap(content: string): string[] {
 }
 
 export interface EposReceiptData {
+  /** Print the receipt block; false = ticket slips only. Default true. */
+  includeReceipt?: boolean;
+  /** 1-bit wordmark raster; falls back to double-size text when absent. */
+  logo?: { width: number; height: number; base64: string } | null;
   registerName: string;
   queueNumber?: number | null;
   companyLines: string[];
@@ -98,11 +104,49 @@ function qrSymbol(data: string, width: number): string {
 export function buildReceiptEposXml(data: EposReceiptData): string {
   const parts: string[] = [];
 
+  if (data.includeReceipt !== false) {
+    buildReceiptBlock(data, parts);
+  }
+
+  // One cut-separated slip per ticket
+  for (const ticket of data.tickets) {
+    parts.push(`<text align="center"/>`);
+    parts.push(`<text dw="true" dh="true" em="true"/>`);
+    parts.push(text(ticket.eventName.toUpperCase()));
+    parts.push(`<text dw="false" dh="false" em="false"/>`);
+    if (ticket.eventDate) parts.push(text(ticket.eventDate));
+    if (ticket.venueName) parts.push(text(ticket.venueName));
+    parts.push(`<feed unit="12"/>`);
+    parts.push(qrSymbol(ticket.qrData, 6));
+    parts.push(`<feed unit="12"/>`);
+    parts.push(`<text em="true"/>`);
+    parts.push(text(ticket.shortId));
+    parts.push(`<text em="false"/>`);
+    parts.push(text(data.labels.ticketsHint));
+    parts.push(`<feed unit="24"/>`);
+    parts.push(`<cut type="feed"/>`);
+  }
+
+  return (
+    `<epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print">` +
+    parts.join("") +
+    `</epos-print>`
+  );
+}
+
+function buildReceiptBlock(data: EposReceiptData, parts: string[]): void {
   // Header
   parts.push(`<text align="center"/>`);
-  parts.push(`<text dw="true" dh="true" em="true"/>`);
-  parts.push(text("ENDEMIT"));
-  parts.push(`<text dw="false" dh="false" em="false"/>`);
+  if (data.logo) {
+    parts.push(
+      `<image width="${data.logo.width}" height="${data.logo.height}" color="color_1" mode="mono">${data.logo.base64}</image>`
+    );
+    parts.push(`<feed unit="12"/>`);
+  } else {
+    parts.push(`<text dw="true" dh="true" em="true"/>`);
+    parts.push(text("ENDEMIT"));
+    parts.push(`<text dw="false" dh="false" em="false"/>`);
+  }
   for (const companyLine of data.companyLines) {
     parts.push(text(companyLine));
   }
@@ -173,31 +217,6 @@ export function buildReceiptEposXml(data: EposReceiptData): string {
   parts.push(text(data.labels.thanks));
   parts.push(`<feed unit="24"/>`);
   parts.push(`<cut type="feed"/>`);
-
-  // One cut-separated slip per ticket
-  for (const ticket of data.tickets) {
-    parts.push(`<text align="center"/>`);
-    parts.push(`<text dw="true" dh="true" em="true"/>`);
-    parts.push(text(ticket.eventName.toUpperCase()));
-    parts.push(`<text dw="false" dh="false" em="false"/>`);
-    if (ticket.eventDate) parts.push(text(ticket.eventDate));
-    if (ticket.venueName) parts.push(text(ticket.venueName));
-    parts.push(`<feed unit="12"/>`);
-    parts.push(qrSymbol(ticket.qrData, 6));
-    parts.push(`<feed unit="12"/>`);
-    parts.push(`<text em="true"/>`);
-    parts.push(text(ticket.shortId));
-    parts.push(`<text em="false"/>`);
-    parts.push(text(data.labels.ticketsHint));
-    parts.push(`<feed unit="24"/>`);
-    parts.push(`<cut type="feed"/>`);
-  }
-
-  return (
-    `<epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print">` +
-    parts.join("") +
-    `</epos-print>`
-  );
 }
 
 /** Wrap rendered jobs in the Server Direct Print response envelope. */

@@ -97,6 +97,7 @@ export default function PosRegistersDisplay({
       acceptsCard: formData.get("acceptsCard") === "true",
       fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
       trackFulfillment: formData.get("trackFulfillment") === "true",
+      printerUrl: ((formData.get("printerUrl") as string) || "").trim() || null,
     };
 
     if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
@@ -140,6 +141,7 @@ export default function PosRegistersDisplay({
       acceptsCard: formData.get("acceptsCard") === "true",
       fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
       trackFulfillment: formData.get("trackFulfillment") === "true",
+      printerUrl: ((formData.get("printerUrl") as string) || "").trim() || null,
     };
 
     if (!input.acceptsWallet && !input.acceptsCash && !input.acceptsCard) {
@@ -440,6 +442,20 @@ export default function PosRegistersDisplay({
               {t("trackFulfillment")}
             </span>
           </label>
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t("printerUrl")}
+          </label>
+          <input
+            name="printerUrl"
+            type="text"
+            defaultValue={register?.printerUrl ?? ""}
+            placeholder="https://EPSONC78511.local"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p className="text-xs text-gray-500 mt-1">{t("printerUrlHint")}</p>
         </div>
       </div>
 
