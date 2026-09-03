@@ -32,5 +32,6 @@ export const components = {
   ticket_price_progress: dynamic(() => import("./TicketPriceProgress")),
   venue_list: dynamic(() => import("./VenueList")),
   vfx: dynamic(() => import("./Vfx")),
+  video_showcase: dynamic(() => import("./VideoShowcase")),
   vinyl_promo_section: dynamic(() => import("./VinylPromoSection")),
 };

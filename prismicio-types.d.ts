@@ -303,6 +303,7 @@ export type ArtistDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<ArtistDocumentData>, "artist", Lang>;
 
 type ContentPageDocumentDataSlicesSlice =
+  | VideoShowcaseSlice
   | BlurredBlobSlice
   | BannerSlice
   | CollabPromoSlice
@@ -586,6 +587,7 @@ export interface EventDocumentDataArtistsItem {
 }
 
 type EventDocumentDataSlicesSlice =
+  | VideoShowcaseSlice
   | ArtistLineupSlice
   | ArtistProfileListSlice
   | BannerSlice
@@ -1027,6 +1029,7 @@ export type FooterContentDocument<Lang extends string = string> =
   >;
 
 type HomePageDocumentDataSlicesSlice =
+  | VideoShowcaseSlice
   | TicketPriceProgressSlice
   | ArtistLineupSlice
   | BannerSlice
@@ -1118,6 +1121,7 @@ export type HomePageDocument<Lang extends string = string> =
   >;
 
 type InnerContentDocumentDataSlicesSlice =
+  | VideoShowcaseSlice
   | VenueListSlice
   | SaveTheDateSlice
   | TabsSlice
@@ -5515,6 +5519,151 @@ export type VinylPromoSectionSlice = prismic.SharedSlice<
   VinylPromoSectionSliceVariation
 >;
 
+/**
+ * Primary content in *VideoShowcase → Default → Primary*
+ */
+export interface VideoShowcaseSliceDefaultPrimary {
+  /**
+   * Vimeo video ID field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 76979871 (a 9:16 vertical video)
+   * - **API ID Path**: video_showcase.default.primary.vimeo_video_id
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  vimeo_video_id: prismic.KeyTextField;
+
+  /**
+   * Title field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Title (SL) field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.title_sl
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  title_sl: prismic.KeyTextField;
+
+  /**
+   * Description field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Description (SL) field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.description_sl
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description_sl: prismic.RichTextField;
+
+  /**
+   * CTA label field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. Get tickets
+   * - **API ID Path**: video_showcase.default.primary.cta_label
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  cta_label: prismic.KeyTextField;
+
+  /**
+   * CTA label (SL) field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.cta_label_sl
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  cta_label_sl: prismic.KeyTextField;
+
+  /**
+   * CTA link field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Where the CTA points
+   * - **API ID Path**: video_showcase.default.primary.cta_link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  cta_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+  /**
+   * Art image (optional, square, desktop only — shown above the text) field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.art_image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  art_image: prismic.ImageField<never>;
+
+  /**
+   * Art video (optional, overrides the art image) field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Muted looping mp4
+   * - **API ID Path**: video_showcase.default.primary.art_video
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  art_video: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * Poster (optional, falls back to the Vimeo thumbnail) field in *VideoShowcase → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: video_showcase.default.primary.poster
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  poster: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for VideoShowcase Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VideoShowcaseSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<VideoShowcaseSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *VideoShowcase*
+ */
+type VideoShowcaseSliceVariation = VideoShowcaseSliceDefault;
+
+/**
+ * VideoShowcase Shared Slice
+ *
+ * - **API ID**: `video_showcase`
+ * - **Description**: VideoShowcase
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type VideoShowcaseSlice = prismic.SharedSlice<
+  "video_showcase",
+  VideoShowcaseSliceVariation
+>;
+
 declare module "@prismicio/client" {
   interface CreateClient {
     (
@@ -5727,6 +5876,10 @@ declare module "@prismicio/client" {
       VinylPromoSectionSliceDefaultItem,
       VinylPromoSectionSliceVariation,
       VinylPromoSectionSliceDefault,
+      VideoShowcaseSlice,
+      VideoShowcaseSliceDefaultPrimary,
+      VideoShowcaseSliceVariation,
+      VideoShowcaseSliceDefault,
     };
   }
 }
