@@ -5,7 +5,10 @@ import { prisma } from "@/lib/services/prisma";
 import slMessages from "../../../../../messages/sl.json";
 import { buildReceiptEposXml } from "@/lib/services/epos";
 import { getReceiptLogo } from "@/lib/services/epos/logo";
-import { buildFiscalQrValue } from "@/lib/services/furs/zoi";
+import {
+  buildFiscalQrValue,
+  formatFiscalInvoiceNumber,
+} from "@/lib/services/furs/zoi";
 import { FURS_TAX_NUMBER } from "@/lib/services/env/private";
 import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
@@ -133,7 +136,9 @@ export async function renderPosReceiptEpos(
     methodLabel,
     labels: {
       fiscalTitle: fiscalInvoice
-        ? t("fiscalTitle", { number: fiscalInvoice.invoiceNumber })
+        ? t("fiscalTitle", {
+            number: formatFiscalInvoiceNumber(fiscalInvoice),
+          })
         : undefined,
       informalTitle: t("informalTitle"),
       order: t("order"),

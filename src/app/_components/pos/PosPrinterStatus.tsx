@@ -1,21 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   buildTestSlipXml,
   printerHomepage,
   printToEposPrinter,
+  probeEposPrinter,
+  type EposPrinterWarning,
 } from "./eposBrowserPrint";
+
+const PROBE_INTERVAL_MS = 30_000;
+
+type Probe =
+  | { kind: "checking" }
+  | { kind: "online"; warning?: EposPrinterWarning }
+  | { kind: "offline" };
 
 interface Props {
   printerUrl: string;
 }
 
 /**
- * Printer row in the register sidebar: the printer's address as a link
- * (staff open it to accept the self-signed TLS cert on a new device) and a
- * test-print button that reports connectivity failures inline.
+ * Printer row in the register sidebar: a live reachability dot (silent
+ * status probe every 30s and on tab focus — green reachable, amber paper /
+ * cover trouble, red unreachable or cert not trusted), the printer's address
+ * as a link (staff open it to accept the self-signed TLS cert on a new
+ * device) and a test-print button that reports connectivity failures inline.
  */
 export function PosPrinterStatus({ printerUrl }: Props) {
   const t = useTranslations("pos.printer");
@@ -23,8 +34,52 @@ export function PosPrinterStatus({ printerUrl }: Props) {
     "idle"
   );
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  const [probe, setProbe] = useState<Probe>({ kind: "checking" });
 
   const homepage = printerHomepage(printerUrl);
+
+  const runProbe = useCallback(async () => {
+    const result = await probeEposPrinter(printerUrl);
+    setProbe(
+      result.reachable
+        ? { kind: "online", warning: result.warning }
+        : { kind: "offline" }
+    );
+  }, [printerUrl]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const tick = () => {
+      if (document.visibilityState === "visible" && !cancelled) runProbe();
+    };
+    tick();
+    const interval = window.setInterval(tick, PROBE_INTERVAL_MS);
+    window.addEventListener("focus", tick);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", tick);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [runProbe]);
+
+  const dotClass =
+    probe.kind === "checking"
+      ? "bg-gray-300 animate-pulse"
+      : probe.kind === "offline"
+        ? "bg-red-500"
+        : probe.warning
+          ? "bg-amber-400"
+          : "bg-green-500";
+  const dotTitle =
+    probe.kind === "checking"
+      ? t("statusChecking")
+      : probe.kind === "offline"
+        ? t("statusOffline")
+        : probe.warning
+          ? t(probe.warning)
+          : t("statusOnline");
 
   const handleTest = async () => {
     setState("testing");
@@ -39,12 +94,19 @@ export function PosPrinterStatus({ printerUrl }: Props) {
       setState("error");
       setErrorDetail(result.error ?? null);
     }
+    runProbe();
   };
 
   return (
     <div className="px-4 py-2 border-b text-xs text-gray-600">
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-1.5 min-w-0">
+          <span
+            className={`w-2 h-2 rounded-full shrink-0 ${dotClass}`}
+            title={dotTitle}
+            role="img"
+            aria-label={dotTitle}
+          />
           <svg
             className="w-3.5 h-3.5 shrink-0"
             fill="none"
@@ -88,7 +150,11 @@ export function PosPrinterStatus({ printerUrl }: Props) {
                 : t("test")}
         </button>
       </div>
-      {state === "error" && (
+      {probe.kind === "online" && probe.warning && (
+        <p className="mt-1 text-amber-700">{t(probe.warning)}</p>
+      )}
+      {(state === "error" ||
+        (probe.kind === "offline" && state !== "testing")) && (
         <p className="mt-1 text-red-600">
           {errorDetail ? `${errorDetail} — ` : ""}
           {t("certHint")}

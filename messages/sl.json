@@ -2299,7 +2299,8 @@
       "openSlip": "Odpri potrdilo v brskalniku",
       "printing": "Tiskam ...",
       "paperTicketsForCustomer": "Natisni tudi karte na papir (kupec jih ima v profilu)",
-      "printTickets": "Natisni karte"
+      "printTickets": "Natisni karte",
+      "ticketsPending": "Karte se še izdajajo — poskusi še enkrat čez trenutek"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
@@ -2332,7 +2333,14 @@
       "testOk": "Tiskalnik OK ✓",
       "testFailed": "Ni uspelo",
       "testSlip": "Testni izpis blagajne",
-      "certHint": "Odpri naslov tiskalnika v brskalniku in potrdi certifikat (Advanced → Proceed), potem poskusi še enkrat."
+      "certHint": "Odpri naslov tiskalnika v brskalniku in potrdi certifikat (Advanced → Proceed), potem poskusi še enkrat.",
+      "statusChecking": "Preverjam tiskalnik ...",
+      "statusOnline": "Tiskalnik je dosegljiv",
+      "statusOffline": "Tiskalnik ni dosegljiv — ni na njegovem omrežju, je ugasnjen ali certifikat ni potrjen",
+      "paperEnd": "Zmanjkalo je papirja",
+      "paperNearEnd": "Papirja bo kmalu zmanjkalo",
+      "coverOpen": "Pokrov je odprt",
+      "error": "Napaka tiskalnika"
     }
   },
   "scan": {

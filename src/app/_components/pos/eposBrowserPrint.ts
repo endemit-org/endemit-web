@@ -84,7 +84,10 @@ export async function printOrderReceipt(
     });
     const data = await response.json();
     if (!response.ok || !data.xml) {
-      return { success: false, error: data.error ?? "Failed to render receipt" };
+      return {
+        success: false,
+        error: data.error ?? "Failed to render receipt",
+      };
     }
     jobId = data.jobId;
     xml = data.xml;
@@ -130,6 +133,76 @@ export async function printToEposPrinter(
   } catch (error) {
     return {
       success: false,
+      error: error instanceof Error ? error.message : "Printer unreachable",
+    };
+  }
+}
+
+export type EposPrinterWarning =
+  | "paperEnd"
+  | "paperNearEnd"
+  | "coverOpen"
+  | "error";
+
+export interface EposProbeResult {
+  reachable: boolean;
+  /** Printer answered but reports a condition that will block printing. */
+  warning?: EposPrinterWarning;
+  error?: string;
+}
+
+// ePOS-Print response `status` bitfield (Epson ePOS-Print API reference).
+const STATUS_COVER_OPEN = 0x00000020;
+const STATUS_MECHANICAL_ERR = 0x00000400;
+const STATUS_AUTOCUTTER_ERR = 0x00000800;
+const STATUS_UNRECOVER_ERR = 0x00002000;
+const STATUS_AUTORECOVER_ERR = 0x00004000;
+const STATUS_RECEIPT_NEAR_END = 0x00020000;
+const STATUS_RECEIPT_END = 0x00080000;
+
+/**
+ * Reachability probe without printing: an empty ePOS document makes the
+ * printer answer with its status bits and feeds no paper. A failed fetch
+ * means the device is off the printer's network, the printer is off, or the
+ * browser doesn't trust its TLS cert — the browser can't tell those apart.
+ */
+export async function probeEposPrinter(
+  printerUrl: string
+): Promise<EposProbeResult> {
+  try {
+    const response = await fetch(eposServiceUrl(printerUrl), {
+      method: "POST",
+      headers: { "Content-Type": "text/xml; charset=utf-8" },
+      body: soapEnvelope(
+        `<epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print"/>`
+      ),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) {
+      return { reachable: false, error: `Printer HTTP ${response.status}` };
+    }
+    const text = await response.text();
+    const status = Number(text.match(/\bstatus\s*=\s*"(\d+)"/i)?.[1] ?? 0);
+    if (status & STATUS_RECEIPT_END)
+      return { reachable: true, warning: "paperEnd" };
+    if (status & STATUS_COVER_OPEN)
+      return { reachable: true, warning: "coverOpen" };
+    if (
+      status &
+      (STATUS_MECHANICAL_ERR |
+        STATUS_AUTOCUTTER_ERR |
+        STATUS_UNRECOVER_ERR |
+        STATUS_AUTORECOVER_ERR)
+    ) {
+      return { reachable: true, warning: "error" };
+    }
+    if (status & STATUS_RECEIPT_NEAR_END) {
+      return { reachable: true, warning: "paperNearEnd" };
+    }
+    return { reachable: true };
+  } catch (error) {
+    return {
+      reachable: false,
       error: error instanceof Error ? error.message : "Printer unreachable",
     };
   }

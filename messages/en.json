@@ -2299,7 +2299,8 @@
       "openSlip": "Open slip in browser",
       "printing": "Printing…",
       "paperTicketsForCustomer": "Also print paper tickets (customer has them in their profile)",
-      "printTickets": "Print tickets"
+      "printTickets": "Print tickets",
+      "ticketsPending": "Tickets are still being issued — try again in a moment"
     },
     "sticker": {
       "resolving": "Resolving wristband...",
@@ -2332,7 +2333,14 @@
       "testOk": "Printer OK ✓",
       "testFailed": "Failed",
       "testSlip": "Register printer test",
-      "certHint": "Open the printer address in the browser and accept the certificate (Advanced → Proceed), then try again."
+      "certHint": "Open the printer address in the browser and accept the certificate (Advanced → Proceed), then try again.",
+      "statusChecking": "Checking printer…",
+      "statusOnline": "Printer reachable",
+      "statusOffline": "Printer unreachable — not on its network, off, or certificate not trusted",
+      "paperEnd": "Out of paper",
+      "paperNearEnd": "Paper almost out",
+      "coverOpen": "Cover open",
+      "error": "Printer error"
     }
   },
   "scan": {

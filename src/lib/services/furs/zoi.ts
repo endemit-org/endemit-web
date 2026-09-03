@@ -83,3 +83,16 @@ export function buildFiscalQrValue(
 
   return base + String(checkDigit);
 }
+
+/**
+ * Full invoice number as it must appear on the receipt (ZDavPR):
+ * `<premise>-<device>-<sequence>`, e.g. `EP1-BLAG1-127`. Uses the codes
+ * stored on the invoice, not the current env, so old receipts stay correct.
+ */
+export function formatFiscalInvoiceNumber(invoice: {
+  businessPremiseId: string;
+  electronicDeviceId: string;
+  invoiceNumber: number;
+}): string {
+  return `${invoice.businessPremiseId}-${invoice.electronicDeviceId}-${invoice.invoiceNumber}`;
+}

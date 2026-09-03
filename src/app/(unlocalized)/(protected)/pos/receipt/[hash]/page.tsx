@@ -6,7 +6,10 @@ import { prisma } from "@/lib/services/prisma";
 import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { formatTokensFromCents } from "@/lib/util/currency";
-import { buildFiscalQrValue } from "@/lib/services/furs/zoi";
+import {
+  buildFiscalQrValue,
+  formatFiscalInvoiceNumber,
+} from "@/lib/services/furs/zoi";
 import { FURS_TAX_NUMBER } from "@/lib/services/env/private";
 import ReceiptPrintButton from "@/app/_components/pos/ReceiptPrintButton";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
@@ -157,7 +160,9 @@ export default async function PosReceiptPage({
           <div>{order.register.name}</div>
           {fiscalInvoice ? (
             <div className="font-bold mt-2">
-              {t("fiscalTitle", { number: fiscalInvoice.invoiceNumber })}
+              {t("fiscalTitle", {
+                number: formatFiscalInvoiceNumber(fiscalInvoice),
+              })}
             </div>
           ) : (
             <div className="font-bold mt-2">{t("informalTitle")}</div>

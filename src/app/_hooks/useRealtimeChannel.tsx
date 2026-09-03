@@ -13,6 +13,7 @@ type BroadcastEvent =
   | "pos_order_paid"
   | "pos_order_fulfilled"
   | "pos_order_cancelled"
+  | "pos_tickets_issued"
   | "ticket_scanned"
   | "announcement_created"
   | "announcement_updated"
@@ -60,6 +61,11 @@ interface PosOrderFulfilledPayload {
   queueNumber: number | null;
 }
 
+interface PosTicketsIssuedPayload {
+  orderId: string;
+  ticketCount: number;
+}
+
 interface PosOrderCancelledPayload {
   orderId: string;
   shortCode: string;
@@ -93,6 +99,7 @@ interface BroadcastPayload {
   pos_order_paid: PosOrderPaidPayload;
   pos_order_cancelled: PosOrderCancelledPayload;
   pos_order_fulfilled: PosOrderFulfilledPayload;
+  pos_tickets_issued: PosTicketsIssuedPayload;
   ticket_scanned: TicketScannedPayload;
   announcement_created: AnnouncementPayload;
   announcement_updated: AnnouncementPayload;
