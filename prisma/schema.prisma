@@ -459,6 +459,9 @@ model PosRegister {
   // Food-stand mode: paid orders stay "to serve" until completed, with a
   // daily queue number for recall
   trackFulfillment Boolean @default(false)
+  // Local ePOS-Print address of the register's receipt printer (TM-P80II);
+  // the seller's browser POSTs receipts to it directly on the LAN
+  printerUrl String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 

@@ -81,6 +81,7 @@ interface Props {
     acceptsCash: boolean;
     acceptsCard: boolean;
     trackFulfillment: boolean;
+    printerUrl: string | null;
   };
   items: PosItem[];
   initialPendingOrders: PosOrderSummary[];
@@ -638,6 +639,7 @@ export function PosRegisterInterface({
         <div className="flex-1 min-h-0 border-t">
           <PosRecentTransactions
             registerId={register.id}
+            printerUrl={register.printerUrl}
             refreshKey={txRefreshKey}
           />
         </div>
@@ -711,6 +713,7 @@ export function PosRegisterInterface({
             <div className="flex-1 min-h-0 border-t">
               <PosRecentTransactions
                 registerId={register.id}
+                printerUrl={register.printerUrl}
                 refreshKey={txRefreshKey}
               />
             </div>

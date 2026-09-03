@@ -1617,7 +1617,9 @@
         "methodCard": "Card",
         "fiscalBadge": "Fiscal",
         "trackFulfillment": "Track fulfillment (food-stand: orders stay open until served, with queue numbers)",
-        "fulfillmentBadge": "Fulfillment"
+        "fulfillmentBadge": "Fulfillment",
+        "printerUrl": "Receipt printer address (ePOS)",
+        "printerUrlHint": "Local address of the Epson receipt printer, e.g. https://EPSONC78511.local — sellers' devices print to it directly over the venue network. Leave empty if the register has no printer."
       },
       "stickers": {
         "title": "POS offline QRs",
@@ -2290,7 +2292,8 @@
       "printReceipt": "Print receipt",
       "printQueued": "Sent to printer ✓",
       "printFailed": "Print failed — try again",
-      "openSlip": "Open slip in browser"
+      "openSlip": "Open slip in browser",
+      "printing": "Printing…"
     },
     "sticker": {
       "resolving": "Resolving wristband...",

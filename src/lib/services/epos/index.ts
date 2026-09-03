@@ -1,9 +1,11 @@
 import "server-only";
 
 /**
- * ePOS-Print XML rendering for Epson receipt printers (TM-P80II et al.)
- * used via Server Direct Print: the printer polls our server and prints
- * the returned XML. 80mm @ 203dpi = 48 columns in font A.
+ * ePOS-Print XML rendering for Epson receipt printers (TM-P80II et al.).
+ * Two transports consume this XML: the seller's browser POSTs it straight
+ * to the printer on the LAN (TM-P80II has no Server Direct Print — see
+ * eposBrowserPrint.ts), and the Server Direct Print poll endpoint remains
+ * for printers that support it. 80mm @ 203dpi = 48 columns in font A.
  */
 
 const COLS = 48;

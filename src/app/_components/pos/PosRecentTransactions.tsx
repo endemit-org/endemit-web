@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { printOrderReceipt } from "./eposBrowserPrint";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import ClientDate from "@/app/_components/ui/ClientDate";
 
@@ -24,6 +25,8 @@ interface PosTransaction {
 
 interface Props {
   registerId: string;
+  /** Local ePOS printer of the register; print buttons hide without it. */
+  printerUrl?: string | null;
   /** Bump to refetch (e.g. when a realtime order event arrives). */
   refreshKey?: number;
 }
@@ -34,7 +37,11 @@ const statusStyles: Record<PosTransaction["status"], string> = {
   CANCELLED: "bg-red-100 text-red-800",
 };
 
-export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
+export function PosRecentTransactions({
+  registerId,
+  printerUrl,
+  refreshKey = 0,
+}: Props) {
   const t = useTranslations("pos.transactions");
   const [transactions, setTransactions] = useState<PosTransaction[] | null>(
     null
@@ -206,19 +213,28 @@ export function PosRecentTransactions({ registerId, refreshKey = 0 }: Props) {
                   </div>
                   {tx.status === "PAID" && (
                     <span className="flex items-center gap-2 whitespace-nowrap">
-                      <button
-                        onClick={async e => {
-                          e.stopPropagation();
-                          setQueuedIds(prev => new Set(prev).add(tx.id));
-                          await fetch(
-                            `/api/v1/pos/orders/${tx.orderHash}/print`,
-                            { method: "POST" }
-                          ).catch(() => {});
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        {queuedIds.has(tx.id) ? t("printQueued") : t("print")}
-                      </button>
+                      {printerUrl && (
+                        <button
+                          onClick={async e => {
+                            e.stopPropagation();
+                            setQueuedIds(prev => new Set(prev).add(tx.id));
+                            const result = await printOrderReceipt(
+                              tx.orderHash,
+                              printerUrl
+                            );
+                            if (!result.success) {
+                              setQueuedIds(prev => {
+                                const next = new Set(prev);
+                                next.delete(tx.id);
+                                return next;
+                              });
+                            }
+                          }}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          {queuedIds.has(tx.id) ? t("printQueued") : t("print")}
+                        </button>
+                      )}
                       <a
                         href={`/pos/receipt/${tx.orderHash}`}
                         target="_blank"

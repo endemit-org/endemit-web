@@ -14,6 +14,7 @@ import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
 import { posErrorMessageKey } from "@/domain/pos/types/posError";
+import { printOrderReceipt } from "./eposBrowserPrint";
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
@@ -63,6 +64,7 @@ interface RegisterConfig {
   acceptsWallet: boolean;
   acceptsCash: boolean;
   acceptsCard: boolean;
+  printerUrl: string | null;
 }
 
 interface RegisterConfig {
@@ -172,9 +174,9 @@ export function PosOrderQrModal({
   const [payError, setPayError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [liveTip, setLiveTip] = useState(0);
-  const [printState, setPrintState] = useState<"idle" | "queued" | "error">(
-    "idle"
-  );
+  const [printState, setPrintState] = useState<
+    "idle" | "printing" | "printed" | "error"
+  >("idle");
 
   const totalRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -308,18 +310,21 @@ export function PosOrderQrModal({
     [hasTopUpItems, register.acceptsCash, register.acceptsCard]
   );
 
-  const handleQueuePrint = useCallback(async () => {
-    setPrintState("idle");
-    try {
-      const response = await fetch(
-        `/api/v1/pos/orders/${order.orderHash}/print`,
-        { method: "POST" }
-      );
-      setPrintState(response.ok ? "queued" : "error");
-    } catch {
-      setPrintState("error");
-    }
-  }, [order.orderHash]);
+  const handlePrint = useCallback(async () => {
+    if (!register.printerUrl) return;
+    setPrintState("printing");
+    const result = await printOrderReceipt(order.orderHash, register.printerUrl);
+    setPrintState(result.success ? "printed" : "error");
+  }, [order.orderHash, register.printerUrl]);
+
+  // Receipt prints automatically the moment the order flips to paid; the
+  // button stays for reprints.
+  const hasAutoPrintedRef = useRef(false);
+  useEffect(() => {
+    if (!isPaid || !register.printerUrl || hasAutoPrintedRef.current) return;
+    hasAutoPrintedRef.current = true;
+    void handlePrint();
+  }, [isPaid, register.printerUrl, handlePrint]);
 
   const handleMarkPaid = useCallback(
     async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
@@ -801,16 +806,21 @@ export function PosOrderQrModal({
             >
               {t("orders.continue")}
             </button>
-            <button
-              onClick={handleQueuePrint}
-              className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10"
-            >
-              {printState === "queued"
-                ? t("orders.printQueued")
-                : printState === "error"
-                  ? t("orders.printFailed")
-                  : t("orders.printReceipt")}
-            </button>
+            {register.printerUrl && (
+              <button
+                onClick={handlePrint}
+                disabled={printState === "printing"}
+                className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10 disabled:opacity-60"
+              >
+                {printState === "printing"
+                  ? t("orders.printing")
+                  : printState === "printed"
+                    ? t("orders.printQueued")
+                    : printState === "error"
+                      ? t("orders.printFailed")
+                      : t("orders.printReceipt")}
+              </button>
+            )}
             <a
               href={`/pos/receipt/${order.orderHash}`}
               target="_blank"

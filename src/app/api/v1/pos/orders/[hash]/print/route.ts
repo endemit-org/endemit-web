@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/services/auth";
 import { prisma } from "@/lib/services/prisma";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
+import { renderPosReceiptEpos } from "@/domain/pos/operations/renderPosReceiptEpos";
 
-// Queue a paid order for the Server Direct Print receipt printer.
+// Render a paid order's receipt as ePOS-Print XML for the seller's browser
+// to push to the register's LAN printer (TM-P80II has no Server Direct
+// Print). A PosPrintJob row tracks the outcome, reported back via
+// /api/v1/pos/print/jobs/[jobId]/result.
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ hash: string }> }
@@ -41,11 +45,13 @@ export async function POST(
       }
     }
 
+    const xml = await renderPosReceiptEpos(order.id);
+
     const job = await prisma.posPrintJob.create({
-      data: { posOrderId: order.id },
+      data: { posOrderId: order.id, attempts: 1 },
     });
 
-    return NextResponse.json({ success: true, jobId: job.id });
+    return NextResponse.json({ success: true, jobId: job.id, xml });
   } catch (error) {
     console.error("Queue POS print job error:", error);
     return NextResponse.json(

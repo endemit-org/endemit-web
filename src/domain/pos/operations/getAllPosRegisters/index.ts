@@ -23,6 +23,7 @@ export interface PosRegisterWithRelations {
   acceptsCard: boolean;
   fiscalizeInvoices: boolean;
   trackFulfillment: boolean;
+  printerUrl: string | null;
   tipPool: number;
   createdAt: Date;
   updatedAt: Date;

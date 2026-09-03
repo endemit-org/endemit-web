@@ -1617,7 +1617,9 @@
         "methodCard": "Kartica",
         "fiscalBadge": "Davčno",
         "trackFulfillment": "Sledenje strežbi (stojnica s hrano: naročila ostanejo odprta do postrežbe, s številkami vrste)",
-        "fulfillmentBadge": "Strežba"
+        "fulfillmentBadge": "Strežba",
+        "printerUrl": "Naslov tiskalnika za račune (ePOS)",
+        "printerUrlHint": "Lokalni naslov Epson tiskalnika, npr. https://EPSONC78511.local — naprave prodajalcev tiskajo nanj direktno prek lokalnega omrežja. Pusti prazno, če blagajna nima tiskalnika."
       },
       "stickers": {
         "title": "POS offline QR-ji",
@@ -2290,7 +2292,8 @@
       "printReceipt": "Natisni račun",
       "printQueued": "Poslano na tiskalnik ✓",
       "printFailed": "Tiskanje ni uspelo — poskusi znova",
-      "openSlip": "Odpri potrdilo v brskalniku"
+      "openSlip": "Odpri potrdilo v brskalniku",
+      "printing": "Tiskam ..."
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",
