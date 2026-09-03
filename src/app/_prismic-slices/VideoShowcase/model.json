@@ -1,0 +1,102 @@
+{
+  "id": "video_showcase",
+  "type": "SharedSlice",
+  "name": "VideoShowcase",
+  "description": "Vertical 9:16 Vimeo video with a muted looping preview, text + CTA beside it, blurred video ambilight on desktop, fullscreen modal player on mobile.",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "vimeo_video_id": {
+          "type": "Text",
+          "config": {
+            "label": "Vimeo video ID",
+            "placeholder": "e.g. 76979871 (a 9:16 vertical video)"
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        },
+        "title_sl": {
+          "type": "Text",
+          "config": {
+            "label": "Title (SL)",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "multi": "paragraph,strong,em,hyperlink"
+          }
+        },
+        "description_sl": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description (SL)",
+            "multi": "paragraph,strong,em,hyperlink"
+          }
+        },
+        "cta_label": {
+          "type": "Text",
+          "config": {
+            "label": "CTA label",
+            "placeholder": "e.g. Get tickets"
+          }
+        },
+        "cta_label_sl": {
+          "type": "Text",
+          "config": {
+            "label": "CTA label (SL)",
+            "placeholder": ""
+          }
+        },
+        "cta_link": {
+          "type": "Link",
+          "config": {
+            "label": "CTA link",
+            "placeholder": "Where the CTA points",
+            "select": null,
+            "allowText": false
+          }
+        },
+        "art_image": {
+          "type": "Image",
+          "config": {
+            "label": "Art image (optional, square, desktop only — shown above the text)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "art_video": {
+          "type": "Link",
+          "config": {
+            "label": "Art video (optional, overrides the art image)",
+            "placeholder": "Muted looping mp4",
+            "select": "media",
+            "allowText": false
+          }
+        },
+        "poster": {
+          "type": "Image",
+          "config": {
+            "label": "Poster (optional, falls back to the Vimeo thumbnail)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

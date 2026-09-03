@@ -88,6 +88,9 @@
             },
             "record_showcase": {
               "type": "SharedSlice"
+            },
+            "video_showcase": {
+              "type": "SharedSlice"
             }
           }
         }

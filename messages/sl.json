@@ -18,6 +18,8 @@
       "unmuteVideo": "Vklopi zvok",
       "tabs": "Zavihki",
       "closeLightbox": "Zapri",
+      "playVideo": "Predvajaj video",
+      "closeVideo": "Zapri video",
       "previousImage": "Prejšna slika",
       "nextImage": "Naslednja slika",
       "viewImage": "Poglej sliko {number}",

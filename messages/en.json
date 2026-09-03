@@ -18,6 +18,8 @@
       "unmuteVideo": "Unmute video",
       "tabs": "Tabs",
       "closeLightbox": "Close lightbox",
+      "playVideo": "Play video",
+      "closeVideo": "Close video",
       "previousImage": "Previous image",
       "nextImage": "Next image",
       "viewImage": "View image {number}",

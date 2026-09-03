@@ -28,6 +28,7 @@ import TicketPriceProgress from "@/app/_prismic-slices/TicketPriceProgress";
 import TileGrid from "@/app/_prismic-slices/TileGrid";
 import VenueList from "@/app/_prismic-slices/VenueList";
 import Vfx from "@/app/_prismic-slices/Vfx";
+import VideoShowcase from "@/app/_prismic-slices/VideoShowcase";
 import VinylPromoSection from "@/app/_prismic-slices/VinylPromoSection";
 
 export const components = {
@@ -61,5 +62,6 @@ export const components = {
   ticket_price_progress: TicketPriceProgress,
   venue_list: VenueList,
   vfx: Vfx,
+  video_showcase: VideoShowcase,
   vinyl_promo_section: VinylPromoSection,
 };
