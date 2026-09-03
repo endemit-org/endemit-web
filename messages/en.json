@@ -2297,7 +2297,9 @@
       "printQueued": "Sent to printer ✓",
       "printFailed": "Print failed — try again",
       "openSlip": "Open slip in browser",
-      "printing": "Printing…"
+      "printing": "Printing…",
+      "paperTicketsForCustomer": "Also print paper tickets (customer has them in their profile)",
+      "printTickets": "Print tickets"
     },
     "sticker": {
       "resolving": "Resolving wristband...",

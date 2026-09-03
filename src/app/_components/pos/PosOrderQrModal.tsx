@@ -14,7 +14,7 @@ import AnimatedBalance from "@/app/_components/wallet/AnimatedBalance";
 import WalletAnimationRenderer from "@/app/_components/wallet/WalletAnimationRenderer";
 import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation";
 import { posErrorMessageKey } from "@/domain/pos/types/posError";
-import { printOrderReceipt } from "./eposBrowserPrint";
+import { printOrderReceipt, type PrintParts } from "./eposBrowserPrint";
 
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
@@ -174,9 +174,12 @@ export function PosOrderQrModal({
   const [payError, setPayError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [liveTip, setLiveTip] = useState(0);
-  const [printState, setPrintState] = useState<
-    "idle" | "printing" | "printed" | "error"
-  >("idle");
+  type PrintState = "idle" | "printing" | "printed" | "error";
+  const [printState, setPrintState] = useState<PrintState>("idle");
+  const [ticketPrintState, setTicketPrintState] = useState<PrintState>("idle");
+  // Known customers carry tickets in their profile, so slips are skipped by
+  // default — the seller can opt in so nobody has to log in for paper.
+  const [paperTickets, setPaperTickets] = useState(false);
 
   const totalRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -313,8 +316,24 @@ export function PosOrderQrModal({
   const handlePrint = useCallback(async () => {
     if (!register.printerUrl) return;
     setPrintState("printing");
-    const result = await printOrderReceipt(order.orderHash, register.printerUrl);
+    const parts: PrintParts = paperTickets ? "all" : "full";
+    const result = await printOrderReceipt(
+      order.orderHash,
+      register.printerUrl,
+      parts
+    );
     setPrintState(result.success ? "printed" : "error");
+  }, [order.orderHash, register.printerUrl, paperTickets]);
+
+  const handlePrintTickets = useCallback(async () => {
+    if (!register.printerUrl) return;
+    setTicketPrintState("printing");
+    const result = await printOrderReceipt(
+      order.orderHash,
+      register.printerUrl,
+      "tickets"
+    );
+    setTicketPrintState(result.success ? "printed" : "error");
   }, [order.orderHash, register.printerUrl]);
 
   // Receipt prints automatically the moment the order flips to paid; the
@@ -761,6 +780,24 @@ export function PosOrderQrModal({
           ) : null}
         </div>
 
+        {/* Paper-ticket opt-in for a known customer at the payment step */}
+        {!isPaid &&
+          hasTicketItems &&
+          register.printerUrl &&
+          ((subView === "customer-confirm" && stickerScan) ||
+            ((subView === "cash-confirm" || subView === "card-confirm") &&
+              order.attachedCustomer)) && (
+            <label className="flex items-center gap-2 px-6 py-3 border-t bg-gray-50 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={paperTickets}
+                onChange={e => setPaperTickets(e.target.checked)}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              {t("orders.paperTicketsForCustomer")}
+            </label>
+          )}
+
         {/* Actions */}
         {!isPaid && (subView === "sticker-scan" || subView === "method-select") && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
@@ -819,6 +856,21 @@ export function PosOrderQrModal({
                     : printState === "error"
                       ? t("orders.printFailed")
                       : t("orders.printReceipt")}
+              </button>
+            )}
+            {register.printerUrl && hasTicketItems && (
+              <button
+                onClick={handlePrintTickets}
+                disabled={ticketPrintState === "printing"}
+                className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10 disabled:opacity-60"
+              >
+                {ticketPrintState === "printing"
+                  ? t("orders.printing")
+                  : ticketPrintState === "printed"
+                    ? t("orders.printQueued")
+                    : ticketPrintState === "error"
+                      ? t("orders.printFailed")
+                      : t("orders.printTickets")}
               </button>
             )}
             <a

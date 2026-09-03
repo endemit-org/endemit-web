@@ -60,17 +60,21 @@ export async function POST(
       }
     }
 
-    // Sellers can reprint pieces when a print partially failed: "receipt"
-    // (no slips), "tickets" (slips only, even for wallet buyers who by
-    // default carry tickets in their profile), or "full" (default —
-    // receipt + slips for anonymous sales).
+    // "full" (default): receipt + slips for anonymous sales. "all": receipt
+    // + slips even for a known customer (who otherwise carries tickets in
+    // their profile) — the seller's opt-in at payment. "receipt"/"tickets":
+    // partial reprints when a print half-failed.
     const body = (await request.json().catch(() => null)) as {
-      parts?: "full" | "receipt" | "tickets";
+      parts?: "full" | "all" | "receipt" | "tickets";
     } | null;
     const parts = body?.parts ?? "full";
     const includeReceipt = parts !== "tickets";
     const ticketMode =
-      parts === "tickets" ? "always" : parts === "receipt" ? "never" : "auto";
+      parts === "tickets" || parts === "all"
+        ? "always"
+        : parts === "receipt"
+          ? "never"
+          : "auto";
 
     // Tickets are issued async by Inngest after payment — auto-print races
     // them. Wait briefly for the expected count before rendering.

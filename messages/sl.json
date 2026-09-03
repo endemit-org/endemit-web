@@ -2297,7 +2297,9 @@
       "printQueued": "Poslano na tiskalnik ✓",
       "printFailed": "Tiskanje ni uspelo — poskusi znova",
       "openSlip": "Odpri potrdilo v brskalniku",
-      "printing": "Tiskam ..."
+      "printing": "Tiskam ...",
+      "paperTicketsForCustomer": "Natisni tudi karte na papir (kupec jih ima v profilu)",
+      "printTickets": "Natisni karte"
     },
     "sticker": {
       "resolving": "Povezujem zapestnco…",

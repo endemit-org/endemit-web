@@ -62,7 +62,7 @@ export interface EposPrintResult {
   error?: string;
 }
 
-export type PrintParts = "full" | "receipt" | "tickets";
+export type PrintParts = "full" | "all" | "receipt" | "tickets";
 
 /**
  * Full print chain for a paid order: fetch the rendered receipt XML from the
