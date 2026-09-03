@@ -2319,6 +2319,14 @@
     "attachedCustomer": {
       "paying": "Plača: {name} — {balance}",
       "insufficient": "premalo dobroimetja"
+    },
+    "printer": {
+      "test": "Testni izpis",
+      "testing": "Tiskam ...",
+      "testOk": "Tiskalnik OK ✓",
+      "testFailed": "Ni uspelo",
+      "testSlip": "Testni izpis blagajne",
+      "certHint": "Odpri naslov tiskalnika v brskalniku in potrdi certifikat (Advanced → Proceed), potem poskusi še enkrat."
     }
   },
   "scan": {

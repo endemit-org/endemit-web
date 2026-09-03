@@ -21,6 +21,33 @@ export function eposServiceUrl(printerUrl: string): string {
   return `${withScheme}${EPOS_SERVICE_PATH}?devid=local_printer&timeout=30000`;
 }
 
+/** Printer web-admin address — where staff go to accept the TLS cert. */
+export function printerHomepage(printerUrl: string): string {
+  const base = printerUrl.trim().replace(/\/+$/, "");
+  const withScheme = /^https?:\/\//i.test(base) ? base : `https://${base}`;
+  try {
+    return new URL(withScheme).origin;
+  } catch {
+    return withScheme;
+  }
+}
+
+/** Small test slip so staff can verify connectivity/cert from the register. */
+export function buildTestSlipXml(label: string): string {
+  const esc = (v: string) =>
+    v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return (
+    `<epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print">` +
+    `<text align="center"/>` +
+    `<text dw="true" dh="true" em="true"/><text>ENDEMIT&#10;</text>` +
+    `<text dw="false" dh="false" em="false"/>` +
+    `<text>${esc(label)}&#10;</text>` +
+    `<text>${esc(new Date().toLocaleString("sl-SI"))}&#10;</text>` +
+    `<feed line="2"/><cut type="feed"/>` +
+    `</epos-print>`
+  );
+}
+
 function soapEnvelope(eposXml: string): string {
   return (
     `<?xml version="1.0" encoding="utf-8"?>` +

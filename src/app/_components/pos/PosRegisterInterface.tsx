@@ -11,6 +11,7 @@ import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
 import { PosOrderQrModal } from "./PosOrderQrModal";
 import { PosRecentTransactions } from "./PosRecentTransactions";
+import { PosPrinterStatus } from "./PosPrinterStatus";
 import { PosToServeList } from "./PosToServeList";
 import { PosRegisterStatsModal } from "./PosRegisterStatsModal";
 
@@ -610,6 +611,9 @@ export function PosRegisterInterface({
           </svg>
           {t("stats.label")}
         </button>
+        {register.printerUrl && (
+          <PosPrinterStatus printerUrl={register.printerUrl} />
+        )}
         {/* Empty pending queue hides entirely — space goes to the other
             sections */}
         {pendingOrders.length > 0 && (
@@ -683,6 +687,9 @@ export function PosRegisterInterface({
               </svg>
               {t("stats.label")}
             </button>
+            {register.printerUrl && (
+              <PosPrinterStatus printerUrl={register.printerUrl} />
+            )}
             {pendingOrders.length > 0 && (
               <div className="flex-1 min-h-0 overflow-auto">
                 <PosOrderQueue

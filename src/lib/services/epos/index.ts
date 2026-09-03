@@ -48,6 +48,8 @@ function wrap(content: string): string[] {
 }
 
 export interface EposReceiptData {
+  /** 1-bit wordmark raster; falls back to double-size text when absent. */
+  logo?: { width: number; height: number; base64: string } | null;
   registerName: string;
   queueNumber?: number | null;
   companyLines: string[];
@@ -102,9 +104,16 @@ export function buildReceiptEposXml(data: EposReceiptData): string {
 
   // Header
   parts.push(`<text align="center"/>`);
-  parts.push(`<text dw="true" dh="true" em="true"/>`);
-  parts.push(text("ENDEMIT"));
-  parts.push(`<text dw="false" dh="false" em="false"/>`);
+  if (data.logo) {
+    parts.push(
+      `<image width="${data.logo.width}" height="${data.logo.height}" color="color_1" mode="mono">${data.logo.base64}</image>`
+    );
+    parts.push(`<feed unit="12"/>`);
+  } else {
+    parts.push(`<text dw="true" dh="true" em="true"/>`);
+    parts.push(text("ENDEMIT"));
+    parts.push(`<text dw="false" dh="false" em="false"/>`);
+  }
   for (const companyLine of data.companyLines) {
     parts.push(text(companyLine));
   }

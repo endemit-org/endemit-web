@@ -2319,6 +2319,14 @@
     "attachedCustomer": {
       "paying": "Paying: {name} — {balance}",
       "insufficient": "insufficient balance"
+    },
+    "printer": {
+      "test": "Test print",
+      "testing": "Printing…",
+      "testOk": "Printer OK ✓",
+      "testFailed": "Failed",
+      "testSlip": "Register printer test",
+      "certHint": "Open the printer address in the browser and accept the certificate (Advanced → Proceed), then try again."
     }
   },
   "scan": {

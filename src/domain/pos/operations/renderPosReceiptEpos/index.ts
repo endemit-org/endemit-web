@@ -4,6 +4,7 @@ import { createTranslator } from "next-intl";
 import { prisma } from "@/lib/services/prisma";
 import slMessages from "../../../../../messages/sl.json";
 import { buildReceiptEposXml } from "@/lib/services/epos";
+import { getReceiptLogo } from "@/lib/services/epos/logo";
 import { buildFiscalQrValue } from "@/lib/services/furs/zoi";
 import { FURS_TAX_NUMBER } from "@/lib/services/env/private";
 import { formatTokensFromCents } from "@/lib/util/currency";
@@ -91,6 +92,7 @@ export async function renderPosReceiptEpos(
         : t("methodCard");
 
   return buildReceiptEposXml({
+    logo: await getReceiptLogo().catch(() => null),
     registerName: order.register.name,
     queueNumber: order.queueNumber,
     companyLines: COMPANY_LINES,
