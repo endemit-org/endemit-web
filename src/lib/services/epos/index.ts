@@ -48,6 +48,8 @@ function wrap(content: string): string[] {
 }
 
 export interface EposReceiptData {
+  /** Print the receipt block; false = ticket slips only. Default true. */
+  includeReceipt?: boolean;
   /** 1-bit wordmark raster; falls back to double-size text when absent. */
   logo?: { width: number; height: number; base64: string } | null;
   registerName: string;
@@ -102,6 +104,37 @@ function qrSymbol(data: string, width: number): string {
 export function buildReceiptEposXml(data: EposReceiptData): string {
   const parts: string[] = [];
 
+  if (data.includeReceipt !== false) {
+    buildReceiptBlock(data, parts);
+  }
+
+  // One cut-separated slip per ticket
+  for (const ticket of data.tickets) {
+    parts.push(`<text align="center"/>`);
+    parts.push(`<text dw="true" dh="true" em="true"/>`);
+    parts.push(text(ticket.eventName.toUpperCase()));
+    parts.push(`<text dw="false" dh="false" em="false"/>`);
+    if (ticket.eventDate) parts.push(text(ticket.eventDate));
+    if (ticket.venueName) parts.push(text(ticket.venueName));
+    parts.push(`<feed unit="12"/>`);
+    parts.push(qrSymbol(ticket.qrData, 6));
+    parts.push(`<feed unit="12"/>`);
+    parts.push(`<text em="true"/>`);
+    parts.push(text(ticket.shortId));
+    parts.push(`<text em="false"/>`);
+    parts.push(text(data.labels.ticketsHint));
+    parts.push(`<feed unit="24"/>`);
+    parts.push(`<cut type="feed"/>`);
+  }
+
+  return (
+    `<epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print">` +
+    parts.join("") +
+    `</epos-print>`
+  );
+}
+
+function buildReceiptBlock(data: EposReceiptData, parts: string[]): void {
   // Header
   parts.push(`<text align="center"/>`);
   if (data.logo) {
@@ -184,31 +217,6 @@ export function buildReceiptEposXml(data: EposReceiptData): string {
   parts.push(text(data.labels.thanks));
   parts.push(`<feed unit="24"/>`);
   parts.push(`<cut type="feed"/>`);
-
-  // One cut-separated slip per ticket
-  for (const ticket of data.tickets) {
-    parts.push(`<text align="center"/>`);
-    parts.push(`<text dw="true" dh="true" em="true"/>`);
-    parts.push(text(ticket.eventName.toUpperCase()));
-    parts.push(`<text dw="false" dh="false" em="false"/>`);
-    if (ticket.eventDate) parts.push(text(ticket.eventDate));
-    if (ticket.venueName) parts.push(text(ticket.venueName));
-    parts.push(`<feed unit="12"/>`);
-    parts.push(qrSymbol(ticket.qrData, 6));
-    parts.push(`<feed unit="12"/>`);
-    parts.push(`<text em="true"/>`);
-    parts.push(text(ticket.shortId));
-    parts.push(`<text em="false"/>`);
-    parts.push(text(data.labels.ticketsHint));
-    parts.push(`<feed unit="24"/>`);
-    parts.push(`<cut type="feed"/>`);
-  }
-
-  return (
-    `<epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print">` +
-    parts.join("") +
-    `</epos-print>`
-  );
 }
 
 /** Wrap rendered jobs in the Server Direct Print response envelope. */

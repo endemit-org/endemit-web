@@ -60,15 +60,28 @@ export async function POST(
       }
     }
 
-    // Anonymous ticket sales print cut-separated ticket slips, but tickets
-    // are issued async by Inngest after payment — auto-print races them.
-    // Wait briefly for the expected count before rendering.
+    // Sellers can reprint pieces when a print partially failed: "receipt"
+    // (no slips), "tickets" (slips only, even for wallet buyers who by
+    // default carry tickets in their profile), or "full" (default —
+    // receipt + slips for anonymous sales).
+    const body = (await request.json().catch(() => null)) as {
+      parts?: "full" | "receipt" | "tickets";
+    } | null;
+    const parts = body?.parts ?? "full";
+    const includeReceipt = parts !== "tickets";
+    const ticketMode =
+      parts === "tickets" ? "always" : parts === "receipt" ? "never" : "auto";
+
+    // Tickets are issued async by Inngest after payment — auto-print races
+    // them. Wait briefly for the expected count before rendering.
+    const ticketableCount = order.items.reduce(
+      (sum, i) => (i.item.ticketEventId ? sum + i.quantity : sum),
+      0
+    );
     const expectedTickets =
-      order.customerId === null
-        ? order.items.reduce(
-            (sum, i) => (i.item.ticketEventId ? sum + i.quantity : sum),
-            0
-          )
+      ticketMode === "always" ||
+      (ticketMode === "auto" && order.customerId === null)
+        ? ticketableCount
         : 0;
     if (expectedTickets > 0) {
       const deadline = Date.now() + 8000;
@@ -84,7 +97,25 @@ export async function POST(
       }
     }
 
-    const xml = await renderPosReceiptEpos(order.id);
+    if (parts === "tickets") {
+      const issued = await prisma.ticket.count({
+        where: {
+          posOrderId: order.id,
+          status: { notIn: ["CANCELLED", "REFUNDED"] },
+        },
+      });
+      if (issued === 0) {
+        return NextResponse.json(
+          { error: "Order has no tickets" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const xml = await renderPosReceiptEpos(order.id, {
+      includeReceipt,
+      ticketMode,
+    });
 
     const job = await prisma.posPrintJob.create({
       data: { posOrderId: order.id, attempts: 1 },

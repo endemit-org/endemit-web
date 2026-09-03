@@ -2222,7 +2222,11 @@
         "cancelled": "Preklicano",
         "tip": "Napitnina",
         "total": "Skupaj"
-      }
+      },
+      "printing": "Tiskam ...",
+      "printFailed": "Ni uspelo ✗",
+      "printReceiptOnly": "Račun",
+      "printTicketsOnly": "Karte"
     },
     "balanceCheck": {
       "label": "Stanje",

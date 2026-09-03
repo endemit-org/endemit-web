@@ -2222,7 +2222,11 @@
         "cancelled": "Cancelled",
         "tip": "Tip",
         "total": "Total"
-      }
+      },
+      "printing": "Printing…",
+      "printFailed": "Failed ✗",
+      "printReceiptOnly": "Receipt",
+      "printTicketsOnly": "Tickets"
     },
     "balanceCheck": {
       "label": "Balance",

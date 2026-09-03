@@ -62,19 +62,25 @@ export interface EposPrintResult {
   error?: string;
 }
 
+export type PrintParts = "full" | "receipt" | "tickets";
+
 /**
  * Full print chain for a paid order: fetch the rendered receipt XML from the
- * app, push it to the register's printer, report the outcome for tracking.
+ * app (all of it, or just the receipt / just the ticket slips for partial
+ * reprints), push it to the register's printer, report the outcome.
  */
 export async function printOrderReceipt(
   orderHash: string,
-  printerUrl: string
+  printerUrl: string,
+  parts: PrintParts = "full"
 ): Promise<EposPrintResult> {
   let jobId: string | undefined;
   let xml: string | undefined;
   try {
     const response = await fetch(`/api/v1/pos/orders/${orderHash}/print`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ parts }),
     });
     const data = await response.json();
     if (!response.ok || !data.xml) {
