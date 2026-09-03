@@ -4,6 +4,9 @@ import { prisma } from "@/lib/services/prisma";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { renderPosReceiptEpos } from "@/domain/pos/operations/renderPosReceiptEpos";
 
+// The ticket-issuance wait below can hold the request up to ~8s.
+export const maxDuration = 30;
+
 // Render a paid order's receipt as ePOS-Print XML for the seller's browser
 // to push to the register's LAN printer (TM-P80II has no Server Direct
 // Print). A PosPrintJob row tracks the outcome, reported back via
@@ -24,7 +27,19 @@ export async function POST(
     const { hash } = await params;
     const order = await prisma.posOrder.findUnique({
       where: { orderHash: hash },
-      select: { id: true, status: true, sellerId: true, registerId: true },
+      select: {
+        id: true,
+        status: true,
+        sellerId: true,
+        registerId: true,
+        customerId: true,
+        items: {
+          select: {
+            quantity: true,
+            item: { select: { ticketEventId: true } },
+          },
+        },
+      },
     });
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
@@ -42,6 +57,30 @@ export async function POST(
           { error: "Not authorized to print this order" },
           { status: 403 }
         );
+      }
+    }
+
+    // Anonymous ticket sales print cut-separated ticket slips, but tickets
+    // are issued async by Inngest after payment — auto-print races them.
+    // Wait briefly for the expected count before rendering.
+    const expectedTickets =
+      order.customerId === null
+        ? order.items.reduce(
+            (sum, i) => (i.item.ticketEventId ? sum + i.quantity : sum),
+            0
+          )
+        : 0;
+    if (expectedTickets > 0) {
+      const deadline = Date.now() + 8000;
+      while (Date.now() < deadline) {
+        const issued = await prisma.ticket.count({
+          where: {
+            posOrderId: order.id,
+            status: { notIn: ["CANCELLED", "REFUNDED"] },
+          },
+        });
+        if (issued >= expectedTickets) break;
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
