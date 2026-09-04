@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import Pagination from "@/app/_components/table/Pagination";
+import { TicketGoalBar } from "@/app/_components/admin/TicketGoalBar";
 import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
 import {
   fetchEventsForAdmin,
@@ -152,38 +153,12 @@ export default function EventsList({ initialData }: EventsListProps) {
                       </div>
 
                       {stats && event.ticketGoal != null && event.ticketGoal > 0 && (
-                        <div className="mt-2">
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-gray-500">
-                              {t("goal.label")}
-                            </span>
-                            <span
-                              className={`font-semibold ${
-                                stats.sold >= event.ticketGoal
-                                  ? "text-green-600"
-                                  : "text-gray-900"
-                              }`}
-                            >
-                              {stats.sold} / {event.ticketGoal} (
-                              {Math.round((stats.sold / event.ticketGoal) * 100)}
-                              %)
-                              {stats.sold > event.ticketGoal &&
-                                ` · ${t("goal.exceeded", { count: stats.sold - event.ticketGoal })}`}
-                            </span>
-                          </div>
-                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all ${
-                                stats.sold >= event.ticketGoal
-                                  ? "bg-green-500"
-                                  : "bg-blue-500"
-                              }`}
-                              style={{
-                                width: `${Math.min(100, (stats.sold / event.ticketGoal) * 100)}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
+                        <TicketGoalBar
+                          sold={stats.sold}
+                          goal={event.ticketGoal}
+                          isCompleted={event.isCompleted}
+                          className="mt-2"
+                        />
                       )}
 
                       {stats && (

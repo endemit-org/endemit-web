@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { formatTokensFromCents } from "@/lib/util/currency";
 import { TipStepper } from "@/app/_components/payment/TipStepper";
@@ -22,6 +22,11 @@ interface Props {
   /** Rotate the content 180° toward the customer (tip entry). */
   isRotated?: boolean;
   onToggleRotation?: () => void;
+  /**
+   * Fires on mount and whenever the step changes, so the parent can turn
+   * the screen toward the customer (tip) or back to the seller (tender).
+   */
+  onPhaseChange?: (phase: ConfirmPhase) => void;
   isProcessing: boolean;
   error: string | null;
   onConfirm: (tipAmount: number, buyerEmail?: string) => void;
@@ -30,10 +35,14 @@ interface Props {
   onTipChange?: (tipAmount: number) => void;
 }
 
+export type ConfirmPhase = "customer" | "cashier";
+
 /**
- * Seller-facing confirmation for physical tender. Cash: single "cash
- * received" confirm. Card: two steps — charge the external terminal (tip
- * still adjustable), then an explicit "charge approved" confirmation.
+ * Physical-tender confirmation in two steps. First the customer step (screen
+ * turned toward them): the amount, an optional tip, and a confirm. Then the
+ * cashier step (screen turned back): cash — "cash received"; card — charge
+ * the external terminal, then an explicit "charge approved". Top-ups have
+ * no tip, so they start at the cashier step.
  */
 export function PosMethodConfirmView({
   method,
@@ -42,6 +51,7 @@ export function PosMethodConfirmView({
   showEmailField = false,
   isRotated = false,
   onToggleRotation,
+  onPhaseChange,
   isProcessing,
   error,
   onConfirm,
@@ -53,13 +63,19 @@ export function PosMethodConfirmView({
   const [cardCharged, setCardCharged] = useState(false);
   const [buyerEmail, setBuyerEmail] = useState("");
 
-  const confirm = () =>
-    onConfirm(tipAmount, buyerEmail.trim() || undefined);
+  const confirm = () => onConfirm(tipAmount, buyerEmail.trim() || undefined);
 
   const hasTopUp = useMemo(
     () => items.some(item => item.direction === "CREDIT"),
     [items]
   );
+  const [phase, setPhase] = useState<ConfirmPhase>(
+    hasTopUp ? "cashier" : "customer"
+  );
+  useEffect(() => {
+    onPhaseChange?.(phase);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
   const total = subtotal + tipAmount;
 
   const content = (
@@ -79,7 +95,11 @@ export function PosMethodConfirmView({
 
       <div className="bg-neutral-800 rounded-xl p-3 mb-4 text-center">
         <div className="text-neutral-500 text-sm mb-1">
-          {method === "CASH" ? t("cashDue") : t("cardCharge")}
+          {phase === "customer"
+            ? t("amountDue")
+            : method === "CASH"
+              ? t("cashDue")
+              : t("cardCharge")}
         </div>
         <div className="flex items-baseline justify-center gap-2">
           <span className="text-4xl font-bold text-white">
@@ -107,18 +127,38 @@ export function PosMethodConfirmView({
         </div>
       )}
 
-      {!hasTopUp && (
-        <TipStepper
-          tipAmount={tipAmount}
-          onChange={value => {
-            setTipAmount(value);
-            onTipChange?.(value);
-          }}
-          disabled={isProcessing || (method === "CARD" && cardCharged)}
-        />
+      {phase === "customer" && (
+        <>
+          <TipStepper
+            tipAmount={tipAmount}
+            onChange={value => {
+              setTipAmount(value);
+              onTipChange?.(value);
+            }}
+            disabled={isProcessing}
+          />
+          <p className="text-center text-sm text-neutral-400 pt-4">
+            {t("customerHint")}
+          </p>
+          <div className="flex flex-col gap-3 pt-3">
+            <button
+              onClick={() => setPhase("cashier")}
+              className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-green-600 hover:bg-green-700 transition-colors"
+            >
+              {t("customerConfirm", { amount: formatTokensFromCents(total) })}
+            </button>
+            <button
+              onClick={onBack}
+              disabled={isProcessing}
+              className="text-neutral-500 hover:text-neutral-300 text-sm py-1 transition-colors"
+            >
+              {t("back")}
+            </button>
+          </div>
+        </>
       )}
 
-      {showEmailField && (
+      {phase === "cashier" && showEmailField && (
         <div className="mt-3">
           <label className="block text-xs text-neutral-400 mb-1">
             {t("buyerEmailLabel")}
@@ -135,59 +175,73 @@ export function PosMethodConfirmView({
         </div>
       )}
 
-      <div className="flex flex-col gap-3 pt-4">
-        {method === "CASH" ? (
-          <button
-            onClick={confirm}
-            disabled={isProcessing}
-            className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isProcessing
-              ? t("processing")
-              : t("cashReceived", { amount: formatTokensFromCents(total) })}
-          </button>
-        ) : !cardCharged ? (
-          <>
-            <p className="text-center text-sm text-neutral-400">
-              {t("cardInstruction", { amount: formatTokensFromCents(total) })}
-            </p>
-            <button
-              onClick={() => setCardCharged(true)}
-              disabled={isProcessing}
-              className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 transition-colors"
-            >
-              {t("chargedOnTerminal")}
-            </button>
-          </>
-        ) : (
-          <>
-            <p className="text-center text-sm text-neutral-400">
-              {t("confirmApproved", { amount: formatTokensFromCents(total) })}
-            </p>
+      {phase === "cashier" && (
+        <div className="flex flex-col gap-3 pt-4">
+          {method === "CASH" ? (
             <button
               onClick={confirm}
               disabled={isProcessing}
               className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isProcessing ? t("processing") : t("chargeApproved")}
+              {isProcessing
+                ? t("processing")
+                : t("cashReceived", { amount: formatTokensFromCents(total) })}
             </button>
+          ) : !cardCharged ? (
+            <>
+              <p className="text-center text-sm text-neutral-400">
+                {t("cardInstruction", { amount: formatTokensFromCents(total) })}
+              </p>
+              <button
+                onClick={() => setCardCharged(true)}
+                disabled={isProcessing}
+                className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 transition-colors"
+              >
+                {t("chargedOnTerminal")}
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-center text-sm text-neutral-400">
+                {t("confirmApproved", { amount: formatTokensFromCents(total) })}
+              </p>
+              <button
+                onClick={confirm}
+                disabled={isProcessing}
+                className="w-full px-4 py-4 text-white text-lg font-semibold rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isProcessing ? t("processing") : t("chargeApproved")}
+              </button>
+              <button
+                onClick={() => setCardCharged(false)}
+                disabled={isProcessing}
+                className="text-neutral-500 hover:text-neutral-300 text-sm py-1 transition-colors"
+              >
+                {t("backToAmount")}
+              </button>
+            </>
+          )}
+          {!hasTopUp && (
             <button
-              onClick={() => setCardCharged(false)}
+              onClick={() => {
+                setCardCharged(false);
+                setPhase("customer");
+              }}
               disabled={isProcessing}
               className="text-neutral-500 hover:text-neutral-300 text-sm py-1 transition-colors"
             >
-              {t("backToAmount")}
+              {t("changeTip")}
             </button>
-          </>
-        )}
-        <button
-          onClick={onBack}
-          disabled={isProcessing}
-          className="text-neutral-500 hover:text-neutral-300 text-sm py-1 transition-colors"
-        >
-          {t("back")}
-        </button>
-      </div>
+          )}
+          <button
+            onClick={onBack}
+            disabled={isProcessing}
+            className="text-neutral-500 hover:text-neutral-300 text-sm py-1 transition-colors"
+          >
+            {t("back")}
+          </button>
+        </div>
+      )}
     </>
   );
 

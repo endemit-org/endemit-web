@@ -2179,6 +2179,10 @@
       "backToAmount": "Back to amount",
       "back": "Back",
       "buyerEmailLabel": "Buyer email for digital tickets (optional)",
+      "amountDue": "To pay",
+      "customerHint": "Add a tip if you like, then confirm.",
+      "customerConfirm": "Confirm {amount}",
+      "changeTip": "Change tip",
       "buyerEmailPlaceholder": "email@example.com"
     },
     "receipt": {
@@ -2282,6 +2286,7 @@
       "cancelEdit": "Cancel & Edit",
       "continue": "Continue",
       "closingIn": "Closing in {count}s",
+      "keepOpen": "Keep open",
       "toggleRotation": "Toggle rotation",
       "expired": "Expired",
       "pendingOrders": "Pending Orders",
@@ -2298,7 +2303,6 @@
       "printFailed": "Print failed — try again",
       "openSlip": "Open slip in browser",
       "printing": "Printing…",
-      "paperTicketsForCustomer": "Also print paper tickets (customer has them in their profile)",
       "printTickets": "Print tickets",
       "ticketsPending": "Tickets are still being issued — try again in a moment"
     },

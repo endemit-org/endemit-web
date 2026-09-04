@@ -24,8 +24,18 @@ module.exports = {
         "slow-spin": "spin 2s linear infinite",
         "slowest-spin": "spin 15s linear infinite",
         scan: "scan 2s ease-in-out infinite",
+        "goal-glow-blue": "goal-glow-blue 2.8s ease-in-out infinite",
+        "goal-glow-green": "goal-glow-green 2.8s ease-in-out infinite",
       },
       keyframes: {
+        "goal-glow-blue": {
+          "0%, 100%": { boxShadow: "0 0 2px 0 rgba(59, 130, 246, 0.35)" },
+          "50%": { boxShadow: "0 0 10px 2px rgba(59, 130, 246, 0.65)" },
+        },
+        "goal-glow-green": {
+          "0%, 100%": { boxShadow: "0 0 2px 0 rgba(34, 197, 94, 0.35)" },
+          "50%": { boxShadow: "0 0 10px 2px rgba(34, 197, 94, 0.65)" },
+        },
         scan: {
           "0%, 100%": { top: "0%", opacity: "0" },
           "50%": { top: "100%", opacity: "1" },

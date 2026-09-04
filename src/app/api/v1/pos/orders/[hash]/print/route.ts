@@ -4,8 +4,13 @@ import { prisma } from "@/lib/services/prisma";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { renderPosReceiptEpos } from "@/domain/pos/operations/renderPosReceiptEpos";
 
-// The ticket-issuance wait below can hold the request up to ~8s.
+// The ticket safety wait below can hold the request a few seconds.
 export const maxDuration = 30;
+
+// Tickets are issued in the payment request, so they normally exist by the
+// time the receipt auto-prints; this only covers the fallback path (inline
+// issuance failed, Inngest is redoing it).
+const TICKET_WAIT_MS = 3000;
 
 // Render a paid order's receipt as ePOS-Print XML for the seller's browser
 // to push to the register's LAN printer (TM-P80II has no Server Direct
@@ -60,65 +65,49 @@ export async function POST(
       }
     }
 
-    // "full" (default): receipt + slips for anonymous sales. "all": receipt
-    // + slips even for a known customer (who otherwise carries tickets in
-    // their profile) — the seller's opt-in at payment. "receipt"/"tickets":
+    // "full" (default): receipt + a slip per ticket. "receipt"/"tickets":
     // partial reprints when a print half-failed.
     const body = (await request.json().catch(() => null)) as {
-      parts?: "full" | "all" | "receipt" | "tickets";
+      parts?: "full" | "receipt" | "tickets";
     } | null;
     const parts = body?.parts ?? "full";
     const includeReceipt = parts !== "tickets";
-    const ticketMode =
-      parts === "tickets" || parts === "all"
-        ? "always"
-        : parts === "receipt"
-          ? "never"
-          : "auto";
+    const ticketMode = parts === "receipt" ? "never" : "always";
 
-    // Tickets are issued async by Inngest after payment — auto-print races
-    // them. Wait briefly for the expected count before rendering.
-    const ticketableCount = order.items.reduce(
-      (sum, i) => (i.item.ticketEventId ? sum + i.quantity : sum),
-      0
-    );
-    const expectedTickets =
-      ticketMode === "always" ||
-      (ticketMode === "auto" && order.customerId === null)
-        ? ticketableCount
-        : 0;
-    if (expectedTickets > 0) {
-      const deadline = Date.now() + 8000;
-      while (Date.now() < deadline) {
-        const issued = await prisma.ticket.count({
-          where: {
-            posOrderId: order.id,
-            status: { notIn: ["CANCELLED", "REFUNDED"] },
-          },
-        });
-        if (issued >= expectedTickets) break;
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
-
-    if (parts === "tickets") {
-      const issued = await prisma.ticket.count({
+    const countTickets = () =>
+      prisma.ticket.count({
         where: {
           posOrderId: order.id,
           status: { notIn: ["CANCELLED", "REFUNDED"] },
         },
       });
-      if (issued === 0) {
-        // Issuance is async (Inngest) — a sale with ticket items whose
-        // tickets haven't landed yet is "pending", not "none"
-        return NextResponse.json(
-          {
-            error:
-              ticketableCount > 0 ? "TICKETS_PENDING" : "Order has no tickets",
-          },
-          { status: ticketableCount > 0 ? 409 : 400 }
-        );
+    const expectedTickets =
+      ticketMode === "always"
+        ? order.items.reduce(
+            (sum, i) => (i.item.ticketEventId ? sum + i.quantity : sum),
+            0
+          )
+        : 0;
+    let issued = expectedTickets > 0 ? await countTickets() : 0;
+    if (expectedTickets > 0 && issued < expectedTickets) {
+      const deadline = Date.now() + TICKET_WAIT_MS;
+      while (issued < expectedTickets && Date.now() < deadline) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        issued = await countTickets();
       }
+    }
+    const ticketsMissing = issued < expectedTickets;
+
+    if (parts === "tickets" && issued === 0) {
+      // A sale with ticket items whose tickets haven't landed yet is
+      // "pending", not "none"
+      return NextResponse.json(
+        {
+          error:
+            expectedTickets > 0 ? "TICKETS_PENDING" : "Order has no tickets",
+        },
+        { status: expectedTickets > 0 ? 409 : 400 }
+      );
     }
 
     const xml = await renderPosReceiptEpos(order.id, {
@@ -130,7 +119,13 @@ export async function POST(
       data: { posOrderId: order.id, attempts: 1 },
     });
 
-    return NextResponse.json({ success: true, jobId: job.id, xml });
+    return NextResponse.json({
+      success: true,
+      jobId: job.id,
+      xml,
+      // Receipt still prints; the client flags the slips for a reprint
+      ticketsMissing,
+    });
   } catch (error) {
     console.error("Queue POS print job error:", error);
     return NextResponse.json(

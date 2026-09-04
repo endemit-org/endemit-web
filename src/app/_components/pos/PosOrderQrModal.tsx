@@ -16,12 +16,6 @@ import { useWalletAnimation } from "@/app/_components/wallet/WalletCoinAnimation
 import { posErrorMessageKey } from "@/domain/pos/types/posError";
 import { printOrderReceipt } from "./eposBrowserPrint";
 
-/** Auto-print of ticket slips, owned by the register (outlives this modal). */
-export interface TicketSlipPrintState {
-  state: "waiting" | "printed" | "error";
-  error?: string;
-}
-
 // Dynamic import: QR Scanner (~120KB) only loads when sticker scan view is opened
 const PosStickerScanView = dynamic(
   () =>
@@ -84,12 +78,6 @@ interface Props {
   register: RegisterConfig;
   onClose: () => void;
   onCopyToCart: () => void;
-  /**
-   * Tickets are issued async after payment; the register waits for them and
-   * prints the slips even if this modal has been closed by then.
-   */
-  onQueueTicketSlips?: (order: { id: string; orderHash: string }) => void;
-  ticketSlipState?: TicketSlipPrintState;
 }
 
 const AUTO_CLOSE_SECONDS = 30;
@@ -107,8 +95,6 @@ export function PosOrderQrModal({
   register,
   onClose,
   onCopyToCart,
-  onQueueTicketSlips,
-  ticketSlipState,
 }: Props) {
   const t = useTranslations("pos");
   const tw = useTranslations("profile.walletPay");
@@ -117,6 +103,8 @@ export function PosOrderQrModal({
   const [autoCloseCountdown, setAutoCloseCountdown] = useState<number | null>(
     null
   );
+  // Seller pressed "keep open" — the paid screen stays until closed by hand
+  const [autoCloseCancelled, setAutoCloseCancelled] = useState(false);
   // Top-up orders always scan first (wallet to credit); sales go straight
   // into their single enabled method, or to the method chooser.
   const hasTopUpItems = order.items.some(i => i.direction === "CREDIT");
@@ -193,10 +181,6 @@ export function PosOrderQrModal({
   const [ticketPrintState, setTicketPrintState] = useState<PrintState>("idle");
   const [printError, setPrintError] = useState<string | null>(null);
   const [ticketPrintError, setTicketPrintError] = useState<string | null>(null);
-  // Ticket slips print with the receipt by default, also for known customers
-  // (who additionally carry tickets in their profile) — the seller can untick
-  // to save paper when the customer will use their profile QR.
-  const [paperTickets, setPaperTickets] = useState(true);
 
   const totalRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -221,23 +205,37 @@ export function PosOrderQrModal({
   const isScanned = !!order.scannedAt;
   const hasTip = (order.tipAmount ?? 0) > 0;
 
-  // Start auto-close countdown when paid
+  // Start auto-close countdown when paid — but not while the receipt is
+  // still on its way to the printer (a failure needs the seller's eyes)
+  const printPending =
+    printState === "printing" || ticketPrintState === "printing";
   useEffect(() => {
-    if (isPaid && autoCloseCountdown === null) {
+    if (
+      isPaid &&
+      autoCloseCountdown === null &&
+      !autoCloseCancelled &&
+      !printPending
+    ) {
       setAutoCloseCountdown(AUTO_CLOSE_SECONDS);
     }
-  }, [isPaid, autoCloseCountdown]);
+  }, [isPaid, autoCloseCountdown, autoCloseCancelled, printPending]);
 
-  // Countdown timer
+  const cancelAutoClose = useCallback(() => {
+    setAutoCloseCancelled(true);
+    setAutoCloseCountdown(null);
+  }, []);
+
+  // Countdown timer (paused while a print is pending)
   useEffect(() => {
     if (autoCloseCountdown === null || autoCloseCountdown <= 0) return;
+    if (printPending) return;
 
     const timer = setTimeout(() => {
       setAutoCloseCountdown(autoCloseCountdown - 1);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [autoCloseCountdown]);
+  }, [autoCloseCountdown, printPending]);
 
   // Auto-close when countdown reaches 0
   useEffect(() => {
@@ -362,47 +360,30 @@ export function PosOrderQrModal({
     }
   }, [order.orderHash, register.printerUrl, t]);
 
-  // Receipt prints automatically the moment the order flips to paid; the
+  // Receipt and ticket slips print together, automatically, the moment the
+  // order flips to paid (tickets are issued in the payment request); the
   // buttons stay for reprints.
   const hasAutoPrintedRef = useRef(false);
-  const autoPrintTickets = Boolean(
-    register.printerUrl && hasTicketItems && paperTickets
-  );
   useEffect(() => {
     if (!isPaid || !register.printerUrl || hasAutoPrintedRef.current) return;
     hasAutoPrintedRef.current = true;
-    // Receipt right away; ticket slips follow once the tickets exist
     setPrintState("printing");
-    void printOrderReceipt(
-      order.orderHash,
-      register.printerUrl,
-      "receipt"
-    ).then(result => {
-      setPrintState(result.success ? "printed" : "error");
-      if (!result.success) setPrintError(result.error ?? null);
-    });
-    if (autoPrintTickets) {
-      onQueueTicketSlips?.({ id: order.id, orderHash: order.orderHash });
-    }
-  }, [
-    isPaid,
-    register.printerUrl,
-    order.id,
-    order.orderHash,
-    autoPrintTickets,
-    onQueueTicketSlips,
-  ]);
-
-  // Ticket button reflects the register-owned auto-print until the seller
-  // presses it themselves
-  const shownTicketState: PrintState =
-    ticketPrintState !== "idle" || !ticketSlipState
-      ? ticketPrintState
-      : ticketSlipState.state === "waiting"
-        ? "printing"
-        : ticketSlipState.state;
-  const shownTicketError =
-    ticketPrintState !== "idle" ? ticketPrintError : ticketSlipState?.error;
+    if (hasTicketItems) setTicketPrintState("printing");
+    void printOrderReceipt(order.orderHash, register.printerUrl, "full").then(
+      result => {
+        setPrintState(result.success ? "printed" : "error");
+        if (!result.success) setPrintError(result.error ?? null);
+        if (!hasTicketItems) return;
+        if (result.success && result.ticketsMissing) {
+          setTicketPrintState("error");
+          setTicketPrintError(t("orders.ticketsPending"));
+        } else {
+          setTicketPrintState(result.success ? "printed" : "error");
+          if (!result.success) setTicketPrintError(result.error ?? null);
+        }
+      }
+    );
+  }, [isPaid, register.printerUrl, order.orderHash, hasTicketItems, t]);
 
   const handleMarkPaid = useCallback(
     async (method: "CASH" | "CARD", tipAmount: number, buyerEmail?: string) => {
@@ -780,6 +761,8 @@ export function PosOrderQrModal({
               showEmailField={hasTicketItems}
               isRotated={isRotated}
               onToggleRotation={() => setIsRotated(r => !r)}
+              // Customer step faces the customer, cashier step faces the seller
+              onPhaseChange={phase => setIsRotated(phase === "customer")}
               isProcessing={isPaying}
               error={payError}
               onConfirm={(tipAmount, buyerEmail) =>
@@ -839,28 +822,11 @@ export function PosOrderQrModal({
           ) : null}
         </div>
 
-        {/* Paper-ticket opt-in for a known customer at the payment step */}
-        {!isPaid &&
-          hasTicketItems &&
-          register.printerUrl &&
-          ((subView === "customer-confirm" && stickerScan) ||
-            ((subView === "cash-confirm" || subView === "card-confirm") &&
-              order.attachedCustomer)) && (
-            <label className="flex items-center gap-2 px-6 py-3 border-t bg-gray-50 text-sm text-gray-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={paperTickets}
-                onChange={e => setPaperTickets(e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              {t("orders.paperTicketsForCustomer")}
-            </label>
-          )}
-
         {/* Actions */}
-        {!isPaid && (subView === "sticker-scan" || subView === "method-select") && (
-          <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
-            {/* Hidden for now — sticker scan is the only offered flow.
+        {!isPaid &&
+          (subView === "sticker-scan" || subView === "method-select") && (
+            <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
+              {/* Hidden for now — sticker scan is the only offered flow.
             <button
               onClick={() => setSubView("qr")}
               className="flex-1 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50"
@@ -868,14 +834,14 @@ export function PosOrderQrModal({
               {t("orders.showQr")}
             </button>
             */}
-            <button
-              onClick={onCopyToCart}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-            >
-              {t("orders.cancelEdit")}
-            </button>
-          </div>
-        )}
+              <button
+                onClick={onCopyToCart}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              >
+                {t("orders.cancelEdit")}
+              </button>
+            </div>
+          )}
 
         {!isPaid && subView === "qr" && (
           <div className="px-6 py-4 border-t bg-gray-50 flex gap-3">
@@ -923,21 +889,21 @@ export function PosOrderQrModal({
             {register.printerUrl && hasTicketItems && (
               <button
                 onClick={handlePrintTickets}
-                disabled={shownTicketState === "printing"}
+                disabled={ticketPrintState === "printing"}
                 className="block w-full px-4 py-2 text-center border border-white/40 text-white text-sm font-medium rounded-lg hover:bg-white/10 disabled:opacity-60"
               >
-                {shownTicketState === "printing"
+                {ticketPrintState === "printing"
                   ? t("orders.printing")
-                  : shownTicketState === "printed"
+                  : ticketPrintState === "printed"
                     ? t("orders.printQueued")
-                    : shownTicketState === "error"
+                    : ticketPrintState === "error"
                       ? t("orders.printFailed")
                       : t("orders.printTickets")}
               </button>
             )}
-            {shownTicketState === "error" && shownTicketError && (
+            {ticketPrintState === "error" && ticketPrintError && (
               <p className="text-center text-white/80 text-xs">
-                {shownTicketError}
+                {ticketPrintError}
               </p>
             )}
             <a
@@ -949,9 +915,14 @@ export function PosOrderQrModal({
               {t("orders.openSlip")}
             </a>
             {autoCloseCountdown !== null && autoCloseCountdown > 0 && (
-              <p className="text-center text-sm text-white/70 mt-2">
-                {t("orders.closingIn", { count: autoCloseCountdown })}
-              </p>
+              <button
+                type="button"
+                onClick={cancelAutoClose}
+                className="block w-full text-center text-sm text-white/70 mt-2 hover:text-white"
+              >
+                {t("orders.closingIn", { count: autoCloseCountdown })} ·{" "}
+                <span className="underline">{t("orders.keepOpen")}</span>
+              </button>
             )}
           </div>
         )}

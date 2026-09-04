@@ -2179,6 +2179,10 @@
       "backToAmount": "Nazaj na znesek",
       "back": "Nazaj",
       "buyerEmailLabel": "Email kupca za digitalne karte (neobvezno)",
+      "amountDue": "Za plačat",
+      "customerHint": "Če hočeš, dodaj napitnino, pol potrdi.",
+      "customerConfirm": "Potrdi {amount}",
+      "changeTip": "Spremeni napitnino",
       "buyerEmailPlaceholder": "email@example.com"
     },
     "receipt": {
@@ -2282,6 +2286,7 @@
       "cancelEdit": "Prekliči in uredi",
       "continue": "Naprej",
       "closingIn": "Zapiram čez {count}s",
+      "keepOpen": "Pusti odprto",
       "toggleRotation": "Obrni",
       "expired": "Poteklo",
       "pendingOrders": "Naročila v čakanju",
@@ -2298,7 +2303,6 @@
       "printFailed": "Tiskanje ni uspelo — poskusi znova",
       "openSlip": "Odpri potrdilo v brskalniku",
       "printing": "Tiskam ...",
-      "paperTicketsForCustomer": "Natisni tudi karte na papir (kupec jih ima v profilu)",
       "printTickets": "Natisni karte",
       "ticketsPending": "Karte se še izdajajo — poskusi še enkrat čez trenutek"
     },

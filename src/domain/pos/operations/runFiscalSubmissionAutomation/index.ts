@@ -9,7 +9,12 @@ import { buildInvoicePayload } from "@/lib/services/furs/invoice";
 const MAX_ATTEMPTS = 10;
 const BATCH_SIZE = 50;
 
-async function submitPendingInvoices(invoiceIds?: string[]) {
+/**
+ * Submit pending/failed fiscal invoices to FURS (optionally only the given
+ * ids) and store the EOR. Called inline right after payment so the printed
+ * receipt carries the EOR, and by the Inngest sweep as the fallback.
+ */
+export async function submitPendingInvoices(invoiceIds?: string[]) {
   if (!isFursConfigured()) {
     return { submitted: 0, failed: 0, skipped: "FURS not configured" };
   }
@@ -53,8 +58,7 @@ async function submitPendingInvoices(invoiceIds?: string[]) {
             ? {
                 invoiceNumber: invoice.referenceInvoice.invoiceNumber,
                 businessPremiseId: invoice.referenceInvoice.businessPremiseId,
-                electronicDeviceId:
-                  invoice.referenceInvoice.electronicDeviceId,
+                electronicDeviceId: invoice.referenceInvoice.electronicDeviceId,
                 issuedAt: invoice.referenceInvoice.issuedAt,
               }
             : null,
@@ -84,9 +88,10 @@ async function submitPendingInvoices(invoiceIds?: string[]) {
 }
 
 /**
- * Submits fiscal invoices to FURS for EOR confirmation. Fires near-realtime
- * on each issued invoice and sweeps every 10 minutes as the offline/bulk
- * fallback (legal window: 2 working days).
+ * Fallback submission of fiscal invoices to FURS: the payment request
+ * already tried inline; this re-fires on each issued invoice and sweeps
+ * every 10 minutes for anything still pending (legal window: 2 working
+ * days).
  */
 export const runFiscalSubmissionAutomation = inngest.createFunction(
   {

@@ -91,8 +91,8 @@ export default async function PosReceiptPage({
     });
   }
 
-  // The slip doubles as the entry ticket for anonymous sales; wallet buyers
-  // carry their tickets in their profile. Event date/venue enrich the slip.
+  // The slip doubles as the entry ticket (wallet buyers also have them in
+  // their profile). Event date/venue enrich the slip.
   const ticketEventIds = [...new Set(order.tickets.map(t => t.eventId))];
   const ticketEvents = new Map(
     (
@@ -105,29 +105,23 @@ export default async function PosReceiptPage({
     ).map(({ id, event }) => [id, event])
   );
 
-  const ticketQrs =
-    order.customerId === null
-      ? await Promise.all(
-          order.tickets.map(async ticket => {
-            const cmsEvent = ticketEvents.get(ticket.eventId) ?? null;
-            return {
-              shortId: ticket.shortId,
-              eventName: ticket.eventName,
-              eventDate: cmsEvent?.date_start
-                ? formatEventDateAndTime(cmsEvent.date_start)
-                : null,
-              venueName: cmsEvent?.venue?.name ?? null,
-              dataUrl: await QRCode.toDataURL(
-                JSON.stringify(ticket.qrContent),
-                {
-                  width: 200,
-                  margin: 0,
-                }
-              ),
-            };
-          })
-        )
-      : [];
+  const ticketQrs = await Promise.all(
+    order.tickets.map(async ticket => {
+      const cmsEvent = ticketEvents.get(ticket.eventId) ?? null;
+      return {
+        shortId: ticket.shortId,
+        eventName: ticket.eventName,
+        eventDate: cmsEvent?.date_start
+          ? formatEventDateAndTime(cmsEvent.date_start)
+          : null,
+        venueName: cmsEvent?.venue?.name ?? null,
+        dataUrl: await QRCode.toDataURL(JSON.stringify(ticket.qrContent), {
+          width: 200,
+          margin: 0,
+        }),
+      };
+    })
+  );
 
   const methodLabel =
     order.paymentMethod === "WALLET"
@@ -248,9 +242,7 @@ export default async function PosReceiptPage({
               />
             )}
             {/* Legally required VAT-exemption clause (mali davčni zavezanec) */}
-            <div className="mt-2 text-[10px] text-center">
-              {t("vatClause")}
-            </div>
+            <div className="mt-2 text-[10px] text-center">{t("vatClause")}</div>
           </>
         )}
 

@@ -28,12 +28,8 @@ const COMPANY_LINES = [
 export interface RenderPosReceiptOptions {
   /** Skip the receipt block, printing only ticket slips. Default true. */
   includeReceipt?: boolean;
-  /**
-   * "auto" (default): ticket slips only for anonymous sales — wallet buyers
-   * carry tickets in their profile. "always" overrides that for manual
-   * prints; "never" prints the receipt alone.
-   */
-  ticketMode?: "auto" | "always" | "never";
+  /** "always" (default) prints a slip per ticket; "never" the receipt alone. */
+  ticketMode?: "always" | "never";
 }
 
 // Thermal codepages have no token-symbol glyphs (they print as ??) — paper
@@ -75,9 +71,10 @@ export async function renderPosReceiptEpos(
 
   const fiscalInvoice = order.fiscalInvoices[0] ?? null;
 
-  // Ticket slips print only for anonymous sales (wallet buyers have their
-  // profile QR), matching the HTML receipt
-  const ticketEventIds = [...new Set(order.tickets.map(ticket => ticket.eventId))];
+  // Event date/venue enrich the ticket slips
+  const ticketEventIds = [
+    ...new Set(order.tickets.map(ticket => ticket.eventId)),
+  ];
   const ticketEvents = new Map(
     (
       await Promise.all(
@@ -89,12 +86,8 @@ export async function renderPosReceiptEpos(
     ).map(({ id, event }) => [id, event])
   );
 
-  const ticketMode = options?.ticketMode ?? "auto";
-  const includeTickets =
-    ticketMode === "always" ||
-    (ticketMode === "auto" && order.customerId === null);
   const tickets =
-    includeTickets
+    (options?.ticketMode ?? "always") === "always"
       ? order.tickets.map(ticket => {
           const cmsEvent = ticketEvents.get(ticket.eventId) ?? null;
           return {
@@ -131,7 +124,8 @@ export async function renderPosReceiptEpos(
       name: item.name,
       total: formatAmountForPaper(item.total),
     })),
-    tipLabel: order.tipAmount > 0 ? formatAmountForPaper(order.tipAmount) : null,
+    tipLabel:
+      order.tipAmount > 0 ? formatAmountForPaper(order.tipAmount) : null,
     totalFormatted: formatAmountForPaper(order.total),
     methodLabel,
     labels: {
