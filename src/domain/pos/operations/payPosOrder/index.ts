@@ -11,6 +11,7 @@ import { queuePosTransactionEmail } from "@/domain/pos/operations/queuePosTransa
 import { bustOnPosOrderPaid } from "@/lib/services/cache";
 import { inngest } from "@/lib/services/inngest";
 import { nextQueueNumber } from "@/domain/pos/util/fulfillment";
+import { issuePosOrderTickets } from "@/domain/pos/operations/issuePosOrderTickets";
 import type { PayPosOrderInput, PayPosOrderResult } from "@/domain/pos/types";
 import { PosError } from "@/domain/pos/types/posError";
 import type { WalletTransaction } from "@prisma/client";
@@ -76,9 +77,7 @@ export async function payPosOrder(
 
     // Top-up orders must be funded with physical tender (cash/card) — a
     // wallet cannot fund its own top-up.
-    const hasCreditItems = order.items.some(
-      i => i.item.direction === "CREDIT"
-    );
+    const hasCreditItems = order.items.some(i => i.item.direction === "CREDIT");
     if (hasCreditItems) {
       throw new PosError(
         "TOPUP_NOT_WALLET_PAYABLE",
@@ -87,7 +86,8 @@ export async function payPosOrder(
     }
 
     const debitItems = order.items.filter(i => i.item.direction === "DEBIT");
-    const debitTotal = debitItems.reduce((sum, i) => sum + i.total, 0) + tipAmount;
+    const debitTotal =
+      debitItems.reduce((sum, i) => sum + i.total, 0) + tipAmount;
 
     const formatItemsDescription = (items: typeof order.items) =>
       items.map(i => `${i.quantity}x ${i.name}`).join(", ");
@@ -103,9 +103,10 @@ export async function payPosOrder(
       }
 
       currentBalance -= debitTotal;
-      const debitNote = tipAmount > 0
-        ? `${formatItemsDescription(debitItems)}${debitItems.length > 0 ? ", " : ""}Tip`
-        : formatItemsDescription(debitItems);
+      const debitNote =
+        tipAmount > 0
+          ? `${formatItemsDescription(debitItems)}${debitItems.length > 0 ? ", " : ""}Tip`
+          : formatItemsDescription(debitItems);
 
       lastTransaction = await tx.walletTransaction.create({
         data: {
@@ -181,6 +182,14 @@ export async function payPosOrder(
     };
   });
 
+  // Tickets are issued before we answer so the auto-printed receipt carries
+  // their QRs; the Inngest follow-up below re-checks and handles delivery.
+  if (result.hasTicketItems) {
+    await issuePosOrderTickets(result.order.id).catch(error => {
+      console.error("Inline POS ticket issuance failed:", error);
+    });
+  }
+
   // Run announcements + side-effects after the response is sent.
   // Broadcasts still fire (seller/customer realtime UIs still update); the
   // seller's HTTP response no longer waits on Supabase/Discord/Inngest.
@@ -247,7 +256,8 @@ export async function payPosOrder(
       orderId: result.order.id,
     }).catch(() => {});
 
-    // Ticket-linked items → durable ticket issuance to the buyer's account
+    // Ticket-linked items → durable follow-up (fallback issuance, email to
+    // the buyer's account, Discord)
     const ticketIssue = result.hasTicketItems
       ? inngest
           .send({

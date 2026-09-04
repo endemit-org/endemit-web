@@ -12,6 +12,8 @@ import { bustOnPosOrderPaid } from "@/lib/services/cache";
 import { inngest } from "@/lib/services/inngest";
 import { PosError } from "@/domain/pos/types/posError";
 import { nextQueueNumber } from "@/domain/pos/util/fulfillment";
+import { issuePosOrderTickets } from "@/domain/pos/operations/issuePosOrderTickets";
+import { submitPendingInvoices } from "@/domain/pos/operations/runFiscalSubmissionAutomation";
 import { computeZoi } from "@/lib/services/furs/zoi";
 import { isFursConfigured } from "@/lib/services/furs/cert";
 import {
@@ -20,6 +22,9 @@ import {
   FURS_DEVICE_ID,
 } from "@/lib/services/env/private";
 import type { PosOrder, Prisma, WalletTransaction } from "@prisma/client";
+
+// How long the paid confirmation may wait on FURS before printing "pending"
+const FURS_INLINE_TIMEOUT_MS = 7000;
 
 export interface MarkPosOrderPaidInput {
   orderHash: string;
@@ -181,7 +186,26 @@ export async function markPosOrderPaid(
     };
   });
 
+  // Tickets are issued before we answer so the auto-printed receipt carries
+  // their QRs; the Inngest follow-up below re-checks and handles delivery.
+  if (result.hasTicketItems) {
+    await issuePosOrderTickets(result.order.id, buyerEmail).catch(error => {
+      console.error("Inline POS ticket issuance failed:", error);
+    });
+  }
+
   after(async () => {
+    // Fetch the EOR inline (bounded) so the paid screen — and the receipt it
+    // auto-prints — show the confirmed invoice; the sweep covers timeouts.
+    if (result.fiscalInvoiceId) {
+      await Promise.race([
+        submitPendingInvoices([result.fiscalInvoiceId]).catch(error => {
+          console.error("Inline FURS submission failed:", error);
+        }),
+        new Promise(resolve => setTimeout(resolve, FURS_INLINE_TIMEOUT_MS)),
+      ]);
+    }
+
     const payload = {
       orderId: result.order.id,
       shortCode: result.order.shortCode,
@@ -246,8 +270,8 @@ export async function markPosOrderPaid(
       );
     }
 
-    // Ticket-linked items → durable ticket issuance (anonymous door tickets,
-    // optionally emailed to the captured buyer address)
+    // Ticket-linked items → durable follow-up (fallback issuance, email to
+    // the captured buyer address, Discord)
     if (result.hasTicketItems) {
       broadcasts.push(
         inngest

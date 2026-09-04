@@ -2282,6 +2282,7 @@
       "cancelEdit": "Prekliči in uredi",
       "continue": "Naprej",
       "closingIn": "Zapiram čez {count}s",
+      "keepOpen": "Pusti odprto",
       "toggleRotation": "Obrni",
       "expired": "Poteklo",
       "pendingOrders": "Naročila v čakanju",
@@ -2298,7 +2299,6 @@
       "printFailed": "Tiskanje ni uspelo — poskusi znova",
       "openSlip": "Odpri potrdilo v brskalniku",
       "printing": "Tiskam ...",
-      "paperTicketsForCustomer": "Natisni tudi karte na papir (kupec jih ima v profilu)",
       "printTickets": "Natisni karte",
       "ticketsPending": "Karte se še izdajajo — poskusi še enkrat čez trenutek"
     },

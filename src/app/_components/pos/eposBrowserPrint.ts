@@ -60,9 +60,14 @@ function soapEnvelope(eposXml: string): string {
 export interface EposPrintResult {
   success: boolean;
   error?: string;
+  /**
+   * The receipt printed but the order's tickets weren't all issued yet, so
+   * their slips are missing — offer a ticket reprint.
+   */
+  ticketsMissing?: boolean;
 }
 
-export type PrintParts = "full" | "all" | "receipt" | "tickets";
+export type PrintParts = "full" | "receipt" | "tickets";
 
 /**
  * Full print chain for a paid order: fetch the rendered receipt XML from the
@@ -76,6 +81,7 @@ export async function printOrderReceipt(
 ): Promise<EposPrintResult> {
   let jobId: string | undefined;
   let xml: string | undefined;
+  let ticketsMissing = false;
   try {
     const response = await fetch(`/api/v1/pos/orders/${orderHash}/print`, {
       method: "POST",
@@ -91,11 +97,13 @@ export async function printOrderReceipt(
     }
     jobId = data.jobId;
     xml = data.xml;
+    ticketsMissing = Boolean(data.ticketsMissing);
   } catch {
     return { success: false, error: "Failed to render receipt" };
   }
 
   const result = await printToEposPrinter(printerUrl, xml!);
+  if (result.success && ticketsMissing) result.ticketsMissing = true;
 
   if (jobId) {
     fetch(`/api/v1/pos/print/jobs/${jobId}/result`, {

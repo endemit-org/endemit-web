@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -9,13 +9,7 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import { PosItemGrid } from "./PosItemGrid";
 import { PosCart } from "./PosCart";
 import { PosOrderQueue } from "./PosOrderQueue";
-import { PosOrderQrModal, type TicketSlipPrintState } from "./PosOrderQrModal";
-import { printOrderReceipt } from "./eposBrowserPrint";
-
-// Tickets are issued async after payment (Inngest). The register prints the
-// slips when the "pos_tickets_issued" broadcast lands; if it never does, it
-// falls back to asking the print route, which itself waits a few seconds.
-const TICKET_SLIP_FALLBACK_MS = 20_000;
+import { PosOrderQrModal } from "./PosOrderQrModal";
 import { PosRecentTransactions } from "./PosRecentTransactions";
 import { PosPrinterStatus } from "./PosPrinterStatus";
 import { PosToServeList } from "./PosToServeList";
@@ -114,69 +108,6 @@ export function PosRegisterInterface({
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [txRefreshKey, setTxRefreshKey] = useState(0);
 
-  // Ticket slips pending print, keyed by order id — only orders this device
-  // sold (other sellers on the same register get the broadcast too and must
-  // not print duplicates)
-  const ticketSlipQueueRef = useRef(
-    new Map<string, { orderHash: string; timer: number }>()
-  );
-  const [ticketSlipStates, setTicketSlipStates] = useState<
-    Record<string, TicketSlipPrintState>
-  >({});
-
-  const printTicketSlips = useCallback(
-    async (orderId: string) => {
-      const entry = ticketSlipQueueRef.current.get(orderId);
-      if (!entry || !register.printerUrl) return;
-      ticketSlipQueueRef.current.delete(orderId);
-      window.clearTimeout(entry.timer);
-      const result = await printOrderReceipt(
-        entry.orderHash,
-        register.printerUrl,
-        "tickets"
-      );
-      setTicketSlipStates(prev => ({
-        ...prev,
-        [orderId]: result.success
-          ? { state: "printed" }
-          : {
-              state: "error",
-              error:
-                result.error === "TICKETS_PENDING"
-                  ? t("orders.ticketsPending")
-                  : result.error,
-            },
-      }));
-    },
-    [register.printerUrl, t]
-  );
-
-  const queueTicketSlips = useCallback(
-    (order: { id: string; orderHash: string }) => {
-      if (ticketSlipQueueRef.current.has(order.id)) return;
-      const timer = window.setTimeout(
-        () => void printTicketSlips(order.id),
-        TICKET_SLIP_FALLBACK_MS
-      );
-      ticketSlipQueueRef.current.set(order.id, {
-        orderHash: order.orderHash,
-        timer,
-      });
-      setTicketSlipStates(prev => ({
-        ...prev,
-        [order.id]: { state: "waiting" },
-      }));
-    },
-    [printTicketSlips]
-  );
-
-  useRealtimeChannel({
-    channelName: `pos:register:${register.id}`,
-    event: "pos_tickets_issued",
-    onMessage: payload => {
-      void printTicketSlips(payload.orderId);
-    },
-  });
   const [orderNote, setOrderNote] = useState("");
   const [attachedCustomer, setAttachedCustomer] = useState<{
     id: string;
@@ -195,9 +126,7 @@ export function PosRegisterInterface({
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) return sortedItems;
     const query = searchQuery.toLowerCase();
-    return sortedItems.filter(item =>
-      item.name.toLowerCase().includes(query)
-    );
+    return sortedItems.filter(item => item.name.toLowerCase().includes(query));
   }, [sortedItems, searchQuery]);
 
   // Real-time updates for this register
@@ -343,16 +272,25 @@ export function PosRegisterInterface({
         expiresAt: data.order.expiresAt,
         createdAt: new Date().toISOString(),
         attachedCustomer: data.order.attachedCustomer ?? null,
-        scannedAt: data.order.attachedCustomer ? new Date().toISOString() : null,
-        items: data.order.items.map((i: { itemId: string; name: string; quantity: number; total: number }) => ({
-          itemId: i.itemId,
-          name: i.name,
-          quantity: i.quantity,
-          total: i.total,
-          // API response has no direction/ticket flag — the cart does
-          direction: cart.find(c => c.item.id === i.itemId)?.item.direction,
-          isTicket: cart.find(c => c.item.id === i.itemId)?.item.isTicket,
-        })),
+        scannedAt: data.order.attachedCustomer
+          ? new Date().toISOString()
+          : null,
+        items: data.order.items.map(
+          (i: {
+            itemId: string;
+            name: string;
+            quantity: number;
+            total: number;
+          }) => ({
+            itemId: i.itemId,
+            name: i.name,
+            quantity: i.quantity,
+            total: i.total,
+            // API response has no direction/ticket flag — the cart does
+            direction: cart.find(c => c.item.id === i.itemId)?.item.direction,
+            isTicket: cart.find(c => c.item.id === i.itemId)?.item.isTicket,
+          })
+        ),
       };
 
       setPendingOrders(prev => [newOrder, ...prev]);
@@ -369,26 +307,31 @@ export function PosRegisterInterface({
     }
   }, [cart, register.id, isCreating, clearCart, orderNote, attachedCustomer]);
 
-  const cancelOrder = useCallback(async (orderHash: string) => {
-    try {
-      const response = await fetch(`/api/v1/pos/orders/${orderHash}/cancel`, {
-        method: "POST",
-      });
+  const cancelOrder = useCallback(
+    async (orderHash: string) => {
+      try {
+        const response = await fetch(`/api/v1/pos/orders/${orderHash}/cancel`, {
+          method: "POST",
+        });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to cancel order");
-      }
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to cancel order");
+        }
 
-      setPendingOrders(prev => prev.filter(o => o.orderHash !== orderHash));
-      if (activeOrder?.orderHash === orderHash) {
-        setActiveOrder(null);
+        setPendingOrders(prev => prev.filter(o => o.orderHash !== orderHash));
+        if (activeOrder?.orderHash === orderHash) {
+          setActiveOrder(null);
+        }
+      } catch (error) {
+        console.error("Failed to cancel order:", error);
+        alert(
+          error instanceof Error ? error.message : "Failed to cancel order"
+        );
       }
-    } catch (error) {
-      console.error("Failed to cancel order:", error);
-      alert(error instanceof Error ? error.message : "Failed to cancel order");
-    }
-  }, [activeOrder]);
+    },
+    [activeOrder]
+  );
 
   const copyToCart = useCallback(
     async (order: PosOrderSummary) => {
@@ -397,7 +340,9 @@ export function PosRegisterInterface({
         await fetch(`/api/v1/pos/orders/${order.orderHash}/cancel`, {
           method: "POST",
         });
-        setPendingOrders(prev => prev.filter(o => o.orderHash !== order.orderHash));
+        setPendingOrders(prev =>
+          prev.filter(o => o.orderHash !== order.orderHash)
+        );
       } catch (error) {
         console.error("Failed to cancel order:", error);
       }
@@ -424,10 +369,7 @@ export function PosRegisterInterface({
         : sum,
     0
   );
-  const cartTotal = cart.reduce(
-    (sum, c) => sum + c.item.cost * c.quantity,
-    0
-  );
+  const cartTotal = cart.reduce((sum, c) => sum + c.item.cost * c.quantity, 0);
 
   // Determine cart direction - if cart has items, disable the opposite type
   const cartDirection = useMemo(() => {
@@ -437,7 +379,12 @@ export function PosRegisterInterface({
   }, [cart]);
 
   // Disable the opposite direction
-  const disabledDirection = cartDirection === "CREDIT" ? "DEBIT" : cartDirection === "DEBIT" ? "CREDIT" : null;
+  const disabledDirection =
+    cartDirection === "CREDIT"
+      ? "DEBIT"
+      : cartDirection === "DEBIT"
+        ? "CREDIT"
+        : null;
 
   return (
     <div className="flex h-[calc(100dvh-4rem)] relative">
@@ -465,16 +412,30 @@ export function PosRegisterInterface({
               </svg>
             </Link>
           )}
-          <span className="font-medium text-gray-900 flex-1">{register.name}</span>
+          <span className="font-medium text-gray-900 flex-1">
+            {register.name}
+          </span>
 
           <button
             onClick={() => setIsBalanceCheckOpen(true)}
             className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2m10-18h2a2 2 0 012 2v2m-4 14h2a2 2 0 002-2v-2M7 12h10" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2m10-18h2a2 2 0 012 2v2m-4 14h2a2 2 0 002-2v-2M7 12h10"
+              />
             </svg>
-            <span className="text-xs font-medium">{t("balanceCheck.label")}</span>
+            <span className="text-xs font-medium">
+              {t("balanceCheck.label")}
+            </span>
           </button>
 
           {/* Desktop Search */}
@@ -484,7 +445,7 @@ export function PosRegisterInterface({
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   placeholder={t("register.searchPlaceholder")}
                   autoFocus
                   className="w-48 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -496,8 +457,18 @@ export function PosRegisterInterface({
                   }}
                   className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -506,8 +477,18 @@ export function PosRegisterInterface({
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </button>
             )}
@@ -521,7 +502,7 @@ export function PosRegisterInterface({
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 placeholder={t("register.searchPlaceholder")}
                 autoFocus
                 className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -533,8 +514,18 @@ export function PosRegisterInterface({
                 }}
                 className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -562,24 +553,48 @@ export function PosRegisterInterface({
                     </svg>
                   </Link>
                 )}
-                <span className="font-medium text-gray-900">{register.name}</span>
+                <span className="font-medium text-gray-900">
+                  {register.name}
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setIsBalanceCheckOpen(true)}
                   className="flex items-center gap-1 px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2m10-18h2a2 2 0 012 2v2m-4 14h2a2 2 0 002-2v-2M7 12h10" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2m10-18h2a2 2 0 012 2v2m-4 14h2a2 2 0 002-2v-2M7 12h10"
+                    />
                   </svg>
-                  <span className="text-xs font-medium">{t("balanceCheck.label")}</span>
+                  <span className="text-xs font-medium">
+                    {t("balanceCheck.label")}
+                  </span>
                 </button>
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </button>
                 <button
@@ -676,8 +691,18 @@ export function PosRegisterInterface({
           onClick={() => setIsStatsOpen(true)}
           className="flex items-center justify-center gap-2 px-4 py-2 border-b text-sm font-medium text-gray-600 hover:bg-gray-50"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
           </svg>
           {t("stats.label")}
         </button>
@@ -752,8 +777,18 @@ export function PosRegisterInterface({
               onClick={() => setIsStatsOpen(true)}
               className="flex items-center justify-center gap-2 px-4 py-2 border-b text-sm font-medium text-gray-600 hover:bg-gray-50"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
               </svg>
               {t("stats.label")}
             </button>
@@ -817,7 +852,6 @@ export function PosRegisterInterface({
         />
       )}
 
-
       {/* QR Modal */}
       {activeOrder && (
         <PosOrderQrModal
@@ -825,8 +859,6 @@ export function PosRegisterInterface({
           register={register}
           onClose={() => setActiveOrder(null)}
           onCopyToCart={() => copyToCart(activeOrder)}
-          onQueueTicketSlips={queueTicketSlips}
-          ticketSlipState={ticketSlipStates[activeOrder.id]}
         />
       )}
     </div>
