@@ -2179,6 +2179,10 @@
       "backToAmount": "Nazaj na znesek",
       "back": "Nazaj",
       "buyerEmailLabel": "Email kupca za digitalne karte (neobvezno)",
+      "amountDue": "Za plačat",
+      "customerHint": "Če hočeš, dodaj napitnino, pol potrdi.",
+      "customerConfirm": "Potrdi {amount}",
+      "changeTip": "Spremeni napitnino",
       "buyerEmailPlaceholder": "email@example.com"
     },
     "receipt": {

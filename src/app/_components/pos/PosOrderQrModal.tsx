@@ -205,28 +205,37 @@ export function PosOrderQrModal({
   const isScanned = !!order.scannedAt;
   const hasTip = (order.tipAmount ?? 0) > 0;
 
-  // Start auto-close countdown when paid
+  // Start auto-close countdown when paid — but not while the receipt is
+  // still on its way to the printer (a failure needs the seller's eyes)
+  const printPending =
+    printState === "printing" || ticketPrintState === "printing";
   useEffect(() => {
-    if (isPaid && autoCloseCountdown === null && !autoCloseCancelled) {
+    if (
+      isPaid &&
+      autoCloseCountdown === null &&
+      !autoCloseCancelled &&
+      !printPending
+    ) {
       setAutoCloseCountdown(AUTO_CLOSE_SECONDS);
     }
-  }, [isPaid, autoCloseCountdown, autoCloseCancelled]);
+  }, [isPaid, autoCloseCountdown, autoCloseCancelled, printPending]);
 
   const cancelAutoClose = useCallback(() => {
     setAutoCloseCancelled(true);
     setAutoCloseCountdown(null);
   }, []);
 
-  // Countdown timer
+  // Countdown timer (paused while a print is pending)
   useEffect(() => {
     if (autoCloseCountdown === null || autoCloseCountdown <= 0) return;
+    if (printPending) return;
 
     const timer = setTimeout(() => {
       setAutoCloseCountdown(autoCloseCountdown - 1);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [autoCloseCountdown]);
+  }, [autoCloseCountdown, printPending]);
 
   // Auto-close when countdown reaches 0
   useEffect(() => {
@@ -752,6 +761,8 @@ export function PosOrderQrModal({
               showEmailField={hasTicketItems}
               isRotated={isRotated}
               onToggleRotation={() => setIsRotated(r => !r)}
+              // Customer step faces the customer, cashier step faces the seller
+              onPhaseChange={phase => setIsRotated(phase === "customer")}
               isProcessing={isPaying}
               error={payError}
               onConfirm={(tipAmount, buyerEmail) =>
