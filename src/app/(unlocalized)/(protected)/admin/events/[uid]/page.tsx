@@ -12,6 +12,7 @@ import {
 } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import EventTicketsDisplay from "@/app/_components/admin/EventTicketsDisplay";
+import { TicketGoalBar } from "@/app/_components/admin/TicketGoalBar";
 import { serializeTicket } from "@/domain/ticket/util";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/services/auth";
@@ -78,7 +79,8 @@ export default async function AdminEventPage({
   );
 
   const canCreateTickets =
-    user.permissions.includes(PERMISSIONS.TICKETS_CREATE) && !isEventCompleted(event);
+    user.permissions.includes(PERMISSIONS.TICKETS_CREATE) &&
+    !isEventCompleted(event);
 
   const t = await getTranslations("admin.events");
 
@@ -123,9 +125,7 @@ export default async function AdminEventPage({
                 {formatEventDateAndTime(event.date_start)}
               </p>
             )}
-            {event.venue && (
-              <p className="text-gray-500">{event.venue.name}</p>
-            )}
+            {event.venue && <p className="text-gray-500">{event.venue.name}</p>}
             {event.artists.length > 0 && (
               <p className="text-gray-400 text-sm mt-2 uppercase">
                 {event.artists.map(a => a.name).join(" • ")}
@@ -157,35 +157,12 @@ export default async function AdminEventPage({
             </div>
 
             {event.ticketGoal != null && event.ticketGoal > 0 && (
-              <div className="mt-3 max-w-md">
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-gray-500">{t("goal.label")}</span>
-                  <span
-                    className={`font-semibold ${
-                      stats.sold >= event.ticketGoal
-                        ? "text-green-600"
-                        : "text-gray-900"
-                    }`}
-                  >
-                    {stats.sold} / {event.ticketGoal} (
-                    {Math.round((stats.sold / event.ticketGoal) * 100)}%)
-                    {stats.sold > event.ticketGoal &&
-                      ` · ${t("goal.exceeded", { count: stats.sold - event.ticketGoal })}`}
-                  </span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${
-                      stats.sold >= event.ticketGoal
-                        ? "bg-green-500"
-                        : "bg-blue-500"
-                    }`}
-                    style={{
-                      width: `${Math.min(100, (stats.sold / event.ticketGoal) * 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
+              <TicketGoalBar
+                sold={stats.sold}
+                goal={event.ticketGoal}
+                isCompleted={isEventCompleted(event)}
+                className="mt-3 max-w-md"
+              />
             )}
           </div>
         </div>
