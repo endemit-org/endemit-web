@@ -197,3 +197,57 @@
     animation: none;
   }
 }
+
+/* RecordShowcase: on hover the record slides fully out of the sleeve (behind
+   it), then comes back on top of the sleeve; on hover-out it leaves the same
+   way and tucks back in behind. Geometry assumes the record is 82% of the
+   container width and sits 18% in from the left (see RecordShowcaseCard). */
+@keyframes record-pull {
+  0% {
+    transform: translate(0, -50%);
+    z-index: 0;
+    animation-timing-function: ease-in;
+  }
+  45% {
+    transform: translate(82%, -50%);
+    z-index: 0;
+  }
+  50% {
+    transform: translate(82%, -50%);
+    z-index: 20;
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate(-22%, -50%);
+    z-index: 20;
+  }
+}
+
+@keyframes record-return {
+  0% {
+    transform: translate(-22%, -50%);
+    z-index: 20;
+    animation-timing-function: ease-in;
+  }
+  45% {
+    transform: translate(82%, -50%);
+    z-index: 20;
+  }
+  50% {
+    transform: translate(82%, -50%);
+    z-index: 0;
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate(0, -50%);
+    z-index: 0;
+  }
+}
+
+.animate-record-pull {
+  animation: record-pull 1.2s forwards;
+}
+
+.animate-record-return {
+  animation: record-return 1.2s forwards;
+}
