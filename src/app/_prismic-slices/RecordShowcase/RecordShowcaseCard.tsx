@@ -11,6 +11,9 @@ type Props = {
   statusText: string | null;
   coverImage: string;
   recordImage: string;
+  /** Stacking order: earlier cards sit above later ones so the record can
+   *  overflow onto the next card's cover instead of under it. */
+  zIndex: number;
 };
 
 /**
@@ -27,6 +30,7 @@ const RecordShowcaseCard: FC<Props> = ({
   statusText,
   coverImage,
   recordImage,
+  zIndex,
 }) => {
   const [hovered, setHovered] = useState(false);
   const [armed, setArmed] = useState(false);
@@ -40,7 +44,8 @@ const RecordShowcaseCard: FC<Props> = ({
   return (
     <Link
       href={href}
-      className="group block"
+      className="group block relative"
+      style={{ zIndex }}
       onPointerEnter={() => {
         setArmed(true);
         setHovered(true);

@@ -245,9 +245,9 @@
 }
 
 .animate-record-pull {
-  animation: record-pull 1.2s forwards;
+  animation: record-pull 0.7s forwards;
 }
 
 .animate-record-return {
-  animation: record-return 1.2s forwards;
+  animation: record-return 0.7s forwards;
 }

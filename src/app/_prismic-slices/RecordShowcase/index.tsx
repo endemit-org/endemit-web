@@ -89,7 +89,7 @@ const RecordShowcase: FC<RecordShowcaseProps> = async ({ slice, context }) => {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12 mt-8">
-          {records.map(({ product, coverImage, recordImage }) => {
+          {records.map(({ product, coverImage, recordImage }, index) => {
             const statusText =
               product.status === ProductStatus.AVAILABLE
                 ? null
@@ -112,6 +112,7 @@ const RecordShowcase: FC<RecordShowcaseProps> = async ({ slice, context }) => {
                 statusText={statusText}
                 coverImage={coverImage}
                 recordImage={recordImage}
+                zIndex={records.length - index}
               />
             );
           })}
