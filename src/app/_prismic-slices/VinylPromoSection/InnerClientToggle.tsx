@@ -41,6 +41,23 @@ export default function InnerClientToggle({
   const isAlbumLoaded =
     playlistUrl && loadedTrack?.title && loadedTrack?.url === playlistUrl;
 
+  const playAlbum = () => {
+    if (!playlistUrl) return;
+    loadTrack({
+      url: playlistUrl,
+      title: albumTitle,
+      type: "track",
+      image: coverImage,
+      artist: artistName,
+    });
+  };
+
+  // Playlist only, no per-track list: there is nothing to pick from, so the
+  // drawer stays as the visual cue but clicking it (or the cover) plays the
+  // album straight away instead of opening a panel with one button.
+  const playlistOnly = tracks.length === 0 && Boolean(playlistUrl);
+  const open = () => (playlistOnly ? playAlbum() : setIsClicked(true));
+
   return (
     <div className="relative overflow-hidden z-20">
       <ImageWithFallback
@@ -48,8 +65,10 @@ export default function InnerClientToggle({
         alt={coverAlt}
         width={400}
         height={400}
-        className="z-10 relative "
-        onClick={() => setIsClicked(!isClicked)}
+        className="z-10 relative cursor-pointer"
+        onClick={() =>
+          playlistOnly || !isClicked ? open() : setIsClicked(false)
+        }
         placeholder={placeholder}
       />
       <div
@@ -64,10 +83,12 @@ export default function InnerClientToggle({
             "bg-[#2f284585] rounded-t-md p-1 text-center  transition-opacity duration-300 font-heading uppercase text-xl backdrop-blur-lg cursor-pointer",
             isClicked && "opacity-0 pointer-events-none"
           )}
-          onClick={() => setIsClicked(true)}
+          onClick={open}
         >
           <span className={"animate-pulse tracking-wider"}>
-            {t("clickToListen")}
+            {playlistOnly && isAlbumLoaded
+              ? t("playingAlbum")
+              : t("clickToListen")}
           </span>
         </div>
         <div className={"relative"}>
@@ -136,15 +157,7 @@ export default function InnerClientToggle({
               <div className={"px-4 pb-4"}>
                 <ActionButton
                   size={"sm"}
-                  onClick={() =>
-                    loadTrack({
-                      url: playlistUrl,
-                      title: albumTitle,
-                      type: "track",
-                      image: coverImage,
-                      artist: artistName,
-                    })
-                  }
+                  onClick={playAlbum}
                   disabled={!!isAlbumLoaded}
                 >
                   <PlayIcon

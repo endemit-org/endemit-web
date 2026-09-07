@@ -65,7 +65,7 @@ export default function PodcastSection({
           Array.from({ length: 4 - visiblePodcasts.length }).map((_, index) => (
             <div
               key={`filler-${index}`}
-              className="bg-neutral-900 w-full h-full items-center justify-center hidden sm:flex @5xl:hidden @7xl:flex"
+              className="bg-neutral-900 w-full h-full items-center justify-center hidden sm:flex @3xl:hidden @5xl:flex"
             >
               <div
                 className={"text-neutral-700 font-heading uppercase text-lg "}

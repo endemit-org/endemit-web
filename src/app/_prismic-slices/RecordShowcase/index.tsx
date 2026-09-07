@@ -6,8 +6,7 @@ import { isProductVisible } from "@/domain/product/businessLogic";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { ProductStatus, type Product } from "@/domain/product/types/product";
 import InnerPage from "@/app/_components/ui/InnerPage";
-import { Link } from "@/i18n/navigation";
-import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
+import RecordShowcaseCard from "./RecordShowcaseCard";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
 import { formatPrice } from "@/lib/util/formatting";
 import { getTranslations } from "next-intl/server";
@@ -90,59 +89,31 @@ const RecordShowcase: FC<RecordShowcaseProps> = async ({ slice, context }) => {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12 mt-8">
-          {records.map(({ product, coverImage, recordImage }) => {
-            const showStatus = product.status !== ProductStatus.AVAILABLE;
+          {records.map(({ product, coverImage, recordImage }, index) => {
+            const statusText =
+              product.status === ProductStatus.AVAILABLE
+                ? null
+                : t(
+                    product.status === ProductStatus.PREORDER
+                      ? "product.statusText.preorder"
+                      : product.status === ProductStatus.COMING_SOON
+                        ? "product.statusText.comingSoon"
+                        : product.status === ProductStatus.OUT_OF_STOCK
+                          ? "product.statusText.outOfStock"
+                          : "product.statusText.soldOut"
+                  );
 
             return (
-              <Link
+              <RecordShowcaseCard
                 key={product.id}
                 href={getProductLink(product.uid, product.category)}
-                className="group block"
-              >
-                {/* Cover with the record peeking out behind; on hover the
-                    record slides further out of the sleeve. */}
-                <div className="relative pr-[18%]">
-                  <div className="absolute top-1/2 -translate-y-1/2 right-0 w-[82%] transition-transform duration-500 ease-out group-hover:translate-x-[10%]">
-                    <ImageWithFallback
-                      src={recordImage}
-                      alt=""
-                      width={400}
-                      height={400}
-                      quality={80}
-                      className="animate-slow-spin rounded-full w-full"
-                    />
-                  </div>
-                  <ImageWithFallback
-                    src={coverImage}
-                    alt={product.name}
-                    width={400}
-                    height={400}
-                    className="relative z-10 w-full shadow-[0_6px_14px_rgba(0,0,0,0.5)]"
-                  />
-                  {showStatus && (
-                    <span className="absolute z-20 top-3 left-3 bg-neutral-950/80 backdrop-blur-sm text-neutral-200 text-xs uppercase tracking-wider font-heading px-2 py-1 rounded">
-                      {t(
-                        product.status === ProductStatus.PREORDER
-                          ? "product.statusText.preorder"
-                          : product.status === ProductStatus.COMING_SOON
-                            ? "product.statusText.comingSoon"
-                            : product.status === ProductStatus.OUT_OF_STOCK
-                              ? "product.statusText.outOfStock"
-                              : "product.statusText.soldOut"
-                      )}
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-4 pr-[18%]">
-                  <div className="text-neutral-200 text-lg group-hover:text-neutral-400 transition-colors">
-                    {product.name}
-                  </div>
-                  <div className="text-neutral-500 text-sm">
-                    {formatPrice(product.price)}
-                  </div>
-                </div>
-              </Link>
+                name={product.name}
+                price={formatPrice(product.price)}
+                statusText={statusText}
+                coverImage={coverImage}
+                recordImage={recordImage}
+                zIndex={records.length - index}
+              />
             );
           })}
         </div>
