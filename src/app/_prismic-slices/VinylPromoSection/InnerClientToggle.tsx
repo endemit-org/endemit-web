@@ -76,20 +76,11 @@ export default function InnerClientToggle({
           )}
         >
           <div
-            className="bg-[#2f284585] rounded-t-md p-1 text-center font-heading uppercase text-xl backdrop-blur-lg cursor-pointer flex items-center justify-center gap-2"
+            className="bg-[#2f284585] rounded-t-md p-1 text-center font-heading uppercase text-xl backdrop-blur-lg cursor-pointer"
             onClick={playAlbum}
           >
-            <PlayIcon
-              fill
-              className={clsx("size-5", isAlbumLoaded && "animate-pulse")}
-            />
-            <span
-              className={clsx(
-                "tracking-wider",
-                !isAlbumLoaded && "animate-pulse"
-              )}
-            >
-              {isAlbumLoaded ? t("playingAlbum") : t("playAlbum")}
+            <span className={"animate-pulse tracking-wider"}>
+              {isAlbumLoaded ? t("playingAlbum") : t("clickToListen")}
             </span>
           </div>
         </div>
