@@ -48,11 +48,18 @@ const RecordShowcaseCard: FC<Props> = ({
       href={href}
       className="group block relative"
       style={{ zIndex }}
-      onPointerEnter={() => {
+      onPointerEnter={e => {
+        // Mouse only: a tap on touch devices would play the pull and
+        // immediately the return, which is just distracting on the way to
+        // the product page.
+        if (e.pointerType !== "mouse") return;
         setArmed(true);
         setHovered(true);
       }}
-      onPointerLeave={() => setHovered(false)}
+      onPointerLeave={e => {
+        if (e.pointerType !== "mouse") return;
+        setHovered(false);
+      }}
     >
       <div className="relative pr-[18%]">
         {/* Resting transform matches the 0% frame of record-pull; keyframes
