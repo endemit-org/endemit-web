@@ -58,7 +58,7 @@ const RecordShowcaseCard: FC<Props> = ({
         {/* Resting transform matches the 0% frame of record-pull; keyframes
             in animations.css take over once armed. */}
         <div
-          className={`absolute top-1/2 -translate-y-1/2 right-0 w-[82%] rounded-full ${recordAnimation}`}
+          className={`pointer-events-none absolute top-1/2 -translate-y-1/2 right-0 w-[82%] rounded-full ${recordAnimation}`}
         >
           <ImageWithFallback
             src={recordImage}
