@@ -9,7 +9,7 @@ import { fetchPodcastsForArtistFromCms } from "@/domain/cms/operations/fetchPodc
 import ArtistProfile from "@/app/_components/artist/ArtistProfile";
 import Spacer from "@/app/_components/content/Spacer";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
-import clsx from "clsx";
+import CardGrid from "@/app/_components/grid/CardGrid";
 import PodcastCard from "@/app/_components/podcast/PodcastCard";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import { Metadata } from "next";
@@ -142,11 +142,7 @@ export default async function ArtistPage({
             <h2 className={"text-3xl text-neutral-200"}>
               {t("appearsOn", { name: artist.name })}
             </h2>
-            <div
-              className={clsx(
-                "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2 mt-8"
-              )}
-            >
+            <CardGrid trimOrphans={true} className="max-sm:grid-cols-1 mt-8">
               {showRelatedPodcasts &&
                 relatedPodcasts.map(podcast => (
                   <PodcastCard
@@ -178,7 +174,7 @@ export default async function ArtistPage({
                     />
                   );
                 })}
-            </div>
+            </CardGrid>
           </InnerPage>
         )}{" "}
         {relatedArtists && (

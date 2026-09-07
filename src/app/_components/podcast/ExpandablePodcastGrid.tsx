@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import clsx from "clsx";
 import { Podcast } from "@/domain/podcast/types/podcast";
 import PlayablePodcastCard from "@/app/_components/podcast/PlayablePodcastCard";
+import CardGrid from "@/app/_components/grid/CardGrid";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -27,13 +27,10 @@ export default function ExpandablePodcastGrid({
 
   return (
     <>
-      <div
-        className={clsx(
-          "grid gap-2 w-full",
-          gridCols === "2"
-            ? "grid-cols-2"
-            : "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
-        )}
+      {/* Orphans are only trimmed while collapsed — "view all" must show all. */}
+      <CardGrid
+        trimOrphans={!isExpanded}
+        className={gridCols === "2" ? "!grid-cols-2" : undefined}
       >
         {visiblePodcasts.map(podcast => (
           <PlayablePodcastCard
@@ -47,7 +44,7 @@ export default function ExpandablePodcastGrid({
             artist={podcast.artist?.name}
           />
         ))}
-      </div>
+      </CardGrid>
 
       {hasMore && (
         <div className="mt-6 text-center">

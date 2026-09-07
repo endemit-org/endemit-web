@@ -124,7 +124,7 @@ export default function ImageGalleryWithMasonry({
               {sliderImages.map((image, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 w-full snap-center cursor-pointer"
+                  className="flex-shrink-0 w-full snap-center cursor-pointer rounded-lg overflow-hidden"
                   onClick={() => setLightboxIndex(index)}
                 >
                   <ImageWithFallback
@@ -134,7 +134,10 @@ export default function ImageGalleryWithMasonry({
                     height={height}
                     alt={image?.alt ?? altFallbackText}
                     src={image.src}
-                    className="aspect-3/4 size-full rounded-lg object-cover"
+                    className={clsx(
+                      "aspect-3/4 size-full object-cover",
+                      index === 0 && "animate-product-hero-zoom"
+                    )}
                   />
                 </div>
               ))}
@@ -173,7 +176,7 @@ export default function ImageGalleryWithMasonry({
         ) : (
           <div
             className={clsx(
-              "row-span-2 col-span-2 cursor-pointer",
+              "row-span-2 col-span-2 cursor-pointer rounded-lg overflow-hidden",
               images.length === 1 && !hasRelatedEvent && "col-span-3"
             )}
             onClick={() => setLightboxIndex(0)}
@@ -185,7 +188,7 @@ export default function ImageGalleryWithMasonry({
               height={height}
               alt={images[0]?.alt ?? altFallbackText}
               src={images[0].src}
-              className="aspect-3/4 size-full rounded-lg object-cover"
+              className="aspect-3/4 size-full object-cover animate-product-hero-zoom"
             />
           </div>
         )}
@@ -252,7 +255,7 @@ export default function ImageGalleryWithMasonry({
           {images.map((image, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-full snap-center cursor-pointer"
+              className="flex-shrink-0 w-full snap-center cursor-pointer rounded-lg overflow-hidden"
               onClick={() => setLightboxIndex(index)}
             >
               <ImageWithFallback
@@ -262,7 +265,10 @@ export default function ImageGalleryWithMasonry({
                 height={height}
                 alt={image?.alt ?? altFallbackText}
                 src={image.src}
-                className="aspect-4/5 w-full rounded-lg object-cover h-full"
+                className={clsx(
+                  "aspect-4/5 w-full object-cover h-full",
+                  index === 0 && "animate-product-hero-zoom"
+                )}
               />
             </div>
           ))}

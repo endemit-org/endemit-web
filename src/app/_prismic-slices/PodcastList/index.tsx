@@ -9,6 +9,7 @@ import PodcastSeriesSeoMicrodata from "@/app/_components/seo/PodcastSeriesSeoMic
 import PlayablePodcastCard from "@/app/_components/podcast/PlayablePodcastCard";
 import FeaturedPodcastCard from "@/app/_components/podcast/FeaturedPodcastCard";
 import ExpandablePodcastGrid from "@/app/_components/podcast/ExpandablePodcastGrid";
+import CardGrid from "@/app/_components/grid/CardGrid";
 import { pickLocalized } from "@/domain/cms/pickLocalized";
 import type { SliceContext } from "@/app/_components/content/SliceDisplay";
 
@@ -76,12 +77,10 @@ const PodcastList: FC<PodcastListProps> = async ({ slice, context }) => {
             />
           </div>
         ) : (
-          <div
+          <CardGrid
+            trimOrphans={episodeCountValue !== "2"}
             className={clsx(
-              "grid gap-2 w-full",
-              episodeCountValue === "2"
-                ? "grid-cols-2"
-                : "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
+              episodeCountValue === "2" && "!grid-cols-2",
               (sliceTitle || sliceDescription) && "mt-8"
             )}
           >
@@ -97,7 +96,7 @@ const PodcastList: FC<PodcastListProps> = async ({ slice, context }) => {
                 artist={podcast.artist?.name}
               />
             ))}
-          </div>
+          </CardGrid>
         )}
       </section>
     );

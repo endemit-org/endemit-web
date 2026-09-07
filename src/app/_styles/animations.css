@@ -173,3 +173,27 @@
 .animate-subtle-pulse {
   animation: subtle-pulse 2.5s ease-in-out infinite;
 }
+
+/* Product page hero image: a barely-there, one-shot Ken Burns push-in —
+   slow ease in, slow ease out, then it just rests at the end. Applied to
+   the image inside an overflow-hidden wrapper so the frame stays put. */
+@keyframes product-hero-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+.animate-product-hero-zoom {
+  animation: product-hero-zoom 14s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-product-hero-zoom {
+    animation: none;
+  }
+}
