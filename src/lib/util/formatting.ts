@@ -61,14 +61,14 @@ export const formatMonthNameShort = (
 
 export const formatDayOfMonth = (date: Date) => {
   return date.toLocaleDateString("en-US", {
-    day: "2-digit",
+    day: "numeric",
     timeZone: "Europe/Ljubljana",
   });
 };
 
 export const formatDate = (date: Date, locale: "sl" | "en" = "en") => {
   return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
-    day: "2-digit",
+    day: "numeric",
     month: "long",
     year: "2-digit",
     timeZone: "Europe/Ljubljana",
@@ -77,7 +77,7 @@ export const formatDate = (date: Date, locale: "sl" | "en" = "en") => {
 
 export const formatDateTime = (date: Date, locale: "sl" | "en" = "en") => {
   return date.toLocaleDateString(locale === "sl" ? "sl-SI" : "en-GB", {
-    day: "2-digit",
+    day: "numeric",
     month: "long",
     year: "2-digit",
     hour: "2-digit",
