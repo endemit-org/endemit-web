@@ -25,7 +25,7 @@ export default function CardGrid({ children, trimOrphans, className }: Props) {
     <div className="@container w-full">
       <div
         className={clsx(
-          "grid gap-2 w-full grid-cols-2 @5xl:grid-cols-3 @7xl:grid-cols-4",
+          "grid gap-2 w-full grid-cols-2 @3xl:grid-cols-3 @5xl:grid-cols-4",
           trimOrphans && "card-grid-trim",
           className
         )}
