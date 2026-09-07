@@ -112,3 +112,28 @@ button:focus {
   }
 }
 
+
+/* Card grids (CardGrid.tsx) pick their column count from the *container*, so
+   a section inside a framed/padded panel or a narrow column steps down on
+   its own. `.card-grid-trim` additionally hides whatever would spill into an
+   incomplete last row (e.g. the 4th of 4 related items when only 3 columns
+   fit) — the last items, which are the oldest in date-sorted lists. A lone
+   row that never fills (fewer items than columns) is left alone. Breakpoints
+   must match the `@5xl` / `@7xl` container variants used in CardGrid. */
+@container (max-width: 63.99rem) {
+  .card-grid-trim > :nth-child(2n + 1):not(:first-child):last-child {
+    display: none;
+  }
+}
+@container (min-width: 64rem) and (max-width: 79.99rem) {
+  .card-grid-trim > :nth-child(3n + 1):not(:first-child):nth-last-child(-n + 2),
+  .card-grid-trim > :nth-child(3n + 1):not(:first-child):nth-last-child(-n + 2) ~ * {
+    display: none;
+  }
+}
+@container (min-width: 80rem) {
+  .card-grid-trim > :nth-child(4n + 1):not(:first-child):nth-last-child(-n + 3),
+  .card-grid-trim > :nth-child(4n + 1):not(:first-child):nth-last-child(-n + 3) ~ * {
+    display: none;
+  }
+}

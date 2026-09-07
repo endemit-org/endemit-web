@@ -4,6 +4,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { Podcast } from "@/domain/podcast/types/podcast";
 import PodcastCard from "@/app/_components/podcast/PodcastCard";
+import CardGrid from "@/app/_components/grid/CardGrid";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -45,11 +46,10 @@ export default function PodcastSection({
         <p className={"text-md text-neutral-400"}>{description}</p>
       )}
 
-      <div
-        className={clsx(
-          "grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2",
-          title || description ? "mt-8" : "mt-0"
-        )}
+      {/* Orphans are only trimmed while collapsed — "view all" must show all. */}
+      <CardGrid
+        trimOrphans={!isExpanded}
+        className={title || description ? "mt-8" : "mt-0"}
       >
         {visiblePodcasts.map(podcast => (
           <PodcastCard
@@ -65,7 +65,7 @@ export default function PodcastSection({
           Array.from({ length: 4 - visiblePodcasts.length }).map((_, index) => (
             <div
               key={`filler-${index}`}
-              className="bg-neutral-900 w-full h-full items-center justify-center hidden sm:flex xl:hidden 2xl:flex"
+              className="bg-neutral-900 w-full h-full items-center justify-center hidden sm:flex @5xl:hidden @7xl:flex"
             >
               <div
                 className={"text-neutral-700 font-heading uppercase text-lg "}
@@ -74,7 +74,7 @@ export default function PodcastSection({
               </div>
             </div>
           ))}
-      </div>
+      </CardGrid>
 
       {hasMore && (
         <div className="mt-6 text-center">

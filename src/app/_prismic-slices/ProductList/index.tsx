@@ -85,6 +85,7 @@ const ProductList: FC<ProductListProps> = async ({ slice, context }) => {
           renderFrame={slice.primary.render_frame ?? false}
           gridType={gridSizeType}
           quickAddToCart={quickAddToCart}
+          trimOrphans={true}
         />
       )}
     </section>

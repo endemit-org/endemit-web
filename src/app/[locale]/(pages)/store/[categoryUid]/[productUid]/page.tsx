@@ -14,7 +14,7 @@ import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
 import SliceDisplay from "@/app/_components/content/SliceDisplay";
-import clsx from "clsx";
+import CardGrid from "@/app/_components/grid/CardGrid";
 import ProductSeoMicrodata from "@/app/_components/seo/ProductSeoMicrodata";
 import { fetchEventFromCmsByUid } from "@/domain/cms/operations/fetchEventFromCms";
 import { buildOpenGraphImages, buildOpenGraphObject } from "@/lib/util/seo";
@@ -192,11 +192,7 @@ export default async function ProductPage({
             <h3 className={"text-neutral-200 text-2xl py-6"}>
               {t("product.youMightAlsoLike")}
             </h3>
-            <div
-              className={clsx(
-                "grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2"
-              )}
-            >
+            <CardGrid trimOrphans={true}>
               {relatedProducts.map((relatedProduct, index) => (
                 <ProductCard
                   status={relatedProduct.status}
@@ -210,7 +206,7 @@ export default async function ProductPage({
                   callToAction={relatedProduct.callToAction}
                 />
               ))}
-            </div>
+            </CardGrid>
           </div>
         )}
       </OuterPage>

@@ -628,6 +628,7 @@ export default function Checkout({
           title={t("officialItems.title")}
           gridType={"small"}
           quickAddToCart={true}
+          trimOrphans={true}
           description={t("officialItems.description")}
         />
       )}

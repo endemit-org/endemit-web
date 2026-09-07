@@ -1,6 +1,7 @@
 import { Product } from "@/domain/product/types/product";
 import ProductCard from "@/app/_components/product/ProductCard";
 import clsx from "clsx";
+import CardGrid from "@/app/_components/grid/CardGrid";
 
 interface Props {
   products: Product[];
@@ -9,6 +10,8 @@ interface Props {
   renderFrame?: boolean;
   gridType?: "small" | "large";
   quickAddToCart?: boolean;
+  /** Hide items that would orphan on a partial last row (see CardGrid). */
+  trimOrphans?: boolean;
 }
 
 export default function ProductSection({
@@ -18,6 +21,7 @@ export default function ProductSection({
   renderFrame = true,
   gridType,
   quickAddToCart = false,
+  trimOrphans = false,
 }: Props) {
   if (products.length === 0) {
     return;
@@ -35,12 +39,10 @@ export default function ProductSection({
         <p className={"text-md text-neutral-400"}>{description}</p>
       )}
 
-      <div
+      <CardGrid
+        trimOrphans={trimOrphans}
         className={clsx(
-          "grid w-full gap-2",
-          gridType === "small"
-            ? "grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
-            : "grid-cols-1 xl:grid-cols-2",
+          gridType !== "small" && "!grid-cols-1 @5xl:!grid-cols-2",
           title || description ? "mt-8" : "mt-0"
         )}
       >
@@ -59,7 +61,7 @@ export default function ProductSection({
             product={product}
           />
         ))}
-      </div>
+      </CardGrid>
     </section>
   );
 }

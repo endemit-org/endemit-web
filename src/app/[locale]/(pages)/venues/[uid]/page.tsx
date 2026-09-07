@@ -4,7 +4,7 @@ import OuterPage from "@/app/_components/ui/OuterPage";
 import { notFound } from "next/navigation";
 import Spacer from "@/app/_components/content/Spacer";
 import EndemitSubscribe from "@/app/_components/newsletter/EndemitSubscribe";
-import clsx from "clsx";
+import CardGrid from "@/app/_components/grid/CardGrid";
 import EventMiniCard from "@/app/_components/event/EventMiniCard";
 import { Metadata } from "next";
 import { prismic } from "@/lib/services/prismic";
@@ -155,11 +155,7 @@ export default async function VenuePage({
             <h2 className={"text-3xl text-neutral-200"}>
               {t("eventsHostedAt", { name: venue.name })}
             </h2>
-            <div
-              className={clsx(
-                "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-2 mt-8"
-              )}
-            >
+            <CardGrid trimOrphans={true} className="max-sm:grid-cols-1 mt-8">
               {showRelatedEvents &&
                 relatedEvents.map(event => {
                   const shouldShowLink =
@@ -180,7 +176,7 @@ export default async function VenuePage({
                     />
                   );
                 })}
-            </div>
+            </CardGrid>
           </InnerPage>
         )}
 
