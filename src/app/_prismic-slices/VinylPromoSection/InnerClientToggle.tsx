@@ -41,6 +41,62 @@ export default function InnerClientToggle({
   const isAlbumLoaded =
     playlistUrl && loadedTrack?.title && loadedTrack?.url === playlistUrl;
 
+  const playAlbum = () => {
+    if (!playlistUrl) return;
+    loadTrack({
+      url: playlistUrl,
+      title: albumTitle,
+      type: "track",
+      image: coverImage,
+      artist: artistName,
+    });
+  };
+
+  // Playlist only, no per-track list: there is nothing to pick from, so the
+  // cover and the tab play the album straight away instead of opening the
+  // panel that would just hold a single play button.
+  const playlistOnly = tracks.length === 0 && Boolean(playlistUrl);
+
+  if (playlistOnly) {
+    return (
+      <div className="relative overflow-hidden z-20">
+        <ImageWithFallback
+          src={coverImage}
+          alt={coverAlt}
+          width={400}
+          height={400}
+          className="z-10 relative cursor-pointer"
+          onClick={playAlbum}
+          placeholder={placeholder}
+        />
+        <div
+          className={clsx(
+            "absolute bottom-0 z-10 w-full p-3 transition-transform duration-300 ease-in-out opacity-95",
+            "group-hover:translate-y-[85%] translate-y-[87%]"
+          )}
+        >
+          <div
+            className="bg-[#2f284585] rounded-t-md p-1 text-center font-heading uppercase text-xl backdrop-blur-lg cursor-pointer flex items-center justify-center gap-2"
+            onClick={playAlbum}
+          >
+            <PlayIcon
+              fill
+              className={clsx("size-5", isAlbumLoaded && "animate-pulse")}
+            />
+            <span
+              className={clsx(
+                "tracking-wider",
+                !isAlbumLoaded && "animate-pulse"
+              )}
+            >
+              {isAlbumLoaded ? t("playingAlbum") : t("playAlbum")}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-hidden z-20">
       <ImageWithFallback
@@ -136,15 +192,7 @@ export default function InnerClientToggle({
               <div className={"px-4 pb-4"}>
                 <ActionButton
                   size={"sm"}
-                  onClick={() =>
-                    loadTrack({
-                      url: playlistUrl,
-                      title: albumTitle,
-                      type: "track",
-                      image: coverImage,
-                      artist: artistName,
-                    })
-                  }
+                  onClick={playAlbum}
                   disabled={!!isAlbumLoaded}
                 >
                   <PlayIcon
