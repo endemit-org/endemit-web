@@ -9,6 +9,7 @@ import {
 } from "@react-google-maps/api";
 import { PUBLIC_GOOGLE_MAP_API_KEY } from "@/lib/services/env/public";
 import { useTranslations } from "next-intl";
+import clsx from "clsx";
 
 interface GoogleMapProps {
   center?: { lat: number; lng: number };
@@ -159,7 +160,7 @@ const GoogleMapLocation: React.FC<GoogleMapProps> = ({
 
   return (
     <GoogleMap
-      mapContainerClassName={className}
+      mapContainerClassName={clsx("grayscale", className)}
       mapContainerStyle={{ height, width }}
       center={center}
       zoom={zoom}
