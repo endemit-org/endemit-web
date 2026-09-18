@@ -6,7 +6,7 @@ import { recordOtcRequest } from "@/domain/auth/operations/recordOtcRequest";
 import { generateOtcCode } from "@/domain/auth/operations/generateOtcCode";
 import { generateMagicLink } from "@/domain/auth/operations/generateMagicLink";
 import { createOtcToken } from "@/domain/auth/operations/createOtcToken";
-import { queueOtcEmail } from "@/domain/auth/operations/queueOtcEmail";
+import { deliverOtcEmail } from "@/domain/auth/operations/deliverOtcEmail";
 import { assignRoleToUser } from "@/domain/auth/operations/assignRoleToUser";
 import { ROLE_SLUGS } from "@/domain/auth/config/roles.config";
 import { bustOnUserCreated, bustOnWalletCreated } from "@/lib/services/cache";
@@ -91,8 +91,8 @@ export const registerOtcUser = async ({
   // Record the request for rate limiting
   await recordOtcRequest(normalizedEmail);
 
-  // Queue email
-  await queueOtcEmail({
+  // Send email (falls back to queue on failure)
+  await deliverOtcEmail({
     email: normalizedEmail,
     code,
     magicLink,
