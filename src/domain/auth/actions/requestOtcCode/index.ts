@@ -6,7 +6,7 @@ import { recordOtcRequest } from "@/domain/auth/operations/recordOtcRequest";
 import { generateOtcCode } from "@/domain/auth/operations/generateOtcCode";
 import { generateMagicLink } from "@/domain/auth/operations/generateMagicLink";
 import { createOtcToken } from "@/domain/auth/operations/createOtcToken";
-import { queueOtcEmail } from "@/domain/auth/operations/queueOtcEmail";
+import { deliverOtcEmail } from "@/domain/auth/operations/deliverOtcEmail";
 import type { OtcRequestResult } from "@/domain/auth/types";
 import { getLocale } from "next-intl/server";
 
@@ -111,9 +111,9 @@ export const requestOtcCode = async ({
   // Record the request for rate limiting
   await recordOtcRequest(normalizedEmail);
 
-  // Queue email in the visitor's current locale
+  // Send email in the visitor's current locale (falls back to queue on failure)
   const locale = await getLocale();
-  await queueOtcEmail({
+  await deliverOtcEmail({
     email: normalizedEmail,
     code,
     magicLink,
