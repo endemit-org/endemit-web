@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCheckoutRequest";
+import { resolvePickupSelection } from "@/domain/checkout/operations/resolvePickupSelection";
+import { DeliveryMethod } from "@/domain/checkout/types/checkout";
 import { createOrder } from "@/domain/order/operations/createOrder";
 import { transformToProductInOrder } from "@/domain/product/transformers/transformToProductInOrder";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscribeEmailToGeneralList";
@@ -34,10 +36,14 @@ export async function POST(request: Request) {
       shippingAddress,
       complementaryTicketData,
       shouldHaveShippingAddress,
+      deliveryMethod,
+      pickupEventUid,
       subtotal,
       shippingCost,
       walletCreditAmount,
     } = validateCheckoutRequest(body, products);
+
+    const pickup = await resolvePickupSelection(deliveryMethod, pickupEventUid);
 
     // Validate and calculate discount if provided
     let discount: DiscountDetails | undefined;
@@ -115,9 +121,14 @@ export async function POST(request: Request) {
         // receipt emails (receipt_email would send them regardless of settings).
         customerEmail: email,
         requiresShipping: shippingAddress ? "true" : "false",
+        deliveryMethod,
         includesTickets: ticketHolders ? "true" : "false",
         walletCreditAmount: validatedWalletCredit.toString(),
       };
+
+      if (pickup) {
+        metadata.pickupEvent = pickup.eventName ?? "by agreement";
+      }
 
       if (ticketHolders) {
         metadata.ticketHolders = JSON.stringify(ticketHolders);
@@ -136,7 +147,11 @@ export async function POST(request: Request) {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountToCharge,
         currency: "eur",
-        description: transformToCheckoutDescription(shippingAddress, email),
+        description: transformToCheckoutDescription(
+          shippingAddress,
+          email,
+          deliveryMethod === DeliveryMethod.PICKUP ? pickup : undefined
+        ),
         metadata,
         automatic_payment_methods: {
           enabled: true,
@@ -178,6 +193,8 @@ export async function POST(request: Request) {
       walletAmountUsed: validatedWalletCredit,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
+      deliveryMethod,
+      pickup,
       orderItems,
       userId: currentUser?.id,
       locale: body.locale === "en" ? "en" : "sl",
@@ -210,7 +227,9 @@ export async function POST(request: Request) {
     }
 
     // Get the PaymentIntent to return clientSecret
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId!);
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      paymentIntentId!
+    );
 
     return NextResponse.json(
       {

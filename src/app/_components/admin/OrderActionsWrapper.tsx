@@ -4,12 +4,13 @@ import { useState } from "react";
 import OrderActions from "./OrderActions";
 import RefundDialog from "./RefundDialog";
 import { ProductInOrder } from "@/domain/order/types/order";
-import { OrderStatus } from "@prisma/client";
+import { DeliveryMethod, OrderStatus } from "@prisma/client";
 
 interface OrderActionsWrapperProps {
   orderId: string;
   status: OrderStatus;
   items: ProductInOrder[];
+  deliveryMethod?: DeliveryMethod;
   totalAmount: number;
   refundedAmount: number;
   userPermissions: string[];
@@ -19,6 +20,7 @@ export default function OrderActionsWrapper({
   orderId,
   status,
   items,
+  deliveryMethod,
   totalAmount,
   refundedAmount,
   userPermissions,
@@ -31,6 +33,7 @@ export default function OrderActionsWrapper({
         orderId={orderId}
         status={status}
         items={items}
+        deliveryMethod={deliveryMethod}
         totalAmount={totalAmount}
         refundedAmount={refundedAmount}
         userPermissions={userPermissions}

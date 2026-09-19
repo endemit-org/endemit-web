@@ -1,4 +1,7 @@
-import { CheckoutFormData } from "@/domain/checkout/types/checkout";
+import {
+  CheckoutFormData,
+  DeliveryMethod,
+} from "@/domain/checkout/types/checkout";
 import { transformToComplementaryTicketModel } from "@/domain/ticket/transformers/transformToComplementaryTicketModel";
 import { ValidationErrors } from "@/domain/checkout/types/validation";
 import { CartItem } from "@/domain/checkout/types/cartItem";
@@ -72,16 +75,23 @@ export class CheckoutValidationService {
       postalCode: false,
       country: false,
       phone: false,
+      pickupEvent: false,
       termsAndConditions: !this.isValidCheckbox(formData.termsAndConditions),
     };
 
     if (requiresShippingAddress) {
+      const isPickup = formData.deliveryMethod === DeliveryMethod.PICKUP;
       errors.name = !this.isValidFullName(formData.name);
-      errors.address = !this.isValidAddress(formData.address);
-      errors.city = !this.isValidCity(formData.city);
-      errors.postalCode = !this.isValidPostalCode(formData.postalCode);
-      errors.country = !this.isValidCountry(formData.country);
       errors.phone = !this.isValidPhone(formData.phone);
+      if (isPickup) {
+        // Pickup only needs a contact; the event (or "by agreement") must be chosen
+        errors.pickupEvent = !formData.pickupEventUid;
+      } else {
+        errors.address = !this.isValidAddress(formData.address);
+        errors.city = !this.isValidCity(formData.city);
+        errors.postalCode = !this.isValidPostalCode(formData.postalCode);
+        errors.country = !this.isValidCountry(formData.country);
+      }
     }
 
     // Flatten complementary ticket validation to top level
@@ -114,6 +124,7 @@ export class CheckoutValidationService {
       postalCode: "Postal code must be at least 3 characters",
       country: "Invalid country",
       phone: "Phone number must be at least 5 numbers and digits only",
+      pickupEvent: "Choose where you will pick up the order",
       termsAndConditions: "You must accept the terms and conditions",
     };
 

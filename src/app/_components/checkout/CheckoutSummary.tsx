@@ -16,6 +16,7 @@ interface Props {
   discountObject?: DiscountDetails;
   discountAmount: number;
   country: CountryCode;
+  isPickup?: boolean;
   loadingShippingCost: boolean;
   loadingPromoCode?: boolean;
 }
@@ -50,6 +51,7 @@ export default function CheckoutSummary({
   walletCreditEur,
   orderWeight,
   country,
+  isPickup = false,
   loadingShippingCost,
   loadingPromoCode,
 }: Props) {
@@ -61,7 +63,15 @@ export default function CheckoutSummary({
   return (
     <div className="text-md text-neutral-200 space-y-4 pt-4">
       {showSubtotal && (
-        <LineItem label={t("subtotal")}>{formatDecimalPrice(subTotal)}</LineItem>
+        <LineItem label={t("subtotal")}>
+          {formatDecimalPrice(subTotal)}
+        </LineItem>
+      )}
+
+      {isPickup && (
+        <LineItem label={t("pickup")}>
+          <span className="text-neutral-400">{t("free")}</span>
+        </LineItem>
       )}
 
       {shippingCost > 0 && (

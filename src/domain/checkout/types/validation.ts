@@ -7,6 +7,7 @@ export type ValidationErrors = {
   postalCode: boolean;
   country: boolean;
   phone: boolean;
+  pickupEvent: boolean;
   termsAndConditions: boolean;
   [key: string]: boolean; // Dynamic keys for complementary tickets
 };

@@ -2,6 +2,7 @@ import "server-only";
 
 import {
   CheckoutSessionRequestBody,
+  DeliveryMethod,
   ShippingAddress,
 } from "@/domain/checkout/types/checkout";
 import { CheckoutValidationService } from "@/lib/services/validation/validation.service";
@@ -22,18 +23,40 @@ export const validateCheckoutRequest = (
   products: Product[]
 ) => {
   const items = body.items as CartItem[];
-  const shippingAddress = body.shippingAddress as ShippingAddress | undefined;
   const shouldHaveShippingAddress = includesShippableProduct(items);
+  // Pickup is only a choice when there is something physical to hand over
+  const deliveryMethod =
+    shouldHaveShippingAddress &&
+    body.formData?.deliveryMethod === DeliveryMethod.PICKUP
+      ? DeliveryMethod.PICKUP
+      : DeliveryMethod.SHIPPING;
+  const isPickup = deliveryMethod === DeliveryMethod.PICKUP;
+
+  const rawAddress = body.shippingAddress as ShippingAddress | undefined;
+  // Pickup keeps only the contact; goods are handed over in Slovenia
+  const shippingAddress: ShippingAddress | undefined =
+    isPickup && rawAddress
+      ? {
+          name: rawAddress.name,
+          phone: rawAddress.phone,
+          country: "SI",
+          address: "",
+          city: "",
+          postalCode: "",
+        }
+      : rawAddress;
 
   validateBasicFields(body.email, body.termsAndConditions);
 
-  const isFormValid = CheckoutValidationService.validateForm({
-    formData: body.formData,
+  const formErrors = CheckoutValidationService.validateForm({
+    formData: { ...body.formData, deliveryMethod },
     requiresShippingAddress: shouldHaveShippingAddress,
     items,
   });
 
-  if (!isFormValid) throw new Error("Form validation failed");
+  if (!CheckoutValidationService.isFormValid(formErrors)) {
+    throw new Error("Form validation failed");
+  }
 
   const validProducts = getValidProducts(products, shippingAddress?.country);
   const checkoutItems = transformToItemsForPayment(items, validProducts);
@@ -41,12 +64,14 @@ export const validateCheckoutRequest = (
   validateCheckoutItems(checkoutItems);
 
   const orderWeight = getCheckoutWeight(checkoutItems);
-  const shippingCost = getCalculatedShippingCost(
-    shouldHaveShippingAddress,
-    shippingAddress,
-    checkoutItems,
-    orderWeight
-  );
+  const shippingCost = isPickup
+    ? 0
+    : getCalculatedShippingCost(
+        shouldHaveShippingAddress,
+        shippingAddress,
+        checkoutItems,
+        orderWeight
+      );
 
   transformToNormalizedShippingAddress(
     shouldHaveShippingAddress,
@@ -64,6 +89,8 @@ export const validateCheckoutRequest = (
     termsAndConditions: body.termsAndConditions,
     shippingAddress,
     shouldHaveShippingAddress,
+    deliveryMethod,
+    pickupEventUid: body.formData?.pickupEventUid ?? "",
     complementaryTicketData: body.complementaryTicketData || undefined,
     subscribeToNewsletter: body.subscribeToNewsletter || false,
     discountCodeId: body.discountCodeId || undefined,

@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { CartStore, PaymentIntentResult } from "@/domain/checkout/types/cartStore";
+import {
+  CartStore,
+  PaymentIntentResult,
+} from "@/domain/checkout/types/cartStore";
 import { Product } from "@/domain/product/types/product";
 import { getApiPath } from "@/lib/util/api";
 import { canProductExistInCart } from "@/domain/product/businessLogic";
@@ -144,6 +147,11 @@ export const useCartStore = create<CartStore>()(
             // codes are DB-backed now and the legacy session can't apply them.
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             discountCodeId,
+            // Delivery choice travels via formData, not the address
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            deliveryMethod,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            pickupEventUid,
             ...shippingAddress
           } = formData;
           const response = await fetch(getApiPath("checkout/create-session"), {
@@ -207,6 +215,11 @@ export const useCartStore = create<CartStore>()(
             complementaryTicketData,
             termsAndConditions,
             subscribeToNewsletter,
+            // Delivery choice travels via formData, not the address
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            deliveryMethod,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            pickupEventUid,
             ...shippingAddress
           } = formData;
 

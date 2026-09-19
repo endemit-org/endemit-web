@@ -302,6 +302,19 @@
         "terms": "Potrjujem naročilo in se strinjam s <terms>pogoji poslovanja</terms>, <privacy>politiko zasebnosti</privacy> in <withdrawal>pravico do odstopa</withdrawal>.",
         "nonRefundable": "Razumem in sprejemam, da naročilo vsebuje izdelke, ko se ne vračajo, tko piše v <notice>obvestilu o nakupu digitalnih izdelkov</notice>.",
         "codeOfConduct": "Razumem, sprejemam in spoštujem <code>kodeks obnašanja</code> na Endemit eventu."
+      },
+      "delivery": {
+        "title": "Dostava",
+        "shipping": "Pošljemo po pošti",
+        "shippingDetail": "Pošljemo na tvoj naslov",
+        "pickup": "Osebni prevzem",
+        "pickupDetail": "Brezplačno — prevzameš na dogodku al' po dogovoru"
+      },
+      "pickup": {
+        "description": "Povej, kje boš prevzel naročilo. Rabimo samo ime pa telefon, da te dobimo.",
+        "where": "Kje boš prevzel?",
+        "byAgreement": "Po dogovoru",
+        "byAgreementDetail": "Se ti oglasimo pa se zmenimo za čas in kraj"
       }
     },
     "summary": {
@@ -310,7 +323,9 @@
       "shipping": "Dostava:",
       "discount": "Popust:",
       "walletCredit": "Denarnca:",
-      "total": "Skupaj:"
+      "total": "Skupaj:",
+      "pickup": "Osebni prevzem:",
+      "free": "Brezplačno"
     },
     "promo": {
       "applied": "Promo koda <strong>{code}</strong> je dodana",
@@ -621,7 +636,10 @@
       "ticketsCount": "Karte ({count})",
       "emptyDesc": "Ko kej kupiš, se naročila pojavijo tukej.",
       "itemCountLabel": "{count, plural, one {# izdelek} two {# izdelka} few {# izdelki} other {# izdelkov}}",
-      "ticketsIncluded": "Vklučuje {count, plural, one {# karto} two {# karti} few {# karte} other {# kart}}"
+      "ticketsIncluded": "Vklučuje {count, plural, one {# karto} two {# karti} few {# karte} other {# kart}}",
+      "pickup": "Osebni prevzem",
+      "pickupByAgreement": "Po dogovoru",
+      "pickupByAgreementNote": "Se ti oglasimo pa se zmenimo za čas in kraj."
     },
     "ticketBadge": {
       "validated": "POTRJENA",
@@ -884,7 +902,11 @@
       "discount": "Popust:",
       "totalLabel": "Skupaj:",
       "viewOrder": "Poglej naročilo na spletu",
-      "invoiceNote": "Ta email velja kot račun. Če imaš vprašanja ali potrebuješ pomoč, nam piši na <link>endemit@endemit.org</link>."
+      "invoiceNote": "Ta email velja kot račun. Če imaš vprašanja ali potrebuješ pomoč, nam piši na <link>endemit@endemit.org</link>.",
+      "willPickup": "Zbral si osebni prevzem, tak da pošiljanja ni. Ko prideš po naročilo, imej pri sebi ta mail al' številko naročila.",
+      "pickup": "Osebni prevzem",
+      "pickupByAgreement": "Po dogovoru",
+      "pickupByAgreementNote": "Se ti oglasimo pa se zmenimo za čas in kraj."
     },
     "otcSignIn": {
       "subject": "Tvoja koda za prjavo: {code}",
@@ -1036,6 +1058,15 @@
       "title": "Tvoja karta je bila sprejeta",
       "body": "{recipient} je sprejel/a tvojo karto za {event}. Zdaj je v njihovem računu.",
       "voidNote": "Tvoja kopija karte (email, QR koda, wallet pass) za vstop ne velja več."
+    },
+    "orderReadyForPickup": {
+      "subject": "Naročilo je pripravljeno za prevzem",
+      "heading": "Naročilo je pripravljeno za prevzem",
+      "orderNumber": "Naročilo #{id}",
+      "bodyEvent": "Naročilo je zapakirano in te čaka na {event} ({date}). Poišči nas pri merch stojnici al' vprašaj ekipo.",
+      "bodyByAgreement": "Naročilo je zapakirano in te čaka. Se ti oglasimo pa se zmenimo za čas in kraj prevzema.",
+      "viewOrder": "Poglej naročilo",
+      "questions": "Vprašanja o prevzemu? Piši nam na <link>endemit@endemit.org</link>"
     }
   },
   "music": {
@@ -1354,7 +1385,10 @@
         "city": "Kraj:",
         "country": "Država:",
         "phone": "Telefon:",
-        "viewOnGoogleMaps": "Poglej na Google Zmlevidu"
+        "viewOnGoogleMaps": "Poglej na Google Zmlevidu",
+        "pickup": "Osebni prevzem",
+        "pickupWhere": "Prevzem na:",
+        "pickupByAgreement": "Po dogovoru"
       },
       "ticketStatus": {
         "VALIDATED": "Pripravljena za skeniranje",
@@ -1413,7 +1447,12 @@
         "denyRefund": "Zavrni vračilo",
         "denyRefundDesc": "Zavrni vračilo in povrni prejšnji status naročila",
         "refundMoreItems": "Vrni več artiklov",
-        "refundMoreItemsDesc": "Izvedi dodatna vračila za preostale artikle"
+        "refundMoreItemsDesc": "Izvedi dodatna vračila za preostale artikle",
+        "markReadyForPickup": "Označi kot pripravljeno za prevzem",
+        "markReadyForPickupDesc": "Naročilo je zapakirano in čaka na prevzem",
+        "sendPickupEmail": "Pošlji e-pošto, da je pripravljeno za prevzem",
+        "markPickedUp": "Označi kot prevzeto",
+        "markPickedUpDesc": "Stranka je naročilo prevzela"
       }
     },
     "pos": {

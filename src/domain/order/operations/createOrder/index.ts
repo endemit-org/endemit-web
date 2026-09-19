@@ -1,4 +1,8 @@
-import { ShippingAddress } from "@/domain/checkout/types/checkout";
+import {
+  DeliveryMethod,
+  PickupSelection,
+  ShippingAddress,
+} from "@/domain/checkout/types/checkout";
 
 import { prisma } from "@/lib/services/prisma";
 import { ProductInOrder } from "@/domain/order/types/order";
@@ -18,6 +22,8 @@ interface CreateOrderParams {
   walletAmountUsed?: number; // in cents
   shippingRequired: boolean;
   shippingAddress?: ShippingAddress;
+  deliveryMethod?: DeliveryMethod;
+  pickup?: PickupSelection;
   orderItems: ProductInOrder[];
   metadata?: Prisma.InputJsonValue;
   userId?: string;
@@ -42,6 +48,8 @@ export const createOrder = async ({
   walletAmountUsed = 0,
   shippingRequired,
   shippingAddress,
+  deliveryMethod = DeliveryMethod.SHIPPING,
+  pickup,
   orderItems,
   metadata,
   userId,
@@ -72,6 +80,10 @@ export const createOrder = async ({
       walletAmountUsed,
       shippingRequired,
       shippingAddress,
+      deliveryMethod,
+      pickupEventUid: pickup?.eventUid ?? null,
+      pickupEventName: pickup?.eventName ?? null,
+      pickupEventDate: pickup?.eventDate ?? null,
       items: JSON.parse(JSON.stringify(orderItems)),
       metadata,
       locale: locale === "en" ? "en" : "sl",

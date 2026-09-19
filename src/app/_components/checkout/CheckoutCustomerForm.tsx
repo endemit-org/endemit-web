@@ -2,7 +2,14 @@ import Input from "@/app/_components/form/Input";
 import CountrySelect from "@/app/_components/form/CountrySelect";
 import CheckboxInput from "@/app/_components/form/CheckboxInput";
 import { Link } from "@/i18n/navigation";
-import { CheckoutFormData } from "@/domain/checkout/types/checkout";
+import {
+  CheckoutFormData,
+  DeliveryMethod,
+  PICKUP_BY_AGREEMENT,
+  PickupEvent,
+} from "@/domain/checkout/types/checkout";
+import { formatDate } from "@/lib/util/formatting";
+import clsx from "clsx";
 import CheckoutTicketForm from "@/app/_components/checkout/CheckoutTicketForm";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";
 import {
@@ -11,7 +18,7 @@ import {
 } from "@/domain/product/businessLogic";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { CartItem } from "@/domain/checkout/types/cartItem";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface CheckoutFormProps {
   formData: CheckoutFormData;
@@ -29,6 +36,7 @@ interface CheckoutFormProps {
   onDecrementItem: (productId: string) => void;
   onRemoveItem: (productId: string) => void;
   requiresShippingAddress: boolean;
+  pickupEvents?: PickupEvent[];
   includesNonRefundable: boolean;
   validateForm: (type: "manual" | "auto") => boolean;
   submitForm: () => void;
@@ -69,6 +77,7 @@ export default function CheckoutCustomerForm({
   onDecrementItem,
   onRemoveItem,
   requiresShippingAddress,
+  pickupEvents = [],
   includesNonRefundable,
   validateForm,
   validationTriggered,
@@ -76,7 +85,24 @@ export default function CheckoutCustomerForm({
   userEmail,
 }: CheckoutFormProps) {
   const t = useTranslations("checkout.customer");
-  const destinationCountry = getCountry(formData.country);
+  const locale = useLocale() === "en" ? "en" : "sl";
+  const isPickup = formData.deliveryMethod === DeliveryMethod.PICKUP;
+  // Pickup happens in Slovenia, so the phone prefix is always +386
+  const destinationCountry = getCountry(isPickup ? "SI" : formData.country);
+  const pickupOptions = [
+    ...pickupEvents.map(event => ({
+      value: event.uid,
+      label: event.name,
+      detail: [formatDate(new Date(event.dateStart), locale), event.venueName]
+        .filter(Boolean)
+        .join(" · "),
+    })),
+    {
+      value: PICKUP_BY_AGREEMENT,
+      label: t("pickup.byAgreement"),
+      detail: t("pickup.byAgreementDetail"),
+    },
+  ];
   const includesTickets = includesTicketProducts(items);
   const ticketItems = items.filter(item => isProductTicket(item));
 
@@ -191,9 +217,47 @@ export default function CheckoutCustomerForm({
 
       {requiresShippingAddress && (
         <CheckoutFormSection
-          title={t("shipping.title")}
-          description={t("shipping.description")}
+          title={t("delivery.title")}
+          description={
+            isPickup ? t("pickup.description") : t("shipping.description")
+          }
         >
+          <div
+            role="radiogroup"
+            aria-label={t("delivery.title")}
+            className="grid grid-cols-2 gap-3 mb-4"
+          >
+            {[DeliveryMethod.SHIPPING, DeliveryMethod.PICKUP].map(method => {
+              const selected = formData.deliveryMethod === method;
+              return (
+                <button
+                  key={method}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => onFormChangeAction("deliveryMethod", method)}
+                  className={clsx(
+                    "rounded-lg border-2 px-3 py-3 text-left transition-colors",
+                    selected
+                      ? "border-blue-500 bg-neutral-700 text-neutral-100"
+                      : "border-neutral-600 bg-neutral-800 text-neutral-300 hover:border-neutral-500"
+                  )}
+                >
+                  <div className="font-medium">
+                    {method === DeliveryMethod.SHIPPING
+                      ? t("delivery.shipping")
+                      : t("delivery.pickup")}
+                  </div>
+                  <div className="text-xs text-neutral-400 mt-0.5">
+                    {method === DeliveryMethod.SHIPPING
+                      ? t("delivery.shippingDetail")
+                      : t("delivery.pickupDetail")}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
           <Input
             name="name"
             label={t("fullName")}
@@ -206,61 +270,109 @@ export default function CheckoutCustomerForm({
             placeholder={t("fullNamePlaceholder")}
             validationTriggered={validationTriggered}
           />
-          <Input
-            name="address"
-            label={t("address")}
-            type="text"
-            value={formData.address}
-            onChangeAction={onFormChangeAction}
-            onEnter={handleOnEnter}
-            errorMessage={errorMessages.address as string}
-            required={true}
-            placeholder={t("addressPlaceholder")}
-            validationTriggered={validationTriggered}
-          />
-          <div className={"flex gap-x-4"}>
-            <Input
-              name="postalCode"
-              label={t("postalCode")}
-              type="text"
-              value={formData.postalCode}
-              onChangeAction={onFormChangeAction}
-              onEnter={handleOnEnter}
-              errorMessage={errorMessages.postalCode as string}
-              required={true}
-              placeholder={t("postalCodePlaceholder")}
-              validationTriggered={validationTriggered}
-            />
-            <Input
-              name="city"
-              label={t("city")}
-              type="text"
-              value={formData.city}
-              onChangeAction={onFormChangeAction}
-              onEnter={handleOnEnter}
-              errorMessage={errorMessages.city as string}
-              required={true}
-              placeholder="Ravne na Koroškem"
-              validationTriggered={validationTriggered}
-            />
-          </div>
-          <CountrySelect
-            name="country"
-            label={t("country")}
-            onChangeAction={onFormChangeAction}
-            value={formData.country}
-            errorMessage={errorMessages.country as string}
-            required={true}
-          />
-          <div className="text-neutral-400 text-sm">
-            {t.rich("countryNotListed", {
-              contact: chunks => (
-                <Link href="mailto:endemit@endemit.org" className={"link"}>
-                  {chunks}
-                </Link>
-              ),
-            })}
-          </div>
+
+          {isPickup && (
+            <div className="mb-4">
+              <div className="block text-lg font-medium font-heading text-neutral-400 mb-1">
+                {t("pickup.where")}
+                <span className="text-red-500 ml-1">*</span>
+              </div>
+              <div role="radiogroup" className="space-y-2">
+                {pickupOptions.map(option => {
+                  const selected = formData.pickupEventUid === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() =>
+                        onFormChangeAction("pickupEventUid", option.value)
+                      }
+                      className={clsx(
+                        "w-full rounded-lg border-2 px-3 py-2 text-left transition-colors",
+                        selected
+                          ? "border-blue-500 bg-neutral-700 text-neutral-100"
+                          : "border-neutral-600 bg-neutral-800 text-neutral-300 hover:border-neutral-500"
+                      )}
+                    >
+                      <div className="font-medium">{option.label}</div>
+                      {option.detail && (
+                        <div className="text-xs text-neutral-400 mt-0.5">
+                          {option.detail}
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              {validationTriggered && errorMessages.pickupEvent && (
+                <p className="text-red-500 text-sm mt-1">
+                  ⚠ {errorMessages.pickupEvent as string}
+                </p>
+              )}
+            </div>
+          )}
+
+          {!isPickup && (
+            <>
+              <Input
+                name="address"
+                label={t("address")}
+                type="text"
+                value={formData.address}
+                onChangeAction={onFormChangeAction}
+                onEnter={handleOnEnter}
+                errorMessage={errorMessages.address as string}
+                required={true}
+                placeholder={t("addressPlaceholder")}
+                validationTriggered={validationTriggered}
+              />
+              <div className={"flex gap-x-4"}>
+                <Input
+                  name="postalCode"
+                  label={t("postalCode")}
+                  type="text"
+                  value={formData.postalCode}
+                  onChangeAction={onFormChangeAction}
+                  onEnter={handleOnEnter}
+                  errorMessage={errorMessages.postalCode as string}
+                  required={true}
+                  placeholder={t("postalCodePlaceholder")}
+                  validationTriggered={validationTriggered}
+                />
+                <Input
+                  name="city"
+                  label={t("city")}
+                  type="text"
+                  value={formData.city}
+                  onChangeAction={onFormChangeAction}
+                  onEnter={handleOnEnter}
+                  errorMessage={errorMessages.city as string}
+                  required={true}
+                  placeholder="Ravne na Koroškem"
+                  validationTriggered={validationTriggered}
+                />
+              </div>
+              <CountrySelect
+                name="country"
+                label={t("country")}
+                onChangeAction={onFormChangeAction}
+                value={formData.country}
+                errorMessage={errorMessages.country as string}
+                required={true}
+              />
+              <div className="text-neutral-400 text-sm">
+                {t.rich("countryNotListed", {
+                  contact: chunks => (
+                    <Link href="mailto:endemit@endemit.org" className={"link"}>
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </div>
+            </>
+          )}
 
           <Input
             name="phone"
@@ -355,7 +467,6 @@ export default function CheckoutCustomerForm({
           )}
         </div>
       </CheckboxInput>
-
     </div>
   );
 }
