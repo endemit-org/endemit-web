@@ -8,7 +8,10 @@ import {
   SetStateAction,
 } from "react";
 import { CheckoutValidationService } from "@/lib/services/validation/validation.service";
-import { CheckoutFormData } from "@/domain/checkout/types/checkout";
+import {
+  CheckoutFormData,
+  DeliveryMethod,
+} from "@/domain/checkout/types/checkout";
 import { transformToComplementaryTicketModel } from "@/domain/ticket/transformers/transformToComplementaryTicketModel";
 import { useSessionStorageForm } from "@/app/_hooks/useSessionStorageForm";
 
@@ -27,6 +30,8 @@ function getDefaultFormData(items: CartItem[]): CheckoutFormData {
     postalCode: "",
     country: "SI",
     phone: "",
+    deliveryMethod: DeliveryMethod.SHIPPING,
+    pickupEventUid: "",
     termsAndConditions: false,
     subscribeToNewsletter: false,
     complementaryTicketData: transformToComplementaryTicketModel(items, ""),
@@ -57,6 +62,7 @@ export function useCheckoutForm(
     const stored = loadFromStorage();
     if (stored) {
       return {
+        ...getDefaultFormData(items),
         ...stored,
         complementaryTicketData: transformToComplementaryTicketModel(items, ""),
         termsAndConditions: false,
@@ -74,6 +80,7 @@ export function useCheckoutForm(
     postalCode: false,
     country: false,
     phone: false,
+    pickupEvent: false,
     termsAndConditions: false,
   }));
 

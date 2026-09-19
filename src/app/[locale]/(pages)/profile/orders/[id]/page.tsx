@@ -157,8 +157,34 @@ export default async function ProfileOrderDetailPage({
             </div>
           </div>
 
+          {/* Pickup */}
+          {order.shippingRequired && order.deliveryMethod === "PICKUP" && (
+            <div className="rounded-lg p-4">
+              <h2 className="text-lg font-semibold text-neutral-200 mb-4">
+                {t("orders.pickup")}
+              </h2>
+              <div className="space-y-2 text-neutral-300">
+                <p>{order.pickupEventName ?? t("orders.pickupByAgreement")}</p>
+                {order.pickupEventDate && (
+                  <p className="text-neutral-400">
+                    {formatDateTime(
+                      new Date(order.pickupEventDate),
+                      locale === "en" ? "en" : "sl"
+                    )}
+                  </p>
+                )}
+                {!order.pickupEventName && (
+                  <p className="text-neutral-400 text-sm">
+                    {t("orders.pickupByAgreementNote")}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Shipping Address */}
           {order.shippingRequired &&
+            order.deliveryMethod !== "PICKUP" &&
             order.shippingAddress &&
             (() => {
               const addr = order.shippingAddress as {

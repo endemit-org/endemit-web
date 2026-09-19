@@ -28,6 +28,29 @@ export enum OrderPaymentStatus {
 
 export type ComplementaryTicketField = Record<string, string>;
 
+export enum DeliveryMethod {
+  SHIPPING = "SHIPPING",
+  PICKUP = "PICKUP",
+}
+
+/** Sentinel for the "po dogovoru" pickup option (no specific event). */
+export const PICKUP_BY_AGREEMENT = "by-agreement";
+
+/** Upcoming event the customer can collect a pickup order at. */
+export type PickupEvent = {
+  uid: string;
+  name: string;
+  dateStart: string; // ISO, serialisable for the client
+  venueName: string | null;
+};
+
+/** Resolved pickup choice stored on the order. */
+export type PickupSelection = {
+  eventUid: string | null;
+  eventName: string | null;
+  eventDate: Date | null;
+};
+
 export type ShippingAddress = {
   name: string;
   address: string;
@@ -52,6 +75,10 @@ export type DiscountDetails = DiscountRule & {
 
 export interface CheckoutFormData extends ShippingAddress {
   email: string;
+  /** Only meaningful when the cart has shippable items. */
+  deliveryMethod: DeliveryMethod;
+  /** Event uid, PICKUP_BY_AGREEMENT, or "" when nothing chosen yet. */
+  pickupEventUid: string;
   emailRepeat: string;
   termsAndConditions: boolean;
   subscribeToNewsletter?: boolean;

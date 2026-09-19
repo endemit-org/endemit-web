@@ -2,7 +2,7 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text, Link } from "@react-email/components";
-import { formatDecimalPrice } from "@/lib/util/formatting";
+import { formatDateTime, formatDecimalPrice } from "@/lib/util/formatting";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ShippingAddress } from "@/domain/checkout/types/checkout";
 import { includesTicketProducts } from "@/domain/checkout/businessRules";
@@ -12,6 +12,7 @@ import { CartItem } from "@/domain/checkout/types/cartItem";
 import { getResizedPrismicImage } from "@/lib/util/util";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
+import { isPickupOrder } from "@/domain/order/businessLogic";
 
 interface Props {
   order: Order;
@@ -35,6 +36,8 @@ function NewOrderToCustomerTemplate({ order, locale = "sl" }: Props) {
   const countryDetails = shippingAddress
     ? getCountry(shippingAddress.country)
     : null;
+  const isPickup = isPickupOrder(order);
+  const dateLocale = locale === "en" ? "en" : "sl";
 
   return (
     <MasterTemplate>
@@ -45,7 +48,8 @@ function NewOrderToCustomerTemplate({ order, locale = "sl" }: Props) {
         </Text>
         <Text className="text-gray-600 mb-6">
           {t("confirmation")}
-          {shippingAddress && <div>{t("willShip")}</div>}
+          {shippingAddress && !isPickup && <div>{t("willShip")}</div>}
+          {isPickup && <div>{t("willPickup")}</div>}
         </Text>
 
         {hasTicketItems && (
@@ -57,7 +61,38 @@ function NewOrderToCustomerTemplate({ order, locale = "sl" }: Props) {
           </Text>
         )}
 
-        {shippingAddress && (
+        {isPickup && (
+          <div
+            style={{
+              marginTop: "32px",
+              padding: "16px",
+              backgroundColor: "#f9fafb",
+              borderRadius: "8px",
+            }}
+          >
+            <Text className="font-semibold mb-2">{t("pickup")}</Text>
+            <Text className="text-neutral-700 my-1">
+              {order.pickupEventName ?? t("pickupByAgreement")}
+            </Text>
+            {order.pickupEventDate && (
+              <Text className="text-neutral-700 my-1">
+                {formatDateTime(order.pickupEventDate, dateLocale)}
+              </Text>
+            )}
+            {!order.pickupEventName && (
+              <Text className="text-neutral-500 my-1">
+                {t("pickupByAgreementNote")}
+              </Text>
+            )}
+            {shippingAddress?.phone && (
+              <Text className="text-neutral-700 my-1">
+                {t("phone", { phone: shippingAddress.phone })}
+              </Text>
+            )}
+          </div>
+        )}
+
+        {shippingAddress && !isPickup && (
           <div
             style={{
               marginTop: "32px",
@@ -272,7 +307,8 @@ function NewOrderToCustomerTemplate({ order, locale = "sl" }: Props) {
                           <td align="right" style={{ padding: "4px 0" }}>
                             <Text className="text-gray-600">
                               {t("shippingTo", {
-                                country: `${countryDetails?.flag ?? ""} ${countryDetails?.name ?? ""}`.trim(),
+                                country:
+                                  `${countryDetails?.flag ?? ""} ${countryDetails?.name ?? ""}`.trim(),
                               })}
                             </Text>
                           </td>

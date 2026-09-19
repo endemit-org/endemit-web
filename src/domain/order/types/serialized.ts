@@ -1,4 +1,9 @@
-import type { Order, Ticket, OrderStatus } from "@prisma/client";
+import type {
+  DeliveryMethod,
+  Order,
+  Ticket,
+  OrderStatus,
+} from "@prisma/client";
 import type { ProductInOrder } from "./order";
 import type { SerializedTicket } from "@/domain/ticket/types/ticket";
 import { serializeTicket } from "@/domain/ticket/util";
@@ -15,6 +20,10 @@ export interface SerializedOrder {
   discountCodeKey: string | null;
   shippingRequired: boolean;
   shippingAddress: Record<string, unknown> | null;
+  deliveryMethod: DeliveryMethod;
+  pickupEventUid: string | null;
+  pickupEventName: string | null;
+  pickupEventDate: string | null;
   items: ProductInOrder[];
   metadata: Record<string, unknown> | null;
   status: OrderStatus;
@@ -24,7 +33,8 @@ export interface SerializedOrder {
   refundedAmount: number;
 }
 
-export interface SerializedOrderWithTickets extends Omit<SerializedOrder, "ticketCount"> {
+export interface SerializedOrderWithTickets
+  extends Omit<SerializedOrder, "ticketCount"> {
   tickets: SerializedTicket[];
 }
 
@@ -43,6 +53,10 @@ export function serializeOrder(
     discountCodeKey: order.discountCodeKey,
     shippingRequired: order.shippingRequired,
     shippingAddress: order.shippingAddress as Record<string, unknown> | null,
+    deliveryMethod: order.deliveryMethod,
+    pickupEventUid: order.pickupEventUid,
+    pickupEventName: order.pickupEventName,
+    pickupEventDate: order.pickupEventDate?.toISOString() ?? null,
     items: order.items as unknown as ProductInOrder[],
     metadata: order.metadata as Record<string, unknown> | null,
     status: order.status,
@@ -68,6 +82,10 @@ export function serializeOrderWithTickets(
     discountCodeKey: order.discountCodeKey,
     shippingRequired: order.shippingRequired,
     shippingAddress: order.shippingAddress as Record<string, unknown> | null,
+    deliveryMethod: order.deliveryMethod,
+    pickupEventUid: order.pickupEventUid,
+    pickupEventName: order.pickupEventName,
+    pickupEventDate: order.pickupEventDate?.toISOString() ?? null,
     items: order.items as unknown as ProductInOrder[],
     metadata: order.metadata as Record<string, unknown> | null,
     status: order.status,

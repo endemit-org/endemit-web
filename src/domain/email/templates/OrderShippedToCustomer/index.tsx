@@ -3,14 +3,27 @@ import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Text, Link } from "@react-email/components";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import { getEmailTranslator } from "@/domain/email/getEmailTranslator";
+import { formatDateTime } from "@/lib/util/formatting";
 
 interface Props {
   orderId: string;
   locale?: string;
+  /** Present for pickup orders: renders the "ready for pickup" variant. */
+  pickup?: {
+    eventName: string | null;
+    eventDate: Date | null;
+  };
 }
 
-function OrderShippedToCustomerTemplate({ orderId, locale = "sl" }: Props) {
-  const t = getEmailTranslator(locale, "emails.orderShipped");
+function OrderShippedToCustomerTemplate({
+  orderId,
+  locale = "sl",
+  pickup,
+}: Props) {
+  const t = getEmailTranslator(
+    locale,
+    pickup ? "emails.orderReadyForPickup" : "emails.orderShipped"
+  );
   return (
     <MasterTemplate>
       <div>
@@ -18,7 +31,21 @@ function OrderShippedToCustomerTemplate({ orderId, locale = "sl" }: Props) {
         <Text className="text-gray-800 mb-2">
           {t("orderNumber", { id: orderId })}
         </Text>
-        <Text className="text-gray-600 mb-6">{t("body")}</Text>
+        <Text className="text-gray-600 mb-6">
+          {pickup
+            ? pickup.eventName
+              ? t("bodyEvent", {
+                  event: pickup.eventName,
+                  date: pickup.eventDate
+                    ? formatDateTime(
+                        pickup.eventDate,
+                        locale === "en" ? "en" : "sl"
+                      )
+                    : "",
+                })
+              : t("bodyByAgreement")
+            : t("body")}
+        </Text>
 
         <div
           style={{

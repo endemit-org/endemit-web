@@ -5,6 +5,7 @@ import { transformToCheckoutDescription } from "@/domain/checkout/transformers/t
 import {
   CheckoutSessionMetaData,
   CustomStripeLineItem,
+  PickupSelection,
   ShippingAddress,
 } from "@/domain/checkout/types/checkout";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
@@ -14,6 +15,7 @@ export const createCheckoutSession = async ({
   discountCodeId,
   email,
   shippingAddress,
+  pickup,
   ticketHolders,
   donationAmount,
   walletCreditAmount = 0,
@@ -22,6 +24,7 @@ export const createCheckoutSession = async ({
   discountCodeId?: string;
   email: string;
   shippingAddress?: ShippingAddress;
+  pickup?: PickupSelection;
   metadata?: CheckoutSessionMetaData;
   ticketHolders?: string[];
   donationAmount?: number;
@@ -29,6 +32,8 @@ export const createCheckoutSession = async ({
 }) => {
   const metadata: CheckoutSessionMetaData = {
     requiresShipping: shippingAddress ? "true" : "false",
+    deliveryMethod: pickup ? "PICKUP" : "SHIPPING",
+    ...(pickup && { pickupEvent: pickup.eventName ?? "by agreement" }),
     includesTickets: ticketHolders ? "true" : "false",
     includesDonation: donationAmount && donationAmount > 0 ? "true" : "false",
     ticketHolders: ticketHolders ? JSON.stringify(ticketHolders) : "",
@@ -77,7 +82,11 @@ export const createCheckoutSession = async ({
     metadata,
     discounts: discounts.length > 0 ? discounts : undefined,
     payment_intent_data: {
-      description: transformToCheckoutDescription(shippingAddress, email),
+      description: transformToCheckoutDescription(
+        shippingAddress,
+        email,
+        pickup
+      ),
     },
   });
 };

@@ -20,7 +20,10 @@ import { getCheckoutTotals } from "@/domain/checkout/actions/getCheckoutTotals";
 import { getSuggestedDonationAmount } from "@/domain/checkout/actions/getSuggestedDonationAmount";
 import { getRoundedUpTotal } from "@/domain/checkout/actions/getRoundedUpTotal";
 import { transformToConsolidatedCheckoutErrors } from "@/domain/checkout/transformers/transformToConsolidatedCheckoutErrors";
-import { DiscountDetails } from "@/domain/checkout/types/checkout";
+import {
+  DeliveryMethod,
+  DiscountDetails,
+} from "@/domain/checkout/types/checkout";
 import { CartItem } from "@/domain/checkout/types/cartItem";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
@@ -66,11 +69,9 @@ function useDonationCalculations(
     const roundedTotal = getRoundedUpTotal(total);
     const donationAmount = getSuggestedDonationAmount(roundedTotal, total);
     // Don't show donation CTA for currency-only carts (wallet top-ups)
-    const showDonation = !isOnlyCurrency && shouldShowDonationCTA(
-      items,
-      donationAmount,
-      includesDonationInCart
-    );
+    const showDonation =
+      !isOnlyCurrency &&
+      shouldShowDonationCTA(items, donationAmount, includesDonationInCart);
     return { roundedTotal, donationAmount, showDonation };
   }, [total, items, includesDonationInCart, isOnlyCurrency]);
 }
@@ -114,13 +115,17 @@ export function useCheckoutState() {
     validateForm,
   } = useCheckoutForm(requiresShippingAddress, items, setValidationTriggered);
 
-
   const {
     shippingCost,
     shippingWeight,
     isLoading: isLoadingShipping,
     error: shippingError,
-  } = useShippingCost(formData.country, orderWeight, requiresShippingAddress);
+  } = useShippingCost(
+    formData.country,
+    orderWeight,
+    // Pickup orders ship nothing, so no shipping cost
+    requiresShippingAddress && formData.deliveryMethod !== DeliveryMethod.PICKUP
+  );
 
   const {
     discount,
@@ -137,12 +142,11 @@ export function useCheckoutState() {
     updateField("discountCodeId", discountCodeId);
   }, [discount?.success, discount?.promoCodeId, updateField]);
 
-  const { subTotal, total: totalBeforeWallet, discountAmount } = useCheckoutTotals(
-    subtotalPrice,
-    shippingCost,
-    items,
-    discount
-  );
+  const {
+    subTotal,
+    total: totalBeforeWallet,
+    discountAmount,
+  } = useCheckoutTotals(subtotalPrice, shippingCost, items, discount);
 
   // Wallet credit integration - disabled for currency top-ups
   const walletCredit = useWalletCredit({
@@ -154,7 +158,12 @@ export function useCheckoutState() {
   const total = totalBeforeWallet - walletCredit.walletCreditEur;
 
   const { roundedTotal, donationAmount, showDonation } =
-    useDonationCalculations(totalBeforeWallet, items, includesDonationInCart, isOnlyCurrency);
+    useDonationCalculations(
+      totalBeforeWallet,
+      items,
+      includesDonationInCart,
+      isOnlyCurrency
+    );
 
   const consolidatedError = transformToConsolidatedCheckoutErrors([
     checkoutError,
@@ -162,7 +171,12 @@ export function useCheckoutState() {
     promoError,
   ]);
 
-  const isProcessing = isCheckoutLoading || isLoadingShipping || isLoadingPromo || walletCredit.isLoading || isCreatingPayment;
+  const isProcessing =
+    isCheckoutLoading ||
+    isLoadingShipping ||
+    isLoadingPromo ||
+    walletCredit.isLoading ||
+    isCreatingPayment;
   const canProceed = canProceedToCheckout(
     isFormValid,
     items.length > 0,
@@ -217,7 +231,9 @@ export function useCheckoutState() {
         clientSecret: result.clientSecret,
       };
     } catch (err) {
-      setCheckoutError(err instanceof Error ? err.message : "Failed to process payment");
+      setCheckoutError(
+        err instanceof Error ? err.message : "Failed to process payment"
+      );
       return { success: false };
     } finally {
       setIsCreatingPayment(false);
@@ -239,7 +255,12 @@ export function useCheckoutState() {
     if (!walletCredit.canUseWallet || !walletCredit.isUsingWallet) return false;
     const totalInCents = Math.round(totalBeforeWallet * 100);
     return walletCredit.walletCreditAmount >= totalInCents;
-  }, [walletCredit.canUseWallet, walletCredit.isUsingWallet, walletCredit.walletCreditAmount, totalBeforeWallet]);
+  }, [
+    walletCredit.canUseWallet,
+    walletCredit.isUsingWallet,
+    walletCredit.walletCreditAmount,
+    totalBeforeWallet,
+  ]);
 
   // Amount to charge via Stripe (in cents)
   const amountToCharge = useMemo(() => {

@@ -5,6 +5,7 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { prismic } from "@/lib/services/prismic";
 import { getCurrentUser } from "@/lib/services/auth";
+import { getPickupEvents } from "@/domain/checkout/operations/getPickupEvents";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({
@@ -13,7 +14,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale: locale as "sl" | "en", namespace: "store" });
+  const t = await getTranslations({
+    locale: locale as "sl" | "en",
+    namespace: "store",
+  });
   return {
     title: t("checkout.metaTitle"),
     description: t("checkout.metaDescription"),
@@ -30,24 +34,28 @@ export default async function CheckoutPage({
   const loc = locale === "en" ? "en" : "sl";
   const t = await getTranslations("store");
 
-  const [featuredProducts, currencyProducts, donationProducts, user] =
-    await Promise.all([
-      fetchProductsFromCms({
-        filters: [prismic.filter.at("my.product.featured_product", true)],
-        locale: loc,
-      }),
-      fetchProductsFromCms({
-        filters: [
-          prismic.filter.at("my.product.product_category", "Currencies"),
-        ],
-        locale: loc,
-      }),
-      fetchProductsFromCms({
-        filters: [prismic.filter.at("my.product.uid", "donation-to-association")],
-        locale: loc,
-      }),
-      getCurrentUser(),
-    ]);
+  const [
+    featuredProducts,
+    currencyProducts,
+    donationProducts,
+    user,
+    pickupEvents,
+  ] = await Promise.all([
+    fetchProductsFromCms({
+      filters: [prismic.filter.at("my.product.featured_product", true)],
+      locale: loc,
+    }),
+    fetchProductsFromCms({
+      filters: [prismic.filter.at("my.product.product_category", "Currencies")],
+      locale: loc,
+    }),
+    fetchProductsFromCms({
+      filters: [prismic.filter.at("my.product.uid", "donation-to-association")],
+      locale: loc,
+    }),
+    getCurrentUser(),
+    getPickupEvents(),
+  ]);
 
   const donationProduct = donationProducts?.[0] ?? null;
 
@@ -66,6 +74,7 @@ export default async function CheckoutPage({
         currencyProducts={currencyProducts ?? []}
         donationProduct={donationProduct}
         userEmail={user?.email || undefined}
+        pickupEvents={pickupEvents}
       />
     </OuterPage>
   );

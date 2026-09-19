@@ -2,13 +2,16 @@ import * as React from "react";
 import { MasterTemplate } from "@/domain/email/templates/MasterTemplate";
 import { Order } from "@prisma/client";
 import { Img, Text, Link } from "@react-email/components";
-import { formatDecimalPrice } from "@/lib/util/formatting";
+import { formatDateTime, formatDecimalPrice } from "@/lib/util/formatting";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ShippingAddress } from "@/domain/checkout/types/checkout";
 import { getProductLink } from "@/domain/product/actions/getProductLink";
 import { getCountry } from "@/domain/checkout/actions/getCountry";
 import { getResizedPrismicImage } from "@/lib/util/util";
-import { includesShippableProduct } from "@/domain/order/businessLogic";
+import {
+  includesShippableProduct,
+  isPickupOrder,
+} from "@/domain/order/businessLogic";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 
 interface Props {
@@ -27,24 +30,68 @@ function NewOrderToDispatcherTemplate({ order }: Props) {
   const countryDetails = shippingAddress
     ? getCountry(shippingAddress.country)
     : null;
+  const isPickup = isPickupOrder(order);
 
   return (
     <MasterTemplate>
       <div>
         <h1 className="text-2xl font-bold mb-2">
-          A new order requires shipping
+          {isPickup
+            ? "A new order is waiting for personal pickup"
+            : "A new order requires shipping"}
         </h1>
         <Text className="text-gray-800 mb-6">Order #{order.id}</Text>
         <Text className="text-gray-600 mb-6">
           This is a copy of an order placed with us on Endemit.org. Below are
-          the details of the customers purchase that requires shipping.
-          <div>
-            We have stated that we will ship your order to the address provided
-            shortly, usually within 3 - 5 days.
-          </div>
+          the details of the customers purchase
+          {isPickup
+            ? " that will be picked up in person."
+            : " that requires shipping."}
+          {!isPickup && (
+            <div>
+              We have stated that we will ship your order to the address
+              provided shortly, usually within 3 - 5 days.
+            </div>
+          )}
         </Text>
 
-        {shippingAddress && (
+        {isPickup && (
+          <div
+            style={{
+              marginTop: "32px",
+              padding: "16px",
+              backgroundColor: "#f9fafb",
+              borderRadius: "8px",
+            }}
+          >
+            <Text className="font-semibold mb-2">Hand the order over at:</Text>
+            <Text className="text-neutral-700 my-1">
+              {order.pickupEventName ?? "By agreement"}
+            </Text>
+            {order.pickupEventDate && (
+              <Text className="text-neutral-700 my-1">
+                {formatDateTime(order.pickupEventDate, "sl")}
+              </Text>
+            )}
+            {!order.pickupEventName && (
+              <Text className="text-neutral-500 my-1">
+                Contact the customer to arrange a time and place.
+              </Text>
+            )}
+            {shippingAddress?.name && (
+              <Text className="text-neutral-700 my-1">
+                {shippingAddress.name}
+              </Text>
+            )}
+            {shippingAddress?.phone && (
+              <Text className="text-neutral-700 my-1">
+                Phone: {shippingAddress.phone}
+              </Text>
+            )}
+          </div>
+        )}
+
+        {shippingAddress && !isPickup && (
           <div
             style={{
               marginTop: "32px",

@@ -28,6 +28,7 @@ import AnimatedWarningIcon from "@/app/_components/icon/AnimatedWarningIcon";
 import ProductSection from "@/app/_components/product/ProductSection";
 import CheckoutCashlessTopUp from "@/app/_components/checkout/CheckoutCashlessTopUp";
 import { Product, ProductCategory } from "@/domain/product/types/product";
+import { DeliveryMethod, PickupEvent } from "@/domain/checkout/types/checkout";
 import clsx from "clsx";
 import ActionButton from "@/app/_components/form/ActionButton";
 
@@ -36,6 +37,7 @@ type Props = {
   currencyProducts?: Product[];
   donationProduct?: Product | null;
   userEmail?: string;
+  pickupEvents?: PickupEvent[];
 };
 
 export default function Checkout({
@@ -43,6 +45,7 @@ export default function Checkout({
   currencyProducts = [],
   donationProduct = null,
   userEmail,
+  pickupEvents = [],
 }: Props) {
   const t = useTranslations("checkout");
   const [isClient, setIsClient] = useState(false);
@@ -75,6 +78,10 @@ export default function Checkout({
     walletCredit,
     payment,
   } = useCheckoutState();
+
+  const isPickup =
+    requiresShippingAddress &&
+    formData.deliveryMethod === DeliveryMethod.PICKUP;
 
   const hasItems = totalItems > 0;
 
@@ -310,6 +317,7 @@ export default function Checkout({
                 onDecrementItem={actions.decrementItem}
                 onRemoveItem={actions.removeItem}
                 requiresShippingAddress={requiresShippingAddress}
+                pickupEvents={pickupEvents}
                 includesNonRefundable={includesNonRefundable}
                 items={items}
                 submitForm={actions.checkout}
@@ -366,6 +374,7 @@ export default function Checkout({
                   walletCreditEur={displayTotals.walletCreditEur}
                   orderWeight={displayTotals.shippingWeight}
                   country={displayCountry}
+                  isPickup={isPickup}
                   loadingShippingCost={isProcessing}
                   loadingPromoCode={isProcessing}
                 />
@@ -487,6 +496,7 @@ export default function Checkout({
                 onDecrementItem={actions.decrementItem}
                 onRemoveItem={actions.removeItem}
                 requiresShippingAddress={requiresShippingAddress}
+                pickupEvents={pickupEvents}
                 includesNonRefundable={includesNonRefundable}
                 items={items}
                 submitForm={actions.checkout}
@@ -542,6 +552,7 @@ export default function Checkout({
                 walletCreditEur={displayTotals.walletCreditEur}
                 orderWeight={displayTotals.shippingWeight}
                 country={displayCountry}
+                isPickup={isPickup}
                 loadingShippingCost={isProcessing}
                 loadingPromoCode={isProcessing}
               />

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromCms";
 import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCheckoutRequest";
+import { resolvePickupSelection } from "@/domain/checkout/operations/resolvePickupSelection";
+import { DeliveryMethod } from "@/domain/checkout/types/checkout";
 import { transformToCheckoutSessionLineItems } from "@/domain/checkout/transformers/transformToCheckoutSessionLineItems";
 import { createCheckoutSession } from "@/domain/checkout/operations/createCheckoutSession";
 import { createOrder } from "@/domain/order/operations/createOrder";
@@ -32,10 +34,15 @@ export async function POST(request: Request) {
       discountCodeId,
       complementaryTicketData,
       shouldHaveShippingAddress,
+      deliveryMethod,
+      pickupEventUid,
       subtotal,
       shippingCost,
       walletCreditAmount,
     } = validateCheckoutRequest(body, products);
+
+    const pickup = await resolvePickupSelection(deliveryMethod, pickupEventUid);
+    const isPickup = deliveryMethod === DeliveryMethod.PICKUP;
 
     // Validate wallet credit if provided
     let validatedWalletCredit = 0;
@@ -64,7 +71,8 @@ export async function POST(request: Request) {
     const lineItems = transformToCheckoutSessionLineItems({
       checkoutItems,
       shippingAddress,
-      shouldHaveShippingAddress,
+      // Pickup adds no shipping line item
+      shouldHaveShippingAddress: shouldHaveShippingAddress && !isPickup,
       orderWeight,
       complementaryTicketData,
     });
@@ -75,6 +83,7 @@ export async function POST(request: Request) {
       discountCodeId,
       email,
       shippingAddress,
+      pickup,
       walletCreditAmount: validatedWalletCredit,
     });
 
@@ -90,6 +99,8 @@ export async function POST(request: Request) {
       walletAmountUsed: validatedWalletCredit,
       shippingRequired: shouldHaveShippingAddress,
       shippingAddress,
+      deliveryMethod,
+      pickup,
       orderItems: checkoutItems.map(checkoutItem =>
         transformToProductInOrder(checkoutItem, complementaryTicketData)
       ),

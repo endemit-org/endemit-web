@@ -302,6 +302,19 @@
         "terms": "I confirm the order, accept and agree to the <terms>Terms and conditions</terms>, <privacy>Privacy policy</privacy>, and <withdrawal>Right to withdrawal</withdrawal>.",
         "nonRefundable": "I understand and accept that my order contains non refundable items as stated in <notice>Notice on purchase of digital products</notice>.",
         "codeOfConduct": "I understand, accept and will respect the applicable <code>Code of conduct</code> at Endemit events."
+      },
+      "delivery": {
+        "title": "Delivery",
+        "shipping": "Shipping",
+        "shippingDetail": "We post it to your address",
+        "pickup": "Personal pickup",
+        "pickupDetail": "Free — collect it at an event or by agreement"
+      },
+      "pickup": {
+        "description": "Tell us where you will collect your order. We only need a name and phone number to reach you.",
+        "where": "Where will you pick it up?",
+        "byAgreement": "By agreement",
+        "byAgreementDetail": "We contact you and arrange a time and place"
       }
     },
     "summary": {
@@ -310,7 +323,9 @@
       "shipping": "Shipping:",
       "discount": "Discount:",
       "walletCredit": "Wallet Credit:",
-      "total": "Total:"
+      "total": "Total:",
+      "pickup": "Personal pickup:",
+      "free": "Free"
     },
     "promo": {
       "applied": "Promo code <strong>{code}</strong> applied",
@@ -621,7 +636,10 @@
       "ticketsCount": "Tickets ({count})",
       "emptyDesc": "When you make a purchase, your orders will appear here.",
       "itemCountLabel": "{count, plural, one {# item} other {# items}}",
-      "ticketsIncluded": "{count, plural, one {# ticket} other {# tickets}} included"
+      "ticketsIncluded": "{count, plural, one {# ticket} other {# tickets}} included",
+      "pickup": "Personal pickup",
+      "pickupByAgreement": "By agreement",
+      "pickupByAgreementNote": "We will contact you to arrange a time and place."
     },
     "ticketBadge": {
       "validated": "VALIDATED",
@@ -884,7 +902,11 @@
       "discount": "Discount:",
       "totalLabel": "Total:",
       "viewOrder": "View Your Order online",
-      "invoiceNote": "This email message serves as an invoice. Please feel free to reach out to our support team at <link>endemit@endemit.org</link> if you have any questions or need further assistance."
+      "invoiceNote": "This email message serves as an invoice. Please feel free to reach out to our support team at <link>endemit@endemit.org</link> if you have any questions or need further assistance.",
+      "willPickup": "You chose personal pickup, so there is no shipping. Bring this email or your order number when you collect it.",
+      "pickup": "Personal pickup",
+      "pickupByAgreement": "By agreement",
+      "pickupByAgreementNote": "We will contact you to arrange a time and place."
     },
     "otcSignIn": {
       "subject": "Your sign-in code: {code}",
@@ -1036,6 +1058,15 @@
       "title": "Your ticket was accepted",
       "body": "{recipient} accepted your ticket for {event}. It now lives in their account.",
       "voidNote": "Your copy of the ticket (email, QR code, wallet pass) is no longer valid for entry."
+    },
+    "orderReadyForPickup": {
+      "subject": "Your order is ready for pickup",
+      "heading": "Your order is ready for pickup",
+      "orderNumber": "Order #{id}",
+      "bodyEvent": "Your order is packed and waiting for you at {event} ({date}). Find us at the merch stand or ask the crew.",
+      "bodyByAgreement": "Your order is packed and waiting for you. We will contact you to arrange a time and place for the handover.",
+      "viewOrder": "View Your Order",
+      "questions": "Questions about the pickup? Contact us at <link>endemit@endemit.org</link>"
     }
   },
   "music": {
@@ -1354,7 +1385,10 @@
         "city": "City:",
         "country": "Country:",
         "phone": "Phone:",
-        "viewOnGoogleMaps": "View on Google Maps"
+        "viewOnGoogleMaps": "View on Google Maps",
+        "pickup": "Personal Pickup",
+        "pickupWhere": "Pickup at:",
+        "pickupByAgreement": "By agreement"
       },
       "ticketStatus": {
         "VALIDATED": "Ready to scan",
@@ -1413,7 +1447,12 @@
         "denyRefund": "Deny refund",
         "denyRefundDesc": "Deny refund and restore previous order status",
         "refundMoreItems": "Refund more items",
-        "refundMoreItemsDesc": "Process additional refunds for remaining items"
+        "refundMoreItemsDesc": "Process additional refunds for remaining items",
+        "markReadyForPickup": "Mark ready for pickup",
+        "markReadyForPickupDesc": "Order is packed and waiting to be picked up",
+        "sendPickupEmail": "Send ready-for-pickup email",
+        "markPickedUp": "Mark picked up",
+        "markPickedUpDesc": "Customer collected the order"
       }
     },
     "pos": {

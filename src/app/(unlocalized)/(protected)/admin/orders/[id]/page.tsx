@@ -120,6 +120,7 @@ export default async function AdminOrderDetailPage({
               orderId={order.id}
               status={order.status}
               items={order.items}
+              deliveryMethod={order.deliveryMethod}
               totalAmount={order.totalAmount}
               refundedAmount={order.refundedAmount}
               userPermissions={currentUser.permissions}
@@ -210,7 +211,8 @@ export default async function AdminOrderDetailPage({
                   <div>
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-500">
-                      {item.category} • {t("detail.qty", { count: item.quantity })}
+                      {item.category} •{" "}
+                      {t("detail.qty", { count: item.quantity })}
                     </p>
                   </div>
                   <span className="font-medium">
@@ -254,10 +256,13 @@ export default async function AdminOrderDetailPage({
                         <span
                           className={clsx(
                             "inline-block rounded-full px-2 py-1 text-xs font-medium",
-                            ticketStatusColors[ticket.status] || "bg-gray-100 text-gray-800"
+                            ticketStatusColors[ticket.status] ||
+                              "bg-gray-100 text-gray-800"
                           )}
                         >
-                          {tk.has(ticket.status) ? tk(ticket.status) : ticket.status}
+                          {tk.has(ticket.status)
+                            ? tk(ticket.status)
+                            : ticket.status}
                         </span>
                         <p className="text-sm font-medium mt-1">
                           {formatPrice(ticket.price)}
@@ -291,95 +296,167 @@ export default async function AdminOrderDetailPage({
             </section>
           )}
 
-          {order.shippingRequired && order.shippingAddress && (() => {
-            const addr = order.shippingAddress as {
-              name?: string;
-              address?: string;
-              city?: string;
-              postalCode?: string;
-              country?: string;
-              phone?: string;
-            };
-            return (
-            <section>
-              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                {t("detail.shippingAddress")}
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                {addr.name && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("detail.name")}</span>
-                    <span className="font-medium">{addr.name}</span>
+          {order.shippingRequired &&
+            order.deliveryMethod === "PICKUP" &&
+            (() => {
+              const addr = (order.shippingAddress ?? {}) as {
+                name?: string;
+                phone?: string;
+              };
+              return (
+                <section>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+                    {t("detail.pickup")}
+                  </h2>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">
+                        {t("detail.pickupWhere")}
+                      </span>
+                      <span className="font-medium text-right">
+                        {order.pickupEventName ?? t("detail.pickupByAgreement")}
+                        {order.pickupEventDate && (
+                          <span className="block text-sm text-gray-500">
+                            {formatDateTime(new Date(order.pickupEventDate))}
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    {addr.name && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.name")}
+                        </span>
+                        <span className="font-medium">{addr.name}</span>
+                      </div>
+                    )}
+                    {addr.phone && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.phone")}
+                        </span>
+                        <a
+                          href={`tel:${addr.phone}`}
+                          className="font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          {addr.phone}
+                        </a>
+                      </div>
+                    )}
                   </div>
-                )}
-                {addr.address && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("detail.address")}</span>
-                    <span className="font-medium">{addr.address}</span>
+                </section>
+              );
+            })()}
+
+          {order.shippingRequired &&
+            order.deliveryMethod !== "PICKUP" &&
+            order.shippingAddress &&
+            (() => {
+              const addr = order.shippingAddress as {
+                name?: string;
+                address?: string;
+                city?: string;
+                postalCode?: string;
+                country?: string;
+                phone?: string;
+              };
+              return (
+                <section>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+                    {t("detail.shippingAddress")}
+                  </h2>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    {addr.name && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.name")}
+                        </span>
+                        <span className="font-medium">{addr.name}</span>
+                      </div>
+                    )}
+                    {addr.address && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.address")}
+                        </span>
+                        <span className="font-medium">{addr.address}</span>
+                      </div>
+                    )}
+                    {(addr.postalCode || addr.city) && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.city")}
+                        </span>
+                        <span className="font-medium">
+                          {[addr.postalCode, addr.city]
+                            .filter(Boolean)
+                            .join(" ")}
+                        </span>
+                      </div>
+                    )}
+                    {addr.country && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.country")}
+                        </span>
+                        <span className="font-medium">{addr.country}</span>
+                      </div>
+                    )}
+                    {addr.phone && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {t("detail.phone")}
+                        </span>
+                        <a
+                          href={`tel:${addr.phone}`}
+                          className="font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          {addr.phone}
+                        </a>
+                      </div>
+                    )}
+                    <div className="pt-3 border-t border-gray-200">
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                          [
+                            addr.address,
+                            addr.postalCode,
+                            addr.city,
+                            addr.country,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        {t("detail.viewOnGoogleMaps")}
+                      </a>
+                    </div>
                   </div>
-                )}
-                {(addr.postalCode || addr.city) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("detail.city")}</span>
-                    <span className="font-medium">
-                      {[addr.postalCode, addr.city].filter(Boolean).join(" ")}
-                    </span>
-                  </div>
-                )}
-                {addr.country && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("detail.country")}</span>
-                    <span className="font-medium">{addr.country}</span>
-                  </div>
-                )}
-                {addr.phone && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("detail.phone")}</span>
-                    <a
-                      href={`tel:${addr.phone}`}
-                      className="font-medium text-blue-600 hover:text-blue-800"
-                    >
-                      {addr.phone}
-                    </a>
-                  </div>
-                )}
-                <div className="pt-3 border-t border-gray-200">
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      [addr.address, addr.postalCode, addr.city, addr.country]
-                        .filter(Boolean)
-                        .join(", ")
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    {t("detail.viewOnGoogleMaps")}
-                  </a>
-                </div>
-              </div>
-            </section>
-            );
-          })()}
+                </section>
+              );
+            })()}
         </div>
       </div>
     </div>

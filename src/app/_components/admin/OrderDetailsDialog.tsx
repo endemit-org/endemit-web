@@ -86,11 +86,16 @@ export default function OrderDetailsDialog({
                   )}
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t("detail.email")}</span>
-                    <span className="font-medium">{formatEmailForDisplay(order.email)}</span>
+                    <span className="font-medium">
+                      {formatEmailForDisplay(order.email)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t("detail.date")}</span>
-                    <ClientDate date={order.createdAt} className="font-medium" />
+                    <ClientDate
+                      date={order.createdAt}
+                      className="font-medium"
+                    />
                   </div>
                 </div>
               </section>
@@ -101,7 +106,9 @@ export default function OrderDetailsDialog({
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t("detail.subtotal")}</span>
+                    <span className="text-gray-600">
+                      {t("detail.subtotal")}
+                    </span>
                     <span>{formatPrice(order.subtotal)}</span>
                   </div>
                   {(order.discountCodeKey ||
@@ -125,7 +132,9 @@ export default function OrderDetailsDialog({
                   )}
                   {order.shippingAmount != null && order.shippingAmount > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">{t("detail.shipping")}</span>
+                      <span className="text-gray-600">
+                        {t("detail.shipping")}
+                      </span>
                       <span>{formatPrice(order.shippingAmount)}</span>
                     </div>
                   )}
@@ -142,11 +151,15 @@ export default function OrderDetailsDialog({
                 </h3>
                 <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
                   {order.items.map((item, index) => (
-                    <div key={index} className="p-4 flex justify-between items-center">
+                    <div
+                      key={index}
+                      className="p-4 flex justify-between items-center"
+                    >
                       <div>
                         <p className="font-medium">{item.name}</p>
                         <p className="text-sm text-gray-500">
-                          {item.category} • {t("detail.qty", { count: item.quantity })}
+                          {item.category} •{" "}
+                          {t("detail.qty", { count: item.quantity })}
                         </p>
                       </div>
                       <span className="font-medium">
@@ -169,7 +182,8 @@ export default function OrderDetailsDialog({
                           <div>
                             <p className="font-medium">{ticket.eventName}</p>
                             <p className="text-sm text-gray-500">
-                              {ticket.ticketHolderName} • {formatEmailForDisplay(ticket.ticketPayerEmail)}
+                              {ticket.ticketHolderName} •{" "}
+                              {formatEmailForDisplay(ticket.ticketPayerEmail)}
                             </p>
                             <p className="text-xs text-gray-400 font-mono mt-1">
                               {ticket.shortId}
@@ -186,7 +200,9 @@ export default function OrderDetailsDialog({
                                     : "bg-gray-100 text-gray-800"
                               )}
                             >
-                              {tk.has(ticket.status) ? tk(ticket.status) : ticket.status}
+                              {tk.has(ticket.status)
+                                ? tk(ticket.status)
+                                : ticket.status}
                             </span>
                             <p className="text-sm font-medium mt-1">
                               {formatPrice(ticket.price)}
@@ -207,18 +223,46 @@ export default function OrderDetailsDialog({
                 </section>
               )}
 
-              {order.shippingRequired && order.shippingAddress && (
+              {order.shippingRequired && order.deliveryMethod === "PICKUP" && (
                 <section>
                   <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
-                    {t("detail.shippingAddress")}
+                    {t("detail.pickup")}
                   </h3>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <pre className="text-sm whitespace-pre-wrap">
-                      {JSON.stringify(order.shippingAddress, null, 2)}
-                    </pre>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-1 text-sm">
+                    <div className="font-medium">
+                      {order.pickupEventName ?? t("detail.pickupByAgreement")}
+                    </div>
+                    {order.pickupEventDate && (
+                      <div className="text-gray-500">
+                        <ClientDate date={order.pickupEventDate} />
+                      </div>
+                    )}
+                    {!!order.shippingAddress?.name && (
+                      <div>{String(order.shippingAddress.name)}</div>
+                    )}
+                    {!!order.shippingAddress?.phone && (
+                      <div className="text-gray-600">
+                        {String(order.shippingAddress.phone)}
+                      </div>
+                    )}
                   </div>
                 </section>
               )}
+
+              {order.shippingRequired &&
+                order.deliveryMethod !== "PICKUP" &&
+                order.shippingAddress && (
+                  <section>
+                    <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+                      {t("detail.shippingAddress")}
+                    </h3>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <pre className="text-sm whitespace-pre-wrap">
+                        {JSON.stringify(order.shippingAddress, null, 2)}
+                      </pre>
+                    </div>
+                  </section>
+                )}
             </div>
 
             <div className="p-6 border-t border-gray-200 flex justify-end">

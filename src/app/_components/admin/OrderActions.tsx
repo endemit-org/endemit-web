@@ -11,13 +11,14 @@ import {
   OrderAction,
   OrderActionConfig,
 } from "@/domain/order/operations/getOrderActions";
-import { OrderStatus } from "@prisma/client";
+import { DeliveryMethod, OrderStatus } from "@prisma/client";
 import { ProductInOrder } from "@/domain/order/types/order";
 
 interface OrderActionsProps {
   orderId: string;
   status: OrderStatus;
   items: ProductInOrder[];
+  deliveryMethod?: DeliveryMethod;
   totalAmount: number;
   refundedAmount: number;
   userPermissions: string[];
@@ -29,6 +30,7 @@ export default function OrderActions({
   orderId,
   status,
   items,
+  deliveryMethod,
   totalAmount,
   refundedAmount,
   userPermissions,
@@ -40,12 +42,15 @@ export default function OrderActions({
   const [pendingAction, setPendingAction] = useState<OrderAction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sendEmailFlags, setSendEmailFlags] = useState<Record<string, boolean>>({});
+  const [sendEmailFlags, setSendEmailFlags] = useState<Record<string, boolean>>(
+    {}
+  );
 
   // Build context and get available actions
   const context = buildOrderContext({
     status,
     items,
+    deliveryMethod,
     totalAmount: totalAmount * 100, // Convert to cents
     refundedAmount,
   });
@@ -99,19 +104,23 @@ export default function OrderActions({
       )}
 
       <div className="flex flex-wrap gap-2">
-        {actions.map((config) => (
+        {actions.map(config => (
           <ActionButton
             key={config.action}
             config={config}
             isLoading={isLoading && pendingAction === config.action}
             disabled={isLoading}
-            onConfirm={() => handleAction(config.action, sendEmailFlags[config.action])}
+            onConfirm={() =>
+              handleAction(config.action, sendEmailFlags[config.action])
+            }
             onRequestConfirmation={() => setPendingAction(config.action)}
-            showConfirmation={pendingAction === config.action && config.requiresConfirmation}
+            showConfirmation={
+              pendingAction === config.action && config.requiresConfirmation
+            }
             onCancelConfirmation={() => setPendingAction(null)}
             sendEmail={sendEmailFlags[config.action] ?? false}
-            onSendEmailChange={(checked) =>
-              setSendEmailFlags((prev) => ({ ...prev, [config.action]: checked }))
+            onSendEmailChange={checked =>
+              setSendEmailFlags(prev => ({ ...prev, [config.action]: checked }))
             }
           />
         ))}
@@ -186,7 +195,9 @@ function ActionButton({
     <div className="flex flex-col gap-1">
       <button
         className={buttonClasses}
-        onClick={config.requiresConfirmation ? onRequestConfirmation : onConfirm}
+        onClick={
+          config.requiresConfirmation ? onRequestConfirmation : onConfirm
+        }
         disabled={disabled}
         title={ta(config.description)}
       >
@@ -197,7 +208,7 @@ function ActionButton({
           <input
             type="checkbox"
             checked={sendEmail}
-            onChange={(e) => onSendEmailChange(e.target.checked)}
+            onChange={e => onSendEmailChange(e.target.checked)}
             disabled={disabled}
             className="rounded border-gray-300"
           />

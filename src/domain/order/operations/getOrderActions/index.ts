@@ -1,4 +1,4 @@
-import { OrderStatus } from "@prisma/client";
+import { DeliveryMethod, OrderStatus } from "@prisma/client";
 import { ProductInOrder } from "@/domain/order/types/order";
 import { ProductType, ProductCategory } from "@/domain/product/types/product";
 
@@ -29,6 +29,11 @@ export type OrderActionMessageKey =
   | "sendShippingEmail"
   | "markDelivered"
   | "markDeliveredDesc"
+  | "markReadyForPickup"
+  | "markReadyForPickupDesc"
+  | "sendPickupEmail"
+  | "markPickedUp"
+  | "markPickedUpDesc"
   | "processRefund"
   | "processRefundDesc"
   | "denyRefund"
@@ -53,6 +58,7 @@ export interface OrderContext {
   hasDigitalItems: boolean;
   hasCurrencyItems: boolean;
   hasTickets: boolean;
+  isPickup: boolean;
   totalAmount: number;
   refundedAmount: number;
 }
@@ -66,6 +72,7 @@ export function buildOrderContext(order: {
   items: ProductInOrder[];
   totalAmount: number;
   refundedAmount: number;
+  deliveryMethod?: DeliveryMethod;
 }): OrderContext {
   const items = order.items;
 
@@ -77,6 +84,7 @@ export function buildOrderContext(order: {
       item => item.category === ProductCategory.CURRENCIES
     ),
     hasTickets: items.some(item => item.category === ProductCategory.TICKETS),
+    isPickup: order.deliveryMethod === DeliveryMethod.PICKUP,
     totalAmount: order.totalAmount,
     refundedAmount: order.refundedAmount,
   };
@@ -134,15 +142,20 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       break;
 
     case "PREPARING":
-      // Order is being prepared, can be shipped or refunded
+      // Order is being prepared, can be shipped (or readied for pickup) or refunded.
+      // Pickup orders reuse IN_DELIVERY as "ready for pickup".
       actions.push({
         action: "mark_in_delivery",
-        label: "markShipped",
-        description: "markShippedDesc",
+        label: context.isPickup ? "markReadyForPickup" : "markShipped",
+        description: context.isPickup
+          ? "markReadyForPickupDesc"
+          : "markShippedDesc",
         requiresConfirmation: false,
         variant: "default",
         showEmailCheckbox: true,
-        emailCheckboxLabel: "sendShippingEmail",
+        emailCheckboxLabel: context.isPickup
+          ? "sendPickupEmail"
+          : "sendShippingEmail",
       });
 
       actions.push({
@@ -156,11 +169,13 @@ export function getOrderActions(context: OrderContext): OrderActionConfig[] {
       break;
 
     case "IN_DELIVERY":
-      // Order is in delivery, can be marked as completed
+      // Order is in delivery (or waiting for pickup), can be marked as completed
       actions.push({
         action: "mark_completed",
-        label: "markDelivered",
-        description: "markDeliveredDesc",
+        label: context.isPickup ? "markPickedUp" : "markDelivered",
+        description: context.isPickup
+          ? "markPickedUpDesc"
+          : "markDeliveredDesc",
         requiresConfirmation: false,
         variant: "default",
       });

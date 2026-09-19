@@ -15,6 +15,11 @@ enum UserStatus {
   DELETED
 }
 
+enum DeliveryMethod {
+  SHIPPING
+  PICKUP
+}
+
 enum OrderStatus {
   CREATED
   PROCESSING
@@ -144,6 +149,10 @@ model Order {
   walletAmountUsed Int         @default(0)
   shippingRequired Boolean
   shippingAddress  Json?
+  deliveryMethod   DeliveryMethod @default(SHIPPING)
+  pickupEventUid   String? // Prismic event uid; null with PICKUP = "po dogovoru"
+  pickupEventName  String? // Snapshot, survives CMS edits
+  pickupEventDate  DateTime?
   items            Json
   metadata         Json?
   locale           String      @default("sl")
