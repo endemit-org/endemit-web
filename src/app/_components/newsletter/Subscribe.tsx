@@ -9,6 +9,8 @@ import CheckoutError from "@/app/_components/checkout/CheckoutError";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import Spinner from "@/app/_components/ui/Spinner";
 import { useTranslations } from "next-intl";
+import { trackMetaEvent } from "@/app/_components/analytics/metaPixelClient";
+import { MetaEvent } from "@/lib/services/meta/events";
 
 interface SubscribeProps {
   title: string;
@@ -51,6 +53,9 @@ export default function Subscribe({
     });
 
     if (result.success) {
+      // `content_name` carries the list, so the newsletter slices can be told
+      // apart in Meta without a separate custom event per form.
+      trackMetaEvent(MetaEvent.LEAD, { content_name: title });
       setSubmitState("success");
     } else {
       setSubmitState("idle");

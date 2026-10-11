@@ -21,6 +21,14 @@ import {
   bustOnOrderCreated,
   bustOnDonationReceived,
 } from "@/lib/services/cache";
+import { sendMetaEvent } from "@/lib/services/meta/capi";
+import { readMetaAttribution } from "@/lib/services/meta/requestContext";
+import {
+  META_CURRENCY,
+  MetaEvent,
+  metaPurchaseEventId,
+} from "@/lib/services/meta/events";
+import type { ShippingAddress } from "@/domain/checkout/types/checkout";
 
 /**
  * All post-payment side effects for an order, moved out of the Stripe webhook
@@ -241,6 +249,54 @@ export const runOrderPaymentProcessing = inngest.createFunction(
       }
 
       return applied;
+    });
+
+    // Meta Conversions API. Runs after the customer-facing side effects and
+    // swallows its own failures: ad reporting must never hold up or fail a
+    // paid order. Deduplicates against the browser pixel's Purchase on the
+    // success page through a shared, order-derived event id.
+    await step.run("report-meta-purchase", async () => {
+      const attribution = readMetaAttribution(order.metadata);
+      const shippingAddress = order.shippingAddress as ShippingAddress | null;
+
+      const contents = items.map(item => ({
+        id: item.uid,
+        quantity: item.quantity,
+        item_price: item.paidPrice ?? item.price,
+      }));
+
+      const result = await sendMetaEvent({
+        eventName: MetaEvent.PURCHASE,
+        eventId: metaPurchaseEventId(order.id),
+        // The conversion happened when the order was placed, not when this
+        // (possibly retried) job runs.
+        eventTime: Math.floor(order.createdAt.getTime() / 1000),
+        eventSourceUrl: attribution?.eventSourceUrl,
+        userData: {
+          email: order.email,
+          name: order.name ?? shippingAddress?.name,
+          phone: shippingAddress?.phone,
+          city: shippingAddress?.city,
+          postalCode: shippingAddress?.postalCode,
+          country: shippingAddress?.country,
+          externalId: order.userId,
+          fbp: attribution?.fbp,
+          fbc: attribution?.fbc,
+          clientIpAddress: attribution?.clientIpAddress,
+          clientUserAgent: attribution?.clientUserAgent,
+        },
+        customData: {
+          currency: META_CURRENCY,
+          value: Number(order.totalAmount),
+          content_type: "product",
+          content_ids: contents.map(content => content.id),
+          contents,
+          num_items: items.reduce((sum, item) => sum + item.quantity, 0),
+          order_id: order.id,
+        },
+      });
+
+      return result.sent ? "sent" : `skipped: ${result.reason}`;
     });
 
     await step.run("finalize", async () => {

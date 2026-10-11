@@ -5,6 +5,7 @@ import { validateCheckoutRequest } from "@/domain/checkout/operations/validateCh
 import { resolvePickupSelection } from "@/domain/checkout/operations/resolvePickupSelection";
 import { DeliveryMethod } from "@/domain/checkout/types/checkout";
 import { createOrder } from "@/domain/order/operations/createOrder";
+import { getMetaAttribution } from "@/lib/services/meta/requestContext";
 import { transformToProductInOrder } from "@/domain/product/transformers/transformToProductInOrder";
 import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscribeEmailToGeneralList";
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
@@ -198,6 +199,9 @@ export async function POST(request: Request) {
       orderItems,
       userId: currentUser?.id,
       locale: body.locale === "en" ? "en" : "sl",
+      // Snapshot of the Meta click/browser ids, needed to attribute the
+      // server-side Purchase event that fires after payment is confirmed.
+      metadata: { metaAttribution: getMetaAttribution(request) },
     });
 
     // Update PaymentIntent with orderId in metadata

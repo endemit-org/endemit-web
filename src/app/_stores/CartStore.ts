@@ -8,6 +8,8 @@ import { Product } from "@/domain/product/types/product";
 import { getApiPath } from "@/lib/util/api";
 import { canProductExistInCart } from "@/domain/product/businessLogic";
 import { CartItem } from "@/domain/checkout/types/cartItem";
+import { trackMetaEvent } from "@/app/_components/analytics/metaPixelClient";
+import { META_CURRENCY, MetaEvent } from "@/lib/services/meta/events";
 
 interface CreateCheckoutSessionResponse {
   sessionId: string;
@@ -25,6 +27,26 @@ interface CheckoutError {
   error: string;
 }
 
+/**
+ * Reports the start of a checkout to the Meta Pixel. Both checkout paths (the
+ * Stripe-hosted session and the embedded PaymentIntent) funnel through here,
+ * so the event is emitted exactly once per attempt in either flow.
+ */
+function trackMetaInitiateCheckout(items: CartItem[], value: number): void {
+  trackMetaEvent(MetaEvent.INITIATE_CHECKOUT, {
+    currency: META_CURRENCY,
+    value,
+    content_type: "product",
+    content_ids: items.map(item => item.uid),
+    contents: items.map(item => ({
+      id: item.uid,
+      quantity: item.quantity,
+      item_price: item.price,
+    })),
+    num_items: items.reduce((sum, item) => sum + item.quantity, 0),
+  });
+}
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -37,6 +59,18 @@ export const useCartStore = create<CartStore>()(
         if (!canProductExistInCart(product)) {
           return;
         }
+
+        trackMetaEvent(MetaEvent.ADD_TO_CART, {
+          currency: META_CURRENCY,
+          value: product.price * quantity,
+          content_type: "product",
+          content_ids: [product.uid],
+          content_name: product.name,
+          content_category: product.category,
+          contents: [
+            { id: product.uid, quantity, item_price: product.price },
+          ],
+        });
 
         set(state => {
           const existingItem = state.items.find(item => item.id === product.id);
@@ -133,6 +167,8 @@ export const useCartStore = create<CartStore>()(
           throw new Error("Cart is empty");
         }
 
+        trackMetaInitiateCheckout(items, get().getTotalPrice());
+
         set({ isLoading: true });
 
         try {
@@ -204,6 +240,8 @@ export const useCartStore = create<CartStore>()(
         if (items.length === 0) {
           throw new Error("Cart is empty");
         }
+
+        trackMetaInitiateCheckout(items, get().getTotalPrice());
 
         set({ isLoading: true });
 

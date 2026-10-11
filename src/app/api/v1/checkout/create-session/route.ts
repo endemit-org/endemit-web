@@ -12,6 +12,7 @@ import { subscribeEmailToGeneralList } from "@/domain/newsletter/actions/subscri
 import { notifyOnNewSubscriber } from "@/domain/notification/operations/notifyOnNewSubscriber";
 import { transformPriceFromStripe } from "@/domain/checkout/transformers/transformPriceFromStripe";
 import { getCurrentUser } from "@/lib/services/auth";
+import { getMetaAttribution } from "@/lib/services/meta/requestContext";
 import { getWalletByUserIdFresh } from "@/domain/wallet/operations/getWalletByUserId";
 import { isValidWalletCreditAmount } from "@/domain/checkout/businessRules";
 
@@ -106,6 +107,9 @@ export async function POST(request: Request) {
       ),
       userId: currentUser?.id,
       locale: body.locale === "en" ? "en" : "sl",
+      // Snapshot of the Meta click/browser ids, needed to attribute the
+      // server-side Purchase event that fires after Stripe confirms payment.
+      metadata: { metaAttribution: getMetaAttribution(request) },
     });
 
     // Subscribe all customers to general email list

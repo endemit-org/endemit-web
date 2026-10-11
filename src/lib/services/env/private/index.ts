@@ -93,6 +93,14 @@ export const APPLE_PASS_CERTIFICATE_PASSWORD =
   process.env.APPLE_PASS_CERTIFICATE_PASSWORD!;
 export const APPLE_WWDR_CERTIFICATE = process.env.APPLE_WWDR_CERTIFICATE!;
 
+// Meta Conversions API (server-side events). Both optional: without a token
+// the CAPI sender is a no-op and only the browser pixel reports.
+export const META_CAPI_ACCESS_TOKEN = process.env.META_CAPI_ACCESS_TOKEN;
+export const META_PIXEL_ID =
+  process.env.META_PIXEL_ID ?? process.env.NEXT_PUBLIC_META_PIXEL_ID;
+/** Set only while validating in Events Manager > Test events. Unset in prod. */
+export const META_CAPI_TEST_EVENT_CODE = process.env.META_CAPI_TEST_EVENT_CODE;
+
 // Feature flags
 export const FEAT_IGNORE_VISIBILITY =
   process.env.FEAT_IGNORE_VISIBILITY === "true";

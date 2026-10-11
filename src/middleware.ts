@@ -4,6 +4,7 @@ import createIntlMiddleware from "next-intl/middleware";
 import { STAGING_PASSWORD } from "@/lib/services/env/private";
 import { isDevelopment, isProduction } from "@/lib/util/env";
 import { routing, LOCALE_COOKIE } from "@/i18n/routing";
+import { isMetaPixelEnabled } from "@/lib/services/meta/enabled";
 
 const STAGING_LOGIN_PATH = "/staging-login";
 
@@ -129,6 +130,38 @@ function resolveLocale(request: NextRequest): "sl" | "en" {
   return "sl";
 }
 
+/** 90 days, matching Meta's own click-attribution window for `_fbc`. */
+const FBC_COOKIE_MAX_AGE = 60 * 60 * 24 * 90;
+
+/**
+ * Persists an ad click as the first-party `_fbc` cookie.
+ *
+ * Meta attributes a conversion to a campaign through the `fbclid` query
+ * parameter of the landing URL. The purchase itself is reported later, from
+ * the server, with no browser present — so the click id has to be durable
+ * from the moment of landing. Writing it here (rather than leaving it to the
+ * pixel script) also survives the pixel being blocked or loading late.
+ *
+ * The value format `fb.1.<millis>.<fbclid>` is Meta's, and is not readable as
+ * anything else. Not httpOnly on purpose: the pixel reads it too.
+ */
+function captureFbclid(request: NextRequest, response: NextResponse): void {
+  if (!isMetaPixelEnabled()) return;
+
+  const fbclid = request.nextUrl.searchParams.get("fbclid");
+  if (!fbclid) return;
+
+  // An existing cookie is the earlier, more valuable click: never overwrite.
+  if (request.cookies.get("_fbc")) return;
+
+  response.cookies.set("_fbc", `fb.1.${Date.now()}.${fbclid}`, {
+    maxAge: FBC_COOKIE_MAX_AGE,
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -153,12 +186,16 @@ export function middleware(request: NextRequest) {
   if (!hasEnPrefix && !isBot(request) && resolveLocale(request) === "en") {
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" ? "/en" : `/en${pathname}`;
-    return NextResponse.redirect(url);
+    const redirect = NextResponse.redirect(url);
+    captureFbclid(request, redirect);
+    return redirect;
   }
 
   // next-intl maps the prefix to a locale (and rewrites / -> /sl internally,
   // 308-redirects a literal /sl/... back to the unprefixed path).
-  return intlMiddleware(request);
+  const response = intlMiddleware(request);
+  captureFbclid(request, response);
+  return response;
 }
 
 export const config = {
