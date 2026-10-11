@@ -1,46 +1,24 @@
 "use client";
 
 import Script from "next/script";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef } from "react";
 import { PUBLIC_META_PIXEL_ID } from "@/lib/services/env/public";
 import { isMetaPixelEnabled } from "@/lib/services/meta/enabled";
-import { trackMetaPageView } from "@/app/_components/analytics/metaPixelClient";
 
 /**
- * Meta Pixel loader for the public store and festival pages.
+ * Meta Pixel loader.
  *
- * Mounted in the localized layout only, so the admin, POS and scan areas are
- * never tracked. Loading is gated by `isMetaPixelEnabled()`: production with
- * a configured pixel id, nothing anywhere else.
+ * Mounted via `TrackingScripts` in the localized layout only, so the admin,
+ * POS and scan areas are never tracked. Loading is gated by
+ * `isMetaPixelEnabled()`: production with a configured pixel id, nothing
+ * anywhere else.
  *
- * NOTE ON CONSENT: the pixel loads unconditionally, without a consent
- * prompt, by an explicit product decision. For EU visitors GDPR/ePrivacy
- * normally require prior opt-in before setting pixel cookies. If a consent
- * banner is introduced later, gate this component (and the `fbp`/`fbc`
- * capture in the checkout routes) on the stored consent signal.
+ * NOTE ON CONSENT: the pixel loads unconditionally, without a consent prompt,
+ * by an explicit product decision. For EU visitors GDPR/ePrivacy normally
+ * require prior opt-in before setting pixel cookies. If a consent banner is
+ * introduced later, gate the `isMetaPixelEnabled()` / `isTikTokPixelEnabled()`
+ * helpers (and the click-id capture in the middleware) on the stored consent
+ * signal — they are the single choke points.
  */
-
-/**
- * `fbq('init')` fires its own PageView on load, so the first render must not
- * send a second one. Only subsequent client-side navigations report.
- */
-function MetaPixelRouteEvents() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    trackMetaPageView();
-  }, [pathname, searchParams]);
-
-  return null;
-}
-
 export default function MetaPixel() {
   if (!isMetaPixelEnabled()) {
     return null;
@@ -52,6 +30,8 @@ export default function MetaPixel() {
         id="meta-pixel"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
+          // Meta's official snippet. `fbq('init')` reports the initial
+          // PageView; client-side navigations come from TrackingScripts.
           __html: `
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -76,10 +56,6 @@ fbq('track', 'PageView');
           src={`https://www.facebook.com/tr?id=${PUBLIC_META_PIXEL_ID}&ev=PageView&noscript=1`}
         />
       </noscript>
-      {/* useSearchParams forces a Suspense boundary in the App Router. */}
-      <Suspense fallback={null}>
-        <MetaPixelRouteEvents />
-      </Suspense>
     </>
   );
 }

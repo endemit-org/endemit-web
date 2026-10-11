@@ -101,6 +101,15 @@ export const META_PIXEL_ID =
 /** Set only while validating in Events Manager > Test events. Unset in prod. */
 export const META_CAPI_TEST_EVENT_CODE = process.env.META_CAPI_TEST_EVENT_CODE;
 
+// TikTok Events API (server-side events). All optional: without a token the
+// sender is a no-op, so the integration ships inert until an account exists.
+export const TIKTOK_EVENTS_API_ACCESS_TOKEN =
+  process.env.TIKTOK_EVENTS_API_ACCESS_TOKEN;
+export const TIKTOK_PIXEL_ID =
+  process.env.TIKTOK_PIXEL_ID ?? process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+/** Set only while validating in TikTok Events Manager. Unset in prod. */
+export const TIKTOK_TEST_EVENT_CODE = process.env.TIKTOK_TEST_EVENT_CODE;
+
 // Feature flags
 export const FEAT_IGNORE_VISIBILITY =
   process.env.FEAT_IGNORE_VISIBILITY === "true";

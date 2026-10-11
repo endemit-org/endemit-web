@@ -13,7 +13,7 @@ import { transformTicketsFromOrder } from "@/domain/order/transformers/transform
 import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
 import AutoLoginOnSuccess from "@/app/_components/checkout/AutoLoginOnSuccess";
-import MetaPurchaseEvent from "@/app/_components/analytics/MetaPurchaseEvent";
+import PurchaseEvent from "@/app/_components/analytics/PurchaseEvent";
 import type { ProductInOrder } from "@/domain/order/types/order";
 import { OrderStatus } from "@prisma/client";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -87,13 +87,15 @@ export default async function SuccessPage({
     notFound();
   }
 
-  // Line items for the Meta Purchase event, deduplicated against the
-  // server-side Conversions API event by the shared order-derived event id.
+  // Line items for the purchase conversion, deduplicated against the
+  // server-side event by the shared order-derived event id.
   const orderItems = (order.items ?? []) as unknown as ProductInOrder[];
-  const metaContents = orderItems.map(item => ({
+  const purchaseContents = orderItems.map(item => ({
     id: item.uid,
     quantity: item.quantity,
-    item_price: item.paidPrice ?? item.price,
+    unitPrice: item.paidPrice ?? item.price,
+    name: item.name,
+    category: item.category,
   }));
 
   const tickets = transformTicketsFromOrder(order);
@@ -108,11 +110,10 @@ export default async function SuccessPage({
 
   return (
     <OuterPage>
-      <MetaPurchaseEvent
+      <PurchaseEvent
         orderId={order.id}
         value={Number(order.totalAmount)}
-        contents={metaContents}
-        numItems={orderItems.reduce((sum, item) => sum + item.quantity, 0)}
+        contents={purchaseContents}
       />
       <PageHeadline
         title={`Order ${order.id}`}

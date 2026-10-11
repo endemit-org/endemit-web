@@ -21,13 +21,17 @@ import {
   bustOnOrderCreated,
   bustOnDonationReceived,
 } from "@/lib/services/cache";
-import { sendMetaEvent } from "@/lib/services/meta/capi";
-import { readMetaAttribution } from "@/lib/services/meta/requestContext";
 import {
-  META_CURRENCY,
-  MetaEvent,
-  metaPurchaseEventId,
-} from "@/lib/services/meta/events";
+  reportConversion,
+  summarizeConversionResults,
+} from "@/lib/services/tracking/server";
+import { readTrackingAttribution } from "@/lib/services/tracking/attribution";
+import {
+  countItems,
+  purchaseEventId,
+  TRACKING_CURRENCY,
+  TrackedEvent,
+} from "@/lib/services/tracking/events";
 import type { ShippingAddress } from "@/domain/checkout/types/checkout";
 
 /**
@@ -251,23 +255,26 @@ export const runOrderPaymentProcessing = inngest.createFunction(
       return applied;
     });
 
-    // Meta Conversions API. Runs after the customer-facing side effects and
-    // swallows its own failures: ad reporting must never hold up or fail a
-    // paid order. Deduplicates against the browser pixel's Purchase on the
-    // success page through a shared, order-derived event id.
-    await step.run("report-meta-purchase", async () => {
-      const attribution = readMetaAttribution(order.metadata);
+    // Server-side purchase conversion, reported to every configured ad
+    // platform. Runs after the customer-facing side effects and swallows its
+    // own failures: ad reporting must never hold up or fail a paid order.
+    // Deduplicates against the browser event on the success page through a
+    // shared, order-derived event id.
+    await step.run("report-purchase-conversion", async () => {
+      const attribution = readTrackingAttribution(order.metadata);
       const shippingAddress = order.shippingAddress as ShippingAddress | null;
 
       const contents = items.map(item => ({
         id: item.uid,
         quantity: item.quantity,
-        item_price: item.paidPrice ?? item.price,
+        unitPrice: item.paidPrice ?? item.price,
+        name: item.name,
+        category: item.category,
       }));
 
-      const result = await sendMetaEvent({
-        eventName: MetaEvent.PURCHASE,
-        eventId: metaPurchaseEventId(order.id),
+      const results = await reportConversion({
+        event: TrackedEvent.PURCHASE,
+        eventId: purchaseEventId(order.id),
         // The conversion happened when the order was placed, not when this
         // (possibly retried) job runs.
         eventTime: Math.floor(order.createdAt.getTime() / 1000),
@@ -282,21 +289,21 @@ export const runOrderPaymentProcessing = inngest.createFunction(
           externalId: order.userId,
           fbp: attribution?.fbp,
           fbc: attribution?.fbc,
+          ttclid: attribution?.ttclid,
+          ttp: attribution?.ttp,
           clientIpAddress: attribution?.clientIpAddress,
           clientUserAgent: attribution?.clientUserAgent,
         },
-        customData: {
-          currency: META_CURRENCY,
+        data: {
+          currency: TRACKING_CURRENCY,
           value: Number(order.totalAmount),
-          content_type: "product",
-          content_ids: contents.map(content => content.id),
           contents,
-          num_items: items.reduce((sum, item) => sum + item.quantity, 0),
-          order_id: order.id,
+          numItems: countItems(contents),
+          orderId: order.id,
         },
       });
 
-      return result.sent ? "sent" : `skipped: ${result.reason}`;
+      return summarizeConversionResults(results);
     });
 
     await step.run("finalize", async () => {
