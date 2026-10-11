@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { requestOtcCode } from "@/domain/auth/actions/requestOtcCode";
 import { registerOtcUser } from "@/domain/auth/actions/registerOtcUser";
+import { trackMetaEvent } from "@/app/_components/analytics/metaPixelClient";
+import { MetaEvent } from "@/lib/services/meta/events";
 import type { SceneStatus, WristbandColor } from "./WristbandScene";
 
 // three.js stage — client-only and heavy, so keep it out of the page bundle.
@@ -162,6 +164,9 @@ export default function WristbandIntro({
         callbackUrl: continueUrl(),
       });
       if (result.success) {
+        trackMetaEvent(MetaEvent.COMPLETE_REGISTRATION, {
+          content_name: "wristband-signup",
+        });
         goTo({ kind: "code", email: phase.email });
       } else {
         setError(result.error || tSignin("emailForm.errors.createFailed"));

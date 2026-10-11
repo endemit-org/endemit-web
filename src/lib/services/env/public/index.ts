@@ -15,6 +15,9 @@ export const PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 export const PUBLIC_SUPABASE_PUBLIC_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!;
 
+// Meta (Facebook) Pixel — public dataset/pixel id. Empty disables the pixel.
+export const PUBLIC_META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "";
+
 // Feature flags
 export const PUBLIC_ENDEMIT_PAY_ENABLED =
   process.env.NEXT_PUBLIC_FEAT_ENDEMIT_PAY_ENABLED === "true";

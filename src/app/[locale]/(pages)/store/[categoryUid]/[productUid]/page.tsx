@@ -9,6 +9,7 @@ import PageHeadline from "@/app/_components/ui/PageHeadline";
 import OuterPage from "@/app/_components/ui/OuterPage";
 import style from "@/app/_styles/insetHtml.module.css";
 import { notFound } from "next/navigation";
+import MetaViewContentEvent from "@/app/_components/analytics/MetaViewContentEvent";
 import RichTextDisplay from "@/app/_components/content/RichTextDisplay";
 import ProductAddToCart from "@/app/_components/product/ProductAddToCart";
 import { Metadata } from "next";
@@ -105,6 +106,12 @@ export default async function ProductPage({
   return (
     <>
       <ProductSeoMicrodata product={product} />
+      <MetaViewContentEvent
+        productUid={product.uid}
+        name={product.name}
+        category={product.category}
+        price={product.price}
+      />
       <OuterPage>
         <PageHeadline
           title={product.name}
