@@ -88,6 +88,9 @@ export const ROLE_DEFINITIONS: Record<RoleSlug, RoleDefinition> = {
       PERMISSIONS.POS_STICKERS_MANAGE,
       // Event Claims
       PERMISSIONS.EVENT_CLAIMS_MANAGE,
+      // Short links
+      PERMISSIONS.SHORT_LINKS_READ,
+      PERMISSIONS.SHORT_LINKS_WRITE,
     ],
   },
   [ROLE_SLUGS.MODERATOR]: {

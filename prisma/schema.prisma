@@ -775,3 +775,21 @@ model EventClaim {
   @@index([userId])
   @@index([status])
 }
+
+/// Admin-managed short links for QR codes and shared URLs: /go/<code>.
+/// Codes are stored and matched lowercase so a code read off print and typed
+/// in any case still resolves.
+model ShortLink {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  targetUrl   String
+  description String?
+  isActive    Boolean   @default(true)
+  clickCount  Int       @default(0)
+  lastClickAt DateTime?
+  createdBy   String? // User id of the admin who created it
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+}

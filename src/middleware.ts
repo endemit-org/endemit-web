@@ -14,7 +14,8 @@ const intlMiddleware = createIntlMiddleware(routing);
 
 /**
  * Paths that must never be locale-handled: API, the English-only admin/POS/scan
- * areas, staging login, the slice simulator, short links and static assets.
+ * areas, staging login, the slice simulator, short links ("/s/" wristbands and
+ * "/go/" admin-managed codes) and static assets.
  */
 function isLocaleExcluded(pathname: string): boolean {
   return (
@@ -25,6 +26,7 @@ function isLocaleExcluded(pathname: string): boolean {
     pathname.startsWith("/staging-login") ||
     pathname.startsWith("/slice-simulator") ||
     pathname.startsWith("/s/") ||
+    pathname.startsWith("/go/") ||
     pathname === "/sitemap.xml" ||
     pathname === "/robots.txt" ||
     pathname === "/manifest.json" ||
