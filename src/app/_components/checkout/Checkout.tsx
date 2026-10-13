@@ -90,6 +90,9 @@ export default function Checkout({
   useCheckoutPrefill({
     prefill,
     totalItems,
+    promoCodeValue,
+    // What applyPromoCode validates against; it refuses to run at 0.
+    cartValue: totals.subTotal + totals.shippingCost,
     clearCart: actions.clearCart,
     addItem: actions.addItem,
     setPromoCodeValue: actions.setPromoCodeValue,
