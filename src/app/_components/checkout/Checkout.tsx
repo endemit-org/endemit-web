@@ -294,14 +294,58 @@ export default function Checkout({
                       />
                     )}
 
-                  {/* Subtotal summary for step 1 */}
-                  <div className="text-md text-neutral-200 pt-4 border-t border-neutral-700">
+                  {/* Subtotal summary for step 1. A discount is broken out
+                      here rather than held back until the review step: a
+                      shopper arriving on a pre-applied discount link would
+                      otherwise meet the full price first and have no
+                      reason to believe the code worked. Shipping is listed
+                      only once it is known, so the total always adds up from
+                      the lines above it. */}
+                  <div className="text-md text-neutral-200 pt-4 border-t border-neutral-700 space-y-1">
                     <div className="flex justify-between text-lg">
                       <span>{t("summary.subtotal")}</span>
                       <span className="font-medium">
                         {formatCurrency(displayTotals.subTotal)}
                       </span>
                     </div>
+
+                    {discount && displayTotals.discountAmount !== 0 && (
+                      <>
+                        <div className="flex justify-between text-base text-green-400">
+                          <span>
+                            {t("summary.discount")}
+                            {discount.valueType === "PERCENTAGE" && (
+                              <span className="ml-2 italic text-neutral-400">
+                                (-{discount.value}%)
+                              </span>
+                            )}
+                          </span>
+                          <span className="font-medium">
+                            {formatCurrency(displayTotals.discountAmount)}
+                          </span>
+                        </div>
+
+                        {displayTotals.shippingCost > 0 && (
+                          <div className="flex justify-between text-base">
+                            <span>{t("summary.shipping")}</span>
+                            <span className="font-medium">
+                              {formatCurrency(displayTotals.shippingCost)}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Before wallet credit: the wallet control only
+                            appears on the later steps, so subtracting it
+                            here would show a total the customer cannot yet
+                            account for. */}
+                        <div className="flex justify-between text-xl pt-2 border-t border-neutral-700">
+                          <span>{t("summary.total")}</span>
+                          <span className="font-medium">
+                            {formatCurrency(displayTotals.totalBeforeWallet)}
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Continue button */}
