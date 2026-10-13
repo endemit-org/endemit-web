@@ -127,6 +127,22 @@ export function useCheckoutState() {
     requiresShippingAddress && formData.deliveryMethod !== DeliveryMethod.PICKUP
   );
 
+  /**
+   * The shipping cost everything downstream uses.
+   *
+   * Derived from the current cart rather than read straight off the fetch
+   * state, so a cart with nothing shippable — or a pickup order — cannot
+   * display or discount against a fee under any timing. The hook already
+   * retires superseded requests; this makes it structurally impossible as
+   * well, which matters because the figure feeds the promo code validation
+   * and the totals the customer reads.
+   */
+  const effectiveShippingCost =
+    requiresShippingAddress &&
+    formData.deliveryMethod !== DeliveryMethod.PICKUP
+      ? shippingCost
+      : 0;
+
   const {
     discount,
     promoCodeValue,
@@ -135,7 +151,7 @@ export function useCheckoutState() {
     setPromoCodeValue,
     applyPromoCode,
     removePromoCode,
-  } = usePromoCodes(items, subtotalPrice, shippingCost);
+  } = usePromoCodes(items, subtotalPrice, effectiveShippingCost);
 
   useEffect(() => {
     const discountCodeId = discount?.success ? discount.promoCodeId : undefined;
@@ -146,7 +162,7 @@ export function useCheckoutState() {
     subTotal,
     total: totalBeforeWallet,
     discountAmount,
-  } = useCheckoutTotals(subtotalPrice, shippingCost, items, discount);
+  } = useCheckoutTotals(subtotalPrice, effectiveShippingCost, items, discount);
 
   // Wallet credit integration - disabled for currency top-ups
   const walletCredit = useWalletCredit({
@@ -273,7 +289,7 @@ export function useCheckoutState() {
     totalItems,
     totals: {
       subTotal,
-      shippingCost,
+      shippingCost: effectiveShippingCost,
       shippingWeight,
       discountAmount,
       totalBeforeWallet,
