@@ -92,7 +92,10 @@ export default function CheckoutSummary({
       )}
 
       {discountObject && (
-        <LineItem label={t("discount")}>
+        // Green, matching the wallet credit line and the mobile cart step:
+        // the reductions a customer gains read as a group, distinct from the
+        // charges above them.
+        <LineItem label={t("discount")} className="text-green-400">
           {loadingPromoCode ? (
             <LineItemSpinner text={t("loading")} />
           ) : (
