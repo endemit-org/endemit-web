@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import RootShell from "@/app/_components/RootShell";
-import MetaPixel from "@/app/_components/analytics/MetaPixel";
+import TrackingScripts from "@/app/_components/analytics/TrackingScripts";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { buildRootMetadata } from "@/lib/util/rootMetadata";
 
@@ -47,7 +47,7 @@ export default async function LocaleLayout({
     <RootShell lang={locale}>
       {/* Public pages only. The admin/POS/scan areas live under the
           unlocalized layout and are intentionally never tracked. */}
-      <MetaPixel />
+      <TrackingScripts />
       <NextIntlClientProvider>{children}</NextIntlClientProvider>
     </RootShell>
   );

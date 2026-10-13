@@ -3,6 +3,10 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useCheckoutState } from "@/app/_hooks/useCheckoutState";
+import {
+  useCheckoutPrefill,
+  type CheckoutPrefill,
+} from "@/app/_hooks/useCheckoutPrefill";
 import { isProductSellable } from "@/domain/product/businessLogic";
 import { isOnlyCurrencyProducts } from "@/domain/checkout/businessRules";
 import CheckoutCustomerForm from "@/app/_components/checkout/CheckoutCustomerForm";
@@ -38,6 +42,8 @@ type Props = {
   donationProduct?: Product | null;
   userEmail?: string;
   pickupEvents?: PickupEvent[];
+  /** Cart and discount code from a shareable pre-filled checkout link. */
+  prefill?: CheckoutPrefill | null;
 };
 
 export default function Checkout({
@@ -46,6 +52,7 @@ export default function Checkout({
   donationProduct = null,
   userEmail,
   pickupEvents = [],
+  prefill = null,
 }: Props) {
   const t = useTranslations("checkout");
   const [isClient, setIsClient] = useState(false);
@@ -78,6 +85,19 @@ export default function Checkout({
     walletCredit,
     payment,
   } = useCheckoutState();
+
+  // A shareable link overwrites the cart and pre-applies its discount code.
+  useCheckoutPrefill({
+    prefill,
+    totalItems,
+    promoCodeValue,
+    // What applyPromoCode validates against; it refuses to run at 0.
+    cartValue: totals.subTotal + totals.shippingCost,
+    clearCart: actions.clearCart,
+    addItem: actions.addItem,
+    setPromoCodeValue: actions.setPromoCodeValue,
+    applyPromoCode: actions.applyPromoCode,
+  });
 
   const isPickup =
     requiresShippingAddress &&

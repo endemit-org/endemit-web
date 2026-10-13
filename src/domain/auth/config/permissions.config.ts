@@ -94,6 +94,10 @@ export const PERMISSIONS = {
   // Discount codes
   DISCOUNTS_READ: "discounts:read",
   DISCOUNTS_WRITE: "discounts:write",
+
+  // Short links
+  SHORT_LINKS_READ: "shortLinks:read",
+  SHORT_LINKS_WRITE: "shortLinks:write",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -457,6 +461,20 @@ export const PERMISSION_METADATA: Record<
     name: "Manage Discount Codes",
     description: "Create, edit, and delete discount codes",
     resource: "discounts",
+    action: "write",
+  },
+
+  // Short links
+  [PERMISSIONS.SHORT_LINKS_READ]: {
+    name: "Read Short Links",
+    description: "View short links, their targets and scan counts",
+    resource: "shortLinks",
+    action: "read",
+  },
+  [PERMISSIONS.SHORT_LINKS_WRITE]: {
+    name: "Manage Short Links",
+    description: "Create, re-target, disable and delete short links",
+    resource: "shortLinks",
     action: "write",
   },
 };

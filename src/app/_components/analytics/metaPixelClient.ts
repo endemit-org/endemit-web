@@ -1,16 +1,17 @@
-import {
-  MetaEvent,
-  type MetaCustomData,
-  type MetaEventName,
-} from "@/lib/services/meta/events";
+import { toMetaCustomData, toMetaEventName } from "@/lib/services/meta/events";
 import { isMetaPixelEnabled } from "@/lib/services/meta/enabled";
+import type {
+  TrackedEventData,
+  TrackedEventName,
+} from "@/lib/services/tracking/events";
 
 /**
- * Browser-side helpers for the Meta Pixel.
+ * Browser-side Meta Pixel sender.
  *
- * Call sites use `trackMetaEvent` and never touch `window.fbq` directly, so a
- * disabled environment, a blocked script or a missing pixel id degrades to a
- * no-op instead of a runtime error in the middle of a checkout flow.
+ * Reached through the platform-agnostic dispatcher in `trackEvent`, never
+ * called directly from a component, so a disabled environment, a blocked
+ * script or a missing pixel id degrades to a no-op instead of a runtime error
+ * in the middle of a checkout flow.
  */
 
 type Fbq = ((...args: unknown[]) => void) & { queue?: unknown[] };
@@ -29,31 +30,31 @@ function getFbq(): Fbq | undefined {
 }
 
 /**
- * Fires a standard event.
+ * Fires a standard Meta event.
  *
  * `eventId` is the deduplication key: pass the same value the server sends to
  * the Conversions API for the same action, otherwise Meta counts it twice.
  */
 export function trackMetaEvent(
-  eventName: MetaEventName,
-  customData?: MetaCustomData,
+  event: TrackedEventName,
+  data?: TrackedEventData,
   eventId?: string
 ): void {
   const fbq = getFbq();
   if (!fbq) return;
 
+  const eventName = toMetaEventName(event);
+  if (!eventName) return;
+
   try {
+    const customData = toMetaCustomData(data) ?? {};
     if (eventId) {
-      fbq("track", eventName, customData ?? {}, { eventID: eventId });
+      fbq("track", eventName, customData, { eventID: eventId });
     } else {
-      fbq("track", eventName, customData ?? {});
+      fbq("track", eventName, customData);
     }
   } catch (error) {
     // Analytics must never break a user flow, least of all checkout.
-    console.error("Meta Pixel track failed", { eventName, error });
+    console.error("Meta Pixel track failed", { event, error });
   }
-}
-
-export function trackMetaPageView(): void {
-  trackMetaEvent(MetaEvent.PAGE_VIEW);
 }

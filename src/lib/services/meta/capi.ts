@@ -6,17 +6,25 @@ import {
   META_PIXEL_ID,
 } from "@/lib/services/env/private";
 import { isProduction } from "@/lib/util/env";
-import type { MetaCustomData, MetaEventName } from "@/lib/services/meta/events";
+import type {
+  TrackedEventData,
+  TrackedEventName,
+} from "@/lib/services/tracking/events";
 import {
-  hashCity,
-  hashCountry,
-  hashEmail,
-  hashExternalId,
-  hashName,
-  hashPhone,
-  hashPostalCode,
+  normalizeCity,
+  normalizeCountry,
+  normalizeEmail,
+  normalizeName,
+  normalizePhoneDigits,
+  normalizePostalCode,
+  sha256Hex,
   splitName,
-} from "@/lib/services/meta/hash";
+  type TrackedUserData,
+} from "@/lib/services/tracking/normalize";
+import {
+  toMetaCustomData,
+  toMetaEventName,
+} from "@/lib/services/meta/events";
 
 const GRAPH_API_VERSION = "v21.0";
 
@@ -27,36 +35,19 @@ const GRAPH_API_VERSION = "v21.0";
  * conversions, and feeding them in would inflate campaign results.
  *
  * Every event sent from here must also be sent from the browser pixel with
- * the same `event_name` and `event_id`, so Meta deduplicates the pair instead
+ * the same event name and `event_id`, so Meta deduplicates the pair instead
  * of counting the conversion twice.
  */
 
-/** Raw (unhashed) identifiers. Hashing happens here, never at the call site. */
-export interface MetaUserData {
-  email?: string | null;
-  phone?: string | null;
-  name?: string | null;
-  city?: string | null;
-  postalCode?: string | null;
-  country?: string | null;
-  externalId?: string | null;
-  /** `_fbp` cookie captured in the browser at checkout time. */
-  fbp?: string | null;
-  /** `_fbc` cookie (click id) captured in the browser at checkout time. */
-  fbc?: string | null;
-  clientIpAddress?: string | null;
-  clientUserAgent?: string | null;
-}
-
 export interface SendMetaEventParams {
-  eventName: MetaEventName;
+  event: TrackedEventName;
   /** Must match the browser event's `eventID` exactly. */
   eventId: string;
   /** Unix seconds. Defaults to now. Meta rejects events older than 7 days. */
   eventTime?: number;
   eventSourceUrl?: string | null;
-  userData: MetaUserData;
-  customData?: MetaCustomData;
+  userData: TrackedUserData;
+  data?: TrackedEventData;
 }
 
 /**
@@ -65,28 +56,39 @@ export interface SendMetaEventParams {
  * Production with both secrets present is the normal case. A non-production
  * environment sends only when `META_CAPI_TEST_EVENT_CODE` is deliberately
  * set, because Meta flags those as test traffic and excludes them from ads
- * reporting and optimization — that is the only safe way for someone to
- * verify the wiring in Events Manager from staging. With no Meta variables
- * configured, every environment stays silent.
+ * reporting and optimization — that is the only safe way to verify the wiring
+ * in Events Manager from staging. With no Meta variables configured, every
+ * environment stays silent.
  */
 function canSendServerEvents(): boolean {
   if (!META_CAPI_ACCESS_TOKEN || !META_PIXEL_ID) return false;
   return isProduction() || Boolean(META_CAPI_TEST_EVENT_CODE);
 }
 
-function buildUserData(userData: MetaUserData): Record<string, unknown> {
+/**
+ * Meta's `user_data`. Each hashed identifier is sent as an array of hashes;
+ * `fbp`, `fbc`, the IP and the user agent go unhashed, as Meta requires.
+ */
+function buildUserData(userData: TrackedUserData): Record<string, unknown> {
   const { firstName, lastName } = splitName(userData.name);
+  const email = normalizeEmail(userData.email);
+  const phone = normalizePhoneDigits(userData.phone);
 
-  // Meta expects each hashed identifier as an array of hashes.
   const hashed: Record<string, string | undefined> = {
-    em: hashEmail(userData.email),
-    ph: hashPhone(userData.phone),
-    fn: hashName(firstName),
-    ln: hashName(lastName),
-    ct: hashCity(userData.city),
-    zp: hashPostalCode(userData.postalCode),
-    country: hashCountry(userData.country),
-    external_id: hashExternalId(userData.externalId),
+    em: email ? sha256Hex(email) : undefined,
+    ph: phone ? sha256Hex(phone) : undefined,
+    fn: normalizeName(firstName) && sha256Hex(normalizeName(firstName)!),
+    ln: normalizeName(lastName) && sha256Hex(normalizeName(lastName)!),
+    ct: normalizeCity(userData.city) && sha256Hex(normalizeCity(userData.city)!),
+    zp:
+      normalizePostalCode(userData.postalCode) &&
+      sha256Hex(normalizePostalCode(userData.postalCode)!),
+    country:
+      normalizeCountry(userData.country) &&
+      sha256Hex(normalizeCountry(userData.country)!),
+    external_id: userData.externalId
+      ? sha256Hex(userData.externalId.trim().toLowerCase())
+      : undefined,
   };
 
   const payload: Record<string, unknown> = {};
@@ -94,7 +96,6 @@ function buildUserData(userData: MetaUserData): Record<string, unknown> {
     if (value) payload[key] = [value];
   }
 
-  // fbp/fbc/IP/user agent are sent unhashed — Meta requires them raw.
   if (userData.fbp) payload.fbp = userData.fbp;
   if (userData.fbc) payload.fbc = userData.fbc;
   if (userData.clientIpAddress) {
@@ -107,16 +108,6 @@ function buildUserData(userData: MetaUserData): Record<string, unknown> {
   return payload;
 }
 
-function buildCustomData(
-  customData?: MetaCustomData
-): Record<string, unknown> | undefined {
-  if (!customData) return undefined;
-  const entries = Object.entries(customData).filter(
-    ([, value]) => value !== undefined && value !== null
-  );
-  return entries.length > 0 ? Object.fromEntries(entries) : undefined;
-}
-
 /**
  * Sends one event to the Conversions API.
  *
@@ -125,18 +116,23 @@ function buildCustomData(
  * Inngest step) can record them without retrying the whole payment flow.
  */
 export async function sendMetaEvent({
-  eventName,
+  event,
   eventId,
   eventTime,
   eventSourceUrl,
   userData,
-  customData,
+  data,
 }: SendMetaEventParams): Promise<{ sent: boolean; reason?: string }> {
   if (!canSendServerEvents()) {
     return { sent: false, reason: "meta capi disabled for this environment" };
   }
 
-  const event: Record<string, unknown> = {
+  const eventName = toMetaEventName(event);
+  if (!eventName) {
+    return { sent: false, reason: `no meta equivalent for ${event}` };
+  }
+
+  const eventPayload: Record<string, unknown> = {
     event_name: eventName,
     event_id: eventId,
     event_time: eventTime ?? Math.floor(Date.now() / 1000),
@@ -145,11 +141,11 @@ export async function sendMetaEvent({
     user_data: buildUserData(userData),
   };
 
-  if (eventSourceUrl) event.event_source_url = eventSourceUrl;
-  const custom = buildCustomData(customData);
-  if (custom) event.custom_data = custom;
+  if (eventSourceUrl) eventPayload.event_source_url = eventSourceUrl;
+  const customData = toMetaCustomData(data);
+  if (customData) eventPayload.custom_data = customData;
 
-  const body: Record<string, unknown> = { data: [event] };
+  const body: Record<string, unknown> = { data: [eventPayload] };
   if (META_CAPI_TEST_EVENT_CODE) {
     body.test_event_code = META_CAPI_TEST_EVENT_CODE;
   }

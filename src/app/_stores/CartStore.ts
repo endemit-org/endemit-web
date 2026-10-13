@@ -8,8 +8,12 @@ import { Product } from "@/domain/product/types/product";
 import { getApiPath } from "@/lib/util/api";
 import { canProductExistInCart } from "@/domain/product/businessLogic";
 import { CartItem } from "@/domain/checkout/types/cartItem";
-import { trackMetaEvent } from "@/app/_components/analytics/metaPixelClient";
-import { META_CURRENCY, MetaEvent } from "@/lib/services/meta/events";
+import { trackEvent } from "@/app/_components/analytics/trackEvent";
+import {
+  countItems,
+  TRACKING_CURRENCY,
+  TrackedEvent,
+} from "@/lib/services/tracking/events";
 
 interface CreateCheckoutSessionResponse {
   sessionId: string;
@@ -28,22 +32,25 @@ interface CheckoutError {
 }
 
 /**
- * Reports the start of a checkout to the Meta Pixel. Both checkout paths (the
- * Stripe-hosted session and the embedded PaymentIntent) funnel through here,
- * so the event is emitted exactly once per attempt in either flow.
+ * Reports the start of a checkout to every configured ad platform. Both
+ * checkout paths (the Stripe-hosted session and the embedded PaymentIntent)
+ * funnel through here, so the event is emitted exactly once per attempt in
+ * either flow.
  */
-function trackMetaInitiateCheckout(items: CartItem[], value: number): void {
-  trackMetaEvent(MetaEvent.INITIATE_CHECKOUT, {
-    currency: META_CURRENCY,
+function trackInitiateCheckout(items: CartItem[], value: number): void {
+  const contents = items.map(item => ({
+    id: item.uid,
+    quantity: item.quantity,
+    unitPrice: item.price,
+    name: item.name,
+    category: item.category,
+  }));
+
+  trackEvent(TrackedEvent.INITIATE_CHECKOUT, {
+    currency: TRACKING_CURRENCY,
     value,
-    content_type: "product",
-    content_ids: items.map(item => item.uid),
-    contents: items.map(item => ({
-      id: item.uid,
-      quantity: item.quantity,
-      item_price: item.price,
-    })),
-    num_items: items.reduce((sum, item) => sum + item.quantity, 0),
+    contents,
+    numItems: countItems(contents),
   });
 }
 
@@ -60,15 +67,20 @@ export const useCartStore = create<CartStore>()(
           return;
         }
 
-        trackMetaEvent(MetaEvent.ADD_TO_CART, {
-          currency: META_CURRENCY,
+        trackEvent(TrackedEvent.ADD_TO_CART, {
+          currency: TRACKING_CURRENCY,
           value: product.price * quantity,
-          content_type: "product",
-          content_ids: [product.uid],
-          content_name: product.name,
-          content_category: product.category,
+          contentName: product.name,
+          contentCategory: product.category,
+          numItems: quantity,
           contents: [
-            { id: product.uid, quantity, item_price: product.price },
+            {
+              id: product.uid,
+              quantity,
+              unitPrice: product.price,
+              name: product.name,
+              category: product.category,
+            },
           ],
         });
 
@@ -167,7 +179,7 @@ export const useCartStore = create<CartStore>()(
           throw new Error("Cart is empty");
         }
 
-        trackMetaInitiateCheckout(items, get().getTotalPrice());
+        trackInitiateCheckout(items, get().getTotalPrice());
 
         set({ isLoading: true });
 
@@ -241,7 +253,7 @@ export const useCartStore = create<CartStore>()(
           throw new Error("Cart is empty");
         }
 
-        trackMetaInitiateCheckout(items, get().getTotalPrice());
+        trackInitiateCheckout(items, get().getTotalPrice());
 
         set({ isLoading: true });
 

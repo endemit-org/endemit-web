@@ -7,8 +7,8 @@ import { Link } from "@/i18n/navigation";
 import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import { requestOtcCode } from "@/domain/auth/actions/requestOtcCode";
 import { registerOtcUser } from "@/domain/auth/actions/registerOtcUser";
-import { trackMetaEvent } from "@/app/_components/analytics/metaPixelClient";
-import { MetaEvent } from "@/lib/services/meta/events";
+import { trackEvent } from "@/app/_components/analytics/trackEvent";
+import { TrackedEvent } from "@/lib/services/tracking/events";
 
 // Validation helpers
 const isValidEmail = (value: string): boolean => {
@@ -123,8 +123,8 @@ export default function OtcEmailForm() {
         if (result.success) {
           // The account row already exists at this point; only the email
           // verification is still outstanding.
-          trackMetaEvent(MetaEvent.COMPLETE_REGISTRATION, {
-            content_name: "otc-signup",
+          trackEvent(TrackedEvent.COMPLETE_REGISTRATION, {
+            contentName: "otc-signup",
           });
 
           const verifyParams = new URLSearchParams({

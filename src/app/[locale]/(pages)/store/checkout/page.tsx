@@ -6,6 +6,7 @@ import { fetchProductsFromCms } from "@/domain/cms/operations/fetchProductsFromC
 import { prismic } from "@/lib/services/prismic";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getPickupEvents } from "@/domain/checkout/operations/getPickupEvents";
+import { resolveCartPrefill } from "@/domain/checkout/operations/resolveCartPrefill";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({
@@ -26,13 +27,19 @@ export async function generateMetadata({
 
 export default async function CheckoutPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { locale } = await params;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale as "sl" | "en");
   const loc = locale === "en" ? "en" : "sl";
   const t = await getTranslations("store");
+
+  // Shareable pre-filled link: ?cart=product-uid:2,other-uid&code=FRIENDS20
+  const firstParam = (value: string | string[] | undefined) =>
+    Array.isArray(value) ? value[0] : value;
 
   const [
     featuredProducts,
@@ -57,6 +64,12 @@ export default async function CheckoutPage({
     getPickupEvents(),
   ]);
 
+  const prefill = await resolveCartPrefill({
+    cartParam: firstParam(query.cart),
+    codeParam: firstParam(query.code),
+    locale: loc,
+  });
+
   const donationProduct = donationProducts?.[0] ?? null;
 
   return (
@@ -75,6 +88,7 @@ export default async function CheckoutPage({
         donationProduct={donationProduct}
         userEmail={user?.email || undefined}
         pickupEvents={pickupEvents}
+        prefill={prefill}
       />
     </OuterPage>
   );
