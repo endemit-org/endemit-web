@@ -12,34 +12,6 @@
           "label": "UID"
         }
       },
-      "published": {
-        "type": "Boolean",
-        "config": {
-          "label": "Published",
-          "default_value": false,
-          "placeholder_false": "Draft",
-          "placeholder_true": "Published"
-        }
-      },
-      "tile": {
-        "type": "Image",
-        "config": {
-          "label": "Tile",
-          "constraint": {
-            "width": 800,
-            "height": 800
-          },
-          "thumbnails": []
-        }
-      },
-      "cover_image": {
-        "type": "Image",
-        "config": {
-          "label": "Cover image",
-          "constraint": {},
-          "thumbnails": []
-        }
-      },
       "episode_name": {
         "type": "Text",
         "config": {
@@ -77,46 +49,6 @@
           "placeholder": "",
           "allowTargetBlank": true,
           "multi": "paragraph,heading3,strong,em,hyperlink"
-        }
-      },
-      "artist": {
-        "type": "Link",
-        "config": {
-          "label": "Artist",
-          "select": "document",
-          "repeat": false,
-          "customtypes": [
-            {
-              "id": "artist",
-              "fields": [
-                "name",
-                "description",
-                "image",
-                "video",
-                {
-                  "id": "links",
-                  "fields": [
-                    "type",
-                    "link"
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "episode_date": {
-        "type": "Date",
-        "config": {
-          "label": "Episode date",
-          "placeholder": "The date of the episode"
-        }
-      },
-      "track_url": {
-        "type": "Text",
-        "config": {
-          "label": "Track url",
-          "placeholder": "Soundcloud track url"
         }
       },
       "footnote": {
@@ -166,7 +98,81 @@
             }
           }
         }
+      }
+    },
+    "Media": {
+      "tile": {
+        "type": "Image",
+        "config": {
+          "label": "Tile",
+          "constraint": {
+            "width": 800,
+            "height": 800
+          },
+          "thumbnails": []
+        }
       },
+      "cover_image": {
+        "type": "Image",
+        "config": {
+          "label": "Cover image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "track_url": {
+        "type": "Text",
+        "config": {
+          "label": "Track url",
+          "placeholder": "Soundcloud track url"
+        }
+      }
+    },
+    "Attributes": {
+      "published": {
+        "type": "Boolean",
+        "config": {
+          "label": "Published",
+          "default_value": false,
+          "placeholder_false": "Draft",
+          "placeholder_true": "Published"
+        }
+      },
+      "artist": {
+        "type": "Link",
+        "config": {
+          "label": "Artist",
+          "select": "document",
+          "repeat": false,
+          "customtypes": [
+            {
+              "id": "artist",
+              "fields": [
+                "name",
+                "description",
+                "image",
+                "video",
+                {
+                  "id": "links",
+                  "fields": [
+                    "type",
+                    "link"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "episode_date": {
+        "type": "Date",
+        "config": {
+          "label": "Episode date",
+          "placeholder": "The date of the episode"
+        }
+      }
+    },
+    "Rich content": {
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

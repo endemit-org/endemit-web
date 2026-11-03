@@ -23,7 +23,9 @@
           "placeholder_true": "users can dismiss",
           "default_value": true
         }
-      },
+      }
+    },
+    "Rich content": {
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

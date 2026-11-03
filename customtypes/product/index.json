@@ -5,11 +5,11 @@
   "repeatable": true,
   "status": true,
   "json": {
-    "About": {
+    "Main": {
       "uid": {
         "type": "UID",
         "config": {
-          "label": "slug"
+          "label": "UID"
         }
       },
       "title": {
@@ -26,113 +26,22 @@
           "placeholder": "Name of the product"
         }
       },
-      "product_category": {
-        "type": "Select",
+      "description": {
+        "type": "StructuredText",
         "config": {
-          "label": "Product category",
-          "placeholder": "Which category best describes the product",
-          "options": [
-            "Merch",
-            "Music",
-            "Albums",
-            "Donations",
-            "Tickets",
-            "Licenses",
-            "Currencies",
-            "Other"
-          ],
-          "default_value": "Merch"
+          "label": "Description",
+          "placeholder": "Descriptive text to highlight the features of the product",
+          "allowTargetBlank": true,
+          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
         }
       },
-      "product_type": {
-        "type": "Select",
+      "description_sl": {
+        "type": "StructuredText",
         "config": {
-          "label": "Product type",
-          "placeholder": "Is this a physical or digital item",
-          "options": [
-            "Physical",
-            "Digital"
-          ],
-          "default_value": "Physical"
-        }
-      },
-      "images": {
-        "type": "Group",
-        "config": {
-          "label": "Images",
-          "repeat": true,
-          "fields": {
-            "image": {
-              "type": "Image",
-              "config": {
-                "label": "image",
-                "constraint": {},
-                "thumbnails": []
-              }
-            }
-          }
-        }
-      },
-      "video": {
-        "type": "Link",
-        "config": {
-          "label": "Video",
-          "placeholder": "Video for product",
-          "select": "media",
-          "allowText": false
-        }
-      },
-      "related_products": {
-        "type": "Group",
-        "config": {
-          "label": "Related products",
-          "repeat": true,
-          "fields": {
-            "related_product": {
-              "type": "Link",
-              "config": {
-                "label": "Related product",
-                "select": "document",
-                "repeat": false,
-                "customtypes": [
-                  {
-                    "id": "product",
-                    "fields": [
-                      "title",
-                      {
-                        "id": "images",
-                        "fields": [
-                          "image"
-                        ]
-                      },
-                      "price",
-                      "discounted_price",
-                      "product_category",
-                      "product_type",
-                      "sorting_weight",
-                      "product_status",
-                      "description",
-                      "product_visibility"
-                    ]
-                  }
-                ]
-              }
-            },
-            "call_to_action": {
-              "type": "Text",
-              "config": {
-                "label": "Call to action",
-                "placeholder": "Example, \"Goes great with\", \"To wear with your shirt\""
-              }
-            },
-            "call_to_action_sl": {
-              "type": "Text",
-              "config": {
-                "label": "Call to action (SL)",
-                "placeholder": "Example, \"Goes great with\", \"To wear with your shirt\""
-              }
-            }
-          }
+          "label": "Description (SL)",
+          "placeholder": "Descriptive text to highlight the features of the product",
+          "allowTargetBlank": true,
+          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
         }
       },
       "special_notice": {
@@ -164,116 +73,65 @@
         }
       }
     },
-    "Rich content": {
-      "description": {
-        "type": "StructuredText",
+    "Media": {
+      "images": {
+        "type": "Group",
         "config": {
-          "label": "Description",
-          "placeholder": "Descriptive text to highlight the features of the product",
-          "allowTargetBlank": true,
-          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
-        }
-      },
-      "description_sl": {
-        "type": "StructuredText",
-        "config": {
-          "label": "Description (SL)",
-          "placeholder": "Descriptive text to highlight the features of the product",
-          "allowTargetBlank": true,
-          "multi": "paragraph,strong,em,hyperlink,list-item,o-list-item,heading2"
-        }
-      },
-      "display_content_slices": {
-        "type": "Select",
-        "config": {
-          "label": "Display content slices",
-          "placeholder": "",
-          "options": [
-            "Above description",
-            "Below description"
-          ],
-          "default_value": "Above description"
-        }
-      },
-      "slices": {
-        "type": "Slices",
-        "fieldset": "Slice Zone",
-        "config": {
-          "choices": {
-            "ticket_price_progress": {
-              "type": "SharedSlice"
-            },
-            "tabs": {
-              "type": "SharedSlice"
-            },
-            "poem": {
-              "type": "SharedSlice"
-            },
-            "save_the_date": {
-              "type": "SharedSlice"
-            },
-            "event_list": {
-              "type": "SharedSlice"
-            },
-            "artist_list": {
-              "type": "SharedSlice"
-            },
-            "artist_profile_list": {
-              "type": "SharedSlice"
-            },
-            "accordion": {
-              "type": "SharedSlice"
-            },
-            "blurred_blob": {
-              "type": "SharedSlice"
-            },
-            "banner": {
-              "type": "SharedSlice"
-            },
-            "hero": {
-              "type": "SharedSlice"
-            },
-            "text_column": {
-              "type": "SharedSlice"
-            },
-            "vinyl_promo_section": {
-              "type": "SharedSlice"
-            },
-            "newsletter_subscription": {
-              "type": "SharedSlice"
-            },
-            "content_section": {
-              "type": "SharedSlice"
-            },
-            "grid_tile": {
-              "type": "SharedSlice"
-            },
-            "spacer": {
-              "type": "SharedSlice"
-            },
-            "horizontal_rule": {
-              "type": "SharedSlice"
-            },
-            "image_gallery": {
-              "type": "SharedSlice"
-            },
-            "sound_cloud": {
-              "type": "SharedSlice"
-            },
-            "vfx": {
-              "type": "SharedSlice"
-            },
-            "discord_banner": {
-              "type": "SharedSlice"
-            },
-            "record_showcase": {
-              "type": "SharedSlice"
+          "label": "Images",
+          "repeat": true,
+          "fields": {
+            "image": {
+              "type": "Image",
+              "config": {
+                "label": "image",
+                "constraint": {},
+                "thumbnails": []
+              }
             }
           }
+        }
+      },
+      "video": {
+        "type": "Link",
+        "config": {
+          "label": "Video",
+          "placeholder": "Video for product",
+          "select": "media",
+          "allowText": false
         }
       }
     },
     "Attributes": {
+      "product_category": {
+        "type": "Select",
+        "config": {
+          "label": "Product category",
+          "placeholder": "Which category best describes the product",
+          "options": [
+            "Merch",
+            "Music",
+            "Albums",
+            "Donations",
+            "Tickets",
+            "Licenses",
+            "Currencies",
+            "Other"
+          ],
+          "default_value": "Merch"
+        }
+      },
+      "product_type": {
+        "type": "Select",
+        "config": {
+          "label": "Product type",
+          "placeholder": "Is this a physical or digital item",
+          "options": [
+            "Physical",
+            "Digital"
+          ],
+          "default_value": "Physical"
+        }
+      },
       "product_status": {
         "type": "Select",
         "config": {
@@ -357,6 +215,59 @@
               ]
             }
           ]
+        }
+      },
+      "related_products": {
+        "type": "Group",
+        "config": {
+          "label": "Related products",
+          "repeat": true,
+          "fields": {
+            "related_product": {
+              "type": "Link",
+              "config": {
+                "label": "Related product",
+                "select": "document",
+                "repeat": false,
+                "customtypes": [
+                  {
+                    "id": "product",
+                    "fields": [
+                      "title",
+                      {
+                        "id": "images",
+                        "fields": [
+                          "image"
+                        ]
+                      },
+                      "price",
+                      "discounted_price",
+                      "product_category",
+                      "product_type",
+                      "sorting_weight",
+                      "product_status",
+                      "description",
+                      "product_visibility"
+                    ]
+                  }
+                ]
+              }
+            },
+            "call_to_action": {
+              "type": "Text",
+              "config": {
+                "label": "Call to action",
+                "placeholder": "Example, \"Goes great with\", \"To wear with your shirt\""
+              }
+            },
+            "call_to_action_sl": {
+              "type": "Text",
+              "config": {
+                "label": "Call to action (SL)",
+                "placeholder": "Example, \"Goes great with\", \"To wear with your shirt\""
+              }
+            }
+          }
         }
       },
       "ticket_quantity": {
@@ -459,6 +370,97 @@
         "config": {
           "label": "Cutoff date",
           "placeholder": "When does the product stop being eligible for sale, clear if sales always permitted"
+        }
+      }
+    },
+    "Rich content": {
+      "display_content_slices": {
+        "type": "Select",
+        "config": {
+          "label": "Display content slices",
+          "placeholder": "",
+          "options": [
+            "Above description",
+            "Below description"
+          ],
+          "default_value": "Above description"
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "ticket_price_progress": {
+              "type": "SharedSlice"
+            },
+            "tabs": {
+              "type": "SharedSlice"
+            },
+            "poem": {
+              "type": "SharedSlice"
+            },
+            "save_the_date": {
+              "type": "SharedSlice"
+            },
+            "event_list": {
+              "type": "SharedSlice"
+            },
+            "artist_list": {
+              "type": "SharedSlice"
+            },
+            "artist_profile_list": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            },
+            "blurred_blob": {
+              "type": "SharedSlice"
+            },
+            "banner": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "text_column": {
+              "type": "SharedSlice"
+            },
+            "vinyl_promo_section": {
+              "type": "SharedSlice"
+            },
+            "newsletter_subscription": {
+              "type": "SharedSlice"
+            },
+            "content_section": {
+              "type": "SharedSlice"
+            },
+            "grid_tile": {
+              "type": "SharedSlice"
+            },
+            "spacer": {
+              "type": "SharedSlice"
+            },
+            "horizontal_rule": {
+              "type": "SharedSlice"
+            },
+            "image_gallery": {
+              "type": "SharedSlice"
+            },
+            "sound_cloud": {
+              "type": "SharedSlice"
+            },
+            "vfx": {
+              "type": "SharedSlice"
+            },
+            "discord_banner": {
+              "type": "SharedSlice"
+            },
+            "record_showcase": {
+              "type": "SharedSlice"
+            }
+          }
         }
       }
     },

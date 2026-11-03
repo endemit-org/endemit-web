@@ -5,7 +5,7 @@
   "repeatable": true,
   "status": true,
   "json": {
-    "About": {
+    "Main": {
       "uid": {
         "type": "UID",
         "config": {
@@ -44,19 +44,21 @@
           "multi": "paragraph,heading2,strong,em,hyperlink"
         }
       },
+      "address": {
+        "type": "Text",
+        "config": {
+          "label": "Address",
+          "placeholder": "Full address, with street, zip, city"
+        }
+      }
+    },
+    "Media": {
       "image": {
         "type": "Image",
         "config": {
           "label": "Image",
           "constraint": {},
           "thumbnails": []
-        }
-      },
-      "address": {
-        "type": "Text",
-        "config": {
-          "label": "Address",
-          "placeholder": "Full address, with street, zip, city"
         }
       },
       "venue_logo": {
@@ -66,7 +68,9 @@
           "constraint": {},
           "thumbnails": []
         }
-      },
+      }
+    },
+    "Attributes": {
       "map_location_url": {
         "type": "Link",
         "config": {
@@ -92,7 +96,9 @@
           "placeholder_true": "true",
           "default_value": false
         }
-      },
+      }
+    },
+    "Rich content": {
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

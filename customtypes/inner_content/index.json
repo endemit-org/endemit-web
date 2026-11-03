@@ -32,7 +32,9 @@
           "label": "(Internal) Description",
           "placeholder": "Internal only, for self organisation"
         }
-      },
+      }
+    },
+    "Attributes": {
       "connected_to_event": {
         "type": "Link",
         "config": {
@@ -61,7 +63,9 @@
           "label": "Sorting weight",
           "placeholder": "Useful in tabs"
         }
-      },
+      }
+    },
+    "Rich content": {
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
