@@ -25,16 +25,9 @@
           "label": "Title (SL)",
           "placeholder": ""
         }
-      },
-      "render_frame": {
-        "type": "Boolean",
-        "config": {
-          "label": "Render frame",
-          "placeholder_false": "false",
-          "placeholder_true": "true",
-          "default_value": true
-        }
-      },
+      }
+    },
+    "Media": {
       "background_image": {
         "type": "Image",
         "config": {
@@ -51,7 +44,20 @@
           "placeholder_true": "Animated",
           "default_value": true
         }
-      },
+      }
+    },
+    "Attributes": {
+      "render_frame": {
+        "type": "Boolean",
+        "config": {
+          "label": "Render frame",
+          "placeholder_false": "false",
+          "placeholder_true": "true",
+          "default_value": true
+        }
+      }
+    },
+    "Rich content": {
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

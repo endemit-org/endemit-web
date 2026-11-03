@@ -5,7 +5,7 @@
   "repeatable": false,
   "status": true,
   "json": {
-    "Main": {
+    "Rich content": {
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
