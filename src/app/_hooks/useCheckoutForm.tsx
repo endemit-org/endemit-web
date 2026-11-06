@@ -30,7 +30,7 @@ function getDefaultFormData(items: CartItem[]): CheckoutFormData {
     postalCode: "",
     country: "SI",
     phone: "",
-    deliveryMethod: DeliveryMethod.SHIPPING,
+    deliveryMethod: DeliveryMethod.PICKUP,
     pickupEventUid: "",
     termsAndConditions: false,
     subscribeToNewsletter: false,

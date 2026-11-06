@@ -227,7 +227,7 @@ export default function CheckoutCustomerForm({
             aria-label={t("delivery.title")}
             className="grid grid-cols-2 gap-3 mb-4"
           >
-            {[DeliveryMethod.SHIPPING, DeliveryMethod.PICKUP].map(method => {
+            {[DeliveryMethod.PICKUP, DeliveryMethod.SHIPPING].map(method => {
               const selected = formData.deliveryMethod === method;
               return (
                 <button
