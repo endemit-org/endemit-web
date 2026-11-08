@@ -82,7 +82,12 @@ export interface ArtistDocumentDataLinksItem {
    * - **Documentation**: https://prismic.io/docs/fields/select
    */
   type: prismic.SelectField<
-    "Soundcloud" | "Bandcamp" | "Instagram" | "Resident Advisor" | "Other"
+    | "Soundcloud"
+    | "Bandcamp"
+    | "Instagram"
+    | "Resident Advisor"
+    | "YouTube"
+    | "Other"
   >;
 
   /**

@@ -6,6 +6,7 @@ export enum ArtistLinkType {
   Bandcamp = "Bandcamp",
   Instagram = "Instagram",
   ResidentAdvisor = "Resident Advisor",
+  YouTube = "YouTube",
   Other = "Other",
 }
 
