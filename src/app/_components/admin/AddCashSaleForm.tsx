@@ -31,6 +31,7 @@ export default function AddCashSaleForm({
   const [totalPrice, setTotalPrice] = useState("");
   const [email, setEmail] = useState("");
   const [sendEmail, setSendEmail] = useState(false);
+  const [notifyDiscord, setNotifyDiscord] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -65,6 +66,7 @@ export default function AddCashSaleForm({
         totalPrice: Math.round(parseFloat(totalPrice) * 100),
         ticketHolderEmail: email || undefined,
         sendEmail: sendEmail && !!email,
+        notifyDiscord,
       });
 
       if (!result.success) {
@@ -78,6 +80,7 @@ export default function AddCashSaleForm({
       setTotalPrice("");
       setEmail("");
       setSendEmail(false);
+      setNotifyDiscord(true);
       onTicketAdded?.();
 
       setTimeout(() => {
@@ -250,6 +253,19 @@ export default function AddCashSaleForm({
             </label>
           </div>
         )}
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="cash-notify-discord"
+            checked={notifyDiscord}
+            onChange={e => setNotifyDiscord(e.target.checked)}
+            className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+          />
+          <label htmlFor="cash-notify-discord" className="text-sm text-gray-700">
+            {t("notifyDiscord")}
+          </label>
+        </div>
 
         {error && (
           <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm">

@@ -1328,6 +1328,7 @@
         "emailLabel": "E-pošta (neobvezno)",
         "emailPlaceholder": "Poišči uporabnika al vtipkaj e-pošto…",
         "emailHint": "Karte se povežejo s to e-pošto; pusti prazno za anonimno prodajo.",
+        "notifyDiscord": "Obvesti Discord",
         "sendViaEmail": "Pošlji karte po e-pošti",
         "creating": "Ustvarjam…",
         "createButton": "Ustvari {count} kart(o)",

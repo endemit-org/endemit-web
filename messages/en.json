@@ -1328,6 +1328,7 @@
         "emailLabel": "Email (optional)",
         "emailPlaceholder": "Search user or type email…",
         "emailHint": "Tickets are linked to this email; leave empty for anonymous cash sale.",
+        "notifyDiscord": "Notify Discord",
         "sendViaEmail": "Send tickets via email",
         "creating": "Creating…",
         "createButton": "Create {count} ticket(s)",
