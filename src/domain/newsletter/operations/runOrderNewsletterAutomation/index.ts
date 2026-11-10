@@ -24,7 +24,7 @@ export const runOrderNewsletterAutomation = inngest.createFunction(
     triggers: [{ event: NewsletterQueueEvent.SUBSCRIBE_ORDER }],
   },
   async ({ event, step }) => {
-    const { email, items, ticketEventIds, customerName } =
+    const { email, items, ticketEventIds, customerName, notifyDiscord } =
       event.data as OrderNewsletterSubscriptionData;
 
     const logPrefix = `[Inngest:OrderNewsletter:${email}]`;
@@ -47,7 +47,8 @@ export const runOrderNewsletterAutomation = inngest.createFunction(
         email,
         items,
         ticketEventIds,
-        customerName
+        customerName,
+        notifyDiscord ?? true
       );
 
       console.log(`${logPrefix} Subscription step result`, {

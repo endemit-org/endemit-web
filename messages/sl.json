@@ -1307,6 +1307,7 @@
         "numberOfTickets": "Število kart",
         "holderNames": "Imena imetnikov",
         "guestNamePlaceholder": "Ime gosta {number}",
+        "notifyDiscord": "Obvesti Discord",
         "sendViaEmail": "Pošlji karte po emailu",
         "emailLabel": "Email (za vse karte)",
         "emailPlaceholder": "Poišči obstoječega uporabnika ali vnesi frišn email",

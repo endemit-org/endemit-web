@@ -22,6 +22,8 @@ interface AddGuestTicketsInput {
   ticketHolders: TicketHolder[];
   ticketHolderEmail: string;
   sendEmail: boolean;
+  // Post to Discord about this batch. Defaults to true.
+  notifyDiscord?: boolean;
 }
 
 interface AddGuestTicketsResult {
@@ -46,6 +48,7 @@ export async function addGuestTicketsAction(
     }
 
     const { eventId, eventName, ticketHolders, ticketHolderEmail, sendEmail } = input;
+    const notifyDiscord = input.notifyDiscord ?? true;
 
     if (!eventId || !eventName || !ticketHolders.length || !ticketHolderEmail) {
       return { success: false, error: "Missing required fields" };
@@ -83,6 +86,7 @@ export async function addGuestTicketsAction(
         ticketHolderName: ticket.ticketHolderName,
         ticketHolderEmail,
         sendEmail,
+        notifyDiscord,
         batchId,
         batchSize: result.tickets.length,
         batchIndex: index,
@@ -102,6 +106,7 @@ export async function addGuestTicketsAction(
       items: [{ category: ProductCategory.TICKETS } as ProductInOrder],
       ticketEventIds: [eventId],
       customerName: ticketHolders[0]?.name ?? null,
+      notifyDiscord,
     }).catch(error =>
       console.error("Failed to queue guest ticket newsletter:", error)
     );

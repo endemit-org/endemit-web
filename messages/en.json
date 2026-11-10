@@ -1307,6 +1307,7 @@
         "numberOfTickets": "Number of Tickets",
         "holderNames": "Ticket Holder Names",
         "guestNamePlaceholder": "Guest {number} name",
+        "notifyDiscord": "Notify Discord",
         "sendViaEmail": "Send tickets via email",
         "emailLabel": "Email (for all tickets)",
         "emailPlaceholder": "Search existing user or enter new email",

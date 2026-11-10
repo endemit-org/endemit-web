@@ -28,6 +28,7 @@ export default function AddGuestTicketForm({
   const [names, setNames] = useState<string[]>([""]);
   const [email, setEmail] = useState("");
   const [sendEmail, setSendEmail] = useState(false);
+  const [notifyDiscord, setNotifyDiscord] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -69,6 +70,7 @@ export default function AddGuestTicketForm({
         ticketHolders: names.map(name => ({ name: name.trim() })),
         ticketHolderEmail: sendEmail ? email : NO_EMAIL_PLACEHOLDER,
         sendEmail,
+        notifyDiscord,
       });
 
       if (!result.success) {
@@ -85,6 +87,7 @@ export default function AddGuestTicketForm({
       setNames([""]);
       setEmail("");
       setSendEmail(false);
+      setNotifyDiscord(true);
       onTicketAdded?.();
 
       // Auto-close success message
@@ -238,6 +241,19 @@ export default function AddGuestTicketForm({
             </p>
           </div>
         )}
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="notify-discord"
+            checked={notifyDiscord}
+            onChange={e => setNotifyDiscord(e.target.checked)}
+            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+          />
+          <label htmlFor="notify-discord" className="text-sm text-gray-700">
+            {t("notifyDiscord")}
+          </label>
+        </div>
 
         {error && (
           <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm">

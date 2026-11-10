@@ -61,7 +61,8 @@ export async function subscribeOrderToNewsletter(
   email: string,
   items: NewsletterOrderItem[],
   ticketEventIds?: string[],
-  customerName?: string | null
+  customerName?: string | null,
+  notifyDiscord = true
 ): Promise<{ success: boolean; isNew?: boolean }> {
   const logPrefix = `[OrderNewsletter:${email}]`;
   const listId = EMAIL_NEWSLETTER_GENERAL_LIST_ID;
@@ -210,7 +211,7 @@ export async function subscribeOrderToNewsletter(
     error: result.error,
   });
 
-  if (result.success) {
+  if (result.success && notifyDiscord) {
     const lastEventName = eventDataList.length > 0
       ? eventDataList[eventDataList.length - 1].name
       : undefined;
