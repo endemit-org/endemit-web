@@ -16,6 +16,8 @@ export interface DoorSaleTicketProcessData {
   eventName: string;
   ticketHolderEmail: string;
   sendEmail: boolean;
+  // Absent on events from other door-sale sources; treated as true.
+  notifyDiscord?: boolean;
   batchId: string;
   batchSize: number;
   batchIndex: number;
@@ -36,6 +38,7 @@ export const runDoorSaleTicketAutomation = inngest.createFunction(
       eventName,
       ticketHolderEmail,
       sendEmail,
+      notifyDiscord = true,
       batchSize,
       batchIndex,
       totalAmount,
@@ -56,7 +59,7 @@ export const runDoorSaleTicketAutomation = inngest.createFunction(
     });
 
     // Send Discord notification only for the first ticket in the batch
-    if (batchIndex === 0) {
+    if (batchIndex === 0 && notifyDiscord) {
       await step.run("send-discord-notification", async () => {
         const doorSaleTicketCount = await prisma.ticket.count({
           where: { eventId, isDoorSale: true },

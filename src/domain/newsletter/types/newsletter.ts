@@ -19,4 +19,6 @@ export interface OrderNewsletterSubscriptionData {
   items: NewsletterOrderItem[];
   ticketEventIds?: string[];
   customerName?: string | null;
+  // Set false to skip the Discord "subscriber updated" post. Defaults to true.
+  notifyDiscord?: boolean;
 }

@@ -20,6 +20,8 @@ interface AddCashSaleTicketsInput {
   totalPrice: number;
   ticketHolderEmail?: string;
   sendEmail: boolean;
+  // Post to Discord about this batch. Defaults to true.
+  notifyDiscord?: boolean;
 }
 
 interface AddCashSaleTicketsResult {
@@ -49,6 +51,7 @@ export async function addCashSaleTicketsAction(
     }
 
     const { eventId, eventName, ticketHolders, totalPrice, ticketHolderEmail, sendEmail } = input;
+    const notifyDiscord = input.notifyDiscord ?? true;
 
     if (!eventId || !eventName || !ticketHolders.length || totalPrice < 0) {
       return { success: false, error: "Missing required fields" };
@@ -84,6 +87,7 @@ export async function addCashSaleTicketsAction(
           eventName,
           ticketHolderEmail,
           sendEmail: true,
+          notifyDiscord,
           batchId,
           batchSize: result.tickets.length,
           batchIndex: index,
@@ -93,7 +97,7 @@ export async function addCashSaleTicketsAction(
       }));
 
       await inngest.send(events);
-    } else {
+    } else if (notifyDiscord) {
       // Still send one event for the Discord notification (no email)
       await inngest.send({
         name: TicketQueueEvent.PROCESS_DOOR_SALE_TICKET,
@@ -119,6 +123,7 @@ export async function addCashSaleTicketsAction(
         items: [{ category: ProductCategory.TICKETS } as ProductInOrder],
         ticketEventIds: [eventId],
         customerName: ticketHolders[0]?.name ?? null,
+        notifyDiscord,
       }).catch(error =>
         console.error("Failed to queue cash sale newsletter:", error)
       );
