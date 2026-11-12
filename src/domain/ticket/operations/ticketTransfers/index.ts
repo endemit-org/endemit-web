@@ -24,6 +24,7 @@ import { removeEventFromSubscriber } from "@/domain/newsletter/operations/remove
 import { ProductCategory } from "@/domain/product/types/product";
 import type { ProductInOrder } from "@/domain/order/types/order";
 import type { TicketPayload } from "@/domain/ticket/types/ticket";
+import { notifyTicketPassUpdate } from "@/domain/wallet-pass/operations/notifyTicketPassUpdate";
 
 const TRANSFER_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -303,6 +304,8 @@ export async function acceptTicketTransfer(
     await bustOnTicketIssued(ticket.id, acceptingUserId, ticket.eventId).catch(
       () => {}
     );
+    // Apple Wallet: the sender's pass turns into a voided "transferred" pass
+    await notifyTicketPassUpdate(ticket.id);
 
     // Fresh ticket (with the new QR) to the recipient — mirrors the
     // door-sale automation's image + email construction

@@ -8,6 +8,7 @@ import { transformToQrContent } from "@/domain/ticket/transformers/transformToQr
 import { bustOnTicketIssued } from "@/lib/services/cache";
 import type { TicketPayload } from "@/domain/ticket/types/ticket";
 import type { Prisma } from "@prisma/client";
+import { scheduleTicketPassUpdate } from "@/domain/wallet-pass/operations/notifyTicketPassUpdate";
 
 interface UpdateTicketHolderNameResult {
   success: boolean;
@@ -95,6 +96,9 @@ export async function updateTicketHolderNameAction(
 
   // Bust ticket cache
   await bustOnTicketIssued(updatedTicket.id, ticket.order.userId, updatedTicket.eventId);
+
+  // Apple Wallet: new holder name + rotated QR on the pass
+  scheduleTicketPassUpdate(updatedTicket.id);
 
   // Revalidate the ticket page
   revalidatePath(`/profile/tickets/${shortId}`);

@@ -13,6 +13,7 @@ import {
 import { broadcastToUser } from "@/lib/services/supabase/broadcast";
 import { bustOnTransactionCreated } from "@/lib/services/cache";
 import { queueRefundEmailAutomation } from "@/domain/order/operations/runRefundEmailAutomation";
+import { scheduleTicketPassUpdate } from "@/domain/wallet-pass/operations/notifyTicketPassUpdate";
 import { bustOnOrderRefunded, bustOnOrderStatusChanged } from "@/lib/services/cache";
 
 export interface ProcessRefundInput {
@@ -364,6 +365,11 @@ export async function processRefund(
     .map((b) => b.itemIndex);
 
   const ticketsRefunded = ticketItemIndicesForEmail.length > 0 && order.tickets.length > 0;
+
+  // Apple Wallet: void the refunded tickets' passes
+  if (ticketsRefunded) {
+    scheduleTicketPassUpdate(order.tickets.map((t) => t.id));
+  }
 
   // 9. Queue refund email automation
   await queueRefundEmailAutomation({

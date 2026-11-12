@@ -6,6 +6,13 @@ import { getCertificates } from "../../utils/certificates";
 import { formatPrice, formatDate, formatTime } from "@/lib/util/formatting";
 import { fetchStripImages } from "../getWalletStripUrls";
 
+/**
+ * What the pass should show.
+ * - valid / used: barcode stays (re-entry, scan mistakes) — only STATUS changes
+ * - cancelled / transferred: voided, no barcode, no personal details
+ */
+export type TicketPassState = "valid" | "used" | "cancelled" | "transferred";
+
 export interface ApplePassTicketData {
   ticketId: string;
   shortId: string;
@@ -13,6 +20,8 @@ export interface ApplePassTicketData {
   eventId: string;
   eventName: string;
   eventDate: Date | null;
+  /** Event end — the pass expires (Wallet hides it) 2 days after. */
+  eventDateEnd?: Date | null;
   venueName: string | null;
   venueAddress: string | null;
   ticketHolderName: string;
@@ -21,7 +30,12 @@ export interface ApplePassTicketData {
   price: number;
   qrContent: string;
   locale?: "sl" | "en";
+  state?: TicketPassState;
+  /** PassKit web service — omitted → static pass that never updates. */
+  webService?: { url: string; authenticationToken: string } | null;
 }
+
+const EXPIRY_AFTER_EVENT_MS = 2 * 24 * 60 * 60 * 1000;
 
 // Pass field labels, keyed by ticket locale (mirrors the ticket-image approach —
 // this runs outside the next-intl request scope).
@@ -32,6 +46,15 @@ const PASS_LABELS = {
     time: "TIME",
     venue: "VENUE",
     date: "DATE",
+    status: "STATUS",
+    // %@ is replaced by the new value on the lock-screen notification
+    statusChange: "Ticket %@",
+    states: {
+      valid: "VALID",
+      used: "USED",
+      cancelled: "CANCELLED",
+      transferred: "TRANSFERRED",
+    },
     price: "Price",
     orderId: "Order ID",
     email: "Email",
@@ -49,6 +72,14 @@ const PASS_LABELS = {
     time: "URA",
     venue: "LOKACIJA",
     date: "DATUM",
+    status: "STATUS",
+    statusChange: "Karta: %@",
+    states: {
+      valid: "VELJAVNA",
+      used: "UPORABLJENA",
+      cancelled: "PREKLICANA",
+      transferred: "PRENESENA",
+    },
     price: "Cena",
     orderId: "Št. naročila",
     email: "Email",
@@ -62,10 +93,19 @@ const PASS_LABELS = {
   },
 } as const;
 
+/** Event end (or start, when no end is set) + 2 days. */
+function getExpirationDate(data: ApplePassTicketData): Date | null {
+  const base = data.eventDateEnd ?? data.eventDate;
+  if (!base) return null;
+  return new Date(new Date(base).getTime() + EXPIRY_AFTER_EVENT_MS);
+}
+
 export async function generateApplePass(
   data: ApplePassTicketData
 ): Promise<Buffer> {
   const labels = PASS_LABELS[data.locale ?? "sl"];
+  const state: TicketPassState = data.state ?? "valid";
+  const isVoided = state === "cancelled" || state === "transferred";
   const certificates = getCertificates();
 
   // Load the pass model from the passmodel.pass directory
@@ -91,6 +131,11 @@ export async function generateApplePass(
       {
         serialNumber: data.ticketId,
         description: `Ticket for ${data.eventName}`,
+        ...(data.webService && {
+          webServiceURL: data.webService.url,
+          authenticationToken: data.webService.authenticationToken,
+        }),
+        ...(isVoided && { voided: true }),
       }
     );
   } catch (error) {
@@ -116,25 +161,37 @@ export async function generateApplePass(
     pass.addBuffer("strip.png", stripImages.strip);
   }
 
-  // Set the barcode with the QR content (same as the physical ticket)
-  pass.setBarcodes({
-    format: "PKBarcodeFormatQR",
-    message: data.qrContent,
-    messageEncoding: "utf-8",
-    altText: data.shortId,
-  });
+  // Barcode (same QR as the physical ticket). A voided pass carries none, so
+  // a cancelled or transferred-away ticket can't be shown at the door.
+  if (!isVoided) {
+    pass.setBarcodes({
+      format: "PKBarcodeFormatQR",
+      message: data.qrContent,
+      messageEncoding: "utf-8",
+      altText: data.shortId,
+    });
+  }
 
   // Set relevant date for lock screen notification
   if (data.eventDate) {
     pass.setRelevantDate(data.eventDate);
   }
 
-  // Header fields (top right)
-  pass.headerFields.push({
-    key: "attendee",
-    label: labels.attendee,
-    value: data.ticketHolderName,
-  });
+  // Wallet moves the pass to "Expired Passes" after this, like boarding passes
+  const expirationDate = getExpirationDate(data);
+  if (expirationDate) {
+    pass.setExpirationDate(expirationDate);
+  }
+
+  // Header fields (top right). A transferred-away pass no longer shows the
+  // ticket row's holder — that's the new owner's data now.
+  if (state !== "transferred") {
+    pass.headerFields.push({
+      key: "attendee",
+      label: labels.attendee,
+      value: data.ticketHolderName,
+    });
+  }
 
   // Secondary fields: EVENT, TIME
   pass.secondaryFields.push({
@@ -151,7 +208,7 @@ export async function generateApplePass(
     });
   }
 
-  // Auxiliary fields: VENUE, DATE
+  // Auxiliary fields: VENUE, DATE, STATUS
   if (data.venueName) {
     pass.auxiliaryFields.push({
       key: "venue",
@@ -168,24 +225,35 @@ export async function generateApplePass(
     });
   }
 
+  // Always present (even when VALID) so a later change triggers the
+  // lock-screen notification via changeMessage
+  pass.auxiliaryFields.push({
+    key: "status",
+    label: labels.status,
+    value: labels.states[state],
+    changeMessage: labels.statusChange,
+  });
+
   // Back fields (information on the back of the pass)
-  pass.backFields.push({
-    key: "price",
-    label: labels.price,
-    value: formatPrice(data.price),
-  });
+  if (state !== "transferred") {
+    pass.backFields.push({
+      key: "price",
+      label: labels.price,
+      value: formatPrice(data.price),
+    });
 
-  pass.backFields.push({
-    key: "orderId",
-    label: labels.orderId,
-    value: data.orderId,
-  });
+    pass.backFields.push({
+      key: "orderId",
+      label: labels.orderId,
+      value: data.orderId,
+    });
 
-  pass.backFields.push({
-    key: "email",
-    label: labels.email,
-    value: data.ticketPayerEmail,
-  });
+    pass.backFields.push({
+      key: "email",
+      label: labels.email,
+      value: data.ticketPayerEmail,
+    });
+  }
 
   if (data.venueAddress) {
     pass.backFields.push({

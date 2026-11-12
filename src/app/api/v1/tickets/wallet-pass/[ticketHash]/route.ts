@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/services/prisma";
-import { generateApplePass } from "@/domain/wallet-pass/operations/generateApplePass";
-import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
+import { buildTicketApplePass } from "@/domain/wallet-pass/operations/buildTicketApplePass";
 import { sanitizeForFilename } from "@/lib/util/formatting";
 
 export async function GET(
@@ -36,29 +35,8 @@ export async function GET(
       );
     }
 
-    // Fetch event details from CMS to get venue info
-    const event = await fetchEventFromCmsById(
-      ticket.eventId,
-      ticket.locale === "en" ? "en" : "sl"
-    );
-
-    // Generate the Apple Wallet pass
-    const passBuffer = await generateApplePass({
-      ticketId: ticket.id,
-      shortId: ticket.shortId,
-      ticketHash: ticket.ticketHash,
-      eventId: ticket.eventId,
-      eventName: ticket.eventName,
-      eventDate: event?.date_start ?? null,
-      venueName: event?.venue?.name ?? null,
-      venueAddress: event?.venue?.address ?? null,
-      ticketHolderName: ticket.ticketHolderName,
-      ticketPayerEmail: ticket.ticketPayerEmail,
-      orderId: ticket.orderId,
-      price: Number(ticket.price),
-      qrContent: JSON.stringify(ticket.qrContent),
-      locale: ticket.locale === "en" ? "en" : "sl",
-    });
+    // Generate the Apple Wallet pass (with expiry + PassKit update service)
+    const passBuffer = await buildTicketApplePass(ticket);
 
     // Create a safe filename
     const eventSlug = sanitizeForFilename(ticket.eventName);

@@ -133,20 +133,20 @@ enum StickerCodeProperty {
 }
 
 model Order {
-  id               String      @id @default(cuid())
-  stripeSession    String      @unique
+  id               String         @id @default(cuid())
+  stripeSession    String         @unique
   userId           String?
-  user             User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user             User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   name             String?
   email            String
-  subtotal         Decimal     @db.Decimal(10, 2)
-  totalAmount      Decimal     @db.Decimal(10, 2)
-  shippingAmount   Decimal?    @db.Decimal(10, 2)
-  discountAmount   Decimal?    @default(0) @db.Decimal(10, 2)
+  subtotal         Decimal        @db.Decimal(10, 2)
+  totalAmount      Decimal        @db.Decimal(10, 2)
+  shippingAmount   Decimal?       @db.Decimal(10, 2)
+  discountAmount   Decimal?       @default(0) @db.Decimal(10, 2)
   discountCodeId   String?
-  discountCode     DiscountCode? @relation(fields: [discountCodeId], references: [id], onDelete: SetNull)
+  discountCode     DiscountCode?  @relation(fields: [discountCodeId], references: [id], onDelete: SetNull)
   discountCodeKey  String? // Snapshot of the code string; survives code deletion
-  walletAmountUsed Int         @default(0)
+  walletAmountUsed Int            @default(0)
   shippingRequired Boolean
   shippingAddress  Json?
   deliveryMethod   DeliveryMethod @default(SHIPPING)
@@ -155,18 +155,18 @@ model Order {
   pickupEventDate  DateTime?
   items            Json
   metadata         Json?
-  locale           String      @default("sl")
-  status           OrderStatus @default(CREATED)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  locale           String         @default("sl")
+  status           OrderStatus    @default(CREATED)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 
   // Refund tracking
-  refundedAmount Int       @default(0) // Total cents refunded
-  walletRefundedAmount Int @default(0) // Cents refunded back as wallet credit (subset of refundedAmount)
-  refundedAt     DateTime?
-  refundedBy     String? // Admin user ID who processed the refund
-  refundReason   String?
-  stripeRefundId String? // Latest Stripe refund ID
+  refundedAmount       Int       @default(0) // Total cents refunded
+  walletRefundedAmount Int       @default(0) // Cents refunded back as wallet credit (subset of refundedAmount)
+  refundedAt           DateTime?
+  refundedBy           String? // Admin user ID who processed the refund
+  refundReason         String?
+  stripeRefundId       String? // Latest Stripe refund ID
 
   tickets Ticket[]
   refunds OrderRefund[]
@@ -221,29 +221,29 @@ model OrderRefund {
 }
 
 model Ticket {
-  shortId          String       @unique
-  id               String       @id @default(cuid())
+  shortId          String           @unique
+  id               String           @id @default(cuid())
   orderId          String
-  order            Order        @relation(fields: [orderId], references: [id])
+  order            Order            @relation(fields: [orderId], references: [id])
   eventId          String
   eventName        String
   ticketHolderName String
   ticketPayerEmail String
-  ticketHash       String       @unique
-  scanCount        Int          @default(0)
-  price            Decimal      @db.Decimal(10, 2)
+  ticketHash       String           @unique
+  scanCount        Int              @default(0)
+  price            Decimal          @db.Decimal(10, 2)
   qrContent        Json?
   metadata         Json?
-  locale           String       @default("sl")
-  attended         Boolean      @default(false)
-  isGuestList      Boolean      @default(false)
-  isDoorSale       Boolean      @default(false)
+  locale           String           @default("sl")
+  attended         Boolean          @default(false)
+  isGuestList      Boolean          @default(false)
+  isDoorSale       Boolean          @default(false)
   // Set when the ticket was sold through a POS register order
   posOrderId       String?
-  posOrder         PosOrder?    @relation(fields: [posOrderId], references: [id])
-  status           TicketStatus @default(PENDING)
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  posOrder         PosOrder?        @relation(fields: [posOrderId], references: [id])
+  status           TicketStatus     @default(PENDING)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   ScanLog          ScanLog[]
   transfers        TicketTransfer[]
 
@@ -432,17 +432,17 @@ model WalletTransaction {
 // =============================================================================
 
 model PosItem {
-  id          String           @id @default(cuid())
-  name        String
-  description String?
-  cost        Int // In cents
-  direction   PosItemDirection
-  color       String? // Hex color shown as an accent bar on the POS touch card
+  id            String           @id @default(cuid())
+  name          String
+  description   String?
+  cost          Int // In cents
+  direction     PosItemDirection
+  color         String? // Hex color shown as an accent bar on the POS touch card
   // When set, selling this item issues real tickets for the linked CMS event
   ticketEventId String?
-  status      PosItemStatus    @default(ACTIVE)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  status        PosItemStatus    @default(ACTIVE)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   registers  PosRegisterItem[]
   orderItems PosOrderItem[]
@@ -460,19 +460,19 @@ model PosRegister {
 
   // Payment methods accepted at this register; defaults keep existing
   // registers wallet-only.
-  acceptsWallet Boolean @default(true)
-  acceptsCash   Boolean @default(false)
-  acceptsCard   Boolean @default(false)
+  acceptsWallet     Boolean  @default(true)
+  acceptsCash       Boolean  @default(false)
+  acceptsCard       Boolean  @default(false)
   // Cash/card payments at this register produce ZDavPR fiscal invoices
-  fiscalizeInvoices Boolean @default(false)
+  fiscalizeInvoices Boolean  @default(false)
   // Food-stand mode: paid orders stay "to serve" until completed, with a
   // daily queue number for recall
-  trackFulfillment Boolean @default(false)
+  trackFulfillment  Boolean  @default(false)
   // Local ePOS-Print address of the register's receipt printer (TM-P80II);
   // the seller's browser POSTs receipts to it directly on the LAN
-  printerUrl String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  printerUrl        String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   items   PosRegisterItem[]
   sellers PosRegisterSeller[]
@@ -542,39 +542,39 @@ model PosRegisterSeller {
 }
 
 model PosOrder {
-  id           String         @id @default(cuid())
-  orderHash    String         @unique
-  shortCode    String         @unique
-  registerId   String
-  register     PosRegister    @relation(fields: [registerId], references: [id])
-  sellerId     String
-  seller       User           @relation("PosOrderSeller", fields: [sellerId], references: [id])
-  customerId   String?
-  customer     User?          @relation("PosOrderCustomer", fields: [customerId], references: [id])
-  walletId     String?
-  subtotal     Int // In cents
-  tipAmount    Int            @default(0)
-  total        Int // subtotal + tipAmount
-  status       PosOrderStatus @default(PENDING)
-  paymentMethod PosPaymentMethod? // null while PENDING / cancelled before pay
+  id                String                @id @default(cuid())
+  orderHash         String                @unique
+  shortCode         String                @unique
+  registerId        String
+  register          PosRegister           @relation(fields: [registerId], references: [id])
+  sellerId          String
+  seller            User                  @relation("PosOrderSeller", fields: [sellerId], references: [id])
+  customerId        String?
+  customer          User?                 @relation("PosOrderCustomer", fields: [customerId], references: [id])
+  walletId          String?
+  subtotal          Int // In cents
+  tipAmount         Int                   @default(0)
+  total             Int // subtotal + tipAmount
+  status            PosOrderStatus        @default(PENDING)
+  paymentMethod     PosPaymentMethod? // null while PENDING / cancelled before pay
   // Seller note for serving ("no onions, blue jacket")
-  note         String?
+  note              String?
   // Fulfillment tracking (registers with trackFulfillment): set at payment
   fulfillmentStatus PosFulfillmentStatus?
   fulfilledAt       DateTime?
   // Daily per-register queue number for recall at pickup
   queueNumber       Int?
-  scannedAt    DateTime?
-  paidAt       DateTime?
-  cancelledAt  DateTime?
-  cancelReason String?
-  copiedFromId String?
-  expiresAt    DateTime
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  scannedAt         DateTime?
+  paidAt            DateTime?
+  cancelledAt       DateTime?
+  cancelReason      String?
+  copiedFromId      String?
+  expiresAt         DateTime
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 
-  items         PosOrderItem[]
-  transactions  WalletTransaction[]
+  items          PosOrderItem[]
+  transactions   WalletTransaction[]
   fiscalInvoices FiscalInvoice[]
   tickets        Ticket[]
   printJobs      PosPrintJob[]
@@ -792,4 +792,22 @@ model ShortLink {
   updatedAt   DateTime  @updatedAt
 
   @@index([isActive])
+}
+
+// Apple Wallet PassKit web-service device registrations. A device registers
+// a pass (serialNumber = Ticket.id) to receive APNs pushes when it changes.
+// authToken is the pass's authenticationToken at registration time — kept so
+// a pass whose ticket was transferred away can still fetch its voided version.
+model WalletPassRegistration {
+  id              String   @id @default(cuid())
+  deviceLibraryId String
+  pushToken       String
+  passTypeId      String
+  serialNumber    String
+  authToken       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([deviceLibraryId, passTypeId, serialNumber], map: "WalletPassRegistration_device_pass_serial_key")
+  @@index([serialNumber])
 }

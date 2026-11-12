@@ -92,6 +92,10 @@ export const APPLE_PASS_CERTIFICATE = process.env.APPLE_PASS_CERTIFICATE!;
 export const APPLE_PASS_CERTIFICATE_PASSWORD =
   process.env.APPLE_PASS_CERTIFICATE_PASSWORD!;
 export const APPLE_WWDR_CERTIFICATE = process.env.APPLE_WWDR_CERTIFICATE!;
+// HMAC secret for PassKit web-service auth tokens (live ticket pass updates).
+// Optional: without it passes are issued without a webServiceURL and never
+// update — signing still works.
+export const PASSKIT_AUTH_SECRET = process.env.PASSKIT_AUTH_SECRET;
 
 // Meta Conversions API (server-side events). Both optional: without a token
 // the CAPI sender is a no-op and only the browser pixel reports.

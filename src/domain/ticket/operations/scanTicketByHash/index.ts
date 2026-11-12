@@ -4,6 +4,7 @@ import { prisma } from "@/lib/services/prisma";
 import { verifyTicketHash } from "@/domain/ticket/operations/verifyTicketHash";
 import type { QrTicketPayload } from "@/domain/ticket/types/ticket";
 import { bustOnTicketScanned } from "@/lib/services/cache";
+import { scheduleTicketPassUpdate } from "@/domain/wallet-pass/operations/notifyTicketPassUpdate";
 
 export const TICKET_ALREADY_SCANNED_MESSAGE =
   "This ticket has already been scanned.";
@@ -53,6 +54,9 @@ export const scanTicketByHash = async (ticketHash: string) => {
     updatedTicket.eventId,
     ticket.order.userId
   );
+
+  // Apple Wallet: flip the pass STATUS to USED (barcode stays)
+  scheduleTicketPassUpdate(updatedTicket.id);
 
   return updatedTicket;
 };
@@ -108,6 +112,9 @@ export const scanTicketByPayload = async (payload: QrTicketPayload) => {
     updatedTicket.eventId,
     ticket.order.userId
   );
+
+  // Apple Wallet: flip the pass STATUS to USED (barcode stays)
+  scheduleTicketPassUpdate(updatedTicket.id);
 
   return updatedTicket;
 };
