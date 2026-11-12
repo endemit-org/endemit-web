@@ -8,10 +8,16 @@ import { fetchStripImages } from "../getWalletStripUrls";
 
 /**
  * What the pass should show.
- * - valid / used: barcode stays (re-entry, scan mistakes) — only STATUS changes
- * - cancelled / transferred: voided, no barcode, no personal details
+ * - ready / used: barcode stays (re-entry, scan mistakes) — only STATUS changes
+ * - refunded / cancelled / transferred: voided, no barcode
+ *   (transferred also hides the new owner's personal details)
  */
-export type TicketPassState = "valid" | "used" | "cancelled" | "transferred";
+export type TicketPassState =
+  | "ready"
+  | "used"
+  | "refunded"
+  | "cancelled"
+  | "transferred";
 
 export interface ApplePassTicketData {
   ticketId: string;
@@ -47,13 +53,21 @@ const PASS_LABELS = {
     venue: "VENUE",
     date: "DATE",
     status: "STATUS",
-    // %@ is replaced by the new value on the lock-screen notification
-    statusChange: "Ticket %@",
+    // Labels match the website's ticket badges
     states: {
-      valid: "VALID",
-      used: "USED",
-      cancelled: "CANCELLED",
-      transferred: "TRANSFERRED",
+      ready: "Ready",
+      used: "Used",
+      refunded: "Refunded",
+      cancelled: "Cancelled",
+      transferred: "Transferred",
+    },
+    // Lock-screen notification when the status changes
+    statusChange: {
+      ready: "Ticket ready",
+      used: "Ticket used",
+      refunded: "Ticket refunded",
+      cancelled: "Ticket cancelled",
+      transferred: "Ticket transferred",
     },
     price: "Price",
     orderId: "Order ID",
@@ -73,12 +87,19 @@ const PASS_LABELS = {
     venue: "LOKACIJA",
     date: "DATUM",
     status: "STATUS",
-    statusChange: "Karta: %@",
     states: {
-      valid: "VELJAVNA",
-      used: "UPORABLJENA",
-      cancelled: "PREKLICANA",
-      transferred: "PRENESENA",
+      ready: "Pripravljena",
+      used: "Uporabljena",
+      refunded: "Vrnjena",
+      cancelled: "Preklicana",
+      transferred: "Prenesena",
+    },
+    statusChange: {
+      ready: "Karta pripravljena",
+      used: "Karta uporabljena",
+      refunded: "Karta vrnjena",
+      cancelled: "Karta preklicana",
+      transferred: "Karta prenesena",
     },
     price: "Cena",
     orderId: "Št. naročila",
@@ -104,8 +125,8 @@ export async function generateApplePass(
   data: ApplePassTicketData
 ): Promise<Buffer> {
   const labels = PASS_LABELS[data.locale ?? "sl"];
-  const state: TicketPassState = data.state ?? "valid";
-  const isVoided = state === "cancelled" || state === "transferred";
+  const state: TicketPassState = data.state ?? "ready";
+  const isVoided = state !== "ready" && state !== "used";
   const certificates = getCertificates();
 
   // Load the pass model from the passmodel.pass directory
@@ -225,13 +246,14 @@ export async function generateApplePass(
     });
   }
 
-  // Always present (even when VALID) so a later change triggers the
-  // lock-screen notification via changeMessage
+  // Always present (even when Ready) so a later change triggers the
+  // lock-screen notification. changeMessage comes from the new pass version,
+  // so it's per state and needs no %@ placeholder.
   pass.auxiliaryFields.push({
     key: "status",
     label: labels.status,
     value: labels.states[state],
-    changeMessage: labels.statusChange,
+    changeMessage: labels.statusChange[state],
   });
 
   // Back fields (information on the back of the pass)

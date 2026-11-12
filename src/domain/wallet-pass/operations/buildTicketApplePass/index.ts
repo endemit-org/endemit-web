@@ -11,12 +11,16 @@ import {
   ticketPassAuthToken,
 } from "../../utils/passkitWebService";
 
-const VOIDED_STATUSES = new Set(["CANCELLED", "BANNED", "REFUNDED"]);
-
-export function ticketPassState(ticket: Pick<Ticket, "status" | "attended">) {
-  if (VOIDED_STATUSES.has(ticket.status)) return "cancelled" as const;
-  if (ticket.status === "SCANNED" || ticket.attended) return "used" as const;
-  return "valid" as const;
+export function ticketPassState(
+  ticket: Pick<Ticket, "status" | "attended">
+): TicketPassState {
+  if (ticket.status === "REFUNDED") return "refunded";
+  // Banned shows as Cancelled — no need to say "banned" on someone's phone
+  if (ticket.status === "CANCELLED" || ticket.status === "BANNED") {
+    return "cancelled";
+  }
+  if (ticket.status === "SCANNED" || ticket.attended) return "used";
+  return "ready";
 }
 
 interface BuildOptions {
