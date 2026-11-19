@@ -19,10 +19,29 @@ function getHost() {
 }
 
 /** Raw HTTPS POST with the client certificate (mutual TLS). */
-function postJson(
-  path: string,
-  body: unknown
-): Promise<{ status: number; body: string }> {
+interface FursHttpResponse {
+  status: number;
+  contentType: string;
+  body: string;
+}
+
+/**
+ * Parse a FURS response body as JSON. A gateway in front of FURS can answer
+ * 200 with an HTML page, so a parse failure reports the status, content type
+ * and the start of the body instead of a bare SyntaxError.
+ */
+function parseJsonBody<T>(response: FursHttpResponse): T {
+  try {
+    return JSON.parse(response.body) as T;
+  } catch {
+    const excerpt = response.body.replace(/\s+/g, " ").trim().slice(0, 350);
+    throw new Error(
+      `FURS non-JSON response (HTTP ${response.status}, ${response.contentType || "no content-type"}): ${excerpt}`
+    );
+  }
+}
+
+function postJson(path: string, body: unknown): Promise<FursHttpResponse> {
   const { p12Buffer, passphrase } = getFursCertificate();
   const { host, port } = getHost();
   const payload = JSON.stringify(body);
@@ -49,7 +68,11 @@ function postJson(
         let data = "";
         response.on("data", chunk => (data += chunk));
         response.on("end", () =>
-          resolve({ status: response.statusCode ?? 0, body: data })
+          resolve({
+            status: response.statusCode ?? 0,
+            contentType: String(response.headers["content-type"] ?? ""),
+            body: data,
+          })
         );
       }
     );
@@ -119,7 +142,7 @@ export async function submitInvoice(
     throw new Error(`FURS HTTP ${response.status}: ${response.body.slice(0, 300)}`);
   }
 
-  const responseToken = (JSON.parse(response.body) as { token?: string }).token;
+  const responseToken = parseJsonBody<{ token?: string }>(response).token;
   if (!responseToken) throw new Error("FURS response missing token");
 
   const payload = decodeJwsPayload(responseToken) as {
@@ -156,7 +179,7 @@ export async function registerBusinessPremise(
     throw new Error(`FURS HTTP ${response.status}: ${response.body.slice(0, 300)}`);
   }
 
-  const responseToken = (JSON.parse(response.body) as { token?: string }).token;
+  const responseToken = parseJsonBody<{ token?: string }>(response).token;
   if (!responseToken) throw new Error("FURS response missing token");
 
   const payload = decodeJwsPayload(responseToken) as {
@@ -176,6 +199,5 @@ export async function echo(message = "ping"): Promise<string> {
   if (response.status !== 200) {
     throw new Error(`FURS echo HTTP ${response.status}`);
   }
-  return (JSON.parse(response.body) as { EchoResponse?: string })
-    .EchoResponse ?? "";
+  return parseJsonBody<{ EchoResponse?: string }>(response).EchoResponse ?? "";
 }
