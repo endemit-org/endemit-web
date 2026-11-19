@@ -5,6 +5,7 @@ import { prisma } from "@/lib/services/prisma";
 import { broadcastToUser } from "@/lib/services/supabase/broadcast";
 import { bustOnPosOrderReversed, bustOnTicketIssued } from "@/lib/services/cache";
 import { inngest } from "@/lib/services/inngest";
+import { notifyTicketPassUpdate } from "@/domain/wallet-pass/operations/notifyTicketPassUpdate";
 
 /**
  * Admin reversal of a PAID POS order. Wallet-linked orders (wallet payments
@@ -185,6 +186,8 @@ export async function reversePosOrder(orderId: string, adminUserId: string) {
       ...ticketBusts,
       stornoSubmission,
       bustOnPosOrderReversed(result.customerId, result.walletId),
+      // Apple Wallet: void the passes of the cancelled tickets
+      notifyTicketPassUpdate(result.cancelledTickets.map(t => t.id)),
     ]);
   });
 

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/services/prisma";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { isEventCompleted } from "@/domain/event/businessLogic";
 import { bustOnTicketScanReverted } from "@/lib/services/cache";
+import { scheduleTicketPassUpdate } from "@/domain/wallet-pass/operations/notifyTicketPassUpdate";
 
 export const TICKET_NOT_SCANNED_MESSAGE =
   "This ticket has not been scanned yet.";
@@ -53,6 +54,8 @@ export const revertTicketScan = async (ticketId: string) => {
     updatedTicket.eventId,
     ticket.order.userId
   );
+
+  scheduleTicketPassUpdate(updatedTicket.id);
 
   return updatedTicket;
 };
