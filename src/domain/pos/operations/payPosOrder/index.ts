@@ -57,6 +57,10 @@ export async function payPosOrder(
       throw new PosError("ORDER_EXPIRED", "Order has expired");
     }
 
+    if (tipAmount > 0 && !order.register.offersTip) {
+      throw new PosError("INVALID_TIP", "This register does not take tips");
+    }
+
     if (order.customerId && order.customerId !== customerId) {
       throw new PosError(
         "ORDER_OTHER_CUSTOMER",

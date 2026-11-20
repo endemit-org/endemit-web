@@ -82,6 +82,7 @@ interface Props {
     acceptsCash: boolean;
     acceptsCard: boolean;
     trackFulfillment: boolean;
+    offersTip: boolean;
     printerUrl: string | null;
   };
   items: PosItem[];

@@ -468,6 +468,9 @@ model PosRegister {
   // Food-stand mode: paid orders stay "to serve" until completed, with a
   // daily queue number for recall
   trackFulfillment  Boolean  @default(false)
+  // Offer the tip step at payment (wallet, cash and card). Off for registers
+  // where a tip makes no sense, e.g. a door or merch desk.
+  offersTip         Boolean  @default(true)
   // Local ePOS-Print address of the register's receipt printer (TM-P80II);
   // the seller's browser POSTs receipts to it directly on the LAN
   printerUrl        String?

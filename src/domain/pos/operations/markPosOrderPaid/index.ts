@@ -79,6 +79,10 @@ export async function markPosOrderPaid(
       throw new PosError("ORDER_EXPIRED", "Order has expired");
     }
 
+    if (tipAmount > 0 && !order.register.offersTip) {
+      throw new PosError("INVALID_TIP", "This register does not take tips");
+    }
+
     const accepts =
       method === "CASH"
         ? order.register.acceptsCash

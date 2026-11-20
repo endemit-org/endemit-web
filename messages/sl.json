@@ -1659,6 +1659,7 @@
         "fiscalBadge": "Davčno",
         "trackFulfillment": "Sledenje strežbi (stojnica s hrano: naročila ostanejo odprta do postrežbe, s številkami vrste)",
         "fulfillmentBadge": "Strežba",
+        "offersTip": "Ponudi napitnino ob plačilu (stranka vidi korak za napitnino)",
         "printerUrl": "Naslov tiskalnika za račune (ePOS)",
         "printerUrlHint": "Lokalni naslov Epson tiskalnika, npr. https://EPSONC78511.local — naprave prodajalcev tiskajo nanj direktno prek lokalnega omrežja. Pusti prazno, če blagajna nima tiskalnika."
       },

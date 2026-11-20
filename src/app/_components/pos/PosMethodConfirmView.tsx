@@ -19,6 +19,8 @@ interface Props {
   subtotal: number;
   /** Show the optional buyer-email input (ticket-linked orders). */
   showEmailField?: boolean;
+  /** Register offers the tip step; without it the cashier step comes first. */
+  offersTip?: boolean;
   /** Rotate the content 180° toward the customer (tip entry). */
   isRotated?: boolean;
   onToggleRotation?: () => void;
@@ -41,14 +43,16 @@ export type ConfirmPhase = "customer" | "cashier";
  * Physical-tender confirmation in two steps. First the customer step (screen
  * turned toward them): the amount, an optional tip, and a confirm. Then the
  * cashier step (screen turned back): cash — "cash received"; card — charge
- * the external terminal, then an explicit "charge approved". Top-ups have
- * no tip, so they start at the cashier step.
+ * the external terminal, then an explicit "charge approved". Top-ups and
+ * registers that do not offer tips have no tip, so they start at the cashier
+ * step.
  */
 export function PosMethodConfirmView({
   method,
   items,
   subtotal,
   showEmailField = false,
+  offersTip = true,
   isRotated = false,
   onToggleRotation,
   onPhaseChange,
@@ -69,8 +73,9 @@ export function PosMethodConfirmView({
     () => items.some(item => item.direction === "CREDIT"),
     [items]
   );
+  const hasTipStep = !hasTopUp && offersTip;
   const [phase, setPhase] = useState<ConfirmPhase>(
-    hasTopUp ? "cashier" : "customer"
+    hasTipStep ? "customer" : "cashier"
   );
   useEffect(() => {
     onPhaseChange?.(phase);
@@ -221,7 +226,7 @@ export function PosMethodConfirmView({
               </button>
             </>
           )}
-          {!hasTopUp && (
+          {hasTipStep && (
             <button
               onClick={() => {
                 setCardCharged(false);
