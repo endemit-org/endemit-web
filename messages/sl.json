@@ -95,15 +95,15 @@
       "eventConcluded": "Ta event je končan.",
       "comingSoon": "Karte pridejo kmalo",
       "notForSaleYet": "Karte še niso naprodaj",
-      "notAvailableOnline": "Kart ni na spletu",
+      "notAvailableOnline": "Online je razprodano!",
       "onlineSoldOut": "Spletne karte RAZPRODANE",
-      "availableAtEntrance": "Karte dobiš na vhodo",
+      "availableAtEntrance": "Neki kart bo še na vhodo",
       "batchSoldOut": "Ta runda kart je razprodana",
       "batchComingSoon": "Naslednja runda kart pride kmalo",
       "availableNow": "Zbri svojo",
       "personCount": "{count, plural, one {# oseba} two {# osebi} few {# osebe} other {# oseb}}",
       "includesTickets": "Vklučuje karte za {count, plural, one {# osebo} two {# osebi} few {# osebe} other {# oseb}}",
-      "soldOutBanner": "Spletne karte so razprodane, ampak karte zase in za kolege še zmerm dobiš, k prideš na event. <strong>Sam keš.</strong>",
+      "soldOutBanner": "Spletne karte so šle. Na vhodo jih bo še neki, ampak sam omejeno. <strong>Kdor prej pride, je prej na floro.</strong>",
       "batchSoldOutBanner": "Ta runda kart za Endemit 2026 je razprodana. Naslednjo rundo spustimo kmalo. Ostan na preži!"
     },
     "lineup": {

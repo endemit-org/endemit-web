@@ -10,7 +10,7 @@ export default function Banner({ title, children }: BannerProps) {
   return (
     <div
       className={
-        "bg-black/90 rounded-md px-3 pb-2 pt-4 mb-6 gap-3 backdrop-blur text-center text-neutral-200 border border-dotted border-neutral-200 drop-shadow-2xl"
+        "bg-black/90 rounded-md px-4 pb-7 pt-6 mb-6 gap-3 backdrop-blur text-center text-neutral-200 border border-dotted border-neutral-200 drop-shadow-2xl"
       }
       style={{
         backgroundImage: "url('/images/worms.png')",
