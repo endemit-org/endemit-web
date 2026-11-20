@@ -95,15 +95,15 @@
       "eventConcluded": "This event has concluded.",
       "comingSoon": "Tickets coming soon",
       "notForSaleYet": "Tickets are not for sale yet",
-      "notAvailableOnline": "Tickets not available online",
+      "notAvailableOnline": "Sold out online!",
       "onlineSoldOut": "Online tickets SOLD OUT",
-      "availableAtEntrance": "Tickets are available at entrance",
+      "availableAtEntrance": "Limited tickets at the door",
       "batchSoldOut": "Ticket batch sold out",
       "batchComingSoon": "Next ticket batch coming soon",
       "availableNow": "Tickets available now",
       "personCount": "{count, plural, one {# person} other {# people}}",
       "includesTickets": "Includes tickets for {count, plural, one {# person} other {# people}}",
-      "soldOutBanner": "Online tickets are sold out, but you can still get the tickets for you and your friends when you arrive at the event. <strong>Cash only.</strong>",
+      "soldOutBanner": "Online tickets are gone. A limited number will be available at the door. <strong>First come, first served.</strong>",
       "batchSoldOutBanner": "This ticket batch for Endemit 2026 is sold out. We will be releasing the next ticket batch soon. Stay tuned!"
     },
     "lineup": {

@@ -115,12 +115,58 @@ function TicketPurchaseDisplay({
   );
 }
 
+/** Read-only list of ticket types shown once every type is sold out. */
+function SoldOutTicketList({
+  products,
+  soldOutLabel,
+  personCountLabel,
+}: {
+  products: Product[];
+  soldOutLabel: string;
+  personCountLabel: (count: number) => string;
+}) {
+  return (
+    <ul className="flex flex-col divide-y divide-neutral-700/60 border-y border-neutral-700/60">
+      {products.map(product => {
+        const ticketQuantity = getTicketQuantityForProduct(product);
+        return (
+          <li
+            key={product.id}
+            className="flex items-center justify-between gap-x-3 py-3"
+          >
+            <div className="min-w-0 text-neutral-400">
+              <div className="font-semibold line-through decoration-neutral-600">
+                {product.name}
+              </div>
+              <div className="text-sm flex gap-x-1.5 items-center">
+                <span className="flex gap-x-1 opacity-50">
+                  {[...Array(ticketQuantity).keys()].map(i => (
+                    <TicketIcon key={`sold-out-ticket-icon-${i}`} />
+                  ))}
+                </span>
+                <span>
+                  {personCountLabel(ticketQuantity)} -{" "}
+                  {formatPrice(product.price)}
+                </span>
+              </div>
+            </div>
+            <span className="shrink-0 rounded-md border border-neutral-600 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-neutral-400">
+              {soldOutLabel}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 export default function EventTicketDisplay({
   products,
   event,
   autoExpandTicket = true,
 }: EventTicketDisplayProps) {
   const t = useTranslations("events");
+  const tStore = useTranslations("store");
   // Defensive: never crash the whole page if an event somehow arrives undefined.
   if (!event) return null;
   const isPastEvent = isEventCompleted(event);
@@ -266,6 +312,16 @@ export default function EventTicketDisplay({
       </div>
 
       {!hasAvailableProducts && content}
+
+      {!hasAvailableProducts && (
+        <SoldOutTicketList
+          products={products}
+          soldOutLabel={tStore("product.statusText.soldOut")}
+          personCountLabel={count =>
+            t("ticketsDisplay.personCount", { count })
+          }
+        />
+      )}
 
       {hasAvailableProducts && (
         <Accordion
