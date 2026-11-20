@@ -83,6 +83,10 @@ export const FURS_PREMISE_ID = process.env.FURS_PREMISE_ID;
 export const FURS_DEVICE_ID = process.env.FURS_DEVICE_ID;
 export const FURS_ENV = process.env.FURS_ENV; // "test" | "prod"
 export const FURS_TLS_CA_BASE64 = process.env.FURS_TLS_CA_BASE64;
+// Optional HTTP CONNECT proxy for FURS calls, e.g.
+// "https://user:password@proxy.example.com:8443". FURS production only accepts
+// Slovenian IP addresses, so calls from Vercel must leave through one.
+export const FURS_PROXY_URL = process.env.FURS_PROXY_URL;
 
 // Shared secret in the Epson Server Direct Print poll URL
 export const POS_PRINT_TOKEN = process.env.POS_PRINT_TOKEN;

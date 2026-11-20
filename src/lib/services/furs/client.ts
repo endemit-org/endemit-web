@@ -1,11 +1,17 @@
 import "server-only";
 
+import http from "node:http";
 import https from "node:https";
+import type { Duplex } from "node:stream";
 import { randomUUID } from "node:crypto";
 import { CompactSign, importPKCS8 } from "jose";
 import { getFursCertificate } from "./cert";
 import { formatFursDateTime } from "./zoi";
-import { FURS_ENV, FURS_TLS_CA_BASE64 } from "@/lib/services/env/private";
+import {
+  FURS_ENV,
+  FURS_PROXY_URL,
+  FURS_TLS_CA_BASE64,
+} from "@/lib/services/env/private";
 
 const HOSTS = {
   test: { host: "blagajne-test.fu.gov.si", port: 9002 },
@@ -41,10 +47,76 @@ function parseJsonBody<T>(response: FursHttpResponse): T {
   }
 }
 
-function postJson(path: string, body: unknown): Promise<FursHttpResponse> {
+const PROXY_CONNECT_TIMEOUT_MS = 10_000;
+
+/**
+ * Open a tunnel to FURS through the HTTP CONNECT proxy in FURS_PROXY_URL.
+ * The proxy only relays bytes: the mutual-TLS session with the fiscal
+ * certificate is still established end to end with FURS, so the proxy never
+ * sees the certificate or the invoice data.
+ */
+function openProxyTunnel(
+  proxyUrl: string,
+  host: string,
+  port: number
+): Promise<Duplex> {
+  const proxy = new URL(proxyUrl);
+  const isHttps = proxy.protocol === "https:";
+  if (!isHttps && proxy.protocol !== "http:") {
+    throw new Error("FURS_PROXY_URL must be an http:// or https:// URL");
+  }
+
+  const headers: Record<string, string> = { Host: `${host}:${port}` };
+  if (proxy.username) {
+    const credentials = `${decodeURIComponent(proxy.username)}:${decodeURIComponent(proxy.password)}`;
+    headers["Proxy-Authorization"] =
+      `Basic ${Buffer.from(credentials).toString("base64")}`;
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = (isHttps ? https : http).request({
+      host: proxy.hostname,
+      port: proxy.port ? Number(proxy.port) : isHttps ? 443 : 80,
+      method: "CONNECT",
+      path: `${host}:${port}`,
+      headers,
+      agent: false,
+      timeout: PROXY_CONNECT_TIMEOUT_MS,
+    });
+    request.on("connect", (response, socket) => {
+      if (response.statusCode !== 200) {
+        socket.destroy();
+        reject(
+          new Error(`FURS proxy refused CONNECT (HTTP ${response.statusCode})`)
+        );
+        return;
+      }
+      resolve(socket);
+    });
+    // A proxy that answers CONNECT with a regular response (e.g. 407)
+    request.on("response", response => {
+      response.resume();
+      reject(
+        new Error(`FURS proxy refused CONNECT (HTTP ${response.statusCode})`)
+      );
+    });
+    request.on("timeout", () => {
+      request.destroy(new Error("FURS proxy connection timed out"));
+    });
+    request.on("error", error => {
+      reject(new Error(`FURS proxy connection failed: ${error.message}`));
+    });
+    request.end();
+  });
+}
+
+async function postJson(path: string, body: unknown): Promise<FursHttpResponse> {
   const { p12Buffer, passphrase } = getFursCertificate();
   const { host, port } = getHost();
   const payload = JSON.stringify(body);
+  const tunnel = FURS_PROXY_URL
+    ? await openProxyTunnel(FURS_PROXY_URL, host, port)
+    : null;
 
   return new Promise((resolve, reject) => {
     const request = https.request(
@@ -53,6 +125,8 @@ function postJson(path: string, body: unknown): Promise<FursHttpResponse> {
         port,
         path: `${BASE_PATH}${path}`,
         method: "POST",
+        // TLS runs over the proxy tunnel when one is configured
+        ...(tunnel && { socket: tunnel, agent: false }),
         pfx: p12Buffer,
         passphrase,
         ...(FURS_TLS_CA_BASE64 && {
