@@ -97,6 +97,7 @@ export default function PosRegistersDisplay({
       acceptsCard: formData.get("acceptsCard") === "true",
       fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
       trackFulfillment: formData.get("trackFulfillment") === "true",
+      offersTip: formData.get("offersTip") === "true",
       printerUrl: ((formData.get("printerUrl") as string) || "").trim() || null,
     };
 
@@ -141,6 +142,7 @@ export default function PosRegistersDisplay({
       acceptsCard: formData.get("acceptsCard") === "true",
       fiscalizeInvoices: formData.get("fiscalizeInvoices") === "true",
       trackFulfillment: formData.get("trackFulfillment") === "true",
+      offersTip: formData.get("offersTip") === "true",
       printerUrl: ((formData.get("printerUrl") as string) || "").trim() || null,
     };
 
@@ -441,6 +443,16 @@ export default function PosRegistersDisplay({
             <span className="text-sm text-gray-700">
               {t("trackFulfillment")}
             </span>
+          </label>
+          <label className="flex items-center gap-2 mt-3">
+            <input
+              name="offersTip"
+              type="checkbox"
+              value="true"
+              defaultChecked={register?.offersTip ?? true}
+              className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+            />
+            <span className="text-sm text-gray-700">{t("offersTip")}</span>
           </label>
         </div>
 

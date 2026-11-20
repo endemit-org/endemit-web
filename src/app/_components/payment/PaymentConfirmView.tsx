@@ -18,7 +18,8 @@ export interface PaymentConfirmOrder {
     total: number;
     direction: "CREDIT" | "DEBIT";
   }>;
-  register: { id: string; name: string };
+  /** offersTip is absent in older payloads; tips are then offered. */
+  register: { id: string; name: string; offersTip?: boolean };
 }
 
 export interface PaymentConfirmCustomer {
@@ -61,6 +62,7 @@ export function PaymentConfirmView({
   }, [order.items]);
 
   const hasTopUp = creditTotal > 0;
+  const offersTip = !hasTopUp && order.register.offersTip !== false;
 
   const totalToPay = debitTotal + tipAmount;
   const balanceAfter = customer.balance + creditTotal - totalToPay;
@@ -140,7 +142,7 @@ export function PaymentConfirmView({
         </div>
       )}
 
-      {!hasTopUp && (
+      {offersTip && (
         <TipStepper
           tipAmount={tipAmount}
           onChange={value => {

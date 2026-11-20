@@ -1659,6 +1659,7 @@
         "fiscalBadge": "Fiscal",
         "trackFulfillment": "Track fulfillment (food-stand: orders stay open until served, with queue numbers)",
         "fulfillmentBadge": "Fulfillment",
+        "offersTip": "Offer tips at payment (the customer sees the tip step)",
         "printerUrl": "Receipt printer address (ePOS)",
         "printerUrlHint": "Local address of the Epson receipt printer, e.g. https://EPSONC78511.local — sellers' devices print to it directly over the venue network. Leave empty if the register has no printer."
       },

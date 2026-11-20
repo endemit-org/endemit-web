@@ -64,6 +64,7 @@ interface RegisterConfig {
   acceptsWallet: boolean;
   acceptsCash: boolean;
   acceptsCard: boolean;
+  offersTip: boolean;
   printerUrl: string | null;
 }
 
@@ -154,7 +155,11 @@ export function PosOrderQrModal({
           total: item.total,
           direction: item.direction ?? "DEBIT",
         })),
-        register: { id: register.id, name: register.name },
+        register: {
+          id: register.id,
+          name: register.name,
+          offersTip: register.offersTip,
+        },
       },
       customer: {
         id: order.attachedCustomer.id,
@@ -759,6 +764,7 @@ export function PosOrderQrModal({
               items={order.items}
               subtotal={order.subtotal}
               showEmailField={hasTicketItems}
+              offersTip={register.offersTip}
               isRotated={isRotated}
               onToggleRotation={() => setIsRotated(r => !r)}
               // Customer step faces the customer, cashier step faces the seller

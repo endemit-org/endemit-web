@@ -108,6 +108,7 @@ export default async function PosRegisterPage({ params }: Props) {
         acceptsCash: register.acceptsCash,
         acceptsCard: register.acceptsCard,
         trackFulfillment: register.trackFulfillment,
+        offersTip: register.offersTip,
         printerUrl: register.printerUrl,
       }}
       items={items}

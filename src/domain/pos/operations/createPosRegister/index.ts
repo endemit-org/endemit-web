@@ -14,6 +14,7 @@ export interface CreatePosRegisterInput {
   acceptsCard?: boolean;
   fiscalizeInvoices?: boolean;
   trackFulfillment?: boolean;
+  offersTip?: boolean;
   printerUrl?: string | null;
 }
 
@@ -38,6 +39,7 @@ export async function createPosRegister(
       acceptsCard,
       fiscalizeInvoices: input.fiscalizeInvoices ?? false,
       trackFulfillment: input.trackFulfillment ?? false,
+      offersTip: input.offersTip ?? true,
       printerUrl: input.printerUrl ?? null,
     },
   });

@@ -38,6 +38,7 @@ export async function POST(
         register: {
           id: result.order.register.id,
           name: result.order.register.name,
+          offersTip: result.order.register.offersTip,
         },
       },
       customer: result.customer,
