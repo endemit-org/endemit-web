@@ -2,6 +2,7 @@ import { Product } from "@/domain/product/types/product";
 import { Event } from "@/domain/event/types/event";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import SeoSchema from "@/app/_components/seo/SeoSchema";
+import { isProductSellable } from "@/domain/product/businessLogic";
 
 type Props = {
   event: Event;
@@ -9,8 +10,12 @@ type Props = {
 };
 
 export default function EventSeoMicrodata({ event, products = [] }: Props) {
-  // Use the lowest-priced product for SEO (products should already be sorted by price)
-  const lowestPriceProduct = products.length > 0 ? products[0] : null;
+  // Use the lowest-priced product still on sale for SEO (products should
+  // already be sorted by price; sold-out types can be in the list too)
+  const lowestPriceProduct =
+    products.find(product => isProductSellable(product).isSellable) ??
+    products[0] ??
+    null;
 
   const eventSchema = {
     "@context": "https://schema.org",

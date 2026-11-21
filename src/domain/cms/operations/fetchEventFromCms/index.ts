@@ -51,6 +51,14 @@ const getTicketProductIdsForEvent = async (eventId: string): Promise<string[]> =
     }
   }
 
+  // Partial sell-out: keep the sold-out types too, so the event page can list
+  // them as sold out below the ones still on sale
+  if (validTicketsForEvent && validTicketsForEvent.length > 0) {
+    const soldOutTicketProducts =
+      ticketsForEvent?.filter(ticket => isProductSoldOut(ticket)) ?? [];
+    ticketProducts = [...validTicketsForEvent, ...soldOutTicketProducts];
+  }
+
   // Return all product IDs instead of just the first one
   return ticketProducts?.map(ticket => ticket.id) ?? [];
 };
