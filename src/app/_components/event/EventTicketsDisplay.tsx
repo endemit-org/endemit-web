@@ -277,9 +277,15 @@ export default function EventTicketDisplay({
     );
   }
 
-  // For multiple products - use accordion
-  const middleIndex = Math.floor(products.length / 2);
-  const accordionItems = products.map((product, index) => ({
+  // For multiple products - use accordion. Once at least one type is still
+  // on sale, only sellable types are pickable; the sold-out ones are listed
+  // read-only below.
+  const accordionProducts = hasAvailableProducts ? availableProducts : products;
+  const soldOutProducts = hasAvailableProducts
+    ? products.filter(p => !isProductSellable(p).isSellable)
+    : products;
+  const middleIndex = Math.floor(accordionProducts.length / 2);
+  const accordionItems = accordionProducts.map((product, index) => ({
     title: formatTicketTitle(
       product,
       index === middleIndex,
@@ -313,16 +319,6 @@ export default function EventTicketDisplay({
 
       {!hasAvailableProducts && content}
 
-      {!hasAvailableProducts && (
-        <SoldOutTicketList
-          products={products}
-          soldOutLabel={tStore("product.statusText.soldOut")}
-          personCountLabel={count =>
-            t("ticketsDisplay.personCount", { count })
-          }
-        />
-      )}
-
       {hasAvailableProducts && (
         <Accordion
           items={accordionItems}
@@ -331,6 +327,18 @@ export default function EventTicketDisplay({
           autoExpandIndexOnView={autoExpandTicket ? middleIndex : undefined}
           autoExpandDelay={500}
         />
+      )}
+
+      {soldOutProducts.length > 0 && (
+        <div className={hasAvailableProducts ? "mt-4" : undefined}>
+          <SoldOutTicketList
+            products={soldOutProducts}
+            soldOutLabel={tStore("product.statusText.soldOut")}
+            personCountLabel={count =>
+              t("ticketsDisplay.personCount", { count })
+            }
+          />
+        </div>
       )}
 
       {hasAvailableProducts && event.date_start && (
