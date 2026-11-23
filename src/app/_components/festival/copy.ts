@@ -163,10 +163,10 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     nav: [
       { id: "about", label: "About" },
       { id: "impressions", label: "Impressions" },
+      { id: "lineup", label: "Line up" },
       { id: "tickets", label: "Tickets" },
       { id: "map", label: "Map" },
       { id: "info", label: "Info" },
-      { id: "newsletter", label: "News" },
     ],
     newsletterText: "Line up, ticket batches and stories from the valley, straight to your inbox.",
     soundOn: "Sound on",
@@ -277,10 +277,10 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     nav: [
       { id: "about", label: "Zgodba" },
       { id: "impressions", label: "Vtisi" },
+      { id: "lineup", label: "Line up" },
       { id: "tickets", label: "Karte" },
       { id: "map", label: "Plac" },
       { id: "info", label: "Info" },
-      { id: "newsletter", label: "Novice" },
     ],
     newsletterText: "Line up, runde kart pa zgodbe iz doline, naravnost v tvoj nabiralnik.",
     soundOn: "Zvok ofnan",

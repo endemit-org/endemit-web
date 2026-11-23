@@ -180,7 +180,7 @@ const MYSTERY = [[7, 5], [9], [4, 8], [6, 6], [11], [5, 3, 6], [8], [6, 9], [10]
 
 function MysteryLineup({ title, soon, note }: { title: string; soon: string; note: string }) {
   return (
-    <div className={styles.lineup}>
+    <div className={styles.lineup} id="lineup">
       <div className={styles.lineupHead}>
         <h3 className={styles.boilSmall}>{title}</h3>
         <span className={`${styles.tag} ${styles.jitter}`}>{soon}</span>
@@ -303,7 +303,8 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
               </p>
             ))}
             <p className={`${styles.motto} ${styles.boilSmall}`}>
-              {t.motto.map(line => (
+              {/* The last line is the title above; it returns once more in the footer. */}
+              {t.motto.slice(0, -1).map(line => (
                 <span key={line}>{line}</span>
               ))}
             </p>
