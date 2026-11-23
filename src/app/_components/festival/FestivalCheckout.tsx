@@ -672,7 +672,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                   </button>
                 </div>
                 {promo.error ? <p className={styles.error} role="alert">{t.promoError}</p> : null}
-                <p className={styles.extraRow}>
+                <p className={`${styles.extraRow} ${styles.rowEnd}`}>
                   <button
                     type="button"
                     className={styles.linkButton}
@@ -686,7 +686,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                 </p>
               </>
             ) : (
-              <p className={styles.extraRow}>
+              <p className={`${styles.extraRow} ${styles.rowEnd}`}>
                 <button type="button" className={styles.linkButton} onClick={() => setPromoOpen(true)}>
                   {t.promoAdd}
                 </button>

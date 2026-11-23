@@ -914,6 +914,7 @@
 .linkButton:disabled { opacity: 0.45; cursor: not-allowed; }
 .extraRow { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 1rem 0 0; }
 .extraRow b { color: var(--salmon); }
+.rowEnd { justify-content: flex-end; margin-top: 0.6rem; }
 .promo { display: flex; gap: 0.7rem; margin-top: 1rem; }
 .promo input { flex: 1; min-width: 0; min-height: 46px; padding: 0.5rem 0.8rem; border: 2px solid var(--lilac); border-radius: 0; background: rgba(4, 6, 18, 0.6); color: var(--cream); font: inherit; font-size: 16px; text-transform: uppercase; }
 .promo input:focus { border-color: var(--salmon); outline: none; }
