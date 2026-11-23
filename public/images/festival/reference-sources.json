@@ -1,0 +1,129 @@
+{
+  "source": "Published 2026 festival content; read-only snapshot for the design preview.",
+  "assets": [
+    {
+      "url": "https://images.prismic.io/endemit/ahMljbK9tuLqEGxL_adriana_lopez.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-adriana-lopez"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ahMljLK9tuLqEGxK_backdrop.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-alan-backdrop"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ah7ULweQX7-eWjKg_isabel_soto.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-isabel-soto"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ahCEarK9tuLqEFeQ_jasa_buz.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-jasa-buzinel"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ahCEa7K9tuLqEFeR_material_o.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-material-object"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/Sfn1SCbv6Wp2T751_rha_mmali_festival_2026.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-mmali-b2b-rhaegal"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ah7ULweQX7-eWjKf_mozer_beko.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-mozer-b2b-beko"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ah7UMAeQX7-eWjKh_obscur.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-obscur"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ah7UMweQX7-eWjKl_rahul.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-rahul"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/t3ef99kOQK3HjJVU_rhaegal_solo_festival_2026.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-rhaegal"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ahMli7K9tuLqEGxJ_vermisst.png?auto=format%2Ccompress&w=600&fm=webp&q=78",
+      "name": "artist-vermisst"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/afCX4cBOoF08xXla_Endemit-ks-24-229.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "vibe-0"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/afCX4sBOoF08xXlb_Izvir-52of98-.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "vibe-1"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/afCX6MBOoF08xXlf_Endemit-ks-24-243.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "vibe-2"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/afCX5MBOoF08xXld_Endemit-ks-24-177.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "vibe-3"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/afCX5sBOoF08xXle_Endemit-ks-24-246.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "vibe-4"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/afCX48BOoF08xXlc_Izvir_Formaviva-103.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "vibe-5"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ae2nVsBOoF08xTR-_izvir-s%CC%8Cotori.jpeg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-accommodation-en-0-1"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aecqX8BOoF08xKZf_hotel-korosica.jpg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-accommodation-en-0-2"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aecqesBOoF08xKZh_PZA-rener.jpg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-accommodation-en-0-3"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ae2nVsBOoF08xTR-_izvir-s%CC%8Cotori.jpeg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-accommodation-sl-0-1"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aecqX8BOoF08xKZf_hotel-korosica.jpg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-accommodation-sl-0-2"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aecqesBOoF08xKZh_PZA-rener.jpg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-accommodation-sl-0-3"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aQO9CLpReVYa32kb_festival-food-1.jpeg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-food-drinks-en-0-1"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aQO9CbpReVYa32kc_festival-food-2.jpeg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-food-drinks-en-0-2"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aQO9CLpReVYa32kb_festival-food-1.jpeg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-food-drinks-sl-0-1"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aQO9CbpReVYa32kc_festival-food-2.jpeg?auto=format%2Ccompress&w=900&fm=webp&q=78",
+      "name": "festival-2026-food-drinks-sl-0-2"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/X3-ohIL-e5l07A7o_map_2026_eng%403x.png?auto=format%2Ccompress&w=1500&fm=webp&q=78",
+      "name": "map-en"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/mayNOBbQk2WeLzPy_map_festival_2026_slo.png?auto=format%2Ccompress&w=1500&fm=webp&q=78",
+      "name": "map-sl"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/ah1ncAeQX7-eWe4f_thumb.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "film-poster"
+    },
+    {
+      "url": "https://images.prismic.io/endemit/aQO6SLpReVYa32ix_x-drava-river.jpg?auto=format%2Ccompress&w=1200&fm=webp&q=78",
+      "name": "river"
+    }
+  ]
+}

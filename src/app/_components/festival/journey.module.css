@@ -1,0 +1,980 @@
+/* The journey is a single printed landscape. Existing booking controls remain ordinary HTML. */
+.journey {
+  --look-x: 0;
+  --look-y: 0;
+  --travel: 0;
+  --paper: #ebc8a0;
+  --purple: #241330;
+  --orange: #fb8759;
+  background: #34203e;
+}
+.journey::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 31;
+  pointer-events: none;
+  background: url("/images/festival/grain.svg") repeat;
+  background-size: 500px;
+  opacity: 0.14;
+  mix-blend-mode: soft-light;
+}
+.trail {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(
+    #392246 0%,
+    #5c354f 20%,
+    #27152f 40%,
+    #523b50 60%,
+    #34273f 80%
+  );
+}
+.riverThread {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.riverThread svg {
+  width: 100%;
+  height: 20%;
+  flex: 1;
+}
+.arrivalRunway {
+  height: 180svh;
+  position: relative;
+  --opening: 0;
+}
+.arrivalRunway > section {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 780px;
+  max-height: none;
+  background: #352041;
+}
+.arrivalFilm {
+  position: absolute;
+  inset: 4% 6%;
+  opacity: calc(0.12 + var(--opening) * 0.72);
+  z-index: -1;
+  transform: scale(calc(0.86 + var(--opening) * 0.14));
+}
+.arrivalFilm figure {
+  height: 100%;
+  width: 100%;
+  border-radius: 45% 48% 43% 44%;
+}
+.arrivalFilm video {
+  height: 100%;
+}
+.arrivalFilm figcaption,
+.arrivalFilm button {
+  display: none;
+}
+.arrivalCanopy {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+.canopy {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  width: 52%;
+  transform-origin: center bottom;
+}
+.canopyLeft {
+  left: -11%;
+  transform: translate3d(calc(var(--opening, 0) * -78%), 0, 0)
+    rotate(calc(var(--opening, 0) * -15deg));
+}
+.canopyRight {
+  right: -11%;
+  transform: translate3d(calc(var(--opening, 0) * 78%), 0, 0)
+    rotate(calc(var(--opening, 0) * 15deg)) scaleX(-1);
+}
+.canopyArt {
+  position: absolute;
+  inset: 0;
+  background: url("/images/festival/forest-art.webp") 10% center/auto 100%;
+  clip-path: polygon(
+    0 0,
+    76% 0,
+    72% 8%,
+    88% 13%,
+    65% 25%,
+    87% 30%,
+    58% 44%,
+    73% 48%,
+    44% 61%,
+    80% 68%,
+    49% 77%,
+    74% 90%,
+    61% 100%,
+    0 100%
+  );
+}
+.canopy svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.86;
+  transform: translate(calc(var(--look-x) * 8px), calc(var(--look-y) * 5px));
+}
+.heroLogo {
+  width: min(72vw, 930px);
+  margin: 0 auto 38px;
+  transform: rotate(-4deg)
+    translate(calc(var(--look-x) * -9px), calc(var(--look-y) * -5px));
+  color: #f7caa8;
+}
+.heroLogo svg {
+  width: 100%;
+  overflow: visible;
+}
+.journey .heroContent {
+  max-width: 1100px;
+  position: relative;
+  z-index: 3;
+  transform: translateY(calc(var(--opening) * -45px));
+}
+.journey .heroContent h1 {
+  font-size: clamp(40px, 5.4vw, 80px);
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  transform: rotate(-3deg);
+  margin: 0 0 30px;
+}
+.journey .heroContent h1 br {
+  display: none;
+}
+.journey .heroContent h1 em {
+  display: inline-block;
+  margin-left: 0.15em;
+  color: #f7caa8;
+}
+.journey .intro {
+  max-width: 430px;
+  font-size: 15px;
+}
+.journey .orbit {
+  border-style: dashed;
+  opacity: 0.3;
+}
+.journey .heroArt {
+  opacity: 0.65;
+}
+.journey .header {
+  background: transparent;
+  border: 0;
+  height: 78px;
+  padding: 0 3vw;
+  pointer-events: none;
+  gap: 20px;
+}
+.journey .header a,
+.journey .header button,
+.journey .header nav {
+  pointer-events: auto;
+}
+.journey .header > a {
+  padding: 12px 16px;
+  background: #30203bed;
+  border-radius: 50% 43% 46% 25%;
+  width: 150px;
+}
+.journey .header nav {
+  background: #30203bed;
+  padding: 15px 24px;
+  border-radius: 39% 31% 27% 38%;
+}
+.journey .languages {
+  background: #30203bed;
+  padding: 8px;
+}
+.journey .header nav a:last-child {
+  border: 0;
+  color: #ffa77d;
+}
+.journey .primaryButton {
+  border-radius: 44% 39% 47% 28%;
+  transform: rotate(-3deg);
+  border: 0;
+  transition:
+    transform 0.25s,
+    border-radius 0.35s;
+}
+.journey .primaryButton:hover {
+  border-radius: 20% 49% 24% 47%;
+  transform: rotate(2deg) scale(1.04);
+}
+.journey .previewBanner {
+  background: transparent;
+  border: 0;
+  color: #d7b9ca;
+  font-size: 10px;
+  padding: 30px 12vw;
+  transform: rotate(-2deg);
+}
+.journey .section {
+  background: transparent;
+  color: #edcfae;
+  padding: 110px 9vw;
+}
+.journey h2 {
+  font-size: clamp(62px, 8.5vw, 130px);
+  letter-spacing: -0.045em;
+  transform: rotate(-3deg);
+  font-weight: 400;
+}
+.journey h2 em {
+  font-family: Georgia, serif;
+  font-size: 0.67em;
+  font-style: italic;
+  letter-spacing: -0.07em;
+  color: #eaa591;
+}
+.journey .story {
+  padding-top: 140px;
+  padding-bottom: 160px;
+  gap: 8%;
+}
+.journey .story::before,
+.journey .stay::before {
+  display: none;
+}
+.journey .storyText {
+  padding-top: 70px;
+}
+.journey .storyCollage {
+  min-height: 820px;
+}
+.journey .storyCollage figure {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+.journey .storyCollage > figure:first-of-type {
+  width: 95%;
+  left: -10%;
+  top: 40px;
+  transform: rotate(-9deg) translateY(calc(var(--opening) * -35px));
+}
+.journey .storyCollage > figure:first-of-type img {
+  height: 350px;
+  border-radius: 54% 38% 47% 30%;
+}
+.journey .storyCollage > figure:nth-of-type(2) {
+  width: 56%;
+  right: -10%;
+  top: 500px;
+  transform: rotate(12deg);
+  z-index: 2;
+}
+.journey .storyCollage > figure:nth-of-type(2) img {
+  height: 220px;
+  clip-path: polygon(2% 5%, 94% 0, 100% 90%, 9% 100%);
+}
+.journey .endmitek {
+  width: 150px;
+  bottom: 80px;
+  left: -25%;
+  mix-blend-mode: screen;
+  transform-origin: center bottom;
+  animation: inhabit 7s ease-in-out infinite alternate;
+}
+.storyPortrait {
+  position: absolute;
+  width: 55%;
+  top: 310px;
+  left: 2%;
+  transform: rotate(-8deg);
+  z-index: 1;
+}
+.movingImage {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 9/16;
+  overflow: hidden;
+  border-radius: 45% 42% 32% 35% / 23% 27% 18% 24%;
+  background: #1d1028;
+  isolation: isolate;
+}
+.movingImage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 45px #2c193b55;
+  border: 1px solid #efc9a12b;
+  border-radius: inherit;
+}
+.movingImage video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.movingImage figcaption {
+  position: absolute;
+  bottom: 6%;
+  left: 12%;
+  right: 12%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #ffebcc;
+  text-shadow: 0 1px 5px #000;
+}
+.videoToggle {
+  position: absolute;
+  top: 15%;
+  right: 10%;
+  border: 1px solid #edcfae70;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  background: #21132980;
+  color: #ffe5c3;
+  font-size: 15px;
+}
+.wide {
+  aspect-ratio: 16/9;
+  border-radius: 43% 52% 32% 41% / 40% 34% 41% 28%;
+}
+.passage {
+  position: relative;
+  min-height: 900px;
+  height: 110svh;
+  max-height: 1200px;
+  display: grid;
+  place-items: center;
+  --opening: 0;
+  isolation: isolate;
+}
+.passageInside {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4vw;
+  transform: scale(calc(0.82 + var(--opening) * 0.18));
+}
+.passageLeft,
+.passageRight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+.passage .canopy {
+  width: 64%;
+  opacity: 0.95;
+}
+.passage .canopyLeft {
+  left: -6%;
+}
+.passage .canopyRight {
+  right: -6%;
+}
+.passageTitle {
+  color: #edb5a0;
+  font-family: var(--font-heading);
+  font-size: clamp(140px, 22vw, 360px);
+  line-height: 0.65;
+  transform: rotate(-8deg);
+  position: absolute;
+  left: 6%;
+  z-index: 1;
+  pointer-events: none;
+}
+.passageTitle span {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 0.16em;
+  display: block;
+  text-align: center;
+  margin-top: 0.8em;
+}
+.passagePortrait {
+  width: min(35vw, 420px);
+  position: relative;
+  margin-left: 36%;
+  transform: rotate(8deg);
+}
+.pathNote {
+  position: absolute;
+  bottom: 3%;
+  left: 15%;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 22px;
+  transform: rotate(-5deg);
+  max-width: 70%;
+}
+.pathNote span {
+  display: inline-block;
+  font-size: 45px;
+  margin-left: 20px;
+}
+.journey .filmSection {
+  padding: 100px 14vw 150px;
+  transform: rotate(2deg);
+}
+.journey .filmSection > div {
+  display: block;
+}
+.journey .filmSection h2 {
+  max-width: 600px;
+  font-size: clamp(50px, 6vw, 90px);
+  margin: 25px 0;
+}
+.journey .filmPoster {
+  height: 450px;
+  width: 83%;
+  margin-left: 13%;
+  border: 0;
+  clip-path: polygon(1% 8%, 95% 0, 100% 94%, 5% 100%, 0 66%);
+}
+.journey .artists {
+  padding-top: 130px;
+  padding-bottom: 80px;
+}
+.journey .artists > h2 {
+  position: relative;
+  z-index: 2;
+  max-width: 62%;
+}
+.journey .artists::before {
+  display: none;
+}
+.artistSideFilm {
+  position: absolute;
+  top: 70px;
+  right: 9%;
+  width: 22%;
+  max-width: 260px;
+  transform: rotate(11deg);
+}
+.journey .artistGrid {
+  margin-top: 90px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 90px 7%;
+  align-items: start;
+}
+.journey .artistCard {
+  transform: rotate(-5deg);
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+  position: relative;
+}
+.journey .artistCard:nth-child(3n + 2) {
+  transform: translateY(100px) rotate(6deg);
+}
+.journey .artistCard:nth-child(3n) {
+  transform: translateY(30px) rotate(-2deg);
+}
+.journey .artistCard:hover,
+.journey .artistCard:focus-visible {
+  transform: translateY(-12px) rotate(0);
+  z-index: 3;
+}
+.journey .artistCard:nth-child(3n + 2):hover,
+.journey .artistCard:nth-child(3n + 2):focus-visible {
+  transform: translateY(88px) rotate(0);
+}
+.journey .artistCard > img {
+  aspect-ratio: 1;
+  clip-path: polygon(1% 2%, 96% 0, 100% 97%, 3% 100%);
+  filter: saturate(0.65);
+  transition:
+    filter 0.35s,
+    clip-path 0.35s;
+}
+.journey .artistCard:hover > img {
+  filter: saturate(1.2);
+  clip-path: polygon(0 0, 100% 0, 98% 100%, 0 98%);
+}
+.journey .artistName {
+  font-size: clamp(24px, 3vw, 48px);
+  border-bottom: 0;
+}
+.journey .artistMeta {
+  font-size: 9px;
+  opacity: 0.65;
+}
+.journey .gallerySection {
+  padding-top: 220px;
+}
+.journey .sectionHeading {
+  align-items: end;
+  gap: 70px;
+}
+.journey .gallery {
+  gap: 70px 5%;
+}
+.journey .gallery > button {
+  border: 0;
+  background: transparent;
+}
+.journey .gallery > button:nth-child(3n + 1) {
+  border-radius: 40% 33% 0 0;
+  overflow: hidden;
+}
+.journey .gallery > button:nth-child(3n + 2) {
+  transform: translateY(80px) rotate(-8deg);
+}
+.journey .gallery > button:nth-child(3n) {
+  transform: rotate(10deg);
+}
+.daybreak {
+  position: relative;
+  width: 80%;
+  transform: rotate(-6deg);
+}
+.daybreak span {
+  position: absolute;
+  left: 5%;
+  top: 37%;
+  font-family: var(--font-heading);
+  color: #ffe1be;
+  font-size: clamp(100px, 20vw, 320px);
+  line-height: 0.7;
+  text-shadow: 0 4px 30px #32232d60;
+}
+.journey .stay {
+  padding-top: 150px;
+}
+.journey .stayGrid {
+  gap: 8%;
+  margin: 70px 0;
+}
+.journey .stayGrid article:nth-child(2) {
+  padding-top: 150px;
+  transform: rotate(3deg);
+}
+.journey .stayGrid article:nth-child(3) {
+  padding-top: 40px;
+  transform: rotate(-3deg);
+}
+.journey .stayGrid article > img {
+  height: 320px;
+  border-radius: 45% 47% 10% 20%;
+}
+.journey .stayGrid article:nth-child(2) > img {
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.journey .stayGrid h3 {
+  font-size: 38px;
+}
+.journey .accordions details {
+  border-color: #ebc8a040;
+}
+.journey .food {
+  padding-top: 180px;
+}
+.journey .foodGrid {
+  gap: 12%;
+}
+.journey .foodGrid article:nth-child(2) {
+  padding-top: 160px;
+}
+.journey .foodGrid img {
+  border-radius: 47% 30% 42% 20%;
+  transform: rotate(-5deg);
+}
+.journey .location {
+  padding-top: 150px;
+}
+.journey .mapButton {
+  transform: rotate(-5deg);
+  border: 0;
+  background: transparent;
+  transition: transform 0.4s;
+}
+.journey .mapButton:hover {
+  transform: rotate(0) scale(1.025);
+}
+.journey .travelInfo {
+  padding-top: 60px;
+}
+.journey .wallet {
+  border: 0;
+  padding-top: 130px;
+  padding-bottom: 130px;
+}
+.journey .wallet > span {
+  transform: rotate(-12deg);
+}
+.journey .ticketSection {
+  background: #e7bf98;
+  color: #35203e;
+  border-radius: 10% 15% 0 0 / 3% 5% 0 0;
+  margin: 80px 3vw 0;
+  padding: 100px 6vw;
+}
+.journey .ticketSection::before {
+  display: none;
+}
+.journey .ticketSection h2 em {
+  color: #833d59;
+}
+.journey .orderSummary {
+  transform: rotate(2deg);
+}
+.journey .faq {
+  padding-top: 160px;
+}
+.journey .footer {
+  background: #281931;
+  border-radius: 50% 40% 0 0 / 15% 10% 0 0;
+}
+.motionControl {
+  position: fixed;
+  bottom: 76px;
+  right: 25px;
+  z-index: 25;
+  padding: 12px 17px;
+  font-size: 10px;
+  color: #f3d6b6;
+  background: #281931ed;
+  border: 1px solid #d3a98e45;
+  border-radius: 40% 30% 40% 30%;
+}
+.journey .soundControl {
+  bottom: 20px;
+  left: 25px;
+  border-radius: 26% 40% 25% 40%;
+}
+.journey .soundControl button {
+  min-height: 40px;
+}
+.journey .handStar {
+  animation: inhabit 9s ease-in-out infinite alternate;
+}
+@keyframes inhabit {
+  from {
+    rotate: -7deg;
+    translate: 0 0;
+  }
+  to {
+    rotate: 6deg;
+    translate: 0 -9px;
+  }
+}
+.journey[data-motion="off"] *,
+.journey[data-motion="off"] *::before,
+.journey[data-motion="off"] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.journey[data-motion="off"] .arrivalRunway {
+  height: auto;
+}
+.journey[data-motion="off"] .arrivalRunway > section {
+  position: relative;
+}
+.journey[data-motion="off"] .canopy {
+  opacity: 0.35;
+}
+@media (max-width: 850px) {
+  .journey .header {
+    padding: 0 18px;
+  }
+  .journey .header > a {
+    width: 130px;
+  }
+  .journey .header nav {
+    border-radius: 0;
+  }
+  .journey .menuButton {
+    background: #30203bed;
+    padding: 12px;
+    margin-left: auto;
+  }
+  .journey .section {
+    padding-left: 7vw;
+    padding-right: 7vw;
+  }
+  .journey .artistGrid {
+    gap: 70px 6%;
+  }
+  .journey .artistName {
+    font-size: 29px;
+  }
+}
+@media (max-width: 650px) {
+  .arrivalRunway {
+    height: 150svh;
+  }
+  .arrivalRunway > section {
+    min-height: 740px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .heroLogo {
+    width: 91vw;
+    margin-bottom: 32px;
+  }
+  .journey .heroContent h1 {
+    font-size: 38px;
+    line-height: 1;
+    max-width: 340px;
+    margin: 0 auto 25px;
+  }
+  .journey .heroContent h1 em {
+    display: block;
+  }
+  .journey .intro {
+    font-size: 13px;
+    max-width: 300px;
+  }
+  .journey .heroContent .kicker {
+    font-size: 9px;
+    gap: 8px;
+  }
+  .canopy {
+    width: 69%;
+  }
+  .canopyLeft {
+    left: -30%;
+  }
+  .canopyRight {
+    right: -30%;
+  }
+  .journey .section {
+    padding-top: 90px;
+    padding-bottom: 90px;
+  }
+  .journey h2 {
+    font-size: 70px;
+  }
+  .journey .story {
+    display: block;
+  }
+  .journey .storyText {
+    padding-top: 0;
+  }
+  .journey .storyCollage {
+    min-height: 710px;
+    margin-top: 40px;
+  }
+  .journey .storyCollage > figure:first-of-type {
+    width: 82%;
+    left: 0;
+  }
+  .journey .storyCollage > figure:first-of-type img {
+    height: 250px;
+  }
+  .storyPortrait {
+    width: 53%;
+    left: 3%;
+    top: 260px;
+  }
+  .journey .storyCollage > figure:nth-of-type(2) {
+    width: 49%;
+    right: -2%;
+    top: 430px;
+  }
+  .journey .storyCollage > figure:nth-of-type(2) img {
+    height: 155px;
+  }
+  .journey .endmitek {
+    left: auto;
+    right: -5%;
+    top: 230px;
+    bottom: auto;
+    width: 100px;
+  }
+  .passage {
+    min-height: 660px;
+    height: 90svh;
+  }
+  .passageTitle {
+    font-size: 31vw;
+    left: 6%;
+    top: 20%;
+  }
+  .passagePortrait {
+    width: 52%;
+    margin-left: 21%;
+    margin-top: 80px;
+  }
+  .pathNote {
+    bottom: 2%;
+    left: 9%;
+    font-size: 18px;
+  }
+  .journey .filmSection {
+    padding: 80px 7vw 100px;
+  }
+  .journey .filmSection h2 {
+    font-size: 55px;
+  }
+  .journey .filmPoster {
+    width: 100%;
+    height: 290px;
+    margin-left: 0;
+  }
+  .journey .artists > h2 {
+    max-width: 78%;
+    font-size: 67px;
+  }
+  .artistSideFilm {
+    width: 30%;
+    top: 30px;
+    right: 3%;
+    opacity: 0.6;
+  }
+  .journey .artistGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 65px 7%;
+    margin-top: 65px;
+  }
+  .journey .artistCard:nth-child(n) {
+    transform: rotate(-4deg);
+  }
+  .journey .artistCard:nth-child(2n) {
+    transform: translateY(65px) rotate(6deg);
+  }
+  .journey .artistCard:nth-child(n):hover {
+    transform: rotate(0);
+  }
+  .journey .artistCard:nth-child(2n):hover {
+    transform: translateY(65px) rotate(0);
+  }
+  .journey .artistName {
+    font-size: 24px;
+  }
+  .journey .artistMeta {
+    font-size: 8px;
+  }
+  .journey .gallerySection {
+    padding-top: 120px;
+  }
+  .journey .sectionHeading {
+    display: block;
+  }
+  .journey .gallery {
+    gap: 45px 6%;
+  }
+  .journey .gallery > button:nth-child(n) {
+    transform: rotate(-4deg);
+  }
+  .journey .gallery > button:nth-child(2n) {
+    transform: translateY(40px) rotate(5deg);
+  }
+  .daybreak {
+    width: 95%;
+  }
+  .daybreak figure {
+    aspect-ratio: 4/5;
+  }
+  .daybreak span {
+    font-size: 38vw;
+  }
+  .journey .stayGrid {
+    display: block;
+  }
+  .journey .stayGrid article {
+    max-width: 88%;
+    margin-bottom: 70px;
+  }
+  .journey .stayGrid article:nth-child(2) {
+    padding-top: 0;
+    margin-left: 12%;
+  }
+  .journey .stayGrid article:nth-child(3) {
+    padding-top: 0;
+  }
+  .journey .stayGrid article > img {
+    height: 300px;
+  }
+  .journey .foodGrid article:nth-child(2) {
+    padding-top: 45px;
+  }
+  .journey .ticketSection {
+    margin: 40px 0 0;
+    padding: 80px 7vw;
+  }
+  .journey .orderSummary {
+    transform: none;
+  }
+  .journey .ticketSection h2 {
+    font-size: 62px;
+  }
+  .motionControl {
+    right: 12px;
+    bottom: 72px;
+    font-size: 9px;
+    padding: 11px;
+  }
+  .journey .soundControl {
+    left: 12px;
+    bottom: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey *,
+  .journey *::before,
+  .journey *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .arrivalRunway {
+    height: auto;
+  }
+  .arrivalRunway > section {
+    position: relative;
+  }
+  .canopyLeft {
+    transform: translateX(-65%);
+  }
+  .canopyRight {
+    transform: translateX(65%) scaleX(-1);
+  }
+}
+
+.arrivalFilm::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 45% 48% 43% 44%;
+  background: radial-gradient(ellipse at center, #1b10285c, #1b102818);
+  pointer-events: none;
+}
+.journey .heroContent {
+  transform: translateY(calc(var(--opening) * -65px))
+    scale(calc(1 - var(--opening) * 0.12));
+  opacity: calc(1 - var(--opening) * 0.5);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .movingImage {
+    transition:
+      transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+      border-radius 0.8s;
+  }
+  .movingImage:hover {
+    transform: perspective(1000px) rotateY(calc(var(--look-x) * 7deg))
+      rotateX(calc(var(--look-y) * -5deg));
+    border-radius: 35% 46% 40% 27% / 29% 22% 25% 20%;
+  }
+  .arrivalFilm .movingImage:hover {
+    transform: none;
+  }
+}

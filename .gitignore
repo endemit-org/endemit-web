@@ -75,3 +75,8 @@ combination_list.csv
 # Certificates — never commit
 *.p12
 *.pfx
+
+# Festival raw source assets (large, optimized copies live in public/images/festival)
+/festival-content-temp/
+/festival-content-vids/
+/festival-vib-graphics/

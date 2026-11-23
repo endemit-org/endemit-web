@@ -1,0 +1,14 @@
+{
+  "purpose": "Local festival experience prototype; source files are unchanged.",
+  "forest-art.webp": {
+    "source": "~/Desktop/em/2026breznapisa.png",
+    "processing": "Resized to 1440px wide, WebP quality 78",
+    "usage": "Illustrated hero backdrop for all devices"
+  },
+  "endmitek.webp": {
+    "source": "~/Desktop/em/endemitek_nejc.png",
+    "processing": "Resized to 512px wide, WebP quality 84",
+    "usage": "Illustrated character in the story collage, blended into the paper. Clean transparent export can improve its edges."
+  },
+  "excluded": ["Rave On artwork", "Blender files", "Previous-years music"]
+}
