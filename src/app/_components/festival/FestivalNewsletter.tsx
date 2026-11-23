@@ -21,13 +21,13 @@ const text = {
     failed: "That did not work. Try again.",
   },
   sl: {
-    label: "Mejl",
-    placeholder: "tvoj@mejl",
+    label: "Email",
+    placeholder: "tvoj@email",
     submit: "Zapiši me",
     sending: "Pošilam",
     done: "Zapisan si",
     doneNote: "Pišemo, ko bo kej novga.",
-    invalid: "Vpiši veljavn mejl.",
+    invalid: "Vpiši veljavn email.",
     failed: "Ni šlo. Probi še enkrat.",
   },
 } as const;

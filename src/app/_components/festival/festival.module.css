@@ -121,6 +121,15 @@
 .tagSolid:hover, .tagSolid:focus-visible { background: var(--cream); border-color: var(--cream); color: var(--hill-near); }
 .tag[aria-disabled="true"], .tag:disabled { opacity: 0.45; cursor: not-allowed; }
 
+/* Paper grain over the flat fills, so they sit with the stippled paintings. */
+.section::before, .foot::before, .page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .7 0 0 0 0 1 0 0 0 .55 -.2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 .section { position: relative; padding: clamp(4rem, 12vw, 9rem) var(--gutter); }
 .inner { position: relative; max-width: 68rem; margin: 0 auto; }
 
@@ -461,11 +470,11 @@
   transform: skewY(calc(var(--v, 0) * 5deg)) scaleY(calc(1 + var(--va, 0) * 0.07));
 }
 /* Photographs also turn colour while moving; the painted layers do not. */
-.shot[data-tone="night"] > * { filter: hue-rotate(calc(var(--v, 0) * 55deg)) saturate(calc(1 + var(--va, 0) * 0.4)); }
-.root[data-warping="true"] .shot > * { filter: url(#fest-warp) hue-rotate(calc(var(--v, 0) * 55deg)) saturate(calc(1 + var(--va, 0) * 0.4)); }
+.shot > *, .reel button, .mapButton img { filter: hue-rotate(calc(var(--v, 0) * 150deg)) saturate(calc(1 + var(--va, 0) * 1.2)); }
+.root[data-warping="true"] .shot > *,
 .root[data-warping="true"] .reel button,
 .root[data-warping="true"] .mapButton img,
-.root[data-warping="true"] .lineup ol,
+.root[data-warping="true"] .lineup ol { filter: url(#fest-warp) hue-rotate(calc(var(--v, 0) * 150deg)) saturate(calc(1 + var(--va, 0) * 1.2)); }
 .root[data-warping="true"] .edge,
 .root[data-warping="true"] .heroHill,
 .root[data-warping="true"] .forestEdge,
@@ -640,14 +649,98 @@
 .step[data-state="now"] { color: var(--cream); }
 .step[data-state="now"] .stepDot { background: var(--red); border-color: var(--red); }
 .step[data-state="now"] .stepPrice { color: var(--salmon); }
-.step[data-state="done"] .stepTitle, .step[data-state="done"] .stepPrice { text-decoration: line-through; opacity: 0.6; }
+.step[data-state="done"] .stepTitle, .step[data-state="done"] .stepPrice, .step[data-state="done"] .stepMeta { text-decoration: line-through; opacity: 0.45; }
+/* Rubber stamp: red on the batch on sale, hollow on the ones that are gone. */
+.stepStamp {
+  --tilt: -4deg;
+  grid-column: 2 / -1;
+  justify-self: start;
+  margin-top: 0.3rem;
+  padding: 0.28em 0.7em 0.2em;
+  border: 3px solid var(--red);
+  background: var(--red);
+  color: var(--cream);
+  font-family: var(--font-heading), sans-serif;
+  font-size: 1.15rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.step[data-state="done"] .stepStamp { --tilt: 3deg; border-color: var(--lilac); background: none; color: var(--lilac); }
+.step[data-state="now"] { border-color: var(--red); }
+/* Wide screens: the batches climb like stairs, one step per price rise. */
+@media (min-width: 900px) {
+  .timeline { grid-template-columns: repeat(4, 1fr); align-items: end; gap: 0; margin-top: 1.4rem; border-bottom: 3px solid var(--lilac); }
+  .step, .step:last-child {
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 0.5rem;
+    min-height: calc(9.5rem + var(--rise, 0) * 3.4rem);
+    padding: 1.1rem 1.1rem 1.3rem;
+    border: 0;
+    border-top: 3px solid currentColor;
+    border-left: 3px solid currentColor;
+    background: rgba(4, 6, 18, 0.35);
+  }
+  .step:last-child { border-right: 3px solid currentColor; }
+  .stepDot { display: none; }
+  .stepPrice { order: -1; font-size: 3.4rem; }
+  .stepMeta, .stepStamp { grid-column: auto; }
+  .step[data-state="now"] { background: rgba(238, 59, 79, 0.16); }
+}
 .stepFlag { color: var(--red); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
 
+/* The builder is a ticket: punched notches where the total tears off, and
+   on wide screens a stub down the side. */
 .builder {
+  --notch: 15px;
+  position: relative;
   margin-top: 3rem;
   padding: clamp(1.2rem, 4vw, 2.4rem);
   border: 3px solid var(--salmon);
-  background: rgba(4, 6, 18, 0.55);
+  background: #060817;
+  rotate: -0.35deg;
+}
+.stub { display: none; }
+.builder .total {
+  position: relative;
+  margin-top: 0.4rem;
+  padding-top: 1.6rem;
+  border-top: 3px dashed var(--salmon);
+}
+.builder .row:has(+ .total) { border-bottom: 0; }
+.builder .total::before, .builder .total::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--notch) * -1 - 1.5px);
+  width: calc(var(--notch) * 2);
+  height: calc(var(--notch) * 2);
+  border: 3px solid var(--salmon);
+  border-radius: 50%;
+  background: var(--forest-deep);
+}
+.builder .total::before { left: calc(clamp(1.2rem, 4vw, 2.4rem) * -1 - var(--notch) - 1.5px); clip-path: inset(0 0 0 50%); }
+.builder .total::after { right: calc(clamp(1.2rem, 4vw, 2.4rem) * -1 - var(--notch) - 1.5px); clip-path: inset(0 50% 0 0); }
+@media (min-width: 900px) {
+  .builder { padding-right: calc(clamp(1.2rem, 4vw, 2.4rem) + 4.2rem); }
+  .stub {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    width: 4.2rem;
+    border-left: 3px dashed var(--salmon);
+    writing-mode: vertical-rl;
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--salmon);
+  }
+  .builder .total::after { right: calc(clamp(1.2rem, 4vw, 2.4rem) * -1 - 4.2rem - var(--notch) - 1.5px); }
 }
 .row {
   display: flex;
@@ -880,11 +973,25 @@
   color: var(--lilac);
 }
 .foot a { color: inherit; }
+.foot { position: relative; }
+.footShout {
+  flex: 0 0 100%;
+  margin: 0 0 1.5rem;
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 12.4vw, 12rem);
+  line-height: 0.84;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--salmon);
+}
+.foot > * { position: relative; }
 .footLogo { width: 120px; color: var(--salmon); }
 .footLogo svg { display: block; width: 100%; height: auto; }
 
 /* ---- sub pages (info, checkout) ----------------------------------------- */
-.page { min-height: 100svh; background: var(--hill-far); padding: clamp(1.4rem, 5vw, 3rem) var(--gutter) 6rem; }
+.page { position: relative; min-height: 100svh; background: var(--hill-far); padding: clamp(1.4rem, 5vw, 3rem) var(--gutter) 6rem; }
 .pageHead { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: clamp(2rem, 8vw, 4rem); }
 .pageTitle { font-size: clamp(3rem, 13vw, 6.5rem); }
 .field { display: grid; gap: 0.35rem; margin-top: 1.1rem; }

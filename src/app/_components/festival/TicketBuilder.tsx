@@ -40,7 +40,7 @@ const text = {
     none: "Poznej",
     total: "Skop",
     checkout: "Naprej na plačilo",
-    closed: "Prodaja kart se ofne kmalo. Posti mejl spodi pa zveš prvi.",
+    closed: "Prodaja kart se ofne kmalo. Posti email spodi pa zveš prvi.",
     notify: "Javi mi",
     demo: "Demo: produkti še niso objavleni. Cene so začasne, nč se ne zaračuna.",
     less: "Mn",
@@ -146,6 +146,9 @@ export default function TicketBuilder({
 
   return (
     <div className={styles.builder}>
+      <span className={styles.stub} aria-hidden>
+        Endemit festival · 13–15 · 08 · 2027 · Libeliče
+      </span>
       <div className={styles.row} style={{ alignItems: "flex-start" }}>
         <div>
           <span className={styles.rowLabel}>{t.people}</span>

@@ -394,19 +394,20 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
 
           <h3 className={styles.timelineTitle}>{t.timelineTitle}</h3>
           <ol className={styles.timeline}>
-            {data.timeline.map(step => {
+            {data.timeline.map((step, index) => {
               const state = stepState(step, now);
               return (
-                <li key={step.title} className={styles.step} data-state={state}>
+                <li key={step.title} className={styles.step} data-state={state} style={css({ "--rise": index })}>
                   <span className={styles.stepDot} aria-hidden />
                   <span className={styles.stepTitle}>{step.title}</span>
                   <span className={styles.stepPrice}>{step.price === null ? "" : formatPrice(step.price)}</span>
                   <span className={styles.stepMeta}>
-                    {state === "now" ? <span className={styles.stepFlag}>{t.timelineNow} · </span> : null}
-                    {state === "done" ? <span>{t.timelineDone} · </span> : null}
                     {dateFormat.format(new Date(step.from))} – {dateFormat.format(new Date(step.until))}
                     {step.description ? ` · ${step.description}` : ""}
                   </span>
+                  {state === "next" ? null : (
+                    <span className={`${styles.stepStamp} ${styles.jitter}`}>{state === "now" ? t.timelineNow : t.timelineDone}</span>
+                  )}
                 </li>
               );
             })}
@@ -486,6 +487,9 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       </Scene>
 
       <footer className={styles.foot} data-scene>
+        <p className={`${styles.footShout} ${styles.boil}`} aria-hidden>
+          {t.motto[t.motto.length - 1]}
+        </p>
         <Link href="/" className={`${styles.footLogo} ${styles.boilSmall}`} aria-label="Endemit">
           <EndemitLogo />
         </Link>

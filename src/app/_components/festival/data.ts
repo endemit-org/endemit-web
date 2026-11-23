@@ -93,13 +93,13 @@ const OFFER_SEEDS: OfferSeed[] = [
 // Placeholder batches, shown until the event's ticket_price_progress slice is published.
 const FALLBACK_TIMELINE: Record<FestivalLocale, TimelineStep[]> = {
   en: [
-    { title: "Blind tickets", description: "No line up yet", price: 75, from: "2026-11-23T23:00:00Z", until: "2027-01-31T22:59:00Z" },
+    { title: "Blind tickets", description: "No line up yet", price: 75, from: "2026-11-22T23:00:00Z", until: "2027-01-31T22:59:00Z" },
     { title: "First batch", description: "Duo 160, Group 300", price: 85, from: "2027-01-31T23:00:00Z", until: "2027-04-30T21:59:00Z" },
     { title: "Second batch", description: "Duo 180, Group 340", price: 95, from: "2027-04-30T22:00:00Z", until: "2027-07-31T21:59:00Z" },
     { title: "Last batch", description: "Festival price", price: 120, from: "2027-07-31T22:00:00Z", until: "2027-08-15T15:00:00Z" },
   ],
   sl: [
-    { title: "Karte na slepo", description: "Brez line upa", price: 75, from: "2026-11-23T23:00:00Z", until: "2027-01-31T22:59:00Z" },
+    { title: "Karte na slepo", description: "Brez line upa", price: 75, from: "2026-11-22T23:00:00Z", until: "2027-01-31T22:59:00Z" },
     { title: "Prva runda", description: "Duo 160, Skupinska 300", price: 85, from: "2027-01-31T23:00:00Z", until: "2027-04-30T21:59:00Z" },
     { title: "Druga runda", description: "Duo 180, Skupinska 340", price: 95, from: "2027-04-30T22:00:00Z", until: "2027-07-31T21:59:00Z" },
     { title: "Zadna runda", description: "Festivalska cena", price: 120, from: "2027-07-31T22:00:00Z", until: "2027-08-15T15:00:00Z" },
