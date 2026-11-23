@@ -71,8 +71,8 @@ const OFFER_SEEDS: OfferSeed[] = [
   },
   {
     key: "tent", kind: "tent", uid: "endemit-festival-2027-tent", fallbackPrice: 30,
-    label: { en: "Tent", sl: "Šotor" },
-    note: { en: "Set up and waiting at the camp", sl: "Postavlen in prpravlen v kampo" },
+    label: { en: "Tent rental", sl: "Najem šotora" },
+    note: { en: "Rented for the festival, set up and waiting at the camp", sl: "V najem za festival, postavlen in prpravlen v kampo" },
   },
   {
     key: "bus", kind: "bus", uid: "endemit-festival-2027-bus-ljubljana", fallbackPrice: 15,

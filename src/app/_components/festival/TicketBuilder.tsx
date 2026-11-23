@@ -15,7 +15,7 @@ const text = {
     peopleNote: "Every holder's name is added at checkout",
     perPerson: "per person",
     save: "You save",
-    tent: "Tents",
+    tent: "Tent rental",
     bus: "Bus seats",
     topup: "Wallet top up",
     topupNote: "Food and drinks are paid with the Wallet only",
@@ -32,7 +32,7 @@ const text = {
     peopleNote: "Imena imetnikov vpišeš pr plačilo",
     perPerson: "na glavo",
     save: "Prišparaš",
-    tent: "Šotori",
+    tent: "Najem šotora",
     bus: "Sedeži na buso",
     topup: "Polnitev denarnce",
     topupNote: "Hrana pa pijača se plača sam z Denarnco",
@@ -123,7 +123,7 @@ export default function TicketBuilder({
           <span className={styles.rowNote}>{t.peopleNote}</span>
           <div className={styles.people} aria-hidden>
             {Array.from({ length: booking.people }, (_, i) => (
-              <img key={i} src={`/images/festival/2027/creature-${(i % 6) + 1}.webp`} width={260} height={200} alt="" />
+              <img key={i} src={`/images/festival/2027/creature-${(i % 6) + 1}.webp`} width={200} height={266} alt="" />
             ))}
           </div>
           <p className={styles.combo}>

@@ -87,9 +87,13 @@ async function buildLayers() {
     const cut = await open(`${LAYERS}/endemitki.png`).extract({ left, top, width, height }).png().toBuffer();
     const info = await sharp(cut)
       .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 1 })
-      .resize({ width: 260 })
+      .toBuffer()
+      // The sheet stores the creatures lying on their side: stand them up.
+      .then(buffer => sharp(buffer).rotate(270).resize({ width: 200 }).toBuffer())
+      .then(buffer => sharp(buffer))
+      .then(image => image
       .webp({ quality: 84, alphaQuality: 90, effort: 6 })
-      .toFile(target);
+      .toFile(target));
     manifest.creatures.push({ src: `creature-${index + 1}.webp`, ratio: Number((info.height / info.width).toFixed(4)) });
     console.log(`creature-${index + 1}.webp ${kb(target)}K`);
   }

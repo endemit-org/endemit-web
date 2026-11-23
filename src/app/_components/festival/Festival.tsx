@@ -73,8 +73,8 @@ function Creature({ n, style }: { n: number; style: Record<string, string | numb
       className={styles.creature}
       style={css(style)}
       src={`${ART}/creature-${n}.webp`}
-      width={260}
-      height={200}
+      width={200}
+      height={266}
       alt=""
       loading="lazy"
       decoding="async"
@@ -169,7 +169,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       {t.marquee.map((phrase, i) => (
         <span key={i} style={{ display: "contents" }}>
           {phrase}
-          <img src={`${ART}/creature-${(i % 6) + 1}.webp`} width={260} height={200} alt="" loading="lazy" />
+          <img src={`${ART}/creature-${(i % 6) + 1}.webp`} width={200} height={266} alt="" loading="lazy" />
         </span>
       ))}
     </span>
@@ -310,13 +310,19 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
 
       {/* ---- forest: releases and tickets ---- */}
       <Scene className={styles.forest} id="tickets">
-        <div className={styles.dome} aria-hidden>
-          {[0, 1, 2, 3].map(i => (
-            <span key={i} className={styles.ring} style={css({ "--i": i })} />
-          ))}
-          <Layer name="dome" widths={[720, 420]} ratio={0.3293} sizes="(max-width: 780px) 46vw, 360px" />
+        {/* The dome stands in the clearing painted into the forest layer: in
+            front of the back treetops, behind the bushes with the glowing rim.
+            The forest is drawn twice, the second copy clipped to those bushes. */}
+        <div className={styles.forestEdge} aria-hidden>
+          <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.forestImage} />
+          <div className={styles.dome}>
+            {[0, 1, 2, 3].map(i => (
+              <span key={i} className={styles.ring} style={css({ "--i": i })} />
+            ))}
+            <Layer name="dome" widths={[720, 420]} ratio={0.3293} sizes="(max-width: 900px) 190px, 21vw" />
+          </div>
+          <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.forestFront} />
         </div>
-        <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.edge} style={css({ "--depth": 12 })} />
         <CreatureRow spots={[[3, "8%", 46], [1, "31%", 58], [6, "57%", 42], [4, "82%", 54]]} />
         <div className={styles.inner}>
           <p className={styles.kicker}>{t.timelineTitle}</p>

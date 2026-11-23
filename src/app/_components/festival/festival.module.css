@@ -309,7 +309,7 @@
 }
 .marqueeTrack { display: inline-flex; animation: marquee 22s steps(110) infinite; will-change: transform; }
 .marqueeTrack > span { display: inline-flex; align-items: center; gap: 1.1em; padding-right: 1.1em; }
-.marqueeTrack img { width: 1.05em; height: auto; }
+.marqueeTrack img { width: 0.8em; height: auto; }
 @keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
 
 /* ---- film -------------------------------------------------------------- */
@@ -406,14 +406,39 @@
 
 /* ---- forest: timeline + tickets ---------------------------------------- */
 .forest { background: var(--forest-deep); }
+.forestEdge {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 2px);
+  width: max(100%, 900px);
+  transform: translate3d(-50%, calc((var(--p, 0) + 1) * 12px), 0);
+  pointer-events: none;
+  will-change: transform;
+}
+/* Below 900px the layer is wider than the screen: slide it so the clearing
+   with the dome stays in view. */
+@media (max-width: 899px) {
+  .forestEdge { transform: translate3d(-66%, calc((var(--p, 0) + 1) * 12px), 0); }
+}
+.forestImage { position: relative; display: block; width: 100%; height: auto; }
+/* Coordinates below are percentages of the forest layer. */
 .dome {
   position: absolute;
-  z-index: 0;
-  right: 6%;
-  bottom: calc(100% + max(100vw, 900px) * 0.3);
-  width: min(46vw, 360px);
-  transform: translate3d(0, calc(var(--p, 0) * 46px), 0);
-  will-change: transform;
+  left: 59.5%;
+  bottom: 56.5%;
+  width: 21%;
+}
+.forestFront {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(
+    0 0, 57% 0, 57% 31%, 58% 33%, 60% 36%, 61.5% 40%, 62.5% 45.5%, 63.5% 43%,
+    65% 42%, 66.5% 43%, 67.2% 41%, 69% 39%, 71% 39.5%, 72.5% 41.5%, 73.2% 38%,
+    75% 35%, 76.2% 33.5%, 77.5% 30.5%, 79.5% 29.5%, 80.5% 29%, 80.5% 0, 100% 0,
+    100% 100%, 0 100%
+  );
 }
 .dome img { position: relative; display: block; width: 100%; height: auto; }
 /* Sound leaving the dome: one ring, repeated. */
@@ -578,7 +603,7 @@
   88%, 100% { translate: 0 62%; }
 }
 .creatureRow { position: absolute; left: 0; right: 0; bottom: 100%; height: 0; overflow: visible; }
-.creatureMask { position: absolute; left: 0; right: 0; bottom: 0; height: 80px; overflow: hidden; }
+.creatureMask { position: absolute; left: 0; right: 0; bottom: 0; height: 110px; overflow: hidden; }
 
 /* ---- stories + newsletter + foot ---------------------------------------- */
 .outro { background: var(--ground); }
@@ -641,8 +666,8 @@
     transition: none !important;
   }
   .boil, .boilSmall { filter: none; }
-  .sky, .stars, .mark, .heroHill, .edge, .dome, .tree, .echo > span[aria-hidden] { transform: none; }
-  .heroHill, .edge { transform: translate3d(-50%, 0, 0); }
+  .sky, .stars, .mark, .heroHill, .edge, .tree, .echo > span[aria-hidden] { transform: none; }
+  .heroHill, .edge, .forestEdge { transform: translate3d(-50%, 0, 0); }
   .creature { translate: 0 0; }
   .hero { height: 100svh; }
 }
