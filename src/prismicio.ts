@@ -5,7 +5,10 @@ import {
 } from "@prismicio/client";
 import { enableAutoPreviews } from "@prismicio/next";
 import sm from "../slicemachine.config.json";
-import { PRISMIC_REPOSITORY_NAME } from "@/lib/services/env/private";
+import {
+  PRISMIC_ACCESS_TOKEN,
+  PRISMIC_REPOSITORY_NAME,
+} from "@/lib/services/env/private";
 import { isProduction } from "@/lib/util/env";
 
 /**
@@ -40,13 +43,12 @@ const routes: Route[] = [
     type: "artist",
     path: "/artists/:uid",
   },
-  {
-    type: "product",
-    path: "/product/:uid",
-  },
+  // Products live under /store/<category>/<uid>; the category comes from the
+  // document's data, which a route can't express — see the preview route's
+  // link resolver.
   {
     type: "podcast",
-    path: "/music/podcast/:uid",
+    path: "/music/emit/:uid",
   },
 ];
 
@@ -58,6 +60,7 @@ const routes: Route[] = [
  */
 export const createClient = (config: ClientConfig = {}) => {
   const client = baseCreateClient(repositoryName, {
+    accessToken: PRISMIC_ACCESS_TOKEN,
     routes,
     fetchOptions: isProduction()
       ? { next: { tags: ["prismic"] }, cache: "force-cache" }

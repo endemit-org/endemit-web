@@ -2,10 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { draftMode } from "next/headers";
+import { PrismicPreview } from "@prismicio/next";
 import RootShell from "@/app/_components/RootShell";
 import TrackingScripts from "@/app/_components/analytics/TrackingScripts";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { buildRootMetadata } from "@/lib/util/rootMetadata";
+import { repositoryName } from "@/prismicio";
 
 // Emitted as <meta name="color-scheme" content="dark"> — tells forced-dark
 // browsers (Samsung Internet) not to re-darken our already-dark palette.
@@ -43,12 +46,23 @@ export default async function LocaleLayout({
   // Enable static rendering for this locale.
   setRequestLocale(locale as AppLocale);
 
+  // Prismic toolbar (live refresh + exit) only for editors in a preview
+  // session, so regular visitors never load the third-party script.
+  const { isEnabled: isPreviewing } = await draftMode();
+
   return (
     <RootShell lang={locale}>
       {/* Public pages only. The admin/POS/scan areas live under the
           unlocalized layout and are intentionally never tracked. */}
       <TrackingScripts />
       <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      {isPreviewing && (
+        <PrismicPreview
+          repositoryName={repositoryName}
+          updatePreviewURL="/api/v1/prismic/preview"
+          exitPreviewURL="/api/v1/prismic/exit-preview"
+        />
+      )}
     </RootShell>
   );
 }
