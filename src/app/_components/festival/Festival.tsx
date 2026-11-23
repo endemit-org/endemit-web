@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- hand-tuned srcset on local, pre-optimized art */
 import type { CSSProperties, ReactNode } from "react";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
+import LanguageSwitcher from "@/app/_components/ui/LanguageSwitcher";
 import BoilDefs from "./BoilDefs";
 import FestivalNewsletter from "./FestivalNewsletter";
 import { Link } from "@/i18n/navigation";
@@ -223,10 +224,14 @@ const METEORS = [
   ["66%", "96%", 5.8, 7],
 ] as const;
 
-export default function Festival({ locale, data }: { locale: FestivalLocale; data: FestivalData }) {
+type Legal = { text: string; links: { href: string; label: string }[] } | null;
+
+export default function Festival({ locale, data, legal = null }: { locale: FestivalLocale; data: FestivalData; legal?: Legal }) {
   const t = festivalCopy[locale];
   const now = Date.now();
   const dateFormat = new Intl.DateTimeFormat(locale === "sl" ? "sl-SI" : "en-GB", { day: "numeric", month: "short" });
+  // The batch on sale, or the next one to open: later batches fade with distance from it.
+  const current = Math.max(0, data.timeline.findIndex(step => stepState(step, now) !== "done"));
   const marquee = (
     <span>
       {t.marquee.map((phrase, i) => (
@@ -266,6 +271,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
           <Link href="/" className={`${styles.tag} ${styles.home}`}>
             ← {t.home}
           </Link>
+          <LanguageSwitcher className={styles.language} />
           <div className={styles.mark}>
             <h1 style={{ margin: 0 }}>
               <span className={`${styles.logo} ${styles.boil}`} role="img" aria-label="Endemit">
@@ -422,7 +428,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             {data.timeline.map((step, index) => {
               const state = stepState(step, now);
               return (
-                <li key={step.title} className={styles.step} data-state={state} style={css({ "--rise": index })}>
+                <li key={step.title} className={styles.step} data-state={state} style={css({ "--rise": index, "--far": Math.max(0, index - current) })}>
                   <span className={styles.stepDot} aria-hidden />
                   <span className={styles.stepTitle}>{step.title}</span>
                   <span className={styles.stepPrice}>{step.price === null ? "" : formatPrice(step.price)}</span>
@@ -523,6 +529,18 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         </span>
         <Link href="/events">{t.allEvents} →</Link>
         <Link href="/festival/info">{t.infoMore}</Link>
+        <LanguageSwitcher className={styles.footLanguage} />
+        {legal ? (
+          <p className={styles.legal}>
+            {legal.text}
+            {legal.links.map(link => (
+              <span key={link.href}>
+                {" · "}
+                <Link href={link.href}>{link.label}</Link>
+              </span>
+            ))}
+          </p>
+        ) : null}
       </footer>
 
       <Gallery photos={GALLERY} labels={{ title: t.galleryAll, close: t.galleryClose, previous: t.galleryPrevious, next: t.galleryNext }} />

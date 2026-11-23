@@ -247,9 +247,20 @@ async function main() {
     },
   ];
 
+  // Drafts from earlier runs. With FESTIVAL_UPDATE=1 they are updated in place
+  // instead of created (creating again fails: the UID is taken).
+  const DRAFT_IDS: Record<string, string> = {
+    "endemit-festival-2027-single-ticket": "awQzORIAAC0AIuWt",
+    "endemit-festival-2027-duo-ticket": "awQzNhIAACwAIuWk",
+    "endemit-festival-2027-group-ticket": "awQzNBIAAC0AIuWb",
+    "endemit-festival-2027-evening-ticket": "awRkcRIAAC0AIz-4",
+    "endemit-festival-2027-tent": "awQzMhIAAC0AIuWU",
+    "endemit-festival-2027-bus-ljubljana": "awQzMBIAACcAIuWK",
+  };
+  const updating = process.env.FESTIVAL_UPDATE === "1";
   const wanted = only === "event" ? [] : only === "day" ? products.filter(p => p.cutoff) : products;
   for (const p of wanted) {
-    migration.createDocument(
+    const productDoc =
       {
         type: "product",
         uid: p.uid,
@@ -282,9 +293,10 @@ async function main() {
           display_content_slices: "Above description",
           slices: [],
         } as never,
-      },
-      p.title
-    );
+      };
+    const draftId = updating ? DRAFT_IDS[p.uid] : undefined;
+    if (draftId) migration.updateDocument({ ...productDoc, id: draftId } as never, p.title);
+    else migration.createDocument(productDoc as never, p.title);
   }
 
   await client.migrate(migration, {

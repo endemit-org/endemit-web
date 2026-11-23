@@ -258,6 +258,16 @@
 .dateline b { color: var(--salmon); font-weight: 400; }
 .heroActions { margin-top: 1.6rem; display: flex; justify-content: center; }
 /* Sits under the button in the same column, so the two can never collide. */
+.language {
+  position: absolute;
+  z-index: 4;
+  top: calc(18px + env(safe-area-inset-top));
+  right: var(--gutter);
+  font-size: 0.95rem;
+  color: var(--salmon);
+}
+.footLanguage { font-size: 0.95rem; color: var(--lilac); }
+.legal { flex: 0 0 100%; margin: 0.6rem 0 0; padding-top: 1.2rem; border-top: 2px dashed rgba(169, 155, 234, 0.3); font-size: 0.8rem; text-align: center; color: var(--lilac); opacity: 0.85; }
 /* The way back to the rest of Endemit. */
 .home {
   position: absolute;
@@ -747,6 +757,8 @@
 .step[data-state="now"] .stepDot { background: var(--red); border-color: var(--red); }
 .step[data-state="now"] .stepPrice { color: var(--salmon); }
 .step[data-state="done"] .stepTitle, .step[data-state="done"] .stepPrice, .step[data-state="done"] .stepMeta { text-decoration: line-through; opacity: 0.45; }
+/* Batches still ahead: the further off, the fainter and softer. */
+.step[data-state="next"] { opacity: calc(1 - var(--far, 0) * 0.17); filter: blur(calc(var(--far, 0) * 0.6px)); }
 /* Rubber stamp: red on the batch on sale, hollow on the ones that are gone. */
 .stepStamp {
   --tilt: -4deg;
@@ -765,10 +777,13 @@
 }
 .step[data-state="done"] .stepStamp { --tilt: 3deg; border-color: var(--lilac); background: none; color: var(--lilac); }
 .step[data-state="now"] { border-color: var(--red); }
-.step[data-state="now"]::after { border-color: var(--red); }
+.timeline .step[data-state="now"]::after { border-color: var(--red); }
 /* Wide screens: the batches climb like stairs, one step per price rise. */
 @media (min-width: 900px) {
-  .timeline { grid-template-columns: repeat(4, 1fr); align-items: end; gap: 0; margin-top: 1.4rem; border-bottom: 3px solid var(--lilac); }
+  .timeline { position: relative; grid-template-columns: repeat(4, 1fr); align-items: end; gap: 0; margin-top: 1.4rem; }
+  /* The ground line under the stairs, drawn like the other outlines. */
+  .timeline::after { content: ""; position: absolute; inset: auto 0 -3px; height: 3px; background: var(--lilac); filter: url(#fest-boil-a); }
+  [data-inview="true"] .timeline::after { animation: boilBig 0.42s steps(1) infinite; }
   .step, .step:last-child {
     grid-template-columns: 1fr;
     align-content: start;
@@ -778,8 +793,8 @@
     border: 0;
     background: rgba(4, 6, 18, 0.35);
   }
-  .step::after { display: block; inset: 0; border: 0; border-top: 3px solid currentColor; border-left: 3px solid currentColor; }
-  .step:last-child::after { border-right: 3px solid currentColor; }
+  .timeline .step::after { display: block; inset: 0; border: 0; border-top: 3px solid currentColor; border-left: 3px solid currentColor; }
+  .timeline .step:last-child::after { border-right: 3px solid currentColor; }
   .stepDot { display: none; }
   .stepPrice { order: -1; font-size: 3.4rem; }
   .stepMeta, .stepStamp { grid-column: auto; }
