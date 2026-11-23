@@ -20,7 +20,7 @@ import { formatPrice } from "@/lib/util/formatting";
 import type { FestivalLocale } from "./copy";
 import type { FestivalOffer } from "./data";
 import BoilDefs from "./BoilDefs";
-import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, normalizeBooking, PASSES, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
+import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, normalizeBooking, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
 import { Stepper } from "./TicketBuilder";
 import styles from "./festival.module.css";
 
@@ -253,7 +253,6 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
 
   const ticketLines = lines.filter(line => line.offer.kind === "ticket" || line.offer.kind === "day");
   const isDay = booking.pass !== "weekend";
-  const passes = PASSES.filter(pass => pass === "weekend" || offers.some(offer => offer.key === pass && offer.sellable));
   const tent = offers.find(offer => offer.key === "tent" && offer.sellable);
   const bus = offers.find(offer => offer.key === "bus" && offer.sellable);
   const topups = offers.filter(offer => offer.kind === "topup" && offer.sellable);
@@ -494,17 +493,6 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
           <section className={styles.stepCart}>
             <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.order}</h2>
             <div className={styles.cart}>
-              {passes.length > 1 ? (
-                <div className={styles.cartRow}>
-                  <div className={styles.chips} role="group" aria-label={t.tickets}>
-                    {passes.map(pass => (
-                      <button key={pass} type="button" aria-pressed={booking.pass === pass} className={styles.chip} onClick={() => onBooking({ pass })}>
-                        {t.passes[pass]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
               <div className={styles.cartRow}>
                 <div>
                   <b>{t.tickets}</b> · {formatPrice(linesTotal(ticketLines))}
