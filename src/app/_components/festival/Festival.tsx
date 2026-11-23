@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element -- hand-tuned srcset on local, pre-optimized art */
 import type { CSSProperties, ReactNode } from "react";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
-import FestivalSubscribe from "@/app/_components/newsletter/FestivalSubscribe";
+import FestivalNewsletter from "./FestivalNewsletter";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
 import { festivalCopy, type FestivalLocale } from "./copy";
 import type { FestivalData, TimelineStep } from "./data";
-import { FilmPlayer, LoopVideo, MapViewer, SceneMotion, SoundToggle } from "./motion";
+import { FilmPlayer, LoopVideo, MapViewer, SceneMotion, SectionNav, SoundToggle } from "./motion";
 import TicketBuilder from "./TicketBuilder";
 import styles from "./festival.module.css";
 
@@ -178,6 +178,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
   return (
     <main id={ROOT_ID} className={styles.root} lang={locale}>
       <SceneMotion rootId={ROOT_ID} />
+      <SectionNav label={t.navLabel} items={t.nav} />
       <svg className={styles.defs} aria-hidden focusable="false">
         <defs>
           {[
@@ -239,7 +240,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       </header>
 
       {/* ---- about, on the far hill ---- */}
-      <Scene className={styles.about}>
+      <Scene className={styles.about} id="about">
         <div className={`${styles.inner} ${styles.aboutGrid}`}>
           <div>
             <p className={styles.kicker}>{t.tagline}</p>
@@ -268,7 +269,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       </div>
 
       {/* ---- film, on the middle hill ---- */}
-      <Scene className={styles.film}>
+      <Scene className={styles.film} id="film">
         <div className={`${styles.inner} ${styles.filmGrid}`}>
           <div>
             <p className={styles.kicker}>Endemit N&amp;D</p>
@@ -355,7 +356,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       </Scene>
 
       {/* ---- map ---- */}
-      <Scene className={styles.map}>
+      <Scene className={styles.map} id="map">
         <div className={styles.inner}>
           <Echo>{t.mapTitle}</Echo>
           <p className={styles.lede} style={{ marginTop: "1.4rem" }}>
@@ -373,7 +374,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       </Scene>
 
       {/* ---- practical, down among the trees ---- */}
-      <Scene className={styles.info}>
+      <Scene className={styles.info} id="info">
         <div className={styles.inner}>
           <Echo>{t.infoTitle}</Echo>
           <div className={styles.infoGrid}>
@@ -412,7 +413,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         <div className={styles.inner}>
           <Echo>{t.newsletterTitle}</Echo>
           <div className={styles.newsletter}>
-            <FestivalSubscribe title="" description={t.newsletterText} />
+            <FestivalNewsletter locale={locale} description={t.newsletterText} />
           </div>
         </div>
       </Scene>

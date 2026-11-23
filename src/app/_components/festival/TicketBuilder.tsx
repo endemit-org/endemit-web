@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
 import type { FestivalLocale } from "./copy";
@@ -45,6 +45,31 @@ const text = {
     more: "Več",
   },
 } as const;
+
+const TentIcon = () => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 6.5 4.5 25.5h23L16 6.5Z" />
+    <path d="M16 6.5V4M12 25.5l4-8 4 8" />
+  </svg>
+);
+
+const SeatIcon = () => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11.5 7v12.5H23" strokeWidth="4.6" />
+    <path d="M13 24v3.5M22 24v3.5M17 14h5" strokeWidth="2.4" />
+  </svg>
+);
+
+function Units({ count, tone, children }: { count: number; tone: "tent" | "seat"; children: ReactNode }) {
+  if (count < 1) return null;
+  return (
+    <div className={styles.units} data-tone={tone} aria-hidden>
+      {Array.from({ length: count }, (_, i) => (
+        <span key={i}>{children}</span>
+      ))}
+    </div>
+  );
+}
 
 function Stepper({
   value,
@@ -155,6 +180,9 @@ export default function TicketBuilder({
               {t.tent} · {formatPrice(tent.price)}
             </span>
             <span className={styles.rowNote}>{tent.note}</span>
+            <Units count={booking.tents} tone="tent">
+              <TentIcon />
+            </Units>
           </div>
           <Stepper value={booking.tents} min={0} max={booking.people} onChange={tents => update({ tents })} label={t.tent} less={t.less} more={t.more} />
         </div>
@@ -167,6 +195,9 @@ export default function TicketBuilder({
               {t.bus} · {formatPrice(bus.price)}
             </span>
             <span className={styles.rowNote}>{bus.note}</span>
+            <Units count={booking.bus} tone="seat">
+              <SeatIcon />
+            </Units>
           </div>
           <Stepper value={booking.bus} min={0} max={booking.people} onChange={value => update({ bus: value })} label={t.bus} less={t.less} more={t.more} />
         </div>

@@ -41,6 +41,8 @@ export type FestivalCopy = {
   location: Block;
   storiesTitle: string;
   newsletterTitle: string;
+  navLabel: string;
+  nav: { id: string; label: string }[];
   newsletterText: string;
   soundOn: string;
   soundOff: string;
@@ -141,6 +143,15 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     },
     storiesTitle: "Whispers from the valley",
     newsletterTitle: "Stay in the loop",
+    navLabel: "Sections",
+    nav: [
+      { id: "about", label: "About" },
+      { id: "film", label: "Film" },
+      { id: "tickets", label: "Tickets" },
+      { id: "map", label: "Map" },
+      { id: "info", label: "Info" },
+      { id: "newsletter", label: "News" },
+    ],
     newsletterText: "Line up, ticket batches and stories from the valley, straight to your inbox.",
     soundOn: "Sound on",
     soundOff: "Sound off",
@@ -238,6 +249,15 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     },
     storiesTitle: "Šepeti iz doline",
     newsletterTitle: "Ostani na vezi",
+    navLabel: "Sekcije",
+    nav: [
+      { id: "about", label: "Zgodba" },
+      { id: "film", label: "Film" },
+      { id: "tickets", label: "Karte" },
+      { id: "map", label: "Plac" },
+      { id: "info", label: "Info" },
+      { id: "newsletter", label: "Novice" },
+    ],
     newsletterText: "Line up, runde kart pa zgodbe iz doline, naravnost v tvoj nabiralnik.",
     soundOn: "Zvok ofnan",
     soundOff: "Zvok ugasnen",

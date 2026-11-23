@@ -218,3 +218,53 @@ export function SoundToggle({ onLabel, offLabel }: { onLabel: string; offLabel: 
     </button>
   );
 }
+
+/** Fixed strip of section links; shows once the hero is scrolled past. */
+export function SectionNav({ label, items }: { label: string; items: { id: string; label: string }[] }) {
+  const [shown, setShown] = useState(false);
+  const [active, setActive] = useState("");
+  const strip = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const line = window.innerHeight * 0.4;
+      let current = "";
+      for (const item of items) {
+        const top = document.getElementById(item.id)?.getBoundingClientRect().top;
+        if (top !== undefined && top <= line) current = item.id;
+      }
+      setActive(current);
+      setShown(window.scrollY > window.innerHeight * 0.55);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [items]);
+
+  // Keep the active link visible when the strip overflows on a phone.
+  useEffect(() => {
+    const bar = strip.current;
+    const link = bar?.querySelector<HTMLElement>('[aria-current="true"]');
+    if (bar && link) bar.scrollTo({ left: link.offsetLeft - (bar.clientWidth - link.offsetWidth) / 2, behavior: "smooth" });
+  }, [active]);
+
+  return (
+    <nav ref={strip} className={styles.nav} aria-label={label} data-shown={shown} inert={!shown}>
+      {items.map(item => (
+        <a key={item.id} href={`#${item.id}`} aria-current={active === item.id ? "true" : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  );
+}
