@@ -458,11 +458,10 @@
   background: var(--hill-mid);
 }
 .shot[data-tone="night"] img, .shot[data-tone="night"] > video { border-color: var(--lilac); }
-/* Scrolling bends the pictures and turns their colours. */
+/* Scrolling bends shapes out of place; colours stay as painted. */
 .shot > button, .shot > video {
   transform: skewY(calc(var(--v, 0) * 5deg)) scaleY(calc(1 + var(--va, 0) * 0.07));
 }
-.shot[data-tone="night"] > * { filter: hue-rotate(calc(var(--v, 0) * 55deg)) saturate(calc(1 + var(--va, 0) * 0.4)); }
 .root[data-warping="true"] .shot > *,
 .root[data-warping="true"] .reel button,
 .root[data-warping="true"] .mapButton img,
@@ -471,7 +470,7 @@
 .root[data-warping="true"] .heroHill,
 .root[data-warping="true"] .forestEdge,
 .root[data-warping="true"] .tree > img:first-child {
-  filter: url(#fest-warp) hue-rotate(calc(var(--v, 0) * 55deg)) saturate(calc(1 + var(--va, 0) * 0.4));
+  filter: url(#fest-warp);
 }
 .echo { transform: skewX(calc(var(--v, 0) * -10deg)); }
 
@@ -507,30 +506,30 @@
 }
 .collageMore { margin: 2.6rem 0 0; text-align: center; }
 
-/* Day turns to night: a band that folds into a fractal while it is scrolled. */
+/* Day turns to night: the painted sky opens between the two halves. */
 .trip {
   position: relative;
   grid-column: 1 / -1;
   width: 100vw;
-  height: clamp(420px, 92svh, 780px);
+  height: clamp(380px, 80svh, 700px);
   margin: 2.5rem 0 2.5rem calc(50% - 50vw);
   overflow: hidden;
-  background: var(--hill-near);
-  -webkit-mask-image: linear-gradient(transparent, #000 16%, #000 84%, transparent);
-  mask-image: linear-gradient(transparent, #000 16%, #000 84%, transparent);
+  background: var(--night);
+  -webkit-mask-image: linear-gradient(transparent, #000 24%, #000 76%, transparent);
+  mask-image: linear-gradient(transparent, #000 24%, #000 76%, transparent);
 }
-/* Without WebGL a still fan of the same colours stands in. */
-.trip::before {
-  content: "";
+.tripSky, .tripStars {
   position: absolute;
-  inset: 0;
-  opacity: 0.22;
-  background: repeating-conic-gradient(from 8deg at 50% 50%, var(--night) 0 9deg, var(--red) 9deg 18deg, var(--salmon) 18deg 27deg, var(--lilac) 27deg 36deg);
+  inset: -18% 0;
+  width: 100%;
+  height: 136%;
+  object-fit: cover;
+  pointer-events: none;
 }
-.trip[data-live="true"]::before { display: none; }
-.trip canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
-/* Faint on entry, a little stronger as it is scrolled through; never loud. */
-.trip[data-live="true"] canvas { opacity: calc(0.16 + var(--trip, 0.5) * 0.26); }
+.tripSky { object-position: 38% 30%; transform: translate3d(0, calc(var(--p, 0) * -60px), 0); }
+.tripStars { transform: translate3d(0, calc(var(--p, 0) * -200px), 0) scale(1.2); animation: twinkle 1.3s steps(1) infinite paused; }
+.tripStarsB { transform: translate3d(0, calc(var(--p, 0) * -340px), 0) scale(-1.7, 1.7); animation-name: twinkleB; animation-duration: 1.7s; }
+[data-inview="true"] .tripStars { animation-play-state: running; }
 .tripWords { position: absolute; inset: 0; }
 .tripWords span {
   position: absolute;
@@ -545,14 +544,14 @@
   text-align: center;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 2px var(--hill-near);
-  transform: translate3d(0, calc((var(--trip, 0.5) - 0.5) * var(--i) * 150px), 0);
+  -webkit-text-stroke: 1.5px var(--salmon);
+  transform: translate3d(0, calc(var(--i) * -0.2em + var(--v, 0) * var(--i) * -46px), 0);
+  opacity: calc(1 - var(--i) * 0.22);
 }
 .tripWords span:first-child {
   z-index: 1;
   color: var(--cream);
   -webkit-text-stroke: 0;
-  text-shadow: 4px 4px 0 var(--hill-near), -2px -2px 0 var(--hill-near), 2px -2px 0 var(--hill-near), -2px 2px 0 var(--hill-near);
 }
 @media (min-width: 900px) {
   .collage { grid-template-columns: repeat(12, 1fr); }
@@ -918,7 +917,7 @@
     transition: none !important;
   }
   .boil, .boilSmall { filter: none; }
-  .sky, .stars, .mark, .heroHill, .edge, .tree, .echo > span[aria-hidden], .tripWords span { transform: none; }
+  .sky, .stars, .mark, .heroHill, .edge, .tree, .echo > span[aria-hidden], .tripWords span, .tripSky, .tripStars { transform: none; }
   .mark { opacity: 1; }
   .pattern span { transform: none; }
   .heroHill, .edge, .forestEdge { transform: translate3d(-50%, 0, 0); }

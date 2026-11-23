@@ -10,7 +10,6 @@ import { FilmPlayer, LoopVideo, MapViewer, SceneMotion, SectionNav, SoundToggle 
 import Gallery from "./Gallery";
 import { findPhoto, GALLERY, PLACE } from "./photos";
 import TicketBuilder from "./TicketBuilder";
-import Trip from "./Trip";
 import styles from "./festival.module.css";
 
 const ART = "/images/festival/2027";
@@ -361,7 +360,21 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             {DAY.map((shot, i) => (
               <ShotFigure key={i} shot={shot} tone="day" />
             ))}
-            <Trip word={t.nightWord} />
+            <div className={styles.trip} aria-hidden>
+              <picture>
+                <source type="image/avif" srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1400.avif 1400w`} sizes="100vw" />
+                <img className={styles.tripSky} src={`${ART}/sky-fallback.webp`} width={1400} height={1253} alt="" loading="lazy" decoding="async" />
+              </picture>
+              <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.tripStars} />
+              <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.tripStars} ${styles.tripStarsB}`} />
+              <div className={`${styles.tripWords} ${styles.boil}`}>
+                {[0, 1, 2, 3].map(i => (
+                  <span key={i} style={css({ "--i": i })}>
+                    {t.nightWord}
+                  </span>
+                ))}
+              </div>
+            </div>
             {NIGHT.map((shot, i) => (
               <ShotFigure key={i} shot={shot} tone="night" />
             ))}
