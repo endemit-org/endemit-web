@@ -10,6 +10,7 @@ import { useWalletCredit } from "@/app/_hooks/useWalletCredit";
 import { getCheckoutTotals } from "@/domain/checkout/actions/getCheckoutTotals";
 import { getRoundedUpTotal } from "@/domain/checkout/actions/getRoundedUpTotal";
 import { getSuggestedDonationAmount } from "@/domain/checkout/actions/getSuggestedDonationAmount";
+import { isCutoffWithin48Hours, isProductSellableByCutoffDate } from "@/domain/product/businessLogic";
 import type { Product } from "@/domain/product/types/product";
 import { Link, useRouter } from "@/i18n/navigation";
 import { PUBLIC_BASE_WEB_URL, PUBLIC_STRIPE_PUBLISHABLE_KEY } from "@/lib/services/env/public";
@@ -18,7 +19,8 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import { formatPrice } from "@/lib/util/formatting";
 import type { FestivalLocale } from "./copy";
 import type { FestivalOffer } from "./data";
-import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
+import BoilDefs from "./BoilDefs";
+import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, normalizeBooking, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
 import { Stepper } from "./TicketBuilder";
 import styles from "./festival.module.css";
 
@@ -220,6 +222,7 @@ function useWide() {
 
 function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly, wallet, promo, donation, suggestion, onDonate, onSkipDonation, subTotal, discountAmount, offers, booking, onBooking }: FormProps) {
   const consent = useTranslations("checkout.customer");
+  const item = useTranslations("checkout.item");
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -248,6 +251,21 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
   const tent = offers.find(offer => offer.key === "tent" && offer.sellable);
   const bus = offers.find(offer => offer.key === "bus" && offer.sellable);
   const topups = offers.filter(offer => offer.kind === "topup" && offer.sellable);
+
+  // Per-line notes, as in the shop cart: order limits and closing sales.
+  const notes = lines.flatMap(({ offer, quantity }) => {
+    const product = offer.product;
+    if (!product) return [];
+    const name = product.name;
+    const limit = product.limits?.quantityLimit;
+    if (limit && quantity > limit) return [{ key: `${offer.key}-limit`, blocking: true, text: `${name}: ${item("maxQuantity", { quantity: limit })}` }];
+    if (!product.limits?.cutoffTimestamp) return [];
+    if (!isProductSellableByCutoffDate(product)) return [{ key: `${offer.key}-gone`, blocking: true, text: `${name}: ${item("noLongerAvailable")}` }];
+    if (!isCutoffWithin48Hours(product)) return [];
+    const until = new Intl.DateTimeFormat(document.documentElement.lang || "sl", { dateStyle: "medium", timeStyle: "short" }).format(new Date(product.limits.cutoffTimestamp));
+    return [{ key: `${offer.key}-until`, blocking: false, text: `${name}: ${item("availableUntil")} ${until}` }];
+  });
+  const blocked = notes.some(note => note.blocking);
 
   const go = (next: Step) => {
     setStep(next);
@@ -349,7 +367,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
   if (demoDone) {
     return (
       <div>
-        <h2 className={styles.panelTitle}>{t.demoDone}</h2>
+        <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.demoDone}</h2>
         <ol className={styles.demoSteps}>
           {t.demoSteps.map(step => (
             <li key={step}>{step}</li>
@@ -400,7 +418,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
       <div className={styles.checkoutGrid} data-step={step}>
         {/* ---- details: who buys, who comes ---- */}
         <section className={styles.stepInfo}>
-          <h2 className={styles.panelTitle}>{t.contact}</h2>
+          <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.contact}</h2>
           <div className={styles.field}>
             <label htmlFor="fest-email">{t.email}</label>
             <input id="fest-email" type="email" autoComplete="email" inputMode="email" required readOnly={signedIn} value={email} onChange={e => setEmail(e.target.value)} aria-invalid={submitted && !emailValid} />
@@ -414,7 +432,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
             </div>
           )}
 
-          <h2 className={styles.panelTitle}>{t.holders}</h2>
+          <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.holders}</h2>
           {holders.map(holder => (
             <div key={holder.field} className={styles.field}>
               <label htmlFor={holder.field}>{holder.label}</label>
@@ -468,7 +486,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
         <aside>
           {/* ---- cart ---- */}
           <section className={styles.stepCart}>
-            <h2 className={styles.panelTitle}>{t.order}</h2>
+            <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.order}</h2>
             <div className={styles.cart}>
               <div className={styles.cartRow}>
                 <div>
@@ -529,6 +547,11 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                 </div>
               ) : null}
             </div>
+            {notes.map(note => (
+              <p key={note.key} className={note.blocking ? styles.error : styles.notice}>
+                {note.text}
+              </p>
+            ))}
 
             {suggestion ? (
               <div className={styles.donation}>
@@ -555,8 +578,23 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
 
             <div className={`${styles.total} ${styles.stepOnly}`}>
               <span className={styles.rowLabel}>{t.subtotal}</span>
-              <span className={styles.totalSum}>{formatPrice(subTotal)}</span>
+              <span className={`${styles.totalSum} ${styles.boilSmall}`}>{formatPrice(subTotal)}</span>
             </div>
+            {/* A code that arrived with the link shows its effect on the first step already. */}
+            {discountAmount !== 0 ? (
+              <div className={styles.stepOnly}>
+                <p className={styles.extraRow}>
+                  <span>
+                    {t.discount} {applied ? <b>{applied.promoCodeKey}</b> : null}
+                  </span>
+                  <span>{formatPrice(discountAmount)}</span>
+                </p>
+                <p className={styles.extraRow}>
+                  <b>{t.total}</b>
+                  <b>{formatPrice(subTotal + discountAmount)}</b>
+                </p>
+              </div>
+            ) : null}
             <div className={styles.stepNav}>
               <button type="button" className={`${styles.tag} ${styles.tagSolid}`} onClick={() => go(2)}>
                 {t.toDetails} →
@@ -589,7 +627,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
             </ul>
             <div className={styles.total}>
               <span className={styles.rowLabel}>{t.total}</span>
-              <span className={styles.totalSum}>{formatPrice(payable)}</span>
+              <span className={`${styles.totalSum} ${styles.boilSmall}`}>{formatPrice(payable)}</span>
             </div>
 
             {applied ? (
@@ -601,7 +639,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                   {t.promoRemove}
                 </button>
               </p>
-            ) : promoOpen ? (
+            ) : promoOpen || promo.promoCodeValue || promo.error ? (
               <>
                 <div className={styles.promo}>
                   <input
@@ -682,7 +720,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
             {error ? <p className={styles.error} role="alert">{error}</p> : null}
 
             <div className={styles.payNav}>
-              <button type="submit" className={`${styles.tag} ${styles.tagSolid}`} disabled={busy || !stripe || (!walletOnly && !ready)}>
+              <button type="submit" className={`${styles.tag} ${styles.tagSolid}`} disabled={busy || blocked || !stripe || (!walletOnly && !ready)}>
                 {busy ? t.paying : `${t.pay} ${formatPrice(payable)}`}
               </button>
               <button type="button" className={`${styles.linkButton} ${styles.stepOnly}`} onClick={() => go(2)} disabled={busy}>
@@ -717,9 +755,30 @@ export default function FestivalCheckout({
   const [donationSkipped, setDonationSkipped] = useState(false);
 
   const [loaded, setLoaded] = useState(false);
+  // Shareable link: /festival/checkout?people=4&tents=2&bus=4&topup=50&code=FRIENDS20
+  // The link is an entry point, not state: it is read once and stripped from the URL.
+  const [linkCode, setLinkCode] = useState("");
   useEffect(() => {
-    setBooking(readBooking());
+    const url = new URL(window.location.href);
+    const query = url.searchParams;
+    const number = (name: string) => Number.parseInt(query.get(name) ?? "", 10);
+    let next = readBooking();
+    if (Number.isFinite(number("people"))) {
+      next = normalizeBooking({
+        people: number("people"),
+        tents: number("tents") || 0,
+        bus: number("bus") || 0,
+        topup: query.get("topup") ? `topup-${query.get("topup")}` : null,
+      });
+      writeBooking(next);
+    }
+    setBooking(next);
     setLoaded(true);
+    setLinkCode((query.get("code") ?? "").trim().toUpperCase());
+    if (["people", "tents", "bus", "topup", "code"].some(name => query.has(name))) {
+      for (const name of ["people", "tents", "bus", "topup", "code"]) query.delete(name);
+      window.history.replaceState(window.history.state, "", url);
+    }
   }, []);
 
   // The cart stays editable here, under the same rules as on the festival page.
@@ -755,6 +814,19 @@ export default function FestivalCheckout({
   const subTotal = linesTotal(lines) + (donation ? donation.product.price * donation.quantity : 0);
 
   const promo = usePromoCodes(cartItems, subTotal, 0);
+  // The code from the link is applied in a second pass: validation needs the
+  // cart total and the code to have landed in state first.
+  const { promoCodeValue, setPromoCodeValue, applyPromoCode } = promo;
+  const [linkCodeApplied, setLinkCodeApplied] = useState(false);
+  useEffect(() => {
+    if (!linkCode || linkCodeApplied || subTotal <= 0) return;
+    if (promoCodeValue !== linkCode) {
+      setPromoCodeValue(linkCode);
+      return;
+    }
+    setLinkCodeApplied(true);
+    void applyPromoCode();
+  }, [linkCode, linkCodeApplied, subTotal, promoCodeValue, setPromoCodeValue, applyPromoCode]);
   const totals = getCheckoutTotals({ subTotal, discount: promo.discount, shippingCost: 0, items: cartItems });
   // Same rule as the shop: Wallet credit cannot buy a Wallet top up.
   const hasTopup = lines.some(line => line.offer.kind === "topup");
@@ -793,7 +865,8 @@ export default function FestivalCheckout({
   };
 
   return (
-    <main className={`${styles.root} ${styles.page}`} lang={locale}>
+    <main className={`${styles.root} ${styles.page}`} lang={locale} data-inview="true">
+      <BoilDefs />
       <div className={styles.inner}>
         <div className={styles.pageHead}>
           <Link href="/festival" className={styles.footLogo} aria-label="Endemit festival">
@@ -803,7 +876,7 @@ export default function FestivalCheckout({
             ← {t.back}
           </Link>
         </div>
-        <h1 className={`${styles.display} ${styles.pageTitle}`}>{t.title}</h1>
+        <h1 className={`${styles.display} ${styles.pageTitle} ${styles.boil}`}>{t.title}</h1>
         {demo ? <p className={styles.notice}>{t.demoBanner}</p> : null}
 
         {!loaded ? null : !salesOpen || !booking || !hasTicket || subTotal <= 0 ? (

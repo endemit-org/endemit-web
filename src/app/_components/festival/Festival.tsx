@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- hand-tuned srcset on local, pre-optimized art */
 import type { CSSProperties, ReactNode } from "react";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
+import BoilDefs from "./BoilDefs";
 import FestivalNewsletter from "./FestivalNewsletter";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
@@ -241,27 +242,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
     <main id={ROOT_ID} className={styles.root} lang={locale}>
       <SceneMotion rootId={ROOT_ID} />
       <SectionNav label={t.navLabel} items={t.nav} />
-      <svg className={styles.defs} aria-hidden focusable="false">
-        <defs>
-          {[
-            ["fest-boil-a", 3, 5.5, 0.03],
-            ["fest-boil-b", 11, 5.5, 0.03],
-            ["fest-boil-c", 23, 5.5, 0.03],
-            ["fest-boil-sa", 5, 2.2, 0.05],
-            ["fest-boil-sb", 17, 2.2, 0.05],
-            ["fest-boil-sc", 29, 2.2, 0.05],
-          ].map(([id, seed, scale, frequency]) => (
-            <filter key={id} id={String(id)} x="-4%" y="-12%" width="108%" height="124%">
-              <feTurbulence type="fractalNoise" baseFrequency={frequency} numOctaves={2} seed={seed} result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale={scale} xChannelSelector="R" yChannelSelector="G" />
-            </filter>
-          ))}
-          <filter id="fest-warp" x="-12%" y="-12%" width="124%" height="124%">
-            <feTurbulence type="turbulence" baseFrequency="0.006 0.013" numOctaves={2} seed={7} result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale={0} xChannelSelector="R" yChannelSelector="B" />
-          </filter>
-        </defs>
-      </svg>
+      <BoilDefs warp />
 
       {/* ---- sky ---- */}
       <header className={styles.hero} data-scene>
