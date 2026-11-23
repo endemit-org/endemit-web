@@ -923,8 +923,39 @@
 .donation h3 { margin: 0; font-family: var(--font-heading), sans-serif; font-weight: 600; font-size: 1.6rem; line-height: 1; text-transform: uppercase; color: var(--salmon); }
 .donation p { margin: 0.5rem 0 0; font-size: 0.95rem; color: var(--lilac); }
 .donationActions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.4rem; margin-top: 1rem; }
-.checkoutGrid { display: grid; gap: 2.5rem; }
-@media (min-width: 900px) { .checkoutGrid { grid-template-columns: 1fr 22rem; gap: 4rem; align-items: start; } }
+/* Checkout. Phones walk three steps: cart, details, review and pay. Wide
+   screens show details on the left and cart, discount and payment on the right. */
+.checkoutGrid { display: grid; gap: 2.5rem; margin-top: 2rem; }
+.steps { display: flex; gap: 0.5rem; list-style: none; margin: 2rem 0 0; padding: 0; }
+.steps li { flex: 1; display: grid; justify-items: center; gap: 0.4rem; font-family: var(--font-heading), sans-serif; font-size: 0.95rem; letter-spacing: 0.08em; line-height: 1.1; text-align: center; text-transform: uppercase; color: var(--lilac); opacity: 0.55; }
+.steps li span { display: grid; place-items: center; width: 34px; height: 34px; border: 2px solid currentColor; border-radius: 50%; font-size: 1.1rem; }
+.steps li[data-state="now"] { color: var(--salmon); opacity: 1; }
+.steps li[data-state="now"] span { background: var(--salmon); border-color: var(--salmon); color: var(--hill-near); }
+.steps li[data-state="done"] { opacity: 1; }
+.stepNav, .payNav { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; margin-top: 1.8rem; }
+.recap { margin-bottom: 0.4rem; border-bottom: 2px dashed rgba(244, 167, 143, 0.35); }
+.recap summary { padding: 0.7rem 0; font-family: var(--font-heading), sans-serif; font-size: 1.4rem; text-transform: uppercase; color: var(--salmon); cursor: pointer; }
+.stepPay .panelTitle:first-child, .stepCart .panelTitle:first-child, .stepInfo .panelTitle:first-child { margin-top: 0; }
+.cart { margin-top: 0.4rem; }
+.cartRow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 0; border-bottom: 2px dashed rgba(244, 167, 143, 0.35); }
+.cartRow b { font-family: var(--font-heading), sans-serif; font-size: 1.3rem; font-weight: 600; text-transform: uppercase; color: var(--salmon); }
+.cartRow small { display: block; margin-top: 0.15rem; font-size: 0.85rem; color: var(--lilac); }
+.cartRow .stepper button { width: 38px; height: 38px; font-size: 1.2rem; }
+.cartRow .stepper output { font-size: 1.6rem; }
+.consent { display: grid; gap: 0.7rem; font-size: 0.92rem; }
+.wideOnly { display: none; }
+@media (max-width: 899px) {
+  .checkoutGrid[data-step="1"] .stepInfo, .checkoutGrid[data-step="1"] .stepPay,
+  .checkoutGrid[data-step="2"] aside,
+  .checkoutGrid[data-step="3"] .stepInfo, .checkoutGrid[data-step="3"] .stepCart { display: none; }
+}
+@media (min-width: 900px) {
+  .checkoutGrid { grid-template-columns: 1fr 24rem; gap: 4rem; align-items: start; margin-top: 2.4rem; }
+  .checkoutGrid aside { position: sticky; top: 1.5rem; }
+  .steps, .stepNav, .stepOnly, .recap { display: none; }
+  .wideOnly { display: block; }
+  .stepPay { margin-top: 0.6rem; }
+}
 .panelTitle { margin: 2.4rem 0 0; font-family: var(--font-heading), sans-serif; font-size: 2rem; font-weight: 600; line-height: 1; text-transform: uppercase; color: var(--salmon); }
 .panelTitle:first-child { margin-top: 0; }
 .stripe { margin-top: 1.2rem; }

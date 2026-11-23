@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe, type StripeElementsOptions } from "@stripe/stripe-js";
+import { useTranslations } from "next-intl";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import { usePromoCodes } from "@/app/_hooks/usePromoCodes";
 import { useWalletCredit } from "@/app/_hooks/useWalletCredit";
@@ -17,7 +18,8 @@ import { formatTokensFromCents } from "@/lib/util/currency";
 import { formatPrice } from "@/lib/util/formatting";
 import type { FestivalLocale } from "./copy";
 import type { FestivalOffer } from "./data";
-import { bookingLines, linesTotal, readBooking, type BookingLine } from "./booking";
+import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
+import { Stepper } from "./TicketBuilder";
 import styles from "./festival.module.css";
 
 const stripePromise = loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -47,6 +49,20 @@ const text = {
     errTerms: "Accept the terms to continue.",
     errGeneric: "Payment could not be started. Try again.",
     signedIn: "Signed in. Tickets go to this address.",
+    steps: ["Cart", "Details", "Review and pay"],
+    toDetails: "Continue",
+    toReview: "Continue to review",
+    stepBack: "Back",
+    subtotal: "Subtotal",
+    tickets: "Tickets",
+    people: "People",
+    tent: "Tent rental",
+    bus: "Bus seats",
+    topup: "Wallet top up",
+    topupNone: "None",
+    each: "each",
+    less: "Less",
+    more: "More",
     promoAdd: "I have a discount code",
     promoPlaceholder: "Code",
     promoApply: "Apply",
@@ -100,6 +116,20 @@ const text = {
     errTerms: "Za naprej se mormo strinjat s pogoji.",
     errGeneric: "Plačila ni blo mogoče zagnat. Probi še enkrat.",
     signedIn: "Prijavlen si. Karte grejo na ta naslov.",
+    steps: ["Košara", "Podatki", "Pregled pa plačilo"],
+    toDetails: "Naprej",
+    toReview: "Naprej na pregled",
+    stepBack: "Nazaj",
+    subtotal: "Vmesn seštevk",
+    tickets: "Karte",
+    people: "Ludi",
+    tent: "Najem šotora",
+    bus: "Sedeži na buso",
+    topup: "Polnitev denarnce",
+    topupNone: "Brez",
+    each: "na kos",
+    less: "Mn",
+    more: "Več",
     promoAdd: "Mam kodo za popust",
     promoPlaceholder: "Koda",
     promoApply: "Uporabi",
@@ -166,9 +196,30 @@ type FormProps = {
   suggestion: { amount: number; rounded: number } | null;
   onDonate: (amount: number) => void;
   onSkipDonation: () => void;
+  subTotal: number;
+  discountAmount: number;
+  offers: FestivalOffer[];
+  booking: Booking;
+  onBooking: (patch: Partial<Booking>) => void;
 };
 
-function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly, wallet, promo, donation, suggestion, onDonate, onSkipDonation }: FormProps) {
+type Step = 1 | 2 | 3;
+
+/** Wide screens show everything at once; phones go step by step. */
+function useWide() {
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 900px)");
+    const sync = () => setWide(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+  return wide;
+}
+
+function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly, wallet, promo, donation, suggestion, onDonate, onSkipDonation, subTotal, discountAmount, offers, booking, onBooking }: FormProps) {
+  const consent = useTranslations("checkout.customer");
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -182,6 +233,8 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
   const [ready, setReady] = useState(false);
   const [demoDone, setDemoDone] = useState(false);
   const [promoOpen, setPromoOpen] = useState(false);
+  const [step, setStep] = useState<Step>(1);
+  const wide = useWide();
 
   const signedIn = Boolean(userEmail);
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -189,6 +242,22 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
   const missingHolder = holders.some(holder => (names[holder.field] ?? "").trim().length < 2);
   const problem = !emailValid ? t.errEmail : !repeatValid ? t.errRepeat : missingHolder ? t.errHolder : !terms ? t.errTerms : "";
   const applied = promo.discount?.success ? promo.discount : null;
+  const donationTotal = donation ? donation.product.price * donation.quantity : 0;
+
+  const ticketLines = lines.filter(line => line.offer.kind === "ticket");
+  const tent = offers.find(offer => offer.key === "tent" && offer.sellable);
+  const bus = offers.find(offer => offer.key === "bus" && offer.sellable);
+  const topups = offers.filter(offer => offer.kind === "topup" && offer.sellable);
+
+  const go = (next: Step) => {
+    setStep(next);
+    window.scrollTo({ top: 0 });
+  };
+  // Details must be complete before the review step opens.
+  const toReview = () => {
+    setSubmitted(true);
+    if (!problem) go(3);
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -253,6 +322,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
       if (!response.ok || !result.orderId) throw new Error(result.error || t.errGeneric);
 
       if (result.fullWalletPayment) {
+        sessionStorage.removeItem(BOOKING_STORAGE_KEY);
         router.push(`/store/checkout/success/${result.orderId}`);
         return;
       }
@@ -265,6 +335,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
       });
       if (confirmation.error) throw new Error(confirmation.error.message || t.errGeneric);
       if (confirmation.paymentIntent?.status === "succeeded") {
+        sessionStorage.removeItem(BOOKING_STORAGE_KEY);
         router.push(`/store/checkout/success/${result.paymentIntentId}`);
         return;
       }
@@ -291,163 +362,336 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
     );
   }
 
+  const orderLines = (
+    <ul className={styles.summary}>
+      {lines.map(line => (
+        <li key={line.offer.key}>
+          <span>
+            {line.quantity}× {line.offer.product?.name ?? line.offer.label}
+          </span>
+          <span>{formatPrice(line.offer.price * line.quantity)}</span>
+        </li>
+      ))}
+      {donation ? (
+        <li>
+          <span>
+            {t.donationLine}{" "}
+            <button type="button" className={styles.linkButton} onClick={() => onDonate(0)} disabled={busy}>
+              {t.donationRemove}
+            </button>
+          </span>
+          <span>{formatPrice(donationTotal)}</span>
+        </li>
+      ) : null}
+    </ul>
+  );
+
   return (
     <form onSubmit={submit} noValidate>
-      <h2 className={styles.panelTitle}>{t.contact}</h2>
-      <div className={styles.field}>
-        <label htmlFor="fest-email">{t.email}</label>
-        <input id="fest-email" type="email" autoComplete="email" inputMode="email" required readOnly={signedIn} value={email} onChange={e => setEmail(e.target.value)} aria-invalid={submitted && !emailValid} />
-      </div>
-      {signedIn ? (
-        <p className={styles.fieldNote}>{t.signedIn}</p>
-      ) : (
-        <div className={styles.field}>
-          <label htmlFor="fest-email-repeat">{t.emailRepeat}</label>
-          <input id="fest-email-repeat" type="email" autoComplete="email" inputMode="email" required value={emailRepeat} onChange={e => setEmailRepeat(e.target.value)} aria-invalid={submitted && !repeatValid} />
-        </div>
-      )}
+      <ol className={styles.steps} aria-hidden>
+        {t.steps.map((label, i) => (
+          <li key={label} data-state={step === i + 1 ? "now" : step > i + 1 ? "done" : "next"}>
+            <span>{i + 1}</span>
+            {label}
+          </li>
+        ))}
+      </ol>
 
-      <h2 className={styles.panelTitle}>{t.holders}</h2>
-      {holders.map(holder => (
-        <div key={holder.field} className={styles.field}>
-          <label htmlFor={holder.field}>{holder.label}</label>
-          <input
-            id={holder.field}
-            type="text"
-            autoComplete="off"
-            placeholder={t.holderHint}
-            required
-            value={names[holder.field] ?? ""}
-            onChange={e => setNames(current => ({ ...current, [holder.field]: e.target.value }))}
-            aria-invalid={submitted && (names[holder.field] ?? "").trim().length < 2}
-          />
-        </div>
-      ))}
-
-      {suggestion ? (
-        <div className={styles.donation}>
-          <h3>{t.donationTitle}</h3>
-          <p>{t.donationText}</p>
-          <div className={styles.donationActions}>
-            <button type="button" className={`${styles.tag} ${styles.tagSolid}`} onClick={() => onDonate(suggestion.amount)} disabled={busy}>
-              {t.donationAdd} {formatPrice(suggestion.amount)} → {formatPrice(suggestion.rounded)}
-            </button>
-            <button type="button" className={styles.linkButton} onClick={onSkipDonation}>
-              {t.donationSkip}
-            </button>
+      <div className={styles.checkoutGrid} data-step={step}>
+        {/* ---- details: who buys, who comes ---- */}
+        <section className={styles.stepInfo}>
+          <h2 className={styles.panelTitle}>{t.contact}</h2>
+          <div className={styles.field}>
+            <label htmlFor="fest-email">{t.email}</label>
+            <input id="fest-email" type="email" autoComplete="email" inputMode="email" required readOnly={signedIn} value={email} onChange={e => setEmail(e.target.value)} aria-invalid={submitted && !emailValid} />
           </div>
-        </div>
-      ) : null}
+          {signedIn ? (
+            <p className={styles.fieldNote}>{t.signedIn}</p>
+          ) : (
+            <div className={styles.field}>
+              <label htmlFor="fest-email-repeat">{t.emailRepeat}</label>
+              <input id="fest-email-repeat" type="email" autoComplete="email" inputMode="email" required value={emailRepeat} onChange={e => setEmailRepeat(e.target.value)} aria-invalid={submitted && !repeatValid} />
+            </div>
+          )}
 
-      <h2 className={styles.panelTitle}>{t.payment}</h2>
+          <h2 className={styles.panelTitle}>{t.holders}</h2>
+          {holders.map(holder => (
+            <div key={holder.field} className={styles.field}>
+              <label htmlFor={holder.field}>{holder.label}</label>
+              <input
+                id={holder.field}
+                type="text"
+                autoComplete="off"
+                placeholder={t.holderHint}
+                required
+                value={names[holder.field] ?? ""}
+                onChange={e => setNames(current => ({ ...current, [holder.field]: e.target.value }))}
+                aria-invalid={submitted && (names[holder.field] ?? "").trim().length < 2}
+              />
+            </div>
+          ))}
 
-      {applied ? (
-        <p className={styles.extraRow}>
-          <span>
-            {t.promoApplied} <b>{applied.promoCodeKey}</b>
-          </span>
-          <button type="button" className={styles.linkButton} onClick={promo.removePromoCode} disabled={busy}>
-            {t.promoRemove}
-          </button>
-        </p>
-      ) : promoOpen ? (
-        <>
-          <div className={styles.promo}>
-            <input
-              type="text"
-              aria-label={t.promoPlaceholder}
-              placeholder={t.promoPlaceholder}
-              autoComplete="off"
-              autoCapitalize="characters"
-              value={promo.promoCodeValue}
-              onChange={e => promo.setPromoCodeValue(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  void promo.applyPromoCode();
-                }
-              }}
-            />
-            <button type="button" className={styles.tag} onClick={() => void promo.applyPromoCode()} disabled={promo.isLoading || !promo.promoCodeValue.trim()}>
-              {promo.isLoading ? t.promoApplying : t.promoApply}
-            </button>
-          </div>
-          {promo.error ? <p className={styles.error} role="alert">{t.promoError}</p> : null}
-        </>
-      ) : (
-        <p className={styles.extraRow}>
-          <button type="button" className={styles.linkButton} onClick={() => setPromoOpen(true)}>
-            {t.promoAdd}
-          </button>
-        </p>
-      )}
-
-      {wallet.canUseWallet ? (
-        <div className={styles.walletBox}>
-          <label className={styles.check} style={{ marginTop: 0 }}>
-            <input type="checkbox" checked={wallet.isUsingWallet} onChange={wallet.toggleWalletCredit} disabled={busy} />
-            <span>
-              <b>{t.walletUse}</b>
-              <br />
-              {t.walletAvailable}: {formatTokensFromCents(wallet.walletBalance)}
+          <label className={styles.check}>
+            <input type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} />
+            <span className={styles.consent}>
+              <span>
+                {consent.rich("consent.terms", {
+                  terms: chunks => <Link href="/terms-and-conditions" target="_blank">{chunks}</Link>,
+                  privacy: chunks => <Link href="/privacy-policy" target="_blank">{chunks}</Link>,
+                  withdrawal: chunks => <Link href="/right-to-withdrawal" target="_blank">{chunks}</Link>,
+                })}
+              </span>
+              <span>
+                {consent.rich("consent.nonRefundable", {
+                  notice: chunks => <Link href="/notice-on-purchase-of-digital-products" target="_blank">{chunks}</Link>,
+                })}
+              </span>
+              <span>
+                {consent.rich("consent.codeOfConduct", {
+                  code: chunks => <Link href="/code-of-conduct" target="_blank">{chunks}</Link>,
+                })}
+              </span>
             </span>
           </label>
-          {wallet.isUsingWallet ? (
-            <>
-              {wallet.maxWalletCredit > 100 ? (
-                <input
-                  type="range"
-                  aria-label={t.walletAmount}
-                  min={100}
-                  max={wallet.maxWalletCredit}
-                  step={1}
-                  value={wallet.walletCreditAmount || 100}
-                  onChange={e => wallet.setWalletCreditAmount(parseInt(e.target.value, 10))}
-                  disabled={busy}
-                />
+          {submitted && problem ? <p className={styles.error} role="alert">{problem}</p> : null}
+
+          <div className={styles.stepNav}>
+            <button type="button" className={`${styles.tag} ${styles.tagSolid}`} onClick={toReview}>
+              {t.toReview} →
+            </button>
+            <button type="button" className={styles.linkButton} onClick={() => go(1)}>
+              ← {t.stepBack}
+            </button>
+          </div>
+        </section>
+
+        <aside>
+          {/* ---- cart ---- */}
+          <section className={styles.stepCart}>
+            <h2 className={styles.panelTitle}>{t.order}</h2>
+            <div className={styles.cart}>
+              <div className={styles.cartRow}>
+                <div>
+                  <b>{t.tickets}</b> · {formatPrice(linesTotal(ticketLines))}
+                  <small>
+                    {ticketLines.map((line, i) => `${i > 0 ? " + " : ""}${line.quantity}× ${line.offer.label}`).join("")}
+                  </small>
+                </div>
+                <Stepper value={booking.people} min={1} max={MAX_PEOPLE} onChange={people => onBooking({ people })} label={t.people} less={t.less} more={t.more} />
+              </div>
+              {tent ? (
+                <div className={styles.cartRow}>
+                  <div>
+                    <b>{t.tent}</b> · {formatPrice(tent.price * booking.tents)}
+                    <small>
+                      {formatPrice(tent.price)} {t.each}
+                    </small>
+                  </div>
+                  <Stepper value={booking.tents} min={0} max={booking.people} onChange={tents => onBooking({ tents })} label={t.tent} less={t.less} more={t.more} />
+                </div>
               ) : null}
+              {bus ? (
+                <div className={styles.cartRow}>
+                  <div>
+                    <b>{t.bus}</b> · {formatPrice(bus.price * booking.bus)}
+                    <small>
+                      Ljubljana – Libeliče – Ljubljana · {formatPrice(bus.price)} {t.each}
+                    </small>
+                  </div>
+                  <Stepper value={booking.bus} min={0} max={booking.people} onChange={value => onBooking({ bus: value })} label={t.bus} less={t.less} more={t.more} />
+                </div>
+              ) : null}
+              {topups.length ? (
+                <div className={styles.cartRow} style={{ flexWrap: "wrap" }}>
+                  <div>
+                    <b>{t.topup}</b>
+                  </div>
+                  <div className={styles.chips}>
+                    <button type="button" className={styles.chip} aria-pressed={booking.topup === null} onClick={() => onBooking({ topup: null })}>
+                      {t.topupNone}
+                    </button>
+                    {topups.map(offer => (
+                      <button key={offer.key} type="button" className={styles.chip} aria-pressed={booking.topup === offer.key} onClick={() => onBooking({ topup: offer.key })}>
+                        {offer.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {donation ? (
+                <div className={styles.cartRow}>
+                  <div>
+                    <b>{t.donationLine}</b> · {formatPrice(donationTotal)}
+                  </div>
+                  <button type="button" className={styles.linkButton} onClick={() => onDonate(0)}>
+                    {t.donationRemove}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            {suggestion ? (
+              <div className={styles.donation}>
+                <h3>{t.donationTitle}</h3>
+                <p>{t.donationText}</p>
+                <div className={styles.donationActions}>
+                  <button type="button" className={`${styles.tag} ${styles.tagSolid}`} 
+                    onClick={async event => {
+                      onDonate(suggestion.amount);
+                      const origin = { x: event.clientX / window.innerWidth, y: event.clientY / window.innerHeight };
+                      const confetti = (await import("canvas-confetti")).default;
+                      confetti({ particleCount: 50, spread: 50, origin, colors: ["#f4a78f", "#ee3b4f", "#a99bea", "#ffd23f"] });
+                    }}
+                    disabled={busy}
+                  >
+                    {t.donationAdd} {formatPrice(suggestion.amount)} → {formatPrice(suggestion.rounded)}
+                  </button>
+                  <button type="button" className={styles.linkButton} onClick={onSkipDonation}>
+                    {t.donationSkip}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            <div className={`${styles.total} ${styles.stepOnly}`}>
+              <span className={styles.rowLabel}>{t.subtotal}</span>
+              <span className={styles.totalSum}>{formatPrice(subTotal)}</span>
+            </div>
+            <div className={styles.stepNav}>
+              <button type="button" className={`${styles.tag} ${styles.tagSolid}`} onClick={() => go(2)}>
+                {t.toDetails} →
+              </button>
+            </div>
+          </section>
+
+          {/* ---- review and pay ---- */}
+          <section className={styles.stepPay}>
+            <details className={styles.recap}>
+              <summary>
+                {t.order} · {formatPrice(subTotal)}
+              </summary>
+              {orderLines}
+            </details>
+
+            <ul className={styles.summary}>
+              {discountAmount !== 0 ? (
+                <li>
+                  <span>{t.discount}</span>
+                  <span>{formatPrice(discountAmount)}</span>
+                </li>
+              ) : null}
+              {wallet.isUsingWallet ? (
+                <li>
+                  <span>{t.walletAmount}</span>
+                  <span>−{formatTokensFromCents(wallet.walletCreditAmount)}</span>
+                </li>
+              ) : null}
+            </ul>
+            <div className={styles.total}>
+              <span className={styles.rowLabel}>{t.total}</span>
+              <span className={styles.totalSum}>{formatPrice(payable)}</span>
+            </div>
+
+            {applied ? (
               <p className={styles.extraRow}>
-                <span>{t.walletAmount}</span>
-                <span>−{formatTokensFromCents(wallet.walletCreditAmount)}</span>
+                <span>
+                  {t.promoApplied} <b>{applied.promoCodeKey}</b>
+                </span>
+                <button type="button" className={styles.linkButton} onClick={promo.removePromoCode} disabled={busy}>
+                  {t.promoRemove}
+                </button>
               </p>
+            ) : promoOpen ? (
+              <>
+                <div className={styles.promo}>
+                  <input
+                    type="text"
+                    aria-label={t.promoPlaceholder}
+                    placeholder={t.promoPlaceholder}
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    value={promo.promoCodeValue}
+                    onChange={e => promo.setPromoCodeValue(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        void promo.applyPromoCode();
+                      }
+                    }}
+                  />
+                  <button type="button" className={styles.tag} onClick={() => void promo.applyPromoCode()} disabled={promo.isLoading || !promo.promoCodeValue.trim()}>
+                    {promo.isLoading ? t.promoApplying : t.promoApply}
+                  </button>
+                </div>
+                {promo.error ? <p className={styles.error} role="alert">{t.promoError}</p> : null}
+              </>
+            ) : (
               <p className={styles.extraRow}>
-                <span>{t.walletCard}</span>
-                <span>{formatPrice(payable)}</span>
+                <button type="button" className={styles.linkButton} onClick={() => setPromoOpen(true)}>
+                  {t.promoAdd}
+                </button>
               </p>
-            </>
-          ) : null}
-        </div>
-      ) : null}
+            )}
 
-      {walletOnly ? (
-        <p className={styles.notice}>{t.walletOnly}</p>
-      ) : (
-        <div className={styles.stripe}>
-          <PaymentElement
-            onReady={() => setReady(true)}
-            options={{ layout: "tabs", paymentMethodOrder: ["apple_pay", "card", "google_pay"], wallets: { applePay: "auto", googlePay: "auto" } }}
-          />
-        </div>
-      )}
+            {wallet.canUseWallet ? (
+              <div className={styles.walletBox}>
+                <label className={styles.check} style={{ marginTop: 0 }}>
+                  <input type="checkbox" checked={wallet.isUsingWallet} onChange={wallet.toggleWalletCredit} disabled={busy} />
+                  <span>
+                    <b>{t.walletUse}</b>
+                    <br />
+                    {t.walletAvailable}: {formatTokensFromCents(wallet.walletBalance)}
+                  </span>
+                </label>
+                {wallet.isUsingWallet ? (
+                  <>
+                    {wallet.maxWalletCredit > 100 ? (
+                      <input
+                        type="range"
+                        aria-label={t.walletAmount}
+                        min={100}
+                        max={wallet.maxWalletCredit}
+                        step={1}
+                        value={wallet.walletCreditAmount || 100}
+                        onChange={e => wallet.setWalletCreditAmount(parseInt(e.target.value, 10))}
+                        disabled={busy}
+                      />
+                    ) : null}
+                    <p className={styles.extraRow}>
+                      <span>{t.walletCard}</span>
+                      <span>{formatPrice(payable)}</span>
+                    </p>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
 
-      <label className={styles.check}>
-        <input type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} />
-        <span>
-          {t.terms}{" "}
-          <Link href="/terms-and-conditions" target="_blank">
-            {t.termsLink}
-          </Link>
-        </span>
-      </label>
+            {walletOnly ? (
+              <p className={styles.notice}>{t.walletOnly}</p>
+            ) : wide || step === 3 ? (
+              // Mounted only while visible: the card field needs real size to lay out.
+              <div className={styles.stripe}>
+                <PaymentElement
+                  onReady={() => setReady(true)}
+                  options={{ layout: "tabs", paymentMethodOrder: ["apple_pay", "card", "google_pay"], wallets: { applePay: "auto", googlePay: "auto" } }}
+                />
+              </div>
+            ) : null}
 
-      {submitted && problem ? <p className={styles.error} role="alert">{problem}</p> : null}
-      {error ? <p className={styles.error} role="alert">{error}</p> : null}
+            {submitted && problem ? <p className={`${styles.error} ${styles.wideOnly}`} role="alert">{problem}</p> : null}
+            {error ? <p className={styles.error} role="alert">{error}</p> : null}
 
-      <p style={{ marginTop: "1.6rem" }}>
-        <button type="submit" className={`${styles.tag} ${styles.tagSolid}`} disabled={busy || !stripe || (!walletOnly && !ready)}>
-          {busy ? t.paying : `${t.pay} ${formatPrice(payable)}`}
-        </button>
-      </p>
+            <div className={styles.payNav}>
+              <button type="submit" className={`${styles.tag} ${styles.tagSolid}`} disabled={busy || !stripe || (!walletOnly && !ready)}>
+                {busy ? t.paying : `${t.pay} ${formatPrice(payable)}`}
+              </button>
+              <button type="button" className={`${styles.linkButton} ${styles.stepOnly}`} onClick={() => go(2)} disabled={busy}>
+                ← {t.stepBack}
+              </button>
+            </div>
+          </section>
+        </aside>
+      </div>
     </form>
   );
 }
@@ -468,17 +712,32 @@ export default function FestivalCheckout({
   donationProduct?: Product | null;
 }) {
   const t = text[locale];
-  const [loaded, setLoaded] = useState<BookingLine[] | null>(null);
+  const [booking, setBooking] = useState<Booking | null>(null);
   const [donationQuantity, setDonationQuantity] = useState(0);
   const [donationSkipped, setDonationSkipped] = useState(false);
 
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    const booking = readBooking();
-    // Only lines backed by a published, sellable product can be paid for.
-    setLoaded(booking ? bookingLines(offers, booking).filter(line => (demo || line.offer.product) && line.offer.sellable) : []);
-  }, [offers, demo]);
+    setBooking(readBooking());
+    setLoaded(true);
+  }, []);
 
-  const lines = useMemo(() => loaded ?? [], [loaded]);
+  // The cart stays editable here, under the same rules as on the festival page.
+  const updateBooking = (patch: Partial<Booking>) =>
+    setBooking(current => {
+      if (!current) return current;
+      const next = { ...current, ...patch };
+      next.tents = Math.min(next.tents, next.people);
+      next.bus = Math.min(next.bus, next.people);
+      writeBooking(next);
+      return next;
+    });
+
+  // Only lines backed by a published, sellable product can be paid for.
+  const lines = useMemo(
+    () => (booking ? bookingLines(offers, booking).filter(line => (demo || line.offer.product) && line.offer.sellable) : []),
+    [booking, offers, demo]
+  );
   const holders = useMemo(() => holderFields(lines, t.holder), [lines, t.holder]);
   const hasTicket = holders.length > 0;
 
@@ -493,8 +752,7 @@ export default function FestivalCheckout({
     ],
     [lines, donation]
   );
-  const donationTotal = donation ? donation.product.price * donation.quantity : 0;
-  const subTotal = linesTotal(lines) + donationTotal;
+  const subTotal = linesTotal(lines) + (donation ? donation.product.price * donation.quantity : 0);
 
   const promo = usePromoCodes(cartItems, subTotal, 0);
   const totals = getCheckoutTotals({ subTotal, discount: promo.discount, shippingCost: 0, items: cartItems });
@@ -548,70 +806,33 @@ export default function FestivalCheckout({
         <h1 className={`${styles.display} ${styles.pageTitle}`}>{t.title}</h1>
         {demo ? <p className={styles.notice}>{t.demoBanner}</p> : null}
 
-        {loaded === null ? null : !salesOpen || !hasTicket || subTotal <= 0 ? (
+        {!loaded ? null : !salesOpen || !booking || !hasTicket || subTotal <= 0 ? (
           <p className={styles.lede} style={{ marginTop: "2rem" }}>
             {salesOpen ? t.empty : t.closed}
           </p>
         ) : (
-          <div className={styles.checkoutGrid} style={{ marginTop: "2.4rem" }}>
-            <Elements stripe={stripePromise} options={options}>
-              <CheckoutForm
-                lines={lines}
-                holders={holders}
-                t={t}
-                userEmail={userEmail}
-                demo={demo}
-                payable={payableCents / 100}
-                walletOnly={walletOnly}
-                wallet={wallet}
-                promo={promo}
-                donation={donation}
-                suggestion={suggestion}
-                onDonate={setDonationQuantity}
-                onSkipDonation={() => setDonationSkipped(true)}
-              />
-            </Elements>
-            <aside>
-              <h2 className={styles.panelTitle}>{t.order}</h2>
-              <ul className={styles.summary}>
-                {lines.map(line => (
-                  <li key={line.offer.key}>
-                    <span>
-                      {line.quantity}× {line.offer.product?.name ?? line.offer.label}
-                    </span>
-                    <span>{formatPrice(line.offer.price * line.quantity)}</span>
-                  </li>
-                ))}
-                {donation ? (
-                  <li>
-                    <span>
-                      {t.donationLine}{" "}
-                      <button type="button" className={styles.linkButton} onClick={() => setDonationQuantity(0)}>
-                        {t.donationRemove}
-                      </button>
-                    </span>
-                    <span>{formatPrice(donationTotal)}</span>
-                  </li>
-                ) : null}
-                {totals.discountAmount !== 0 ? (
-                  <li>
-                    <span>{t.discount}</span>
-                    <span>{formatPrice(totals.discountAmount)}</span>
-                  </li>
-                ) : null}
-                {wallet.isUsingWallet ? (
-                  <li>
-                    <span>{t.walletAmount}</span>
-                    <span>−{formatTokensFromCents(wallet.walletCreditAmount)}</span>
-                  </li>
-                ) : null}
-              </ul>
-              <div className={styles.total}>
-                <span className={styles.rowLabel}>{t.total}</span>
-                <span className={styles.totalSum}>{formatPrice(payableCents / 100)}</span>
-              </div>
-            </aside>
-          </div>
+          <Elements stripe={stripePromise} options={options}>
+            <CheckoutForm
+              lines={lines}
+              holders={holders}
+              t={t}
+              userEmail={userEmail}
+              demo={demo}
+              payable={payableCents / 100}
+              walletOnly={walletOnly}
+              wallet={wallet}
+              promo={promo}
+              donation={donation}
+              suggestion={suggestion}
+              onDonate={setDonationQuantity}
+              onSkipDonation={() => setDonationSkipped(true)}
+              subTotal={subTotal}
+              discountAmount={totals.discountAmount}
+              offers={offers}
+              booking={booking}
+              onBooking={updateBooking}
+            />
+          </Elements>
         )}
       </div>
     </main>

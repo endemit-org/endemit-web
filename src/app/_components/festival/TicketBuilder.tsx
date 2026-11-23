@@ -73,7 +73,7 @@ function Units({ count, tone, children }: { count: number; tone: "tent" | "seat"
   );
 }
 
-function Stepper({
+export function Stepper({
   value,
   min,
   max,
