@@ -70,6 +70,7 @@ const text = {
     promoApply: "Apply",
     promoApplying: "Checking",
     promoRemove: "Remove",
+    promoClose: "No code",
     promoApplied: "Code",
     promoError: "This code does not work for this order.",
     discount: "Discount",
@@ -137,6 +138,7 @@ const text = {
     promoApply: "Uporabi",
     promoApplying: "Preverjam",
     promoRemove: "Odstrani",
+    promoClose: "Brez kode",
     promoApplied: "Koda",
     promoError: "Ta koda za to naročilo ne vela.",
     discount: "Popust",
@@ -635,11 +637,19 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                 <span>
                   {t.promoApplied} <b>{applied.promoCodeKey}</b>
                 </span>
-                <button type="button" className={styles.linkButton} onClick={promo.removePromoCode} disabled={busy}>
+                <button
+                  type="button"
+                  className={styles.linkButton}
+                  onClick={() => {
+                    promo.removePromoCode();
+                    setPromoOpen(false);
+                  }}
+                  disabled={busy}
+                >
                   {t.promoRemove}
                 </button>
               </p>
-            ) : promoOpen || promo.promoCodeValue || promo.error ? (
+            ) : promoOpen || promo.error ? (
               <>
                 <div className={styles.promo}>
                   <input
@@ -662,6 +672,18 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                   </button>
                 </div>
                 {promo.error ? <p className={styles.error} role="alert">{t.promoError}</p> : null}
+                <p className={styles.extraRow}>
+                  <button
+                    type="button"
+                    className={styles.linkButton}
+                    onClick={() => {
+                      promo.removePromoCode();
+                      setPromoOpen(false);
+                    }}
+                  >
+                    {t.promoClose}
+                  </button>
+                </p>
               </>
             ) : (
               <p className={styles.extraRow}>
