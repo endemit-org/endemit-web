@@ -375,13 +375,24 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             The forest is drawn twice, the second copy clipped to those bushes. */}
         <div className={styles.forestEdge} aria-hidden>
           <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.forestImage} />
-          <div className={styles.dome}>
+          <div className={styles.dome} data-dome>
             {[0, 1, 2, 3].map(i => (
               <span key={i} className={styles.ring} style={css({ "--i": i })} />
             ))}
             <Layer name="dome" widths={[720, 420]} ratio={0.3293} sizes="(max-width: 900px) 190px, 21vw" />
           </div>
           <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.forestFront} />
+          {/* Lasers fan out of the dome's light, towards whoever is looking. */}
+          <div className={styles.lasers}>
+            {(
+              [
+                [-64, "cone", 4.2], [-47, "line", 2.9], [-33, "cone", 5.1], [-18, "line", 3.7], [-5, "cone", 3.3],
+                [9, "line", 2.6], [24, "cone", 4.7], [38, "line", 3.1], [53, "cone", 3.9], [66, "line", 4.4],
+              ] as const
+            ).map(([angle, kind, duration], i) => (
+              <span key={angle} data-kind={kind} style={css({ "--a": `${angle}deg`, "--i": i, "--d": `${duration}s` })} />
+            ))}
+          </div>
         </div>
         <CreatureRow spots={[[3, "8%", 46], [1, "31%", 58], [6, "57%", 42], [4, "82%", 54]]} />
         <div className={styles.inner}>

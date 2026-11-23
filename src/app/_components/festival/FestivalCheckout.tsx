@@ -20,7 +20,7 @@ import { formatPrice } from "@/lib/util/formatting";
 import type { FestivalLocale } from "./copy";
 import type { FestivalOffer } from "./data";
 import BoilDefs from "./BoilDefs";
-import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, normalizeBooking, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
+import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, normalizeBooking, PASSES, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
 import { Stepper } from "./TicketBuilder";
 import styles from "./festival.module.css";
 
@@ -57,6 +57,7 @@ const text = {
     stepBack: "Back",
     subtotal: "Subtotal",
     tickets: "Tickets",
+    passes: { weekend: "Whole weekend", friday: "Friday", saturday: "Saturday" },
     people: "People",
     tent: "Tent rental",
     bus: "Bus seats",
@@ -125,6 +126,7 @@ const text = {
     stepBack: "Nazaj",
     subtotal: "Vmesn seštevk",
     tickets: "Karte",
+    passes: { weekend: "Cel vikend", friday: "Petek", saturday: "Sobota" },
     people: "Ludi",
     tent: "Najem šotora",
     bus: "Sedeži na buso",
@@ -172,7 +174,7 @@ type Holder = { field: string; label: string };
 function holderFields(lines: BookingLine[], label: string): Holder[] {
   const holders: Holder[] = [];
   for (const { offer, quantity } of lines) {
-    if (offer.kind !== "ticket") continue;
+    if (offer.kind !== "ticket" && offer.kind !== "day") continue;
     const id = offer.product?.id ?? offer.key;
     const slots = quantity * offer.people;
     for (let slot = 1; slot <= slots; slot++) {
@@ -249,7 +251,9 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
   const applied = promo.discount?.success ? promo.discount : null;
   const donationTotal = donation ? donation.product.price * donation.quantity : 0;
 
-  const ticketLines = lines.filter(line => line.offer.kind === "ticket");
+  const ticketLines = lines.filter(line => line.offer.kind === "ticket" || line.offer.kind === "day");
+  const isDay = booking.pass !== "weekend";
+  const passes = PASSES.filter(pass => pass === "weekend" || offers.some(offer => offer.key === pass && offer.sellable));
   const tent = offers.find(offer => offer.key === "tent" && offer.sellable);
   const bus = offers.find(offer => offer.key === "bus" && offer.sellable);
   const topups = offers.filter(offer => offer.kind === "topup" && offer.sellable);
@@ -490,6 +494,17 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
           <section className={styles.stepCart}>
             <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.order}</h2>
             <div className={styles.cart}>
+              {passes.length > 1 ? (
+                <div className={styles.cartRow}>
+                  <div className={styles.chips} role="group" aria-label={t.tickets}>
+                    {passes.map(pass => (
+                      <button key={pass} type="button" aria-pressed={booking.pass === pass} className={styles.chip} onClick={() => onBooking({ pass })}>
+                        {t.passes[pass]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               <div className={styles.cartRow}>
                 <div>
                   <b>{t.tickets}</b> · {formatPrice(linesTotal(ticketLines))}
@@ -510,7 +525,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                   <Stepper value={booking.tents} min={0} max={booking.people} onChange={tents => onBooking({ tents })} label={t.tent} less={t.less} more={t.more} />
                 </div>
               ) : null}
-              {bus ? (
+              {bus && !isDay ? (
                 <div className={styles.cartRow}>
                   <div>
                     <b>{t.bus}</b> · {formatPrice(bus.price * booking.bus)}
@@ -777,7 +792,7 @@ export default function FestivalCheckout({
   const [donationSkipped, setDonationSkipped] = useState(false);
 
   const [loaded, setLoaded] = useState(false);
-  // Shareable link: /festival/checkout?people=4&tents=2&bus=4&topup=50&code=FRIENDS20
+  // Shareable link: /festival/checkout?pass=weekend&people=4&tents=2&bus=4&topup=50&code=FRIENDS20
   // The link is an entry point, not state: it is read once and stripped from the URL.
   const [linkCode, setLinkCode] = useState("");
   useEffect(() => {
@@ -787,6 +802,7 @@ export default function FestivalCheckout({
     let next = readBooking();
     if (Number.isFinite(number("people"))) {
       next = normalizeBooking({
+        pass: query.get("pass"),
         people: number("people"),
         tents: number("tents") || 0,
         bus: number("bus") || 0,
@@ -797,8 +813,8 @@ export default function FestivalCheckout({
     setBooking(next);
     setLoaded(true);
     setLinkCode((query.get("code") ?? "").trim().toUpperCase());
-    if (["people", "tents", "bus", "topup", "code"].some(name => query.has(name))) {
-      for (const name of ["people", "tents", "bus", "topup", "code"]) query.delete(name);
+    if (["pass", "people", "tents", "bus", "topup", "code"].some(name => query.has(name))) {
+      for (const name of ["pass", "people", "tents", "bus", "topup", "code"]) query.delete(name);
       window.history.replaceState(window.history.state, "", url);
     }
   }, []);

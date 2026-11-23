@@ -3,7 +3,12 @@ import type { FestivalOffer } from "./data";
 export const BOOKING_STORAGE_KEY = "festival-2027-booking";
 export const MAX_PEOPLE = 12;
 
+/** The whole weekend, or one evening. One kind per order. */
+export type Pass = "weekend" | "friday" | "saturday";
+export const PASSES: Pass[] = ["weekend", "friday", "saturday"];
+
 export type Booking = {
+  pass: Pass;
   people: number;
   tents: number;
   bus: number;
@@ -11,7 +16,7 @@ export type Booking = {
   topup: string | null;
 };
 
-export const EMPTY_BOOKING: Booking = { people: 2, tents: 0, bus: 0, topup: null };
+export const EMPTY_BOOKING: Booking = { pass: "weekend", people: 2, tents: 0, bus: 0, topup: null };
 
 export type BookingLine = { offer: FestivalOffer; quantity: number };
 
@@ -42,8 +47,14 @@ export function bookingLines(offers: FestivalOffer[], booking: Booking): Booking
   const byKey = new Map(offers.map(offer => [offer.key, offer]));
   const tickets = offers.filter(offer => offer.kind === "ticket");
   const lines: BookingLine[] = [];
-  for (const [key, quantity] of cheapestTickets(tickets, booking.people)) {
-    lines.push({ offer: byKey.get(key)!, quantity });
+  const day = booking.pass === "weekend" ? undefined : byKey.get(booking.pass);
+  if (day) {
+    // One evening is sold as single tickets only.
+    lines.push({ offer: day, quantity: booking.people });
+  } else {
+    for (const [key, quantity] of cheapestTickets(tickets, booking.people)) {
+      lines.push({ offer: byKey.get(key)!, quantity });
+    }
   }
   // Largest bundle first reads best in the summary.
   lines.sort((a, b) => b.offer.people - a.offer.people);
@@ -52,7 +63,8 @@ export function bookingLines(offers: FestivalOffer[], booking: Booking): Booking
     if (offer && quantity > 0) lines.push({ offer, quantity });
   };
   add("tent", booking.tents);
-  add("bus", booking.bus);
+  // The bus runs for the weekend only.
+  if (!day) add("bus", booking.bus);
   add(booking.topup, 1);
   return lines;
 }
@@ -68,6 +80,7 @@ export function normalizeBooking(value: unknown): Booking {
   const raw = value && typeof value === "object" ? (value as Partial<Booking>) : {};
   const people = clamp(raw.people, 1, MAX_PEOPLE, EMPTY_BOOKING.people);
   return {
+    pass: PASSES.includes(raw.pass as Pass) ? (raw.pass as Pass) : "weekend",
     people,
     tents: clamp(raw.tents, 0, people, 0),
     bus: clamp(raw.bus, 0, people, 0),

@@ -217,6 +217,12 @@ export function SoundToggle({ onLabel, offLabel }: { onLabel: string; offLabel: 
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       engine.current?.setProgress(max > 0 ? window.scrollY / max : 0);
+      // How close the dome in the forest is to the middle of the screen.
+      const dome = document.querySelector("[data-dome]")?.getBoundingClientRect();
+      if (dome) {
+        const distance = Math.abs(dome.top + dome.height / 2 - window.innerHeight / 2);
+        engine.current?.setDomeProximity(1 - distance / (window.innerHeight * 0.9));
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

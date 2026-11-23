@@ -157,7 +157,7 @@
   height: 190svh;
   background: var(--night);
   /* 0 at the top of the page, 1 when the pinned sky lets go. */
-  --h: calc((var(--p, -0.31) + 0.31) / 0.62);
+  --h: clamp(0, (var(--p, -0.31) + 0.31) / 0.62, 1);
 }
 .heroPin {
   position: sticky;
@@ -231,9 +231,9 @@
   z-index: 2;
   width: min(78vw, 640px);
   text-align: center;
-  transform: translate3d(0, calc(var(--h) * -34svh), 0) scale(calc(1 + var(--h) * 0.22));
-  opacity: calc(1.9 - var(--h) * 2.2);
-  will-change: transform, opacity;
+  /* Stays put and sinks a little; the hill rises in front and takes it. */
+  transform: translate3d(0, calc(var(--h) * 9svh), 0) scale(calc(1 + var(--h) * 0.1));
+  will-change: transform;
 }
 .logo { display: block; color: var(--salmon); }
 .logo svg { display: block; width: 100%; height: auto; }
@@ -272,11 +272,12 @@
 @media (max-height: 600px) { .scrollHint { display: none; } }
 .heroHill {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   left: 50%;
   bottom: -2px;
   width: max(100%, 900px);
-  transform: translate3d(-50%, calc(46% - var(--h) * 46%), 0) scale(calc(1 + var(--h) * 0.12));
+  /* Ends pushed down past its slanted painted bottom, so no sky shows under it. */
+  transform: translate3d(-50%, calc(64% - var(--h) * 45%), 0) scale(calc(1 + var(--h) * 0.9));
   transform-origin: 50% 100%;
   pointer-events: none;
   will-change: transform;
@@ -605,6 +606,74 @@
     100% 100%, 0 100%
   );
 }
+.lasers { position: absolute; left: 70%; bottom: 64.6%; width: 0; height: 0; mix-blend-mode: screen; }
+/* The lamp itself: a hot point the beams leave from. */
+.lasers::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(#fff 0 12%, #ff2d4a 26%, rgba(255, 45, 74, 0) 70%);
+  animation: lamp 0.9s steps(3) infinite paused;
+}
+[data-inview="true"] .lasers::before { animation-play-state: running; }
+@keyframes lamp { 50% { scale: 1.7; opacity: 0.7; } }
+.lasers span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: min(130vh, 1150px);
+  translate: -50% 0;
+  rotate: var(--a);
+  transform-origin: 50% 0;
+  opacity: 0;
+  animation: laser var(--d, 4s) steps(1) calc(var(--i) * -0.71s) infinite paused;
+}
+/* Wide haze the beam cuts through the smoke. */
+.lasers span[data-kind="cone"] {
+  width: clamp(46px, 8vw, 130px);
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  background: linear-gradient(rgba(255, 45, 74, 0.9), rgba(238, 30, 60, 0.4) 24%, rgba(238, 30, 60, 0) 80%);
+}
+/* The beam itself: thin, hard and hot. */
+.lasers span[data-kind="line"] {
+  width: 3px;
+  background: linear-gradient(#fff, #ff2d4a 6%, #ff2d4a 46%, rgba(255, 45, 74, 0) 92%);
+  box-shadow: 0 0 10px 1px rgba(255, 45, 74, 0.85);
+  animation-name: laserLine;
+}
+[data-inview="true"] .lasers span { animation-play-state: running; }
+/* Cut like a light desk: beams snap between positions and blink out. */
+@keyframes laser {
+  0% { opacity: 0.8; transform: rotate(-7deg); }
+  12% { opacity: 0.8; transform: rotate(-2deg); }
+  24% { opacity: 0.15; transform: rotate(3deg); }
+  30% { opacity: 0.9; transform: rotate(6deg); }
+  46% { opacity: 0.9; transform: rotate(9deg); }
+  58% { opacity: 0; transform: rotate(4deg); }
+  70% { opacity: 0.75; transform: rotate(-3deg); }
+  84% { opacity: 0.3; transform: rotate(-9deg); }
+  92% { opacity: 0.9; transform: rotate(-10deg); }
+}
+/* Thin beams scan faster and strobe. */
+@keyframes laserLine {
+  0% { opacity: 1; transform: rotate(-14deg); }
+  8% { opacity: 1; transform: rotate(-8deg); }
+  16% { opacity: 1; transform: rotate(-1deg); }
+  24% { opacity: 1; transform: rotate(7deg); }
+  32% { opacity: 0; transform: rotate(13deg); }
+  44% { opacity: 1; transform: rotate(13deg); }
+  48% { opacity: 0; transform: rotate(13deg); }
+  52% { opacity: 1; transform: rotate(6deg); }
+  56% { opacity: 0; transform: rotate(6deg); }
+  60% { opacity: 1; transform: rotate(-4deg); }
+  76% { opacity: 1; transform: rotate(-11deg); }
+  88% { opacity: 0; transform: rotate(-14deg); }
+}
 .dome img { position: relative; display: block; width: 100%; height: auto; }
 /* Sound leaving the dome: one ring, repeated. */
 .ring {
@@ -668,6 +737,7 @@
 }
 .step[data-state="done"] .stepStamp { --tilt: 3deg; border-color: var(--lilac); background: none; color: var(--lilac); }
 .step[data-state="now"] { border-color: var(--red); }
+.step[data-state="now"]::after { border-color: var(--red); }
 /* Wide screens: the batches climb like stairs, one step per price rise. */
 @media (min-width: 900px) {
   .timeline { grid-template-columns: repeat(4, 1fr); align-items: end; gap: 0; margin-top: 1.4rem; border-bottom: 3px solid var(--lilac); }
@@ -678,11 +748,10 @@
     min-height: calc(9.5rem + var(--rise, 0) * 3.4rem);
     padding: 1.1rem 1.1rem 1.3rem;
     border: 0;
-    border-top: 3px solid currentColor;
-    border-left: 3px solid currentColor;
     background: rgba(4, 6, 18, 0.35);
   }
-  .step:last-child { border-right: 3px solid currentColor; }
+  .step::after { display: block; inset: 0; border: 0; border-top: 3px solid currentColor; border-left: 3px solid currentColor; }
+  .step:last-child::after { border-right: 3px solid currentColor; }
   .stepDot { display: none; }
   .stepPrice { order: -1; font-size: 3.4rem; }
   .stepMeta, .stepStamp { grid-column: auto; }
@@ -690,6 +759,25 @@
 }
 .stepFlag { color: var(--red); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
 
+/* Weekend or one evening: three tabs across the top of the ticket. */
+.passes { position: relative; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 0; margin-bottom: 0.6rem; border: 2px solid transparent; }
+.pass {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0.4rem 0.6rem;
+  border: 0;
+  border-left: 2px solid var(--salmon);
+  background: none;
+  color: var(--salmon);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.pass:first-child { border-left: 0; }
+.pass b { font-family: var(--font-heading), sans-serif; font-size: clamp(1.15rem, 4.6vw, 1.7rem); font-weight: 600; line-height: 1; text-transform: uppercase; }
+.pass small { font-size: 0.8rem; color: var(--lilac); }
+.pass[aria-checked="true"] { background: var(--salmon); color: var(--hill-near); }
+.pass[aria-checked="true"] small { color: var(--hill-near); }
 /* The builder is a ticket: punched notches where the total tears off, and
    on wide screens a stub down the side. */
 .builder {
@@ -697,10 +785,28 @@
   position: relative;
   margin-top: 3rem;
   padding: clamp(1.2rem, 4vw, 2.4rem);
-  border: 3px solid var(--salmon);
+  border: 3px solid transparent;
   background: #060817;
   rotate: -0.35deg;
 }
+/* Outlines are drawn on their own layer so they can boil like the type
+   without shaking the text and controls inside. */
+.builder::before, .passes::before, .step::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 3px solid var(--salmon);
+  pointer-events: none;
+  filter: url(#fest-boil-a);
+}
+[data-inview="true"] .builder::before,
+[data-inview="true"] .passes::before,
+[data-inview="true"] .step::after { animation: boilBig 0.42s steps(1) infinite; }
+.root[data-lite="true"] .builder::before,
+.root[data-lite="true"] .passes::before,
+.root[data-lite="true"] .step::after { animation: none; filter: none; }
+.passes::before { inset: -2px; border-width: 2px; }
+.step::after { display: none; }
 .stub { display: none; }
 .builder .total {
   position: relative;
@@ -976,7 +1082,8 @@
 .foot { position: relative; }
 .footShout {
   flex: 0 0 100%;
-  margin: 0 0 1.5rem;
+  margin: clamp(2.5rem, 8vw, 6rem) 0 1.5rem;
+  text-align: center;
   font-family: var(--font-heading), sans-serif;
   font-weight: 600;
   font-size: clamp(2.6rem, 12.4vw, 12rem);
@@ -1075,7 +1182,6 @@
   }
   .boil, .boilSmall { filter: none; }
   .sky, .stars, .mark, .heroHill, .edge, .tree, .echo > span[aria-hidden], .tripWords span, .tripSky, .tripStars { transform: none; }
-  .mark { opacity: 1; }
   .pattern span { transform: none; }
   .heroHill, .edge, .forestEdge { transform: translate3d(-50%, 0, 0); }
   .creature { translate: 0 0; }

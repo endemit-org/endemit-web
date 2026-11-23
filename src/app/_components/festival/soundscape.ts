@@ -4,6 +4,9 @@ export class ForestSoundscape {
   private master: GainNode;
   private music: BiquadFilterNode;
   private nature: GainNode;
+  private boost: GainNode;
+  private clarity = 0;
+  private near = 0;
   private crickets: GainNode;
   private cricketVoices = [
     { frequency: 4350, pan: -0.7, gap: 0.62, next: 0 },
@@ -34,7 +37,9 @@ export class ForestSoundscape {
     this.spatial.refDistance = 1;
     this.spatial.rolloffFactor = 0.16;
     this.spatial.positionZ.value = -8;
-    this.music.connect(this.spatial).connect(this.master);
+    this.boost = ctx.createGain();
+    this.boost.gain.value = 0.7;
+    this.music.connect(this.spatial).connect(this.boost).connect(this.master);
     this.nature = ctx.createGain();
     this.nature.gain.value = 0.09;
     this.nature.connect(this.master);
@@ -96,17 +101,8 @@ export class ForestSoundscape {
       this.context.currentTime,
       0.8
     );
-    this.spatial.positionZ.setTargetAtTime(
-      -8 + p * 6.5,
-      this.context.currentTime,
-      0.8
-    );
-    const clarity = Math.pow(Math.min(1, p / 0.85), 2);
-    this.music.frequency.setTargetAtTime(
-      180 + clarity * 5200,
-      this.context.currentTime,
-      0.45
-    );
+    this.clarity = Math.pow(Math.min(1, p / 0.85), 2);
+    this.applyMusic();
     const river = Math.exp(-Math.pow((p - 0.34) * 7, 2));
     this.nature.gain.setTargetAtTime(
       0.055 + river * 0.11,
@@ -120,6 +116,22 @@ export class ForestSoundscape {
       this.context.currentTime,
       0.6
     );
+  }
+
+  /** 0 far from the dome, 1 standing in front of it: the music comes up and opens. */
+  setDomeProximity(value: number) {
+    if (this.disposed) return;
+    this.near = Math.min(1, Math.max(0, value));
+    this.applyMusic();
+  }
+
+  private applyMusic() {
+    const now = this.context.currentTime;
+    const open = Math.max(this.clarity, this.near);
+    this.music.frequency.setTargetAtTime(180 + open * 6400, now, 0.4);
+    this.boost.gain.setTargetAtTime(0.7 + this.near * 1.9, now, 0.4);
+    // The floor pushes the river and the crickets back a little.
+    this.spatial.positionZ.setTargetAtTime(-8 + Math.max(this.clarity * 0.8, this.near) * 7, now, 0.5);
   }
 
   private tone(

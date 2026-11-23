@@ -30,12 +30,12 @@ const ABOUT_SL =
   "S ttim placom smo gr zrasli tko pa je on zrasto z nami. Tole je tok, ko smo ga pognali po dolini, vsako leto močnejši in zmerm bol teče po špuri, ko smo jo nastajli s kalibracijo zvoka in globino samorastniške izkušne.\n" +
   "Ne postit familije zadi. Ne pozabi jt domo.";
 
-// TEMP: batch names, dates and prices are placeholders. Prices are in cents.
+// Batch dates are placeholders; weekend prices are confirmed. Prices are in cents.
 const PRICE_BATCHES = [
-  ["Blind tickets", "Karte na slepo", "No line up yet. Duo 140, Group 260", "Brez line upa. Duo 140, Skupinska 260", 7500, "2026-11-23T23:00:00+0000", "2027-01-31T22:59:00+0000"],
-  ["First batch", "Prva runda", "Duo 160, Group 300", "Duo 160, Skupinska 300", 8500, "2027-01-31T23:00:00+0000", "2027-04-30T21:59:00+0000"],
-  ["Second batch", "Druga runda", "Duo 180, Group 340", "Duo 180, Skupinska 340", 9500, "2027-04-30T22:00:00+0000", "2027-07-31T21:59:00+0000"],
-  ["Last batch", "Zadna runda", "Festival price", "Festivalska cena", 12000, "2027-07-31T22:00:00+0000", "2027-08-15T15:00:00+0000"],
+  ["Blind tickets", "Karte na slepo", "No line up yet. Duo 160, Group 300, one evening 55", "Brez line upa. Duo 160, Skupinska 300, en večer 55", 8500, "2026-11-22T23:00:00+0000", "2027-01-31T22:59:00+0000"],
+  ["First batch", "Prva runda", "Duo 180, Group 340, one evening 60", "Duo 180, Skupinska 340, en večer 60", 9500, "2027-01-31T23:00:00+0000", "2027-04-30T21:59:00+0000"],
+  ["Second batch", "Druga runda", "Duo 200, Group 380, one evening 65", "Duo 200, Skupinska 380, en večer 65", 10500, "2027-04-30T22:00:00+0000", "2027-07-31T21:59:00+0000"],
+  ["Last batch", "Zadna runda", "Duo 220, Group 420, one evening 70", "Duo 220, Skupinska 420, en večer 70", 11500, "2027-07-31T22:00:00+0000", "2027-08-15T15:00:00+0000"],
 ] as const;
 
 async function main() {
@@ -56,12 +56,15 @@ async function main() {
   const prevHero = (prevData.slices as { slice_type: string; primary: Record<string, unknown> }[]).find(
     s => s.slice_type === "hero"
   )!;
-  const sampleTicket = await client.getByUID("product" as never, "rave-on-single-ticket");
+  // Products are written in the repository's master language, like the event.
+  const sampleTicket = { lang: prev.lang };
 
+  // FESTIVAL_ONLY: event | products | day (day = only the two single-evening tickets).
   const only = process.env.FESTIVAL_ONLY;
+  const skipEvent = only === "products" || only === "day";
   const migration = prismic.createMigration();
   const eventAsset = (file: string) =>
-    only === "products" ? undefined : migration.createAsset(new File([readFileSync(`${GRAPHICS}/${file}`)], file), file);
+    skipEvent ? undefined : migration.createAsset(new File([readFileSync(`${GRAPHICS}/${file}`)], file), file);
   const cover = eventAsset("festival_2027_wide_with_text.png");
   const coverNoText = eventAsset("festival_2027_wide_no_text.png");
   const square = migration.createAsset(
@@ -144,7 +147,7 @@ async function main() {
         ],
       } as never,
   };
-  const event = only === "products"
+  const event = skipEvent
     ? null
     : eventDraftId
     ? migration.updateDocument({ ...eventDoc, id: eventDraftId } as never, "Endemit festival '27")
@@ -162,6 +165,7 @@ async function main() {
     category: "Tickets" | "Other";
     price: number;
     ticketQuantity?: number;
+    cutoff?: string;
     sorting: number;
   };
 
@@ -175,7 +179,7 @@ async function main() {
       notice: ["Blind ticket, line up to be announced", "Karta na slepo, line up napovemo kmalo"],
       checkout: ["Single ticket for Endemit festival '27", "Karta za Endemit festival '27"],
       category: "Tickets",
-      price: 75, // TEMP
+      price: 85, // blind batch
       ticketQuantity: 1,
       sorting: 930,
     },
@@ -188,7 +192,7 @@ async function main() {
       notice: ["Two tickets, blind sale", "Dve karti, na slepo"],
       checkout: ["Duo ticket for Endemit festival '27", "Duo karta za Endemit festival '27"],
       category: "Tickets",
-      price: 140, // TEMP
+      price: 160, // blind batch
       ticketQuantity: 2,
       sorting: 920,
     },
@@ -201,14 +205,42 @@ async function main() {
       notice: ["Four tickets, blind sale", "Štiri karte, na slepo"],
       checkout: ["Group ticket for Endemit festival '27", "Skupinska karta za Endemit festival '27"],
       category: "Tickets",
-      price: 260, // TEMP
+      price: 300, // blind batch
       ticketQuantity: 4,
       sorting: 910,
     },
     {
+      uid: "endemit-festival-2027-friday-ticket",
+      title: "Festival '27 Friday ticket",
+      title_sl: "Festival '27 petek",
+      description: "Entry for one person to Endemit festival, Libeliče, for Friday August 13th 2027 only.",
+      description_sl: "Vstop za eno osebo na Endemit festival, Libeliče, sam za petek, 13. avgust 2027.",
+      notice: ["Friday only", "Sam petek"],
+      checkout: ["Friday ticket for Endemit festival '27", "Petkova karta za Endemit festival '27"],
+      category: "Tickets",
+      price: 55, // proposal, blind batch
+      ticketQuantity: 1,
+      cutoff: "2027-08-14T04:00:00+0000",
+      sorting: 908,
+    },
+    {
+      uid: "endemit-festival-2027-saturday-ticket",
+      title: "Festival '27 Saturday ticket",
+      title_sl: "Festival '27 sobota",
+      description: "Entry for one person to Endemit festival, Libeliče, for Saturday August 14th 2027 only.",
+      description_sl: "Vstop za eno osebo na Endemit festival, Libeliče, sam za soboto, 14. avgust 2027.",
+      notice: ["Saturday only", "Sam sobota"],
+      checkout: ["Saturday ticket for Endemit festival '27", "Sobotna karta za Endemit festival '27"],
+      category: "Tickets",
+      price: 55, // proposal, blind batch
+      ticketQuantity: 1,
+      cutoff: "2027-08-15T04:00:00+0000",
+      sorting: 906,
+    },
+    {
       uid: "endemit-festival-2027-tent",
       title: "Festival '27 tent rental",
-      title_sl: "Festival '27 šotor",
+      title_sl: "Festival '27 najem šotora",
       description: "An Endemit tent, set up and waiting for you at the camp. Limited number available.",
       description_sl: "Endemitski šotor, postavlen in prpravlen v kampo. Število je omejeno.",
       checkout: ["Tent rental at Endemit festival '27", "Najem šotora na Endemit festivalu '27"],
@@ -219,7 +251,7 @@ async function main() {
     {
       uid: "endemit-festival-2027-bus-ljubljana",
       title: "Festival '27 bus from Ljubljana",
-      title_sl: "Festival '27 bus iz Lublane",
+      title_sl: "Festival '27 bus Ljubljana – Libeliče – Ljubljana",
       description: "Bus transport from Ljubljana to the festival grounds in Libeliče.",
       description_sl: "Prevoz z busom iz Lublane do festivalskega placa v Libeličah.",
       checkout: ["Bus Ljubljana to Endemit festival '27", "Bus Lublana do Endemit festivala '27"],
@@ -229,7 +261,8 @@ async function main() {
     },
   ];
 
-  for (const p of only === "event" ? [] : products) {
+  const wanted = only === "event" ? [] : only === "day" ? products.filter(p => p.cutoff) : products;
+  for (const p of wanted) {
     migration.createDocument(
       {
         type: "product",
@@ -259,7 +292,7 @@ async function main() {
           ticket_quantity: p.ticketQuantity ?? null,
           variants: [],
           regional_eligibility: [],
-          cutoff_date: "2027-08-15T15:00:00+0000",
+          cutoff_date: p.cutoff ?? "2027-08-15T15:00:00+0000",
           display_content_slices: "Above description",
           slices: [],
         } as never,

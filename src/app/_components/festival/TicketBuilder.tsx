@@ -6,11 +6,17 @@ import { useRouter } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
 import type { FestivalLocale } from "./copy";
 import type { FestivalOffer } from "./data";
-import { bookingLines, EMPTY_BOOKING, linesTotal, MAX_PEOPLE, readBooking, writeBooking, type Booking } from "./booking";
+import { bookingLines, cheapestTickets, EMPTY_BOOKING, linesTotal, MAX_PEOPLE, PASSES, readBooking, writeBooking, type Booking } from "./booking";
 import styles from "./festival.module.css";
 
 const text = {
   en: {
+    pass: "Which ticket?",
+    passes: { weekend: "Whole weekend", friday: "Friday", saturday: "Saturday" },
+    passDates: { weekend: "13–15 Aug", friday: "13 Aug", saturday: "14 Aug" },
+    dayNote: "Entry for this evening only. The bus runs for the whole weekend only.",
+    upsell: "The whole weekend is only",
+    upsellMore: "more per person.",
     people: "How many are coming?",
     peopleNote: "Every holder's name is added at checkout",
     perPerson: "per person",
@@ -29,6 +35,12 @@ const text = {
     more: "More",
   },
   sl: {
+    pass: "Kero karto?",
+    passes: { weekend: "Cel vikend", friday: "Petek", saturday: "Sobota" },
+    passDates: { weekend: "13.–15. avg.", friday: "13. avg.", saturday: "14. avg." },
+    dayNote: "Vstop sam za ta večer. Bus vozi sam za cel vikend.",
+    upsell: "Cel vikend je sam",
+    upsellMore: "več na glavo.",
     people: "Kok vas pride?",
     peopleNote: "Imena imetnikov vpišeš pr plačilo",
     perPerson: "na glavo",
@@ -135,10 +147,17 @@ export default function TicketBuilder({
 
   const lines = useMemo(() => bookingLines(offers, booking), [offers, booking]);
   const total = linesTotal(lines);
-  const ticketLines = lines.filter(line => line.offer.kind === "ticket");
+  const ticketLines = lines.filter(line => line.offer.kind === "ticket" || line.offer.kind === "day");
+  const isDay = booking.pass !== "weekend";
+  // Evenings are offered only when their product can be sold.
+  const passes = PASSES.filter(pass => pass === "weekend" || offers.some(offer => offer.key === pass && (offer.sellable || !salesOpen)));
+  // What the same group would pay per person for the whole weekend.
+  const weekendOffers = offers.filter(offer => offer.kind === "ticket");
+  const weekendTotal = [...cheapestTickets(weekendOffers, booking.people)].reduce((sum, [key, quantity]) => sum + (weekendOffers.find(offer => offer.key === key)?.price ?? 0) * quantity, 0);
   const ticketTotal = linesTotal(ticketLines);
   const single = offers.find(offer => offer.key === "single");
-  const saving = single ? single.price * booking.people - ticketTotal : 0;
+  const saving = single && !isDay ? single.price * booking.people - ticketTotal : 0;
+  const upsell = isDay ? (weekendTotal - ticketTotal) / booking.people : 0;
   const tent = offers.find(offer => offer.key === "tent");
   const bus = offers.find(offer => offer.key === "bus");
   const topups = offers.filter(offer => offer.kind === "topup" && (offer.sellable || !salesOpen));
@@ -149,6 +168,17 @@ export default function TicketBuilder({
       <span className={styles.stub} aria-hidden>
         Endemit festival · 13–15 · 08 · 2027 · Libeliče
       </span>
+      {passes.length > 1 ? (
+        <div className={styles.passes} role="radiogroup" aria-label={t.pass}>
+          {passes.map(pass => (
+            <button key={pass} type="button" role="radio" aria-checked={booking.pass === pass} className={styles.pass} onClick={() => update({ pass })}>
+              <b>{t.passes[pass]}</b>
+              <small>{t.passDates[pass]}</small>
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       <div className={styles.row} style={{ alignItems: "flex-start" }}>
         <div>
           <span className={styles.rowLabel}>{t.people}</span>
@@ -176,6 +206,19 @@ export default function TicketBuilder({
               </>
             ) : null}
           </p>
+          {isDay ? (
+            <p className={styles.rowNote}>
+              {t.dayNote}
+              {upsell > 0 ? (
+                <>
+                  {" "}
+                  <button type="button" className={styles.linkButton} onClick={() => update({ pass: "weekend" })}>
+                    {t.upsell} {formatPrice(upsell)} {t.upsellMore}
+                  </button>
+                </>
+              ) : null}
+            </p>
+          ) : null}
         </div>
         <Stepper value={booking.people} min={1} max={MAX_PEOPLE} onChange={people => update({ people })} label={t.people} less={t.less} more={t.more} />
       </div>
@@ -195,7 +238,7 @@ export default function TicketBuilder({
         </div>
       ) : null}
 
-      {extraAvailable(bus) && bus ? (
+      {extraAvailable(bus) && bus && !isDay ? (
         <div className={styles.row}>
           <div>
             <span className={styles.rowLabel}>
