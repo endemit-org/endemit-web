@@ -297,11 +297,11 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
                 {t.cta}
               </a>
             </div>
+            <span className={styles.scrollHint} aria-hidden>
+              {t.scroll} ↓
+            </span>
           </div>
 
-          <span className={styles.scrollHint} aria-hidden>
-            {t.scroll} ↓
-          </span>
           <Layer name="hill-far" widths={[1600, 900]} ratio={0.4331} sizes="max(100vw, 900px)" className={styles.heroHill} eager />
         </div>
       </header>

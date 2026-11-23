@@ -248,12 +248,10 @@
 }
 .dateline b { color: var(--salmon); font-weight: 400; }
 .heroActions { margin-top: 1.6rem; display: flex; justify-content: center; }
+/* Sits under the button in the same column, so the two can never collide. */
 .scrollHint {
-  position: absolute;
-  z-index: 2;
-  bottom: clamp(5.5rem, 16svh, 9rem);
-  left: 50%;
-  translate: -50% 0;
+  display: block;
+  margin-top: clamp(1.4rem, 5svh, 3rem);
   font-family: var(--font-heading), sans-serif;
   font-size: 0.95rem;
   letter-spacing: 0.4em;
@@ -261,8 +259,8 @@
   color: var(--lilac);
   animation: bob 1.6s steps(2) infinite;
 }
-@keyframes bob { 50% { translate: -50% 7px; } }
-@media (max-height: 780px) { .scrollHint { display: none; } }
+@keyframes bob { 50% { translate: 0 7px; } }
+@media (max-height: 600px) { .scrollHint { display: none; } }
 .heroHill {
   position: absolute;
   z-index: 1;
@@ -458,11 +456,13 @@
   background: var(--hill-mid);
 }
 .shot[data-tone="night"] img, .shot[data-tone="night"] > video { border-color: var(--lilac); }
-/* Scrolling bends shapes out of place; colours stay as painted. */
+/* Scrolling bends shapes out of place. */
 .shot > button, .shot > video {
   transform: skewY(calc(var(--v, 0) * 5deg)) scaleY(calc(1 + var(--va, 0) * 0.07));
 }
-.root[data-warping="true"] .shot > *,
+/* Photographs also turn colour while moving; the painted layers do not. */
+.shot[data-tone="night"] > * { filter: hue-rotate(calc(var(--v, 0) * 55deg)) saturate(calc(1 + var(--va, 0) * 0.4)); }
+.root[data-warping="true"] .shot > * { filter: url(#fest-warp) hue-rotate(calc(var(--v, 0) * 55deg)) saturate(calc(1 + var(--va, 0) * 0.4)); }
 .root[data-warping="true"] .reel button,
 .root[data-warping="true"] .mapButton img,
 .root[data-warping="true"] .lineup ol,
