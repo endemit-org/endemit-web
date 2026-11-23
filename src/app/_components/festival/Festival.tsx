@@ -385,6 +385,17 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             ))}
             <Layer name="dome" widths={[720, 420]} ratio={0.3293} sizes="(max-width: 900px) 190px, 21vw" />
           </div>
+          {(
+            [
+              [1, "5.8%", "48.9%"],
+              [3, "22.2%", "19.6%"],
+              [6, "37.2%", "48.1%"],
+              [4, "51.3%", "38.1%"],
+              [2, "93.3%", "41.5%"],
+            ] as const
+          ).map(([n, x, y], i) => (
+            <img key={x} className={styles.lurker} style={css({ "--x": x, "--y": y, "--i": i })} src={`${ART}/creature-${n}.webp`} width={200} height={266} alt="" loading="lazy" decoding="async" />
+          ))}
           <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.forestFront} />
           {/* Lasers fan out of the dome's light, towards whoever is looking. */}
           <div className={styles.lasers}>
@@ -398,7 +409,6 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             ))}
           </div>
         </div>
-        <CreatureRow spots={[[3, "8%", 46], [1, "31%", 58], [6, "57%", 42], [4, "82%", 54]]} />
         <div className={styles.inner}>
           <Echo>{t.ticketsTitle}</Echo>
           <p className={styles.lede} style={{ marginTop: "1.4rem" }}>

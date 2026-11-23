@@ -534,6 +534,7 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
                     {topups.map(offer => (
                       <button key={offer.key} type="button" className={styles.chip} aria-pressed={booking.topup === offer.key} onClick={() => onBooking({ topup: offer.key })}>
                         {offer.label}
+                        {offer.bonus > 0 ? <sup>+{offer.bonus}</sup> : null}
                       </button>
                     ))}
                   </div>

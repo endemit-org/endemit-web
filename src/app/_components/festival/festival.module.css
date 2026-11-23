@@ -608,11 +608,11 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  /* Notches above the dome's bushes and above five canopies the creatures hide behind. */
   clip-path: polygon(
-    0 0, 57% 0, 57% 31%, 58% 33%, 60% 36%, 61.5% 40%, 62.5% 45.5%, 63.5% 43%,
-    65% 42%, 66.5% 43%, 67.2% 41%, 69% 39%, 71% 39.5%, 72.5% 41.5%, 73.2% 38%,
-    75% 35%, 76.2% 33.5%, 77.5% 30.5%, 79.5% 29.5%, 80.5% 29%, 80.5% 0, 100% 0,
-    100% 100%, 0 100%
+    0 0, 1.1% 0.0%, 1.1% 59.9%, 3.3% 58.0%, 6.1% 57.2%, 8.9% 57.0%, 10.6% 57.4%, 10.6% 0.0%, 12.2% 0.0%, 12.2% 36.7%, 13.9% 32.2%, 17.2% 28.9%, 22.2% 27.7%, 27.2% 28.9%, 31.1% 32.2%, 32.8% 36.3%, 32.8% 0.0%, 33.3% 0.0%, 33.3% 59.5%, 35.0% 57.2%, 37.2% 56.2%, 39.4% 57.0%, 40.6% 59.1%, 40.6% 0.0%, 46.1% 0.0%, 46.1% 52.5%, 48.0% 48.9%, 50.6% 46.8%, 53.9% 46.0%, 56.1% 46.6%, 56.1% 0.0%,
+    57% 0, 57% 31%, 58% 33%, 60% 36%, 61.5% 40%, 62.5% 45.5%, 63.5% 43%, 65% 42%, 66.5% 43%, 67.2% 41%, 69% 39%, 71% 39.5%, 72.5% 41.5%, 73.2% 38%, 75% 35%, 76.2% 33.5%, 77.5% 30.5%, 79.5% 29.5%, 80.5% 29%, 80.5% 0,
+    86.1% 0.0%, 86.1% 60.1%, 87.6% 55.0%, 90.0% 51.3%, 93.9% 49.7%, 97.8% 50.9%, 99.4% 52.5%, 99.4% 0.0%, 100% 0, 100% 100%, 0 100%
   );
 }
 .lasers { position: absolute; left: 70%; bottom: 64.6%; width: 0; height: 0; mix-blend-mode: screen; }
@@ -682,6 +682,25 @@
   60% { opacity: 1; transform: rotate(-4deg); }
   76% { opacity: 1; transform: rotate(-11deg); }
   88% { opacity: 0; transform: rotate(-14deg); }
+}
+/* Creatures living in the trees: they rise from behind a canopy and sink back. */
+.lurker {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 5%;
+  height: auto;
+  translate: -50% 78%;
+  animation: lurk 9s steps(1) calc(var(--i) * -2.3s) infinite paused;
+}
+[data-inview="true"] .lurker { animation-play-state: running; }
+@keyframes lurk {
+  0%, 100% { translate: -50% 78%; }
+  8% { translate: -50% 52%; }
+  12% { translate: -50% 26%; }
+  16%, 58% { translate: -50% 0; }
+  62% { translate: -50% 30%; }
+  66% { translate: -50% 60%; }
 }
 .dome img { position: relative; display: block; width: 100%; height: auto; }
 /* Sound leaving the dome: one ring, repeated. */
@@ -907,6 +926,8 @@
 .units svg { width: 22px; height: 22px; }
 .combo { margin: 0.9rem 0 0; color: var(--cream); }
 .combo b { color: var(--salmon); font-weight: 600; }
+.chip sup { margin-left: 0.3em; font-size: 0.82em; font-weight: 600; color: var(--red); vertical-align: 0.5em; line-height: 0; }
+.chip[aria-pressed="true"] sup { color: var(--hill-near); }
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .chip {
   min-height: 44px;
@@ -1194,5 +1215,6 @@
   .pattern span { transform: none; }
   .heroHill, .edge, .forestEdge { transform: translate3d(-50%, 0, 0); }
   .creature { translate: 0 0; }
+  .lurker { translate: -50% 0; }
   .hero { height: 100svh; }
 }

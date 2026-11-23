@@ -20,11 +20,14 @@ const text = {
     people: "How many are coming?",
     peopleNote: "Every holder's name is added at checkout",
     perPerson: "per person",
-    save: "You save",
+    save: (people: number) => (people > 0 ? "You save" : ""),
     tent: "Tent rental",
     bus: "Bus seats",
     topup: "Wallet top up",
     topupNote: "Food and drinks are paid with the Wallet only",
+    bonusNote: "Top up now and get more tokens.",
+    bonusPay: "You pay",
+    bonusGet: "you get",
     none: "Later",
     total: "Total",
     checkout: "Continue to payment",
@@ -44,11 +47,15 @@ const text = {
     people: "Kok vas pride?",
     peopleNote: "Imena imetnikov vpišeš pr plačilo",
     perPerson: "na glavo",
-    save: "Prišparaš",
+    // Slovene dual for two, plural from three.
+    save: (people: number) => (people === 2 ? "Pršparata" : people > 2 ? "Pršparate" : "Pršparaš"),
     tent: "Najem šotora",
     bus: "Sedeži na buso",
     topup: "Polnitev denarnce",
     topupNote: "Hrana pa pijača se plača sam z Denarnco",
+    bonusNote: "Nafilaj zdej pa dobiš več žetonov.",
+    bonusPay: "Plačaš",
+    bonusGet: "dobiš",
     none: "Poznej",
     total: "Skop",
     checkout: "Naprej na plačilo",
@@ -161,6 +168,7 @@ export default function TicketBuilder({
   const tent = offers.find(offer => offer.key === "tent");
   const bus = offers.find(offer => offer.key === "bus");
   const topups = offers.filter(offer => offer.kind === "topup" && (offer.sellable || !salesOpen));
+  const chosenTopup = topups.find(offer => offer.key === booking.topup);
   const extraAvailable = (offer?: FestivalOffer) => Boolean(offer && (offer.sellable || !salesOpen));
 
   return (
@@ -201,7 +209,7 @@ export default function TicketBuilder({
               <>
                 {" · "}
                 <b>
-                  {t.save} {formatPrice(saving)}
+                  {t.save(booking.people)} {formatPrice(saving)}
                 </b>
               </>
             ) : null}
@@ -257,7 +265,13 @@ export default function TicketBuilder({
         <div className={styles.row} style={{ flexWrap: "wrap" }}>
           <div>
             <span className={styles.rowLabel}>{t.topup}</span>
-            <span className={styles.rowNote}>{t.topupNote}</span>
+            <span className={styles.rowNote}>
+              {chosenTopup && chosenTopup.bonus > 0
+                ? `${t.bonusPay} ${formatPrice(chosenTopup.price)}, ${t.bonusGet} ${chosenTopup.price + chosenTopup.bonus} ǝŧ.`
+                : topups.some(offer => offer.bonus > 0)
+                  ? t.bonusNote
+                  : t.topupNote}
+            </span>
           </div>
           <div className={styles.chips}>
             <button type="button" className={styles.chip} aria-pressed={booking.topup === null} onClick={() => update({ topup: null })}>
@@ -266,6 +280,7 @@ export default function TicketBuilder({
             {topups.map(offer => (
               <button key={offer.key} type="button" className={styles.chip} aria-pressed={booking.topup === offer.key} onClick={() => update({ topup: offer.key })}>
                 {offer.label}
+                {offer.bonus > 0 ? <sup>+{offer.bonus}</sup> : null}
               </button>
             ))}
           </div>

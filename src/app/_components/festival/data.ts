@@ -19,6 +19,8 @@ export type FestivalOffer = {
   note: string;
   /** EUR. From Prismic when the product is published, otherwise the fallback. */
   price: number;
+  /** Extra Wallet tokens credited on top of a top up (the product's top-up reward). */
+  bonus: number;
   /** Tickets issued by one unit (1 single, 2 duo, 4 group). */
   people: number;
   /** Full product for the checkout request; null while unpublished. */
@@ -75,6 +77,8 @@ type OfferSeed = {
   people?: number;
   /** Used only until the product is published in Prismic. */
   fallbackPrice: (batch: Batch) => number;
+  /** Proposed top-up bonus, shown until the product carries its own reward. */
+  fallbackBonus?: number;
   label: Record<FestivalLocale, string>;
   note: Record<FestivalLocale, string>;
 };
@@ -111,9 +115,10 @@ const OFFER_SEEDS: OfferSeed[] = [
     label: { en: "Bus from Ljubljana", sl: "Bus iz Lublane" },
     note: { en: "Ljubljana – Libeliče – Ljubljana, one return seat", sl: "Ljubljana – Libeliče – Ljubljana, en povratn sedež" },
   },
-  ...[20, 50, 100].map(
-    (amount): OfferSeed => ({
-      key: `topup-${amount}`, kind: "topup", uid: `wallet-top-up-${amount}-tokens`, fallbackPrice: () => amount,
+  // Bonus tokens are a proposal: roughly 10, 12 and 15 percent on top.
+  ...([[20, 2], [50, 6], [100, 15]] as const).map(
+    ([amount, bonus]): OfferSeed => ({
+      key: `topup-${amount}`, kind: "topup", uid: `wallet-top-up-${amount}-tokens`, fallbackPrice: () => amount, fallbackBonus: bonus,
       label: { en: `${amount} ǝŧ`, sl: `${amount} ǝŧ` },
       note: { en: "Wallet top up", sl: "Polnitev denarnce" },
     })
@@ -172,6 +177,7 @@ export async function loadFestival(locale: FestivalLocale): Promise<FestivalData
       label: seed.label[locale],
       note: seed.note[locale],
       price: product?.price ?? seed.fallbackPrice(batch),
+      bonus: product?.walletTopupReward ?? 0,
       people: seed.people ?? 0,
       product,
       sellable: product ? isProductSellable(product).isSellable : false,
@@ -183,7 +189,13 @@ export async function loadFestival(locale: FestivalLocale): Promise<FestivalData
   // On local dev and Vercel previews, while the products are not published
   // yet, the flow opens as a demo with the placeholder prices for review.
   const demo = !live && (process.env.NODE_ENV === "development" || process.env.VERCEL_ENV === "preview");
-  if (demo) for (const offer of offers) offer.sellable = true;
+  if (demo) {
+    offers.forEach((offer, index) => {
+      offer.sellable = true;
+      // The proposed top-up bonus shows in demo only; live, the product's own reward decides.
+      if (!offer.bonus) offer.bonus = OFFER_SEEDS[index].fallbackBonus ?? 0;
+    });
+  }
   return {
     demo,
     offers,
