@@ -42,6 +42,11 @@ export type FestivalCopy = {
   storiesTitle: string;
   newsletterTitle: string;
   navLabel: string;
+  nightWord: string;
+  galleryAll: string;
+  galleryClose: string;
+  galleryPrevious: string;
+  galleryNext: string;
   nav: { id: string; label: string }[];
   newsletterText: string;
   soundOn: string;
@@ -144,9 +149,14 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     storiesTitle: "Whispers from the valley",
     newsletterTitle: "Stay in the loop",
     navLabel: "Sections",
+    nightWord: "Night falls",
+    galleryAll: "All photos",
+    galleryClose: "Close",
+    galleryPrevious: "Previous photo",
+    galleryNext: "Next photo",
     nav: [
       { id: "about", label: "About" },
-      { id: "film", label: "Film" },
+      { id: "impressions", label: "Impressions" },
       { id: "tickets", label: "Tickets" },
       { id: "map", label: "Map" },
       { id: "info", label: "Info" },
@@ -250,9 +260,14 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     storiesTitle: "Šepeti iz doline",
     newsletterTitle: "Ostani na vezi",
     navLabel: "Sekcije",
+    nightWord: "Pa pade noč",
+    galleryAll: "Vse slike",
+    galleryClose: "Zapri",
+    galleryPrevious: "Prejšna slika",
+    galleryNext: "Nasledna slika",
     nav: [
       { id: "about", label: "Zgodba" },
-      { id: "film", label: "Film" },
+      { id: "impressions", label: "Vtisi" },
       { id: "tickets", label: "Karte" },
       { id: "map", label: "Plac" },
       { id: "info", label: "Info" },

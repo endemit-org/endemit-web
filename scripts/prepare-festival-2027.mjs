@@ -128,6 +128,31 @@ const photoSpecs = [
   ["red-smoke", "EMA_0853.JPG", "night"],
   ["green-laser", "file_0000000033748243826a65aa9c3b46f8.png", "night"],
   ["booth", "AAM08809.jpg", "day"],
+  ["teal-crowd", "A7406631.jpg", "night"],
+  ["teal-light", "A7406592.jpg", "night"],
+  ["blue-beam", "A7406758.jpg", "night"],
+  ["night-bar", "A7406691.jpg", "night"],
+  ["lantern-line", "A7406567.jpg", "night"],
+  ["decks", "A7406659.jpg", "night"],
+  ["disco", "54178455-8665-4896-9328-E5BB04EF470B_1_105_c.jpeg", "night"],
+  ["purple-laser", "EMA_0802.JPG", "night"],
+  ["violet-beam", "EMA_0898.JPG", "night"],
+  ["green-dome", "EMA_0878.JPG", "night"],
+  ["pink-sky", "Izvir 2026 1~2.jpg", "night"],
+  ["blue-wide", "file_00000000c260820aae9002e3252514db~2.jpg", "night"],
+  ["glow-creatures", "A7406519.jpg", "night"],
+  ["blue-smoke", "7119F5D1-1380-46C3-AA4F-3B17B8AD5FFD_1_105_c.jpeg", "day"],
+  ["dancers", "AAM08780.jpg", "day"],
+  ["curtain-path", "A7407178.jpg", "day"],
+  ["dome-dj", "A7407063.jpg", "day"],
+  ["smoke-jump", "A7407410.jpg", "day"],
+  ["drava-meadow", "854537A6-22A9-4EA4-8282-EE81C39C60D1_1_105_c.jpeg", "place"],
+  ["drava-bank", "B785D58E-E1EA-4403-9CEF-DCCB75FA8CA2_1_105_c.jpeg", "place"],
+  ["hall", "0C714971-5F00-4ADD-99E6-8EBAC1AA25EA_1_105_c.jpeg", "place"],
+  ["fog-tree", "6B670FAD-ED7B-441D-8596-1BA5DAB82959_1_105_c.jpeg", "place"],
+  ["lantern-path", "5B95BB7E-B0DB-4FDA-92CA-ED9A912720DD_1_105_c.jpeg", "place"],
+  ["dome-frame", "324C98C9-CF63-4C85-A837-6532D25F32F4_1_105_c.jpeg", "place"],
+  ["sign-meadow", "D0085142-782A-4A12-ADB5-DFAB3C7EC43C_1_105_c.jpeg", "place"],
 ];
 
 async function buildPhotos() {
@@ -138,6 +163,12 @@ async function buildPhotos() {
       .resize({ width: 1280, height: 1280, fit: "inside", withoutEnlargement: true })
       .webp({ quality: 72, effort: 6 })
       .toFile(target);
+    // Half-size copy for grids and the gallery wall.
+    await sharp(`${PHOTOS}/${file}`)
+      .rotate()
+      .resize({ width: 640, height: 640, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 68, effort: 6 })
+      .toFile(`${OUT}/photo-${slug}-640.webp`);
     manifest.photos.push({ slug, src: `photo-${slug}.webp`, width: info.width, height: info.height, tone });
     console.log(`photo-${slug}.webp ${info.width}x${info.height} ${kb(target)}K`);
   }

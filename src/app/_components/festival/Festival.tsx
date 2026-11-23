@@ -7,7 +7,10 @@ import { formatPrice } from "@/lib/util/formatting";
 import { festivalCopy, type FestivalLocale } from "./copy";
 import type { FestivalData, TimelineStep } from "./data";
 import { FilmPlayer, LoopVideo, MapViewer, SceneMotion, SectionNav, SoundToggle } from "./motion";
+import Gallery from "./Gallery";
+import { findPhoto, GALLERY, PLACE } from "./photos";
 import TicketBuilder from "./TicketBuilder";
+import Trip from "./Trip";
 import styles from "./festival.module.css";
 
 const ART = "/images/festival/2027";
@@ -95,47 +98,79 @@ function CreatureRow({ spots }: { spots: [n: number, x: string, w: number][] }) 
   );
 }
 
-type Shot =
-  | { photo: string; w: number; h: number; span: number; wide: number; tilt: number; drop?: string }
-  | { loop: string; span: number; wide: number; tilt: number; drop?: string };
+type Shot = { photo: string; span: number; wide: number; tilt: number; drop?: string } | { loop: string; span: number; wide: number; tilt: number; drop?: string };
 
 const DAY: Shot[] = [
-  { photo: "smoke-dance-2", w: 1280, h: 853, span: 6, wide: 7, tilt: -0.8 },
-  { photo: "sunbeam-tree", w: 853, h: 1280, span: 3, wide: 3, tilt: 1.6, drop: "1.4rem" },
+  { photo: "smoke-dance-2", span: 6, wide: 7, tilt: -0.8 },
+  { photo: "sunbeam-tree", span: 3, wide: 3, tilt: 1.6, drop: "1.4rem" },
   { loop: "meadow", span: 3, wide: 2, tilt: -1.4 },
-  { photo: "river", w: 1024, h: 768, span: 4, wide: 4, tilt: 1.1 },
-  { photo: "sign-tree", w: 853, h: 1280, span: 2, wide: 2, tilt: -2.1, drop: "-1rem" },
+  { photo: "river", span: 4, wide: 4, tilt: 1.1 },
+  { photo: "sign-tree", span: 2, wide: 2, tilt: -2.1, drop: "-1rem" },
   { loop: "camp", span: 2, wide: 2, tilt: 1.8 },
-  { photo: "watermelon", w: 1280, h: 853, span: 4, wide: 4, tilt: -1.2 },
+  { photo: "watermelon", span: 4, wide: 4, tilt: -1.2 },
   { loop: "smoke", span: 2, wide: 3, tilt: -1.7 },
-  { photo: "grass-crew", w: 1280, h: 853, span: 6, wide: 7, tilt: 0.7 },
+  { photo: "grass-crew", span: 6, wide: 7, tilt: 0.7 },
+  { photo: "dancers", span: 3, wide: 2, tilt: -1.5 },
+  { photo: "blue-smoke", span: 3, wide: 3, tilt: 1.3, drop: "1rem" },
 ];
 
 const NIGHT: Shot[] = [
-  { photo: "laser-dome-3", w: 768, h: 1024, span: 3, wide: 3, tilt: -1.3 },
+  { photo: "blue-floor", span: 6, wide: 7, tilt: 0.9 },
+  { photo: "disco", span: 3, wide: 3, tilt: -1.6 },
   { loop: "lasers", span: 3, wide: 2, tilt: 1.7, drop: "1.2rem" },
-  { photo: "red-smoke", w: 1280, h: 853, span: 6, wide: 5, tilt: 0.6 },
-  { photo: "silhouettes", w: 853, h: 1280, span: 3, wide: 3, tilt: -2 },
-  { loop: "hands", span: 3, wide: 2, tilt: 1.2, drop: "-0.8rem" },
-  { photo: "blue-floor", w: 1280, h: 853, span: 6, wide: 7, tilt: 1.4 },
+  { photo: "teal-crowd", span: 6, wide: 5, tilt: -0.7 },
+  { photo: "blue-beam", span: 3, wide: 3, tilt: 1.4 },
+  { photo: "violet-beam", span: 3, wide: 2, tilt: -1.9, drop: "-0.8rem" },
+  { loop: "hands", span: 3, wide: 2, tilt: 1.2 },
+  { photo: "purple-laser", span: 3, wide: 3, tilt: -1.2, drop: "1rem" },
+  { photo: "night-bar", span: 6, wide: 6, tilt: 0.8 },
+  { photo: "green-laser", span: 2, wide: 3, tilt: 1.8 },
+  { photo: "silhouettes", span: 2, wide: 3, tilt: -1.4 },
+  { photo: "laser-dome-3", span: 2, wide: 3, tilt: 1.1 },
+  { photo: "pink-sky", span: 6, wide: 6, tilt: -0.6 },
+  { photo: "lantern-line", span: 6, wide: 7, tilt: 0.7 },
+  { photo: "green-dome", span: 6, wide: 5, tilt: -1 },
 ];
 
 function ShotFigure({ shot, tone }: { shot: Shot; tone: "day" | "night" }) {
+  const item = "photo" in shot ? findPhoto(shot.photo) : null;
   const vars = css({
     "--span": shot.span,
     "--span-wide": shot.wide,
     "--tilt": `${shot.tilt}deg`,
     "--drop": shot.drop ?? "0",
-    "--ratio": "photo" in shot ? `${shot.w} / ${shot.h}` : "9 / 16",
+    "--ratio": item ? `${item.w} / ${item.h}` : "9 / 16",
   });
   return (
     <figure className={`${styles.shot} ${styles.jitter}`} data-tone={tone} style={vars}>
-      {"photo" in shot ? (
-        <img src={`${ART}/photo-${shot.photo}.webp`} width={shot.w} height={shot.h} alt="" loading="lazy" decoding="async" />
+      {item ? (
+        <button type="button" data-gallery={item.slug}>
+          <img
+            src={`${ART}/photo-${item.slug}-640.webp`}
+            srcSet={`${ART}/photo-${item.slug}-640.webp 640w, ${ART}/photo-${item.slug}.webp ${item.w}w`}
+            sizes={`(max-width: 900px) ${Math.round((shot.span / 6) * 100)}vw, ${Math.round((shot.wide / 12) * 1100)}px`}
+            width={item.w}
+            height={item.h}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
       ) : (
-        <LoopVideo src={`${ART}/motion/loop-${shot.loop}.mp4`} poster={`${ART}/motion/loop-${shot.loop}.webp`} label="" />
+        <LoopVideo src={`${ART}/motion/loop-${(shot as { loop: string }).loop}.mp4`} poster={`${ART}/motion/loop-${(shot as { loop: string }).loop}.webp`} label="" />
       )}
     </figure>
+  );
+}
+
+/** Poster pattern: rows of heads sliding past each other. */
+function Pattern() {
+  return (
+    <div className={styles.pattern} aria-hidden data-scene>
+      {[0, 1, 2, 3, 4].map(i => (
+        <span key={i} data-row={i} />
+      ))}
+    </div>
   );
 }
 
@@ -209,6 +244,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             <img className={styles.sky} src={`${ART}/sky-fallback.webp`} width={1400} height={1253} alt="" fetchPriority="high" decoding="async" />
           </picture>
           <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.stars} eager />
+          <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.stars} ${styles.starsB}`} eager />
           <div className={styles.meteors} aria-hidden>
             {METEORS.map(([y, x, delay, dur], i) => (
               <span key={i} className={styles.meteor} style={css({ "--y": y, "--x": x, "--delay": `${delay}s`, "--dur": `${dur}s` })} />
@@ -243,7 +279,6 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       <Scene className={styles.about} id="about">
         <div className={`${styles.inner} ${styles.aboutGrid}`}>
           <div>
-            <p className={styles.kicker}>{t.tagline}</p>
             <Echo>{t.aboutTitle}</Echo>
           </div>
           <div>
@@ -269,10 +304,9 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       </div>
 
       {/* ---- film, on the middle hill ---- */}
-      <Scene className={styles.film} id="film">
+      <Scene className={styles.film} id="impressions">
         <div className={`${styles.inner} ${styles.filmGrid}`}>
           <div>
-            <p className={styles.kicker}>Endemit N&amp;D</p>
             <Echo>{t.filmTitle}</Echo>
             {data.showLineup ? null : (
               <p className={`${styles.lede} ${styles.dim}`} style={{ marginTop: "1.6rem" }}>
@@ -299,13 +333,16 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             {DAY.map((shot, i) => (
               <ShotFigure key={i} shot={shot} tone="day" />
             ))}
-            <div className={styles.nightTitle}>
-              <p className={styles.kicker}>{t.filmTitle}</p>
-            </div>
+            <Trip word={t.nightWord} />
             {NIGHT.map((shot, i) => (
               <ShotFigure key={i} shot={shot} tone="night" />
             ))}
           </div>
+          <p className={styles.collageMore}>
+            <button type="button" className={`${styles.tag} ${styles.jitter}`} data-gallery="">
+              {t.galleryAll} →
+            </button>
+          </p>
         </div>
       </Scene>
 
@@ -326,7 +363,6 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         </div>
         <CreatureRow spots={[[3, "8%", 46], [1, "31%", 58], [6, "57%", 42], [4, "82%", 54]]} />
         <div className={styles.inner}>
-          <p className={styles.kicker}>{t.timelineTitle}</p>
           <Echo>{t.ticketsTitle}</Echo>
           <p className={styles.lede} style={{ marginTop: "1.4rem" }}>
             {t.ticketsIntro}
@@ -373,6 +409,8 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         </div>
       </Scene>
 
+      <Pattern />
+
       {/* ---- practical, down among the trees ---- */}
       <Scene className={styles.info} id="info">
         <div className={styles.inner}>
@@ -384,6 +422,13 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
                 <p>{block.paragraphs[0]}</p>
                 {block.note ? <p className={styles.infoNote}>{block.note}</p> : null}
               </div>
+            ))}
+          </div>
+          <div className={styles.reel}>
+            {PLACE.map((item, i) => (
+              <button key={item.slug} type="button" className={styles.jitter} data-gallery={item.slug} style={css({ "--tilt": `${[-1.4, 1.1, -0.7, 1.6, -1.2][i % 5]}deg`, "--ratio": `${item.w} / ${item.h}` })}>
+                <img src={`${ART}/photo-${item.slug}-640.webp`} width={item.w} height={item.h} alt="" loading="lazy" decoding="async" />
+              </button>
             ))}
           </div>
           <p style={{ marginTop: "2rem" }}>
@@ -418,8 +463,8 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         </div>
       </Scene>
 
-      <footer className={styles.foot}>
-        <Link href="/" className={styles.footLogo} aria-label="Endemit">
+      <footer className={styles.foot} data-scene>
+        <Link href="/" className={`${styles.footLogo} ${styles.boilSmall}`} aria-label="Endemit">
           <EndemitLogo />
         </Link>
         <span>
@@ -428,6 +473,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         <Link href="/festival/info">{t.infoMore}</Link>
       </footer>
 
+      <Gallery photos={GALLERY} labels={{ title: t.galleryAll, close: t.galleryClose, previous: t.galleryPrevious, next: t.galleryNext }} />
       <SoundToggle onLabel={t.soundOn} offLabel={t.soundOff} />
     </main>
   );
