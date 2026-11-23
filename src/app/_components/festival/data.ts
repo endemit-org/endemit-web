@@ -77,7 +77,7 @@ const OFFER_SEEDS: OfferSeed[] = [
   {
     key: "bus", kind: "bus", uid: "endemit-festival-2027-bus-ljubljana", fallbackPrice: 15,
     label: { en: "Bus from Ljubljana", sl: "Bus iz Lublane" },
-    note: { en: "One seat to Libeliče", sl: "En sedež do Libelič" },
+    note: { en: "Ljubljana – Libeliče – Ljubljana, one return seat", sl: "Ljubljana – Libeliče – Ljubljana, en povratn sedež" },
   },
   ...[20, 50, 100].map(
     (amount): OfferSeed => ({
