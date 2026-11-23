@@ -1,0 +1,316 @@
+{
+  "layers": {
+    "sky": {
+      "widths": [
+        1400,
+        800
+      ],
+      "ratio": 0.8953
+    },
+    "stars": {
+      "widths": [
+        1600,
+        900
+      ],
+      "ratio": 0.7808
+    },
+    "hill-far": {
+      "widths": [
+        1600,
+        900
+      ],
+      "ratio": 0.4331
+    },
+    "hill-mid": {
+      "widths": [
+        1600,
+        900
+      ],
+      "ratio": 0.4018
+    },
+    "hill-near": {
+      "widths": [
+        1600,
+        900
+      ],
+      "ratio": 0.5843
+    },
+    "forest": {
+      "widths": [
+        1600,
+        900
+      ],
+      "ratio": 0.5458
+    },
+    "dome": {
+      "widths": [
+        720,
+        420
+      ],
+      "ratio": 0.3293
+    },
+    "tree-a": {
+      "widths": [
+        760,
+        440
+      ],
+      "ratio": 0.9481
+    },
+    "tree-b": {
+      "widths": [
+        720,
+        420
+      ],
+      "ratio": 1.4739
+    },
+    "tree-c": {
+      "widths": [
+        520,
+        320
+      ],
+      "ratio": 1.3022
+    }
+  },
+  "creatures": [
+    {
+      "src": "creature-1.webp",
+      "ratio": 0.7538
+    },
+    {
+      "src": "creature-2.webp",
+      "ratio": 0.7154
+    },
+    {
+      "src": "creature-3.webp",
+      "ratio": 0.9769
+    },
+    {
+      "src": "creature-4.webp",
+      "ratio": 0.7885
+    },
+    {
+      "src": "creature-5.webp",
+      "ratio": 0.6885
+    },
+    {
+      "src": "creature-6.webp",
+      "ratio": 0.8731
+    }
+  ],
+  "photos": [
+    {
+      "slug": "river",
+      "src": "photo-river.webp",
+      "width": 1024,
+      "height": 768,
+      "tone": "day"
+    },
+    {
+      "slug": "meadow-dome",
+      "src": "photo-meadow-dome.webp",
+      "width": 1024,
+      "height": 768,
+      "tone": "day"
+    },
+    {
+      "slug": "sunbeam-tree",
+      "src": "photo-sunbeam-tree.webp",
+      "width": 853,
+      "height": 1280,
+      "tone": "day"
+    },
+    {
+      "slug": "backlight",
+      "src": "photo-backlight.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "smoke-dance-1",
+      "src": "photo-smoke-dance-1.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "smoke-dance-2",
+      "src": "photo-smoke-dance-2.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "smoke-dance-3",
+      "src": "photo-smoke-dance-3.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "smoke-figure",
+      "src": "photo-smoke-figure.webp",
+      "width": 853,
+      "height": 1280,
+      "tone": "day"
+    },
+    {
+      "slug": "afternoon-floor",
+      "src": "photo-afternoon-floor.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "watermelon",
+      "src": "photo-watermelon.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "grass-crew",
+      "src": "photo-grass-crew.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "white-curtain",
+      "src": "photo-white-curtain.webp",
+      "width": 853,
+      "height": 1280,
+      "tone": "day"
+    },
+    {
+      "slug": "dome-day",
+      "src": "photo-dome-day.webp",
+      "width": 1024,
+      "height": 768,
+      "tone": "day"
+    },
+    {
+      "slug": "sign-sun",
+      "src": "photo-sign-sun.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "sign-tree",
+      "src": "photo-sign-tree.webp",
+      "width": 853,
+      "height": 1280,
+      "tone": "day"
+    },
+    {
+      "slug": "melon-slices",
+      "src": "photo-melon-slices.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    },
+    {
+      "slug": "tent-view",
+      "src": "photo-tent-view.webp",
+      "width": 1280,
+      "height": 960,
+      "tone": "day"
+    },
+    {
+      "slug": "laser-dome-1",
+      "src": "photo-laser-dome-1.webp",
+      "width": 792,
+      "height": 992,
+      "tone": "night"
+    },
+    {
+      "slug": "laser-dome-2",
+      "src": "photo-laser-dome-2.webp",
+      "width": 768,
+      "height": 1024,
+      "tone": "night"
+    },
+    {
+      "slug": "laser-dome-3",
+      "src": "photo-laser-dome-3.webp",
+      "width": 768,
+      "height": 1024,
+      "tone": "night"
+    },
+    {
+      "slug": "silhouettes",
+      "src": "photo-silhouettes.webp",
+      "width": 853,
+      "height": 1280,
+      "tone": "night"
+    },
+    {
+      "slug": "lanterns",
+      "src": "photo-lanterns.webp",
+      "width": 853,
+      "height": 1280,
+      "tone": "night"
+    },
+    {
+      "slug": "blue-floor",
+      "src": "photo-blue-floor.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "night"
+    },
+    {
+      "slug": "red-smoke",
+      "src": "photo-red-smoke.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "night"
+    },
+    {
+      "slug": "green-laser",
+      "src": "photo-green-laser.webp",
+      "width": 571,
+      "height": 1280,
+      "tone": "night"
+    },
+    {
+      "slug": "booth",
+      "src": "photo-booth.webp",
+      "width": 1280,
+      "height": 853,
+      "tone": "day"
+    }
+  ],
+  "loops": [
+    {
+      "slug": "lasers",
+      "src": "motion/loop-lasers.mp4",
+      "poster": "motion/loop-lasers.webp"
+    },
+    {
+      "slug": "camp",
+      "src": "motion/loop-camp.mp4",
+      "poster": "motion/loop-camp.webp"
+    },
+    {
+      "slug": "smoke",
+      "src": "motion/loop-smoke.mp4",
+      "poster": "motion/loop-smoke.webp"
+    },
+    {
+      "slug": "meadow",
+      "src": "motion/loop-meadow.mp4",
+      "poster": "motion/loop-meadow.webp"
+    },
+    {
+      "slug": "hands",
+      "src": "motion/loop-hands.mp4",
+      "poster": "motion/loop-hands.webp"
+    },
+    {
+      "slug": "green",
+      "src": "motion/loop-green.mp4",
+      "poster": "motion/loop-green.webp"
+    }
+  ]
+}
