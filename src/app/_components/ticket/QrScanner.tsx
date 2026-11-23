@@ -258,6 +258,12 @@ export default function QRScanner({
 
       {current.ticket && (
         <div>
+          {/* What this ticket admits, large enough to read at a glance. */}
+          {current.ticket.doorLabel && (
+            <div className="mb-3 inline-block rounded-md bg-white px-4 py-1 text-3xl font-black uppercase tracking-wide text-neutral-900">
+              {current.ticket.doorLabel}
+            </div>
+          )}
           <div className="text-2xl font-bold">
             {current.ticket.ticketHolderName}
             {current.ticket.isGuestList && (
@@ -266,6 +272,9 @@ export default function QRScanner({
               </span>
             )}
           </div>
+          {current.ticket.productName && (
+            <div className="text-base font-medium">{current.ticket.productName}</div>
+          )}
           <div className="text-sm opacity-90">
             {current.ticket.ticketPayerEmail} ·{" "}
             {formatDecimalPrice(current.ticket.price)}

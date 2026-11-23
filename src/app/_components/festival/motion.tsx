@@ -299,3 +299,80 @@ export function SectionNav({ label, items }: { label: string; items: { id: strin
     </nav>
   );
 }
+
+/**
+ * Creatures are shy: they slip away from the pointer and come back when it
+ * leaves. Elements opt in with `data-shy`; `data-shy="duck"` ones (in the
+ * trees) sink behind their cover instead of running.
+ */
+export function ShyCreatures({ rootId }: { rootId: string }) {
+  useEffect(() => {
+    const root = document.getElementById(rootId);
+    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const shy = Array.from(root.querySelectorAll<HTMLElement>("[data-shy]"));
+    const offsets = new Map<HTMLElement, { x: number; y: number }>();
+    const near = new Set<HTMLElement>();
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) near.add(entry.target as HTMLElement);
+        else near.delete(entry.target as HTMLElement);
+      }
+    });
+    shy.forEach(element => observer.observe(element));
+
+    const REACH = 150;
+    let frame = 0;
+    let pointer: { x: number; y: number } | null = null;
+    const update = () => {
+      frame = 0;
+      for (const element of near) {
+        const now = offsets.get(element) ?? { x: 0, y: 0 };
+        let x = 0;
+        let y = 0;
+        if (pointer) {
+          const rect = element.getBoundingClientRect();
+          // Where it rests, without the push it is already under.
+          const dx = rect.left + rect.width / 2 - now.x - pointer.x;
+          const dy = rect.top + rect.height / 2 - now.y - pointer.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance < REACH) {
+            const push = 1 - distance / REACH;
+            const ux = distance > 1 ? dx / distance : 0;
+            const uy = distance > 1 ? dy / distance : -1;
+            if (element.dataset.shy === "duck") {
+              x = ux * push * 24;
+              y = push * rect.height * 0.9;
+            } else {
+              x = ux * push * 110;
+              y = uy * push * 70;
+            }
+          }
+        }
+        if (Math.abs(x - now.x) < 0.5 && Math.abs(y - now.y) < 0.5) continue;
+        offsets.set(element, { x, y });
+        element.style.setProperty("--fx", `${x.toFixed(1)}px`);
+        element.style.setProperty("--fy", `${y.toFixed(1)}px`);
+        element.style.setProperty("--fr", `${(x / 9).toFixed(1)}deg`);
+      }
+    };
+    const move = (event: PointerEvent) => {
+      pointer = { x: event.clientX, y: event.clientY };
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const leave = () => {
+      pointer = null;
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerdown", move, { passive: true });
+    document.addEventListener("pointerleave", leave);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerdown", move);
+      document.removeEventListener("pointerleave", leave);
+    };
+  }, [rootId]);
+  return null;
+}

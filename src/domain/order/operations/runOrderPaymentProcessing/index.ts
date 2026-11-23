@@ -156,6 +156,11 @@ export const runOrderPaymentProcessing = inngest.createFunction(
               metadata: {
                 productName: ticketItem.name ?? "Default",
                 eventUid: eventData.uid,
+                // The product's ticket design, so the issued image and the
+                // door scanner know what kind of ticket this is.
+                ...(typeof ticketItem.metadata?.ticketTemplate === "string" && {
+                  ticketTemplate: ticketItem.metadata.ticketTemplate,
+                }),
               },
             },
           });

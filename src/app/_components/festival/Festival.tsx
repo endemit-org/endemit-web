@@ -8,7 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
 import { festivalCopy, type FestivalLocale } from "./copy";
 import type { FestivalData, TimelineStep } from "./data";
-import { FilmPlayer, LoopVideo, MapViewer, SceneMotion, SectionNav, SoundToggle } from "./motion";
+import { FilmPlayer, LoopVideo, MapViewer, SceneMotion, SectionNav, ShyCreatures, SoundToggle } from "./motion";
 import Gallery from "./Gallery";
 import { findPhoto, GALLERY, PLACE } from "./photos";
 import TicketBuilder from "./TicketBuilder";
@@ -75,6 +75,7 @@ function Creature({ n, style }: { n: number; style: Record<string, string | numb
   return (
     <img
       className={styles.creature}
+      data-shy
       style={css(style)}
       src={`${ART}/creature-${n}.webp`}
       width={200}
@@ -246,6 +247,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
   return (
     <main id={ROOT_ID} className={styles.root} lang={locale}>
       <SceneMotion rootId={ROOT_ID} />
+      <ShyCreatures rootId={ROOT_ID} />
       <SectionNav label={t.navLabel} items={t.nav} />
       <BoilDefs warp />
 
@@ -400,7 +402,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
               [2, "93.3%", "41.5%"],
             ] as const
           ).map(([n, x, y], i) => (
-            <img key={x} className={styles.lurker} style={css({ "--x": x, "--y": y, "--i": i })} src={`${ART}/creature-${n}.webp`} width={200} height={266} alt="" loading="lazy" decoding="async" />
+            <img key={x} className={styles.lurker} data-shy="duck" style={css({ "--x": x, "--y": y, "--i": i })} src={`${ART}/creature-${n}.webp`} width={200} height={266} alt="" loading="lazy" decoding="async" />
           ))}
           <Layer name="forest" widths={[1600, 900]} ratio={0.5458} sizes="max(100vw, 900px)" className={styles.forestFront} />
           {/* Lasers fan out of the dome's light, towards whoever is looking. */}

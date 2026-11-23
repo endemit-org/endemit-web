@@ -1,4 +1,4 @@
-export type TicketTemplateId = "default" | "guest";
+export type TicketTemplateId = "default" | "guest" | "festival" | "festival-evening";
 
 export interface TicketColorScheme {
   background: string;
@@ -25,4 +25,9 @@ export interface TicketTemplate {
   colorScheme: TicketColorScheme;
   textContent: TicketTextContent;
   invertLogo: boolean;
+  /**
+   * What the ticket admits, shown large to door staff when it is scanned.
+   * Null for ordinary tickets, where there is nothing to tell apart.
+   */
+  doorLabel?: LocalizedTicketText | null;
 }

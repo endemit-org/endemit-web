@@ -62,6 +62,11 @@
 [data-inview="true"] .boilSmall { animation: boilSmall 0.42s steps(1) infinite; }
 .jitter { transform: rotate(var(--tilt, 0deg)); }
 [data-inview="true"] .jitter { animation: jitter 0.5s steps(1) infinite; }
+/* A picture holds still while the pointer is on it. */
+[data-inview="true"] .shot:hover,
+[data-inview="true"] .reel button:hover,
+[data-inview="true"] .mapButton:hover,
+[data-inview="true"] .filmPoster:hover { animation-play-state: paused; }
 
 .root[data-lite="true"] .boil,
 .root[data-lite="true"] .boilSmall {
@@ -1075,6 +1080,11 @@
 [data-inview="true"] .pattern span { animation-play-state: running; }
 @keyframes moire { from { translate: -5% -3%; } to { translate: 5% 3%; } }
 
+/* Shy: pushed away from the pointer in a few drawn steps (see ShyCreatures). */
+.creature, .lurker {
+  transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0) rotate(var(--fr, 0deg));
+  transition: transform 0.24s steps(4);
+}
 /* Creatures: the same family, peeking again and again. */
 .creature {
   position: absolute;
