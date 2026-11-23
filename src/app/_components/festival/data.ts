@@ -96,14 +96,10 @@ const OFFER_SEEDS: OfferSeed[] = [
     note: { en: "Four tickets", sl: "Štiri karte" },
   },
   {
-    key: "friday", kind: "day", uid: "endemit-festival-2027-friday-ticket", people: 1, fallbackPrice: batch => batch.day,
-    label: { en: "Friday", sl: "Petek" },
-    note: { en: "Friday 13 August only", sl: "Sam petek, 13. avgusta" },
-  },
-  {
-    key: "saturday", kind: "day", uid: "endemit-festival-2027-saturday-ticket", people: 1, fallbackPrice: batch => batch.day,
-    label: { en: "Saturday", sl: "Sobota" },
-    note: { en: "Saturday 14 August only", sl: "Sam sobota, 14. avgusta" },
+    // One ticket, one entry, on either evening: the holder decides on the day.
+    key: "evening", kind: "day", uid: "endemit-festival-2027-evening-ticket", people: 1, fallbackPrice: batch => batch.day,
+    label: { en: "One evening", sl: "En večer" },
+    note: { en: "Friday or Saturday, your pick on the day", sl: "Petek al sobota, zbereš na dan" },
   },
   {
     key: "tent", kind: "tent", uid: "endemit-festival-2027-tent", fallbackPrice: () => 30,

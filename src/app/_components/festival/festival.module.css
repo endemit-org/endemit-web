@@ -258,6 +258,15 @@
 .dateline b { color: var(--salmon); font-weight: 400; }
 .heroActions { margin-top: 1.6rem; display: flex; justify-content: center; }
 /* Sits under the button in the same column, so the two can never collide. */
+/* The way back to the rest of Endemit. */
+.home {
+  position: absolute;
+  z-index: 4;
+  top: calc(14px + env(safe-area-inset-top));
+  left: var(--gutter);
+  font-size: 0.82rem;
+  padding: 0.4em 0.9em 0.32em;
+}
 .scrollHint {
   display: block;
   margin-top: clamp(1.4rem, 5svh, 3rem);
@@ -760,7 +769,7 @@
 .stepFlag { color: var(--red); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
 
 /* Weekend or one evening: three tabs across the top of the ticket. */
-.passes { position: relative; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 0; margin-bottom: 0.6rem; border: 2px solid transparent; }
+.passes { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; margin-bottom: 0.6rem; border: 2px solid transparent; }
 .pass {
   display: grid;
   gap: 0.2rem;

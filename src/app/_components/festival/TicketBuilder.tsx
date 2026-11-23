@@ -12,9 +12,9 @@ import styles from "./festival.module.css";
 const text = {
   en: {
     pass: "Which ticket?",
-    passes: { weekend: "Whole weekend", friday: "Friday", saturday: "Saturday" },
-    passDates: { weekend: "13–15 Aug", friday: "13 Aug", saturday: "14 Aug" },
-    dayNote: "Entry for this evening only. The bus runs for the whole weekend only.",
+    passes: { weekend: "Whole weekend", evening: "One evening" },
+    passDates: { weekend: "13–15 Aug", evening: "Friday or Saturday" },
+    dayNote: "One entry, Friday or Saturday, you decide on the day. The bus runs for the whole weekend only.",
     upsell: "The whole weekend is only",
     upsellMore: "more per person.",
     people: "How many are coming?",
@@ -36,9 +36,9 @@ const text = {
   },
   sl: {
     pass: "Kero karto?",
-    passes: { weekend: "Cel vikend", friday: "Petek", saturday: "Sobota" },
-    passDates: { weekend: "13.–15. avg.", friday: "13. avg.", saturday: "14. avg." },
-    dayNote: "Vstop sam za ta večer. Bus vozi sam za cel vikend.",
+    passes: { weekend: "Cel vikend", evening: "En večer" },
+    passDates: { weekend: "13.–15. avg.", evening: "petek al sobota" },
+    dayNote: "En vstop, petek al sobota, zbereš na dan. Bus vozi sam za cel vikend.",
     upsell: "Cel vikend je sam",
     upsellMore: "več na glavo.",
     people: "Kok vas pride?",

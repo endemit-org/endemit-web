@@ -43,6 +43,8 @@ export type FestivalCopy = {
   storiesTitle: string;
   newsletterTitle: string;
   navLabel: string;
+  home: string;
+  allEvents: string;
   nightWord: string;
   galleryAll: string;
   galleryClose: string;
@@ -151,6 +153,8 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     storiesTitle: "Whispers from the valley",
     newsletterTitle: "Stay in the loop",
     navLabel: "Sections",
+    home: "Endemit",
+    allEvents: "All Endemit events",
     nightWord: "Two nights. The tent can wait.",
     galleryAll: "All photos",
     galleryClose: "Close",
@@ -263,6 +267,8 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     storiesTitle: "Šepeti iz doline",
     newsletterTitle: "Ostani na vezi",
     navLabel: "Sekcije",
+    home: "Endemit",
+    allEvents: "Vsi Endemit eventi",
     nightWord: "Dve noči. Šotor naj čaka.",
     galleryAll: "Vse slike",
     galleryClose: "Zapri",

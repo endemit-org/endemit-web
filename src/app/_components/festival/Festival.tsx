@@ -263,6 +263,9 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             ))}
           </div>
 
+          <Link href="/" className={`${styles.tag} ${styles.home}`}>
+            ← {t.home}
+          </Link>
           <div className={styles.mark}>
             <h1 style={{ margin: 0 }}>
               <span className={`${styles.logo} ${styles.boil}`} role="img" aria-label="Endemit">
@@ -507,6 +510,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         <span>
           {t.dateline} {t.year} · {t.place}
         </span>
+        <Link href="/events">{t.allEvents} →</Link>
         <Link href="/festival/info">{t.infoMore}</Link>
       </footer>
 

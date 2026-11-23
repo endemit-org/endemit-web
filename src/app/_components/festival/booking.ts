@@ -4,8 +4,8 @@ export const BOOKING_STORAGE_KEY = "festival-2027-booking";
 export const MAX_PEOPLE = 12;
 
 /** The whole weekend, or one evening. One kind per order. */
-export type Pass = "weekend" | "friday" | "saturday";
-export const PASSES: Pass[] = ["weekend", "friday", "saturday"];
+export type Pass = "weekend" | "evening";
+export const PASSES: Pass[] = ["weekend", "evening"];
 
 export type Booking = {
   pass: Pass;
