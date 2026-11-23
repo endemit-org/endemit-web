@@ -74,6 +74,8 @@ type OfferSeed = {
   key: string;
   kind: OfferKind;
   uid: string;
+  /** Used when the product under `uid` is not published. */
+  fallbackUid?: string;
   people?: number;
   /** Used only until the product is published in Prismic. */
   fallbackPrice: (batch: Batch) => number;
@@ -118,7 +120,8 @@ const OFFER_SEEDS: OfferSeed[] = [
   // Bonus tokens are a proposal: roughly 10, 12 and 15 percent on top.
   ...([[20, 2], [50, 6], [100, 15]] as const).map(
     ([amount, bonus]): OfferSeed => ({
-      key: `topup-${amount}`, kind: "topup", uid: `wallet-top-up-${amount}-tokens`, fallbackPrice: () => amount, fallbackBonus: bonus,
+      // Festival top ups carry the bonus; the shop's plain top ups stand in until they are published.
+      key: `topup-${amount}`, kind: "topup", uid: `endemit-festival-2027-top-up-${amount}`, fallbackUid: `wallet-top-up-${amount}-tokens`, fallbackPrice: () => amount, fallbackBonus: bonus,
       label: { en: `${amount} ǝŧ`, sl: `${amount} ǝŧ` },
       note: { en: "Wallet top up", sl: "Polnitev denarnce" },
     })
@@ -164,7 +167,13 @@ function timelineFromSlices(slices: unknown, locale: FestivalLocale): TimelineSt
 export async function loadFestival(locale: FestivalLocale): Promise<FestivalData> {
   const [event, products] = await Promise.all([
     fetchEventFromCmsByUid(FESTIVAL_EVENT_UID, locale).catch(() => null),
-    Promise.all(OFFER_SEEDS.map(seed => fetchProductFromCmsByUid(seed.uid, locale).catch(() => null))),
+    Promise.all(
+      OFFER_SEEDS.map(async seed => {
+        const product = await fetchProductFromCmsByUid(seed.uid, locale).catch(() => null);
+        if (product || !seed.fallbackUid) return product;
+        return fetchProductFromCmsByUid(seed.fallbackUid, locale).catch(() => null);
+      })
+    ),
   ]);
 
   const batch = currentBatch(Date.now());
@@ -173,7 +182,7 @@ export async function loadFestival(locale: FestivalLocale): Promise<FestivalData
     return {
       key: seed.key,
       kind: seed.kind,
-      uid: seed.uid,
+      uid: product?.uid ?? seed.uid,
       label: seed.label[locale],
       note: seed.note[locale],
       price: product?.price ?? seed.fallbackPrice(batch),

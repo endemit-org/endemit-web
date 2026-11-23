@@ -12,6 +12,7 @@ import {
 import { getTicketSummaryForEvent } from "@/domain/ticket/operations/getTicketSummaryForEvent";
 import { notifyOnTicketScanned } from "@/domain/notification/operations/notifyOnTicketScanned";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
+import { getTemplateById } from "@/domain/ticket/config/ticketTemplates";
 
 type ScanInput = { eventId: string } & (
   | { code: string; shortId?: undefined }
@@ -20,13 +21,21 @@ type ScanInput = { eventId: string } & (
 
 type ScannedTicket = Awaited<ReturnType<typeof scanTicketByCode>>;
 
-const toTicketInfo = (ticket: ScannedTicket) => ({
-  shortId: ticket.shortId,
-  ticketHolderName: ticket.ticketHolderName,
-  ticketPayerEmail: ticket.ticketPayerEmail,
-  price: Number(ticket.price),
-  isGuestList: ticket.isGuestList,
-});
+const toTicketInfo = (ticket: ScannedTicket) => {
+  const metadata = (ticket.metadata ?? {}) as Record<string, unknown>;
+  const templateId = typeof metadata.ticketTemplate === "string" ? metadata.ticketTemplate : undefined;
+  const locale = ticket.locale === "en" ? "en" : "sl";
+  return {
+    // What the ticket admits (whole weekend, one evening), when its design says so.
+    doorLabel: getTemplateById(templateId).doorLabel?.[locale] ?? null,
+    productName: typeof metadata.productName === "string" ? metadata.productName : null,
+    shortId: ticket.shortId,
+    ticketHolderName: ticket.ticketHolderName,
+    ticketPayerEmail: ticket.ticketPayerEmail,
+    price: Number(ticket.price),
+    isGuestList: ticket.isGuestList,
+  };
+};
 
 /**
  * Scan a ticket at the door, either from its QR code or (staff fallback) by

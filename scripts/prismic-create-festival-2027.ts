@@ -47,7 +47,8 @@ async function main() {
   const existing = await client
     .getByUID("event" as never, EVENT_UID)
     .catch(() => null);
-  if (existing) throw new Error(`${EVENT_UID} already exists, aborting`);
+  // A published event is fine once its id is known: later runs update it or add products to it.
+  if (existing && !process.env.FESTIVAL_EVENT_DRAFT_ID) throw new Error(`${EVENT_UID} already exists, aborting`);
   // Set when the event draft already exists (a first run created it empty).
   const eventDraftId = process.env.FESTIVAL_EVENT_DRAFT_ID;
 
@@ -61,7 +62,7 @@ async function main() {
 
   // FESTIVAL_ONLY: event | products | day (day = only the two single-evening tickets).
   const only = process.env.FESTIVAL_ONLY;
-  const skipEvent = only === "products" || only === "day";
+  const skipEvent = only === "products" || only === "day" || only === "topups";
   const migration = prismic.createMigration();
   const eventAsset = (file: string) =>
     skipEvent ? undefined : migration.createAsset(new File([readFileSync(`${GRAPHICS}/${file}`)], file), file);
@@ -166,6 +167,7 @@ async function main() {
     price: number;
     ticketQuantity?: number;
     cutoff?: string;
+    template?: "festival" | "festival-evening";
     sorting: number;
   };
 
@@ -181,6 +183,7 @@ async function main() {
       category: "Tickets",
       price: 85, // blind batch
       ticketQuantity: 1,
+      template: "festival",
       sorting: 930,
     },
     {
@@ -194,6 +197,7 @@ async function main() {
       category: "Tickets",
       price: 160, // blind batch
       ticketQuantity: 2,
+      template: "festival",
       sorting: 920,
     },
     {
@@ -207,6 +211,7 @@ async function main() {
       category: "Tickets",
       price: 300, // blind batch
       ticketQuantity: 4,
+      template: "festival",
       sorting: 910,
     },
     {
@@ -221,6 +226,7 @@ async function main() {
       price: 55, // proposal, blind batch
       ticketQuantity: 1,
       cutoff: "2027-08-15T04:00:00+0000",
+      template: "festival-evening",
       sorting: 908,
     },
     {
@@ -258,7 +264,7 @@ async function main() {
     "endemit-festival-2027-bus-ljubljana": "awQzMBIAACcAIuWK",
   };
   const updating = process.env.FESTIVAL_UPDATE === "1";
-  const wanted = only === "event" ? [] : only === "day" ? products.filter(p => p.cutoff) : products;
+  const wanted = only === "event" || only === "topups" ? [] : only === "day" ? products.filter(p => p.cutoff) : products;
   for (const p of wanted) {
     const productDoc =
       {
@@ -287,6 +293,7 @@ async function main() {
           related_to_event: eventLink,
           related_products: [],
           ticket_quantity: p.ticketQuantity ?? null,
+          ticket_template: p.template ?? null,
           variants: [],
           regional_eligibility: [],
           cutoff_date: p.cutoff ?? "2027-08-15T15:00:00+0000",
@@ -297,6 +304,34 @@ async function main() {
     const draftId = updating ? DRAFT_IDS[p.uid] : undefined;
     if (draftId) migration.updateDocument({ ...productDoc, id: draftId } as never, p.title);
     else migration.createDocument(productDoc as never, p.title);
+  }
+
+  // Festival Wallet top ups: copies of the shop's top ups that credit bonus
+  // tokens (wallet_topup_reward). Bonus amounts are a proposal.
+  if (only === "topups") {
+    for (const [amount, reward] of [[20, 2], [50, 6], [100, 15]] as const) {
+      const source = await client.getByUID("product" as never, `wallet-top-up-${amount}-tokens`);
+      const data = source.data as Record<string, unknown>;
+      migration.createDocument(
+        {
+          type: "product",
+          uid: `endemit-festival-2027-top-up-${amount}`,
+          lang: source.lang,
+          tags: [],
+          data: {
+            ...data,
+            title: `Festival '27 Wallet top up ${amount}`,
+            title_sl: `Festival '27 polnitev denarnce ${amount}`,
+            product_visibility: "Hidden",
+            featured_product: false,
+            wallet_topup_reward: reward,
+            related_to_event: eventLink,
+            cutoff_date: "2027-08-15T15:00:00+0000",
+          } as never,
+        },
+        `Festival '27 Wallet top up ${amount}`
+      );
+    }
   }
 
   await client.migrate(migration, {
