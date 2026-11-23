@@ -31,6 +31,17 @@ const IMAGE_CONFIG = {
 };
 
 const REDIRECTS = [
+  // The 2027 festival has its own page instead of the standard event template.
+  {
+    source: "/events/endemit-festival-2027",
+    destination: "/festival",
+    permanent: false,
+  },
+  {
+    source: "/en/events/endemit-festival-2027",
+    destination: "/en/festival",
+    permanent: false,
+  },
   {
     source: "/endemit-festival/map",
     destination: "/events/endemit-festival-2025#festival-25-map-timetable",

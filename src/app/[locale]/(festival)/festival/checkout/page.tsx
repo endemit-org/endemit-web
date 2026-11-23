@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import FestivalCheckoutPreview from "@/app/_components/festival/FestivalCheckoutPreview";
+import { setRequestLocale } from "next-intl/server";
+import FestivalCheckout from "@/app/_components/festival/FestivalCheckout";
+import type { FestivalLocale } from "@/app/_components/festival/copy";
+import { loadFestival } from "@/app/_components/festival/data";
+import { getCurrentUser } from "@/lib/services/auth";
+
+type PageProps = { params: Promise<{ locale: string }> };
+
 export const metadata: Metadata = {
-  title: "Festival 27 · Booking preview",
+  title: "Endemit festival · Checkout",
   robots: { index: false, follow: false },
 };
-export default async function CheckoutPreviewPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  return <FestivalCheckoutPreview locale={locale === "en" ? "en" : "sl"} />;
+
+export default async function FestivalCheckoutPage({ params }: PageProps) {
+  const locale: FestivalLocale = (await params).locale === "en" ? "en" : "sl";
+  setRequestLocale(locale);
+  const [data, user] = await Promise.all([loadFestival(locale), getCurrentUser().catch(() => null)]);
+  return <FestivalCheckout locale={locale} offers={data.offers} salesOpen={data.salesOpen} userEmail={user?.email ?? ""} />;
 }

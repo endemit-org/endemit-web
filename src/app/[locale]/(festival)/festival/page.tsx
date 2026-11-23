@@ -1,23 +1,32 @@
 import type { Metadata } from "next";
-import FestivalExperience from "@/app/_components/festival/FestivalExperience";
-import { editorialCopy } from "@/app/_components/festival/editorialCopy";
+import { setRequestLocale } from "next-intl/server";
+import Festival from "@/app/_components/festival/Festival";
+import { festivalCopy, type FestivalLocale } from "@/app/_components/festival/copy";
+import { loadFestival } from "@/app/_components/festival/data";
 
 type PageProps = { params: Promise<{ locale: string }> };
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { locale } = await params;
-  const copy = editorialCopy[locale === "en" ? "en" : "sl"];
+// Ticket batches change state over time; refresh the page every five minutes.
+export const revalidate = 300;
+
+const toLocale = (locale: string): FestivalLocale => (locale === "en" ? "en" : "sl");
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const t = festivalCopy[toLocale((await params).locale)];
   return {
-    title: `Endemit · ${copy.title.join(" ")}`,
-    description: copy.intro,
+    title: `Endemit festival · ${t.dateline} ${t.year} · ${t.place}`,
+    description: t.about[0],
+    openGraph: { images: ["/images/festival/2027/photo-smoke-dance-2.webp"] },
+    // Hidden until launch.
     robots: { index: false, follow: false },
   };
 }
 
 export default async function FestivalPage({ params }: PageProps) {
-  const { locale } = await params;
-  const language = locale === "en" ? "en" : "sl";
-  return <FestivalExperience locale={language} />;
+  const locale = toLocale((await params).locale);
+  setRequestLocale(locale);
+  const data = await loadFestival(locale);
+  // The landing page needs prices only; full products are loaded at checkout.
+  const offers = data.offers.map(offer => ({ ...offer, product: null }));
+  return <Festival locale={locale} data={{ ...data, offers }} />;
 }
