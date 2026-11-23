@@ -32,16 +32,37 @@ export function SceneMotion({ rootId }: { rootId: string }) {
     const visible = new Set<HTMLElement>();
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // Scroll speed bends the page: --v is the eased velocity (-1..1), --va its
+    // size. With a mouse and a capable machine it also drives a displacement
+    // filter, switched on only while the page is actually moving.
+    const warp = lite || !window.matchMedia("(hover: hover) and (pointer: fine)").matches ? null : root.querySelector("#fest-warp feDisplacementMap");
+    let lastY = window.scrollY;
+    let velocity = 0;
+
     let frame = 0;
     const update = () => {
       frame = 0;
       const height = window.innerHeight;
+      const y = window.scrollY;
+      const target = Math.max(-1, Math.min(1, (y - lastY) / 45));
+      lastY = y;
+      velocity += (target - velocity) * 0.3;
+      if (Math.abs(velocity) < 0.004) velocity = 0;
       for (const scene of visible) {
         const rect = scene.getBoundingClientRect();
         const centre = rect.top + rect.height / 2;
         const progress = (height / 2 - centre) / (height / 2 + rect.height / 2);
         scene.style.setProperty("--p", Math.max(-1, Math.min(1, progress)).toFixed(4));
+        scene.style.setProperty("--v", velocity.toFixed(3));
+        scene.style.setProperty("--va", Math.abs(velocity).toFixed(3));
       }
+      if (warp) {
+        const warping = Math.abs(velocity) > 0.03;
+        warp.setAttribute("scale", (Math.abs(velocity) * 80).toFixed(1));
+        if ((root.dataset.warping === "true") !== warping) root.dataset.warping = String(warping);
+      }
+      // Keep drawing until the bend has eased back to rest.
+      if (velocity !== 0) frame = requestAnimationFrame(update);
     };
     const schedule = () => {
       if (!frame && !reduced) frame = requestAnimationFrame(update);
@@ -53,7 +74,11 @@ export function SceneMotion({ rootId }: { rootId: string }) {
           const scene = entry.target as HTMLElement;
           scene.dataset.inview = String(entry.isIntersecting);
           if (entry.isIntersecting) visible.add(scene);
-          else visible.delete(scene);
+          else {
+            visible.delete(scene);
+            scene.style.setProperty("--v", "0");
+            scene.style.setProperty("--va", "0");
+          }
         }
         schedule();
       },

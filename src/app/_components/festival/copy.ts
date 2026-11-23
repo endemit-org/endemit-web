@@ -22,6 +22,7 @@ export type FestivalCopy = {
   vibeTitle: string;
   lineupTitle: string;
   lineup: string;
+  lineupSoon: string;
   timelineTitle: string;
   timelineNow: string;
   timelineDone: string;
@@ -75,6 +76,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     filmClose: "Close film",
     vibeTitle: "Three days by the river",
     lineupTitle: "Line up",
+    lineupSoon: "Revealing soon",
     lineup: "Endemit artists, guest artists to be announced soon",
     timelineTitle: "Ticket releases",
     timelineNow: "On sale now",
@@ -186,6 +188,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     filmClose: "Zapri film",
     vibeTitle: "Tri dni ob Dravi",
     lineupTitle: "Line up",
+    lineupSoon: "Razkrijemo kmalo",
     lineup: "Artisti endemitskega plemena, kundije s tujine napovemo kmalo",
     timelineTitle: "Runde kart",
     timelineNow: "Zj na volo",

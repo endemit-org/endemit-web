@@ -124,7 +124,7 @@ export default function Trip({ word }: { word: string }) {
   return (
     <div ref={band} className={styles.trip} aria-hidden>
       <canvas ref={canvas} />
-      <div className={styles.tripWords}>
+      <div className={`${styles.tripWords} ${styles.boil}`}>
         {[0, 1, 2, 3, 4].map(i => (
           <span key={i} style={{ "--i": i } as React.CSSProperties}>
             {word}

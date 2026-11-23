@@ -457,6 +457,49 @@
   background: var(--hill-mid);
 }
 .shot[data-tone="night"] img, .shot[data-tone="night"] > video { border-color: var(--lilac); }
+/* Scrolling bends the pictures and turns their colours. */
+.shot > button, .shot > video {
+  transform: skewY(calc(var(--v, 0) * 5deg)) scaleY(calc(1 + var(--va, 0) * 0.07));
+}
+.shot[data-tone="night"] > * { filter: hue-rotate(calc(var(--v, 0) * 150deg)) saturate(calc(1 + var(--va, 0) * 1.2)); }
+.root[data-warping="true"] .shot > *,
+.root[data-warping="true"] .reel button,
+.root[data-warping="true"] .mapButton img,
+.root[data-warping="true"] .lineup ol {
+  filter: url(#fest-warp) hue-rotate(calc(var(--v, 0) * 150deg)) saturate(calc(1 + var(--va, 0) * 1.2));
+}
+.echo { transform: skewX(calc(var(--v, 0) * -10deg)); }
+
+/* ---- mystery line up, standing on the near hill -------------------------- */
+.lineup { margin: calc(max(100vw, 900px) * -0.42) 0 clamp(4rem, 12vw, 8rem); }
+.lineupHead { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.4rem; }
+.lineupHead h3 { margin: 0; font-family: var(--font-heading), sans-serif; font-weight: 600; font-size: clamp(2.6rem, 9vw, 4.4rem); line-height: 0.9; text-transform: uppercase; color: var(--red); }
+.lineup ol { list-style: none; margin: 1.6rem 0 0; padding: 0; font-family: var(--font-heading), sans-serif; font-size: clamp(1.7rem, 5.6vw, 2.5rem); line-height: 1; }
+.lineup li { display: flex; align-items: center; gap: 0.6em; padding: 0.42em 0; border-bottom: 2px dashed rgba(244, 167, 143, 0.3); }
+.lineup li > span:first-child { flex: none; width: 1.5em; font-size: 0.55em; letter-spacing: 0.12em; color: var(--lilac); }
+.lineup li i {
+  display: inline-block;
+  width: calc(var(--w) * 0.56em);
+  max-width: 34vw;
+  height: 0.74em;
+  margin-right: 0.3em;
+  background: var(--salmon);
+  animation: redact 2.6s steps(1) calc(var(--i) * -0.37s) infinite paused;
+}
+.lineup li:nth-child(3n) i:last-child { background: var(--lilac); }
+.lineup li:nth-child(5n + 2) i:first-child { background: var(--red); }
+[data-inview="true"] .lineup li i { animation-play-state: running; }
+@keyframes redact {
+  0%, 100% { opacity: 1; scale: 1 1; }
+  46% { opacity: 0.35; scale: 0.92 1; }
+  54% { opacity: 1; scale: 1.05 1; }
+  62% { opacity: 0.6; scale: 1 1; }
+}
+.lineup p { margin: 1.2rem 0 0; max-width: 34rem; }
+@media (min-width: 760px) {
+  .lineup ol { columns: 2; column-gap: 4rem; }
+  .lineup li { break-inside: avoid; }
+}
 .collageMore { margin: 2.6rem 0 0; text-align: center; }
 
 /* Day turns to night: a band that folds into a fractal while it is scrolled. */
@@ -725,34 +768,30 @@
 }
 .reel img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-/* ---- poster pattern: a crowd of heads, row sliding against row ----------- */
+/* ---- pattern: two ring fields drifting across each other (moire) --------- */
 .pattern {
-  --s: clamp(62px, 13vw, 112px);
   position: relative;
+  height: clamp(190px, 36vw, 340px);
   overflow: hidden;
-  padding-top: calc(var(--s) * 0.5);
-  background: var(--eye);
-  border-block: 3px solid var(--hill-near);
+  background: var(--forest-deep);
+  -webkit-mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
 }
 .pattern span {
-  display: block;
-  width: 130%;
-  height: var(--s);
-  margin: calc(var(--s) * -0.44) 0 0 -15%;
-  background-repeat: repeat-x;
-  background-size: var(--s) var(--s);
-  translate: calc(var(--p, 0) * var(--drift, 60px)) 0;
-  animation: slide 3.4s steps(8) infinite paused;
+  position: absolute;
+  inset: -40% -20%;
+  background: repeating-radial-gradient(circle at 36% 50%, transparent 0 7px, var(--salmon) 7px 9px);
+  transform: translate3d(calc(var(--p, 0) * 70px), 0, 0);
+  animation: moire 7s steps(28) infinite alternate paused;
+}
+.pattern span + span {
+  background: repeating-radial-gradient(circle at 64% 50%, transparent 0 7px, var(--salmon) 7px 9px);
+  transform: translate3d(calc(var(--p, 0) * -70px), 0, 0);
+  animation-direction: alternate-reverse;
+  animation-duration: 9s;
 }
 .pattern[data-inview="true"] span { animation-play-state: running; }
-.pattern span:nth-child(even) { --drift: -80px; animation-name: slideBack; }
-.pattern span:nth-child(1) { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M1 121V60a59 59 0 0 1 118 0v61Z' fill='%23a99bea' stroke='%23040612' stroke-width='5'/%3E%3Cellipse cx='45' cy='58' rx='6' ry='8.5' fill='%230c0a45'/%3E%3Cellipse cx='75' cy='58' rx='6' ry='8.5' fill='%230c0a45'/%3E%3C/svg%3E"); }
-.pattern span:nth-child(2) { animation-duration: 4.6s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M1 121V60a59 59 0 0 1 118 0v61Z' fill='%23ee3b4f' stroke='%23040612' stroke-width='5'/%3E%3Cellipse cx='45' cy='58' rx='6' ry='8.5' fill='%23ffd23f'/%3E%3Cellipse cx='75' cy='58' rx='6' ry='8.5' fill='%23ffd23f'/%3E%3C/svg%3E"); }
-.pattern span:nth-child(3) { animation-duration: 2.7s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M1 121V60a59 59 0 0 1 118 0v61Z' fill='%233a2a8c' stroke='%23040612' stroke-width='5'/%3E%3Cellipse cx='45' cy='58' rx='6' ry='8.5' fill='%23ffd23f'/%3E%3Cellipse cx='75' cy='58' rx='6' ry='8.5' fill='%23ffd23f'/%3E%3C/svg%3E"); }
-.pattern span:nth-child(4) { animation-duration: 5.2s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M1 121V60a59 59 0 0 1 118 0v61Z' fill='%23f4a78f' stroke='%23040612' stroke-width='5'/%3E%3Cellipse cx='45' cy='58' rx='6' ry='8.5' fill='%230c0a45'/%3E%3Cellipse cx='75' cy='58' rx='6' ry='8.5' fill='%230c0a45'/%3E%3C/svg%3E"); }
-.pattern span:nth-child(5) { animation-duration: 3.8s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M1 121V60a59 59 0 0 1 118 0v61Z' fill='%2314154e' stroke='%23040612' stroke-width='5'/%3E%3Cellipse cx='45' cy='58' rx='6' ry='8.5' fill='%23ffd23f'/%3E%3Cellipse cx='75' cy='58' rx='6' ry='8.5' fill='%23ffd23f'/%3E%3C/svg%3E"); }
-@keyframes slide { to { background-position-x: var(--s); } }
-@keyframes slideBack { from { background-position-x: calc(var(--s) * 0.5); } to { background-position-x: calc(var(--s) * -0.5); } }
+@keyframes moire { from { translate: -5% -3%; } to { translate: 5% 3%; } }
 
 /* Creatures: the same family, peeking again and again. */
 .creature {
@@ -862,7 +901,7 @@
   .boil, .boilSmall { filter: none; }
   .sky, .stars, .mark, .heroHill, .edge, .tree, .echo > span[aria-hidden], .tripWords span { transform: none; }
   .mark { opacity: 1; }
-  .pattern span { translate: none; }
+  .pattern span { transform: none; }
   .heroHill, .edge, .forestEdge { transform: translate3d(-50%, 0, 0); }
   .creature { translate: 0 0; }
   .hero { height: 100svh; }

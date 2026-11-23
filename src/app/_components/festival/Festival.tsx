@@ -163,13 +163,39 @@ function ShotFigure({ shot, tone }: { shot: Shot; tone: "day" | "night" }) {
   );
 }
 
-/** Poster pattern: rows of heads sliding past each other. */
+/** Two ring fields drifting across each other. */
 function Pattern() {
   return (
     <div className={styles.pattern} aria-hidden data-scene>
-      {[0, 1, 2, 3, 4].map(i => (
-        <span key={i} data-row={i} />
-      ))}
+      <span />
+      <span />
+    </div>
+  );
+}
+
+// Word lengths of fourteen names nobody knows yet.
+const MYSTERY = [[7, 5], [9], [4, 8], [6, 6], [11], [5, 3, 6], [8], [6, 9], [10], [4, 4], [7, 7], [12], [5, 8], [9, 4]];
+
+function MysteryLineup({ title, soon, note }: { title: string; soon: string; note: string }) {
+  return (
+    <div className={styles.lineup}>
+      <div className={styles.lineupHead}>
+        <h3 className={styles.boilSmall}>{title}</h3>
+        <span className={`${styles.tag} ${styles.jitter}`}>{soon}</span>
+      </div>
+      <ol className={styles.boilSmall} aria-label={`${title}: ${soon}`}>
+        {MYSTERY.map((words, i) => (
+          <li key={i} style={css({ "--i": i })}>
+            <span>{String(i + 1).padStart(2, "0")}</span>
+            <span aria-hidden>
+              {words.map((length, j) => (
+                <i key={j} style={css({ "--w": length })} />
+              ))}
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className={styles.dim}>{note}</p>
     </div>
   );
 }
@@ -229,6 +255,10 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
               <feDisplacementMap in="SourceGraphic" in2="noise" scale={scale} xChannelSelector="R" yChannelSelector="G" />
             </filter>
           ))}
+          <filter id="fest-warp" x="-12%" y="-12%" width="124%" height="124%">
+            <feTurbulence type="turbulence" baseFrequency="0.006 0.013" numOctaves={2} seed={7} result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale={0} xChannelSelector="R" yChannelSelector="B" />
+          </filter>
         </defs>
       </svg>
 
@@ -308,11 +338,6 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         <div className={`${styles.inner} ${styles.filmGrid}`}>
           <div>
             <Echo>{t.filmTitle}</Echo>
-            {data.showLineup ? null : (
-              <p className={`${styles.lede} ${styles.dim}`} style={{ marginTop: "1.6rem" }}>
-                <strong>{t.lineupTitle}:</strong> {t.lineup}
-              </p>
-            )}
           </div>
           <FilmPlayer
             src={`${ART}/motion/film.mp4`}
@@ -328,6 +353,7 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
       <Scene className={styles.vibe}>
         <Layer name="hill-near" widths={[1600, 900]} ratio={0.5843} sizes="max(100vw, 900px)" className={styles.edge} style={css({ "--depth": 22 })} />
         <div className={styles.inner}>
+          {data.showLineup ? null : <MysteryLineup title={t.lineupTitle} soon={t.lineupSoon} note={t.lineup} />}
           <Echo>{t.vibeTitle}</Echo>
           <div className={styles.collage}>
             {DAY.map((shot, i) => (
