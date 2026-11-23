@@ -926,8 +926,23 @@
 .units svg { width: 22px; height: 22px; }
 .combo { margin: 0.9rem 0 0; color: var(--cream); }
 .combo b { color: var(--salmon); font-weight: 600; }
-.chip sup { margin-left: 0.3em; font-size: 0.82em; font-weight: 600; color: var(--red); vertical-align: 0.5em; line-height: 0; }
-.chip[aria-pressed="true"] sup { color: var(--hill-near); }
+/* Bonus tokens: a small filled tab riding on the chip, sized to be read. */
+.chip sup {
+  display: inline-block;
+  margin-left: 0.45em;
+  padding: 0.22em 0.5em 0.14em;
+  border-radius: 999px;
+  background: var(--red);
+  color: var(--cream);
+  font-size: 0.86em;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  position: relative;
+  top: -0.08em;
+}
+.chip[aria-pressed="true"] sup { background: var(--hill-near); color: var(--eye); }
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .chip {
   min-height: 44px;
