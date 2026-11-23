@@ -39,6 +39,15 @@ const text = {
     errHolder: "Add a name for every ticket.",
     errTerms: "Accept the terms to continue.",
     errGeneric: "Payment could not be started. Try again.",
+    demoBanner: "Demo: products are not published yet. Fill it in as a buyer would; no payment is made.",
+    demoDone: "This is where the payment happens",
+    demoSteps: [
+      "The order is created and the card is charged through Stripe.",
+      "The buyer lands on the confirmation page with the order summary.",
+      "A confirmation email goes to the address above.",
+      "Every ticket arrives with its own QR code and the holder's name.",
+      "Tent and bus are on the same order; the Wallet top up is credited to the account.",
+    ],
   },
   sl: {
     title: "Plačilo",
@@ -63,6 +72,15 @@ const text = {
     errHolder: "Vpiši ime za vsako karto.",
     errTerms: "Za naprej se mormo strinjat s pogoji.",
     errGeneric: "Plačila ni blo mogoče zagnat. Probi še enkrat.",
+    demoBanner: "Demo: produkti še niso objavleni. Izpolni ko kupec; plačilo se ne izvede.",
+    demoDone: "Tu se zgodi plačilo",
+    demoSteps: [
+      "Naročilo se ustvari, kartica se bremeni prek Stripa.",
+      "Kupec pristane na strani s potrditvijo pa povzetkom naročila.",
+      "Na zgornji mejl gre potrditev naročila.",
+      "Vsaka karta pride s svojo QR kodo pa imenom imetnika.",
+      "Šotor pa bus sta na istem naročilu; polnitev Denarnce se prpiše na račun.",
+    ],
   },
 } as const;
 
@@ -73,16 +91,17 @@ type Holder = { field: string; label: string };
 function holderFields(lines: BookingLine[], label: string): Holder[] {
   const holders: Holder[] = [];
   for (const { offer, quantity } of lines) {
-    if (offer.kind !== "ticket" || !offer.product) continue;
+    if (offer.kind !== "ticket") continue;
+    const id = offer.product?.id ?? offer.key;
     const slots = quantity * offer.people;
     for (let slot = 1; slot <= slots; slot++) {
-      holders.push({ field: `ticket-${offer.product.id}-${slot}-name`, label: `${label} ${holders.length + 1}` });
+      holders.push({ field: `ticket-${id}-${slot}-name`, label: `${label} ${holders.length + 1}` });
     }
   }
   return holders;
 }
 
-function CheckoutForm({ lines, total, holders, t, userEmail }: { lines: BookingLine[]; total: number; holders: Holder[]; t: Copy; userEmail: string }) {
+function CheckoutForm({ lines, total, holders, t, userEmail, demo }: { lines: BookingLine[]; total: number; holders: Holder[]; t: Copy; userEmail: string; demo: boolean }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -94,6 +113,7 @@ function CheckoutForm({ lines, total, holders, t, userEmail }: { lines: BookingL
   const [submitted, setSubmitted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [demoDone, setDemoDone] = useState(false);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const repeatValid = email.trim().toLowerCase() === emailRepeat.trim().toLowerCase();
@@ -105,6 +125,11 @@ function CheckoutForm({ lines, total, holders, t, userEmail }: { lines: BookingL
     setSubmitted(true);
     setError("");
     if (problem || !stripe || !elements) return;
+    // Demo stops here: the form was validated, no card is needed, nothing is sent.
+    if (demo) {
+      setDemoDone(true);
+      return;
+    }
     setBusy(true);
 
     const { error: submitError } = await elements.submit();
@@ -174,6 +199,22 @@ function CheckoutForm({ lines, total, holders, t, userEmail }: { lines: BookingL
     }
   };
 
+  if (demoDone) {
+    return (
+      <div>
+        <h2 className={styles.panelTitle}>{t.demoDone}</h2>
+        <ol className={styles.demoSteps}>
+          {t.demoSteps.map(step => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p className={styles.lede} style={{ marginTop: "1.4rem" }}>
+          {email.trim()} · {holders.map(holder => names[holder.field].trim()).join(", ")}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={submit} noValidate>
       <h2 className={styles.panelTitle}>{t.contact}</h2>
@@ -237,11 +278,13 @@ export default function FestivalCheckout({
   locale,
   offers,
   salesOpen,
+  demo = false,
   userEmail,
 }: {
   locale: FestivalLocale;
   offers: FestivalOffer[];
   salesOpen: boolean;
+  demo?: boolean;
   userEmail: string;
 }) {
   const t = text[locale];
@@ -250,8 +293,8 @@ export default function FestivalCheckout({
   useEffect(() => {
     const booking = readBooking();
     // Only lines backed by a published, sellable product can be paid for.
-    setLines(booking ? bookingLines(offers, booking).filter(line => line.offer.product && line.offer.sellable) : []);
-  }, [offers]);
+    setLines(booking ? bookingLines(offers, booking).filter(line => (demo || line.offer.product) && line.offer.sellable) : []);
+  }, [offers, demo]);
 
   const total = lines ? linesTotal(lines) : 0;
   const holders = useMemo(() => (lines ? holderFields(lines, t.holder) : []), [lines, t.holder]);
@@ -288,6 +331,7 @@ export default function FestivalCheckout({
           </Link>
         </div>
         <h1 className={`${styles.display} ${styles.pageTitle}`}>{t.title}</h1>
+        {demo ? <p className={styles.notice}>{t.demoBanner}</p> : null}
 
         {lines === null ? null : !salesOpen || !hasTicket || total <= 0 ? (
           <p className={styles.lede} style={{ marginTop: "2rem" }}>
@@ -296,7 +340,7 @@ export default function FestivalCheckout({
         ) : (
           <div className={styles.checkoutGrid} style={{ marginTop: "2.4rem" }}>
             <Elements stripe={stripePromise} options={options}>
-              <CheckoutForm lines={lines} total={total} holders={holders} t={t} userEmail={userEmail} />
+              <CheckoutForm lines={lines} total={total} holders={holders} t={t} userEmail={userEmail} demo={demo} />
             </Elements>
             <aside>
               <h2 className={styles.panelTitle}>{t.order}</h2>

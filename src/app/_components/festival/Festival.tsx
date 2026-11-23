@@ -409,6 +409,9 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
             {t.ticketsIntro}
           </p>
 
+          <TicketBuilder locale={locale} offers={data.offers} salesOpen={data.salesOpen} demo={data.demo} />
+
+          <h3 className={styles.timelineTitle}>{t.timelineTitle}</h3>
           <ol className={styles.timeline}>
             {data.timeline.map(step => {
               const state = stepState(step, now);
@@ -427,8 +430,6 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
               );
             })}
           </ol>
-
-          <TicketBuilder locale={locale} offers={data.offers} salesOpen={data.salesOpen} />
         </div>
       </Scene>
 

@@ -16,5 +16,5 @@ export default async function FestivalCheckoutPage({ params }: PageProps) {
   const locale: FestivalLocale = (await params).locale === "en" ? "en" : "sl";
   setRequestLocale(locale);
   const [data, user] = await Promise.all([loadFestival(locale), getCurrentUser().catch(() => null)]);
-  return <FestivalCheckout locale={locale} offers={data.offers} salesOpen={data.salesOpen} userEmail={user?.email ?? ""} />;
+  return <FestivalCheckout locale={locale} offers={data.offers} salesOpen={data.salesOpen} demo={data.demo} userEmail={user?.email ?? ""} />;
 }

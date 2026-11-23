@@ -39,6 +39,8 @@ export type FestivalData = {
   /** True when every ticket product is published and sellable. */
   salesOpen: boolean;
   showLineup: boolean;
+  /** Walk-through mode: the whole purchase can be clicked through, nothing is charged. */
+  demo: boolean;
 };
 
 type OfferSeed = {
@@ -150,10 +152,16 @@ export async function loadFestival(locale: FestivalLocale): Promise<FestivalData
   });
 
   const tickets = offers.filter(offer => offer.kind === "ticket");
+  const live = tickets.length > 0 && tickets.every(offer => offer.sellable);
+  // On local dev and Vercel previews, while the products are not published
+  // yet, the flow opens as a demo with the placeholder prices for review.
+  const demo = !live && (process.env.NODE_ENV === "development" || process.env.VERCEL_ENV === "preview");
+  if (demo) for (const offer of offers) offer.sellable = true;
   return {
+    demo,
     offers,
     timeline: timelineFromSlices(event?.slices, locale) ?? FALLBACK_TIMELINE[locale],
-    salesOpen: tickets.length > 0 && tickets.every(offer => offer.sellable),
+    salesOpen: live || demo,
     showLineup: (event?.artists?.length ?? 0) > 0,
   };
 }

@@ -24,6 +24,7 @@ const text = {
     checkout: "Continue to payment",
     closed: "Ticket sale opens soon. Leave your email below and you hear first.",
     notify: "Tell me when",
+    demo: "Demo: products are not published yet. Prices are placeholders and nothing is charged.",
     less: "Less",
     more: "More",
   },
@@ -41,6 +42,7 @@ const text = {
     checkout: "Naprej na plačilo",
     closed: "Prodaja kart se ofne kmalo. Posti mejl spodi pa zveš prvi.",
     notify: "Javi mi",
+    demo: "Demo: produkti še niso objavleni. Cene so začasne, nč se ne zaračuna.",
     less: "Mn",
     more: "Več",
   },
@@ -105,10 +107,12 @@ export default function TicketBuilder({
   locale,
   offers,
   salesOpen,
+  demo = false,
 }: {
   locale: FestivalLocale;
   offers: FestivalOffer[];
   salesOpen: boolean;
+  demo?: boolean;
 }) {
   const t = text[locale];
   const router = useRouter();
@@ -227,6 +231,7 @@ export default function TicketBuilder({
         <span className={`${styles.totalSum} ${styles.boilSmall}`}>{formatPrice(total)}</span>
       </div>
 
+      {demo ? <p className={styles.notice}>{t.demo}</p> : null}
       {salesOpen ? (
         <div className={styles.builderActions}>
           <button
