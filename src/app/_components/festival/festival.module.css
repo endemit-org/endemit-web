@@ -908,6 +908,21 @@
 .check a { color: var(--salmon); }
 .summary { list-style: none; margin: 0; padding: 0; }
 .summary li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.7rem 0; border-bottom: 2px dashed rgba(244, 167, 143, 0.35); }
+.fieldNote { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--lilac); }
+.field input[readonly] { border-style: dashed; color: var(--lilac); }
+.linkButton { padding: 0; border: 0; background: none; color: var(--salmon); font: inherit; font-size: 0.92rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linkButton:disabled { opacity: 0.45; cursor: not-allowed; }
+.extraRow { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 1rem 0 0; }
+.extraRow b { color: var(--salmon); }
+.promo { display: flex; gap: 0.7rem; margin-top: 1rem; }
+.promo input { flex: 1; min-width: 0; min-height: 46px; padding: 0.5rem 0.8rem; border: 2px solid var(--lilac); border-radius: 0; background: rgba(4, 6, 18, 0.6); color: var(--cream); font: inherit; font-size: 16px; text-transform: uppercase; }
+.promo input:focus { border-color: var(--salmon); outline: none; }
+.walletBox { margin-top: 1.2rem; padding: 1rem; border: 2px dashed var(--lilac); }
+.walletBox input[type="range"] { width: 100%; margin-top: 1rem; accent-color: var(--salmon); }
+.donation { margin-top: 2.4rem; padding: 1.1rem 1.2rem 1.3rem; border: 2px dashed var(--salmon); }
+.donation h3 { margin: 0; font-family: var(--font-heading), sans-serif; font-weight: 600; font-size: 1.6rem; line-height: 1; text-transform: uppercase; color: var(--salmon); }
+.donation p { margin: 0.5rem 0 0; font-size: 0.95rem; color: var(--lilac); }
+.donationActions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.4rem; margin-top: 1rem; }
 .checkoutGrid { display: grid; gap: 2.5rem; }
 @media (min-width: 900px) { .checkoutGrid { grid-template-columns: 1fr 22rem; gap: 4rem; align-items: start; } }
 .panelTitle { margin: 2.4rem 0 0; font-family: var(--font-heading), sans-serif; font-size: 2rem; font-weight: 600; line-height: 1; text-transform: uppercase; color: var(--salmon); }
