@@ -4,8 +4,10 @@ import { getTicketsSoldForEvent } from "@/domain/ticket/operations/getTicketsSol
 import { getTicketsScannedForEvent } from "@/domain/ticket/operations/getTicketsScannedForEvent";
 
 export const getTicketSummaryForEvent = async (eventId: string) => {
-  const ticketsSold = await getTicketsSoldForEvent(eventId);
-  const ticketsScanned = await getTicketsScannedForEvent(eventId);
+  const [ticketsSold, ticketsScanned] = await Promise.all([
+    getTicketsSoldForEvent(eventId),
+    getTicketsScannedForEvent(eventId),
+  ]);
 
   return {
     ticketsSold,

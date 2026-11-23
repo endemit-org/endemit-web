@@ -589,7 +589,11 @@
       "noneYetDesc": "When you purchase event tickets, they will appear here.",
       "activeTitle": "Active Tickets",
       "pastTitle": "Past Tickets",
-      "qrAlt": "Ticket QR Code"
+      "qrAlt": "Ticket QR Code",
+      "tapToEnlarge": "Tap the code to enlarge it",
+      "enlargeQr": "Enlarge QR code",
+      "brightnessHint": "Turn your screen brightness all the way up",
+      "tapToClose": "Tap anywhere to close"
     },
     "transactions": {
       "historyTitle": "Transaction History",
@@ -2452,7 +2456,14 @@
       "scanNext": "OK - Scan Next Ticket",
       "processing": "Processing...",
       "holding": "Hold...",
-      "holdToScan": "Hold to Scan"
+      "holdToScan": "Hold to Scan",
+      "counter": "{scanned} / {sold} scanned",
+      "checking": "Checking ticket...",
+      "tapToContinue": "Tap to scan the next ticket",
+      "manualEntry": "QR won't scan? Enter the ticket code",
+      "manualPlaceholder": "Code",
+      "manualSubmit": "Check in",
+      "cameraError": "Camera is not available. Check the camera permission or enter the ticket code."
     },
     "result": {
       "verified": "Verified",
@@ -2465,7 +2476,15 @@
       "scanCount": "Scan count: {count}",
       "ticketHolderName": "Ticket holder name",
       "paymentEmail": "Payment email",
-      "ticketPrice": "Ticket price"
+      "ticketPrice": "Ticket price",
+      "invalid": "Not valid",
+      "invalidCode": "Invalid ticket - this code was not issued by us or is outdated (transferred ticket).",
+      "notATicket": "This QR code is not a ticket.",
+      "notFound": "No ticket with this code.",
+      "refunded": "This ticket has been refunded and is no longer valid.",
+      "cancelled": "This ticket has been cancelled and is no longer valid.",
+      "genericError": "Ticket could not be scanned. Try again.",
+      "guest": "Guest"
     },
     "header": {
       "title": "Ticket scanner"

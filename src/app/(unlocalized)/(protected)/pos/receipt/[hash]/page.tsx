@@ -15,6 +15,7 @@ import ReceiptPrintButton from "@/app/_components/pos/ReceiptPrintButton";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 
 export const metadata: Metadata = {
   title: "Receipt",
@@ -49,7 +50,7 @@ export default async function PosReceiptPage({
           shortId: true,
           eventId: true,
           eventName: true,
-          qrContent: true,
+          orderId: true,
         },
       },
     },
@@ -115,9 +116,10 @@ export default async function PosReceiptPage({
           ? formatEventDateAndTime(cmsEvent.date_start)
           : null,
         venueName: cmsEvent?.venue?.name ?? null,
-        dataUrl: await QRCode.toDataURL(JSON.stringify(ticket.qrContent), {
+        dataUrl: await QRCode.toDataURL(buildTicketQrCode(ticket), {
           width: 200,
           margin: 0,
+          errorCorrectionLevel: "Q",
         }),
       };
     })

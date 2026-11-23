@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/services/auth";
 import { PERMISSIONS } from "@/domain/auth/config/permissions.config";
 import { prisma } from "@/lib/services/prisma";
 import { generateTicketImage } from "@/domain/ticket/operations/generateTicketImage";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
@@ -55,7 +56,7 @@ export async function generateTicketImageAction(
     const image = await generateTicketImage({
       shortId: ticket.shortId,
       hashId: ticket.ticketHash,
-      qrData: JSON.stringify(ticket.qrContent),
+      qrData: buildTicketQrCode(ticket),
       eventName: ticket.eventName,
       eventDetails: event.venue.name ?? "",
       eventDate: formatEventDateAndTime(event.date_start, ticketLocale),

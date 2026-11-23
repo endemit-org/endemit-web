@@ -12,6 +12,7 @@ import { formatEventDateAndTime } from "@/lib/util/formatting";
 import ImageWithFallback from "@/app/_components/content/ImageWithFallback";
 import TicketsDisplay from "@/app/_components/ticket/TicketDisplay";
 import { serializeTicket } from "@/domain/ticket/util";
+import { isTicketScanned } from "@/domain/ticket/businessLogic";
 import ScannerTabs from "@/app/_components/ticket/ScannerTabs";
 import DoorSaleForm from "@/app/_components/ticket/DoorSaleForm";
 import { getTranslations } from "next-intl/server";
@@ -70,6 +71,7 @@ export default async function EventScanPage({
   const serializedTickets = initialTickets.map(ticket =>
     serializeTicket(ticket)
   );
+  const ticketsScannedCount = serializedTickets.filter(isTicketScanned).length;
 
   return (
     <>
@@ -108,7 +110,11 @@ export default async function EventScanPage({
                   showDoorSale={showDoorSale}
                   scannerContent={
                     showScanner ? (
-                      <QRScanner eventId={event.id} />
+                      <QRScanner
+                        eventId={event.id}
+                        initialScanned={ticketsScannedCount}
+                        initialSold={serializedTickets.length}
+                      />
                     ) : (
                       <div>{t("scanningNotEnabled")}</div>
                     )
@@ -131,7 +137,11 @@ export default async function EventScanPage({
               showDoorSale={showDoorSale}
               scannerContent={
                 showScanner ? (
-                  <QRScanner eventId={event.id} />
+                  <QRScanner
+                        eventId={event.id}
+                        initialScanned={ticketsScannedCount}
+                        initialSold={serializedTickets.length}
+                      />
                 ) : (
                   <div>{t("scanningNotEnabled")}</div>
                 )

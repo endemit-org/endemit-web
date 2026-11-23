@@ -5,14 +5,15 @@ import { prisma } from "@/lib/services/prisma";
 import { fetchEventsFromCms } from "@/domain/cms/operations/fetchEventsFromCms";
 import { queueEventReminderEmail } from "@/domain/email/operations/queueEventReminderEmail";
 import { TicketStatus, Prisma } from "@prisma/client";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 
 interface TicketData {
   shortId: string;
+  orderId: string;
   ticketHash: string;
   ticketHolderName: string;
   ticketPayerEmail: string;
   price: Prisma.Decimal;
-  qrContent: Prisma.JsonValue;
   metadata: Prisma.JsonValue;
   locale: string;
 }
@@ -115,11 +116,11 @@ export const runEventReminderAutomation = inngest.createFunction(
             },
             select: {
               shortId: true,
+              orderId: true,
               ticketHash: true,
               ticketHolderName: true,
               ticketPayerEmail: true,
               price: true,
-              qrContent: true,
               metadata: true,
               locale: true,
             },
@@ -169,7 +170,7 @@ export const runEventReminderAutomation = inngest.createFunction(
                   ticketHolderName: t.ticketHolderName,
                   ticketPayerEmail: t.ticketPayerEmail,
                   price: Number(t.price),
-                  qrContent: t.qrContent,
+                  qrCode: buildTicketQrCode(t),
                   metadata: t.metadata as Record<string, unknown> | null,
                 })),
               },

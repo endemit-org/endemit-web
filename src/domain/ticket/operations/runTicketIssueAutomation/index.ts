@@ -14,6 +14,7 @@ import { transformToQrContent } from "@/domain/ticket/transformers/transformToQr
 import { createTicketTransaction } from "@/domain/ticket/operations/createTicketTransaction";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { generateTicketImage } from "@/domain/ticket/operations/generateTicketImage";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import { sendTicketEmail } from "@/domain/email/operations/sendTicketEmail";
 import { notifyOnNewTicketIssue } from "@/domain/notification/operations/notifyOnNewTicketIssue";
 
@@ -105,7 +106,10 @@ export const runTicketIssueAutomation = inngest.createFunction(
         const image = await generateTicketImage({
           shortId: issuedTicket.shortId,
           hashId: ticketBaseData.ticketHash,
-          qrData: JSON.stringify(ticketBaseData.qrContent),
+          qrData: buildTicketQrCode({
+            shortId: issuedTicket.shortId,
+            orderId,
+          }),
           eventName: eventName,
           eventDetails: event.venue.name ?? "",
           eventDate: formatEventDateAndTime(event.date_start, locale),

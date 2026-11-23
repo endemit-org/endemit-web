@@ -80,16 +80,8 @@ export default function TicketsDisplay({
   const handleTicketAction = async (ticket: SerializedTicket) => {
     setDialogError(null);
     const markTicketScan = await scanTicketAtEventAction({
-      scannedData: {
-        eventId: ticket.eventId,
-        eventName: ticket.eventName,
-        hash: ticket.ticketHash,
-        shortId: ticket.shortId,
-        orderId: ticket.orderId,
-        ticketHolderName: ticket.ticketHolderName,
-        ticketPayerEmail: ticket.ticketPayerEmail,
-        price: ticket.price,
-      },
+      eventId: ticket.eventId,
+      shortId: ticket.shortId,
     });
 
     if (!markTicketScan.success) {

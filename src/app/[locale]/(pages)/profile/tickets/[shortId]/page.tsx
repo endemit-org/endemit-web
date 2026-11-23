@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/services/auth";
 import { getTicketByShortId } from "@/domain/ticket/operations/getTicketByShortId";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import OuterPage from "@/app/_components/ui/OuterPage";
@@ -148,7 +149,7 @@ export default async function ProfileTicketPage({
             price: ticket.price.toString(),
             status: ticket.status,
             scanCount: ticket.scanCount,
-            qrContent: ticket.qrContent,
+            qrCode: buildTicketQrCode(ticket),
             isGuestList: ticket.isGuestList,
           }}
           event={

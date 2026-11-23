@@ -1,31 +1,46 @@
 import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/services/auth";
 import {
   TICKET_ALREADY_SCANNED_MESSAGE,
   TICKET_INVALID_HASH_MESSAGE,
+  scanTicketByCode,
   scanTicketByHash,
-  scanTicketByPayload,
 } from "@/domain/ticket/operations/scanTicketByHash";
-import type { QrTicketPayload } from "@/domain/ticket/types/ticket";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // Marking a ticket as scanned is a door-staff action. Without this check
+    // anyone holding a leaked code or hash could burn someone else's ticket.
+    const user = await getCurrentUser();
 
-    // Support both legacy (ticketHash only) and new (full payload) formats
-    const hasFullPayload = body.shortId && body.hash;
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    if (!user.permissions.includes("tickets:scan")) {
+      return NextResponse.json(
+        { success: false, error: "Not authorized" },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
 
     try {
       let result;
 
-      if (hasFullPayload) {
-        // New format with full QR payload - supports rotating hashes
-        result = await scanTicketByPayload(body as QrTicketPayload);
+      if (typeof body.code === "string") {
+        // Compact QR code as printed on the ticket (E2.<shortId>.<mac>)
+        result = await scanTicketByCode(body.code);
       } else if (body.ticketHash) {
         // Legacy format - hash must match stored hash exactly
         result = await scanTicketByHash(body.ticketHash);
       } else {
         return NextResponse.json(
-          { success: false, error: "Ticket hash or payload is required" },
+          { success: false, error: "Ticket code or hash is required" },
           { status: 400 }
         );
       }

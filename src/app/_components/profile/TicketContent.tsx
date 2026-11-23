@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -16,7 +16,6 @@ import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import ClientDate from "@/app/_components/ui/ClientDate";
 import { formatPrice } from "@/lib/util/formatting";
 import { updateTicketHolderNameAction } from "@/domain/ticket/actions/updateTicketHolderNameAction";
-import { regenerateTicketQrAction } from "@/domain/ticket/actions/regenerateTicketQrAction";
 
 const statusColors: Record<string, string> = {
   VALIDATED: "bg-emerald-500/20 text-emerald-400",
@@ -48,7 +47,7 @@ interface TicketContentProps {
     price: string | number;
     status: string;
     scanCount: number;
-    qrContent: unknown;
+    qrCode: string;
     isGuestList: boolean;
   };
   event: {
@@ -82,26 +81,9 @@ export default function TicketContent({
   const [editedName, setEditedName] = useState(ticket.ticketHolderName);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [qrContent, setQrContent] = useState(ticket.qrContent);
 
   const hasUsableStatus = status === "VALIDATED" || status === "PENDING";
   const isUsable = hasUsableStatus && !isEventPassed;
-  const qrData = qrContent ? JSON.stringify(qrContent) : ticket.ticketHash;
-
-  // Rotate QR code hash every 5 seconds for anti-screenshot protection
-  useEffect(() => {
-    if (!isUsable) return;
-
-    const rotateQr = async () => {
-      const result = await regenerateTicketQrAction(ticket.shortId);
-      if (result.success && result.qrContent) {
-        setQrContent(result.qrContent);
-      }
-    };
-
-    const interval = setInterval(rotateQr, 5000);
-    return () => clearInterval(interval);
-  }, [isUsable, ticket.shortId]);
 
   const handleScanEvent = useCallback(
     (payload: {
@@ -148,9 +130,6 @@ export default function TicketContent({
       setHolderName(result.newName);
       setEditedName(result.newName);
       setIsEditingName(false);
-      if (result.newQrContent) {
-        setQrContent(result.newQrContent);
-      }
     } else {
       setSaveError(result.error || t("tickets.saveFailed"));
     }
@@ -256,17 +235,27 @@ export default function TicketContent({
         {/* QR Code */}
         {isUsable ? (
           <div className="flex flex-col items-center relative z-10">
+            {/* The code is always dark-on-white; the card around it carries
+                the guest look. */}
             <div
-              className={`p-4 rounded-xl mb-4 ${ticket.isGuestList ? "bg-neutral-900" : "bg-white"}`}
+              className={`w-full max-w-[400px] rounded-xl mb-4 ${ticket.isGuestList ? "p-3 bg-neutral-900 border border-purple-500/40" : "p-1 bg-white"}`}
             >
               <ProfileTicketQrCode
-                qrData={qrData}
-                size={280}
-                isGuestList={ticket.isGuestList}
+                qrData={ticket.qrCode}
+                shortId={ticket.shortId}
+                holderName={holderName}
+                fullscreenFooter={
+                  <LiveTicketIndicator
+                    ticketHash={ticket.ticketHash}
+                    className="text-neutral-600"
+                  />
+                }
               />
             </div>
             <p className="text-xs text-neutral-200 text-center">
               {t("tickets.showQr")}
+              <br />
+              {t("tickets.tapToEnlarge")}
             </p>
             <LiveTicketIndicator ticketHash={ticket.ticketHash} />
           </div>

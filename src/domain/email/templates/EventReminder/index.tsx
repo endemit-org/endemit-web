@@ -12,7 +12,6 @@ interface TicketInfo {
   ticketHolderName: string;
   ticketPayerEmail: string;
   price: number;
-  qrContent: unknown;
   metadata?: Record<string, unknown> | null;
 }
 

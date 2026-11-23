@@ -1,262 +1,307 @@
 "use client";
 
 import { Scanner } from "@yudiel/react-qr-scanner";
-import { useState, useEffect } from "react";
-import { QrTicketPayload } from "@/domain/ticket/types/ticket";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { scanTicketAtEventAction } from "@/domain/ticket/actions/scanTicketAtEventAction";
-import { verifyTicketAtEventAction } from "@/domain/ticket/actions/verifyTicketAtEventAction";
 import ActionButton from "@/app/_components/form/ActionButton";
-import AnimatedEndemitLogo from "@/app/_components/icon/AnimatedEndemitLogo";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
 import { formatDecimalPrice } from "@/lib/util/formatting";
 import { playBeep, playBlorp } from "@/domain/ticket/util";
 import { useTranslations } from "next-intl";
 
-interface ScanResult {
-  rawValue: string;
-  format: string;
-}
+type ScanResponse = Awaited<ReturnType<typeof scanTicketAtEventAction>>;
+type TicketInfo = NonNullable<ScanResponse["ticket"]>;
+type ScanInput = { code: string } | { shortId: string };
 
-interface VerificationResult {
-  success: boolean;
-  scanCount: number;
-  message?: string;
-}
+type ResultTone = "success" | "warning" | "error";
 
-type VerificationStatus = "success" | "warning" | "error";
+interface ScanOutcome {
+  tone: ResultTone;
+  message: string;
+  ticket: TicketInfo | null;
+}
 
 type Props = {
   eventId: string;
+  initialScanned: number;
+  initialSold: number;
 };
 
-const getVerificationStatus = (
-  verification: VerificationResult | null
-): VerificationStatus => {
-  if (!verification) return "error";
-  if (!verification.success) return "error";
-  if (verification.scanCount === 1) return "success";
-  return "warning";
+// Compact ticket code: E2.<shortId>.<mac>. Anything else is not our ticket,
+// so it is rejected without a server round trip.
+const TICKET_CODE_PATTERN = /^E2\.[A-Z0-9]{1,12}\.[A-Z2-7]{16}$/i;
+
+// A valid ticket clears itself; anything else waits for a tap so a rejection
+// can't be missed.
+const SUCCESS_DISMISS_MS = 1200;
+
+// The phone that was just scanned usually stays in view for a moment. Without
+// this it would be read again and reported as "already scanned".
+const SAME_CODE_IGNORE_MS = 10_000;
+
+// Continuous autofocus where the browser exposes it (Chrome on Android);
+// ignored elsewhere. The rest mirrors the scanner's default constraints.
+const CAMERA_CONSTRAINTS = {
+  facingMode: "environment",
+  width: { min: 640, ideal: 720, max: 1920 },
+  height: { min: 640, ideal: 720, max: 1080 },
+  advanced: [{ focusMode: "continuous" }],
+} as unknown as MediaTrackConstraints;
+
+const TONE_STYLES: Record<ResultTone, { card: string; flash: string }> = {
+  success: { card: "bg-green-600", flash: "#16a34a" },
+  warning: { card: "bg-amber-500", flash: "#f59e0b" },
+  error: { card: "bg-red-600", flash: "#dc2626" },
 };
 
-const getVerificationStyles = (status: VerificationStatus) => {
-  const styles = {
-    success: {
-      bg: "bg-green-100 text-green-800",
-      icon: "✓",
-      titleKey: "verified",
-    },
-    warning: {
-      bg: "bg-yellow-100 text-yellow-800",
-      icon: "⚠",
-      titleKey: "warning",
-    },
-    error: {
-      bg: "bg-red-100 text-red-800",
-      icon: "✗",
-      titleKey: "error",
-    },
-  } as const;
-  return styles[status];
-};
-
-export default function QRScanner({ eventId }: Props) {
+export default function QRScanner({
+  eventId,
+  initialScanned,
+  initialSold,
+}: Props) {
   const t = useTranslations("scan");
   const [isOpen, setIsOpen] = useState(false);
-  const [scannedData, setScannedData] = useState<QrTicketPayload | null>(null);
-  const [verification, setVerification] = useState<VerificationResult | null>(
-    null
-  );
-  const [isMarkingOnServer, setIsMarkingOnServer] = useState<boolean>(false);
-  const [scanResult, setScanResult] = useState<{ scanCount: number } | null>(
-    null
-  );
+  const [isChecking, setIsChecking] = useState(false);
+  const [outcome, setOutcome] = useState<ScanOutcome | null>(null);
+  const [counter, setCounter] = useState({
+    scanned: initialScanned,
+    sold: initialSold,
+  });
+  const [manualCode, setManualCode] = useState("");
+  const [hasCameraError, setHasCameraError] = useState(false);
 
-  useEffect(() => {
-    if (scanResult && scanResult.scanCount === 1) {
-      const timer = setTimeout(() => {
-        resetScanState();
-      }, 2000);
-      return () => clearTimeout(timer);
+  // Guards live in refs: the scanner keeps decoding frames while a result is
+  // on screen, and those callbacks must see the current value immediately.
+  const isBusyRef = useRef(false);
+  const lastCodeRef = useRef<{ raw: string; at: number } | null>(null);
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashRef = useRef<HTMLDivElement>(null);
+
+  const clearDismissTimer = () => {
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current);
+      dismissTimerRef.current = null;
     }
-  }, [scanResult]);
-
-  const resetScanState = () => {
-    setScannedData(null);
-    setVerification(null);
-    setIsMarkingOnServer(false);
-    setScanResult(null);
   };
 
-  const handleWrongEvent = () => {
-    playBlorp();
-    setIsMarkingOnServer(false);
-    setVerification({
-      success: false,
-      scanCount: 0,
-      message: t("result.wrongEvent"),
-    });
-  };
+  const dismissOutcome = useCallback(() => {
+    clearDismissTimer();
+    setOutcome(null);
+    setIsChecking(false);
+    isBusyRef.current = false;
+  }, []);
 
-  const handleScanSuccess = async (ticketPayload: QrTicketPayload) => {
-    try {
-      const response = await verifyTicketAtEventAction(ticketPayload);
+  useEffect(() => clearDismissTimer, []);
 
-      if (response.success && response.verified) {
-        const markTicketScan = await scanTicketAtEventAction({
-          scannedData: ticketPayload,
+  const showOutcome = useCallback(
+    (next: ScanOutcome) => {
+      setIsChecking(false);
+      setOutcome(next);
+
+      if (next.tone === "success") {
+        playBeep();
+        navigator.vibrate?.(80);
+        dismissTimerRef.current = setTimeout(
+          dismissOutcome,
+          SUCCESS_DISMISS_MS
+        );
+      } else {
+        playBlorp();
+        navigator.vibrate?.([200, 80, 200]);
+      }
+
+      // Whole-screen colour pulse: readable from the corner of the eye.
+      const flash = flashRef.current;
+      if (flash) {
+        flash.style.backgroundColor = TONE_STYLES[next.tone].flash;
+        flash.animate([{ opacity: 0.85 }, { opacity: 0 }], {
+          duration: next.tone === "success" ? 450 : 700,
+          easing: "ease-out",
         });
+      }
+    },
+    [dismissOutcome]
+  );
 
-        if (!markTicketScan.success) {
-          const message =
-            markTicketScan.message ?? t("result.alreadyScanned");
+  const failureMessage = useCallback(
+    (reason: Exclude<ScanResponse, { success: true }>["reason"]) => {
+      switch (reason) {
+        case "already_scanned":
+          return t("result.alreadyScanned");
+        case "wrong_event":
+          return t("result.wrongEvent");
+        case "invalid_code":
+          return t("result.invalidCode");
+        case "not_found":
+          return t("result.notFound");
+        case "refunded":
+          return t("result.refunded");
+        case "cancelled":
+          return t("result.cancelled");
+        default:
+          return t("result.genericError");
+      }
+    },
+    [t]
+  );
 
-          playBlorp();
-          setIsMarkingOnServer(false);
-          setVerification({
-            success: false,
-            scanCount: 0,
-            message:
-              markTicketScan.reason === "already_scanned"
-                ? t("result.alreadyScanned")
-                : message,
+  const submitScan = useCallback(
+    async (input: ScanInput) => {
+      isBusyRef.current = true;
+      setIsChecking(true);
+
+      try {
+        const response = await scanTicketAtEventAction({ eventId, ...input });
+
+        if (response.success) {
+          setCounter({
+            scanned: response.summary.ticketsScanned,
+            sold: response.summary.ticketsSold,
+          });
+          showOutcome({
+            tone: "success",
+            message: t("result.validTicket"),
+            ticket: response.ticket,
           });
           return;
         }
 
-        playBeep();
-        setIsMarkingOnServer(false);
-        setScanResult({
-          scanCount: markTicketScan.scannedTicketData.scanCount,
+        showOutcome({
+          tone: response.reason === "already_scanned" ? "warning" : "error",
+          message: failureMessage(response.reason),
+          ticket: response.ticket,
         });
-        setVerification({
-          success: true,
-          scanCount: markTicketScan.scannedTicketData.scanCount,
-          message:
-            markTicketScan.scannedTicketData.scanCount === 1
-              ? t("result.validTicket")
-              : t("result.scannedTimes", {
-                  count: markTicketScan.scannedTicketData.scanCount,
-                }),
+      } catch (error) {
+        console.error(error);
+        showOutcome({
+          tone: "error",
+          message: t("result.genericError"),
+          ticket: null,
         });
       }
-    } catch (error) {
-      playBlorp();
-      setIsMarkingOnServer(false);
-      console.error(error);
+    },
+    [eventId, failureMessage, showOutcome, t]
+  );
+
+  const handleScan = (detected: { rawValue: string }[]) => {
+    if (isBusyRef.current) return;
+
+    const raw = detected[0]?.rawValue?.trim();
+    if (!raw) return;
+
+    const last = lastCodeRef.current;
+    const now = Date.now();
+    if (last && last.raw === raw && now - last.at < SAME_CODE_IGNORE_MS) {
+      return;
     }
+    lastCodeRef.current = { raw, at: now };
+
+    if (!TICKET_CODE_PATTERN.test(raw)) {
+      isBusyRef.current = true;
+      showOutcome({
+        tone: "error",
+        message: t("result.notATicket"),
+        ticket: null,
+      });
+      return;
+    }
+
+    void submitScan({ code: raw });
   };
 
-  const handleScan = async (result: ScanResult[]) => {
-    if (result && result.length > 0) {
-      const ticketPayload = JSON.parse(result[0].rawValue) as QrTicketPayload;
-      setScannedData(ticketPayload);
-      setIsMarkingOnServer(true);
+  const handleManualSubmit = (event: FormEvent) => {
+    event.preventDefault();
 
-      if (ticketPayload.eventId !== eventId) {
-        handleWrongEvent();
-        return;
-      }
+    const shortId = manualCode.trim().toUpperCase();
+    if (!shortId || isBusyRef.current) return;
 
-      await handleScanSuccess(ticketPayload);
-    }
+    setManualCode("");
+    void submitScan({ shortId });
   };
 
   const handleCloseModal = () => {
     setIsOpen(false);
-    resetScanState();
+    dismissOutcome();
+    lastCodeRef.current = null;
+    setHasCameraError(false);
   };
 
-  const shouldShowActionButton = (verification: VerificationResult | null) => {
-    if (!verification) return false;
-    if (!verification.success) return false;
-    return !verification.success || verification.scanCount > 1;
-  };
-
-  const renderTicketDetails = (scannedData: QrTicketPayload) => {
-    const details = [
-      {
-        label: t("result.ticketHolderName"),
-        value: scannedData.ticketHolderName,
-      },
-      {
-        label: t("result.paymentEmail"),
-        value: scannedData.ticketPayerEmail,
-      },
-      {
-        label: t("result.ticketPrice"),
-        value: formatDecimalPrice(scannedData.price),
-      },
-    ];
-
-    return (
-      <div className="flex flex-col gap-y-6">
-        {details.map((item, index) => (
-          <div key={`${item.label}-${index}`}>
-            <div className="text-md">{item.label}:</div>
-            <div className="text-2xl font-bold">{item.value}</div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderVerificationResult = () => {
-    if (isMarkingOnServer) {
-      return (
-        <div className="flex items-center gap-2 text-gray-600 text-center py-5">
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
-          <span>{t("scanner.recordingScan")}</span>
-        </div>
-      );
-    }
-
-    if (!verification) return null;
-
-    const status = getVerificationStatus(verification);
-    const styles = getVerificationStyles(status);
-
-    return (
-      <div className="space-y-3">
-        <div className={`p-4 rounded-lg ${styles.bg}`}>
-          <div className="font-semibold">
-            {styles.icon} {t(`result.${styles.titleKey}`)}
-          </div>
-          <div className="text-sm mt-1">{verification.message}</div>
-          {verification.success && (
-            <div
-              className={`text-sm mt-1 font-semibold ${
-                verification.scanCount > 1 ? "text-yellow-900" : ""
-              }`}
-            >
-              {t("result.scanCount", { count: verification.scanCount })}
-            </div>
-          )}
-        </div>
-        {shouldShowActionButton(verification) && (
-          <ActionButton onClick={resetScanState}>
-            {t("scanner.scanNext")}
-          </ActionButton>
+  const renderOutcome = (current: ScanOutcome) => (
+    <button
+      type="button"
+      onClick={dismissOutcome}
+      className={`absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center text-white ${TONE_STYLES[current.tone].card}`}
+    >
+      <div className="flex items-center gap-4">
+        {current.tone === "success" ? (
+          <AnimatedSuccessIcon strokeWidth={7} />
+        ) : (
+          <span className="text-5xl leading-none" aria-hidden>
+            {current.tone === "warning" ? "⚠" : "✗"}
+          </span>
+        )}
+        {current.ticket && (
+          <span className="text-6xl font-semibold tracking-widest">
+            {current.ticket.shortId}
+          </span>
         )}
       </div>
-    );
-  };
+
+      <div className="text-2xl font-bold uppercase">
+        {current.tone === "success"
+          ? t("result.verified")
+          : current.tone === "warning"
+            ? t("result.warning")
+            : t("result.invalid")}
+      </div>
+      <div className="text-lg">{current.message}</div>
+
+      {current.ticket && (
+        <div>
+          <div className="text-2xl font-bold">
+            {current.ticket.ticketHolderName}
+            {current.ticket.isGuestList && (
+              <span className="ml-2 align-middle text-sm px-2 py-0.5 rounded-full bg-white/25">
+                {t("result.guest")}
+              </span>
+            )}
+          </div>
+          <div className="text-sm opacity-90">
+            {current.ticket.ticketPayerEmail} ·{" "}
+            {formatDecimalPrice(current.ticket.price)}
+          </div>
+        </div>
+      )}
+
+      {current.tone !== "success" && (
+        <div className="mt-2 px-4 py-2 rounded-full bg-white text-neutral-900 font-semibold">
+          {t("scanner.tapToContinue")}
+        </div>
+      )}
+    </button>
+  );
 
   return (
     <div className="">
-      <ActionButton onClick={() => setIsOpen(!isOpen)}>
+      <ActionButton onClick={() => (isOpen ? handleCloseModal() : setIsOpen(true))}>
         {isOpen ? t("scanner.closeScanner") : t("scanner.scanTicket")}
       </ActionButton>
 
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl h-[90vh] overflow-auto text-neutral-900">
-            <div className="p-4 relative">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">
-                  {t("scanner.modalTitle")}
-                </h2>
+          <div className="light-scheme bg-white rounded-lg w-full max-w-2xl max-h-[95dvh] overflow-auto text-neutral-900">
+            <div className="p-4">
+              <div className="flex justify-between items-center gap-3 mb-3">
+                <h2 className="text-xl font-bold">{t("scanner.modalTitle")}</h2>
+                <div className="ml-auto text-sm font-semibold tabular-nums px-3 py-1 rounded-full bg-neutral-100">
+                  {t("scanner.counter", {
+                    scanned: counter.scanned,
+                    sold: counter.sold,
+                  })}
+                </div>
                 <button
                   onClick={handleCloseModal}
+                  aria-label={t("scanner.closeScanner")}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <svg
@@ -275,59 +320,86 @@ export default function QRScanner({ eventId }: Props) {
                 </button>
               </div>
 
-              {!scannedData && (
-                <div className="mb-4">
-                  <div className="text-neutral-950 p-4 mb-12 flex items-center justify-center">
-                    <AnimatedEndemitLogo />
-                  </div>
-                  <Scanner
-                    onScan={handleScan}
-                    onError={error => console.error(error)}
-                    components={{
-                      finder: true,
-                      torch: true,
-                      zoom: true,
-                    }}
-                    sound={false}
-                  />
-                  <div className="mt-12 text-center">
-                    {t("scanner.pointCamera")}
-                  </div>
-                </div>
-              )}
+              {/* The camera stays mounted between tickets: restarting the
+                  stream costs a fresh focus and exposure hunt every time.
+                  Results are drawn over it instead. */}
+              <div className="relative rounded-lg overflow-hidden bg-neutral-900">
+                <Scanner
+                  onScan={handleScan}
+                  onError={error => {
+                    console.error(error);
+                    setHasCameraError(true);
+                  }}
+                  constraints={CAMERA_CONSTRAINTS}
+                  formats={["qr_code"]}
+                  components={{
+                    finder: true,
+                    torch: true,
+                    zoom: true,
+                  }}
+                  sound={false}
+                />
 
-              {scannedData && (
-                <div className="space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div
-                      className={`flex items-center mb-2 gap-x-5 ${verification && !verification.success ? "text-red-800" : ""}`}
-                    >
-                      {verification && verification.success && (
-                        <AnimatedSuccessIcon strokeWidth={7} />
-                      )}
-                      <h3 className="text-6xl font-semibold tracking-widest">
-                        {scannedData.shortId}
-                      </h3>
-                    </div>
+                {isChecking && !outcome && (
+                  <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/60 text-white">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    <span>{t("scanner.checking")}</span>
                   </div>
+                )}
 
-                  <div
-                    className={
-                      verification && !verification.success
-                        ? "text-red-800"
-                        : ""
+                {outcome && renderOutcome(outcome)}
+              </div>
+
+              <div className="mt-3 text-center text-sm text-neutral-600">
+                {hasCameraError
+                  ? t("scanner.cameraError")
+                  : t("scanner.pointCamera")}
+              </div>
+
+              <form
+                onSubmit={handleManualSubmit}
+                className="mt-4 pt-4 border-t border-neutral-200"
+              >
+                <label
+                  htmlFor="manual-ticket-code"
+                  className="block text-sm font-medium mb-2"
+                >
+                  {t("scanner.manualEntry")}
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="manual-ticket-code"
+                    value={manualCode}
+                    onChange={event =>
+                      setManualCode(
+                        event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")
+                      )
                     }
+                    placeholder={t("scanner.manualPlaceholder")}
+                    maxLength={12}
+                    autoCapitalize="characters"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className="w-32 px-3 py-2 rounded border border-neutral-300 bg-white text-neutral-900 text-xl font-semibold tracking-widest uppercase"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!manualCode || isChecking}
+                    className="flex-1 px-4 py-2 rounded bg-neutral-900 text-white font-semibold disabled:opacity-40"
                   >
-                    {renderTicketDetails(scannedData)}
-                  </div>
-
-                  <div className="border-t pt-4">
-                    {renderVerificationResult()}
-                  </div>
+                    {t("scanner.manualSubmit")}
+                  </button>
                 </div>
-              )}
+              </form>
             </div>
           </div>
+
+          <div
+            ref={flashRef}
+            aria-hidden
+            className="fixed inset-0 z-[60] pointer-events-none opacity-0"
+          />
         </div>
       )}
     </div>

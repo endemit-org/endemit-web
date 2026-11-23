@@ -119,43 +119,36 @@ export const generateTicketImage = async (
 };
 
 async function createQRCode(
-  hashId: string,
+  qrData: string,
   cfg: TicketConfig,
   template: TicketTemplate
 ): Promise<Buffer> {
   const scheme = template.colorScheme;
 
-  const qrCodeDataUrl = await QRCode.toDataURL(hashId, {
-    errorCorrectionLevel: "H",
+  // Always dark-on-light with a full quiet zone and nothing covering the
+  // modules: inverted or logo-covered codes scan noticeably slower from a
+  // phone screen. Level Q keeps the compact ticket code at version 2.
+  const qrCodeDataUrl = await QRCode.toDataURL(qrData, {
+    errorCorrectionLevel: "Q",
     margin: 4,
     width: cfg.qrSize,
     color: { dark: scheme.qrDark, light: scheme.qrLight },
   });
 
-  const logoBuffer = await loadLogo(cfg.logoSize, template.invertLogo);
-  const qrLightRgb = hexToRgb(scheme.qrLight);
-
-  const whitePadding = await sharp(
-    Buffer.from(`
-      <svg width="80" height="80">
-        <rect x="0" y="0" width="80" height="80" fill="${scheme.qrLight}" fill-opacity="1" />
-      </svg>`)
-  )
-    .composite([{ input: logoBuffer, gravity: "center" }])
-    .png()
-    .toBuffer();
+  // The frame around the code (it carries the ticket id header) follows the
+  // template background, so dark templates keep their look.
+  const frameRgb = hexToRgb(scheme.background);
 
   return await sharp(Buffer.from(qrCodeDataUrl.split(",")[1], "base64"))
-    .composite([{ input: whitePadding, gravity: "center" }])
     .extend({
       top: 80,
       bottom: 10,
       left: 10,
       right: 10,
       background: {
-        r: qrLightRgb.r,
-        g: qrLightRgb.g,
-        b: qrLightRgb.b,
+        r: frameRgb.r,
+        g: frameRgb.g,
+        b: frameRgb.b,
         alpha: 1,
       },
     })

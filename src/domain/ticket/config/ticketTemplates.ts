@@ -32,8 +32,10 @@ export const GUEST_TEMPLATE: TicketTemplate = {
     textSecondary: "#888888",
     border: "#ffffff",
     accent: "#ffffff",
-    qrDark: "#ffffff",
-    qrLight: "#000000",
+    // The code itself stays dark-on-light (inverted codes scan poorly); the
+    // black frame around it carries the guest look.
+    qrDark: "#000000",
+    qrLight: "#ffffff",
   },
   textContent: {
     priceLabel: { en: "VIP PASS", sl: "VIP PASS" },

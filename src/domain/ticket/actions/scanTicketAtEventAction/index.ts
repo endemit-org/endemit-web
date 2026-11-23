@@ -1,99 +1,112 @@
 "use server";
 
-import { QrTicketPayload } from "@/domain/ticket/types/ticket";
-import { createScanLogEntry } from "@/domain/ticket/operations/createScanLogEntry";
 import assert from "node:assert";
+import { after } from "next/server";
+import { createScanLogEntry } from "@/domain/ticket/operations/createScanLogEntry";
 import { getCurrentUser } from "@/lib/services/auth";
 import {
-  TICKET_ALREADY_SCANNED_MESSAGE,
-  TICKET_INVALID_HASH_MESSAGE,
-  TICKET_REFUNDED_MESSAGE,
-  scanTicketByPayload,
+  TicketScanError,
+  scanTicketByCode,
+  scanTicketByShortId,
 } from "@/domain/ticket/operations/scanTicketByHash";
 import { getTicketSummaryForEvent } from "@/domain/ticket/operations/getTicketSummaryForEvent";
 import { notifyOnTicketScanned } from "@/domain/notification/operations/notifyOnTicketScanned";
 import { broadcastToChannel } from "@/lib/services/supabase/broadcast";
 
-export const scanTicketAtEventAction = async ({
-  scannedData,
-}: {
-  scannedData: QrTicketPayload;
-}) => {
+type ScanInput = { eventId: string } & (
+  | { code: string; shortId?: undefined }
+  | { shortId: string; code?: undefined }
+);
+
+type ScannedTicket = Awaited<ReturnType<typeof scanTicketByCode>>;
+
+const toTicketInfo = (ticket: ScannedTicket) => ({
+  shortId: ticket.shortId,
+  ticketHolderName: ticket.ticketHolderName,
+  ticketPayerEmail: ticket.ticketPayerEmail,
+  price: Number(ticket.price),
+  isGuestList: ticket.isGuestList,
+});
+
+/**
+ * Scan a ticket at the door, either from its QR code or (staff fallback) by
+ * the short id printed on the ticket. Everything the scanner shows comes from
+ * the database, not from the QR.
+ */
+export const scanTicketAtEventAction = async (input: ScanInput) => {
   const user = await getCurrentUser();
 
   assert(user, "User not authenticated");
   assert(user?.permissions.includes("tickets:scan"), "User not authorized");
 
-  let scannedTicketData;
+  let scannedTicket: ScannedTicket;
 
   try {
-    scannedTicketData = await scanTicketByPayload(scannedData);
+    scannedTicket =
+      input.code !== undefined
+        ? await scanTicketByCode(input.code, { eventId: input.eventId })
+        : await scanTicketByShortId(input.shortId, { eventId: input.eventId });
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === TICKET_ALREADY_SCANNED_MESSAGE
-    ) {
+    if (error instanceof TicketScanError) {
       return {
         success: false as const,
-        reason: "already_scanned" as const,
-        message: TICKET_ALREADY_SCANNED_MESSAGE,
+        reason: error.reason,
+        message: error.message,
+        ticket: error.ticket ? toTicketInfo(error.ticket) : null,
       };
     }
 
-    if (
-      error instanceof Error &&
-      error.message === TICKET_INVALID_HASH_MESSAGE
-    ) {
-      return {
-        success: false as const,
-        reason: "invalid_hash" as const,
-        message: TICKET_INVALID_HASH_MESSAGE,
-      };
-    }
-
-    if (
-      error instanceof Error &&
-      error.message === TICKET_REFUNDED_MESSAGE
-    ) {
-      return {
-        success: false as const,
-        reason: "refunded" as const,
-        message: TICKET_REFUNDED_MESSAGE,
-      };
-    }
+    console.error(error);
 
     return {
       success: false as const,
       reason: "unknown" as const,
       message:
         error instanceof Error ? error.message : "Ticket could not be scanned",
+      ticket: null,
     };
   }
 
-  const scanLogEntry = await createScanLogEntry({
-    ticketId: scannedTicketData.id,
-    userId: user.id,
-    eventId: scannedData.eventId,
+  const summary = await getTicketSummaryForEvent(scannedTicket.eventId);
+  const scannedAt = new Date();
+
+  // The door only waits for the scan itself; logging and notifications run
+  // after the response is sent.
+  after(async () => {
+    const results = await Promise.allSettled([
+      createScanLogEntry({
+        ticketId: scannedTicket.id,
+        userId: user.id,
+        eventId: scannedTicket.eventId,
+      }),
+      // Ticket-specific channel so the ticket page updates in real-time
+      broadcastToChannel(`ticket:${scannedTicket.shortId}`, "ticket_scanned", {
+        ticketId: scannedTicket.id,
+        shortId: scannedTicket.shortId,
+        status: "SCANNED",
+        scannedAt: scannedAt.toISOString(),
+      }),
+      notifyOnTicketScanned({
+        eventName: scannedTicket.eventName,
+        ticketPayerEmail: scannedTicket.ticketPayerEmail,
+        ticketHolderName: scannedTicket.ticketHolderName,
+        totalTicketsScannedAtEvent: summary.ticketsScanned,
+        totalTicketsSoldForEvent: summary.ticketsSold,
+        totalTicketsScannedRatio: summary.attendedPercentage,
+      }),
+    ]);
+
+    for (const result of results) {
+      if (result.status === "rejected") console.error(result.reason);
+    }
   });
 
-  // Broadcast to ticket-specific channel so the ticket page updates in real-time
-  await broadcastToChannel(`ticket:${scannedTicketData.shortId}`, "ticket_scanned", {
-    ticketId: scannedTicketData.id,
-    shortId: scannedTicketData.shortId,
-    status: "SCANNED",
-    scannedAt: scanLogEntry.createdAt.toISOString(),
-  });
-
-  const scanCount = await getTicketSummaryForEvent(scannedData.eventId);
-
-  await notifyOnTicketScanned({
-    eventName: scannedTicketData.eventName,
-    ticketPayerEmail: scannedTicketData.ticketPayerEmail,
-    ticketHolderName: scannedTicketData.ticketHolderName,
-    totalTicketsScannedAtEvent: scanCount.ticketsScanned,
-    totalTicketsSoldForEvent: scanCount.ticketsSold,
-    totalTicketsScannedRatio: scanCount.attendedPercentage,
-  });
-
-  return { success: true as const, scannedTicketData, scanCount };
+  return {
+    success: true as const,
+    ticket: toTicketInfo(scannedTicket),
+    summary: {
+      ticketsScanned: summary.ticketsScanned,
+      ticketsSold: summary.ticketsSold,
+    },
+  };
 };

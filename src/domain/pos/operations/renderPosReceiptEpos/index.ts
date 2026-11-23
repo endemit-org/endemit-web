@@ -13,6 +13,7 @@ import { FURS_TAX_NUMBER } from "@/lib/services/env/private";
 import { formatTokensFromCents, TOKEN_CONFIG } from "@/lib/util/currency";
 import { formatEventDateAndTime } from "@/lib/util/formatting";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 
 const COMPANY_LINES = [
   "Kulturno društvo Endemit",
@@ -55,7 +56,7 @@ export async function renderPosReceiptEpos(
           shortId: true,
           eventId: true,
           eventName: true,
-          qrContent: true,
+          orderId: true,
         },
       },
     },
@@ -97,7 +98,7 @@ export async function renderPosReceiptEpos(
               ? formatEventDateAndTime(cmsEvent.date_start)
               : null,
             venueName: cmsEvent?.venue?.name ?? null,
-            qrData: JSON.stringify(ticket.qrContent),
+            qrData: buildTicketQrCode(ticket),
           };
         })
       : [];

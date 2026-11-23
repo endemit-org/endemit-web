@@ -54,7 +54,7 @@ export const runSingleEventReminderAutomation = inngest.createFunction(
           const imageBase64 = await generateTicketImage({
             shortId: ticket.shortId,
             hashId: ticket.ticketHash,
-            qrData: JSON.stringify(ticket.qrContent),
+            qrData: ticket.qrCode,
             eventName,
             eventDetails: venue.name,
             eventDate: formattedDate,

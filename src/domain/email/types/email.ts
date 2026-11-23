@@ -1,5 +1,3 @@
-import { Prisma } from "@prisma/client";
-
 export enum EmailQueueEvent {
   SEND_EVENT_REMINDER = "send-event-reminder",
 }
@@ -23,7 +21,7 @@ export interface EventReminderData {
     ticketHolderName: string;
     ticketPayerEmail: string;
     price: number;
-    qrContent: Prisma.JsonValue;
+    qrCode: string;
     metadata: Record<string, unknown> | null;
   }[];
 }

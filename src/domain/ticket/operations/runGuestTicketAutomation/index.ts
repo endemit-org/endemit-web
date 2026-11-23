@@ -6,6 +6,7 @@ import { formatEventDateAndTime, formatPrice } from "@/lib/util/formatting";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { generateTicketImage } from "@/domain/ticket/operations/generateTicketImage";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import { sendTicketEmail } from "@/domain/email/operations/sendTicketEmail";
 import { notifyOnGuestTicketIssue } from "@/domain/notification/operations/notifyOnGuestTicketIssue";
 import { prisma } from "@/lib/services/prisma";
@@ -103,7 +104,7 @@ export const runGuestTicketAutomation = inngest.createFunction(
           const image = await generateTicketImage({
             shortId: ticket.shortId,
             hashId: ticket.ticketHash,
-            qrData: JSON.stringify(ticket.qrContent),
+            qrData: buildTicketQrCode(ticket),
             eventName: ticket.eventName,
             eventDetails: eventData.venue.name ?? "",
             eventDate: formatEventDateAndTime(eventData.date_start, ticketLocale),

@@ -5,10 +5,13 @@ import { useFormatter } from "next-intl";
 
 interface LiveTicketIndicatorProps {
   ticketHash: string;
+  /** Overrides the default light-on-dark text color. */
+  className?: string;
 }
 
 export default function LiveTicketIndicator({
   ticketHash,
+  className = "text-white/70 mt-6",
 }: LiveTicketIndicatorProps) {
   const format = useFormatter();
   const [currentTime, setCurrentTime] = useState<string>("");
@@ -64,9 +67,11 @@ export default function LiveTicketIndicator({
   }
 
   return (
-    <div className="flex items-center justify-center gap-3 text-white/70 text-sm font-mono mt-6">
+    <div
+      className={`flex items-center justify-center gap-3 text-sm font-mono ${className}`}
+    >
       <span className="tabular-nums">{currentTime}</span>
-      <span className="text-white/30">|</span>
+      <span className="opacity-40">|</span>
       <span className="tracking-wider transition-all duration-300">
         {hashFragment}
       </span>

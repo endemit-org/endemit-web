@@ -89,7 +89,7 @@ export interface EposReceiptData {
     eventName: string;
     eventDate?: string | null;
     venueName?: string | null;
-    qrData: string; // JSON qrContent, scanned at the door
+    qrData: string; // compact ticket QR code, scanned at the door
   }>;
 }
 

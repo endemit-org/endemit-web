@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Ticket } from "@prisma/client";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import {
   generateApplePass,
   type TicketPassState,
@@ -64,7 +65,7 @@ export async function buildTicketApplePass(
     ticketPayerEmail: ticket.ticketPayerEmail,
     orderId: ticket.orderId,
     price: Number(ticket.price),
-    qrContent: JSON.stringify(ticket.qrContent),
+    qrContent: buildTicketQrCode(ticket),
     locale,
     state,
     webService:

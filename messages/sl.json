@@ -589,7 +589,11 @@
       "noneYetDesc": "Ko kupiš karte za event, se pojavijo tukej.",
       "activeTitle": "Aktivne karte",
       "pastTitle": "Pretekle karte",
-      "qrAlt": "QR koda karte"
+      "qrAlt": "QR koda karte",
+      "tapToEnlarge": "Tapni na kodo, da jo povečaš",
+      "enlargeQr": "Povečaj QR kodo",
+      "brightnessHint": "Dej svetlost zaslona čist do konca",
+      "tapToClose": "Tapni kamorkol, da zapreš"
     },
     "transactions": {
       "historyTitle": "Zgodovina transakcij",
@@ -2452,7 +2456,14 @@
       "scanNext": "V redu – skeniraj naslednjo",
       "processing": "Se procesira…",
       "holding": "Drži…",
-      "holdToScan": "Drži za skeniranje"
+      "holdToScan": "Drži za skeniranje",
+      "counter": "{scanned} / {sold} skeniranih",
+      "checking": "Preverjam karto...",
+      "tapToContinue": "Tapni za naslednjo karto",
+      "manualEntry": "QR se ne da skenirat? Vpiši kodo karte",
+      "manualPlaceholder": "Koda",
+      "manualSubmit": "Potrdi vstop",
+      "cameraError": "Kamera ni na voljo. Preveri dovoljenje za kamero al vpiši kodo karte."
     },
     "result": {
       "verified": "Preverjeno",
@@ -2465,7 +2476,15 @@
       "scanCount": "Število skeniranj: {count}",
       "ticketHolderName": "Ime imetnika karte",
       "paymentEmail": "Email plačnika",
-      "ticketPrice": "Cena karte"
+      "ticketPrice": "Cena karte",
+      "invalid": "Ni veljavna",
+      "invalidCode": "Neveljavna karta – te kode nismo izdali mi al pa je zastarela (prenesena karta).",
+      "notATicket": "Ta QR koda ni karta.",
+      "notFound": "Karte s to kodo ni.",
+      "refunded": "Ta karta je bla vrnjena in ni več veljavna.",
+      "cancelled": "Ta karta je bla preklicana in ni več veljavna.",
+      "genericError": "Karte se ni dalo skenirat. Probi še enkrat.",
+      "guest": "Gost"
     },
     "header": {
       "title": "Skener za karte"

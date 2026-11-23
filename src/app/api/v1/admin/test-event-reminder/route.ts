@@ -5,6 +5,7 @@ import { prisma } from "@/lib/services/prisma";
 import { fetchEventFromCmsById } from "@/domain/cms/operations/fetchEventFromCms";
 import { sendEventReminderEmail } from "@/domain/email/operations/sendEventReminderEmail";
 import { generateTicketImage } from "@/domain/ticket/operations/generateTicketImage";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
 import {
   formatEventDateAndTime,
@@ -15,11 +16,11 @@ import { TicketStatus, Prisma } from "@prisma/client";
 
 interface TicketData {
   shortId: string;
+  orderId: string;
   ticketHash: string;
   ticketHolderName: string;
   ticketPayerEmail: string;
   price: Prisma.Decimal;
-  qrContent: Prisma.JsonValue;
   metadata: Prisma.JsonValue;
 }
 
@@ -93,11 +94,11 @@ export async function POST(request: NextRequest) {
       },
       select: {
         shortId: true,
+        orderId: true,
         ticketHash: true,
         ticketHolderName: true,
         ticketPayerEmail: true,
         price: true,
-        qrContent: true,
         metadata: true,
       },
     });
@@ -171,7 +172,7 @@ export async function POST(request: NextRequest) {
             const imageBase64 = await generateTicketImage({
               shortId: ticket.shortId,
               hashId: ticket.ticketHash,
-              qrData: JSON.stringify(ticket.qrContent),
+              qrData: buildTicketQrCode(ticket),
               eventName: eventData.name,
               eventDetails: eventData.venue.name,
               eventDate: formattedDate,
@@ -205,7 +206,6 @@ export async function POST(request: NextRequest) {
             ticketHolderName: t.ticketHolderName,
             ticketPayerEmail: t.ticketPayerEmail,
             price: Number(t.price),
-            qrContent: t.qrContent,
             metadata: t.metadata as Record<string, unknown> | null,
           })),
           attachments,

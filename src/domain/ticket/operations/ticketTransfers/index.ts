@@ -15,6 +15,7 @@ import {
 } from "@/domain/email/templates";
 import { getUserLocaleByEmail } from "@/domain/user/operations/getUserLocaleByEmail";
 import { generateTicketImage } from "@/domain/ticket/operations/generateTicketImage";
+import { buildTicketQrCode } from "@/domain/ticket/operations/ticketQrCode";
 import { sendTicketEmail } from "@/domain/email/operations/sendTicketEmail";
 import { PUBLIC_BASE_WEB_URL } from "@/lib/services/env/public";
 import { splitArtistsIntoLines } from "@/domain/ticket/util";
@@ -229,7 +230,7 @@ export async function acceptTicketTransfer(
 
   const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 16);
 
-  const { updatedTicket, qrContent } = await prisma.$transaction(async tx => {
+  const { updatedTicket } = await prisma.$transaction(async tx => {
     // Lightweight zero-value order so profile/stats queries keep working
     const transferOrder = await tx.order.create({
       data: {
@@ -291,7 +292,7 @@ export async function acceptTicketTransfer(
       },
     });
 
-    return { updatedTicket: updated, qrContent: newQrContent };
+    return { updatedTicket: updated };
   });
 
   after(async () => {
@@ -316,7 +317,7 @@ export async function acceptTicketTransfer(
         const image = await generateTicketImage({
           shortId: updatedTicket.shortId,
           hashId: updatedTicket.ticketHash,
-          qrData: JSON.stringify(qrContent),
+          qrData: buildTicketQrCode(updatedTicket),
           eventName: updatedTicket.eventName,
           eventDetails: eventData.venue?.name ?? "",
           eventDate: formatEventDateAndTime(eventData.date_start, ticketLocale),
