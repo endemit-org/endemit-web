@@ -112,6 +112,8 @@ const DAY: Shot[] = [
   { photo: "grass-crew", span: 6, wide: 7, tilt: 0.7 },
   { photo: "dancers", span: 3, wide: 2, tilt: -1.5 },
   { photo: "blue-smoke", span: 3, wide: 3, tilt: 1.3, drop: "1rem" },
+  { photo: "curtain-path", span: 2, wide: 3, tilt: -1.1 },
+  { photo: "dome-dj", span: 4, wide: 6, tilt: 0.9 },
 ];
 
 const NIGHT: Shot[] = [
@@ -166,7 +168,7 @@ function ShotFigure({ shot, tone }: { shot: Shot; tone: "day" | "night" }) {
 /** Two ring fields drifting across each other. */
 function Pattern() {
   return (
-    <div className={styles.pattern} aria-hidden data-scene>
+    <div className={styles.pattern} aria-hidden>
       <span />
       <span />
     </div>
@@ -435,10 +437,9 @@ export default function Festival({ locale, data }: { locale: FestivalLocale; dat
         </div>
       </Scene>
 
-      <Pattern />
-
       {/* ---- practical, down among the trees ---- */}
       <Scene className={styles.info} id="info">
+        <Pattern />
         <div className={styles.inner}>
           <Echo>{t.infoTitle}</Echo>
           <div className={styles.infoGrid}>

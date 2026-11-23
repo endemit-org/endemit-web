@@ -58,7 +58,7 @@ export function SceneMotion({ rootId }: { rootId: string }) {
       }
       if (warp) {
         const warping = Math.abs(velocity) > 0.03;
-        warp.setAttribute("scale", (Math.abs(velocity) * 80).toFixed(1));
+        warp.setAttribute("scale", (Math.abs(velocity) * 30).toFixed(1));
         if ((root.dataset.warping === "true") !== warping) root.dataset.warping = String(warping);
       }
       // Keep drawing until the bend has eased back to rest.
