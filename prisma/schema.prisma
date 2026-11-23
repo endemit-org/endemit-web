@@ -372,6 +372,8 @@ model OtcToken {
   magicLink String    @unique
   expiresAt DateTime
   usedAt    DateTime?
+  // Verification attempts made against this token; it locks at the limit
+  attempts  Int       @default(0)
   createdAt DateTime  @default(now())
 
   @@index([userId])
@@ -387,6 +389,15 @@ model OtcRateLimit {
 
   @@index([email])
   @@index([createdAt])
+}
+
+// Generic sliding-window rate limit hits (sign-in, code checks, promo codes)
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
 }
 
 model Wallet {

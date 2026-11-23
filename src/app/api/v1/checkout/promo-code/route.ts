@@ -3,9 +3,26 @@ import { NextResponse } from "next/server";
 import { CheckoutValidationService } from "@/lib/services/validation/validation.service";
 import { validateDiscountCode } from "@/domain/discount/operations/validateDiscountCode";
 import type { DiscountCartItem } from "@/domain/discount/types/discount";
+import {
+  RATE_LIMITED_MESSAGE,
+  consumeClientRateLimit,
+} from "@/lib/services/rateLimit";
 
 export async function POST(request: Request) {
   try {
+    // Promo codes are guessable without this cap.
+    if (
+      !(await consumeClientRateLimit("promo-code", {
+        limit: 20,
+        windowMs: 10 * 60 * 1000,
+      }))
+    ) {
+      return NextResponse.json(
+        { success: false, error: RATE_LIMITED_MESSAGE },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const promoCode = body.promoCode as string;
     const subtotal = body.subtotal as number; // In euros

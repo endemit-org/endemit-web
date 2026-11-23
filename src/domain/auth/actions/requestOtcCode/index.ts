@@ -8,6 +8,7 @@ import { generateMagicLink } from "@/domain/auth/operations/generateMagicLink";
 import { createOtcToken } from "@/domain/auth/operations/createOtcToken";
 import { deliverOtcEmail } from "@/domain/auth/operations/deliverOtcEmail";
 import type { OtcRequestResult } from "@/domain/auth/types";
+import { MAX_OTC_ATTEMPTS } from "@/domain/auth/config/otc.config";
 import { getLocale } from "next-intl/server";
 
 const OTC_EXPIRATION_MINUTES = 10;
@@ -77,6 +78,8 @@ export const requestOtcCode = async ({
     where: {
       userId: user.id,
       usedAt: null,
+      // A code locked by wrong attempts is dead: issue a new one instead.
+      attempts: { lt: MAX_OTC_ATTEMPTS },
       // Only re-use while it has a comfortable amount of life left.
       expiresAt: { gt: new Date(Date.now() + 5 * 60 * 1000) },
     },

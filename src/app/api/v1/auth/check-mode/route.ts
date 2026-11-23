@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { checkAuthMode } from "@/domain/auth/actions/checkAuthMode";
+import { RATE_LIMITED_MESSAGE } from "@/lib/services/rateLimit";
 
 const checkModeSchema = z.object({
   identifier: z.string().min(1),
@@ -25,6 +26,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(authModeResult);
   } catch (error) {
+    if (error instanceof Error && error.message === RATE_LIMITED_MESSAGE) {
+      return NextResponse.json({ error: RATE_LIMITED_MESSAGE }, { status: 429 });
+    }
+
     console.error("Check auth mode error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

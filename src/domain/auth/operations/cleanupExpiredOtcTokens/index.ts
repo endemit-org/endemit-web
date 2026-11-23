@@ -30,6 +30,13 @@ export const cleanupExpiredOtcTokens = async (): Promise<{
     },
   });
 
+  // Generic rate limit hits: no window is longer than an hour
+  await prisma.rateLimitHit.deleteMany({
+    where: {
+      createdAt: { lt: oneHourAgo },
+    },
+  });
+
   return {
     deletedTokens: deletedTokens.count,
     deletedRateLimits: deletedRateLimits.count,

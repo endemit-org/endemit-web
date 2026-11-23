@@ -1,6 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/services/prisma";
+import {
+  RATE_LIMITED_MESSAGE,
+  consumeClientRateLimit,
+} from "@/lib/services/rateLimit";
 
 interface CheckAuthModeParams {
   identifier: string;
@@ -16,6 +20,15 @@ interface CheckAuthModeResult {
 export const checkAuthMode = async ({
   identifier,
 }: CheckAuthModeParams): Promise<CheckAuthModeResult> => {
+  // This lookup reveals whether an account exists, so probing is capped.
+  const isAllowed = await consumeClientRateLimit("auth-check-mode", {
+    limit: 30,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!isAllowed) {
+    throw new Error(RATE_LIMITED_MESSAGE);
+  }
+
   const normalizedIdentifier = identifier.trim();
   const isUsername = normalizedIdentifier.startsWith("@");
 
