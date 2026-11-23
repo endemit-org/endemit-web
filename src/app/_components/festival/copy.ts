@@ -176,7 +176,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     year: "2027",
     tagline: "Tradicionalni vnebohod endemitskega plemena",
     cta: "Po karte",
-    scroll: "Spusti se",
+    scroll: "Sposti se",
     aboutTitle: "Ne pozabi jt domo",
     about: [
       "Tradicionalni vnebohod endemitskega plemena je srečanje, kero je pognavo korenine pred več ko desetletjem, ko so se koroške starešine prvič naselile v Libeličah. Ob Dravi, kera je zasekava v jedro pradavnih drv in ustvarva teren, ko nam je vbiv koroško trmo v bučo in nam privzgojiv impulz, da se zmerm vračamo domo.",
