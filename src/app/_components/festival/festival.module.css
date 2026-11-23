@@ -943,6 +943,8 @@
   top: -0.08em;
 }
 .chip[aria-pressed="true"] sup { background: var(--hill-near); color: var(--eye); }
+/* The badge is round itself, so it sits close to the chip's round end. */
+.chip:has(sup) { padding-right: 0.36em; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .chip {
   min-height: 44px;
