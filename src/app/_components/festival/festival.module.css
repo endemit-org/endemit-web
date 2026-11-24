@@ -240,6 +240,34 @@
   transform: translate3d(0, calc(var(--h) * 9svh), 0) scale(calc(1 + var(--h) * 0.1));
   will-change: transform;
 }
+.markTitle { position: relative; margin: 0; }
+/* The dome emblem behind the wordmark: its lines draw themselves one after another. */
+.domeMark {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  bottom: -7%;
+  width: min(96vw, 1180px);
+  height: auto;
+  translate: -50% 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.domeMark line {
+  stroke: var(--lilac);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.5;
+  animation: domeDraw 0.9s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+  animation-delay: calc(0.35s + var(--i) * 0.045s);
+}
+.domeMark line[data-weight="2"] { stroke-width: 4; opacity: 0.6; }
+.domeMark line[data-weight="3"] { stroke: var(--salmon); stroke-width: 8; opacity: 0.85; }
+@keyframes domeDraw { to { stroke-dashoffset: 0; } }
+.root[data-lite="true"] .domeMark line { animation: none; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) { .domeMark line { animation: none; stroke-dashoffset: 0; } }
 .logo { display: block; color: var(--salmon); }
 .logo svg { display: block; width: 100%; height: auto; }
 .festivalWord {

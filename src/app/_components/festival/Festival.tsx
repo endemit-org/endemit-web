@@ -4,6 +4,7 @@ import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import LanguageSwitcher from "@/app/_components/ui/LanguageSwitcher";
 import FestivalAccount from "./FestivalAccount";
 import BoilDefs from "./BoilDefs";
+import DomeMark from "./DomeMark";
 import FestivalNewsletter from "./FestivalNewsletter";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
@@ -293,7 +294,8 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
           <LanguageSwitcher className={styles.language} />
           <FestivalAccount locale={locale} />
           <div className={styles.mark}>
-            <h1 style={{ margin: 0 }}>
+            <h1 className={styles.markTitle}>
+              <DomeMark />
               <span className={`${styles.logo} ${styles.boil}`} role="img" aria-label="Endemit">
                 <EndemitLogo />
               </span>
