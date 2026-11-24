@@ -369,7 +369,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
             {DAY.map((shot, i) => (
               <ShotFigure key={i} shot={shot} tone="day" />
             ))}
-            <div className={styles.trip} aria-hidden>
+            <div className={styles.trip}>
               <picture>
                 <source type="image/avif" srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1400.avif 1400w`} sizes="100vw" />
                 <img className={styles.tripSky} src={`${ART}/sky-fallback.webp`} width={1400} height={1253} alt="" loading="lazy" decoding="async" />
@@ -377,7 +377,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
               <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.tripStars} />
               <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.tripStars} ${styles.tripStarsB}`} />
               {/* The camp under the stars: a few tents, two with a lamp on. */}
-              <div className={styles.camp}>
+              <div className={styles.camp} aria-hidden>
                 <svg className={`${styles.campRidge} ${styles.campRidgeFar}`} viewBox="0 0 100 40" preserveAspectRatio="none">
                   <path d="M0,5 C9,1 17,8 28,4 S47,0 58,5 S81,8 100,2 V40 H0Z" />
                 </svg>
@@ -396,12 +396,19 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
                 <Imp n={4} x="70%" lift={28} />
                 <Imp n={6} x="88%" size={3.2} lift={30} />
               </div>
-              <div className={`${styles.tripWords} ${styles.boil}`}>
-                {[0, 1, 2, 3].map(i => (
-                  <span key={i} style={css({ "--i": i })}>
-                    {t.nightWord}
-                  </span>
-                ))}
+              <div className={styles.tripWords}>
+                <div className={`${styles.tripEcho} ${styles.boil}`}>
+                  {[0, 1, 2, 3].map(i => (
+                    <span key={i} aria-hidden={i > 0 || undefined} style={css({ "--i": i })}>
+                      {t.nightWord}
+                    </span>
+                  ))}
+                </div>
+                <p className={styles.tripSub}>
+                  <b>{t.nightSub[0]}</b>
+                  <br />
+                  {t.nightSub[1]}
+                </p>
               </div>
             </div>
             {NIGHT.map((shot, i) => (

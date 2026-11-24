@@ -625,13 +625,19 @@
   .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(6), .camp .imp:nth-of-type(odd) { display: none; }
 }
 /* The words sit in the upper sky, clear of the camp below. */
-.tripWords { position: absolute; inset: 0 0 38%; }
-.tripWords span {
+.tripWords {
   position: absolute;
-  inset: 0;
+  inset: 0 0 38%;
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
   padding: 0 var(--gutter);
+}
+/* The echoes share one grid cell, the subline sits in the row under it. */
+.tripEcho { display: grid; justify-items: center; }
+.tripWords span {
+  position: relative;
+  grid-area: 1 / 1;
   font-family: var(--font-heading), sans-serif;
   font-weight: 600;
   font-size: clamp(3rem, 12.5vw, 8.5rem);
@@ -644,7 +650,17 @@
   transform: translate3d(0, calc(var(--i) * -0.2em + var(--v, 0) * var(--i) * -46px), 0);
   opacity: calc(1 - var(--i) * 0.22);
 }
-.tripWords span:first-child {
+.tripSub {
+  max-width: 36rem;
+  margin: 1.3rem 0 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--cream);
+}
+.tripSub b { color: var(--salmon); font-weight: 600; }
+.tripEcho span:first-child {
   z-index: 1;
   color: var(--cream);
   -webkit-text-stroke: 0;

@@ -46,6 +46,7 @@ export type FestivalCopy = {
   home: string;
   allEvents: string;
   nightWord: string;
+  nightSub: [string, string];
   galleryAll: string;
   galleryClose: string;
   galleryPrevious: string;
@@ -156,6 +157,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     home: "Endemit",
     allEvents: "All Endemit events",
     nightWord: "Two nights. The tent can wait.",
+    nightSub: ["Every ticket includes a camping spot.", "Bring your own tent or rent one from us."],
     galleryAll: "All photos",
     galleryClose: "Close",
     galleryPrevious: "Previous photo",
@@ -270,6 +272,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     home: "Endemit",
     allEvents: "Vsi Endemit eventi",
     nightWord: "Dve noči. Šotor naj čaka.",
+    nightSub: ["Plac za kampiranje je v vsaki karti.", "Šotor prneseš sam al pa ga najameš pr nas."],
     galleryAll: "Vse slike",
     galleryClose: "Zapri",
     galleryPrevious: "Prejšna slika",
