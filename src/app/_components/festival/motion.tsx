@@ -181,7 +181,7 @@ export function MapViewer({
   openLabel,
   closeLabel,
 }: {
-  /** Smaller file shown in the page; `src` is the full map, loaded only when opened. */
+  /** Path stem of the lighter files shown in the page (`-900.webp`, `-1500.webp`); `src` is the full map, loaded only when opened. */
   preview: string;
   src: string;
   alt: string;
@@ -195,7 +195,7 @@ export function MapViewer({
     <>
       <button type="button" className={`${styles.mapButton} ${styles.jitter}`} onClick={dialog.show} aria-label={openLabel}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={preview} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+        <img src={`${preview}-900.webp`} srcSet={`${preview}-900.webp 900w, ${preview}-1500.webp 1500w`} sizes="(max-width: 1100px) 92vw, 1082px" alt={alt} width={width} height={height} loading="lazy" decoding="async" />
       </button>
       <dialog ref={dialog.ref} className={styles.dialog} onClose={dialog.onClose}>
         <button type="button" className={`${styles.tag} ${styles.dialogClose}`} onClick={dialog.close}>

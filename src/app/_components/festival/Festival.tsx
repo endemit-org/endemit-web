@@ -499,7 +499,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
             {t.mapIntro}
           </p>
           <MapViewer
-            preview={`/images/festival/map-${locale}-900.webp`}
+            preview={`/images/festival/map-${locale}`}
             src={`/images/festival/map-${locale}.webp`}
             alt={t.mapTitle}
             width={1500}
