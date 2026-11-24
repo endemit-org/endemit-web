@@ -272,6 +272,23 @@
   color: var(--salmon);
 }
 .footLanguage { font-size: 0.95rem; color: var(--lilac); }
+/* Who is signed in, under the language switch. */
+.account {
+  position: absolute;
+  z-index: 4;
+  top: calc(50px + env(safe-area-inset-top));
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  max-width: min(72vw, 24rem);
+  font-size: 0.82rem;
+  color: var(--lilac);
+}
+.account a, .account button { padding: 0; border: 0; background: none; color: inherit; font: inherit; font-family: var(--font-heading), sans-serif; font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+.account a:hover, .account button:hover { color: var(--salmon); }
+.accountWho { font-family: inherit !important; font-size: 0.82rem !important; letter-spacing: 0 !important; text-transform: none !important; display: inline-flex; align-items: center; gap: 0.45em; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--cream) !important; text-decoration: none !important; }
+.accountWho i { flex: none; width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--eye); }
 .legal { flex: 0 0 100%; margin: 0.6rem 0 0; padding-top: 1.2rem; border-top: 2px dashed rgba(169, 155, 234, 0.3); font-size: 0.8rem; text-align: center; color: var(--lilac); opacity: 0.85; }
 /* The way back to the rest of Endemit. */
 .home {

@@ -22,6 +22,7 @@ import type { FestivalOffer } from "./data";
 import BoilDefs from "./BoilDefs";
 import { BOOKING_STORAGE_KEY, bookingLines, linesTotal, MAX_PEOPLE, normalizeBooking, readBooking, writeBooking, type Booking, type BookingLine } from "./booking";
 import { Stepper } from "./TicketBuilder";
+import FestivalAccount from "./FestivalAccount";
 import styles from "./festival.module.css";
 
 const stripePromise = loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -186,6 +187,7 @@ type Wallet = ReturnType<typeof useWalletCredit>;
 type Promo = ReturnType<typeof usePromoCodes>;
 
 type FormProps = {
+  locale: FestivalLocale;
   lines: BookingLine[];
   holders: Holder[];
   t: Copy;
@@ -222,7 +224,7 @@ function useWide() {
   return wide;
 }
 
-function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly, wallet, promo, donation, suggestion, onDonate, onSkipDonation, subTotal, discountAmount, offers, booking, onBooking }: FormProps) {
+function CheckoutForm({ lines, holders, t, locale, userEmail, demo, payable, walletOnly, wallet, promo, donation, suggestion, onDonate, onSkipDonation, subTotal, discountAmount, offers, booking, onBooking }: FormProps) {
   const consent = useTranslations("checkout.customer");
   const item = useTranslations("checkout.item");
   const stripe = useStripe();
@@ -422,12 +424,16 @@ function CheckoutForm({ lines, holders, t, userEmail, demo, payable, walletOnly,
         {/* ---- details: who buys, who comes ---- */}
         <section className={styles.stepInfo}>
           <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.contact}</h2>
+          {signedIn ? null : <FestivalAccount locale={locale} variant="inline" />}
           <div className={styles.field}>
             <label htmlFor="fest-email">{t.email}</label>
             <input id="fest-email" type="email" autoComplete="email" inputMode="email" required readOnly={signedIn} value={email} onChange={e => setEmail(e.target.value)} aria-invalid={submitted && !emailValid} />
           </div>
           {signedIn ? (
-            <p className={styles.fieldNote}>{t.signedIn}</p>
+            <>
+              <p className={styles.fieldNote}>{t.signedIn}</p>
+              <FestivalAccount locale={locale} variant="inline" />
+            </>
           ) : (
             <div className={styles.field}>
               <label htmlFor="fest-email-repeat">{t.emailRepeat}</label>
@@ -914,6 +920,7 @@ export default function FestivalCheckout({
               lines={lines}
               holders={holders}
               t={t}
+              locale={locale}
               userEmail={userEmail}
               demo={demo}
               payable={payableCents / 100}
