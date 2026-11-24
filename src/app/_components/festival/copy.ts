@@ -30,6 +30,7 @@ export type FestivalCopy = {
   ticketsIntro: string;
   mapTitle: string;
   mapIntro: string;
+  mapNote: string;
   mapOpen: string;
   mapClose: string;
   infoTitle: string;
@@ -62,7 +63,7 @@ export type FestivalCopy = {
 export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
   en: {
     dateline: "August 13–15",
-    place: "Libeliče",
+    place: "Libeliče, Slovenia",
     year: "2027",
     tagline: "The annual Assumption of the Tribe",
     cta: "Get tickets",
@@ -88,6 +89,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     ticketsIntro: "Blind tickets. No line up yet, just the place, the sound and the family. The more of you come together, the less each one pays.",
     mapTitle: "The grounds",
     mapIntro: "The map with a timetable is put up at the festival grounds, so you can enjoy the experience offline.",
+    mapNote: "This map is from last year. This year's comes out in the month before the festival.",
     mapOpen: "Open the map",
     mapClose: "Close the map",
     infoTitle: "Good to know",
@@ -203,6 +205,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     ticketsIntro: "Karte na slepo. Line upa še ni, sam plac, zvok pa familija. Več ko vas pride skop, mn plača vsak.",
     mapTitle: "Plac",
     mapIntro: "Mapa z urnikom bo obešena v vidnem poljo, zato ne rabiš skoz gledat v telefon.",
+    mapNote: "Tale mapa je od lani. Letošna pride v meseco pred festivalom.",
     mapOpen: "Ofni mapo",
     mapClose: "Zapri mapo",
     infoTitle: "Dobro je vedet",

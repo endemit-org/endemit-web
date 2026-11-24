@@ -22,6 +22,7 @@ const text = {
     perPerson: "per person",
     save: (people: number) => (people > 0 ? "You save" : ""),
     tent: "Tent rental",
+    limited: "Limited",
     bus: "Bus seats",
     topup: "Wallet top up",
     topupNote: "Food and drinks are paid with the Wallet only",
@@ -50,6 +51,7 @@ const text = {
     // Slovene dual for two, plural from three.
     save: (people: number) => (people === 2 ? "Pršparata" : people > 2 ? "Pršparate" : "Pršparaš"),
     tent: "Najem šotora",
+    limited: "Omejeno",
     bus: "Sedeži na buso",
     topup: "Polnitev denarnce",
     topupNote: "Hrana pa pijača se plača sam z Denarnco",
@@ -236,6 +238,7 @@ export default function TicketBuilder({
           <div>
             <span className={styles.rowLabel}>
               {t.tent} · {formatPrice(tent.price)}
+              <em className={styles.limited}>{t.limited}</em>
             </span>
             <span className={styles.rowNote}>{tent.note}</span>
             <Units count={booking.tents} tone="tent">
@@ -251,6 +254,7 @@ export default function TicketBuilder({
           <div>
             <span className={styles.rowLabel}>
               {t.bus} · {formatPrice(bus.price)}
+              <em className={styles.limited}>{t.limited}</em>
             </span>
             <span className={styles.rowNote}>{bus.note}</span>
             <Units count={booking.bus} tone="seat">

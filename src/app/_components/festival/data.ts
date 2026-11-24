@@ -117,8 +117,8 @@ const OFFER_SEEDS: OfferSeed[] = [
     label: { en: "Bus from Ljubljana", sl: "Bus iz Lublane" },
     note: { en: "Ljubljana – Libeliče – Ljubljana, one return seat", sl: "Ljubljana – Libeliče – Ljubljana, en povratn sedež" },
   },
-  // Bonus tokens are a proposal: roughly 10, 12 and 15 percent on top.
-  ...([[20, 2], [50, 6], [100, 15]] as const).map(
+  // Bonus tokens are a proposal: roughly 10, 12, 15 and 20 percent on top.
+  ...([[20, 2], [50, 6], [100, 15], [200, 40]] as const).map(
     ([amount, bonus]): OfferSeed => ({
       // Festival top ups carry the bonus; the shop's plain top ups stand in until they are published.
       key: `topup-${amount}`, kind: "topup", uid: `endemit-festival-2027-top-up-${amount}`, fallbackUid: `wallet-top-up-${amount}-tokens`, fallbackPrice: () => amount, fallbackBonus: bonus,

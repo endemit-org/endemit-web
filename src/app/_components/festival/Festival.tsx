@@ -2,7 +2,10 @@
 import type { CSSProperties, ReactNode } from "react";
 import EndemitLogo from "@/app/_components/icon/EndemitLogo";
 import LanguageSwitcher from "@/app/_components/ui/LanguageSwitcher";
+import FestivalAccount from "./FestivalAccount";
 import BoilDefs from "./BoilDefs";
+import DomeMark from "./DomeMark";
+import Ridge from "./Ridge";
 import FestivalNewsletter from "./FestivalNewsletter";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/util/formatting";
@@ -273,13 +276,14 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
           <picture>
             <source
               type="image/avif"
-              srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1400.avif 1400w`}
-              sizes="(max-width: 700px) 150vw, 100vw"
+              srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1000.avif 1000w, ${ART}/sky-1400.avif 1400w`}
+              // Phones take the 1000 px file: the 1400 px one arrives seconds later on a slow connection.
+              sizes="(max-width: 700px) 92vw, 100vw"
             />
             <img className={styles.sky} src={`${ART}/sky-fallback.webp`} width={1400} height={1253} alt="" fetchPriority="high" decoding="async" />
           </picture>
-          <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.stars} eager />
-          <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.stars} ${styles.starsB}`} eager />
+          <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="(max-width: 700px) 82vw, 100vw" className={styles.stars} eager />
+          <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="(max-width: 700px) 82vw, 100vw" className={`${styles.stars} ${styles.starsB}`} eager />
           <div className={styles.meteors} aria-hidden>
             {METEORS.map(([y, x, delay, dur], i) => (
               <span key={i} className={styles.meteor} style={css({ "--y": y, "--x": x, "--delay": `${delay}s`, "--dur": `${dur}s` })} />
@@ -290,8 +294,10 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
             ← {t.home}
           </Link>
           <LanguageSwitcher className={styles.language} />
+          <FestivalAccount locale={locale} />
           <div className={styles.mark}>
-            <h1 style={{ margin: 0 }}>
+            <h1 className={styles.markTitle}>
+              <DomeMark />
               <span className={`${styles.logo} ${styles.boil}`} role="img" aria-label="Endemit">
                 <EndemitLogo />
               </span>
@@ -371,19 +377,15 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
             ))}
             <div className={styles.trip}>
               <picture>
-                <source type="image/avif" srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1400.avif 1400w`} sizes="100vw" />
+                <source type="image/avif" srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1000.avif 1000w, ${ART}/sky-1400.avif 1400w`} sizes="(max-width: 700px) 92vw, 100vw" />
                 <img className={styles.tripSky} src={`${ART}/sky-fallback.webp`} width={1400} height={1253} alt="" loading="lazy" decoding="async" />
               </picture>
-              <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.tripStars} />
-              <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.tripStars} ${styles.tripStarsB}`} />
+              <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="(max-width: 700px) 82vw, 100vw" className={styles.tripStars} />
+              <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="(max-width: 700px) 82vw, 100vw" className={`${styles.tripStars} ${styles.tripStarsB}`} />
               {/* The camp under the stars: a few tents, two with a lamp on. */}
               <div className={styles.camp} aria-hidden>
-                <svg className={`${styles.campRidge} ${styles.campRidgeFar}`} viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <path d="M0,5 C9,1 17,8 28,4 S47,0 58,5 S81,8 100,2 V40 H0Z" />
-                </svg>
-                <svg className={styles.campRidge} viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <path d="M0,3 C12,7 22,1 35,4 S58,8 70,3 S90,1 100,5 V40 H0Z" />
-                </svg>
+                <Ridge far />
+                <Ridge />
                 <Tent n={1} x="9%" size={17} lift={4} />
                 <Tent n={3} x="27%" size={10} lift={38} flip />
                 <Tent n={2} x="44%" size={15} lit />
@@ -498,6 +500,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
           <p className={styles.lede} style={{ marginTop: "1.4rem" }}>
             {t.mapIntro}
           </p>
+          <p className={styles.notice}>{t.mapNote}</p>
           <MapViewer
             preview={`/images/festival/map-${locale}`}
             src={`/images/festival/map-${locale}.webp`}

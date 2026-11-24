@@ -9,6 +9,10 @@ import { getCurrentUser } from "@/lib/services/auth";
 
 type PageProps = { params: Promise<{ locale: string }> };
 
+// Rendered per request: the page reads the signed-in user and live product
+// state. Without this the build prerenders it once, signed out, for everyone.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Endemit festival · Checkout",
   robots: { index: false, follow: false },
