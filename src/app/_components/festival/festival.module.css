@@ -841,6 +841,36 @@
 .step[data-state="done"] .stepTitle, .step[data-state="done"] .stepPrice, .step[data-state="done"] .stepMeta { text-decoration: line-through; opacity: 0.45; }
 /* Batches still ahead: the further off, the fainter and softer. */
 .step[data-state="next"] { opacity: calc(1 - var(--far, 0) * 0.17); filter: blur(calc(var(--far, 0) * 0.6px)); }
+/* Not on sale yet: the farther away, the more it swims and shifts colour. */
+[data-inview="true"] .step[data-state="next"] {
+  animation: acid calc(3.4s - var(--far, 0) * 0.5s) steps(9) infinite alternate;
+  animation-delay: calc(var(--far, 0) * -0.9s);
+}
+@keyframes acid {
+  0% {
+    filter: blur(calc(var(--far, 0) * 0.6px)) hue-rotate(calc(var(--far, 0) * -25deg)) saturate(1.2);
+    rotate: calc(var(--far, 0) * -0.35deg);
+    translate: 0 0;
+  }
+  50% {
+    filter: blur(calc(var(--far, 0) * 0.5px)) hue-rotate(calc(var(--far, 0) * 55deg)) saturate(1.7);
+    translate: calc(var(--far, 0) * 1.5px) calc(var(--far, 0) * -2px);
+  }
+  100% {
+    filter: blur(calc(var(--far, 0) * 0.6px)) hue-rotate(calc(60deg + var(--far, 0) * 70deg)) saturate(2.1);
+    rotate: calc(var(--far, 0) * 0.4deg);
+    translate: calc(var(--far, 0) * -1.5px) calc(var(--far, 0) * 1.5px);
+  }
+}
+/* The price splits into two colours, like a misprinted poster. */
+[data-inview="true"] .step[data-state="next"] .stepPrice, [data-inview="true"] .step[data-state="next"] .stepTitle {
+  animation: split calc(1.9s + var(--far, 0) * 0.3s) steps(5) infinite alternate;
+}
+@keyframes split {
+  from { text-shadow: calc(var(--far, 0) * -1.4px) 0 rgba(238, 59, 79, 0.75), calc(var(--far, 0) * 1.4px) 0 rgba(63, 221, 255, 0.6); }
+  to { text-shadow: calc(var(--far, 0) * 2.2px) calc(var(--far, 0) * 0.8px) rgba(255, 210, 63, 0.7), calc(var(--far, 0) * -2.2px) calc(var(--far, 0) * -0.8px) rgba(207, 90, 138, 0.75); }
+}
+.root[data-lite="true"] .step[data-state="next"], .root[data-lite="true"] .step[data-state="next"] * { animation: none; }
 /* Rubber stamp: red on the batch on sale, hollow on the ones that are gone. */
 .stepStamp {
   --tilt: -4deg;
