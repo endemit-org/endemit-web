@@ -309,13 +309,14 @@ async function main() {
   // Festival Wallet top ups: copies of the shop's top ups that credit bonus
   // tokens (wallet_topup_reward). Bonus amounts are a proposal.
   if (only === "topups") {
+    // Existing festival top ups; with FESTIVAL_UPDATE=1 they are updated in place.
+    const TOPUP_IDS: Record<number, string> = { 20: "awR0UBIAACoAI1qL", 50: "awR0TRIAACkAI1qF", 100: "awR0SxIAACoAI1p9", 200: "awVfcBIAACgAJMUb" };
     // FESTIVAL_TOPUP_AMOUNTS=200 creates only the listed amounts (the others exist already).
     const amounts = process.env.FESTIVAL_TOPUP_AMOUNTS?.split(",").map(Number);
     for (const [amount, reward] of ([[20, 2], [50, 6], [100, 15], [200, 40]] as const).filter(([a]) => !amounts || amounts.includes(a))) {
       const source = await client.getByUID("product" as never, `wallet-top-up-${amount}-tokens`);
       const data = source.data as Record<string, unknown>;
-      migration.createDocument(
-        {
+      const topupDoc = {
           type: "product",
           uid: `endemit-festival-2027-top-up-${amount}`,
           lang: source.lang,
@@ -328,11 +329,13 @@ async function main() {
             featured_product: false,
             wallet_topup_reward: reward,
             related_to_event: eventLink,
-            cutoff_date: "2027-08-15T15:00:00+0000",
+            // Sold until the end of the festival's last day: 15 Aug 2027, 23:59 in Slovenia (CEST).
+            cutoff_date: "2027-08-15T21:59:00+0000",
           } as never,
-        },
-        `Festival '27 Wallet top up ${amount}`
-      );
+        };
+      const topupId = updating ? TOPUP_IDS[amount] : undefined;
+      if (topupId) migration.updateDocument({ ...topupDoc, id: topupId } as never, `Festival '27 Wallet top up ${amount}`);
+      else migration.createDocument(topupDoc as never, `Festival '27 Wallet top up ${amount}`);
     }
   }
 
