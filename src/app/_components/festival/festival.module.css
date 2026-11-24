@@ -545,7 +545,7 @@
   position: relative;
   grid-column: 1 / -1;
   width: 100vw;
-  height: clamp(380px, 80svh, 700px);
+  height: clamp(520px, 105svh, 920px);
   margin: 2.5rem 0 2.5rem calc(50% - 50vw);
   overflow: hidden;
   background: var(--night);
@@ -567,7 +567,7 @@
 /* The camp: tents pitched along the bottom of the night, nearer ones larger. */
 .camp {
   position: absolute;
-  inset: auto 0 15%;
+  inset: auto 0 17%;
   height: 0;
   transform: translate3d(0, calc(var(--p, 0) * -110px), 0);
 }
@@ -624,7 +624,8 @@
 @media (max-width: 640px) {
   .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(6), .camp .imp:nth-of-type(odd) { display: none; }
 }
-.tripWords { position: absolute; inset: 0; }
+/* The words sit in the upper sky, clear of the camp below. */
+.tripWords { position: absolute; inset: 0 0 38%; }
 .tripWords span {
   position: absolute;
   inset: 0;

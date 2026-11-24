@@ -265,7 +265,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
       ],
     },
     storiesTitle: "Šepeti iz doline",
-    newsletterTitle: "Ostani na vezi",
+    newsletterTitle: "Stisni se co",
     navLabel: "Sekcije",
     home: "Endemit",
     allEvents: "Vsi Endemit eventi",
