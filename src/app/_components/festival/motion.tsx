@@ -106,7 +106,18 @@ export function LoopVideo({ src, poster, label }: { src: string; poster: string;
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // The still frame loads a screen ahead, not with the page: posters far
+    // down would compete with the hero art for a slow connection.
+    const still = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        video.poster = poster;
+        still.disconnect();
+      },
+      { rootMargin: "120% 0px" }
+    );
+    still.observe(video);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => still.disconnect();
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -119,10 +130,13 @@ export function LoopVideo({ src, poster, label }: { src: string; poster: string;
       { rootMargin: "20% 0px" }
     );
     observer.observe(video);
-    return () => observer.disconnect();
-  }, [src]);
+    return () => {
+      still.disconnect();
+      observer.disconnect();
+    };
+  }, [src, poster]);
 
-  return <video ref={ref} poster={poster} muted loop playsInline preload="none" aria-label={label} />;
+  return <video ref={ref} muted loop playsInline preload="none" aria-label={label} />;
 }
 
 function useDialog() {

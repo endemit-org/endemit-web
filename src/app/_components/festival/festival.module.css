@@ -247,7 +247,8 @@
   z-index: -1;
   left: 50%;
   bottom: -7%;
-  width: min(96vw, 1180px);
+  /* Capped by the viewport height too, so the apex stays on screen. */
+  width: min(96vw, 1180px, 100svh);
   height: auto;
   translate: -50% 0;
   overflow: visible;
@@ -260,9 +261,15 @@
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   opacity: 0.5;
-  animation: domeDraw 0.9s cubic-bezier(0.6, 0, 0.2, 1) forwards;
-  animation-delay: calc(0.35s + var(--i) * 0.045s);
+  animation: domeDraw 1.3s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+  animation-delay: calc(0.7s + var(--i) * 0.075s);
 }
+/* Once built, the fine lines keep flickering a little, like the real frame catching light. */
+.domeMark line[data-weight="1"] {
+  animation: domeDraw 1.3s cubic-bezier(0.6, 0, 0.2, 1) forwards, domeGlint calc(5s + var(--i) * 0.13s) steps(1) infinite;
+  animation-delay: calc(0.7s + var(--i) * 0.075s), calc(6s + var(--i) * 0.4s);
+}
+@keyframes domeGlint { 0%, 100% { opacity: 0.5; } 46% { opacity: 0.12; } 50% { opacity: 1; } 54% { opacity: 0.5; } }
 .domeMark line[data-weight="2"] { stroke-width: 4; opacity: 0.6; }
 .domeMark line[data-weight="3"] { stroke: var(--salmon); stroke-width: 8; opacity: 0.85; }
 @keyframes domeDraw { to { stroke-dashoffset: 0; } }
@@ -626,22 +633,31 @@
   pointer-events: none;
 }
 .tent img { display: block; width: 100%; height: auto; }
-/* Two ridges of ground so the tents stand on something. */
+/* Two ridges of ground so the tents stand on something (see Ridge.tsx). */
+.campGround {
+  position: absolute;
+  left: 0;
+  top: calc(13.5vh - 19px);
+  width: 100%;
+  height: 50vh;
+  z-index: 2;
+  background: #0d0b22;
+}
+.campGround[data-far] { top: calc(13.5vh - 51px); z-index: 0; background: #191544; }
 .campRidge {
   position: absolute;
   left: 0;
-  top: -18px;
+  bottom: calc(100% - 1px);
   width: 100%;
-  height: 60vh;
-  z-index: 2;
+  height: 13.5vh;
   fill: #0d0b22;
   stroke: var(--lilac);
   stroke-width: 2px;
 }
+.campRidge path { vector-effect: non-scaling-stroke; }
+.campGround[data-far] .campRidge { fill: #191544; stroke-opacity: 0.5; }
 [data-inview="true"] .campRidge { animation: boilSmall 0.5s steps(1) infinite; }
 .root[data-lite="true"] .campRidge { animation: none; }
-.campRidge path { vector-effect: non-scaling-stroke; }
-.campRidgeFar { top: -50px; z-index: 0; fill: #191544; stroke-opacity: 0.5; }
 .camp .tent { z-index: 3; }
 .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(4), .camp .tent:nth-of-type(6) { z-index: 1; }
 .tent[data-flip] img { scale: -1 1; }
@@ -1058,6 +1074,20 @@
 }
 .rowLabel { font-family: var(--font-heading), sans-serif; font-size: 1.75rem; line-height: 1; text-transform: uppercase; }
 .rowNote { display: block; margin-top: 0.25rem; font-size: 0.88rem; color: var(--lilac); }
+/* A small stamp next to extras that can run out. */
+.limited {
+  display: inline-block;
+  margin-left: 0.6em;
+  padding: 0.22em 0.5em 0.14em;
+  border: 2px solid var(--eye);
+  font-size: 0.5em;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  vertical-align: 0.35em;
+  color: var(--eye);
+  rotate: -3deg;
+}
 .stepper { display: inline-flex; align-items: center; gap: 0.3rem; }
 .stepper button {
   width: 46px;
@@ -1341,7 +1371,6 @@
 .thanksCamp { position: absolute; inset: auto 0 clamp(3.5rem, 9vw, 6rem); height: 0; pointer-events: none; }
 .thanksTent { position: absolute; bottom: -10px; z-index: 3; height: auto; }
 .thanksCamp .imp { translate: 0 0; }
-.thanksCamp .campRidge { height: 40vh; }
 .field { display: grid; gap: 0.35rem; margin-top: 1.1rem; }
 .field label { font-family: var(--font-heading), sans-serif; font-size: 1.15rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lilac); }
 .field input {

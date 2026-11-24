@@ -63,7 +63,7 @@ export type FestivalCopy = {
 export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
   en: {
     dateline: "August 13–15",
-    place: "Libeliče",
+    place: "Libeliče, Slovenia",
     year: "2027",
     tagline: "The annual Assumption of the Tribe",
     cta: "Get tickets",

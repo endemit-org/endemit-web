@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import PurchaseEvent from "@/app/_components/analytics/PurchaseEvent";
 import AutoLoginOnSuccess from "@/app/_components/checkout/AutoLoginOnSuccess";
 import BoilDefs from "@/app/_components/festival/BoilDefs";
+import Ridge from "@/app/_components/festival/Ridge";
 import ClearFestivalBooking from "@/app/_components/festival/ClearFestivalBooking";
 import type { FestivalLocale } from "@/app/_components/festival/copy";
 import styles from "@/app/_components/festival/festival.module.css";
@@ -186,9 +187,7 @@ export default async function FestivalSuccessPage({ params }: PageProps) {
         <img className={styles.thanksTent} src={`${ART}/tent-1-520.webp`} width={520} height={370} alt="" style={{ left: "6%", width: "min(34vw, 300px)" }} />
         <img className={styles.imp} src={`${ART}/sprite-2-160.webp`} width={160} height={230} alt="" style={{ left: "44%", width: "min(7vw, 54px)", bottom: 6 }} />
         <img className={styles.thanksTent} src={`${ART}/tent-3-520.webp`} width={520} height={277} alt="" style={{ right: "4%", width: "min(30vw, 260px)" }} />
-        <svg className={styles.campRidge} viewBox="0 0 100 40" preserveAspectRatio="none">
-          <path d="M0,3 C12,7 22,1 35,4 S58,8 70,3 S90,1 100,5 V40 H0Z" />
-        </svg>
+        <Ridge />
       </div>
 
       <ClearFestivalBooking />

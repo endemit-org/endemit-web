@@ -29,7 +29,7 @@ const manifest = { layers: {}, creatures: [], photos: [], loops: [] };
 const layerSpecs = [
   // name, file, widths, quality, crop (optional, source pixels)
   // The stippled sky is costly to encode: AVIF with a small WebP fallback.
-  ["sky", "vesolje.png", [1400, 800], 34, { left: 0, top: 0, width: 5540, height: 4960 }, "avif"],
+  ["sky", "vesolje.png", [1400, 1000, 800], 34, { left: 0, top: 0, width: 5540, height: 4960 }, "avif"],
   ["stars", "zvezde.png", [1600, 900], 78],
   ["hill-far", "hrib1.png", [1600, 900], 72],
   ["hill-mid", "hrib2.png", [1600, 900], 72],
