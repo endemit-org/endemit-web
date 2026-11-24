@@ -7,15 +7,12 @@ import CheckoutSuccessConfetti from "@/app/_components/checkout/CheckoutSuccessC
 import InnerPage from "@/app/_components/ui/InnerPage";
 import CheckoutReturnButton from "@/app/_components/checkout/CheckoutReturnButton";
 import AnimatedSuccessIcon from "@/app/_components/icon/AnimatedSuccessIcon";
-import { getOrderByStripeSession } from "@/domain/order/operations/getOrderByStripeSession";
-import { getOrderById } from "@/domain/order/operations/getOrderById";
+import { getPaidOrderForSession } from "@/domain/order/operations/getPaidOrderForSession";
 import { transformTicketsFromOrder } from "@/domain/order/transformers/transformTicketsFromOrder";
-import { stripe } from "@/lib/services/stripe";
 import { notFound } from "next/navigation";
 import AutoLoginOnSuccess from "@/app/_components/checkout/AutoLoginOnSuccess";
 import PurchaseEvent from "@/app/_components/analytics/PurchaseEvent";
 import type { ProductInOrder } from "@/domain/order/types/order";
-import { OrderStatus } from "@prisma/client";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
@@ -36,35 +33,6 @@ export async function generateMetadata({
   };
 }
 
-async function getOrderForSession(sessionId: string) {
-  // Check if it's a checkout session ID (starts with cs_)
-  if (sessionId.startsWith("cs_")) {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    if (session.status !== "complete") {
-      return null;
-    }
-    return await getOrderByStripeSession(sessionId);
-  }
-
-  // Check if it's a PaymentIntent ID (starts with pi_)
-  if (sessionId.startsWith("pi_")) {
-    const paymentIntent = await stripe.paymentIntents.retrieve(sessionId);
-    if (paymentIntent.status !== "succeeded") {
-      return null;
-    }
-    // Order is stored with PaymentIntent ID in stripeSession field
-    return await getOrderByStripeSession(sessionId);
-  }
-
-  // Otherwise, assume it's an order ID (for full wallet payments)
-  const order = await getOrderById(sessionId);
-  if (order && order.status === OrderStatus.PAID) {
-    return order;
-  }
-
-  return null;
-}
-
 export default async function SuccessPage({
   params,
 }: {
@@ -81,7 +49,7 @@ export default async function SuccessPage({
     notFound();
   }
 
-  const order = await getOrderForSession(sessionId);
+  const order = await getPaidOrderForSession(sessionId);
 
   if (!order) {
     notFound();

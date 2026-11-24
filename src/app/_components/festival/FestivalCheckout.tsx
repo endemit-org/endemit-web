@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe, type StripeElementsOptions } from "@stripe/stripe-js";
 import { useTranslations } from "next-intl";
@@ -224,6 +224,36 @@ function useWide() {
   return wide;
 }
 
+/**
+ * Both checkout columns stick, so the shorter one stays in view while the
+ * taller one scrolls. A column taller than the window sticks only once its
+ * end is reached: its top offset goes negative by the overflow.
+ */
+function useStickyColumns() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const grid = ref.current;
+    if (!grid || typeof ResizeObserver === "undefined") return;
+    const GAP = 24;
+    const columns = Array.from(grid.children) as HTMLElement[];
+    const sync = () => {
+      for (const column of columns) {
+        const top = Math.min(GAP, window.innerHeight - column.offsetHeight - GAP);
+        column.style.setProperty("--stick", `${top}px`);
+      }
+    };
+    const observer = new ResizeObserver(sync);
+    columns.forEach(column => observer.observe(column));
+    window.addEventListener("resize", sync);
+    sync();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", sync);
+    };
+  }, []);
+  return ref;
+}
+
 function CheckoutForm({ lines, holders, t, locale, userEmail, demo, payable, walletOnly, wallet, promo, donation, suggestion, onDonate, onSkipDonation, subTotal, discountAmount, offers, booking, onBooking }: FormProps) {
   const consent = useTranslations("checkout.customer");
   const item = useTranslations("checkout.item");
@@ -242,6 +272,7 @@ function CheckoutForm({ lines, holders, t, locale, userEmail, demo, payable, wal
   const [promoOpen, setPromoOpen] = useState(false);
   const [step, setStep] = useState<Step>(1);
   const wide = useWide();
+  const gridRef = useStickyColumns();
 
   const signedIn = Boolean(userEmail);
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -346,20 +377,20 @@ function CheckoutForm({ lines, holders, t, locale, userEmail, demo, payable, wal
 
       if (result.fullWalletPayment) {
         sessionStorage.removeItem(BOOKING_STORAGE_KEY);
-        router.push(`/store/checkout/success/${result.orderId}`);
+        router.push(`/festival/checkout/success/${result.orderId}`);
         return;
       }
 
       const confirmation = await stripe.confirmPayment({
         elements,
         clientSecret: result.clientSecret,
-        confirmParams: { return_url: `${PUBLIC_BASE_WEB_URL}/store/checkout/success/${result.paymentIntentId}` },
+        confirmParams: { return_url: `${PUBLIC_BASE_WEB_URL}/festival/checkout/success/${result.paymentIntentId}` },
         redirect: "if_required",
       });
       if (confirmation.error) throw new Error(confirmation.error.message || t.errGeneric);
       if (confirmation.paymentIntent?.status === "succeeded") {
         sessionStorage.removeItem(BOOKING_STORAGE_KEY);
-        router.push(`/store/checkout/success/${result.paymentIntentId}`);
+        router.push(`/festival/checkout/success/${result.paymentIntentId}`);
         return;
       }
       setBusy(false);
@@ -420,7 +451,7 @@ function CheckoutForm({ lines, holders, t, locale, userEmail, demo, payable, wal
         ))}
       </ol>
 
-      <div className={styles.checkoutGrid} data-step={step}>
+      <div ref={gridRef} className={styles.checkoutGrid} data-step={step}>
         {/* ---- details: who buys, who comes ---- */}
         <section className={styles.stepInfo}>
           <h2 className={`${styles.panelTitle} ${styles.boilSmall}`}>{t.contact}</h2>
