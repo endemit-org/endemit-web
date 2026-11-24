@@ -500,6 +500,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
           <p className={styles.lede} style={{ marginTop: "1.4rem" }}>
             {t.mapIntro}
           </p>
+          <p className={styles.notice}>{t.mapNote}</p>
           <MapViewer
             preview={`/images/festival/map-${locale}`}
             src={`/images/festival/map-${locale}.webp`}
