@@ -46,6 +46,7 @@ export type FestivalCopy = {
   home: string;
   allEvents: string;
   nightWord: string;
+  nightSub: [string, string];
   galleryAll: string;
   galleryClose: string;
   galleryPrevious: string;
@@ -155,14 +156,15 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     navLabel: "Sections",
     home: "Endemit",
     allEvents: "All Endemit events",
-    nightWord: "Two nights. The tent can wait.",
+    nightWord: "Two nights. Sleep by day.",
+    nightSub: ["Every ticket includes a camping spot.", "Bring your own tent or rent one from us."],
     galleryAll: "All photos",
     galleryClose: "Close",
     galleryPrevious: "Previous photo",
     galleryNext: "Next photo",
     nav: [
       { id: "about", label: "About" },
-      { id: "impressions", label: "Impressions" },
+      { id: "impressions", label: "Moments" },
       { id: "lineup", label: "Line up" },
       { id: "tickets", label: "Tickets" },
       { id: "map", label: "Map" },
@@ -265,18 +267,19 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
       ],
     },
     storiesTitle: "Šepeti iz doline",
-    newsletterTitle: "Ostani na vezi",
+    newsletterTitle: "Stisni se co",
     navLabel: "Sekcije",
     home: "Endemit",
     allEvents: "Vsi Endemit eventi",
-    nightWord: "Dve noči. Šotor naj čaka.",
+    nightWord: "Dve noči. Spanje podnev.",
+    nightSub: ["Plac za kampiranje je v vsaki karti.", "Šotor prneseš sam al pa ga najameš pr nas."],
     galleryAll: "Vse slike",
     galleryClose: "Zapri",
     galleryPrevious: "Prejšna slika",
     galleryNext: "Nasledna slika",
     nav: [
       { id: "about", label: "Zgodba" },
-      { id: "impressions", label: "Vtisi" },
+      { id: "impressions", label: "Utrinki" },
       { id: "lineup", label: "Line up" },
       { id: "tickets", label: "Karte" },
       { id: "map", label: "Plac" },

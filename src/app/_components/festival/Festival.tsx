@@ -180,6 +180,22 @@ function Pattern() {
 // Word lengths of fourteen names nobody knows yet.
 const MYSTERY = [[7, 5], [9], [4, 8], [6, 6], [11], [5, 3, 6], [8], [6, 9], [10], [4, 4], [7, 7], [12], [5, 8], [9, 4]];
 
+/** The three painted tents (sotori.png), height over width. */
+const TENT_RATIOS = [0.7117, 0.6679, 0.5322];
+
+function Tent({ n, x, size, lift = 0, lit = false, flip = false }: { n: 1 | 2 | 3; x: string; size: number; lift?: number; lit?: boolean; flip?: boolean }) {
+  return (
+    <span className={styles.tent} data-lit={lit || undefined} data-flip={flip || undefined} style={css({ "--x": x, "--s": size, "--lift": lift })}>
+      <img src={`${ART}/tent-${n}-520.webp`} srcSet={`${ART}/tent-${n}-280.webp 280w, ${ART}/tent-${n}-520.webp 520w`} sizes={`${size}vw`} width={520} height={Math.round(520 * TENT_RATIOS[n - 1])} alt="" loading="lazy" decoding="async" />
+    </span>
+  );
+}
+
+/** A small night creature (endemitki_v2.png) that ducks away from the pointer. */
+function Imp({ n, x, size = 3, lift = 0 }: { n: number; x: string; size?: number; lift?: number }) {
+  return <img className={styles.imp} data-shy="duck" style={css({ "--x": x, "--s": size, "--lift": lift, "--i": n })} src={`${ART}/sprite-${n}-160.webp`} srcSet={`${ART}/sprite-${n}-80.webp 80w, ${ART}/sprite-${n}-160.webp 160w`} sizes="60px" width={160} height={224} alt="" loading="lazy" decoding="async" />;
+}
+
 function MysteryLineup({ title, soon, note }: { title: string; soon: string; note: string }) {
   return (
     <div className={styles.lineup} id="lineup">
@@ -353,19 +369,46 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
             {DAY.map((shot, i) => (
               <ShotFigure key={i} shot={shot} tone="day" />
             ))}
-            <div className={styles.trip} aria-hidden>
+            <div className={styles.trip}>
               <picture>
                 <source type="image/avif" srcSet={`${ART}/sky-800.avif 800w, ${ART}/sky-1400.avif 1400w`} sizes="100vw" />
                 <img className={styles.tripSky} src={`${ART}/sky-fallback.webp`} width={1400} height={1253} alt="" loading="lazy" decoding="async" />
               </picture>
               <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.tripStars} />
               <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.tripStars} ${styles.tripStarsB}`} />
-              <div className={`${styles.tripWords} ${styles.boil}`}>
-                {[0, 1, 2, 3].map(i => (
-                  <span key={i} style={css({ "--i": i })}>
-                    {t.nightWord}
-                  </span>
-                ))}
+              {/* The camp under the stars: a few tents, two with a lamp on. */}
+              <div className={styles.camp} aria-hidden>
+                <svg className={`${styles.campRidge} ${styles.campRidgeFar}`} viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,5 C9,1 17,8 28,4 S47,0 58,5 S81,8 100,2 V40 H0Z" />
+                </svg>
+                <svg className={styles.campRidge} viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,3 C12,7 22,1 35,4 S58,8 70,3 S90,1 100,5 V40 H0Z" />
+                </svg>
+                <Tent n={1} x="9%" size={17} lift={4} />
+                <Tent n={3} x="27%" size={10} lift={38} flip />
+                <Tent n={2} x="44%" size={15} lit />
+                <Tent n={2} x="62%" size={9} lift={34} flip />
+                <Tent n={3} x="79%" size={16} lift={2} lit />
+                <Tent n={1} x="95%" size={10} lift={30} flip />
+                <Imp n={2} x="19%" size={3.4} lift={26} />
+                <Imp n={5} x="35%" lift={30} />
+                <Imp n={1} x="54%" size={2.6} lift={34} />
+                <Imp n={4} x="70%" lift={28} />
+                <Imp n={6} x="88%" size={3.2} lift={30} />
+              </div>
+              <div className={styles.tripWords}>
+                <div className={`${styles.tripEcho} ${styles.boil}`}>
+                  {[0, 1, 2, 3].map(i => (
+                    <span key={i} aria-hidden={i > 0 || undefined} style={css({ "--i": i })}>
+                      {t.nightWord}
+                    </span>
+                  ))}
+                </div>
+                <p className={styles.tripSub}>
+                  <b>{t.nightSub[0]}</b>
+                  <br />
+                  {t.nightSub[1]}
+                </p>
               </div>
             </div>
             {NIGHT.map((shot, i) => (
@@ -456,6 +499,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
             {t.mapIntro}
           </p>
           <MapViewer
+            preview={`/images/festival/map-${locale}`}
             src={`/images/festival/map-${locale}.webp`}
             alt={t.mapTitle}
             width={1500}
@@ -501,6 +545,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
           <div className={styles.tree} style={css({ "--w": "min(40vw, 330px)", "--x": "20%", "--depth": 22 })}>
             <Layer name="tree-a" widths={[760, 440]} ratio={0.9481} sizes="(max-width: 860px) 40vw, 330px" />
           </div>
+          <Tent n={2} x="58%" size={13} lit />
           <div className={styles.tree} style={css({ "--w": "min(34vw, 270px)", "--r": "-3%", "--depth": 30 })}>
             <Layer name="tree-c" widths={[520, 320]} ratio={1.3022} sizes="(max-width: 860px) 34vw, 270px" />
             <Creature n={5} style={{ "--w": "22%", "--x": "8%", "--b": "52%", "--i": 4 }} />

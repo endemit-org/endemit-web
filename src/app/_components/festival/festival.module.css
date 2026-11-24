@@ -545,7 +545,7 @@
   position: relative;
   grid-column: 1 / -1;
   width: 100vw;
-  height: clamp(380px, 80svh, 700px);
+  height: clamp(520px, 105svh, 920px);
   margin: 2.5rem 0 2.5rem calc(50% - 50vw);
   overflow: hidden;
   background: var(--night);
@@ -564,13 +564,80 @@
 .tripStars { transform: translate3d(0, calc(var(--p, 0) * -200px), 0) scale(1.2); animation: twinkle 1.3s steps(1) infinite paused; }
 .tripStarsB { transform: translate3d(0, calc(var(--p, 0) * -340px), 0) scale(-1.7, 1.7); animation-name: twinkleB; animation-duration: 1.7s; }
 [data-inview="true"] .tripStars { animation-play-state: running; }
-.tripWords { position: absolute; inset: 0; }
-.tripWords span {
+/* The camp: tents pitched along the bottom of the night, nearer ones larger. */
+.camp {
   position: absolute;
-  inset: 0;
+  inset: auto 0 17%;
+  height: 0;
+  transform: translate3d(0, calc(var(--p, 0) * -110px), 0);
+}
+.tent {
+  position: absolute;
+  bottom: calc(var(--lift, 0) * 1px);
+  left: var(--x);
+  width: clamp(52px, calc(var(--s) * 1vw), calc(var(--s) * 14px));
+  translate: -50% 0;
+  /* Farther tents sit higher and dimmer. */
+  pointer-events: none;
+}
+.tent img { display: block; width: 100%; height: auto; }
+/* Two ridges of ground so the tents stand on something. */
+.campRidge {
+  position: absolute;
+  left: 0;
+  top: -18px;
+  width: 100%;
+  height: 60vh;
+  z-index: 2;
+  fill: #0d0b22;
+  stroke: var(--lilac);
+  stroke-width: 2px;
+}
+[data-inview="true"] .campRidge { animation: boilSmall 0.5s steps(1) infinite; }
+.root[data-lite="true"] .campRidge { animation: none; }
+.campRidge path { vector-effect: non-scaling-stroke; }
+.campRidgeFar { top: -50px; z-index: 0; fill: #191544; stroke-opacity: 0.5; }
+.camp .tent { z-index: 3; }
+.camp .tent:nth-of-type(2), .camp .tent:nth-of-type(4), .camp .tent:nth-of-type(6) { z-index: 1; }
+.tent[data-flip] img { scale: -1 1; }
+/* The painted hems hang ragged: sink them into the ground a little. */
+.camp .tent img { margin-bottom: -9%; }
+/* The lamp inside flickers: the tent brightens for a drawing or two. */
+[data-inview="true"] .tent[data-lit] img { animation: lamp 3.1s steps(1) infinite; }
+[data-inview="true"] .tent[data-lit]:nth-of-type(5) img { animation-duration: 4.3s; animation-delay: -1.4s; }
+@keyframes lamp { 0%, 100% { filter: none; } 18% { filter: brightness(1.28) saturate(1.2); } 24% { filter: brightness(0.9); } 61% { filter: brightness(1.35) saturate(1.25); } 68% { filter: none; } }
+.root[data-lite="true"] .tent img { animation: none; }
+/* Small night creatures behind the front ridge; they duck from the pointer. */
+.imp {
+  position: absolute;
+  z-index: 1;
+  bottom: calc(var(--lift, 0) * 1px);
+  left: var(--x);
+  width: clamp(22px, calc(var(--s) * 1vw), calc(var(--s) * 15px));
+  height: auto;
+  translate: -50% 0;
+  transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0) rotate(var(--fr, 0deg));
+  transition: transform 0.24s steps(4);
+}
+[data-inview="true"] .imp { animation: bob calc(2.6s + var(--i) * 0.4s) steps(3) infinite; animation-delay: calc(var(--i) * -0.7s); }
+.grove .tent { bottom: -2px; }
+@media (max-width: 640px) {
+  .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(6), .camp .imp:nth-of-type(odd) { display: none; }
+}
+/* The words sit in the upper sky, clear of the camp below. */
+.tripWords {
+  position: absolute;
+  inset: 0 0 38%;
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
   padding: 0 var(--gutter);
+}
+/* The echoes share one grid cell, the subline sits in the row under it. */
+.tripEcho { display: grid; justify-items: center; }
+.tripWords span {
+  position: relative;
+  grid-area: 1 / 1;
   font-family: var(--font-heading), sans-serif;
   font-weight: 600;
   font-size: clamp(3rem, 12.5vw, 8.5rem);
@@ -583,7 +650,17 @@
   transform: translate3d(0, calc(var(--i) * -0.2em + var(--v, 0) * var(--i) * -46px), 0);
   opacity: calc(1 - var(--i) * 0.22);
 }
-.tripWords span:first-child {
+.tripSub {
+  max-width: 36rem;
+  margin: 1.3rem 0 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--cream);
+}
+.tripSub b { color: var(--salmon); font-weight: 600; }
+.tripEcho span:first-child {
   z-index: 1;
   color: var(--cream);
   -webkit-text-stroke: 0;
@@ -764,6 +841,36 @@
 .step[data-state="done"] .stepTitle, .step[data-state="done"] .stepPrice, .step[data-state="done"] .stepMeta { text-decoration: line-through; opacity: 0.45; }
 /* Batches still ahead: the further off, the fainter and softer. */
 .step[data-state="next"] { opacity: calc(1 - var(--far, 0) * 0.17); filter: blur(calc(var(--far, 0) * 0.6px)); }
+/* Not on sale yet: the farther away, the more it swims and shifts colour. */
+[data-inview="true"] .step[data-state="next"] {
+  animation: acid calc(3.4s - var(--far, 0) * 0.5s) steps(9) infinite alternate;
+  animation-delay: calc(var(--far, 0) * -0.9s);
+}
+@keyframes acid {
+  0% {
+    filter: blur(calc(var(--far, 0) * 0.6px)) hue-rotate(calc(var(--far, 0) * -25deg)) saturate(1.2);
+    rotate: calc(var(--far, 0) * -0.35deg);
+    translate: 0 0;
+  }
+  50% {
+    filter: blur(calc(var(--far, 0) * 0.5px)) hue-rotate(calc(var(--far, 0) * 55deg)) saturate(1.7);
+    translate: calc(var(--far, 0) * 1.5px) calc(var(--far, 0) * -2px);
+  }
+  100% {
+    filter: blur(calc(var(--far, 0) * 0.6px)) hue-rotate(calc(60deg + var(--far, 0) * 70deg)) saturate(2.1);
+    rotate: calc(var(--far, 0) * 0.4deg);
+    translate: calc(var(--far, 0) * -1.5px) calc(var(--far, 0) * 1.5px);
+  }
+}
+/* The price splits into two colours, like a misprinted poster. */
+[data-inview="true"] .step[data-state="next"] .stepPrice, [data-inview="true"] .step[data-state="next"] .stepTitle {
+  animation: split calc(1.9s + var(--far, 0) * 0.3s) steps(5) infinite alternate;
+}
+@keyframes split {
+  from { text-shadow: calc(var(--far, 0) * -1.4px) 0 rgba(238, 59, 79, 0.75), calc(var(--far, 0) * 1.4px) 0 rgba(63, 221, 255, 0.6); }
+  to { text-shadow: calc(var(--far, 0) * 2.2px) calc(var(--far, 0) * 0.8px) rgba(255, 210, 63, 0.7), calc(var(--far, 0) * -2.2px) calc(var(--far, 0) * -0.8px) rgba(207, 90, 138, 0.75); }
+}
+.root[data-lite="true"] .step[data-state="next"], .root[data-lite="true"] .step[data-state="next"] * { animation: none; }
 /* Rubber stamp: red on the batch on sale, hollow on the ones that are gone. */
 .stepStamp {
   --tilt: -4deg;
