@@ -600,20 +600,29 @@
 .camp .tent { z-index: 3; }
 .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(4), .camp .tent:nth-of-type(6) { z-index: 1; }
 .tent[data-flip] img { scale: -1 1; }
-/* A lamp left on inside. */
-.tent[data-lit]::after {
-  content: "";
+/* The painted hems hang ragged: sink them into the ground a little. */
+.camp .tent img { margin-bottom: -9%; }
+/* The lamp inside flickers: the tent brightens for a drawing or two. */
+[data-inview="true"] .tent[data-lit] img { animation: lamp 3.1s steps(1) infinite; }
+[data-inview="true"] .tent[data-lit]:nth-of-type(5) img { animation-duration: 4.3s; animation-delay: -1.4s; }
+@keyframes lamp { 0%, 100% { filter: none; } 18% { filter: brightness(1.28) saturate(1.2); } 24% { filter: brightness(0.9); } 61% { filter: brightness(1.35) saturate(1.25); } 68% { filter: none; } }
+.root[data-lite="true"] .tent img { animation: none; }
+/* Small night creatures behind the front ridge; they duck from the pointer. */
+.imp {
   position: absolute;
-  inset: 34% 16% 12%;
-  background: radial-gradient(ellipse at 50% 78%, rgba(255, 176, 128, 0.9), rgba(255, 120, 90, 0.35) 45%, transparent 72%);
-  mix-blend-mode: screen;
+  z-index: 1;
+  bottom: calc(var(--lift, 0) * 1px);
+  left: var(--x);
+  width: clamp(22px, calc(var(--s) * 1vw), calc(var(--s) * 15px));
+  height: auto;
+  translate: -50% 0;
+  transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0) rotate(var(--fr, 0deg));
+  transition: transform 0.24s steps(4);
 }
-[data-inview="true"] .tent[data-lit]::after { animation: lamp 3.1s steps(1) infinite; }
-[data-inview="true"] .tent[data-lit]:last-child::after { animation-duration: 4.3s; animation-delay: -1.4s; }
-@keyframes lamp { 0%, 100% { opacity: 1; } 18% { opacity: 0.72; } 22% { opacity: 0.95; } 61% { opacity: 0.6; } 66% { opacity: 0.9; } }
+[data-inview="true"] .imp { animation: bob calc(2.6s + var(--i) * 0.4s) steps(3) infinite; animation-delay: calc(var(--i) * -0.7s); }
 .grove .tent { bottom: -2px; }
 @media (max-width: 640px) {
-  .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(5) { display: none; }
+  .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(6), .camp .imp:nth-of-type(odd) { display: none; }
 }
 .tripWords { position: absolute; inset: 0; }
 .tripWords span {
