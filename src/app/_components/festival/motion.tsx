@@ -173,6 +173,7 @@ export function FilmPlayer({
 }
 
 export function MapViewer({
+  preview,
   src,
   alt,
   width,
@@ -180,6 +181,8 @@ export function MapViewer({
   openLabel,
   closeLabel,
 }: {
+  /** Smaller file shown in the page; `src` is the full map, loaded only when opened. */
+  preview: string;
   src: string;
   alt: string;
   width: number;
@@ -192,7 +195,7 @@ export function MapViewer({
     <>
       <button type="button" className={`${styles.mapButton} ${styles.jitter}`} onClick={dialog.show} aria-label={openLabel}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+        <img src={preview} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
       </button>
       <dialog ref={dialog.ref} className={styles.dialog} onClose={dialog.onClose}>
         <button type="button" className={`${styles.tag} ${styles.dialogClose}`} onClick={dialog.close}>
