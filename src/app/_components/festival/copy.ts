@@ -164,7 +164,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     galleryNext: "Next photo",
     nav: [
       { id: "about", label: "About" },
-      { id: "impressions", label: "Impressions" },
+      { id: "impressions", label: "Moments" },
       { id: "lineup", label: "Line up" },
       { id: "tickets", label: "Tickets" },
       { id: "map", label: "Map" },
@@ -279,7 +279,7 @@ export const festivalCopy: Record<FestivalLocale, FestivalCopy> = {
     galleryNext: "Nasledna slika",
     nav: [
       { id: "about", label: "Zgodba" },
-      { id: "impressions", label: "Vtisi" },
+      { id: "impressions", label: "Utrinki" },
       { id: "lineup", label: "Line up" },
       { id: "tickets", label: "Karte" },
       { id: "map", label: "Plac" },
