@@ -309,7 +309,9 @@ async function main() {
   // Festival Wallet top ups: copies of the shop's top ups that credit bonus
   // tokens (wallet_topup_reward). Bonus amounts are a proposal.
   if (only === "topups") {
-    for (const [amount, reward] of [[20, 2], [50, 6], [100, 15]] as const) {
+    // FESTIVAL_TOPUP_AMOUNTS=200 creates only the listed amounts (the others exist already).
+    const amounts = process.env.FESTIVAL_TOPUP_AMOUNTS?.split(",").map(Number);
+    for (const [amount, reward] of ([[20, 2], [50, 6], [100, 15], [200, 40]] as const).filter(([a]) => !amounts || amounts.includes(a))) {
       const source = await client.getByUID("product" as never, `wallet-top-up-${amount}-tokens`);
       const data = source.data as Record<string, unknown>;
       migration.createDocument(
