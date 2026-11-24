@@ -180,6 +180,14 @@ function Pattern() {
 // Word lengths of fourteen names nobody knows yet.
 const MYSTERY = [[7, 5], [9], [4, 8], [6, 6], [11], [5, 3, 6], [8], [6, 9], [10], [4, 4], [7, 7], [12], [5, 8], [9, 4]];
 
+function Tent({ x, size, lift = 0, lit = false, flip = false }: { x: string; size: number; lift?: number; lit?: boolean; flip?: boolean }) {
+  return (
+    <span className={styles.tent} data-lit={lit || undefined} data-flip={flip || undefined} style={css({ "--x": x, "--s": size, "--lift": lift })}>
+      <img src={`${ART}/tent-420.webp`} srcSet={`${ART}/tent-220.webp 220w, ${ART}/tent-420.webp 420w`} sizes={`${size}vw`} width={420} height={296} alt="" loading="lazy" decoding="async" />
+    </span>
+  );
+}
+
 function MysteryLineup({ title, soon, note }: { title: string; soon: string; note: string }) {
   return (
     <div className={styles.lineup} id="lineup">
@@ -360,6 +368,21 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
               </picture>
               <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={styles.tripStars} />
               <Layer name="stars" widths={[1600, 900]} ratio={0.7808} sizes="100vw" className={`${styles.tripStars} ${styles.tripStarsB}`} />
+              {/* The camp under the stars: a few tents, two with a lamp on. */}
+              <div className={styles.camp}>
+                <svg className={`${styles.campRidge} ${styles.campRidgeFar}`} viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,5 C9,1 17,8 28,4 S47,0 58,5 S81,8 100,2 V40 H0Z" />
+                </svg>
+                <svg className={styles.campRidge} viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,3 C12,7 22,1 35,4 S58,8 70,3 S90,1 100,5 V40 H0Z" />
+                </svg>
+                <Tent x="7%" size={13} lift={10} />
+                <Tent x="23%" size={8} lift={34} flip />
+                <Tent x="40%" size={16} lit />
+                <Tent x="59%" size={9} lift={30} />
+                <Tent x="76%" size={14} lift={6} flip />
+                <Tent x="93%" size={10} lift={26} lit />
+              </div>
               <div className={`${styles.tripWords} ${styles.boil}`}>
                 {[0, 1, 2, 3].map(i => (
                   <span key={i} style={css({ "--i": i })}>
@@ -501,6 +524,7 @@ export default function Festival({ locale, data, legal = null }: { locale: Festi
           <div className={styles.tree} style={css({ "--w": "min(40vw, 330px)", "--x": "20%", "--depth": 22 })}>
             <Layer name="tree-a" widths={[760, 440]} ratio={0.9481} sizes="(max-width: 860px) 40vw, 330px" />
           </div>
+          <Tent x="58%" size={12} lit />
           <div className={styles.tree} style={css({ "--w": "min(34vw, 270px)", "--r": "-3%", "--depth": 30 })}>
             <Layer name="tree-c" widths={[520, 320]} ratio={1.3022} sizes="(max-width: 860px) 34vw, 270px" />
             <Creature n={5} style={{ "--w": "22%", "--x": "8%", "--b": "52%", "--i": 4 }} />

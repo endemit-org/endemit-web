@@ -564,6 +564,57 @@
 .tripStars { transform: translate3d(0, calc(var(--p, 0) * -200px), 0) scale(1.2); animation: twinkle 1.3s steps(1) infinite paused; }
 .tripStarsB { transform: translate3d(0, calc(var(--p, 0) * -340px), 0) scale(-1.7, 1.7); animation-name: twinkleB; animation-duration: 1.7s; }
 [data-inview="true"] .tripStars { animation-play-state: running; }
+/* The camp: tents pitched along the bottom of the night, nearer ones larger. */
+.camp {
+  position: absolute;
+  inset: auto 0 15%;
+  height: 0;
+  transform: translate3d(0, calc(var(--p, 0) * -110px), 0);
+}
+.tent {
+  position: absolute;
+  bottom: calc(var(--lift, 0) * 1px);
+  left: var(--x);
+  width: clamp(52px, calc(var(--s) * 1vw), calc(var(--s) * 14px));
+  translate: -50% 0;
+  /* Farther tents sit higher and dimmer. */
+  pointer-events: none;
+}
+.tent img { display: block; width: 100%; height: auto; }
+/* Two ridges of ground so the tents stand on something. */
+.campRidge {
+  position: absolute;
+  left: 0;
+  top: -18px;
+  width: 100%;
+  height: 60vh;
+  z-index: 2;
+  fill: #0d0b22;
+  stroke: var(--lilac);
+  stroke-width: 2px;
+}
+[data-inview="true"] .campRidge { animation: boilSmall 0.5s steps(1) infinite; }
+.root[data-lite="true"] .campRidge { animation: none; }
+.campRidge path { vector-effect: non-scaling-stroke; }
+.campRidgeFar { top: -50px; z-index: 0; fill: #191544; stroke-opacity: 0.5; }
+.camp .tent { z-index: 3; }
+.camp .tent:nth-of-type(2), .camp .tent:nth-of-type(4), .camp .tent:nth-of-type(6) { z-index: 1; }
+.tent[data-flip] img { scale: -1 1; }
+/* A lamp left on inside. */
+.tent[data-lit]::after {
+  content: "";
+  position: absolute;
+  inset: 34% 16% 12%;
+  background: radial-gradient(ellipse at 50% 78%, rgba(255, 176, 128, 0.9), rgba(255, 120, 90, 0.35) 45%, transparent 72%);
+  mix-blend-mode: screen;
+}
+[data-inview="true"] .tent[data-lit]::after { animation: lamp 3.1s steps(1) infinite; }
+[data-inview="true"] .tent[data-lit]:last-child::after { animation-duration: 4.3s; animation-delay: -1.4s; }
+@keyframes lamp { 0%, 100% { opacity: 1; } 18% { opacity: 0.72; } 22% { opacity: 0.95; } 61% { opacity: 0.6; } 66% { opacity: 0.9; } }
+.grove .tent { bottom: -2px; }
+@media (max-width: 640px) {
+  .camp .tent:nth-of-type(2), .camp .tent:nth-of-type(5) { display: none; }
+}
 .tripWords { position: absolute; inset: 0; }
 .tripWords span {
   position: absolute;
